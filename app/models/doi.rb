@@ -862,18 +862,37 @@ class Doi < ActiveRecord::Base
     filter << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
     filter << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     filter << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
-    filter << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
-    filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
     filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
     # TODO align PID parsing
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
+    
+    # match either one of has_affiliation, has_organization, or has_funder
+    if options[:has_organization].present?
+      should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
+      should << { term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
+      minimum_should_match = 1
+    end
+    if options[:has_affiliation].present?
+      should << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }}
+      should << { term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" }}
+      minimum_should_match = 1
+    end
+    if options[:has_funder].present?
+      filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }}
+      minimum_should_match = 1
+    end
 
-    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id or funder_id 
     # is a query parameter
+    if options[:organization_id].present?
+      should << { term: { "creators.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
+      should << { term: { "contributors.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
+      minimum_should_match = 1
+    end
     if options[:affiliation_id].present?
       should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
       minimum_should_match = 1
@@ -1031,20 +1050,37 @@ class Doi < ActiveRecord::Base
     filter << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
     filter << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     filter << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
-    filter << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
-    filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
     filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
     # TODO align PID parsing
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
+    
+    # match either one of has_affiliation, has_organization, or has_funder
+    if options[:has_organization].present?
+      should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
+      should << { term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
+      minimum_should_match = 1
+    end
+    if options[:has_affiliation].present?
+      should << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }}
+      should << { term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" }}
+      minimum_should_match = 1
+    end
+    if options[:has_funder].present?
+      filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }}
+      minimum_should_match = 1
+    end
 
-    must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] }} if options[:exclude_registration_agencies]
-
-    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id or funder_id 
     # is a query parameter
+    if options[:organization_id].present?
+      should << { term: { "creators.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
+      should << { term: { "contributors.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
+      minimum_should_match = 1
+    end
     if options[:affiliation_id].present?
       should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
       minimum_should_match = 1
@@ -1053,6 +1089,8 @@ class Doi < ActiveRecord::Base
       should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
       minimum_should_match = 1
     end
+
+    must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] }} if options[:exclude_registration_agencies]
 
     # ES query can be optionally defined in different ways
     # So here we build it differently based upon options
@@ -1675,8 +1713,8 @@ class Doi < ActiveRecord::Base
   end
 
   def affiliation_id
-    Array.wrap(creators).reduce([]) do |sum, creator|
-      Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
 
@@ -1685,8 +1723,8 @@ class Doi < ActiveRecord::Base
   end
 
   def affiliation_id_and_name
-    Array.wrap(creators).reduce([]) do |sum, creator|
-      Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
 

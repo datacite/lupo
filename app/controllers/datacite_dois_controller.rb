@@ -80,6 +80,7 @@ class DataciteDoisController < ApplicationController
                           has_downloads: params[:has_downloads],
                           has_person: params[:has_person],
                           has_affiliation: params[:has_affiliation],
+                          has_organization: params[:has_organization],
                           has_funder: params[:has_funder],
                           link_check_status: params[:link_check_status],
                           link_check_has_schema_org: params[:link_check_has_schema_org],

@@ -2,6 +2,54 @@
 http_interactions:
 - request:
     method: get
+    uri: https://doi.org/ra/10.14454
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Wed, 16 Sep 2020 02:36:22 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=dcb51db7c4c67981cbc1c521611b8f9771600223782; expires=Fri, 16-Oct-20
+        02:36:22 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 05365e3d3c00002c22a59a9200000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 5d37330ecde82c22-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.14454",
+            "RA": "DataCite"
+          }
+        ]
+    http_version: null
+  recorded_at: Wed, 16 Sep 2020 02:36:22 GMT
+- request:
+    method: get
     uri: https://pub.orcid.org/v3.0/0000-0003-3484-6875/person
     body:
       encoding: US-ASCII
@@ -23,7 +71,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Tue, 08 Sep 2020 08:33:25 GMT
+      - Wed, 16 Sep 2020 02:36:26 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,7 +85,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      - X-Mapping-fjhppofk=16FE77A10C90007D85F4078C6A4BB780; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -54,7 +102,7 @@ http_interactions:
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"k.garza@manchester.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null}],"path":"/0000-0003-3484-6875/email"},"addresses":{"last-modified-date":{"value":1516113934881},"address":[{"created-date":{"value":1516113934881},"last-modified-date":{"value":1516113934881},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-3484-6875/address/874810","put-code":874810,"display-index":1}],"path":"/0000-0003-3484-6875/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-3484-6875/keywords"},"external-identifiers":{"last-modified-date":{"value":1492778212570},"external-identifier":[{"created-date":{"value":1492778212567},"last-modified-date":{"value":1492778212570},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"kjgarza","external-id-url":{"value":"https://github.com/kjgarza"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-3484-6875/external-identifiers/692978","put-code":692978,"display-index":0}],"path":"/0000-0003-3484-6875/external-identifiers"},"path":"/0000-0003-3484-6875/person"}'
     http_version: null
-  recorded_at: Tue, 08 Sep 2020 08:33:26 GMT
+  recorded_at: Wed, 16 Sep 2020 02:36:27 GMT
 - request:
     method: get
     uri: https://pub.orcid.org/v3.0/0000-0003-3484-6875/employments
@@ -78,7 +126,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Tue, 08 Sep 2020 08:33:25 GMT
+      - Wed, 16 Sep 2020 02:36:27 GMT
       Expires:
       - '0'
       Pragma:
@@ -92,7 +140,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      - X-Mapping-fjhppofk=16FE77A10C90007D85F4078C6A4BB780; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -101,5 +149,5 @@ http_interactions:
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"put-code":3139844,"department-name":null,"role-title":"Application
         Developer","start-date":{"year":{"value":"2016"},"month":{"value":"08"},"day":null},"end-date":null,"organization":{"name":"DataCite","address":{"city":"Berlin","region":null,"country":"DE"},"disambiguated-organization":null},"url":{"value":"https://ror.org/04wxnsj81"},"external-ids":null,"display-index":"1","visibility":"public","path":"/0000-0003-3484-6875/employment/3139844"}}]}],"path":"/0000-0003-3484-6875/employments"}'
     http_version: null
-  recorded_at: Tue, 08 Sep 2020 08:33:26 GMT
+  recorded_at: Wed, 16 Sep 2020 02:36:27 GMT
 recorded_with: VCR 5.1.0
