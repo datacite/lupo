@@ -872,7 +872,7 @@ class Doi < ActiveRecord::Base
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
 
-    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id
     # is a query parameter
     if options[:affiliation_id].present?
       should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
@@ -1043,7 +1043,7 @@ class Doi < ActiveRecord::Base
 
     must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] }} if options[:exclude_registration_agencies]
 
-    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id
     # is a query parameter
     if options[:affiliation_id].present?
       should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
@@ -2034,7 +2034,7 @@ class Doi < ActiveRecord::Base
     options[:job_name] ||= ""
     query = options[:query].presence
 
-    response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
+    response = Doi.query(query, filter.merge(page: { size: 1, cursor: cursor }))
     message = "#{label} #{response.results.total} Dois with #{label}."
 
     # walk through results using cursor
@@ -2067,7 +2067,7 @@ class Doi < ActiveRecord::Base
   end
 
   def update_agency
-    if agency.blank? || agency.casecmp?("datacite") 
+    if agency.blank? || agency.casecmp?("datacite")
       self.agency = "datacite"
       self.type = "DataciteDoi"
     elsif agency.casecmp?("crossref")
