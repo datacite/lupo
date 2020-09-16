@@ -201,6 +201,18 @@ describe DissertationType do
               name
               contributorType
             }
+            hostingInstitution: contributors(contributorType: "HostingInstitution") {
+              id
+              type
+              name
+              contributorType
+            }
+            contributors {
+              id
+              type
+              name
+              contributorType
+            }
           }
         }
       })
@@ -213,6 +225,14 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(3)
       expect(response.dig("data", "dissertations", "nodes", 0, "dataManagers")).to eq([])
+      expect(response.dig("data", "dissertations", "nodes", 0, "hostingInstitution")).to eq([{"contributorType"=>"HostingInstitution",
+        "id"=>"https://ror.org/046ak2485",
+        "name"=>"Freie Universität Berlin",
+        "type"=>"Organization"}])
+      expect(response.dig("data", "dissertations", "nodes", 0, "contributors")).to eq([{"contributorType"=>"HostingInstitution",
+        "id"=>"https://ror.org/046ak2485",
+        "name"=>"Freie Universität Berlin",
+        "type"=>"Organization"}])
     end
   end
 end

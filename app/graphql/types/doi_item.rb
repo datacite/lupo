@@ -297,7 +297,9 @@ module DoiItem
   end
 
   def contributors(**args)
-    Array.wrap(object.contributors[0...args[:first]]).select { |c| c["contributorType"] == args[:contributor_type] }.map do |c|
+    contrib = Array.wrap(object.contributors[0...args[:first]])
+    contrib = contrib.select { |c| c["contributorType"] == args[:contributor_type] } if args[:contributor_type].present?
+    contrib.map do |c|
       Hashie::Mash.new(
         "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "contributor_type" => c.fetch("contributorType", nil),
