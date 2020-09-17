@@ -8,7 +8,7 @@ if ENV['ES_HOST'] == "elasticsearch.test.datacite.org" || ENV['ES_HOST'] == "ela
     host: ENV['ES_HOST'],
     port: '80',
     scheme: 'http',
-    request_timeout: ENV['ES_REQUEST_TIMEOUT']
+    request_timeout: ENV['ES_REQUEST_TIMEOUT'].to_i
     ) do |f|
     f.request :aws_sigv4,
       credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']),
