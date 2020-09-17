@@ -889,8 +889,8 @@ class Doi < ActiveRecord::Base
     # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id or funder_id 
     # is a query parameter
     if options[:organization_id].present?
-      should << { term: { "creators.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
-      should << { term: { "contributors.nameIdentifiers.nameIdentifier" => ror_from_url(options[:organization_id]) }}
+      should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
+      should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
       minimum_should_match = 1
     end
     if options[:affiliation_id].present?
