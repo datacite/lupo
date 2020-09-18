@@ -13,6 +13,7 @@ class MemberType < BaseObject
   field :logo_url, Url, null: true, description: "URL for the member logo"
   field :region, String, null: true, description: "Geographic region where the member is located"
   field :country, CountryType, null: true, description: "Country where the member is located"
+  field :member_role, MemberRoleType, null: true, description: "Membership type"
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by member"
   field :joined, GraphQL::Types::ISO8601Date, null: true, description: "Date member joined DataCite"
@@ -166,6 +167,11 @@ class MemberType < BaseObject
 
   def type
     "Member"
+  end
+
+  def member_role
+    { "id" => object.member_type,
+      "name" => object.member_type.titleize }
   end
 
   def country

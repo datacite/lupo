@@ -93,6 +93,24 @@ describe Organization, type: :model, vcr: true do
       expect(organization.ringgold).to eq("2152")
     end
 
+    it "found datacite member" do
+      member = create(:provider, role_name: "ROLE_CONSORTIUM_ORGANIZATION", name: "University of Cambridge", symbol: "LPSW", ror_id: "https://ror.org/013meh722")
+      id = "https://ror.org/013meh722"
+      organizations = Organization.find_by_id(id)
+      expect(organizations[:data].size).to eq(1)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/013meh722")
+      expect(organization.name).to eq("University of Cambridge")
+      expect(organization.labels).to eq([{"code"=>"CY", "name"=>"Prifysgol Caergrawnt"}])
+      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.twitter).to eq("Cambridge_Uni")
+      expect(organization.inception_year).to eq("1209")
+      expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
+      expect(organization.ringgold).to eq("2152")
+      expect(organization.member_id).to eq("lpsw")
+      expect(organization.member_role).to eq("id"=>"consortium_organization", "name"=>"Consortium Organization")
+    end
+
     it "found funder" do
       id = "https://ror.org/018mejw64"
       organizations = Organization.find_by_id(id)

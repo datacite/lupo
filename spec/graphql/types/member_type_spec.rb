@@ -124,6 +124,10 @@ describe MemberType do
           country {
             name
           }
+          memberRole {
+            id
+            name
+          }
           repositories {
             totalCount
             years {
@@ -161,6 +165,7 @@ describe MemberType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "member", "id")).to eq(provider.uid)
+      expect(response.dig("data", "member", "memberRole")).to eq("id"=>"direct_member", "name"=>"Direct Member")
       expect(response.dig("data", "member", "name")).to eq("My provider")
       expect(response.dig("data", "member", "country")).to eq("name"=>"Germany")
 

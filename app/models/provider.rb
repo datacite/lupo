@@ -479,7 +479,7 @@ class Provider < ActiveRecord::Base
       "ROLE_CONSORTIUM" => "consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
-      "ROLE_FOR_PROFIT_PROVIDER" => "for_profit_provider",
+      "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",
       "ROLE_REGISTRATION_AGENCY" => "registration_agency",
     }
   end

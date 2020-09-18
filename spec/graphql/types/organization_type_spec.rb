@@ -47,6 +47,9 @@ describe OrganizationType do
         "funderName" => "University of Cambridge"
       }])
     }
+    let(:provider) { create(:provider, symbol: "LPSW", ror_id: "https://ror.org/013meh722") }
+    let(:client) { create(:client, provider: provider) }
+    let!(:member_doi) { create(:doi, aasm_state: "findable", client: client) }
 
     before do
       Doi.import
@@ -57,6 +60,11 @@ describe OrganizationType do
       %(query {
         organization(id: "https://ror.org/013meh722") {
           id
+          memberId
+          memberRole {
+            id
+            name
+          }
           name
           alternateName
           wikipediaUrl
@@ -103,6 +111,8 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "memberId")).to eq("lpsw")
+      expect(response.dig("data", "organization", "memberRole")).to eq("id"=>"direct_member", "name"=>"Direct Member")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
@@ -114,9 +124,10 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
       expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
-      expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
-      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(3)
+      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>3, "title"=>"Dataset"}])
+      # TODO should be 3 nodes
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
 
       work = response.dig("data", "organization", "works", "nodes", 0)

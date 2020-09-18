@@ -16,7 +16,7 @@ class PhysicalObjectConnectionWithTotalType < BaseConnection
     object.total_count 
   end
 
-  def years
+  def published
     facet_by_range(object.aggregations.published.buckets)
   end
 

@@ -5639,6 +5639,11 @@ type Member {
   logoUrl: Url
 
   """
+  Membership type
+  """
+  memberRole: MemberRole
+
+  """
   Member name
   """
   name: String!
@@ -5797,6 +5802,21 @@ type MemberPrefixEdge {
   The item at the end of the edge.
   """
   node: MemberPrefix
+}
+
+"""
+Information about the membership role.
+"""
+type MemberRole {
+  """
+  Role ID
+  """
+  id: ID
+
+  """
+  Role name
+  """
+  name: String
 }
 
 type Model implements DoiItem {
@@ -6148,6 +6168,16 @@ type Organization implements ActorItem {
   Year when the organization came into existence.
   """
   inceptionYear: Int
+
+  """
+  Unique member identifier if a DataCite member
+  """
+  memberId: ID
+
+  """
+  Membership type if a DataCite member
+  """
+  memberRole: MemberRole
 
   """
   The name of the actor.

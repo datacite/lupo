@@ -2,6 +2,13 @@ class Organization
   # include helper module for working with Wikidata
   include Wikidatable
 
+  MEMBER_ROLES = {
+    "ROLE_CONSORTIUM" => "consortium",
+    "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
+    "ROLE_ALLOCATOR" => "direct_member",
+    "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",
+    "ROLE_MEMBER" => "member_only" }
+
   def self.find_by_id(id)
     ror_id = ror_id_from_url(id)
     return {} unless ror_id.present?
@@ -17,6 +24,9 @@ class Organization
     wikidata = data.dig(0, "wikidata", 0)
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+
+    datacite_data = find_datacite_member(id)
+    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
     
     errors = response.body.fetch("errors", nil)
 
@@ -39,6 +49,9 @@ class Organization
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
     
+    datacite_data = find_datacite_member(data.first["id"])
+    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
+
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
@@ -60,9 +73,24 @@ class Organization
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
     
+    datacite_data = find_datacite_member(data.first["id"])
+    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
+
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
+  end
+
+  def self.find_datacite_member(id)
+    member = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil).where(ror_id: id).first
+    return nil unless member.present?
+
+    { "member_id" => member.symbol.downcase,
+      "member_role" => { 
+        "id" => MEMBER_ROLES[member.role_name],
+        "name" => MEMBER_ROLES[member.role_name].titleize
+      }
+    }
   end
 
   def self.query(query, options={})
