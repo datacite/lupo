@@ -107,8 +107,6 @@ describe Organization, type: :model, vcr: true do
       expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
       expect(organization.ringgold).to eq("2152")
-      expect(organization.member_id).to eq("lpsw")
-      expect(organization.member_role).to eq("id"=>"consortium_organization", "name"=>"Consortium Organization")
     end
 
     it "found funder" do

@@ -6175,9 +6175,14 @@ type Organization implements ActorItem {
   memberId: ID
 
   """
-  Membership type if a DataCite member
+  Membership role id if a DataCite member
   """
-  memberRole: MemberRole
+  memberRoleId: String
+
+  """
+  Membership role name if a DataCite member
+  """
+  memberRoleName: String
 
   """
   The name of the actor.

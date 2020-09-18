@@ -25,9 +25,6 @@ class Organization
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
 
-    datacite_data = find_datacite_member(id)
-    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
-    
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
@@ -49,9 +46,6 @@ class Organization
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
     
-    datacite_data = find_datacite_member(data.first["id"])
-    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
-
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
@@ -73,24 +67,9 @@ class Organization
     wikidata_data = find_by_wikidata_id(wikidata)
     data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
     
-    datacite_data = find_datacite_member(data.first["id"])
-    data = [data.first.reverse_merge(datacite_data)] if datacite_data 
-
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
-  end
-
-  def self.find_datacite_member(id)
-    member = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil).where(ror_id: id).first
-    return nil unless member.present?
-
-    { "member_id" => member.symbol.downcase,
-      "member_role" => { 
-        "id" => MEMBER_ROLES[member.role_name],
-        "name" => MEMBER_ROLES[member.role_name].titleize
-      }
-    }
   end
 
   def self.query(query, options={})

@@ -1,13 +1,21 @@
 # frozen_string_literal: true
 
 class OrganizationType < BaseObject
+  MEMBER_ROLES = {
+    "ROLE_CONSORTIUM" => "Consortium",
+    "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
+    "ROLE_ALLOCATOR" => "direct_member",
+    "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",
+    "ROLE_MEMBER" => "member_only" }
+  
   implements ActorItem
 
   description "Information about organizations"
 
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :member_id, ID, null: true, description: "Unique member identifier if a DataCite member"
-  field :member_role, MemberRoleType, null: true, description: "Membership type if a DataCite member"
+  field :member_role_id, String, null: true, description: "Membership role id if a DataCite member"
+  field :member_role_name, String, null: true, description: "Membership role name if a DataCite member"
   field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
   field :wikipedia_url, Url, null: true, hash_key: "wikipedia_url", description: "Wikipedia URL of the organization."
   field :twitter, String, null: true, description: "Twitter username of the organization."
@@ -140,6 +148,27 @@ class OrganizationType < BaseObject
     object.aliases + object.acronyms
   end
 
+  def member
+    m = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil).where(ror_id: object.id).first
+    return {} unless m.present?
+  
+    { "member_id" => m.symbol.downcase,
+      "member_role_id" => MEMBER_ROLES[m.role_name],
+      "member_role_name" => MEMBER_ROLES[m.role_name].titleize }
+  end
+
+  def member_id
+    member["member_id"]
+  end
+
+  def member_role_id
+    member["member_role_id"]
+  end
+
+  def member_role_name
+    member["member_role_name"]
+  end
+
   def geolocation
     { "pointLongitude" => object.dig("geolocation", "longitude"), 
       "pointLatitude" => object.dig("geolocation", "latitude") }
@@ -153,7 +182,7 @@ class OrganizationType < BaseObject
   end
 
   def provider_id
-    object.member_id && %w(direct_member consortium_organization).include?(object.member_role["id"]) ? object.member_id : nil
+    member["member_id"] && %w(direct_member consortium_organization).include?(member["member_role_id"]) ? member["member_id"] : nil
   end
 
   def publications(**args)

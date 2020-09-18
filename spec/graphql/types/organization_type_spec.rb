@@ -61,10 +61,8 @@ describe OrganizationType do
         organization(id: "https://ror.org/013meh722") {
           id
           memberId
-          memberRole {
-            id
-            name
-          }
+          memberRoleId
+          memberRoleName
           name
           alternateName
           wikipediaUrl
@@ -112,7 +110,8 @@ describe OrganizationType do
 
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "memberId")).to eq("lpsw")
-      expect(response.dig("data", "organization", "memberRole")).to eq("id"=>"direct_member", "name"=>"Direct Member")
+      expect(response.dig("data", "organization", "memberRoleId")).to eq("direct_member")
+      expect(response.dig("data", "organization", "memberRoleName")).to eq("Direct Member")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
