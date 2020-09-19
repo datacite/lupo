@@ -39,6 +39,11 @@ class OrganizationType < BaseObject
     argument :license, String, required: false
     argument :resource_type, String, required: false
     argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
@@ -61,6 +66,11 @@ class OrganizationType < BaseObject
     argument :license, String, required: false
     argument :resource_type, String, required: false
     argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
@@ -83,6 +93,11 @@ class OrganizationType < BaseObject
     argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
@@ -105,6 +120,11 @@ class OrganizationType < BaseObject
     argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
@@ -127,6 +147,11 @@ class OrganizationType < BaseObject
     argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false

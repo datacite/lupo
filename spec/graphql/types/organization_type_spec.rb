@@ -130,7 +130,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
-      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.") 
     end
   end
 
