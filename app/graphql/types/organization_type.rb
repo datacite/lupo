@@ -122,7 +122,6 @@ class OrganizationType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
-    argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :resource_type_id, String, required: false
     argument :resource_type, String, required: false
@@ -181,10 +180,6 @@ class OrganizationType < BaseObject
     object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } }
   end
 
-  def provider_id
-    member["member_id"] && %w(direct_member consortium_organization).include?(member["member_role_id"]) ? member["member_id"] : nil
-  end
-
   def publications(**args)
     args[:resource_type_id] = "Text"
     ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
@@ -240,6 +235,6 @@ class OrganizationType < BaseObject
   end
 
   def response(**args)
-    Doi.gql_query(args[:query], ids: args[:ids], affiliation_id: object.id, organization_id: object.id, provider_id: args[:member_id] || provider_id, user_id: args[:user_id], client_id: args[:repository_id], funder_id: args[:funder_id] || object.fundref.join(","), resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
+    Doi.gql_query(args[:query], ids: args[:ids], affiliation_id: object.id, organization_id: object.id, member_id: %w(direct_member consortium_organization).include?(member["member_role_id"]) ? object.id : nil, user_id: args[:user_id], client_id: args[:repository_id], funder_id: args[:funder_id] || object.fundref.join(","), resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 end

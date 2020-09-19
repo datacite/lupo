@@ -824,6 +824,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present?
     filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
+    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
@@ -869,7 +870,7 @@ class Doi < ActiveRecord::Base
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
     
-    # match either one of has_affiliation, has_organization, or has_funder
+    # match either one of has_affiliation, has_organization, has_funder or has_member
     if options[:has_organization].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
       should << { term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
@@ -884,9 +885,13 @@ class Doi < ActiveRecord::Base
       filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }}
       minimum_should_match = 1
     end
+    if options[:has_member].present?
+      should << { exists: { field: "provider.ror_id" }}
+      minimum_should_match = 1
+    end
 
-    # match either ROR ID, Crossref Funder ID or Member ID if either organization_id, affiliation_id,
-    # funder_id or provider_id is a query parameter
+    # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id,
+    # funder_id or member_id is a query parameter
     if options[:organization_id].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
       should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
@@ -900,8 +905,8 @@ class Doi < ActiveRecord::Base
       should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
       minimum_should_match = 1
     end
-    if options[:provider_id].present?
-      should << { terms: { provider_id: options[:provider_id].split(",") } }
+    if options[:member_id].present?
+      should << { term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" }}
       minimum_should_match = 1
     end
 
@@ -1015,6 +1020,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present?
     filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
+    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
@@ -1075,9 +1081,13 @@ class Doi < ActiveRecord::Base
       filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }}
       minimum_should_match = 1
     end
+    if options[:has_member].present?
+      should << { exists: { field: "provider.ror_id" }}
+      minimum_should_match = 1
+    end
 
-    # match either ROR ID, Crossref Funder ID or Member ID if either organization_id, affiliation_id,
-    # funder_id or provider_id is a query parameter
+    # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id,
+    # funder_id or member_id is a query parameter
     if options[:organization_id].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
       should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" }}
@@ -1091,8 +1101,8 @@ class Doi < ActiveRecord::Base
       should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
       minimum_should_match = 1
     end
-    if options[:provider_id].present?
-      should << { terms: { provider_id: options[:provider_id].split(",") } }
+    if options[:member_id].present?
+      should << { term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" }}
       minimum_should_match = 1
     end
 
