@@ -1224,8 +1224,8 @@ class Doi < ActiveRecord::Base
 
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
-    if doi.nil?
-      Rails.logger.error "[MySQL] DOI #{doi_id} not found."
+    if doi.blank?
+      Rails.logger.error "[MySQL] Error importing DOI " + doi_id + ": not found"
       return nil
     end
 
@@ -1238,17 +1238,16 @@ class Doi < ActiveRecord::Base
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url version_info).map do |a|
       [a.to_sym, meta[a]]
-    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string)
+    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    Rails.logger.warn "[MySQL] Imported metadata for DOI " + doi.doi + "."
-    "Imported DOI #{doi.doi}."
+    Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => e
     if doi.present?
       Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
-      "Imported DOI #{doi.doi}."
     else
+      Rails.logger.error "[MySQL] Error importing metadata: " + e.message
       Raven.capture_exception(e)
     end
   end

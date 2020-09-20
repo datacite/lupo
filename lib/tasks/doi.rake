@@ -154,10 +154,10 @@ namespace :doi do
     Doi.loop_through_dois(options)
   end
 
-  desc "Trigger DOI Update based on query"
+  desc "Trigger DOI update based on query"
   task update_dois_by_query: :environment do
-    # Ensure we have to specify a query of some kind.
-    if ENV['QUERY'].nil?
+    # Ensure we have specified a query of some kind.
+    if ENV['QUERY'].blank?
       puts "ENV['QUERY'] is required"
       exit
     end
@@ -171,6 +171,22 @@ namespace :doi do
     puts Doi.loop_through_dois(options)
   end
 
+  desc "Trigger DOI import based on query"
+  task import_dois_by_query: :environment do
+    # Ensure we have specified a query of some kind.
+    if ENV['QUERY'].blank?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    options = {
+      query: ENV["QUERY"],
+      label: "[ImportDoiByQuery]",
+      job_name: "ImportDoiJob",
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
+    }
+    puts Doi.loop_through_dois(options)
+  end
 
   # until all Crossref DOIs are indexed as otherDoi
   desc "Refresh metadata"
