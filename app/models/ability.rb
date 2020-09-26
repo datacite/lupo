@@ -27,10 +27,9 @@ class Ability
       can [:manage], ProviderPrefix do |provider_prefix|
         provider_prefix.provider && user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
-      can [:manage], Client do |client|
+      can [:manage, :transfer], Client do |client|
         client.provider && user.provider_id.casecmp(client.provider.consortium_id)
       end
-      cannot [:transfer], Client
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
       # if Flipper[:delete_doi].enabled?(user)

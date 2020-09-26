@@ -35,6 +35,25 @@ describe ProvidersController, type: :request, elasticsearch: true  do
     end
   end
 
+  describe 'GET /providers for consortium' do
+    let(:consortium) { create(:provider, symbol: "dc", role_name: "ROLE_CONSORTIUM") }
+    let!(:consortium_organization) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
+    let!(:provider) { create(:provider) }
+
+    before do
+      Provider.import
+      sleep 2
+    end
+
+    it "returns providers" do
+      get "/providers?consortium-id=dc", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+      expect(json.dig('meta', 'total')).to eq(1)
+    end
+  end
+
   describe 'GET /providers/:id' do
     context 'when the record exists' do
       it 'returns the provider' do
