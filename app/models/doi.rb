@@ -95,7 +95,6 @@ class Doi < ActiveRecord::Base
   has_many :version_of, class_name: "Doi", through: :version_of_events, source: :doi_for_source
 
   delegate :provider, to: :client, allow_nil: true
-  delegate :consortium_id, to: :provider, allow_nil: true
 
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
@@ -753,7 +752,7 @@ class Doi < ActiveRecord::Base
     filter = []
     filter << { term: { provider_id: options[:provider_id] } } if options[:provider_id].present?
     filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
-    filter << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
+    filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
 
     aggregations = {
@@ -1728,6 +1727,10 @@ class Doi < ActiveRecord::Base
 
   def provider_id_and_name
     "#{provider_id}:#{client.provider.name}" if client.present?
+  end
+
+  def consortium_id
+    client.provider.consortium_id.downcase if client.present? && client.provider.consortium_id.present?
   end
 
   def affiliation_id
