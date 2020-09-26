@@ -158,6 +158,9 @@ describe WorkType do
           nodes {
             id
             doi
+            creators{
+              type
+            }
           }
         }
         associated: works(hasAffiliation: true, hasFunder: true, hasOrganization: true, hasMember: true) {
@@ -228,6 +231,16 @@ describe WorkType do
             "affiliationIdentifierScheme": "ROR"
           },
         ]
+      },
+      {
+        "name" => "University of Cambridge",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
       }])
     }
     let!(:organization_doi) { create(:doi, aasm_state: "findable", client: client_without_ror, creators:
@@ -261,6 +274,7 @@ describe WorkType do
       expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "works", "nodes").length).to eq(4)
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(@works[0].identifier)
+      expect(response.dig("data", "works", "nodes", 0, "creators", 1, "type")).to be nil
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
 
       response = LupoSchema.execute(query, variables: { first: 4, cursor: end_cursor }).as_json

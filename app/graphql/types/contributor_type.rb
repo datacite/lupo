@@ -12,6 +12,11 @@ class ContributorType < BaseObject
   field :affiliation, [AffiliationType], null: true, description: "The organizational or institutional affiliation of the contributor."
 
   def type
-    object.name_type == "Organizational" ? "Organization" : "Person"
+    case object.name_type
+    when "Organizational"
+      "Organization"
+    when "Personal"
+      "Person"
+    end
   end
 end
