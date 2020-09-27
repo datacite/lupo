@@ -112,7 +112,7 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def destroy
-    message = "Provider prefix #{@provider_prefix.uid} deleted."
+    message = "Provider Prefix #{@provider_prefix.uid} deleted."
     if @provider_prefix.destroy
       if @provider_prefix.__elasticsearch__.delete_document.dig("result") != "deleted"
         logger.error "Error deleting Provider Prefix #{@provider_prefix.uid} from Elasticsearch index."
