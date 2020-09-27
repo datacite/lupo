@@ -153,4 +153,18 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       end
     end
   end
+
+  describe 'DELETE /provider-prefixes/:uid' do
+    let!(:provider_prefix) { create(:provider_prefix) }
+
+    before do
+      ProviderPrefix.import
+      sleep 2
+    end
+
+    it 'deletes the prefix' do
+      delete "/provider-prefixes/#{provider_prefix.uid}", nil, headers
+      expect(last_response.status).to eq(204)
+    end
+  end
 end

@@ -822,23 +822,17 @@ describe ProvidersController, type: :request, elasticsearch: true  do
     end
   end
 
-  # # Test suite for DELETE /providers/:id
-  # describe 'DELETE /providers/:id' do
-  #   before { delete "/providers/#{provider.symbol}", headers: headers }
+  describe 'DELETE /providers/:id' do
+    let!(:provider) { create(:provider) }
 
-  #   it 'returns status code 204' do
-  #     expect(response).to have_http_status(204)
-  #   end
-  #   context 'when the resources doesnt exist' do
-  #     before { delete '/providers/xxx', params: params.to_json, headers: headers }
+    before do
+      Provider.import
+      sleep 2
+    end
 
-  #     it 'returns status code 404' do
-  #       expect(response).to have_http_status(404)
-  #     end
-
-  #     it 'returns a validation failure message' do
-  #       expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
-  #     end
-  #   end
-  # end
+    it 'deletes the provider' do
+      delete "/providers/#{provider.symbol.downcase}", nil, admin_headers
+      expect(last_response.status).to eq(204)
+    end
+  end
 end

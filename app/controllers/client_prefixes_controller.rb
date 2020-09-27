@@ -84,7 +84,10 @@ class ClientPrefixesController < ApplicationController
     @client_prefix = ClientPrefix.new(safe_params)
     authorize! :create, @client_prefix
 
-    if @client_prefix.save
+    if @client_prefix.save && @client_prefix.__elasticsearch__.index_document.dig("result") == "created"      
+      @client_prefix.provider_prefix.__elasticsearch__.index_document
+      @client_prefix.prefix.__elasticsearch__.index_document
+      
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -103,7 +106,13 @@ class ClientPrefixesController < ApplicationController
 
   def destroy
     message = "Client prefix #{@client_prefix.uid} deleted."
-    if @client_prefix.destroy
+
+    # first delete document from Elasticsearch and reindex parent documents
+    if @client_prefix.__elasticsearch__.delete_document.dig("result") == "deleted" &&
+      @client_prefix.prefix.__elasticsearch__.index_document &&
+      @client_prefix.provider_prefix.__elasticsearch__.index_document &&
+      @client_prefix.destroy
+      
       Rails.logger.warn message
       head :no_content
     else
