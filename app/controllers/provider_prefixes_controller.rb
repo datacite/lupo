@@ -85,6 +85,16 @@ class ProviderPrefixesController < ApplicationController
     authorize! :create, @provider_prefix
 
     if @provider_prefix.save
+      if @provider_prefix.__elasticsearch__.index_document.dig("result") != "created"
+        logger.error "Error adding Provider Prefix #{@provider_prefix.uid} to Elasticsearch index."
+      end
+      if @provider_prefix.prefix.__elasticsearch__.index_document.dig("result") != "updated"
+        logger.error "Error updating Elasticsearch index for Prefix #{@provider_prefix.prefix.uid}."
+      end
+      if @provider_prefix.provider.__elasticsearch__.index_document.dig("result") != "updated"
+        logger.error "Error updating Elasticsearch index for Provider #{@provider_prefix.provider.uid}."
+      end
+
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -104,7 +114,17 @@ class ProviderPrefixesController < ApplicationController
   def destroy
     message = "Provider prefix #{@provider_prefix.uid} deleted."
     if @provider_prefix.destroy
-      Rails.logger.warn message
+      if @provider_prefix.__elasticsearch__.delete_document.dig("result") != "deleted"
+        logger.error "Error deleting Provider Prefix #{@provider_prefix.uid} from Elasticsearch index."
+      end
+      if @provider_prefix.prefix.__elasticsearch__.index_document.dig("result") != "updated"
+        logger.error "Error updating Elasticsearch index for Prefix #{@provider_prefix.prefix.uid}."
+      end
+      if @provider_prefix.provider.__elasticsearch__.index_document.dig("result") != "updated"
+        logger.error "Error updating Elasticsearch index for Provider #{@provider_prefix.provider.uid}."
+      end
+
+      logger.info message
       head :no_content
     else
       Rails.logger.error @provider_prefix.errors.inspect

@@ -12,20 +12,6 @@ module Indexable
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test?
       elsif self.class.name == "Event"
         OtherDoiJob.perform_later(self.dois_to_import)
-      elsif self.class.name == "ProviderPrefix"
-        self.__elasticsearch__.index_document
-        Rails.logger.info "#{self.class.name} #{uid} added to Elasticsearch index."
-        prefix.__elasticsearch__.index_document
-        Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
-        provider.__elasticsearch__.index_document
-        Rails.logger.info "Provider #{provider.uid} Elasticsearch index updated."
-      elsif self.class.name == "ClientPrefix"
-        self.__elasticsearch__.index_document
-        Rails.logger.info "#{self.class.name} #{uid} added to Elasticsearch index."
-        prefix.__elasticsearch__.index_document
-        Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
-        provider_prefix.__elasticsearch__.index_document
-        Rails.logger.info "Provider Prefix #{provider_prefix.uid} Elasticsearch index updated."
       end
     end
 
@@ -36,21 +22,9 @@ module Indexable
 
     after_commit on: [:destroy] do
       begin
-        __elasticsearch__.delete_document
+        __elasticsearch__.delete_document unless ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
         if self.class.name == "Event"
           Rails.logger.info "#{self.class.name} #{uuid} deleted from Elasticsearch index."
-        elsif self.class.name == "ProviderPrefix"
-          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
-          prefix.__elasticsearch__.index_document
-          Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
-          provider.__elasticsearch__.index_document
-          Rails.logger.info "Provider #{provider.uid} Elasticsearch index updated."
-        elsif self.class.name == "ClientPrefix"
-          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
-          prefix.__elasticsearch__.index_document
-          Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
-          provider_prefix.__elasticsearch__.index_document
-          Rails.logger.info "Provider Prefix #{provider_prefix.uid} Elasticsearch index updated."
         else
           Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
         end
