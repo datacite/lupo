@@ -62,7 +62,7 @@ describe ProvidersController, type: :request, elasticsearch: true  do
         expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
-        expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>0)
+        expect(json["meta"]).to eq("repositoryCount"=>0)
       end
 
       it 'returns the provider info for member page' do
@@ -120,7 +120,7 @@ describe ProvidersController, type: :request, elasticsearch: true  do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
-      expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>1)
+      expect(json["meta"]).to eq("repositoryCount"=>1)
     end
   end
 

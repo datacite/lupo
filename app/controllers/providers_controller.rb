@@ -153,10 +153,16 @@ class ProvidersController < ApplicationController
 
   def show
     options = {}
-    options[:meta] = {
-      "repositoryCount" => Array.wrap(@provider.client_ids).length,
-      "consortiumOrganizationCount" => Array.wrap(@provider.consortium_organization_ids).length
-    }.compact
+    if @provider.member_type == "consortium"
+      options[:meta] = {
+        "consortiumOrganizationCount" => Array.wrap(@provider.consortium_organization_ids).length
+      }
+    elsif %w(direct_member consortium_organization).include?(@provider.member_type)
+      options[:meta] = {
+        "repositoryCount" => Array.wrap(@provider.client_ids).length
+      }
+    end
+
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
