@@ -116,4 +116,18 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       end
     end
   end
+
+  describe 'DELETE /client-prefixes/:uid' do
+    let!(:client_prefix) { create(:client_prefix) }
+
+    before do
+      ClientPrefix.import
+      sleep 2
+    end
+
+    it 'deletes the prefix' do
+      delete "/client-prefixes/#{client_prefix.uid}", nil, headers
+      expect(last_response.status).to eq(204)
+    end
+  end
 end

@@ -6,26 +6,18 @@ module Indexable
   included do
     after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
-      IndexJob.perform_later(self)
+      IndexJob.perform_later(self) unless ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
 
       if (self.class.name == "DataciteDoi" || self.class.name == "OtherDoi" || self.class.name == "Doi") && (saved_change_to_attribute?("related_identifiers") || saved_change_to_attribute?("creators") || saved_change_to_attribute?("funding_references"))
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test?
       elsif self.class.name == "Event"
         OtherDoiJob.perform_later(self.dois_to_import)
-      elsif ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-        # reindex prefix, not triggered by standard callbacks
-        IndexJob.perform_later(self.prefix)
       end
     end
 
     after_touch do
       # use index_document instead of update_document to also update virtual attributes
-      # prefixes need to be reindexed immediately
-      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-        IndexJob.perform_later(self)
-      else
-        IndexBackgroundJob.perform_later(self)
-      end
+      IndexBackgroundJob.perform_later(self)
     end
 
     after_commit on: [:destroy] do
@@ -33,15 +25,10 @@ module Indexable
         __elasticsearch__.delete_document
         if self.class.name == "Event"
           Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
-        else
+        elsif !["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
           Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
         end
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
-
-        # reindex prefix
-        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-          IndexJob.perform_later(self.prefix)
-        end
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
         Rails.logger.error e.message
       end
