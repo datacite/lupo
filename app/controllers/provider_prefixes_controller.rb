@@ -84,9 +84,7 @@ class ProviderPrefixesController < ApplicationController
     @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 
-    if @provider_prefix.save && @provider_prefix.__elasticsearch__.index_document.dig("result") == "created"      
-      @provider_prefix.prefix.__elasticsearch__.index_document
-      
+    if @provider_prefix.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -105,13 +103,7 @@ class ProviderPrefixesController < ApplicationController
 
   def destroy
     message = "Provider prefix #{@provider_prefix.uid} deleted."
-
-    # first delete document from Elasticsearch and reindex parent documents
-    if @provider_prefix.__elasticsearch__.delete_document.dig("result") == "deleted" &&
-       @provider_prefix.prefix.__elasticsearch__.index_document &&
-       @provider_prefix.provider.__elasticsearch__.index_document &&
-       @provider_prefix.destroy
-
+    if @provider_prefix.destroy
       Rails.logger.warn message
       head :no_content
     else

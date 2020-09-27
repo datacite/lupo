@@ -12,6 +12,20 @@ module Indexable
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test?
       elsif self.class.name == "Event"
         OtherDoiJob.perform_later(self.dois_to_import)
+      elsif self.class.name == "ProviderPrefix"
+        self.__elasticsearch__.index_document
+        Rails.logger.info "#{self.class.name} #{uid} added to Elasticsearch index."
+        prefix.__elasticsearch__.index_document
+        Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
+        provider.__elasticsearch__.index_document
+        Rails.logger.info "Provider #{provider.uid} Elasticsearch index updated."
+      elsif self.class.name == "ClientPrefix"
+        self.__elasticsearch__.index_document
+        Rails.logger.info "#{self.class.name} #{uid} added to Elasticsearch index."
+        prefix.__elasticsearch__.index_document
+        Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
+        provider_prefix.__elasticsearch__.index_document
+        Rails.logger.info "Provider Prefix #{provider_prefix.uid} Elasticsearch index updated."
       end
     end
 
@@ -24,9 +38,21 @@ module Indexable
       begin
         __elasticsearch__.delete_document
         if self.class.name == "Event"
-          Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
-        elsif !["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-          Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+          Rails.logger.info "#{self.class.name} #{uuid} deleted from Elasticsearch index."
+        elsif self.class.name == "ProviderPrefix"
+          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
+          prefix.__elasticsearch__.index_document
+          Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
+          provider.__elasticsearch__.index_document
+          Rails.logger.info "Provider #{provider.uid} Elasticsearch index updated."
+        elsif self.class.name == "ClientPrefix"
+          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
+          prefix.__elasticsearch__.index_document
+          Rails.logger.info "Prefix #{prefix.uid} Elasticsearch index updated."
+          provider_prefix.__elasticsearch__.index_document
+          Rails.logger.info "Provider Prefix #{provider_prefix.uid} Elasticsearch index updated."
+        else
+          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
         end
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
