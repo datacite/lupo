@@ -89,8 +89,13 @@ describe RepositoryPrefixesController, type: :request do
     end
   end
 
-  describe 'DELETE /repository-prefixes/:uid' do
+  describe 'DELETE /repository-prefixes/:uid', elasticsearch: true do
     let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+
+    before do
+      ClientPrefix.import
+      sleep 2
+    end
 
     it 'deletes a repository-prefix' do
       delete "/repository-prefixes/#{client_prefix.uid}", nil, headers
