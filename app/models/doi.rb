@@ -1224,14 +1224,16 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     if doi.blank?
-      Rails.logger.error "[MySQL] Error importing DOI " + doi_id + ": not found"
-      return nil
+      message = "[MySQL] Error importing DOI " + doi_id + ": not found"
+      Rails.logger.error message
+      return message
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     if string.blank?
-      Rails.logger.error "[MySQL] No metadata for DOI #{doi.doi} found: " + doi.current_metadata.inspect
-      return nil
+      message = "[MySQL] No metadata for DOI #{doi.doi} found: " + doi.current_metadata.inspect
+      Rails.logger.error message
+      return message
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
@@ -1241,14 +1243,19 @@ class Doi < ActiveRecord::Base
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    message = "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    Rails.logger.info message
+    message
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => e
     if doi.present?
-      Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
+      message = "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
     else
-      Rails.logger.error "[MySQL] Error importing metadata: " + e.message
+      message = "[MySQL] Error importing metadata: " + e.message
       Raven.capture_exception(e)
     end
+
+    Rails.logger.error message
+    message
   end
 
   def self.import_by_client(client_id: nil)
