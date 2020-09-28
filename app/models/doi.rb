@@ -868,7 +868,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
-    
+
     # match either one of has_affiliation, has_organization, has_funder or has_member
     if options[:has_organization].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
@@ -1067,7 +1067,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
-    
+
     # match either one of has_affiliation, has_organization, or has_funder
     if options[:has_organization].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" }}
@@ -2133,7 +2133,7 @@ class Doi < ActiveRecord::Base
   end
 
   def update_agency
-    if agency.blank? || agency.casecmp?("datacite") 
+    if agency.blank? || agency.casecmp?("datacite")
       self.agency = "datacite"
       self.type = "DataciteDoi"
     elsif agency.casecmp?("crossref")
@@ -2310,4 +2310,39 @@ class Doi < ActiveRecord::Base
 
     "Finished migrating landing pages."
   end
+
+  def self.add_index_type(options={})
+    return nil unless options[:from_id].present?
+
+
+    from_id = options[:from_id].to_i
+    until_id = (options[:until_id] || (from_id + 499)).to_i
+
+    # get every id between from_id and end_id
+    count = 0
+
+    Rails.logger.info "[migration_index_types] adding type information for DOIs with IDs #{from_id} - #{until_id}."
+
+    Doi.where(id: from_id..until_id).where('type' => nil).find_each(batch_size: 500) do |doi|
+      begin
+        if doi.agency.casecmp?("datacite")
+          type = "DataciteDoi"
+        else
+          type = "OtherDoi"
+        end
+
+        doi.update_columns("type": type)
+
+        count += 1
+        Rails.logger.info "Updated #{doi.doi} (#{doi.id})"
+
+      rescue => error
+        Rails.logger.error "Error updating #{doi.doi} (#{doi.id}), #{error.message}"
+      end
+    end
+
+    "Finished updating dois, total #{count}"
+  end
+
+
 end

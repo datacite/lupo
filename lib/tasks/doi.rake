@@ -243,4 +243,13 @@ namespace :doi do
     count = Doi.delete_dois_by_prefix(ENV['PREFIX'])
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
+
+  desc 'Add type information to dois based on id range'
+  task :add_index_type => :environment do
+    options = {
+      from_id: ENV['FROM_ID'],
+      until_id: ENV['UNTIL_ID']
+    }
+    puts Doi.add_index_type(options)
+  end
 end
