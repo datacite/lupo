@@ -2327,11 +2327,13 @@ class Doi < ActiveRecord::Base
       begin
         if doi.agency.casecmp?("datacite")
           type = "DataciteDoi"
-        else
+        elsif doi.agency.casecmp?("crossref")
           type = "OtherDoi"
+        else
+          type = "DataciteDoi"
         end
 
-        doi.update_columns("type": type)
+        doi.update_columns("type" => type)
 
         count += 1
         Rails.logger.info "Updated #{doi.doi} (#{doi.id})"
