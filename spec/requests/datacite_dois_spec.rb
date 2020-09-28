@@ -2184,6 +2184,16 @@ describe DataciteDoisController, type: :request do
       end
     end
 
+    context 'when the request has wrong object in nameIDentifiers' do
+      let(:valid_attributes) { JSON.parse(file_fixture('nasa_error.json').read) }
+
+
+      it 'fails to create a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+      end
+    end
 
 
     # context 'when the request is a large xml file' do

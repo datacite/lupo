@@ -1,0 +1,66 @@
+{
+  "data": {
+	"type":"dois",
+	"id":"10.14454/rdnt.1x18sn",
+  	"attributes":{
+  		"doi": "10.14454/rdnt.1x18sn",
+  		"prefix":"10.14454",
+  		"creators":[
+  			{
+          "name":"Maskey, Manil",
+          "nameType":"Personal",
+          "givenName":"Manil",
+          "familyName":"Maskey"
+        },
+        {
+          "name":"Ramachandran, Rahul",
+          "nameType":"Personal",
+          "givenName":"Rahul",
+          "familyName":"Ramachandran"
+        },
+        {
+          "name":"Gurung, Iksha",
+          "nameType":"Personal",
+          "givenName":"Iksha",
+          "familyName":"Gurung"
+        },
+        {
+          "name":"Ramasubramanian, Muthukumaran",
+          "nameType":"Personal",
+          "givenName":"Muthukumaran",
+          "familyName":"Ramasubramanian"
+        }
+  		],
+  		"titles":{
+  			"title":"Tropical Cyclone Satellite Imagery and Wind Speed Dataset"
+  		},
+  		"publisher": "Radiant MLHub",
+  		"publicationYear": 2020,
+  		"types":{
+  			"resourceTypeGeneral":"Dataset"
+  		},
+  		"version":1.0,
+  		"contributors":{
+  			"nameType":"Organizational",
+  			"name":"NASA Interagency Implementation and Advanced Concepts Team (IMPACT)",
+  			"contributorType":"DataCurator"
+  		},
+  		"dates":{
+  			"dateType":"Valid",
+  			"date": "2000/2019"
+      },
+      "fundingReferences":{
+          "funderName":"NASA Earth Science Data Systems Program"
+      },
+  		"rightsList":{
+        "rights":"CC BY 4.0",
+        "rightsUri":"https://creativecommons.org/licenses/by/4.0/"
+  		},
+  		"url":"http://registry.mlhub.earth/10.34911/rdnt.1x18sn",
+  		"landingPage":{
+  			"url":"http://registry.mlhub.earth/10.34911/rdnt.1x18sn"
+  		},
+      "event":"publish"
+    }
+  }
+}
