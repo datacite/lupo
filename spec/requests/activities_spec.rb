@@ -9,6 +9,7 @@ describe ActivitiesController, type: :request do
 
   describe "activities for doi", elasticsearch: true do
     let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
 
     before do
       DataciteDoi.import
@@ -18,9 +19,93 @@ describe ActivitiesController, type: :request do
 
     context "without username" do
       it "returns the activities" do
-        get "/activities", nil, headers
+        get "/dois/#{doi.doi.downcase}/activities", nil, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data", 0, "attributes", "action")).to eq("create")
+        expect(json.dig("data", 0, "attributes", "changes", "aasm_state")).to eq("draft")
+
+        expect(json.dig("data", 0, "attributes", "prov:wasAttributedTo")).to be_nil
+        expect(json.dig("data", 0, "attributes", "prov:wasGeneratedBy")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:generatedAtTime")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:wasDerivedFrom")).to be_present
+      end
+    end
+  end
+
+  describe "activities for repository", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
+
+    before do
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    context "repository" do
+      it "returns the activities" do
+        get "/repositories/#{client.symbol.downcase}/activities", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data", 0, "attributes", "action")).to eq("create")
+        
+        expect(json.dig("data", 0, "attributes", "prov:wasAttributedTo")).to be_nil
+        expect(json.dig("data", 0, "attributes", "prov:wasGeneratedBy")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:generatedAtTime")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:wasDerivedFrom")).to be_present
+      end
+    end
+  end
+
+  describe "activities for provider", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
+
+    before do
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    context "provider" do
+      it "returns the activities" do
+        get "/providers/#{provider.symbol.downcase}/activities", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data", 0, "attributes", "action")).to eq("create")
+        
+        expect(json.dig("data", 0, "attributes", "prov:wasAttributedTo")).to be_nil
+        expect(json.dig("data", 0, "attributes", "prov:wasGeneratedBy")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:generatedAtTime")).to be_present
+        expect(json.dig("data", 0, "attributes", "prov:wasDerivedFrom")).to be_present
+      end
+    end
+  end
+
+  describe "query activities", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
+
+    before do
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    context "query" do
+      it "returns the activities" do
+        get "/activities?query=#{doi.doi.downcase}", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
         expect(json.dig("data", 0, "attributes", "action")).to eq("create")
         expect(json.dig("data", 0, "attributes", "changes", "aasm_state")).to eq("draft")
 

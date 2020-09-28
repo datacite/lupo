@@ -19,7 +19,7 @@ class ActivitiesController < ApplicationController
       response = Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Activity.query(params[:query],
-        uid: params[:doi_id] || params[:provider_id] || params[:client_id] || params[:repository_id], 
+        uid: params[:datacite_doi_id] || params[:provider_id] || params[:client_id] || params[:repository_id], 
         page: page, 
         sort: sort, 
         scroll_id: params[:scroll_id])

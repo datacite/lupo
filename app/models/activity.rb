@@ -54,6 +54,10 @@ class Activity < Audited::Audit
     }
   end
 
+  def self.query_fields
+    ['uid^10', 'username^5', 'action', 'changes', 'was_derived_from', 'was_attributed_to', 'was_generated_by']
+  end
+
   def self.query_aggregations
     {}
   end

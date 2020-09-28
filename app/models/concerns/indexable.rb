@@ -309,6 +309,14 @@ module Indexable
         filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         filter << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
         filter << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
+      elsif self.name == "Activity"
+        if query.present?
+          must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+        else
+          must = [{ match_all: {} }]
+        end
+        
+        filter << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
       end
 
       # ES query can be optionally defined in different ways
