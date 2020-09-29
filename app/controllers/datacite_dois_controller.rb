@@ -666,10 +666,12 @@ class DataciteDoisController < ApplicationController
       xml = xml.strip
     end
 
+    fail(ActionController::UnpermittedParameters, ["creators must be an Array"]) if p[:creators]&.respond_to?(:keys)
     p[:creators]&.each do |c|
       fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
     end
 
+    fail(ActionController::UnpermittedParameters, ["contributors must be an Array"]) if p[:contributors]&.respond_to?(:keys)
     p[:contributors]&.each do |c|
       fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
     end
