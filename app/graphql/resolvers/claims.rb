@@ -4,13 +4,13 @@ class Claims < Base
   type [ClaimType], null: false
 
   def resolve
-    return nil unless context[:current_user].present?
+    return [] unless context[:current_user].present?
 
     # Use DataCite Claims API call to get all ORCID claims for a given DOI
     api_url = Rails.env.production? ? "https://api.datacite.org" : "https://api.stage.datacite.org"
     url = "#{api_url}/claims?user-id=#{context[:current_user].uid}&dois=#{object.doi}"
     response = Maremma.get(url, bearer: context[:current_user].jwt)
-    return nil if response.status != 200
+    return [] if response.status != 200
 
     Array.wrap(response.body.dig("data")).map do |claim|
       { id: claim["id"],
