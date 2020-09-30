@@ -63,6 +63,7 @@ module DoiItem
   field :xml, String, null: false, description: "Metadata in DataCite XML format."
   field :bibtex, String, null: false, description: "Metadata in bibtex format"
   field :schema_org, GraphQL::Types::JSON, null: false, description: "Metadata in schema.org format"
+  field :claims, resolver: Claims, null: true, description: "Claims to ORCID made for this DOI."
   field :reference_count, Int, null: true, description: "Total number of references"
   field :citation_count, Int, null: true, description: "Total number of citations"
   field :view_count, Int, null: true, description: "Total number of views"

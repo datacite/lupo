@@ -78,6 +78,36 @@ describe WorkType do
     end
   end
 
+  describe "find work with claims", elasticsearch: true, vcr: true do
+    let!(:work) { create(:doi, doi: "10.13140/RG.2.1.3847.9844", aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        work(id: "https://doi.org/#{work.doi}") {
+          id
+          claims {
+            sourceId
+            state
+            claimed
+          }
+        }
+      })
+    end
+
+    it "returns work" do
+      current_user = User.new(User.generate_token(uid: "0000-0003-0302-7658", aud: "stage"))
+      response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
+
+      expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      expect(response.dig("data", "work", "claims")).to eq([{"claimed"=>"2016-04-14T22:20:24Z", "sourceId"=>"orcid_search", "state"=>"done"}])
+    end
+  end
+
   describe "find work crossref", elasticsearch: true, vcr: true do
     let!(:work) { create(:doi, doi: "10.1038/nature12373", agency: "crossref", aasm_state: "findable", titles: [
       { "title" => "Nanometre-scale thermometry in a living cell" }]) }

@@ -131,6 +131,11 @@ type Audiovisual implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -427,6 +432,11 @@ type Book implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -678,6 +688,11 @@ type BookChapter implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -997,6 +1012,46 @@ type BookEdge {
   node: Book
 }
 
+"""
+A claim.
+"""
+type Claim {
+  """
+  The action for the claim.
+  """
+  claimAction: String!
+
+  """
+  Date and time when claim was done.
+  """
+  claimed: ISO8601DateTime
+
+  """
+  Optional error messages.
+  """
+  errorMessages: [Error!]
+
+  """
+  The ID of the claim.
+  """
+  id: ID!
+
+  """
+  The source of the claim.
+  """
+  sourceId: String!
+
+  """
+  The state of the claim.
+  """
+  state: String!
+
+  """
+  The type of the item.
+  """
+  type: String!
+}
+
 type Collection implements DoiItem {
   """
   Metadata in bibtex format
@@ -1017,6 +1072,11 @@ type Collection implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -1312,6 +1372,11 @@ type ConferencePaper implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -1895,6 +1960,11 @@ type DataManagementPlan implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -2192,6 +2262,11 @@ type DataPaper implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -2486,6 +2561,11 @@ type Dataset implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -2895,6 +2975,11 @@ type Dissertation implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -3195,6 +3280,11 @@ interface DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -3456,6 +3546,21 @@ type Employment {
   startDate: ISO8601DateTime
 }
 
+"""
+Information about errors
+"""
+type Error {
+  """
+  The error status.
+  """
+  status: Int!
+
+  """
+  The error description.
+  """
+  title: String!
+}
+
 type Event implements DoiItem {
   """
   Metadata in bibtex format
@@ -3476,6 +3581,11 @@ type Event implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -3757,6 +3867,11 @@ type EventData implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -4337,6 +4452,11 @@ type Image implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -4633,6 +4753,11 @@ type Instrument implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -4926,6 +5051,11 @@ type InteractiveResource implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -5247,6 +5377,11 @@ type JournalArticle implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -5841,6 +5976,11 @@ type Model implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -6302,6 +6442,11 @@ type Other implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -6621,6 +6766,11 @@ type PeerReview implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -7056,6 +7206,11 @@ type PhysicalObject implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -7405,6 +7560,11 @@ type Preprint implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -7700,6 +7860,11 @@ type Publication implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -8449,6 +8614,11 @@ type Service implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -8745,6 +8915,11 @@ type Software implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -9073,6 +9248,11 @@ type Sound implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
@@ -9554,6 +9734,11 @@ type Work implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
+
+  """
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
@@ -9851,6 +10036,11 @@ type Workflow implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  Claims to ORCID made for this DOI.
+  """
+  claims: [Claim!]
 
   """
   The container (e.g. journal or repository) hosting the resource.
