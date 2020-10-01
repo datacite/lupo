@@ -10,8 +10,13 @@ class Claims < Base
     api_url = Rails.env.production? ? "https://api.datacite.org" : "https://api.stage.datacite.org"
     url = "#{api_url}/claims?user-id=#{context[:current_user].uid}&dois=#{object.doi}"
     response = Maremma.get(url, bearer: context[:current_user].jwt)
-    return [] if response.status != 200
+    if response.status != 200
+      Rails.logger.error "Error retrieving claims for user #{context[:current_user].uid} and doi #{object.doi}: " + response.body["errors"].inspect
+      return []
+    end
 
+    Rails.logger.info "Claims for user #{context[:current_user].uid} and doi #{object.doi} retrieved."
+    
     Array.wrap(response.body.dig("data")).map do |claim|
       { id: claim["id"],
         source_id: claim.dig("attributes", "sourceId"),
