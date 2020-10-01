@@ -15,7 +15,7 @@ class Claims < Base
       return []
     end
 
-    Rails.logger.info "Claims for user #{context[:current_user].uid} and doi #{object.doi} retrieved."
+    Rails.logger.info "Claims for user #{context[:current_user].uid} and doi #{object.doi} retrieved: " + response.body["data"].inspect
     
     Array.wrap(response.body.dig("data")).map do |claim|
       { id: claim["id"],
