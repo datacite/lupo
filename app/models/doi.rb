@@ -2325,12 +2325,6 @@ class Doi < ActiveRecord::Base
 
     Doi.where(id: from_id..until_id).where('type' => nil).find_each(batch_size: 500) do |doi|
       begin
-        if doi.agency.blank? || doi.agency.casecmp?("datacite")
-          type = "DataciteDoi"
-        else
-          type = "OtherDoi"
-        end
-
         agency = doi.agency
 
         if agency.blank? || agency.casecmp?("datacite")
