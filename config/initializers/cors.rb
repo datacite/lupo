@@ -13,6 +13,14 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, lo
 
     resource '*',
       headers: :any,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+  end
+
+  allow do
+    origins 'localhost:3000', /\Ahttps:\/\/*.datacite.org\z/
+
+    resource '*',
+      headers: :any,
       expose: ["X-Credential-Username", "X-Anonymous-Consumer"],
       methods: [:get, :post, :put, :patch, :delete, :options, :head]
   end

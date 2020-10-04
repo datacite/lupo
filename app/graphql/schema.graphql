@@ -3553,7 +3553,7 @@ type Error {
   """
   The error status.
   """
-  status: Int!
+  status: Int
 
   """
   The error description.

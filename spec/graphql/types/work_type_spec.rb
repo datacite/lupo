@@ -79,7 +79,7 @@ describe WorkType do
   end
 
   describe "find work with claims", elasticsearch: true, vcr: true do
-    let!(:work) { create(:doi, doi: "10.13140/RG.2.1.3847.9844", aasm_state: "findable") }
+    let!(:work) { create(:doi, doi: "10.17863/cam.536", aasm_state: "findable") }
 
     before do
       Doi.import
@@ -94,17 +94,55 @@ describe WorkType do
             sourceId
             state
             claimed
+            errorMessages {
+              status
+              title
+            }
           }
         }
       })
     end
 
     it "returns work" do
-      current_user = User.new(User.generate_token(uid: "0000-0003-0302-7658", aud: "stage"))
+      current_user = User.new(User.generate_token(uid: "0000-0001-5663-772X", aud: "stage"))
       response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
 
       expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
-      expect(response.dig("data", "work", "claims")).to eq([{"claimed"=>"2016-04-14T22:20:24Z", "sourceId"=>"orcid_search", "state"=>"done"}])
+      expect(response.dig("data", "work", "claims")).to eq([{"claimed"=>"2017-10-16T11:15:01Z", "errorMessages"=>[], "sourceId"=>"orcid_update", "state"=>"done"}])
+    end
+  end
+
+  describe "find work with claims and errors", elasticsearch: true, vcr: true do
+    let!(:work) { create(:doi, doi: "10.70048/sc61-b496", aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        work(id: "https://doi.org/#{work.doi}") {
+          id
+          claims {
+            sourceId
+            state
+            claimed
+            errorMessages {
+              status
+              title
+            }
+          }
+        }
+      })
+    end
+
+    it "returns work" do
+      current_user = User.new(User.generate_token(uid: "0000-0002-7352-517X", aud: "stage"))
+      response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
+
+      expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      expect(response.dig("data", "work", "claims")).to eq([{"claimed"=>nil, "errorMessages"=>[{"status"=>nil, "title"=>"Missing data"}], "sourceId"=>"orcid_update", "state"=>"failed"}])
     end
   end
 

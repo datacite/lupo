@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.stage.datacite.org/claims?dois=10.70048/sc61-b496&user-id=0000-0002-7352-517X
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Authorization:
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDItNzM1Mi01MTdYIiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImF1ZCI6InN0YWdlIiwiaWF0IjoxNjAxODEzMzM5LCJleHAiOjE2MDE4MTMzNjl9.Oop_X77N5Efx77mMHPeD4rZZQ-xN-R3tz_41Qo2Csp5vSuT1xVoYjcUes3Mw0FzKV_AxVxwNKEt3F5Ge4wbSnBzcvZvkf5Dm2K-vvpmu56zngxucNFd1LotIw6CGof9I94_-A2KPFYj6mQCLGwkMqg6r1iHOWDyexqo7XIJhm-YLVshN8PN3K_54XUXotuZNkL72QMhZBxGbsqwD7k-TbJYNILJLlQl876crZGJzPIRohvDvxzuujWDSyCzj5qXPQi6TIpTvG0BFE1GlI7A3Nqj4j0BFAHmO3OoLZBUreIgceOWcUqa9HqWVOOi1QzGj9s2N8nnMQAC6lUoRkj6CgA
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 04 Oct 2020 12:09:06 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Credential-Username:
+      - 0000-0002-7352-517X
+      X-Request-Id:
+      - deb3543a-5dff-4b8f-82eb-8abbd70c7bda
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"5873f28e94f9c8bb27871c375addcd43"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.039717'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.6
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.6
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":[{"id":"aaba03a3-1845-4132-99c1-8d19ac6cda2c","type":"claims","attributes":{"orcid":"https://orcid.org/0000-0002-7352-517X","doi":"https://doi.org/10.70048/sc61-b496","sourceId":"orcid_update","state":"failed","claimAction":"create","errorMessages":[{"title":"Missing
+        data"}],"putCode":null,"claimed":null,"created":"2018-12-11T09:08:07.000Z","updated":"2019-03-18T21:32:10.000Z"},"relationships":{"user":{"data":{"id":"0000-0002-7352-517X","type":"users"}}}}],"meta":{"total":1,"totalPages":1,"page":1,"created":[{"id":"2018","title":"2018","count":1}],"sources":[{"id":"orcid_update","title":"Orcid
+        Update","count":1}],"users":[{"id":"0000-0002-7352-517X","title":"0000-0002-7352-517X","count":1}],"claimActions":[{"id":"create","title":"Create","count":1}],"states":[{"id":"failed","title":"Failed","count":1}]},"links":{"self":"https://api.stage.datacite.org/claims?dois=10.70048%2Fsc61-b496&user-id=0000-0002-7352-517X","next":"https://api.stage.datacite.org/claims?page%5Bnumber%5D=2&page%5Bsize%5D=25"}}'
+    http_version: null
+  recorded_at: Sun, 04 Oct 2020 12:09:06 GMT
+recorded_with: VCR 5.1.0
