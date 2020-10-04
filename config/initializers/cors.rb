@@ -17,7 +17,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, lo
   end
 
   allow do
-    origins 'localhost:3000', /\Ahttps:\/\/*.datacite.org\z/
+    origins 'localhost:3000', /\.datacite\.org\z/
 
     resource '*',
       headers: :any,
