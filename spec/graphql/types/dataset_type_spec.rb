@@ -215,7 +215,7 @@ describe DatasetType do
               year
               total
             }
-            citations {
+            citations(resourceTypeId: "Dataset") {
               totalCount
               nodes {
                 id
@@ -229,15 +229,15 @@ describe DatasetType do
 
     it "returns all datasets with counts" do
       response = LupoSchema.execute(query).as_json
-
+      puts response
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
     #   expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
     #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end

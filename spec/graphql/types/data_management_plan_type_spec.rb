@@ -359,4 +359,45 @@ describe DataManagementPlanType do
       expect(response.dig("data", "dataManagementPlans", "nodes").length).to eq(3)
     end
   end
+
+  describe "find data management plan with citations", elasticsearch: true, vcr: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Data Management Plan" }, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, types: { "resourceTypeGeneral" => "Dataset" }, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, types: { "resourceTypeGeneral" => "Software" }, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        dataManagementPlan(id: "https://doi.org/#{doi.doi}") {
+          id
+          partOf {
+            nodes {
+              id
+            }
+          }
+          citations(resourceTypeId: "Dataset") {
+            totalCount
+            nodes {
+              id
+              type
+            }
+          }
+        }
+      })
+    end
+
+    it "returns citations" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "dataManagementPlan", "id")).to eq("https://handle.test.datacite.org/#{doi.doi.downcase}")
+      expect(response.dig("data", "dataManagementPlan", "citations", "totalCount")).to eq(1)
+    end
+  end
 end

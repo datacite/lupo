@@ -451,7 +451,7 @@ module DoiItem
     # make sure no dois are returnded if there are no :ids
     args[:ids] = "999" if args[:ids].blank?
     
-    Doi.gql_query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], organization_id: args[:organization_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
+    Doi.gql_query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], published: args[:published], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_affiliation: args[:has_affiliation], has_member: args[:has_member], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], pid_entity: args[:pid_entity], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 
   def doi_link(url)
