@@ -655,66 +655,64 @@ class DataciteDoisController < ApplicationController
     client_id = p.dig("relationships", "client", "data", "id") || current_user.try(:client_id)
     p = p.fetch("attributes").merge(client_id: client_id)
 
-    # extract attributes from xml field and merge with attributes provided directly
-    xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
+    # # extract attributes from xml field and merge with attributes provided directly
+    # xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
 
-    if xml.present?
-      # remove optional utf-8 bom
-      xml.gsub!("\xEF\xBB\xBF", '')
+    # if xml.present?
+    #   # remove optional utf-8 bom
+    #   xml.gsub!("\xEF\xBB\xBF", '')
 
-      # remove leading and trailing whitespace
-      xml = xml.strip
-    end
+    #   # remove leading and trailing whitespace
+    #   xml = xml.strip
+    # end
 
-    fail(ActionController::UnpermittedParameters, ["creators must be an Array"]) if p[:creators]&.respond_to?(:keys)
-    p[:creators]&.each do |c|
-      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
-    end
+    p = case p[:source]
+        when "fabrica" || "fabricaForm" || "mds" || "ezid" || "legacy"
+          xml_params(p)
+        else
+          json_params(p)
+        end
 
-    fail(ActionController::UnpermittedParameters, ["contributors must be an Array"]) if p[:contributors]&.respond_to?(:keys)
-    p[:contributors]&.each do |c|
-      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
-    end
 
-    meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
-    p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
-    xml = meta["string"]
+    # meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
+    # p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
+    # xml = meta["string"]
   
-    # if metadata for DOIs from other registration agencies are not found
-    fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
+    # # if metadata for DOIs from other registration agencies are not found
+    # fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
 
-    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
-      p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
-      p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
-      p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
-      p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
+    # read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
+    #   p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
+    #   p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
+    #   p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
+    #   p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
-    # generate random DOI if no DOI is provided
-    if p[:doi].blank? && p[:prefix].present?
-      p[:doi] = generate_random_dois(p[:prefix]).first
-    end
+    # # generate random DOI if no DOI is provided
+    # if p[:doi].blank? && p[:prefix].present?
+    #   p[:doi] = generate_random_dois(p[:prefix]).first
+    # end
 
-    # replace DOI, but otherwise don't touch the XML
-    # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
-    if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
-      xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
-    elsif xml.present? || Array.wrap(read_attrs.first).present?
-      regenerate = true
-    end
+    # # replace DOI, but otherwise don't touch the XML
+    # # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
+    # if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
+    #   xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
+    # elsif xml.present? || Array.wrap(read_attrs.first).present?
+    #   regenerate = true
+    # end
 
-    p.merge!(xml: xml) if xml.present?
+    # p.merge!(xml: xml) if xml.present?
 
-    read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
-      :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
-      :fundingReferences, :geoLocations, :rightsList, :agency,
-      :subjects, :contentUrl, :schemaVersion]
+    # read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
+    #   :publicationYear, :types, :descriptions, :container, :sizes,
+    #   :formats, :language, :dates, :identifiers, :relatedIdentifiers,
+    #   :fundingReferences, :geoLocations, :rightsList, :agency,
+    #   :subjects, :contentUrl, :schemaVersion]
 
-    # merge attributes from xml into regular attributes
-    # make sure we don't accidentally set any attributes to nil
-    read_attrs_keys.each do |attr|
-      p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
-    end
+    # # merge attributes from xml into regular attributes
+    # # make sure we don't accidentally set any attributes to nil
+    # read_attrs_keys.each do |attr|
+    #   p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
+    # end
 
     # handle version metadata
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
@@ -740,5 +738,62 @@ class DataciteDoisController < ApplicationController
     return nil if params.dig(:data, :attributes, :xml).blank?
 
     Raven.extra_context metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
+  end
+
+
+  def xml_params(params)
+    xml = Base64.decode64(params[:xml]).force_encoding("UTF-8") 
+
+    if xml.present?
+      # remove optional utf-8 bom
+      xml.gsub!("\xEF\xBB\xBF", '')
+
+      # remove leading and trailing whitespace
+      xml = xml.strip
+    end
+
+    meta = parse_xml(xml, doi: params[:doi])
+    p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
+    xml = meta["string"]
+
+    # if metadata for DOIs from other registration agencies are not found
+    fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
+
+    # generate random DOI if no DOI is provided
+    if params[:doi].blank? && params[:prefix].present?
+      params[:doi] = generate_random_dois(params[:prefix]).first
+    end
+
+    params.merge!(xml: xml) if xml.present?
+
+    read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
+      :publicationYear, :types, :descriptions, :container, :sizes,
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
+      :fundingReferences, :geoLocations, :rightsList, :agency,
+      :subjects, :contentUrl, :schemaVersion]
+
+
+    read_attrs_keys.each do |attr|
+      params.merge!(attr.to_s.underscore =>  meta[attr.to_s.underscore]) if meta.has_key?(attr.to_s.underscore)
+    end
+
+    params
+  end
+
+  def json_params(params)
+    Array.wrap(params[:creators])&.each do |c|
+      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
+    end
+
+    Array.wrap(params[:contributors])&.each do |c|
+      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
+    end
+
+    # generate random DOI if no DOI is provided
+    if params[:doi].blank? && params[:prefix].present?
+      params[:doi] = generate_random_dois(params[:prefix]).first
+    end
+
+    params
   end
 end

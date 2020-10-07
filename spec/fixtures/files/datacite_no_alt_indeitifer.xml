@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd">
+  <identifier identifierType="DOI">10.24397/PANGLOSS-0000008</identifier>
+  <titles>
+    <title xml:lang="en">Wild yam and yam 2</title>
+  </titles>
+  <creators>
+    <creator>
+      <creatorName nameType="Personal">Ridge, Eleanor</creatorName>
+    </creator>
+  </creators>
+  <contributors>
+    <contributor contributorType="Other">
+      <contributorName nameType="Personal">Elder Saksak Ruben</contributorName>
+    </contributor>
+    <contributor contributorType="Researcher">
+      <contributorName nameType="Personal">Ridge, Eleanor</contributorName>
+    </contributor>
+    <contributor contributorType="ContactPerson">
+      <contributorName>Ridge, Eleanor</contributorName>
+    </contributor>
+    <contributor contributorType="Producer">
+      <contributorName nameType="Organizational">Laboratoire de langues et civilisations à tradition orale</contributorName>
+    </contributor>
+    <contributor contributorType="HostingInstitution">
+      <contributorName nameType="Organizational">COllections de COrpus Oraux Numériques</contributorName>
+    </contributor>
+    <contributor contributorType="HostingInstitution">
+      <contributorName nameType="Organizational">Huma-Num</contributorName>
+    </contributor>
+    <contributor contributorType="HostingInstitution">
+      <contributorName nameType="Organizational">Langues et Civilisations à Tradition Orale</contributorName>
+    </contributor>
+    <contributor contributorType="HostingInstitution">
+      <contributorName nameType="Organizational">Centre Informatique National de l'Enseignement Supérieur</contributorName>
+    </contributor>
+    <contributor contributorType="RightsHolder">
+      <contributorName>Ridge, Eleanor</contributorName>
+    </contributor>
+  </contributors>
+  <rightsList>
+    <rights>Freely available for non-commercial use</rights>
+    <rights rightsURI="http://creativecommons.org/licenses/by-nc-nd/3.0/">Creative Commons Attribution-NonCommercial 2.5 Generic</rights>
+  </rightsList>
+  <publisher>Pangloss</publisher>
+  <publicationYear>2018</publicationYear>
+  <language>tvk</language>
+  <subjects>
+    <subject>Linguistique</subject>
+    <subject schemeURI="http://search.language-archives.org/index.html" subjectScheme="OLAC">Vatlongos</subject>
+  </subjects>
+  <resourceType resourceTypeGeneral="Text">narrative</resourceType>
+  <dates>
+    <date dateType="Available">2018-10-10</date>
+  </dates>
+  <alternateIdentifiers>
+    <alternateIdentifier alternateIdentifierType="internal ID">oai:crdo.vjf.cnrs.fr:cocoon-8e9a93c3-d071-3005-bf82-32d45148bfe8</alternateIdentifier>
+    <alternateIdentifier alternateIdentifierType="PURL">http://purl.org/poi/crdo.vjf.cnrs.fr/cocoon-8e9a93c3-d071-3005-bf82-32d45148bfe8</alternateIdentifier>
+    <alternateIdentifier alternateIdentifierType="ARK">https://cocoon.huma-num.fr/exist/crdo/ark:/87895/1.17-961772</alternateIdentifier>
+    <alternateIdentifier alternateIdentifierType="Handle">http://hdl.handle.net/10670/1.5e16l6</alternateIdentifier>
+  </alternateIdentifiers>
+  <relatedIdentifiers>
+    <relatedIdentifier relatedIdentifierType="PURL" relationType="Requires">http://purl.org/poi/crdo.vjf.cnrs.fr/cocoon-99af8135-a22e-3cb3-b49e-96ac48701180</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.24397/Pangloss</relatedIdentifier>
+  </relatedIdentifiers>
+  <formats>
+    <format>text</format>
+    <format>xml</format>
+  </formats>
+  <descriptions>
+    <description descriptionType="Abstract" xml:lang="en">Elder Saksak describes different kinds of yam and wild yam, how to grow them and how to use for them for food, raising money and in custom ceremonies.</description>
+  </descriptions>
+</resource>

@@ -3026,6 +3026,52 @@ describe DataciteDoisController, type: :request do
       end
     end
 
+    context 'mds doi with alternateIdentifiers' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_no_alt_indeitifer.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "should_validate" => "true",
+              "source" => "mds",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "should_validate" => "true",
+              "xml" => xml,
+              "source" => "mds",
+              "event" => "show"
+            }
+          }
+        }
+      end
+
+      it 'add metadata' do
+        put "/dois/10.14454/10703", update_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'identifiers').length).to eq(4)
+
+         
+        put '/dois/10.14454/10703', valid_attributes, headers
+       
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'identifiers').length).to eq(4)
+      end
+    end
+
+
     # Funder has been removed as valid contributor type in schema 4.0
     context 'update contributor type with funder', elasticsearch: true do
       let(:update_attributes) do
