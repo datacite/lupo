@@ -666,12 +666,28 @@ class DataciteDoisController < ApplicationController
     #   xml = xml.strip
     # end
 
-    p = case p[:source]
-        when "fabrica" || "fabricaForm" || "mds" || "ezid" || "legacy"
-          xml_params(p)
-        else
-          json_params(p)
-        end
+    read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
+      :publicationYear, :types, :descriptions, :container, :sizes,
+      :formats, :language, :dates, :relatedIdentifiers,
+      :fundingReferences, :geoLocations, :rightsList, :agency,
+      :subjects, :contentUrl, :schemaVersion]
+
+    regenerate = false
+    # # p = case p[:xml].present?
+    #   if p[:xml].present?
+    #     regenerate = true
+    #     p = xml_params(p)
+    #   else
+    #     p = json_params(p)
+    #   end
+
+    case true
+    when read_attrs_keys.any? { |s| p.key? s }
+      p = json_params(p).except(:xml)
+    when p[:xml].present?
+      regenerate = true
+      p = xml_params(p)
+    end
 
 
     # meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
@@ -742,6 +758,7 @@ class DataciteDoisController < ApplicationController
 
 
   def xml_params(params)
+    puts "xml"
     xml = Base64.decode64(params[:xml]).force_encoding("UTF-8") 
 
     if xml.present?
@@ -753,7 +770,7 @@ class DataciteDoisController < ApplicationController
     end
 
     meta = parse_xml(xml, doi: params[:doi])
-    p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
+    params[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : params[:schemaVersion]
     xml = meta["string"]
 
     # if metadata for DOIs from other registration agencies are not found
@@ -781,6 +798,7 @@ class DataciteDoisController < ApplicationController
   end
 
   def json_params(params)
+    puts "json"
     Array.wrap(params[:creators])&.each do |c|
       fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) if c[:nameIdentifiers]&.respond_to?(:keys)
     end
@@ -793,7 +811,6 @@ class DataciteDoisController < ApplicationController
     if params[:doi].blank? && params[:prefix].present?
       params[:doi] = generate_random_dois(params[:prefix]).first
     end
-
     params
   end
 end

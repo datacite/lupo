@@ -703,7 +703,6 @@ describe DataciteDoisController, type: :request do
 
       it 'updates the record' do
         patch "/dois/#{doi_id}", valid_attributes, headers
-
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
