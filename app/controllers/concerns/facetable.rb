@@ -262,7 +262,7 @@ module Facetable
     end
 
     def providers_totals(arr)
-      providers = Provider.all.pluck(:symbol, :name).to_h
+      providers = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR')").where(deleted_at: nil).pluck(:symbol, :name).to_h
 
       arr.map do |hsh|
         { "id" => hsh["key"],

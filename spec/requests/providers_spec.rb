@@ -126,6 +126,7 @@ describe ProvidersController, type: :request, elasticsearch: true  do
 
   describe 'GET /providers/totals' do
     let(:provider)  { create(:provider) }
+    let(:ra) { create(:provider, role_name: "ROLE_REGISTRATION_AGENCY") }
     let(:client)  { create(:client, provider: provider) }
     let!(:prefixes)  { create_list(:prefix, 10) }
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
