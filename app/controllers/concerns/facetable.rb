@@ -264,18 +264,22 @@ module Facetable
     def providers_totals(arr)
       providers = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR')").where(deleted_at: nil).pluck(:symbol, :name).to_h
 
-      arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => providers[hsh["key"].upcase],
-          "count" => hsh["doc_count"],
-          "temporal" => {
-            "this_month" => facet_annual(hsh.this_month.buckets),
-            "this_year" => facet_annual(hsh.this_year.buckets),
-            "last_year" => facet_annual(hsh.last_year.buckets),
-            "two_years_ago" => facet_annual(hsh.two_years_ago.buckets)
-          },
-          "states"    => facet_by_key(hsh.states.buckets)
-        }
+      arr.reduce([]) do |sum, hsh|
+        if providers[hsh["key"].upcase]
+          sum << { "id" => hsh["key"],
+            "title" => providers[hsh["key"].upcase],
+            "count" => hsh["doc_count"],
+            "temporal" => {
+              "this_month" => facet_annual(hsh.this_month.buckets),
+              "this_year" => facet_annual(hsh.this_year.buckets),
+              "last_year" => facet_annual(hsh.last_year.buckets),
+              "two_years_ago" => facet_annual(hsh.two_years_ago.buckets)
+            },
+            "states"    => facet_by_key(hsh.states.buckets)
+          }
+        end
+
+        sum
       end
     end
 
