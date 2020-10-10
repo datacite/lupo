@@ -171,6 +171,16 @@ namespace :doi do
     puts Doi.loop_through_dois(options)
   end
 
+  desc 'Import one DOI'
+  task :import_one => :environment do
+    if ENV['DOI'].nil?
+      puts "ENV['DOI'] is required"
+      exit
+    end
+
+    Doi.import_one(doi_id: ENV['DOI'])
+  end
+
   desc "Trigger DOI import based on query"
   task import_dois_by_query: :environment do
     # Ensure we have specified a query of some kind.
