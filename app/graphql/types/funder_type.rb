@@ -179,19 +179,19 @@ class FunderType < BaseObject
   def view_count
     args = { first: 0 }
     r = response(args)
-    aggregate_count(r.response.aggregations.views.buckets)
+    r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
     r = response(args)
-    aggregate_count(r.response.aggregations.downloads.buckets)
+    r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
     r = response(args)
-    aggregate_count(r.response.aggregations.citations.buckets)
+    r.response.aggregations.citation_count.value.to_i
   end
 
   def response(**args)

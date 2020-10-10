@@ -218,7 +218,7 @@ describe RepositoryType do
 
       expect(response.dig("data", "repository", "id")).to eq("testr.testr")
       expect(response.dig("data", "repository", "name")).to eq("My data center")
-      expect(response.dig("data", "repository", "citationCount")).to eq(0)
+      expect(response.dig("data", "repository", "citationCount")).to eq(2)
       expect(response.dig("data", "repository", "works", "totalCount")).to eq(3)
       expect(response.dig("data", "repository", "works", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "repository", "works", "resourceTypes")).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])

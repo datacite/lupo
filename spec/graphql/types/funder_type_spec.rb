@@ -80,8 +80,10 @@ describe FunderType do
 
       expect(response.dig("data", "funder", "id")).to eq("https://doi.org/10.13039/501100009053")
       expect(response.dig("data", "funder", "name")).to eq("The Wellcome Trust DBT India Alliance")
-      expect(response.dig("data", "funder", "citationCount")).to eq(0)
-
+      expect(response.dig("data", "funder", "citationCount")).to eq(2)
+      expect(response.dig("data", "funder", "viewCount")).to eq(0)
+      expect(response.dig("data", "funder", "downloadCount")).to eq(0)
+      
       expect(response.dig("data", "funder", "works", "totalCount")).to eq(1)
       expect(Base64.urlsafe_decode64(response.dig("data", "funder", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(doi.uid)
       expect(response.dig("data", "funder", "works", "pageInfo", "hasNextPage")).to be false

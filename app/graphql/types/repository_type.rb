@@ -206,19 +206,19 @@ class RepositoryType < BaseObject
   def view_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
+    r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
+    r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : 0
+    r.response.aggregations.citation_count.value.to_i
   end
 
   def response(**args)
