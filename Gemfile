@@ -81,6 +81,7 @@ group :development, :test do
   gem "rubocop", "~> 0.77.0"
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
   gem "rubocop-rails", "~> 2.4"
+  gem 'prettier', '~> 0.13.0'
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
