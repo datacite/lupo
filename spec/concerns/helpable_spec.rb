@@ -81,6 +81,36 @@ describe Doi, vcr: true do
     end
   end
 
+  context "match_url_with_domains" do
+    it "url missing" do
+      domains = "*"
+      expect(subject.match_url_with_domains(domains: domains)).to be false
+    end
+
+    it "domain missing" do
+      url = "https://blog.datacite.org/bla-bla"
+      expect(subject.match_url_with_domains(url: url)).to be false
+    end
+
+    it "uses *" do
+      domains = "*"
+      url = "https://blog.datacite.org/bla-bla"
+      expect(subject.match_url_with_domains(domains: domains, url: url)).to be true
+    end
+
+    it "specific host should be in list" do
+      domains = "blog.datacite.org,blog.example.com"
+      url = "https://blog.datacite.org/bla-bla"
+      expect(subject.match_url_with_domains(domains: domains, url: url)).to be true
+    end
+
+    it "wildcard host should be in list" do
+      domains = "*.datacite.org,blog.example.com"
+      url = "https://blog.datacite.org/bla-bla"
+      expect(subject.match_url_with_domains(domains: domains, url: url)).to be true
+    end
+  end
+
   context "register_doi", order: :defined do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME']) }
@@ -132,6 +162,24 @@ describe Doi, vcr: true do
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
       expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2020-07-26T08:55:35Z"}])
+    end
+
+    it 'wrong domain' do
+      client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "example.org")
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
+      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
+    end
+
+    it 'wrong subdomain' do
+      client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "datacite.org")
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
+      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
+    end
+
+    it 'wildcard for subdomain but using naked domain' do
+      client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "*.datacite.org")
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://datacite.org/", client: client, aasm_state: "findable")
+      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
     end
 
     it 'draft doi' do

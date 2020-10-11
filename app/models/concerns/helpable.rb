@@ -23,6 +23,11 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
 
+      unless match_url_with_domains(url: url, domains: client.domains)
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": URL not allowed by client domains settings."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "URL not allowed by client domains settings." }] })
+      end
+
       unless is_registered_or_findable?
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
@@ -121,6 +126,23 @@ module Helpable
       uri = Addressable::URI.parse(url)
       uri.scheme = "http"
       uri.to_s
+    end
+
+    def match_url_with_domains(url: nil, domains: nil)
+      return false if url.blank? || domains.blank?
+      return true if domains == "*"
+
+      uri = Addressable::URI.parse(url)
+      domain_list = domains.split(",")
+      domain_list.any? do |d|
+        # strip asterix for subdomain
+        if d.starts_with?("*.")
+          d = d[1..-1] 
+          uri.host.ends_with?(d)
+        else
+          uri.host == d
+        end
+      end
     end
   end
 
