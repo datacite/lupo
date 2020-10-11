@@ -2112,6 +2112,7 @@ class Doi < ActiveRecord::Base
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
+    self.source = "api" if source.blank?
   end
 
   def update_agency
