@@ -10,11 +10,11 @@ class ProvidersController < ApplicationController
   def index
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}
-           when "name" then { "name.raw" => { order: 'asc' }}
-           when "-name" then { "name.raw" => { order: 'desc' }}
+           when "name" then { "display_name.raw" => { order: 'asc' }}
+           when "-name" then { "display_name.raw" => { order: 'desc' }}
            when "created" then { created: { order: 'asc' }}
            when "-created" then { created: { order: 'desc' }}
-           else { "name.raw" => { order: 'asc' }}
+           else { "display_name.raw" => { order: 'asc' }}
            end
 
     page = page_from_params(params)
