@@ -396,9 +396,9 @@ class Client < ActiveRecord::Base
     service_contact.fetch("family_name",nil) if service_contact.present?
   end
 
-  def index_all_dois
-    Doi.index(from_date: "2011-01-01", client_id: id)
-  end
+  # def index_all_dois
+  #   Doi.index(from_date: "2011-01-01", client_id: id)
+  # end
 
   def cache_key
     "clients/#{uid}-#{updated.iso8601}"
