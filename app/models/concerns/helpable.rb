@@ -14,22 +14,19 @@ module Helpable
 
     def register_url
       unless url.present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
+        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": url missing."
       end
 
       unless client_id.present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
+        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": client ID missing."
       end
 
       unless match_url_with_domains(url: url, domains: client.domains)
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": URL not allowed by client domains settings."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "URL not allowed by client domains settings." }] })
+        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": URL not allowed by client domains settings."
       end
 
       unless is_registered_or_findable?
-        return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
+        raise ActionController::BadRequest.new(), "DOI is not registered or findable."
       end
 
       payload = [

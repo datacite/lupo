@@ -184,13 +184,7 @@ describe Doi, type: :model, vcr: true do
       subject { build(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:draft)
-      end
-
-      it "don't update url change" do
-        subject.url = url
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -202,18 +196,7 @@ describe Doi, type: :model, vcr: true do
 
       it "update state change" do
         subject.register
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
-          expect(doi_id).to eq(subject.doi)
-        }
         expect(subject).to have_state(:registered)
-      end
-
-      it "update url change" do
-        subject.register
-        subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
-          expect(doi_id).to eq(subject.doi)
-        }
       end
     end
 
@@ -225,18 +208,7 @@ describe Doi, type: :model, vcr: true do
 
       it "update state change" do
         subject.publish
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
-          expect(doi_id).to eq(subject.doi)
-        }
         expect(subject).to have_state(:findable)
-      end
-
-      it "update url change" do
-        subject.publish
-        subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
-          expect(doi_id).to eq(subject.doi)
-        }
       end
     end
 
@@ -248,14 +220,7 @@ describe Doi, type: :model, vcr: true do
 
       it "don't update state change" do
         subject.publish
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
-      end
-
-      it "don't update url change" do
-        subject.publish
-        subject.url = url
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -267,14 +232,7 @@ describe Doi, type: :model, vcr: true do
 
       it "don't update state change" do
         subject.publish
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
-      end
-
-      it "don't update url change" do
-        subject.publish
-        subject.url = url
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 

@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -17,7 +17,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 26 Jul 2020 06:45:38 GMT
+      - Mon, 12 Oct 2020 05:11:57 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -28,5 +28,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/FJ3W-0SHD","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/data-driven-development/"},"ttl":86400,"timestamp":"2016-12-19T15:06:36Z"}]}'
     http_version: null
-  recorded_at: Sun, 26 Jul 2020 06:45:38 GMT
+  recorded_at: Mon, 12 Oct 2020 05:11:57 GMT
 recorded_with: VCR 5.1.0

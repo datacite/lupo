@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe DataciteDoisController, type: :request do
+describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
@@ -10,7 +10,7 @@ describe DataciteDoisController, type: :request do
   let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
-  let(:doi) { create(:doi, client: client) }
+  let(:doi) { create(:doi, client: client, doi: "10.14454/4K3M-NYVG") }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }}
 
@@ -972,7 +972,7 @@ describe DataciteDoisController, type: :request do
     end
 
     context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
-      let(:doi) { create(:doi, client: client) }
+      let(:doi) { create(:doi, doi: "10.14454/4K3M-NYVG", client: client) }
       let(:url) { "https://figshare.com/articles/Additional_file_1_of_Contemporary_ancestor_Adaptive_divergence_from_standing_genetic_variation_in_Pacific_marine_threespine_stickleback/6839054/1" }
       let(:valid_attributes) do
         {
@@ -1019,11 +1019,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-      end
-
-      it 'sets state to findable' do
-        put "/dois/#{doi_id}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1134,11 +1129,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>":tba", "dateType"=>"Issued"}])
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1167,11 +1157,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'titles')).to eq(titles)
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1225,11 +1210,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'descriptions')).to eq([])
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1374,11 +1354,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'creators')).to eq(creators)
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1493,11 +1468,6 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"article", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"DataPaper", "ris"=>"GEN", "schemaOrg"=>"CreativeWork")
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
@@ -1566,6 +1536,32 @@ describe DataciteDoisController, type: :request do
         post '/dois', valid_attributes
 
         expect(last_response.status).to eq(401)
+      end
+    end
+
+    context 'when the request has invalid client domains' do
+      let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], re3data_id: "10.17616/r3xs37", domains: "example.org") }
+      let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
+      let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }}
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'fails to create a Doi' do
+        post '/dois', valid_attributes, headers
+        expect(last_response.status).to eq(400)
       end
     end
 
@@ -2076,7 +2072,7 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/9zwb-rb91")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"phdthesis", "citeproc"=>"thesis", "resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text", "ris"=>"THES", "schemaOrg"=>"Thesis")
-       expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
+        expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en", "title"=>"The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population","titleType"=>nil},{"lang"=>"en", "title"=>"Subtitle", "titleType"=>"Subtitle"}])
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
@@ -3041,7 +3037,7 @@ describe DataciteDoisController, type: :request do
 
       it 'updates the Doi' do
         patch "/dois/#{doi.doi}", update_attributes, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{"source"=>"contributors", "title"=>"Contributor type Funder is not supported in schema 4."}])
       end
@@ -3641,7 +3637,7 @@ describe DataciteDoisController, type: :request do
       it 'returns url' do
         get "/dois/#{doi.doi}/get-url", nil, headers
 
-        expect(json["url"]).to eq("https://www.datacite.org/roadmap.html")
+        expect(json["url"]).to eq("http://stokes.info/erin")
         expect(last_response.status).to eq(200)
       end
     end
@@ -3698,7 +3694,7 @@ describe DataciteDoisController, type: :request do
       get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["dois"].length).to eq(446)
+      expect(json["dois"].length).to eq(449)
       expect(json["dois"].first).to eq("10.5438/0000-00SS")
     end
   end

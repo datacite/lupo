@@ -690,7 +690,10 @@ class DataciteDoisController < ApplicationController
       p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
     # generate random DOI if no DOI is provided
-    if p[:doi].blank? && p[:prefix].present?
+    # make random DOI predictable in test
+    if p[:doi].blank? && p[:prefix].present? && Rails.env.test?
+      p[:doi] = generate_random_dois(p[:prefix], number: 123456).first
+    elsif p[:doi].blank? && p[:prefix].present?
       p[:doi] = generate_random_dois(p[:prefix]).first
     end
 

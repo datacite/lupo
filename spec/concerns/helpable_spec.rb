@@ -167,34 +167,35 @@ describe Doi, vcr: true do
     it 'wrong domain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "example.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
-      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
     end
 
     it 'wrong subdomain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "datacite.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
-      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
     end
 
     it 'wildcard for subdomain but using naked domain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "*.datacite.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://datacite.org/", client: client, aasm_state: "findable")
-      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"URL not allowed by client domains settings."}])
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
     end
 
     it 'draft doi' do
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "draft")
-      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "DOI is not registered or findable.")
     end
 
     it 'missing username' do
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/re3data-science-europe/", client: nil, aasm_state: "findable")
-      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"Client ID missing."}])
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: client ID missing.")
     end
 
     it 'server not responsible' do
       subject = build(:doi, doi: "10.1371/journal.pbio.2001414", url: "https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
       expect(subject.register_url.body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
+      # expect { subject.register_url }.to raise_error(ActionController::BadRequest, "No valid prefix found")
     end
   end
 

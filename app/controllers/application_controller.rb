@@ -104,6 +104,7 @@ class ApplicationController < ActionController::API
                when "ActionController::UnknownFormat" then 406
                when "ActiveRecord::RecordNotUnique" then 409
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument" then 422
+               when "ActionController::BadRequest" then 400
                when "SocketError" then 500
                else 400
                end
@@ -121,7 +122,7 @@ class ApplicationController < ActionController::API
         message = "The content type is not recognized."
       elsif status == 409
         message = "The resource already exists."
-      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError"].include?(exception.class.to_s)
+      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError", "ActionController::BadRequest"].include?(exception.class.to_s)
         message = exception.message
       else
         Raven.capture_exception(exception)

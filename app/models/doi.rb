@@ -122,7 +122,7 @@ class Doi < ActiveRecord::Base
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
-  after_commit :update_url, on: [:create, :update]
+  # after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
   before_validation :update_xml, if: :regenerate
@@ -132,7 +132,7 @@ class Doi < ActiveRecord::Base
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
-  before_save :set_defaults, :save_metadata
+  before_save :set_defaults, :save_metadata, :update_url
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
@@ -1773,8 +1773,8 @@ class Doi < ActiveRecord::Base
 
     if %w(europ).include?(provider_id) || type == "OtherDoi"
       UrlJob.perform_later(doi)
-    else
-      HandleJob.perform_later(doi)
+    elsif url_changed?
+      register_url
     end
   end
 
