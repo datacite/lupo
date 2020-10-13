@@ -59,7 +59,7 @@ gem "rack-utf8_sanitizer", "~> 1.6"
 gem "turnout", "~> 2.5"
 gem "audited", "~> 4.8"
 gem "git", "~> 1.5"
-gem 'graphql', '~> 1.10', '>= 1.10.8'
+gem 'graphql', '1.11.4'
 gem "graphql-errors", "~> 0.4.0"
 gem "graphql-batch", "~> 0.4.1"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
