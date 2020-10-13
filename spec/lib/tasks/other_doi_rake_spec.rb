@@ -137,7 +137,7 @@ describe "other_doi:import_one", order: :defined do
   include_context "rake"
 
   let(:doi)  { create(:doi) }
-  let(:output) { "Imported DOI #{doi.doi}.\n" }
+  let(:output) { "[MySQL] Imported metadata for DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")

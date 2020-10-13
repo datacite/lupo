@@ -226,7 +226,7 @@ describe Doi, vcr: true do
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
-      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
+      expect(meta["container"]).to eq("firstPage" => "e01567", "identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from crossref url" do
@@ -240,7 +240,7 @@ describe Doi, vcr: true do
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
-      expect(meta["container"]).to eq("identifier" => "2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
+      expect(meta["container"]).to eq("firstPage" => "e01567", "identifier" => "2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
       expect(meta["agency"]).to eq("crossref")
     end
 
@@ -402,7 +402,7 @@ describe Doi, vcr: true do
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
-      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
+      expect(meta["container"]).to eq("firstPage" => "e01567", "identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from bibtex" do

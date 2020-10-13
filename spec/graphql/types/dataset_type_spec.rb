@@ -229,7 +229,7 @@ describe DatasetType do
 
     it "returns all datasets with counts" do
       response = LupoSchema.execute(query).as_json
-      puts response
+
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
