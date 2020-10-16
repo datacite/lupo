@@ -167,19 +167,19 @@ describe Doi, vcr: true do
     it 'wrong domain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "example.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
-      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by repository domains settings.")
     end
 
     it 'wrong subdomain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "datacite.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable")
-      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by repository domains settings.")
     end
 
     it 'wildcard for subdomain but using naked domain' do
       client = create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], domains: "*.datacite.org")
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://datacite.org/", client: client, aasm_state: "findable")
-      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by client domains settings.")
+      expect { subject.register_url }.to raise_error(ActionController::BadRequest, "[Handle] Error updating DOI 10.5438/MCNV-GA6N: URL not allowed by repository domains settings.")
     end
 
     it 'draft doi' do
