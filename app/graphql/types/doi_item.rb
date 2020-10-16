@@ -323,8 +323,12 @@ module DoiItem
     Array.wrap(object.descriptions)[0...first]
   end
 
+  def identifiers
+    Array.wrap(object.identifiers).select { |r| [object.doi, object.url].exclude?(r["identifier"]) }
+  end
+
   def bibtex
-    pages = object.container.to_h["firstPage"].present? ? [object.container["firstPage"], object.container["lastPage"]].join("-") : nil
+    pages = object.container.to_h["firstPage"].present? ? [object.container["firstPage"], object.container["lastPage"]].compact.join("-") : nil
 
     bib = {
       bibtex_type: object.types["bibtex"].presence || "misc",

@@ -69,11 +69,11 @@ class DataciteDoiSerializer
   end
 
   attribute :identifiers do |object|
-    Array.wrap(object.identifiers).select { |r| r["identifierType"] != "DOI" }
+    Array.wrap(object.identifiers).select { |r| [object.doi, object.url].exclude?(r["identifier"]) }
   end
 
   attribute :alternate_identifiers, if: Proc.new { |object, params| params && params[:detail] } do |object|
-    Array.wrap(object.identifiers).select { |r| r["identifierType"] != "DOI" }.map do |a|
+    Array.wrap(object.identifiers).select { |r| [object.doi, object.url].exclude?(r["identifier"]) }.map do |a|
       { "alternateIdentifierType" => a["identifierType"], "alternateIdentifier" => a["identifier"] }
     end.compact
   end
