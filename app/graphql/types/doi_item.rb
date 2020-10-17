@@ -324,7 +324,7 @@ module DoiItem
   end
 
   def identifiers
-    Array.wrap(object.identifiers).select { |r| [object.doi, object.url].exclude?(r["identifier"]) }
+    Array.wrap(object.identifiers).select { |r| [doi_from_url(object.doi), object.url].compact.exclude?(r["identifier"]) }
   end
 
   def bibtex
