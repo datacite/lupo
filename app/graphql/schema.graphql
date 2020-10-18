@@ -6403,6 +6403,7 @@ type OrganizationConnectionWithTotal {
   personConnectionCount: Int!
   totalCount: Int!
   types: [Facet!]
+  years: [Facet!]
 }
 
 """
