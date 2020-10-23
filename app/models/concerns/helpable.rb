@@ -21,10 +21,6 @@ module Helpable
         raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": client ID missing."
       end
 
-      unless match_url_with_domains(url: url, domains: client.domains)
-        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": URL not allowed by repository domains settings."
-      end
-
       unless is_registered_or_findable?
         raise ActionController::BadRequest.new(), "DOI is not registered or findable."
       end
@@ -57,10 +53,13 @@ module Helpable
 
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
-        self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
+        success = true
+        success = self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
         Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
-        self.__elasticsearch__.index_document
+        if success
+          self.__elasticsearch__.index_document
+        end
       elsif response.status == 404
         Rails.logger.info "[Handle] Error updating URL for DOI " + doi + ": not found"
       elsif response.status == 408
@@ -134,7 +133,7 @@ module Helpable
       domain_list.any? do |d|
         # strip asterix for subdomain
         if d.starts_with?("*.")
-          d = d[1..-1] 
+          d = d[1..-1]
           uri.host.ends_with?(d)
         else
           uri.host == d
