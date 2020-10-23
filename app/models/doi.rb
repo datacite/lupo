@@ -106,7 +106,7 @@ class Doi < ActiveRecord::Base
   validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
-  validate :check_url, if: :url?
+  validate :check_url, if: :url?, if: Proc.new { |doi| doi.is_registered_or_findable? }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
   validate :check_titles, if: :titles?
