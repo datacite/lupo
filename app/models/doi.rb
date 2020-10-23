@@ -1838,7 +1838,7 @@ class Doi < ActiveRecord::Base
   end
 
   def check_url
-    return nil if doi.is_registered_or_findable?
+    return nil if is_registered_or_findable?
 
     unless match_url_with_domains(url: url, domains: client.domains)
       errors.add(:url, "URL is not allowed by repository domain settings.")
