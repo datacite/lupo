@@ -534,6 +534,29 @@ describe OrganizationType do
     end
   end
 
+  describe "query all organizations", vcr: true do
+    let(:query) do
+      %(query {
+        organizations {
+          totalCount
+          years {
+            id
+            title
+            count
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organizations", "totalCount")).to eq(98332)
+      expect(response.dig("data", "organizations", "years").first).to eq("count"=>80248, "id"=>"2017", "title"=>"2017")
+      expect(response.dig("data", "organizations", "years").last).to eq("count"=>513, "id"=>"2020", "title"=>"2020")
+    end
+  end
+
   describe "query organizations", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3) }
     let!(:doi) { create(:doi, aasm_state: "findable", creators:

@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_26_173254) do
+ActiveRecord::Schema.define(version: 2020_10_19_125327) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -76,12 +76,14 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.string "logo_content_type"
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
+    t.string "uid", limit: 32
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
+    t.index ["uid"], name: "index_allocator_on_uid"
   end
 
-  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -109,7 +111,8 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "provider_prefix_id"
-    t.string "uid", null: false
+    t.string "uid"
+    t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
     t.index ["provider_prefix_id"], name: "index_client_prefixes_on_provider_prefix_id"
@@ -122,7 +125,7 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
     t.integer "doi_quota_used", null: false
-    t.string "domains"
+    t.text "domains"
     t.binary "is_active", limit: 1
     t.string "name", null: false
     t.string "password"
@@ -147,10 +150,12 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.string "salesforce_id", limit: 191
     t.json "service_contact"
     t.string "globus_uuid", limit: 191
+    t.string "uid", limit: 32
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["globus_uuid"], name: "index_datacentre_on_globus_uuid"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
     t.index ["symbol"], name: "symbol", unique: true
+    t.index ["uid"], name: "index_datacentre_on_uid"
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
@@ -211,7 +216,7 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -271,6 +276,7 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
   create_table "prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
     t.string "uid", limit: 80, null: false
+    t.string "ra", default: "DataCite"
     t.index ["uid"], name: "prefix", unique: true
   end
 
@@ -279,9 +285,19 @@ ActiveRecord::Schema.define(version: 2020_08_26_173254) do
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "uid", null: false
+    t.string "uuid"
+    t.string "uid"
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
+    t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
+
+  add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "_FK13A1B3BA47B5F5FF"
+  add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
+  add_foreign_key "datacentre", "allocator", column: "allocator", name: "_FK6695D60546EBD781"
+  add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
+  add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
+  add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
+  add_foreign_key "provider_prefixes", "prefixes", name: "FKE7FBD674AF86A1C7"
 end

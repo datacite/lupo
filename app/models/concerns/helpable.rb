@@ -22,7 +22,7 @@ module Helpable
       end
 
       unless match_url_with_domains(url: url, domains: client.domains)
-        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": URL not allowed by client domains settings."
+        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": URL not allowed by repository domains settings."
       end
 
       unless is_registered_or_findable?

@@ -75,14 +75,18 @@ describe DatasetType do
             "schemeUri": "https://ror.org",
           }]
       }]) }
-    let!(:dataset) { create(:doi, aasm_state: "findable", creators:
+    let!(:dataset) { create(:doi, doi: "10.14454/4k3m-nyvg", url: "https://example.org", aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
         "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal",
-      }])
+      }], identifiers: [
+        { "identifier" => "pk-1235", "identifierType" => "publisher ID"},
+        { "identifier" => "https://example.org", "identifierType" => "URL"},
+        { "identifier" => "10.14454/4k3m-nyvg", "identifierType" => "DOI"},
+      ])
     }
     before do
       Doi.import
@@ -92,7 +96,7 @@ describe DatasetType do
 
     let(:query) do
       %(query {
-        datasets(userId: "https://orcid.org/0000-0003-1419-2405") {
+        datasets(userId: "https://orcid.org/0000-0003-3484-6875") {
           totalCount
           published {
             id
@@ -105,6 +109,10 @@ describe DatasetType do
           }
           nodes {
             id
+            identifiers {
+              identifier
+              identifierType
+            }
             creators {
               id
               type
@@ -118,13 +126,16 @@ describe DatasetType do
     it "returns datasets" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
-      expect(response.dig("data", "datasets", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "datasets", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
       # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois[2].uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
-      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(1)
       # expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq([{"id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Renaud, François", "type"=>"Person"}, {"id"=>"https://ror.org/02twcfp32", "name"=>"Crossref", "type"=>"Organization"}])
+      expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq([{"id"=>"https://orcid.org/0000-0003-3484-6875",
+        "name"=>"Garza, Kristian",
+        "type"=>"Person"}])
+      expect(response.dig("data", "datasets", "nodes", 0, "identifiers")).to eq([{"identifier"=>"pk-1235", "identifierType"=>"publisher ID"}])
     end
   end
 
@@ -234,7 +245,7 @@ describe DatasetType do
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
+    # expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
     #   expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
