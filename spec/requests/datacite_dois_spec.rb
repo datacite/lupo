@@ -97,7 +97,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(Base64.urlsafe_decode64(cursor).split(",").last).to eq(@dois[3].uid)
       next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      
+
       get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
@@ -108,7 +108,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(Base64.urlsafe_decode64(cursor).split(",").last).to eq(@dois[7].uid)
       next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      
+
       get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
@@ -128,7 +128,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
   end
-  
+
   describe "GET /dois with query", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
       [{
@@ -213,7 +213,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     it 'returns dois with short ror id', vcr: true do
       get "/dois?affiliation-id=046ak2485&affiliation=true", nil, headers
-      
+
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
       expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
@@ -221,7 +221,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     it 'returns dois with ror id', vcr: true do
       get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", nil, headers
-      
+
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
       expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
@@ -416,7 +416,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig('meta', 'resourceTypes')).to eq([])
     end
   end
-  
+
   describe 'GET /dois with views and downloads', elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 2, obj_id: doi.doi) }
@@ -1112,7 +1112,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "attributes" => {
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
-              "dates" => { 
+              "dates" => {
                 "date" => ":tba",
                 "dateType" => "Issued"
               },
@@ -1561,7 +1561,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it 'fails to create a Doi' do
         post '/dois', valid_attributes, headers
-        expect(last_response.status).to eq(400)
+        expect(last_response.status).to eq(422)
       end
     end
 
@@ -1843,7 +1843,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
         expect(json.dig('data', 'attributes', 'identifiers')).to eq([{"identifier"=>"123", "identifierType"=>"Repository ID"}])
         expect(json.dig('data', 'attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"123", "alternateIdentifierType"=>"Repository ID"}])
-        
+
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
         expect(doc.at_css("alternateIdentifiers").content).to eq("123")
@@ -1872,7 +1872,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
         expect(json.dig('data', 'attributes', 'identifiers')).to eq([{"identifier"=>"123", "identifierType"=>"Repository ID"}])
         expect(json.dig('data', 'attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"123", "alternateIdentifierType"=>"Repository ID"}])
-        
+
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
         expect(doc.at_css("alternateIdentifiers").content).to eq("123")
@@ -3015,7 +3015,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
 
         put '/dois/10.14454/10703', valid_attributes, headers
-       
+
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
