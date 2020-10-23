@@ -734,7 +734,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context 'hide' do
-      let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+      let(:doi) { create(:doi, client: client, url: "https://datacite.org", aasm_state: "findable") }
       let(:valid_attributes) do
         {
           "data" => {
@@ -757,7 +757,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context 'hide with reason' do
-      let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+      let(:doi) { create(:doi, client: client, url: "https://datacite.org", aasm_state: "findable") }
       let(:valid_attributes) do
         {
           "data" => {
@@ -868,7 +868,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context 'update sizes' do
-      let(:doi) { create(:doi, doi: "10.14454/10703", client: client) }
+      let(:doi) { create(:doi, doi: "10.14454/10703", url: "https://datacite.org", client: client) }
       let(:sizes) { ["100 samples", "56 pages"] }
       let(:valid_attributes) do
         {
@@ -891,7 +891,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context 'update formats' do
-      let(:doi) { create(:doi, doi: "10.14454/10703", client: client) }
+      let(:doi) { create(:doi, doi: "10.14454/10703", url: "https://datacite.org", client: client) }
       let(:formats) { ["application/json"] }
       let(:valid_attributes) do
         {
@@ -937,7 +937,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context 'when the record exists https://github.com/datacite/lupo/issues/89' do
-      let(:doi) { create(:doi, doi: "10.14454/119496", client: client) }
+      let(:doi) { create(:doi, doi: "10.14454/119496", url: "https://datacite.org", client: client) }
       let(:valid_attributes) { JSON.parse(file_fixture('datacite_89.json').read) }
 
       it 'returns no errors' do
@@ -1561,6 +1561,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it 'fails to create a Doi' do
         post '/dois', valid_attributes, headers
+        puts last_response.body
         expect(last_response.status).to eq(422)
       end
     end
@@ -3246,7 +3247,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         samples. Percussive scooping can reduce the amount of downward force required by about two to four
         times depending on the cohesion of the soil and the depth of the sampling. The goal for this project is to
         build a working prototype of a percussive scoop for Axel.", "descriptionType" => "Abstract" }]}
-      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", xml: xml, event: "publish") }
+      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://example.org", xml: xml, event: "publish") }
       let(:update_attributes) do
         {
           "data" => {
@@ -3269,7 +3270,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     context 'remove series_information via xml', elasticsearch: true do
       let(:xml) { Base64.strict_encode64(File.read(file_fixture('datacite_series_information.xml'))) }
       let(:xml_new) { Base64.strict_encode64(File.read(file_fixture('datacite_no_series_information.xml'))) }
-      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://datacite.org", event: "publish") }
       let(:update_attributes) do
         {
           "data" => {
@@ -3637,7 +3638,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       it 'returns url' do
         get "/dois/#{doi.doi}/get-url", nil, headers
 
-        expect(json["url"]).to eq("http://stokes.info/erin")
+        expect(json["url"]).to eq("https://example.org")
         expect(last_response.status).to eq(200)
       end
     end

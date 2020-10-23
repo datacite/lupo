@@ -17,7 +17,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 12 Oct 2020 05:12:08 GMT
+      - Fri, 23 Oct 2020 21:11:21 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -26,7 +26,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/05MB-Q396","values":[{"index":1,"type":"URL","data":{"format":"string","value":"http://stokes.info/erin"},"ttl":86400,"timestamp":"2020-10-11T20:23:26Z"}]}'
+      string: '{"responseCode":1,"handle":"10.14454/05MB-Q396","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://example.org"},"ttl":86400,"timestamp":"2020-10-23T20:50:11Z"}]}'
     http_version: null
-  recorded_at: Mon, 12 Oct 2020 05:12:08 GMT
+  recorded_at: Fri, 23 Oct 2020 21:11:21 GMT
 recorded_with: VCR 5.1.0
