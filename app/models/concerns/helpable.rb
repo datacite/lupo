@@ -21,10 +21,6 @@ module Helpable
         raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": client ID missing."
       end
 
-      unless match_url_with_domains(url: url, domains: client.domains)
-        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": URL not allowed by repository domains settings."
-      end
-
       unless is_registered_or_findable?
         raise ActionController::BadRequest.new(), "DOI is not registered or findable."
       end

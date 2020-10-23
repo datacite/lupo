@@ -106,6 +106,7 @@ class Doi < ActiveRecord::Base
   validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
+  validate :check_url, if: :url?
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
   validate :check_titles, if: :titles?
@@ -122,7 +123,7 @@ class Doi < ActiveRecord::Base
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
-  # after_commit :update_url, on: [:create, :update]
+  after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
   before_validation :update_xml, if: :regenerate
@@ -132,7 +133,7 @@ class Doi < ActiveRecord::Base
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
-  before_save :set_defaults, :save_metadata, :update_url
+  before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
@@ -1834,6 +1835,12 @@ class Doi < ActiveRecord::Base
 
   def event=(value)
     self.send(value) if %w(register publish hide show).include?(value)
+  end
+
+  def check_url
+    unless match_url_with_domains(url: url, domains: client.domains)
+      errors.add(:url, "URL is not allowed by repository domain settings.")
+    end
   end
 
   def check_dates
