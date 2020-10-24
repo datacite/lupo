@@ -15,7 +15,7 @@ class Claims < Base
       return []
     end
 
-    Rails.logger.info "Claims for user #{context[:current_user].uid} and doi #{object.doi.downcase} retrieved: " + response.body["data"].inspect
+    Rails.logger.info "Claims for user #{context[:current_user].uid} and doi #{object.doi.downcase} retrieved: " + response.body["data"].inspect if response.body["data"].present?
     
     Array.wrap(response.body.dig("data")).map do |claim|
       { id: claim["id"],
