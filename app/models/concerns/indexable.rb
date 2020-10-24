@@ -856,7 +856,13 @@ module Indexable
       return "ENV['QUERY'] is required" if options[:query].blank?
 
       client = Elasticsearch::Model.client
-      client.delete_by_query(index: options[:index], q: options[:query])
+      response = client.delete_by_query(index: options[:index], q: options[:query])
+      
+      if response.to_h["deleted"]
+        "Deleted #{response.to_h["deleted"].to_i} DOIs."
+      else
+        "An error occured deleting DOIs for query #{options[:query]}."
+      end
     end
       
     def doi_from_url(url)
