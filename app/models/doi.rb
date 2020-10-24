@@ -1840,7 +1840,7 @@ class Doi < ActiveRecord::Base
   end
 
   def check_url
-    unless url.blank? || match_url_with_domains(url: url, domains: client.domains)
+    unless url.blank? || client.blank? || match_url_with_domains(url: url, domains: client.domains)
       errors.add(:url, "URL is not allowed by repository domain settings.")
     end
   end
