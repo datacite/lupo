@@ -33,6 +33,29 @@ require 'rails_helper'
 #   end
 # end
 
+# describe "doi:delete_by_query", elasticsearch: true do
+#   include ActiveJob::TestHelper
+#   include_context "rake"
+
+#   let!(:doi)  { create(:doi, aasm_state: "findable") }
+#   let(:output) { "0 DOIs with no URL found in the database.\n" }
+
+#   before do
+#     Doi.import
+#     sleep 1
+#   end
+
+#   it "prerequisites should include environment" do
+#     expect(subject.prerequisites).to include("environment")
+#   end
+
+#   it "should run the rake task" do
+#     ENV['QUERY'] = "uid:#{doi.uid}"
+#     ENV['INDEX'] = "dois-test"
+#     expect(capture_stdout { subject.invoke }).to eq(output)
+#   end
+# end
+
 describe "doi:set_url", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
