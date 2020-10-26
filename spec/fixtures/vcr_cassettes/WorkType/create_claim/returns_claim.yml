@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stage.datacite.org/claims
+    body:
+      encoding: UTF-8
+      string: '{"claim":{"uuid":"d140d44e-af70-43ec-a90b-49878a954487","orcid":"0000-0001-6528-2027","doi":"10.5438/4hr0-d640","claim_action":"create","source_id":"auto_update"}}'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDEtNjUyOC0yMDI3IiwibmFtZSI6Ik1hcnRpbiBGZW5uZXIiLCJyb2xlX2lkIjoic3RhZmZfYWRtaW4iLCJoYXNfb3JjaWRfdG9rZW4iOnRydWUsImF1ZCI6InRlc3QiLCJpYXQiOjE2MDM3MDMxMzQsImV4cCI6MTYwMzcwMzE2NH0.p8viyoRTYngMFSM00aJ4xdLviYI2uW_eUw66X3pND0Vlkd8Eskn4uL7YAQOrp1dmmJ7kHqa-OxouXhTNnT1dazp36sozHEX0YNw_kEHOmnKwPi0lGoLz8rvlhhPm8u07Oqep31hLiwaiZ7mf1Xkgz6ClRImOiI74_FCS8vwX4pXMYpCZB_TguQcparIzMF6AJyfHwsRhcvr_jpnbdAJ05rvLiTDDUse1zKM8L7DG_R5gcv8B4J3oe74V1eNKd2Cjw-NbHJ4Bws5KtiUwB4IIkGWinaN2guXJS-k2jTd9o1iUGmScjdFG87MlfF5oG3wqyNrIMkxhqatgT-1QBt3fUj9-UgvPs0Bf5PcizkzLnQBihvCFHORcYDFUhP7yFmIIM4aOpSMXLYIVozwNCmIwc2NnGPr_DiT4kmCH9XmK9VOf255ix6XsoUlH-kutZcNteQgtZeHTyH59f8HJySI8w6FilXuhHWMRioNv41VDLLQrkbvs8txR-wzww1o0IKyXGhUGrLoVTKCGvJx9krzwILMvE2Ugdt9G8MOe1zS3K_m29-WQOgyrVw3rNyGNyhR5E9jo_P34cMZLU0-4WnhKT0VdrKtfdRK6h1mFY6ixGfWZ6WeTfhraSAeotFThaJ3bF6-6Fs5Z81koEHhWsEsTK0AgyRccT6OWplXqjRA6vTE
+  response:
+    status:
+      code: 202
+      message: Accepted
+    headers:
+      Date:
+      - Mon, 26 Oct 2020 09:05:41 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 202 Accepted
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Accept-Encoding, Origin
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Credential-Username:
+      - 0000-0001-6528-2027
+      X-Request-Id:
+      - 67f20cae-400f-4b19-8223-5116829c2d27
+      X-Download-Options:
+      - noopen
+      X-Runtime:
+      - '0.054676'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.6
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.6
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{"id":"d140d44e-af70-43ec-a90b-49878a954487","type":"claims","attributes":{"orcid":"https://orcid.org/0000-0001-6528-2027","doi":"https://doi.org/10.5438/4hr0-d640","sourceId":"auto_update","state":"failed","claimAction":"create","errorMessages":[{"title":"Missing
+        data"}],"putCode":null,"claimed":null,"created":"2020-10-26T09:03:02.000Z","updated":"2020-10-26T09:03:04.000Z"},"relationships":{"user":{"data":{"id":"0000-0001-6528-2027","type":"users"}}}},"included":[{"id":"0000-0001-6528-2027","type":"users","attributes":{"givenName":"Martin","familyName":"Fenner","name":"Martin
+        Fenner","orcid":"https://orcid.org/0000-0001-6528-2027","github":null,"roleId":"staff_admin","isActive":false,"created":"2018-08-20T16:40:54.000Z","updated":"2019-08-31T07:28:05.000Z"},"relationships":{}}]}'
+    http_version: null
+  recorded_at: Mon, 26 Oct 2020 09:05:41 GMT
+recorded_with: VCR 5.1.0

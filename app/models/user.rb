@@ -11,7 +11,7 @@ class User
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :has_orcid_token, :errors
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -51,6 +51,7 @@ class User
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
       @beta_tester = payload.fetch("beta_tester", false)
+      @has_orcid_token = payload.fetch("has_orcid_token", false)
     end
   end
 

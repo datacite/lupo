@@ -252,6 +252,7 @@ module Authenticable
         role_id: attributes.fetch(:role_id, "staff_admin"),
         password: attributes.fetch(:password, nil),
         beta_tester: attributes.fetch(:beta_tester, nil),
+        has_orcid_token: attributes.fetch(:has_orcid_token, nil),
         aud: attributes.fetch(:aud, Rails.env),
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)

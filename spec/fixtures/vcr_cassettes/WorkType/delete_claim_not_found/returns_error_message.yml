@@ -1,0 +1,59 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://api.stage.datacite.org/claims/6dcaeca5-7e5a-449a-86b8-f2ae80db3fef
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Authorization:
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImF1ZCI6InN0YWdlIiwiaWF0IjoxNjAzNjg4ODk1LCJleHAiOjE2MDM2ODg5MjV9.pOQ33JlfKzNkJZPdAykGWXT4kRgmH8adw7-rCby_h1x-Rl63cYpf3vmjduT1svpIA0JcawBAgtExFD1ks5NXCT01Rj9LKZJFiOF2pGCYnuvi-Ez8yZWPkUmW47jt0cSX2pplupdNU6ljLAZxPbgBO06DBf9l-K447pRlvMKm0ZSmAiIKabyxQFM0qJ5lT7W8au6MtNfcN1vWjWLEudez7MvM5isEdUFtYCs-r98Q_yKAi5s35MX3Dug7VXMa43MpMz8548TiH945S2PdUOyd0RsJ7CYLZODX3tft7c7RGSUtZpWqEa35YZTPrAPoXc1RthuFGHDD9GnJFeffmWA715CR2DeHJ8a3Q5m_n3F2dIKy6U0Z9UqIN1Ve_1u4k8mHIzek7_0_14p0TqtG5b3l-ayCwrHNyAXWGk3gSlPIJMLuZplbnS4rRumOOAGpOKdy4nuvXd1ayzatxECrXpUKqLPHG-ZzQvN-pW2sqMVNzeJU5J4mdy87TVT63rWY7zupiNHocUXKrxGi2oFBpu0rq4FezE1e-ADwtJrNysn2T8sOYwxTkCdvQ-kG4AyB8K7zHH_JbWylHMqvKr42UzZpQvHNDKDD2oXCaCTwBjvt-JtZMWqAf6gfiWCIuqvb4WDdj6wQcnb7DsS7ux8FH3gR_NImS9YQWqrefmJPhNDoj1M
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Mon, 26 Oct 2020 05:08:21 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 404 Not Found
+      Cache-Control:
+      - no-cache
+      Vary:
+      - Accept-Encoding, Origin
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - 70e58ae1-314f-4753-a1e2-850cd1ff9d23
+      X-Download-Options:
+      - noopen
+      X-Runtime:
+      - '0.153424'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.6
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.6
+    body:
+      encoding: ASCII-8BIT
+      string: '{"errors":[{"status":"404","title":"The resource you are looking for
+        doesn''t exist."}]}'
+    http_version: null
+  recorded_at: Mon, 26 Oct 2020 05:08:21 GMT
+recorded_with: VCR 5.1.0

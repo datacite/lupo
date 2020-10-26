@@ -1,0 +1,62 @@
+---
+http_interactions:
+- request:
+    method: delete
+    uri: https://api.stage.datacite.org/claims/d140d44e-af70-43ec-a90b-49878a954487
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Authorization:
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImF1ZCI6InN0YWdlIiwiaWF0IjoxNjAzNjg4NjYyLCJleHAiOjE2MDM2ODg2OTJ9.sYxCcTI7jRrmvqOTWAFOocu-IwXkm6fsrtNI5JgZisl5VqkjtTTUYf75jjhrZRrYC8RqSV7FUqxwiN3ysVQDJIP05WHzAKhxPclkDyJ7dgeCi4FI1ADR8m3HLP9t5iYPc7YcfxqjA-mtUGM77PfLWOTn4-KaSwyT25un9N4mc2acMxOzCfR7BF2hQaG4vyCO0m4G7x5NxYQxbSoqyon3Lk01IyYsX9PIDJDqXHb-kaCA4imISTyhK-beXed7bTvXhEH_na4ck756yJIugK0l6fC44Jp769_9dKNAIuiGGLa-L--UEG4Pcm6qjDjhICk9tHw1qbXdy2d5A3_cN97laB1q5kRcXTzgogMSZZdMJLNiXLK6WTOLb93QGat0_IxNbZ7_ZSYQGXhoAVDf9JCGOQzoA_ysFs8Im-RNzvok_J9IInibqFBVYndAcLc2-t8m3kK_Ecz0oD0t1-1LakREJ0-Ey777QCT7C32V7ul_6As-wJkY-AaHcLYe-2rB4HRb2LwjcSMbp7iDxeVaUE3cJKd0-Cs1e66DFKtoRgn0oJEi3LQGyzJ8FI_13ppPwI5zYjxyGNsp0HrVRGlFOE1TERYv05oZ_GWBOzZuysyWKn5oEo0z4C8AOVrVFVeqcmGkQEE9W_sYGnCwbDTR_q_Z5mLFqMPJGIYvPfDafDyxKa0
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 26 Oct 2020 05:04:29 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Credential-Username:
+      - 0000-0003-1419-2405
+      X-Request-Id:
+      - 8081e93b-5de0-4485-bed4-e0475021dd65
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"7fb9d166d1a15bce0b9f085f3818946f"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.212703'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.6
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.6
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":{}}'
+    http_version: null
+  recorded_at: Mon, 26 Oct 2020 05:04:29 GMT
+recorded_with: VCR 5.1.0

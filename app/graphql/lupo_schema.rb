@@ -18,7 +18,7 @@ class LupoSchema < GraphQL::Schema
   default_max_page_size 1000
   max_depth 10
 
-  # mutation(Types::MutationType)
+  mutation(MutationType)
   query(QueryType)
 end
 

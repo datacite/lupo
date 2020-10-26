@@ -499,4 +499,81 @@ describe WorkType do
         "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
     end
   end
+
+  describe "create claim", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(mutation {
+        createClaim(doi: "10.5438/4hr0-d640", id: "d140d44e-af70-43ec-a90b-49878a954487", sourceId: "auto_update") {
+          claim {
+            id
+            state
+            sourceId
+            errorMessages {
+              title
+            }
+          }
+          errors {
+            status
+            source
+            title
+          }
+        }
+      })
+    end
+
+    it "returns claim" do
+      current_user = User.new(User.generate_token(uid: "0000-0001-6528-2027", name: "Martin Fenner", has_orcid_token: true))
+      response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
+
+      expect(response.dig("data", "createClaim", "claim", "id")).to eq("d140d44e-af70-43ec-a90b-49878a954487")
+      expect(response.dig("data", "createClaim", "claim", "sourceId")).to eq("auto_update")
+      expect(response.dig("data", "createClaim", "claim", "state")).to eq("failed")
+      expect(response.dig("data", "createClaim", "claim", "errorMessages")).to eq([{"title"=>"Missing data"}])
+      expect(response.dig("data", "createClaim", "errors")).to be_empty
+    end
+  end
+
+  describe "delete claim", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(mutation {
+        deleteClaim(id: "d140d44e-af70-43ec-a90b-49878a954487") {
+          message
+          errors {
+            status
+            title
+          }
+        }
+      })
+    end
+
+    it "returns success message" do
+      current_user = User.new(User.generate_token(uid: "0000-0001-6528-2027", aud: "stage", has_orcid_token: true))
+      response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
+
+      expect(response.dig("data", "deleteClaim", "message")).to eq("Claim d140d44e-af70-43ec-a90b-49878a954487 deleted.")
+      expect(response.dig("data", "deleteClaim", "errors")).to be_blank
+    end
+  end
+
+  describe "delete claim not found", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(mutation {
+        deleteClaim(id: "6dcaeca5-7e5a-449a-86b8-f2ae80db3fef") {
+          message
+          errors {
+            status
+            title
+          }
+        }
+      })
+    end
+
+    it "returns error message" do
+      current_user = User.new(User.generate_token(uid: "0000-0001-6528-2027", aud: "stage", has_orcid_token: true))
+      response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
+
+      expect(response.dig("data", "deleteClaim", "message")).to eq("Error deleting claim 6dcaeca5-7e5a-449a-86b8-f2ae80db3fef.")
+      expect(response.dig("data", "deleteClaim", "errors")).to eq([{"status"=>404, "title"=>"Not found"}])
+    end
+  end
 end
