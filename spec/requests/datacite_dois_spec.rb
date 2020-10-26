@@ -2188,7 +2188,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       it 'fails to create a Doi' do
         post '/dois', valid_attributes, headers
 
-        expect(last_response.status).to eq(422)
+        expect(last_response.status).to eq(201)
       end
     end
 
