@@ -62,6 +62,16 @@ namespace :doi do
     puts Doi.monitor_reindex
   end
 
+  desc "Delete from index by query"
+  task :delete_by_query => :environment do
+    if ENV['QUERY'].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+    
+    puts Doi.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc 'Store handle URL'
   task :set_url => :environment do
     puts Doi.set_url

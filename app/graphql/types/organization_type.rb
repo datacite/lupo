@@ -2,7 +2,7 @@
 
 class OrganizationType < BaseObject
   MEMBER_ROLES = {
-    "ROLE_CONSORTIUM" => "Consortium",
+    "ROLE_CONSORTIUM" => "consortium",
     "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
     "ROLE_ALLOCATOR" => "direct_member",
     "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",

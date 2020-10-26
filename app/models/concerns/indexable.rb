@@ -849,6 +849,21 @@ module Indexable
         "Template #{alias_name} does not exist."
       end
     end
+
+    # delete from index by query
+    def delete_by_query(options={})
+      return "ENV['INDEX'] is required" if options[:index].blank?
+      return "ENV['QUERY'] is required" if options[:query].blank?
+
+      client = Elasticsearch::Model.client
+      response = client.delete_by_query(index: options[:index], q: options[:query])
+      
+      if response.to_h["deleted"]
+        "Deleted #{response.to_h["deleted"].to_i} DOIs."
+      else
+        "An error occured deleting DOIs for query #{options[:query]}."
+      end
+    end
       
     def doi_from_url(url)
       if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)

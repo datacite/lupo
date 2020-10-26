@@ -4,14 +4,16 @@
     "resourceTypeGeneral": "Text"
   },
   "identifiers": [{
-    "identifier":"https://doi.org/10.17918/9zwb-rb91",
+    "identifier": "https://doi.org/10.17918/9zwb-rb91",
     "identifier_type": "DOI"
   }],
   "creators": [{
     "nameType": "Personal",
     "givenName": "Julia M.",
     "familyName": "Rovera",
-    "affiliation": ["Drexel University"],
+    "affiliation": [{
+      "name": "Drexel University"
+    }],
     "nameIdentifiers": [{
       "schemeUri": "https://orcid.org",
       "nameIdentifier": "",
