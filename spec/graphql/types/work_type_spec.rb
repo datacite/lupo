@@ -503,7 +503,7 @@ describe WorkType do
   describe "create claim", elasticsearch: true, vcr: true do
     let(:query) do
       %(mutation {
-        createClaim(doi: "10.5438/4hr0-d640", id: "d140d44e-af70-43ec-a90b-49878a954487", sourceId: "auto_update") {
+        createClaim(doi: "10.5438/4hr0-d640", id: "d140d44e-af70-43ec-a90b-49878a954487", sourceId: "orcid_update") {
           claim {
             id
             state
