@@ -8,8 +8,9 @@ class DataciteDoiSerializer
 
   attributes :doi, :prefix, :suffix, :identifiers, :alternate_identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :view_count, :views_over_time, :download_count, :downloads_over_time, :reference_count, :citation_count, :citations_over_time, :part_count, :part_of_count, :version_count, :version_of_count, :created, :registered, :published, :updated
   attributes :prefix, :suffix, :views_over_time, :downloads_over_time, :citations_over_time, if: Proc.new { |object, params| params && params[:detail] }
-  
+
   belongs_to :client, record_type: :clients
+  belongs_to :provider, record_type: :providers, if: Proc.new { |object, params| params && params[:detail] }
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
   has_many :references, record_type: :dois, serializer: DataciteDoiSerializer, object_method_name: :indexed_references, if: Proc.new { |object, params| params && params[:detail] }
   has_many :citations, record_type: :dois, serializer: DataciteDoiSerializer, object_method_name: :indexed_citations, if: Proc.new { |object, params| params && params[:detail] }
@@ -38,7 +39,7 @@ class DataciteDoiSerializer
         if params[:affiliation]
           a
         else
-          a["name"] 
+          a["name"]
         end
       end.compact
       c
@@ -53,7 +54,7 @@ class DataciteDoiSerializer
         if params[:affiliation]
           a
         else
-          a["name"] 
+          a["name"]
         end
       end.compact
       c
