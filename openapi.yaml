@@ -1170,7 +1170,16 @@ components:
                       familyName:
                         type: string
                       affiliation:
-                        type: string
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            affiliationIdentifier:
+                              type: string
+                            affiliationIdentifierScheme:
+                              type: string
+                            schemeUri:
+                              type: string
                 titles:
                   type: array
                   items:
@@ -1246,7 +1255,16 @@ components:
                       familyName:
                         type: string
                       affiliation:
-                        type: string
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            affiliationIdentifier:
+                              type: string
+                            affiliationIdentifierScheme:
+                              type: string
+                            schemeUri:
+                              type: string
                       contributorType:
                         type: string
                 dates:
