@@ -139,8 +139,8 @@ describe Organization, type: :model, vcr: true do
       expect(organization.ringgold).to be_nil
     end
 
-    it "not found" do
-      id = "https://doi.org/10.13039/xxx"
+    it "not found in ror" do
+      id = "https://doi.org/10.13039/100011105"
       organizations = Organization.find_by_id(id)
       expect(organizations[:data]).to be_nil
       expect(organizations[:errors]).to be_nil

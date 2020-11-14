@@ -366,14 +366,14 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.results.length > 0 do
+      while response.results.length > 0 do
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
-        break unless response.results.results.length.positive?
+        break unless response.results.length.positive?
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
-        dois = response.results.results.map(&:subj_id).uniq
+        dois = response.results.map(&:subj_id).uniq
         OtherDoiJob.perform_later(dois)
       end
     end
@@ -412,14 +412,14 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.results.length > 0 do
+      while response.results.length > 0 do
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.length > 0
 
         Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
-        dois = response.results.results.map(&:obj_id).uniq
+        dois = response.results.map(&:obj_id).uniq
 
         # use same job for all non-DataCite dois
         OtherDoiJob.perform_later(dois, options)
@@ -442,14 +442,14 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.results.length > 0 do
+      while response.results.length > 0 do
         response = Event.query(query, source_id: source_id, citation_type: citation_type, page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.length > 0
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
-        ids = response.results.results.map(&:uuid).uniq
+        ids = response.results.map(&:uuid).uniq
 
         EventRegistrantUpdateJob.perform_later(ids, options)
       end
@@ -467,14 +467,14 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.results.length > 0 do
+      while response.results.length > 0 do
         response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.length > 0
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
-        ids = response.results.results.map(&:obj_id).uniq
+        ids = response.results.map(&:obj_id).uniq
         OrcidAutoUpdateJob.perform_later(ids, options)
       end
     end
@@ -588,15 +588,15 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total.positive?
-      while response.results.results.length.positive?
+      while response.results.length.positive?
         response = Event.query(nil,  source_id: "datacite-crossref",page: { size: size, cursor: cursor })
-        break unless response.results.results.length.positive?
+        break unless response.results.length.positive?
 
-        Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.warn "[DoubleCheck] Cursor: #{cursor} "
 
-        events = response.results.results.map { |item| { uuid: item.uuid, subj_id: item.subj_id } }
+        events = response.results.map { |item| { uuid: item.uuid, subj_id: item.subj_id } }
         SubjCheckJob.perform_later(events, options)
       end
     end
@@ -611,15 +611,15 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total.positive?
-      while response.results.results.length.positive?
+      while response.results.length.positive?
         response = Event.query(nil, page: { size: size, cursor: cursor })
-        break unless response.results.results.length.positive?
+        break unless response.results.length.positive?
 
-        Rails.logger.info "[modify_nested_objects] modify_nested_objects #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[modify_nested_objects] modify_nested_objects #{response.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "[modify_nested_objects] Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uuid).uniq
+        ids = response.results.map(&:uuid).uniq
         ids.each do |id|
           CamelcaseNestedObjectsByIdJob.perform_later(id, options)
         end
@@ -662,15 +662,15 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total.positive?
-      while response.results.results.length.positive?
+      while response.results.length.positive?
         response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
-        break unless response.results.results.length.positive?
+        break unless response.results.length.positive?
 
-        Rails.logger.info "#{label} #{response.results.results.length} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{response.results.length} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uuid).uniq
+        ids = response.results.map(&:uuid).uniq
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, filter)
         end

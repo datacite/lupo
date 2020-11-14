@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 02 Sep 2020 20:35:12 GMT
+      - Sat, 31 Oct 2020 10:21:13 GMT
       Status:
       - 200 OK
       X-Frame-Options:
@@ -31,22 +31,24 @@ http_interactions:
       Allow:
       - GET, HEAD, OPTIONS
       X-Powered-By:
-      - Phusion Passenger 6.0.5
+      - Phusion Passenger 6.0.6
       Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.5
+      - nginx/1.18.0 + Phusion Passenger 6.0.6
       Vary:
       - Cookie,Origin
       X-Cache:
-      - Miss from cloudfront
+      - Hit from cloudfront
       Via:
-      - 1.1 dc81a30f5f4fc309ae9445723779b894.cloudfront.net (CloudFront)
+      - 1.1 375e9ad5042f2098d2251daf2e517c52.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - DUS51-C1
       X-Amz-Cf-Id:
-      - OYKM9YNEvhcOd8-YXWSVITqHBFOwjkYMY2oMKgOCtbckDfAg8PkPoA==
+      - FSv_LoTM6Mr-A7_EqdcuFzicZdSV-0uG0zkuCvqpkW2pGrKLiXnYQA==
+      Age:
+      - '370'
     body:
       encoding: ASCII-8BIT
-      string: '{"number_of_results":0,"time_taken":3,"items":[],"meta":{"types":[],"countries":[]}}'
+      string: '{"number_of_results":0,"time_taken":8,"items":[],"meta":{"types":[],"countries":[]}}'
     http_version: null
-  recorded_at: Wed, 02 Sep 2020 20:35:12 GMT
+  recorded_at: Sat, 31 Oct 2020 10:27:23 GMT
 recorded_with: VCR 5.1.0

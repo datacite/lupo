@@ -7,6 +7,7 @@ class OldEventsController < ApplicationController
   prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :detect_crawler
   before_action :load_event, only: [:show]
+  before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
 
   def create
@@ -191,6 +192,15 @@ class OldEventsController < ApplicationController
     response = Event.find_by_id(params[:id])
     @event = response.results.first
     fail ActiveRecord::RecordNotFound unless @event.present?
+  end
+
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
+      @include = @include & [:subj, :obj]
+    else
+      @include = []
+    end
   end
 
   private

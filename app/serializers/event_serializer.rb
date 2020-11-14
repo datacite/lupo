@@ -18,4 +18,7 @@ class EventSerializer
   attribute :target_doi do |object|
     object.target_doi.downcase if object.target_doi.present?
   end
+
+  belongs_to :subj, serializer: ObjectSerializer, record_type: :objects
+  belongs_to :obj, serializer: ObjectSerializer, record_type: :objects
 end

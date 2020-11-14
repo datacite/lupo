@@ -1,4 +1,4 @@
-version: '2.1'
+version: "3"
 
 services:
   web:
@@ -20,8 +20,7 @@ services:
     networks:
       - public
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      - elasticsearch
   memcached:
     image: memcached:1.4.31
     networks:
@@ -68,5 +67,4 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 10.0.40.0/24
-        gateway: 10.0.40.1
+        - subnet: 10.0.40.0/24
