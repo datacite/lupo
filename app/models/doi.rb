@@ -1207,7 +1207,7 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     if doi.blank?
-      message = "[MySQL] Error importing DOI " + doi_id + ": not found"
+      message = "[MySQL] Error importing DOI #{doi_id}: not found"
       Rails.logger.error message
       return message
     end
