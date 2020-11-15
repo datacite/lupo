@@ -42,6 +42,8 @@ module Facetable
     "cc-by-nc-nd-4.0" => "CC-BY-NC-ND-4.0",
     "cc-by-nc-sa-3.0" => "CC-BY-NC-SA-3.0",
     "cc-by-nc-sa-4.0" => "CC-BY-NC-SA-4.0",
+    "cc-by-nd-2.0"    => "CC-BY-ND-2.0",
+    "cc-by-nd-3.0"    => "CC-BY-ND-3.0",
     "cc-by-nd-4.0"    => "CC-BY-ND-4.0",
     "cc-by-sa-4.0"    => "CC-BY-SA-4.0",
     "cc-pddc"         => "CC-PDDC",
