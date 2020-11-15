@@ -471,7 +471,21 @@ module Indexable
         if client.indices.exists_alias?(name: alias_name, index: [index_name])
           "Alias #{alias_name} for index #{index_name} already exists."
         else
-          client.indices.put_alias index: index_name, name: alias_name
+          # alias index is writeable unless it is for OtherDoi index
+          client.indices.update_aliases(
+            body: {
+              actions: [
+                {
+                  add: {
+                    index: index_name,
+                    alias: alias_name,
+                    is_write_index: self.name != "OtherDoi"
+                  }
+                }
+              ]
+            }
+          )
+
           "Created alias #{alias_name} for index #{index_name}."          
         end
       # end
@@ -649,7 +663,15 @@ module Indexable
         stats = client.indices.stats index: [active_index, inactive_index], docs: true
         active_index_count = stats.dig("indices", active_index, "primaries", "docs", "count")
         inactive_index_count = stats.dig("indices", inactive_index, "primaries", "docs", "count")
-        database_count = self.all.count
+        
+        # workaround until STI is enabled
+        if self.name == "DataCiteDoi"
+          database_count = self.where(type: "DataCiteDoi").count
+        elsif self.name == "OtherDoi"
+          database_count = self.where(type: "OtherDoi").count
+        else
+          database_count = self.all.count
+        end
 
         "Active index #{active_index} has #{active_index_count} documents, " \
           "inactive index #{inactive_index} has #{inactive_index_count} documents, " \
@@ -658,10 +680,13 @@ module Indexable
     end
 
     # switch between the two indexes, i.e. the index that is aliased
+    # alias index for OtherDoi by default is not writeable, 
+    # as we also have DataciteDoi alias
     def switch_index(options={})
       alias_name = options[:alias] || self.index_name
       index_name = (options[:index] || self.index_name) + "_v1"
       alternate_index_name = (options[:index] || self.index_name) + "_v2"
+      is_write_index = options[:is_write_index] || self.name != "OtherDoi"
 
       client = Elasticsearch::Model.client
 
@@ -669,7 +694,7 @@ module Indexable
         client.indices.update_aliases body: {
           actions: [
             { remove: { index: index_name, alias: alias_name } },
-            { add:    { index: alternate_index_name, alias: alias_name } }
+            { add:    { index: alternate_index_name, alias: alias_name, is_write_index: is_write_index } }
           ]
         }
 

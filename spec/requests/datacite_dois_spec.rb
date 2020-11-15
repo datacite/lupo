@@ -1561,8 +1561,9 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it 'fails to create a Doi' do
         post '/dois', valid_attributes, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(422)
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"url", "title"=>"URL is not allowed by repository domain settings."}])
       end
     end
 

@@ -526,7 +526,7 @@ describe WorkType do
       response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
 
       expect(response.dig("data", "createClaim", "claim", "id")).to eq("d140d44e-af70-43ec-a90b-49878a954487")
-      expect(response.dig("data", "createClaim", "claim", "sourceId")).to eq("auto_update")
+      expect(response.dig("data", "createClaim", "claim", "sourceId")).to eq("orcid_update")
       expect(response.dig("data", "createClaim", "claim", "state")).to eq("failed")
       expect(response.dig("data", "createClaim", "claim", "errorMessages")).to eq([{"title"=>"Missing data"}])
       expect(response.dig("data", "createClaim", "errors")).to be_empty

@@ -18,9 +18,10 @@ class DataciteDoi < Doi
   #   index_name "dois-datacite"
   # end
 
+  # TODO remove query for type once STI is enabled
   def self.import_by_ids(options={})
-    from_id = (options[:from_id] || DataciteDoi.minimum(:id)).to_i
-    until_id = (options[:until_id] || DataciteDoi.maximum(:id)).to_i
+    from_id = (options[:from_id] || DataciteDoi.where(type: "DataciteDoi").minimum(:id)).to_i
+    until_id = (options[:until_id] || DataciteDoi.where(type: "DataciteDoi").maximum(:id)).to_i
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
@@ -45,7 +46,8 @@ class DataciteDoi < Doi
     errors = 0
     count = 0
 
-    DataciteDoi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
+    # TODO remove query for type once STI is enabled
+    DataciteDoi.where(type: "DataciteDoi").where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = DataciteDoi.__elasticsearch__.client.bulk \
         index:   index,
         type:    DataciteDoi.document_type,
@@ -75,7 +77,8 @@ class DataciteDoi < Doi
 
     count = 0
 
-    DataciteDoi.where(id: id..(id + 499)).find_each do |doi|
+    # TODO remove query for type once STI is enabled
+    DataciteDoi.where(type: "DataciteDoi").where(id: id..(id + 499)).find_each do |doi|
       IndexJob.perform_later(doi)
       count += 1
     end

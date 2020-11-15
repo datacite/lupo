@@ -50,9 +50,10 @@ gem "rack-cors", "~> 1.0", require: "rack/cors"
 gem "strip_attributes", "~> 1.8"
 gem "slack-notifier", "~> 2.1"
 gem "mini_magick", "~> 4.8"
-gem "elasticsearch", "~> 7.1.0"
-gem "elasticsearch-model", "~> 7.0", require: "elasticsearch/model"
-gem "elasticsearch-rails", "~> 7.0"
+gem "elasticsearch", "7.5"
+gem 'elasticsearch-transport', '7.5'
+gem 'elasticsearch-model', '~> 7.1', '>= 7.1.1', require: "elasticsearch/model"
+gem 'elasticsearch-rails', '~> 7.1', '>= 7.1.1'
 gem "faraday", "~> 0.17.3"
 gem "faraday_middleware-aws-sigv4", "~> 0.3.0"
 gem "rack-utf8_sanitizer", "~> 1.6"

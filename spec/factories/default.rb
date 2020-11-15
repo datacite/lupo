@@ -244,6 +244,7 @@ FactoryBot.define do
     ]}
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
+    type { "DataciteDoi" }
     regenerate { true }
     created { Faker::Time.backward(14, :evening) }
     minted { Faker::Time.backward(15, :evening) }

@@ -207,7 +207,7 @@ describe DatasetType do
     before do
       Doi.import
       Event.import
-      sleep 2
+      sleep 3
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
