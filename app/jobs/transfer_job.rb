@@ -10,9 +10,13 @@ class TransferJob < ActiveJob::Base
     doi = Doi.where(doi: doi_id).first
 
     if doi.present? && options[:client_target_id].present?
-      doi.update_attributes(datacentre: options[:client_target_id])
+      # Success starts as true because update_attributes only returns false on error.
+      success = true
+      success = doi.update_attributes(datacentre: options[:client_target_id])
 
-      doi.__elasticsearch__.index_document
+      if success
+        self.__elasticsearch__.index_document
+      end
 
       Rails.logger.info "[Transfer] Transferred DOI #{doi.doi}."
     elsif doi.present?

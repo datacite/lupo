@@ -127,6 +127,15 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doi.dig('attributes')).to include('xml')
       end
     end
+
+    it 'returns related provider when detail is enabled', vcr: true do
+      get '/dois?detail=true', nil, headers
+
+      expect(last_response.status).to eq(200)
+      json['data'].each do |doi|
+        expect(doi.dig('relationships', 'provider','data','id')).to eq(provider.symbol.downcase)
+      end
+    end
   end
 
   describe "GET /dois with query", elasticsearch: true do
