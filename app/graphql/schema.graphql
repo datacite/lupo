@@ -4438,12 +4438,12 @@ type Identifier {
   """
   The value of the identifier.
   """
-  identifier: String!
+  identifier: String
 
   """
   The type of identifier.
   """
-  identifierType: String!
+  identifierType: String
 
   """
   The url of the identifier.
