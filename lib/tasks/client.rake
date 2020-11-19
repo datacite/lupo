@@ -36,6 +36,21 @@ namespace :client do
     puts Client.monitor_reindex
   end
 
+  desc "Create alias for clients"
+  task :create_alias => :environment do
+    puts Client.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "List aliases for clients"
+  task :list_aliases => :environment do
+    puts Client.list_aliases
+  end
+
+  desc "Delete alias for clients"
+  task :delete_alias => :environment do
+    puts Client.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
   desc 'Import all clients'
   task :import => :environment do
     Client.import(index: Client.inactive_index)
@@ -75,6 +90,11 @@ namespace :client do
     # import DOIs for client
     puts "#{client.dois.length} DOIs will be imported."
     Doi.import_by_client(client_id: ENV['CLIENT_ID'])
+  end
+
+  desc 'Export doi counts'
+  task :export_doi_counts => :environment do
+    puts Client.export_doi_counts(query: ENV["QUERY"])
   end
 
   desc 'Delete client transferred to other DOI registration agency'
