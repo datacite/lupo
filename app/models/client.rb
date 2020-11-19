@@ -448,6 +448,73 @@ class Client < ActiveRecord::Base
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
+  def self.export_doi_counts(query: nil)
+    begin
+      # Loop through all clients
+      page = { size: 1000, number: 1 }
+      response = self.query(query, page: page)
+      clients = response.results.to_a
+
+      total = response.results.total
+      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+      # keep going for all pages
+      page_num = 2
+      while page_num <= total_pages
+        page = { size: 1000, number: page_num }
+        response = self.query(query, page: page)
+        clients = clients + response.results.to_a
+        page_num += 1
+      end
+
+      # Get doi counts via DOIs query and combine next to clients.
+      response = DataciteDoi.query(nil, page: { size: 0, number: 1 }, totals_agg: "client_export")
+
+      client_totals = {}
+      totals_buckets = response.aggregations.clients_totals.buckets
+      totals_buckets.each do |totals|
+        client_totals[totals["key"]] = {
+          "count" => totals["doc_count"]
+        }
+      end
+
+      headers = [
+        "Repository Name",
+        "Repository ID",
+        "Organization",
+        "doisTotal",
+        "missing"
+      ]
+
+      csv = clients.reduce(headers.to_csv) do |sum, client|
+        db_total = DataciteDoi.where(datacentre: client.id).count
+        es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
+        if db_total - es_total > 0
+          # Limit for salesforce default of max 80 chars
+          name = +client.name.truncate(80)
+          # Clean the name to remove quotes, which can break csv parsers
+          name.gsub! /["']/, ''
+          
+          row = {
+            accountName: name,
+            fabricaAccountId: client.symbol,
+            parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
+            doisCountTotal: db_total,
+            doisMissing: db_total - es_total
+          }.values
+
+          sum += CSV.generate_line row
+        end
+
+        sum
+      end
+
+      logger.warn "Found #{csv.lines.count - 1} repositories with missing DOIs."
+
+      csv
+    end
+  end
+
   protected
 
   def check_issn
