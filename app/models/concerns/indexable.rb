@@ -426,8 +426,8 @@ module Indexable
     # For initial setup run "create_index".
     #
     # Run "upgrade_index" whenever there are changes in the mappings or settings.
-    # Follow this by "import" to fill the new index, the usen "switch_index" to
-    # alias the new index and remove alias from current index.
+    # Follow this by "import" to fill the new index, then use "switch_index" to
+    # alias the new index and remove the previous alias from current index.
     #
     # TODO: automatically switch aliases when "import" is done. Not easy, as "import"
     # runs as background jobs.
