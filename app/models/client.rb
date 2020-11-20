@@ -489,7 +489,7 @@ class Client < ActiveRecord::Base
       csv = clients.reduce(headers.to_csv) do |sum, client|
         db_total = DataciteDoi.where(datacentre: client.id).count
         es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
-        if db_total - es_total > 0
+        if (db_total - es_total) > 0
           # Limit for salesforce default of max 80 chars
           name = +client.name.truncate(80)
           # Clean the name to remove quotes, which can break csv parsers
@@ -502,6 +502,8 @@ class Client < ActiveRecord::Base
             doisCountTotal: db_total,
             doisMissing: db_total - es_total
           }.values
+
+          puts CSV.generate_line row
 
           sum += CSV.generate_line row
         end
