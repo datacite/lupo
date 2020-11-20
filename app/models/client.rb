@@ -486,8 +486,10 @@ class Client < ActiveRecord::Base
         "missing"
       ]
 
+      dois_by_client = DataciteDoi.group(:datacentre).count
+
       csv = clients.reduce(headers.to_csv) do |sum, client|
-        db_total = DataciteDoi.where(datacentre: client.id).count
+        db_total = dois_by_client.dig(client.id).to_i
         es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
         if (db_total - es_total) > 0
           # Limit for salesforce default of max 80 chars
