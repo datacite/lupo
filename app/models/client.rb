@@ -513,8 +513,6 @@ class Client < ActiveRecord::Base
       end
 
       csv = CSV::Table.new(rows, headers: headers)
-      missing_col = csv[:missing]
-      puts missing_col.inspect
 
       logger.warn "Found #{csv.count} repositories with missing DOIs."
 
