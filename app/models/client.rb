@@ -487,8 +487,7 @@ class Client < ActiveRecord::Base
       ]
 
       dois_by_client = DataciteDoi.group(:datacentre).count
-
-      csv = clients.reduce(headers.to_csv) do |sum, client|
+      rows = clients.reduce([]) do |sum, client|
         db_total = dois_by_client.dig(client.id).to_i
         es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
         if (db_total - es_total) > 0
@@ -505,17 +504,21 @@ class Client < ActiveRecord::Base
             doisMissing: db_total - es_total
           }.values
 
-          puts CSV.generate_line row
+          puts CSV.generate_line(row)
 
-          sum += CSV.generate_line row
+          sum << CSV.generate_line(row)
         end
 
         sum
       end
 
-      logger.warn "Found #{csv.lines.count - 1} repositories with missing DOIs."
+      csv = CSV::Table.new(rows, headers: headers)
+      missing_col = csv[:missing]
+      puts missing_col.inspect
 
-      csv
+      logger.warn "Found #{csv.count} repositories with missing DOIs."
+
+      csv.to_csv
     end
   end
 
