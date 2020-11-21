@@ -40,4 +40,4 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push to DockerHub
-        run: docker push
+        run: docker push datacite/lupo
