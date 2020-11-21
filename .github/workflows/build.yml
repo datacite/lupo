@@ -25,6 +25,10 @@ jobs:
           file: ./Dockerfile
           load: true
           tags: lupo:latest
+      - name: Test
+        run: |
+          docker-compose up -d
+          docker-compose exec web bundle exec rspec
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
