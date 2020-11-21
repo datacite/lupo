@@ -31,8 +31,8 @@ jobs:
         run: |
           cp .env.build .env
           docker-compose up -d
-          docker-compose exec web bundle exec rubocop -a || true
-          docker-compose exec web bundle exec rspec
+          docker-compose exec -T web bundle exec rubocop -a || true
+          docker-compose exec -T web bundle exec rspec
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
