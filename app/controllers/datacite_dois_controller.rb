@@ -1,33 +1,33 @@
-require 'uri'
-require 'base64'
-require 'pp'
+require "uri"
+require "base64"
+require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
 
   prepend_before_action :authenticate_user!
-  before_action :set_include, only: [:index, :show, :create, :update]
-  before_action :set_raven_context, only: [:create, :update, :validate]
+  before_action :set_include, only: %i[index show create update]
+  before_action :set_raven_context, only: %i[create update validate]
 
   def index
     sort = case params[:sort]
-           when "name" then { "doi" => { order: 'asc' }}
-           when "-name" then { "doi" => { order: 'desc' }}
-           when "created" then { created: { order: 'asc' }}
-           when "-created" then { created: { order: 'desc' }}
-           when "updated" then { updated: { order: 'asc' }}
-           when "-updated" then { updated: { order: 'desc' }}
-           when "published" then { published: { order: 'asc' }}
-           when "-published" then { published: { order: 'desc' }}
-           when "view-count" then { view_count: { order: 'asc' }}
-           when "-view-count" then { view_count: { order: 'desc' }}
-           when "download-count" then { download_count: { order: 'asc' }}
-           when "-download-count" then { download_count: { order: 'desc' }}
-           when "citation-count" then { citation_count: { order: 'asc' }}
-           when "-citation-count" then { citation_count: { order: 'desc' }}
-           when "relevance" then { "_score": { "order": "desc" }}
-           else { updated: { order: 'desc' }}
+           when "name" then { "doi" => { order: "asc" } }
+           when "-name" then { "doi" => { order: "desc" } }
+           when "created" then { created: { order: "asc" } }
+           when "-created" then { created: { order: "desc" } }
+           when "updated" then { updated: { order: "asc" } }
+           when "-updated" then { updated: { order: "desc" } }
+           when "published" then { published: { order: "asc" } }
+           when "-published" then { published: { order: "desc" } }
+           when "view-count" then { view_count: { order: "asc" } }
+           when "-view-count" then { view_count: { order: "desc" } }
+           when "download-count" then { download_count: { order: "asc" } }
+           when "-download-count" then { download_count: { order: "desc" } }
+           when "citation-count" then { citation_count: { order: "asc" } }
+           when "-citation-count" then { citation_count: { order: "desc" } }
+           when "relevance" then { "_score": { "order": "desc" } }
+           else { updated: { order: "desc" } }
            end
 
     page = page_from_params(params)
@@ -37,65 +37,64 @@ class DataciteDoisController < ApplicationController
                          when "data-center" then "client_id"
                          when "provider" then "provider_id"
                          when "resource-type" then "types.resourceTypeGeneral"
-                         else nil
                          end
 
     # only show findable DOIs to anonymous users and role user
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
     if params[:id].present?
-      response = DataciteDoi.find_by_id(params[:id])
+      response = DataciteDoi.find_by(id: params[:id])
     elsif params[:ids].present?
       response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
       response = DataciteDoi.query(params[:query],
-                          state: params[:state],
-                          exclude_registration_agencies: true,
-                          published: params[:published],
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:provider_id],
-                          consortium_id: params[:consortium_id],
-                          client_id: params[:client_id],
-                          affiliation_id: params[:affiliation_id],
-                          funder_id: params[:funder_id],
-                          re3data_id: params[:re3data_id],
-                          opendoar_id: params[:opendoar_id],
-                          license: params[:license],
-                          certificate: params[:certificate],
-                          prefix: params[:prefix],
-                          user_id: params[:user_id],
-                          resource_type_id: params[:resource_type_id],
-                          resource_type: params[:resource_type],
-                          schema_version: params[:schema_version],
-                          subject: params[:subject],
-                          field_of_science: params[:field_of_science],
-                          has_citations: params[:has_citations],
-                          has_references: params[:has_references],
-                          has_parts: params[:has_parts],
-                          has_part_of: params[:has_part_of],
-                          has_versions: params[:has_versions],
-                          has_version_of: params[:has_version_of],
-                          has_views: params[:has_views],
-                          has_downloads: params[:has_downloads],
-                          has_person: params[:has_person],
-                          has_affiliation: params[:has_affiliation],
-                          has_organization: params[:has_organization],
-                          has_funder: params[:has_funder],
-                          link_check_status: params[:link_check_status],
-                          link_check_has_schema_org: params[:link_check_has_schema_org],
-                          link_check_body_has_pid: params[:link_check_body_has_pid],
-                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                          sample_group: sample_group_field,
-                          sample_size: params[:sample],
-                          source: params[:source],
-                          scroll_id: params[:scroll_id],
-                          page: page,
-                          sort: sort,
-                          random: params[:random])
+                                   state: params[:state],
+                                   exclude_registration_agencies: true,
+                                   published: params[:published],
+                                   created: params[:created],
+                                   registered: params[:registered],
+                                   provider_id: params[:provider_id],
+                                   consortium_id: params[:consortium_id],
+                                   client_id: params[:client_id],
+                                   affiliation_id: params[:affiliation_id],
+                                   funder_id: params[:funder_id],
+                                   re3data_id: params[:re3data_id],
+                                   opendoar_id: params[:opendoar_id],
+                                   license: params[:license],
+                                   certificate: params[:certificate],
+                                   prefix: params[:prefix],
+                                   user_id: params[:user_id],
+                                   resource_type_id: params[:resource_type_id],
+                                   resource_type: params[:resource_type],
+                                   schema_version: params[:schema_version],
+                                   subject: params[:subject],
+                                   field_of_science: params[:field_of_science],
+                                   has_citations: params[:has_citations],
+                                   has_references: params[:has_references],
+                                   has_parts: params[:has_parts],
+                                   has_part_of: params[:has_part_of],
+                                   has_versions: params[:has_versions],
+                                   has_version_of: params[:has_version_of],
+                                   has_views: params[:has_views],
+                                   has_downloads: params[:has_downloads],
+                                   has_person: params[:has_person],
+                                   has_affiliation: params[:has_affiliation],
+                                   has_organization: params[:has_organization],
+                                   has_funder: params[:has_funder],
+                                   link_check_status: params[:link_check_status],
+                                   link_check_has_schema_org: params[:link_check_has_schema_org],
+                                   link_check_body_has_pid: params[:link_check_body_has_pid],
+                                   link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                                   link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                                   link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                                   link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                                   sample_group: sample_group_field,
+                                   sample_size: params[:sample],
+                                   source: params[:source],
+                                   scroll_id: params[:scroll_id],
+                                   page: page,
+                                   sort: sort,
+                                   random: params[:random])
     end
 
     begin
@@ -117,7 +116,7 @@ class DataciteDoisController < ApplicationController
         total_pages = 1
       elsif page[:scroll].present?
         # if scroll_id has expired
-        fail ActiveRecord::RecordNotFound unless response.scroll_id.present?
+        fail ActiveRecord::RecordNotFound if response.scroll_id.blank?
 
         results = response.results
         total = response.total
@@ -139,14 +138,15 @@ class DataciteDoisController < ApplicationController
           next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
             "scroll-id" => response.scroll_id,
             "page[scroll]" => page[:scroll],
-            "page[size]" => page[:size] }.compact.to_query
-          }.compact
+            "page[size]" => page[:size],
+          }.compact.to_query,
+        }.compact
         options[:is_collection] = true
         options[:params] = {
           current_ability: current_ability,
           detail: params[:detail],
           affiliation: params[:affiliation],
-          is_collection: options[:is_collection]
+          is_collection: options[:is_collection],
         }
 
         # sparse fieldsets
@@ -173,7 +173,7 @@ class DataciteDoisController < ApplicationController
         fields_of_science = total.positive? ? facet_by_fos(response.aggregations.fields_of_science.subject.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
         licenses = total.positive? ? facet_by_license(response.aggregations.licenses.buckets) : nil
-        
+
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
         # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
         # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
@@ -250,8 +250,9 @@ class DataciteDoisController < ApplicationController
                 # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                 "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
                 "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-                "page[size]" => page[:size] }.compact.to_query
-              }.compact
+                "page[size]" => page[:size],
+              }.compact.to_query,
+            }.compact
             options[:include] = @include
             options[:is_collection] = true
             options[:params] = {
@@ -280,10 +281,10 @@ class DataciteDoisController < ApplicationController
           format.csv { render request.format.to_sym => response.records.to_a, header: header }
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
@@ -292,8 +293,9 @@ class DataciteDoisController < ApplicationController
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
     # response = DataciteDoi.find_by_id(params[:id])
-    doi = DataciteDoi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+    # workaround until STI is enabled
+    doi = DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
+    fail ActiveRecord::RecordNotFound if doi.blank? || (doi.aasm_state != "findable" && not_allowed_by_doi_and_user(doi: doi, user: current_user))
 
     respond_to do |format|
       format.json do
@@ -336,7 +338,7 @@ class DataciteDoisController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = {
-        :current_ability => current_ability,
+        current_ability: current_ability,
       }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json, status: :ok
@@ -348,6 +350,7 @@ class DataciteDoisController < ApplicationController
 
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
+
     @doi = DataciteDoi.new(safe_params)
 
     # capture username and password for reuse in the handle system
@@ -362,7 +365,7 @@ class DataciteDoisController < ApplicationController
       options[:params] = {
         current_ability: current_ability,
         detail: true,
-        affiliation: params[:affiliation]
+        affiliation: params[:affiliation],
       }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
@@ -395,7 +398,7 @@ class DataciteDoisController < ApplicationController
       end
     else
       doi_id = validate_doi(params[:id])
-      fail ActiveRecord::RecordNotFound unless doi_id.present?
+      fail ActiveRecord::RecordNotFound if doi_id.blank?
 
       @doi = DataciteDoi.new(safe_params.merge(doi: doi_id))
       # capture username and password for reuse in the handle system
@@ -534,7 +537,7 @@ class DataciteDoisController < ApplicationController
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
 
-      @include = @include & [:client, :media]
+      @include = @include & %i[client media]
     else
       @include = []
     end
@@ -543,50 +546,51 @@ class DataciteDoisController < ApplicationController
   private
 
   def safe_params
-    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
 
     # alternateIdentifiers as alias for identifiers
     # easier before strong_parameters are checked
-    params[:data][:attributes][:identifiers] = Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).map do |a|
-      { identifier: a[:alternateIdentifier],
-        identifierType: a[:alternateIdentifierType] }
-    end if params.dig(:data, :attributes).present? && params.dig(:data, :attributes, :identifiers).blank?
+    if params.dig(:data, :attributes).present? && params.dig(:data, :attributes, :identifiers).blank?
+      params[:data][:attributes][:identifiers] = Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).map do |a|
+        { identifier: a[:alternateIdentifier],
+          identifierType: a[:alternateIdentifierType] }
+      end
+    end
 
     attributes = [
       :doi,
       :confirmDoi,
       :url,
       :titles,
-      { titles: [:title, :titleType, :lang] },
+      { titles: %i[title titleType lang] },
       :publisher,
       :publicationYear,
       :created,
       :prefix,
       :suffix,
       :types,
-      { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
+      { types: %i[resourceTypeGeneral resourceType schemaOrg bibtex citeproc ris] },
       :dates,
-      { dates: [:date, :dateType, :dateInformation] },
+      { dates: %i[date dateType dateInformation] },
       :subjects,
-      { subjects: [:subject, :subjectScheme, :schemeUri, :valueUri, :lang] },
+      { subjects: %i[subject subjectScheme schemeUri valueUri lang] },
       :landingPage,
       { landingPage: [
-          :checked,
-          :url,
-          :status,
-          :contentType,
-          :error,
-          :redirectCount,
-          { redirectUrls: [] },
-          :downloadLatency,
-          :hasSchemaOrg,
-          :schemaOrgId,
-          { schemaOrgId: [] },
-          :dcIdentifier,
-          :citationDoi,
-          :bodyHasPid
-        ]
-      },
+        :checked,
+        :url,
+        :status,
+        :contentType,
+        :error,
+        :redirectCount,
+        { redirectUrls: [] },
+        :downloadLatency,
+        :hasSchemaOrg,
+        :schemaOrgId,
+        { schemaOrgId: [] },
+        :dcIdentifier,
+        :citationDoi,
+        :bodyHasPid,
+      ] },
       :contentUrl,
       { contentUrl: [] },
       :sizes,
@@ -595,9 +599,9 @@ class DataciteDoisController < ApplicationController
       { formats: [] },
       :language,
       :descriptions,
-      { descriptions: [:description, :descriptionType, :lang] },
+      { descriptions: %i[description descriptionType lang] },
       :rightsList,
-      { rightsList: [:rights, :rightsUri, :rightsIdentifier, :rightsIdentifierScheme, :schemeUri, :lang] },
+      { rightsList: %i[rights rightsUri rightsIdentifier rightsIdentifierScheme schemeUri lang] },
       :xml,
       :regenerate,
       :source,
@@ -615,28 +619,28 @@ class DataciteDoisController < ApplicationController
       :should_validate,
       :client,
       :creators,
-      { creators: [:nameType, { nameIdentifiers: [:nameIdentifier, :nameIdentifierScheme, :schemeUri] }, :name, :givenName, :familyName, { affiliation: [:name, :affiliationIdentifier, :affiliationIdentifierScheme, :schemeUri] }, :lang] },
+      { creators: [:nameType, { nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri] }, :name, :givenName, :familyName, { affiliation: %i[name affiliationIdentifier affiliationIdentifierScheme schemeUri] }, :lang] },
       :contributors,
-      { contributors: [:nameType, { nameIdentifiers: [:nameIdentifier, :nameIdentifierScheme, :schemeUri] }, :name, :givenName, :familyName, { affiliation: [:name, :affiliationIdentifier, :affiliationIdentifierScheme, :schemeUri] }, :contributorType, :lang] },
+      { contributors: [:nameType, { nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri] }, :name, :givenName, :familyName, { affiliation: %i[name affiliationIdentifier affiliationIdentifierScheme schemeUri] }, :contributorType, :lang] },
       :identifiers,
-      { identifiers: [:identifier, :identifierType] },
+      { identifiers: %i[identifier identifierType] },
       :alternateIdentifiers,
-      { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
+      { alternateIdentifiers: %i[alternateIdentifier alternateIdentifierType] },
       :relatedIdentifiers,
-      { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :relatedMetadataScheme, :schemeUri, :schemeType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
+      { relatedIdentifiers: %i[relatedIdentifier relatedIdentifierType relationType relatedMetadataScheme schemeUri schemeType resourceTypeGeneral relatedMetadataScheme schemeUri schemeType] },
       :fundingReferences,
-      { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
+      { fundingReferences: %i[funderName funderIdentifier funderIdentifierType awardNumber awardUri awardTitle] },
       :geoLocations,
-      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] },
+      { geoLocations: [{ geoLocationPoint: %i[pointLongitude pointLatitude] }, { geoLocationBox: %i[westBoundLongitude eastBoundLongitude southBoundLatitude northBoundLatitude] }, :geoLocationPlace] },
       :container,
-      { container: [:type, :identifier, :identifierType, :title, :volume, :issue, :firstPage, :lastPage] },
+      { container: %i[type identifier identifierType title volume issue firstPage lastPage] },
       :published,
       :downloadsOverTime,
-      { downloadsOverTime: [:yearMonth, :total] },
+      { downloadsOverTime: %i[yearMonth total] },
       :viewsOverTime,
-      { viewsOverTime: [:yearMonth, :total] },
+      { viewsOverTime: %i[yearMonth total] },
       :citationsOverTime,
-      { citationsOverTime: [:year, :total] },
+      { citationsOverTime: %i[year total] },
       :citationCount,
       :downloadCount,
       :partCount,
@@ -646,10 +650,10 @@ class DataciteDoisController < ApplicationController
       :versionOfCount,
       :viewCount,
     ]
-    relationships = [{ client: [data: [:type, :id]] }]
+    relationships = [{ client: [data: %i[type id]] }]
 
     # default values for attributes stored as JSON
-    defaults = { data: { titles: [], descriptions: [], types: {}, container: {}, dates: [], subjects: [], rightsList: [], creators: [], contributors: [], sizes: [], formats: [], contentUrl: [], identifiers: [], relatedIdentifiers: [], fundingReferences: [], geoLocations: [] }}
+    defaults = { data: { titles: [], descriptions: [], types: {}, container: {}, dates: [], subjects: [], rightsList: [], creators: [], contributors: [], sizes: [], formats: [], contentUrl: [], identifiers: [], relatedIdentifiers: [], fundingReferences: [], geoLocations: [] } }
 
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
     client_id = p.dig("relationships", "client", "data", "id") || current_user.try(:client_id)
@@ -660,7 +664,7 @@ class DataciteDoisController < ApplicationController
 
     if xml.present?
       # remove optional utf-8 bom
-      xml.gsub!("\xEF\xBB\xBF", '')
+      xml.gsub!("\xEF\xBB\xBF", "")
 
       # remove leading and trailing whitespace
       xml = xml.strip
@@ -677,15 +681,15 @@ class DataciteDoisController < ApplicationController
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
     p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
-  
+
     # if metadata for DOIs from other registration agencies are not found
     fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
-      p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
-      p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
-      p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
-      p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
+                  p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
+                  p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
+                  p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
+                  p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
     # generate random DOI if no DOI is provided
     # make random DOI predictable in test
@@ -703,13 +707,13 @@ class DataciteDoisController < ApplicationController
       regenerate = true
     end
 
-    p.merge!(xml: xml) if xml.present?
+    p[:xml] = xml if xml.present?
 
-    read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
-      :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
-      :fundingReferences, :geoLocations, :rightsList, :agency,
-      :subjects, :contentUrl, :schemaVersion]
+    read_attrs_keys = %i[url creators contributors titles publisher
+                         publicationYear types descriptions container sizes
+                         formats language dates identifiers relatedIdentifiers
+                         fundingReferences geoLocations rightsList agency
+                         subjects contentUrl schemaVersion]
 
     # merge attributes from xml into regular attributes
     # make sure we don't accidentally set any attributes to nil
@@ -719,12 +723,12 @@ class DataciteDoisController < ApplicationController
 
     # handle version metadata
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
-    
+
     # only update landing_page info if something is received via API to not overwrite existing data
-    p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
-    
+    p[:landing_page] = p[:landingPage] if p[:landingPage].present?
+
     p.merge(
-      regenerate: p[:regenerate] || regenerate
+      regenerate: p[:regenerate] || regenerate,
     ).except(
       # ignore camelCase keys, and read-only keys
       :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers,
@@ -734,7 +738,8 @@ class DataciteDoisController < ApplicationController
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl,
       :viewsOverTime, :downloadsOverTime, :citationsOverTime, :citationCount, :downloadCount,
-      :partCount, :partOfCount, :referenceCount, :versionCount, :versionOfCount, :viewCount)
+      :partCount, :partOfCount, :referenceCount, :versionCount, :versionOfCount, :viewCount
+    )
   end
 
   def set_raven_context

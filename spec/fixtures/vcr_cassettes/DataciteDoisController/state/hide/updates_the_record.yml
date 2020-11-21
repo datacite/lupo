@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: put
-    uri: https://handle.test.datacite.org/api/handles/10.14454/KE89U020Q62IIEZ
+    uri: https://handle.test.datacite.org/api/handles/10.14454/1X4X-9056
     body:
       encoding: UTF-8
       string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
@@ -17,20 +17,20 @@ http_interactions:
       - Basic <HANDLE_TOKEN>
   response:
     status:
-      code: 201
-      message: Created
+      code: 500
+      message: Server Error
     headers:
       Date:
-      - Fri, 23 Oct 2020 21:15:45 GMT
+      - Sat, 21 Nov 2020 12:10:06 GMT
       Content-Type:
       - application/json;charset=UTF-8
+      Content-Length:
+      - '75'
       Connection:
       - keep-alive
-      Vary:
-      - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/KE89U020Q62IIEZ"}'
+      string: '{"responseCode":2,"message":"Internal Error","handle":"10.14454/1X4X-9056"}'
     http_version: null
-  recorded_at: Fri, 23 Oct 2020 21:15:45 GMT
+  recorded_at: Sat, 21 Nov 2020 12:10:06 GMT
 recorded_with: VCR 5.1.0
