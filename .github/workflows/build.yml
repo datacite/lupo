@@ -6,6 +6,8 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      COMPOSE_INTERACTIVE_NO_CLI: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v2
