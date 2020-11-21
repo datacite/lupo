@@ -21,7 +21,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
@@ -59,7 +59,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-      # "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
+  # "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
 
   config.paperclip_defaults = {
     storage: :s3,
@@ -70,13 +70,13 @@ Rails.application.configure do
     preserve_files: true,
     s3_host_name: "s3-eu-west-1.amazonaws.com",
     s3_credentials: {
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      s3_region: ENV['AWS_REGION']
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"],
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
+      s3_region: ENV["AWS_REGION"],
     },
-    bucket: ENV['AWS_S3_BUCKET']
+    bucket: ENV["AWS_S3_BUCKET"],
   }
 
-  require 'flipper/middleware/memoizer'
+  require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
 end

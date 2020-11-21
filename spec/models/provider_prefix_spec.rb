@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe ProviderPrefix, type: :model do
   let(:prefix) { create(:prefix, uid: "10.5083") }

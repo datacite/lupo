@@ -6,7 +6,7 @@ class SoftwareConnectionWithTotalType < BaseConnection
 
   field :total_count, Integer, null: false, cache: true
   field :published, [FacetType], null: true, cache: true
-  field :registration_agencies, [FacetType], null: true, cache: true  
+  field :registration_agencies, [FacetType], null: true, cache: true
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true

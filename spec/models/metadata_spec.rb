@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Metadata, type: :model, vcr: true do
   context "validations" do
@@ -7,10 +7,10 @@ describe Metadata, type: :model, vcr: true do
   end
 
   context "parses xml" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: client) }
-    let(:xml) { file_fixture('datacite.xml').read }
+    let(:xml) { file_fixture("datacite.xml").read }
 
     subject { Metadata.create(xml: xml, doi: doi) }
 
@@ -36,10 +36,10 @@ describe Metadata, type: :model, vcr: true do
   end
 
   context "parses xml namespaces" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: client) }
-    let(:xml) { file_fixture('ns0.xml').read }
+    let(:xml) { file_fixture("ns0.xml").read }
 
     subject { Metadata.create(xml: xml, doi: doi) }
 
@@ -65,10 +65,10 @@ describe Metadata, type: :model, vcr: true do
   end
 
   context "parses invalid xml draft state" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: client, xml: nil) }
-    let(:xml) { file_fixture('datacite_missing_creator.xml').read }
+    let(:xml) { file_fixture("datacite_missing_creator.xml").read }
 
     subject { Metadata.create(xml: xml, doi: doi) }
 

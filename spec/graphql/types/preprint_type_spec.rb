@@ -43,8 +43,8 @@ describe PreprintType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "preprints", "totalCount")).to eq(4)
-      expect(response.dig("data", "preprints", "registrationAgencies")).to eq([{"count"=>2, "id"=>"crossref", "title"=>"Crossref"},
-        {"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "preprints", "registrationAgencies")).to eq([{ "count" => 2, "id" => "crossref", "title" => "Crossref" },
+                                                                               { "count" => 2, "id" => "datacite", "title" => "DataCite" }])
       expect(response.dig("data", "preprints", "nodes").length).to eq(4)
       expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(@dois.first.identifier)
       expect(response.dig("data", "preprints", "nodes", 0, "type")).to eq("Preprint")
@@ -54,15 +54,16 @@ describe PreprintType do
 
   describe "query preprints by person", elasticsearch: true do
     let!(:preprints) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "PostedContent" }, aasm_state: "findable") }
-    let!(:preprint) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "PostedContent" }, aasm_state: "findable", creators:
+    let!(:preprint) do
+      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "PostedContent" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -89,7 +90,7 @@ describe PreprintType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "preprints", "totalCount")).to eq(3)
-      expect(response.dig("data", "preprints", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "preprints", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
       expect(response.dig("data", "preprints", "nodes").length).to eq(3)
       # expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end

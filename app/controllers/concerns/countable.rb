@@ -3,18 +3,18 @@ module Countable
 
   included do
     def doi_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil)
-      if client_id
-        response = DataciteDoi.stats_query(client_id: client_id)
-      elsif provider_id
-        response = DataciteDoi.stats_query(provider_id: provider_id)
-      elsif consortium_id
-        response = DataciteDoi.stats_query(consortium_id: consortium_id)
-      elsif user_id
-        response = DataciteDoi.stats_query(user_id: user_id)
-      else
-        response = DataciteDoi.stats_query
-      end
-      
+      response = if client_id
+                   DataciteDoi.stats_query(client_id: client_id)
+                 elsif provider_id
+                   DataciteDoi.stats_query(provider_id: provider_id)
+                 elsif consortium_id
+                   DataciteDoi.stats_query(consortium_id: consortium_id)
+                 elsif user_id
+                   DataciteDoi.stats_query(user_id: user_id)
+                 else
+                   DataciteDoi.stats_query
+                 end
+
       response.results.total.positive? ? facet_by_year(response.aggregations.created.buckets) : []
     end
 
@@ -76,14 +76,14 @@ module Countable
         response = Client.query(nil, consortium_id: consortium_id, include_deleted: true, page: { number: 1, size: 0 })
       else
         response = Client.query(nil, include_deleted: true, page: { number: 1, size: 0 })
-      end 
+      end
 
       response.results.total.positive? ? facet_by_cumulative_year(response.aggregations.cumulative_years.buckets) : []
     end
 
     # count active clients by provider. Provider can only be deleted when there are no active clients.
     def active_client_count(provider_id: nil)
-      return 0 unless provider_id.present?
+      return 0 if provider_id.blank?
 
       response = Client.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
       response.results.total
@@ -113,7 +113,7 @@ module Countable
       else
         response = DataciteDoi.query(nil, page: { number: 1, size: 0 })
       end
-      
+
       response.results.total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : []
     end
   end

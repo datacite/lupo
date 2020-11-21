@@ -4,14 +4,14 @@ class Funder
 
   def self.find_by_id(id)
     doi = doi_from_url(id)
-    return { errors: [{ "status" => 422, "title" => "Not a valid DOI." }] } unless doi.present?
+    return { errors: [{ "status" => 422, "title" => "Not a valid DOI." }] } if doi.blank?
 
     url = "https://api.crossref.org/funders/#{doi}"
     response = Maremma.get(url, host: true)
 
     return { errors: [{ "status" => 404, "title" => "Not found." }] } if response.status == 404
     return {} if response.status != 200
-    
+
     message = response.body.dig("data", "message")
     data = [parse_message(id: id, message: message)]
 
@@ -20,7 +20,7 @@ class Funder
     { data: data, errors: errors }
   end
 
-  def self.query(query, options={})
+  def self.query(query, options = {})
     rows = options[:limit] || 25
     offset = options[:offset] || 0
 
@@ -40,10 +40,11 @@ class Funder
     meta = { "total" => response.body.dig("data", "message", "total-results") }
     errors = response.body.fetch("errors", nil)
 
-    { 
-      data: data, 
-      meta: meta, 
-      errors: errors }
+    {
+      data: data,
+      meta: meta,
+      errors: errors,
+    }
   end
 
   def self.parse_message(id: nil, message: nil)
@@ -52,18 +53,19 @@ class Funder
       code = c.present? ? c.alpha2 : nil
       country = {
         "code" => code,
-        "name" => message["location"]
+        "name" => message["location"],
       }
     else
       country = nil
     end
-    
-    Hashie::Mash.new({
+
+    Hashie::Mash.new(
       id: id,
       type: "Funder",
       name: message["name"],
       alternate_name: message["alt-names"],
       country: country,
-      date_modified: "2019-04-18T00:00:00Z" })
+      date_modified: "2019-04-18T00:00:00Z",
+    )
   end
 end

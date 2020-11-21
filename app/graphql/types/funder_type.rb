@@ -153,27 +153,27 @@ class FunderType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def data_management_plans(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def works(**args)
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def view_count

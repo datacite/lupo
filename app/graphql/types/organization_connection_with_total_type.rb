@@ -11,7 +11,7 @@ class OrganizationConnectionWithTotalType < BaseConnection
     { "id" => "2017", "title" => "2017", "count" => 80248 },
     { "id" => "2018", "title" => "2018", "count" => 11392 },
     { "id" => "2019", "title" => "2019", "count" => 6179 },
-  ]
+  ].freeze
 
   field :total_count, Integer, null: false, cache: true
   field :years, [FacetType], null: true, cache: true

@@ -26,15 +26,16 @@ describe PersonType do
 
   describe "find person", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+    let(:doi) do
+      create(:doi, client: client, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
     let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
@@ -112,16 +113,16 @@ describe PersonType do
       expect(response.dig("data", "person", "familyName")).to eq("Garza")
       expect(response.dig("data", "person", "alternateName")).to eq(["Kristian Javier Garza Gutierrez"])
       expect(response.dig("data", "person", "description")).to be_nil
-      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}, {"name"=>"github", "url"=>"https://github.com/kjgarza"}])
-      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub", "identifierUrl"=>"https://github.com/kjgarza"}])
-      expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
-      expect(response.dig("data", "person", "employment")).to eq([{"endDate"=>nil, "organizationId"=>nil, "organizationName"=>"DataCite", "roleTitle"=>"Application Developer", "startDate"=>"2016-08-01T00:00:00Z"}])
+      expect(response.dig("data", "person", "links")).to eq([{ "name" => "Mendeley profile", "url" => "https://www.mendeley.com/profiles/kristian-g/" }, { "name" => "github", "url" => "https://github.com/kjgarza" }])
+      expect(response.dig("data", "person", "identifiers")).to eq([{ "identifier" => "kjgarza", "identifierType" => "GitHub", "identifierUrl" => "https://github.com/kjgarza" }])
+      expect(response.dig("data", "person", "country")).to eq("id" => "DE", "name" => "Germany")
+      expect(response.dig("data", "person", "employment")).to eq([{ "endDate" => nil, "organizationId" => nil, "organizationName" => "DataCite", "roleTitle" => "Application Developer", "startDate" => "2016-08-01T00:00:00Z" }])
       expect(response.dig("data", "person", "citationCount")).to eq(2)
       expect(response.dig("data", "person", "viewCount")).to eq(0)
       expect(response.dig("data", "person", "downloadCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
-      expect(response.dig("data", "person", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "person", "works", "resourceTypes")).to eq([{"count"=>1, "id"=>"dataset", "title"=>"Dataset"}])
+      expect(response.dig("data", "person", "works", "published")).to eq([{ "count" => 1, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "person", "works", "resourceTypes")).to eq([{ "count" => 1, "id" => "dataset", "title" => "Dataset" }])
       expect(response.dig("data", "person", "works", "nodes").length).to eq(1)
 
       work = response.dig("data", "person", "works", "nodes", 0)
@@ -173,26 +174,27 @@ describe PersonType do
       expect(response.dig("data", "person", "familyName")).to eq("Fenner")
       expect(response.dig("data", "person", "alternateName")).to eq(["Martin Hellmut Fenner"])
       expect(response.dig("data", "person", "description")).to eq("Martin Fenner is the DataCite Technical Director since 2015. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
-      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Twitter", "url"=>"http://twitter.com/mfenner"}])
-      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"7006600825",
-        "identifierType"=>"Scopus Author ID",
-        "identifierUrl"=>
-        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},
-       {"identifier"=>"000000035060549X",
-        "identifierType"=>"ISNI",
-        "identifierUrl"=>"http://isni.org/000000035060549X"},
-       {"identifier"=>"mfenner",
-        "identifierType"=>"GitHub",
-        "identifierUrl"=>"https://github.com/mfenner"}])
-      expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
+      expect(response.dig("data", "person", "links")).to eq([{ "name" => "Twitter", "url" => "http://twitter.com/mfenner" }])
+      expect(response.dig("data", "person", "identifiers")).to eq([{ "identifier" => "7006600825",
+                                                                     "identifierType" => "Scopus Author ID",
+                                                                     "identifierUrl" =>
+        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS" },
+                                                                   { "identifier" => "000000035060549X",
+                                                                     "identifierType" => "ISNI",
+                                                                     "identifierUrl" => "http://isni.org/000000035060549X" },
+                                                                   { "identifier" => "mfenner",
+                                                                     "identifierType" => "GitHub",
+                                                                     "identifierUrl" => "https://github.com/mfenner" }])
+      expect(response.dig("data", "person", "country")).to eq("id" => "DE", "name" => "Germany")
       expect(response.dig("data", "person", "employment")).to eq([
-        {"organizationId"=>"https://grid.ac/institutes/grid.475826.a","organizationName"=>"DataCite", "roleTitle"=>"Technical Director", "startDate"=>"2015-08-01T00:00:00Z", "endDate"=>nil},
-{ "organizationId"=>"https://grid.ac/institutes/grid.10423.34",
-  "organizationName"=>"Hannover Medical School",
-  "roleTitle"=>"Clinical Fellow in Hematology and Oncology", "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z"},
-{"organizationId"=>nil, "organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z"},
-{"organizationId"=>nil, "organizationName"=>"Charité Universitätsmedizin Berlin",
-  "roleTitle"=>"Resident in Internal Medicine","startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z"}])
+                                                                   { "organizationId" => "https://grid.ac/institutes/grid.475826.a", "organizationName" => "DataCite", "roleTitle" => "Technical Director", "startDate" => "2015-08-01T00:00:00Z", "endDate" => nil },
+                                                                   { "organizationId" => "https://grid.ac/institutes/grid.10423.34",
+                                                                     "organizationName" => "Hannover Medical School",
+                                                                     "roleTitle" => "Clinical Fellow in Hematology and Oncology", "startDate" => "2005-11-01T00:00:00Z", "endDate" => "2017-05-01T00:00:00Z" },
+                                                                   { "organizationId" => nil, "organizationName" => "Public Library of Science", "roleTitle" => "Technical lead article-level metrics project (contractor)", "startDate" => "2012-04-01T00:00:00Z", "endDate" => "2015-07-01T00:00:00Z" },
+                                                                   { "organizationId" => nil, "organizationName" => "Charité Universitätsmedizin Berlin",
+                                                                     "roleTitle" => "Resident in Internal Medicine", "startDate" => "1998-09-01T00:00:00Z", "endDate" => "2005-10-01T00:00:00Z" },
+                                                                 ])
     end
   end
 
@@ -250,7 +252,7 @@ describe PersonType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
-      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"Record not found", "path"=>["person"]}])
+      expect(response.dig("errors")).to eq([{ "locations" => [{ "column" => 9, "line" => 2 }], "message" => "Record not found", "path" => ["person"] }])
     end
   end
 
@@ -308,7 +310,7 @@ describe PersonType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
-      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"409 Conflict: The ORCID record is locked and cannot be edited. ORCID https://orcid.org/0000-0003-1315-5960", "path"=>["person"]}])
+      expect(response.dig("errors")).to eq([{ "locations" => [{ "column" => 9, "line" => 2 }], "message" => "409 Conflict: The ORCID record is locked and cannot be edited. ORCID https://orcid.org/0000-0003-1315-5960", "path" => ["person"] }])
     end
   end
 
@@ -330,8 +332,8 @@ describe PersonType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "people", "totalCount")).to eq(9688620)
-      expect(response.dig("data", "people", "years").first).to eq("count"=>44270, "id"=>"2012", "title"=>"2012")
-      expect(response.dig("data", "people", "years").last).to eq("count"=>1767011, "id"=>"2020", "title"=>"2020")
+      expect(response.dig("data", "people", "years").first).to eq("count" => 44270, "id" => "2012", "title" => "2012")
+      expect(response.dig("data", "people", "years").last).to eq("count" => 1767011, "id" => "2020", "title" => "2020")
     end
   end
 
@@ -368,7 +370,7 @@ describe PersonType do
 
       expect(response.dig("data", "people", "totalCount")).to eq(262)
       expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("NQ")
-      #expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
+      # expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "people", "nodes").length).to eq(50)
 
       person = response.dig("data", "people", "nodes", 0)

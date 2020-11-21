@@ -11,24 +11,18 @@ class ClientSerializer
   has_many :prefixes, record_type: :prefixes
 
   attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+    object.is_active.getbyte(0) == 1
   end
 
   attribute :has_password do |object|
     object.password.present?
   end
 
-  attribute :contact_email do |object|
-    object.system_email
-  end
+  attribute :contact_email, &:system_email
 
-  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
-    object.salesforce_id
-  end
+  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true }, &:salesforce_id
 
-  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.globus_uuid
-  end
+  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:globus_uuid
 
   attribute :re3data do |object|
     "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?

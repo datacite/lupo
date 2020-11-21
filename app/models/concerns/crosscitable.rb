@@ -30,8 +30,8 @@ module Crosscitable
       @meta || {}
     end
 
-    def parse_xml(input, options={})
-      return {} unless input.present?
+    def parse_xml(input, options = {})
+      return {} if input.blank?
 
       # check whether input is id and we need to fetch the content
       id = normalize_id(input, sandbox: sandbox)
@@ -46,7 +46,7 @@ module Crosscitable
         from = find_from_format(string: input)
       end
 
-      meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
+      meta = from.present? ? send("read_" + from, string: input, doi: options[:doi], sandbox: sandbox).compact : {}
       meta.merge("string" => input, "from" => from)
     rescue NoMethodError, ArgumentError => e
       Raven.capture_exception(e)
@@ -57,7 +57,7 @@ module Crosscitable
       {}
     end
 
-    def replace_doi(input, options={})
+    def replace_doi(input, options = {})
       return input if options[:doi].blank?
 
       doc = Nokogiri::XML(input, nil, "UTF-8", &:noblanks)
@@ -94,37 +94,37 @@ module Crosscitable
 
     def clean_xml(string)
       begin
-        return nil unless string.present?
+        return nil if string.blank?
 
         # enforce utf-8
         string = string.force_encoding("UTF-8")
-      rescue ArgumentError, Encoding::CompatibilityError => exception
+      rescue ArgumentError, Encoding::CompatibilityError => e
         # convert utf-16 to utf-8
-        string = string.force_encoding('UTF-16').encode('UTF-8')
+        string = string.force_encoding("UTF-16").encode("UTF-8")
         string.gsub!('encoding="UTF-16"', 'encoding="UTF-8"')
       end
 
       # remove optional bom
-      string.gsub!("\xEF\xBB\xBF", '')
+      string.gsub!("\xEF\xBB\xBF", "")
 
       # remove leading and trailing whitespace
       string = string.strip
 
       # handle missing <?xml version="1.0" ?> and additional namespace
-      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ') || /\A<.+:resource/.match(string)
+      return nil unless string.start_with?("<?xml version=", "<resource ") || /\A<.+:resource/.match(string)
 
       # make sure xml is valid
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
-    rescue ArgumentError, Encoding::CompatibilityError => exception
-      Rails.logger.error "Error " + exception.message + "."
-      Rails.logger.error exception
+    rescue ArgumentError, Encoding::CompatibilityError => e
+      Rails.logger.error "Error " + e.message + "."
+      Rails.logger.error e
 
       nil
     end
 
     def well_formed_xml(string)
-      return nil unless string.present?
+      return nil if string.blank?
 
       from_xml(string) || from_json(string)
 
@@ -132,7 +132,7 @@ module Crosscitable
     end
 
     def from_xml(string)
-      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
+      return nil unless string.start_with?("<?xml version=", "<resource ")
 
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
@@ -157,7 +157,7 @@ module Crosscitable
       begin
         JSON.parse(string)
         "json"
-      rescue
+      rescue StandardError
         "string"
       end
     end

@@ -6,8 +6,9 @@ class OrganizationType < BaseObject
     "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
     "ROLE_ALLOCATOR" => "direct_member",
     "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",
-    "ROLE_MEMBER" => "member_only" }
-  
+    "ROLE_MEMBER" => "member_only",
+  }.freeze
+
   implements ActorItem
 
   description "Information about organizations"
@@ -174,8 +175,8 @@ class OrganizationType < BaseObject
 
   def member
     m = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil).where(ror_id: object.id).first
-    return {} unless m.present?
-  
+    return {} if m.blank?
+
     { "member_id" => m.symbol.downcase,
       "member_role_id" => MEMBER_ROLES[m.role_name],
       "member_role_name" => MEMBER_ROLES[m.role_name].titleize }
@@ -194,40 +195,40 @@ class OrganizationType < BaseObject
   end
 
   def geolocation
-    { "pointLongitude" => object.dig("geolocation", "longitude"), 
+    { "pointLongitude" => object.dig("geolocation", "longitude"),
       "pointLatitude" => object.dig("geolocation", "latitude") }
   end
 
   def identifiers
-    object.fundref.map { |o| { "identifierType" => "fundref", "identifier" => o } } + 
-    Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
-    Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
-    object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } }
+    object.fundref.map { |o| { "identifierType" => "fundref", "identifier" => o } } +
+      Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } +
+      Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } +
+      object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } }
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def data_management_plans(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def works(**args)
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def people(**args)
@@ -238,7 +239,7 @@ class OrganizationType < BaseObject
     query = ["(#{org_query})", query_query].compact.join(" AND ")
 
     response = Person.query(query, limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
-    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
+    HashConnection.new(response, context: context, first: args[:first], after: args[:after])
   end
 
   def view_count

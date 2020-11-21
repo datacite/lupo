@@ -1,21 +1,20 @@
 class OldEventsController < ApplicationController
-
   include Identifiable
 
   include Facetable
 
-  prepend_before_action :authenticate_user!, except: [:index, :show]
+  prepend_before_action :authenticate_user!, except: %i[index show]
   before_action :detect_crawler
   before_action :load_event, only: [:show]
-  before_action :set_include, only: [:index, :show, :create, :update]
+  before_action :set_include, only: %i[index show create update]
   authorize_resource only: [:destroy]
 
   def create
-    @event = Event.where(subj_id: safe_params[:subj_id])
-                  .where(obj_id: safe_params[:obj_id])
-                  .where(source_id: safe_params[:source_id])
-                  .where(relation_type_id: safe_params[:relation_type_id])
-                  .first
+    @event = Event.where(subj_id: safe_params[:subj_id]).
+      where(obj_id: safe_params[:obj_id]).
+      where(source_id: safe_params[:source_id]).
+      where(relation_type_id: safe_params[:relation_type_id]).
+      first
     exists = @event.present?
 
     # create event if it doesn't exist already
@@ -23,7 +22,7 @@ class OldEventsController < ApplicationController
 
     authorize! :create, @event
 
-    if @event.update_attributes(safe_params)
+    if @event.update(safe_params)
       options = {}
       options[:is_collection] = false
 
@@ -39,11 +38,11 @@ class OldEventsController < ApplicationController
     exists = @event.present?
 
     # create event if it doesn't exist already
-    @event = Event.new(safe_params.except(:format)) unless @event.present?
+    @event = Event.new(safe_params.except(:format)) if @event.blank?
 
     authorize! :update, @event
 
-    if @event.update_attributes(safe_params)
+    if @event.update(safe_params)
       options = {}
       options[:is_collection] = false
 
@@ -63,23 +62,23 @@ class OldEventsController < ApplicationController
 
   def index
     sort = case params[:sort]
-           when "relevance" then { "_score" => { order: 'desc' }}
-           when "obj_id" then { "obj_id" => { order: 'asc' }}
-           when "-obj_id" then { "obj_id" => { order: 'desc' }}
-           when "total" then { "total" => { order: 'asc' }}
-           when "-total" then { "total" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
-           when "updated" then { updated_at: { order: 'asc' }}
-           when "relation_type_id" then { relation_type_id: { order: 'asc' }}
-           when "-updated" then { updated_at: { order: 'desc' }}
-           else { updated_at: { order: 'asc' }}
+           when "relevance" then { "_score" => { order: "desc" } }
+           when "obj_id" then { "obj_id" => { order: "asc" } }
+           when "-obj_id" then { "obj_id" => { order: "desc" } }
+           when "total" then { "total" => { order: "asc" } }
+           when "-total" then { "total" => { order: "desc" } }
+           when "created" then { created_at: { order: "asc" } }
+           when "-created" then { created_at: { order: "desc" } }
+           when "updated" then { updated_at: { order: "asc" } }
+           when "relation_type_id" then { relation_type_id: { order: "asc" } }
+           when "-updated" then { updated_at: { order: "desc" } }
+           else { updated_at: { order: "asc" } }
            end
 
     page = page_from_params(params)
 
     if params[:id].present?
-      response = Event.find_by_id(params[:id])
+      response = Event.find_by(id: params[:id])
     elsif params[:ids].present?
       response = Event.find_by_ids(params[:ids], page: page, sort: sort)
     else
@@ -123,8 +122,9 @@ class OldEventsController < ApplicationController
         next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
           "scroll-id" => response.scroll_id,
           "page[scroll]" => page[:scroll],
-          "page[size]" => page[:size] }.compact.to_query
-        }.compact
+          "page[size]" => page[:size],
+        }.compact.to_query,
+      }.compact
       options[:is_collection] = true
 
       render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
@@ -146,7 +146,7 @@ class OldEventsController < ApplicationController
         prefixes: prefixes,
         "citation-types" => citation_types,
         "relation-types" => relation_types,
-        registrants: registrants
+        registrants: registrants,
       }.compact
 
       options[:links] = {
@@ -168,8 +168,9 @@ class OldEventsController < ApplicationController
           "year-month" => params[:year_month],
           "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
           "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-          "page[size]" => page[:size] }.compact.to_query
-        }.compact
+          "page[size]" => page[:size],
+        }.compact.to_query,
+      }.compact
       options[:is_collection] = true
 
       render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
@@ -189,15 +190,15 @@ class OldEventsController < ApplicationController
   protected
 
   def load_event
-    response = Event.find_by_id(params[:id])
+    response = Event.find_by(id: params[:id])
     @event = response.results.first
-    fail ActiveRecord::RecordNotFound unless @event.present?
+    fail ActiveRecord::RecordNotFound if @event.blank?
   end
 
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:subj, :obj]
+      @include = @include & %i[subj obj]
     else
       @include = []
     end

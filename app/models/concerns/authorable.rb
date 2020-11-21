@@ -5,12 +5,12 @@ module Authorable
 
   included do
     IDENTIFIER_SCHEME_URIS = {
-      "ORCID" => "https://orcid.org/"
-    }
+      "ORCID" => "https://orcid.org/",
+    }.freeze
 
     # parse author string into CSL format
     # only assume personal name when using sort-order: "Turing, Alan"
-    def get_one_author(author, options = {})
+    def get_one_author(author, _options = {})
       return { "literal" => "" } if author.strip.blank?
 
       author = cleanup_author(author)
@@ -32,8 +32,8 @@ module Authorable
 
       # titleize strings
       # remove non-standard space characters
-      author.my_titleize
-            .gsub(/[[:space:]]/, ' ')
+      author.my_titleize.
+        gsub(/[[:space:]]/, " ")
     end
 
     def is_personal_name?(author)
@@ -44,7 +44,7 @@ module Authorable
     end
 
     # parse array of author strings into CSL format
-    def get_authors(authors, options={})
+    def get_authors(authors, options = {})
       Array(authors).map { |author| get_one_author(author, options) }
     end
 
@@ -70,14 +70,14 @@ module Authorable
         scheme = n.fetch("nameIdentifierScheme", nil)
         scheme_uri = n.fetch("schemeURI", nil) || IDENTIFIER_SCHEME_URIS.fetch(scheme, "https://orcid.org")
         scheme_uri = "https://orcid.org/" if validate_orcid_scheme(scheme_uri)
-        scheme_uri << '/' unless scheme_uri.present? && scheme_uri.end_with?('/')
+        scheme_uri << "/" unless scheme_uri.present? && scheme_uri.end_with?("/")
 
         identifier = n.fetch("__content__", nil)
-        if scheme_uri == "https://orcid.org/"
-          identifier = validate_orcid(identifier)
-        else
-          identifier = identifier.gsub(" ", "-")
-        end
+        identifier = if scheme_uri == "https://orcid.org/"
+                       validate_orcid(identifier)
+                     else
+                       identifier.gsub(" ", "-")
+                     end
 
         if identifier.present? && scheme_uri.present?
           sum << scheme_uri + identifier
@@ -88,8 +88,7 @@ module Authorable
 
       # return array of name identifiers, ORCID ID is first element if multiple
       name_identifiers.select { |n| n.start_with?("https://orcid.org") } +
-      name_identifiers.reject { |n| n.start_with?("https://orcid.org") }
+        name_identifiers.reject { |n| n.start_with?("https://orcid.org") }
     end
-
   end
 end

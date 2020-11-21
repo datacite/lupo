@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
     error_response("Wrong grant type.") && return if safe_params[:grant_type] != "password"
     error_response("Missing account ID or password.") && return if
       safe_params[:username].blank? || safe_params[:username] == "undefined" ||
-      safe_params[:password].blank? || safe_params[:password] == "undefined"
+        safe_params[:password].blank? || safe_params[:password] == "undefined"
 
     credentials = User.encode_auth_param(username: safe_params[:username], password: safe_params[:password])
     user = User.new(credentials, type: "basic")
@@ -11,17 +11,17 @@ class SessionsController < ApplicationController
     error_response(user.errors) && return if user.errors.present?
     error_response("Wrong account ID or password.") && return if user.role_id == "anonymous"
 
-    render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
+    render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: :ok
   end
 
   def create_oidc_token
     error_response("Missing token.") && return if
-    safe_params[:token].blank? || safe_params[:token] == "undefined" 
+    safe_params[:token].blank? || safe_params[:token] == "undefined"
 
     user = User.new(safe_params[:token], type: "oidc")
     error_response(user.errors) && return if user.errors.present?
 
-    render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
+    render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: :ok
   end
 
   def reset

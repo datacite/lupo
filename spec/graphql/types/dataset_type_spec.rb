@@ -47,47 +47,50 @@ describe DatasetType do
   end
 
   describe "query datasets by person", elasticsearch: true do
-    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable", creators:
+    let!(:datasets) do
+      create_list(:doi, 3, aasm_state: "findable", creators:
       [{
         "nameType": "Personal",
         "name": "Renaud, François",
         "givenName": "François",
-        "familyName": "Renaud", "nameIdentifiers": 
+        "familyName": "Renaud", "nameIdentifiers":
           [{
             "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
             "nameIdentifierScheme": "ORCID",
             "schemeUri": "https://orcid.org",
           }],
-        "affiliation": 
+        "affiliation":
           [{
             "name": "DataCite",
             "affiliationIdentifier": "https://ror.org/04wxnsj81",
             "affiliationIdentifierScheme": "ROR",
           }]
       },
-      { 
-        "nameType": "Organizational",
-        "name": "Crossref",
-        "nameIdentifiers": 
-          [{
-            "nameIdentifier": "https://ror.org/02twcfp32",
-            "nameIdentifierScheme": "ROR",
-            "schemeUri": "https://ror.org",
-          }]
-      }]) }
-    let!(:dataset) { create(:doi, doi: "10.14454/4k3m-nyvg", url: "https://example.org", aasm_state: "findable", creators:
+       {
+         "nameType": "Organizational",
+         "name": "Crossref",
+         "nameIdentifiers":
+           [{
+             "nameIdentifier": "https://ror.org/02twcfp32",
+             "nameIdentifierScheme": "ROR",
+             "schemeUri": "https://ror.org",
+           }],
+       }])
+    end
+    let!(:dataset) do
+      create(:doi, doi: "10.14454/4k3m-nyvg", url: "https://example.org", aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }], identifiers: [
-        { "identifier" => "pk-1235", "identifierType" => "publisher ID"},
-        { "identifier" => "https://example.org", "identifierType" => "URL"},
-        { "identifier" => "10.14454/4k3m-nyvg", "identifierType" => "DOI"},
+        { "identifier" => "pk-1235", "identifierType" => "publisher ID" },
+        { "identifier" => "https://example.org", "identifierType" => "URL" },
+        { "identifier" => "10.14454/4k3m-nyvg", "identifierType" => "DOI" },
       ])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -127,27 +130,28 @@ describe DatasetType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(1)
-      expect(response.dig("data", "datasets", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "datasets", "published")).to eq([{ "count" => 1, "id" => "2011", "title" => "2011" }])
       # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois[2].uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(1)
       # expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq([{"id"=>"https://orcid.org/0000-0003-3484-6875",
-        "name"=>"Garza, Kristian",
-        "type"=>"Person"}])
-      expect(response.dig("data", "datasets", "nodes", 0, "identifiers")).to eq([{"identifier"=>"pk-1235", "identifierType"=>"publisher ID"}])
+      expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq([{ "id" => "https://orcid.org/0000-0003-3484-6875",
+                                                                                "name" => "Garza, Kristian",
+                                                                                "type" => "Person" }])
+      expect(response.dig("data", "datasets", "nodes", 0, "identifiers")).to eq([{ "identifier" => "pk-1235", "identifierType" => "publisher ID" }])
     end
   end
 
   describe "query datasets by field of science", elasticsearch: true do
     let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
-    let!(:dataset) { create(:doi, aasm_state: "findable", subjects:
+    let!(:dataset) do
+      create(:doi, aasm_state: "findable", subjects:
       [{
         "subject": "FOS: Computer and information sciences",
         "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
-        "subjectScheme": "Fields of Science and Technology (FOS)"
+        "subjectScheme": "Fields of Science and Technology (FOS)",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -186,17 +190,17 @@ describe DatasetType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(1)
-      expect(response.dig("data", "datasets", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "datasets", "fieldsOfScience")).to eq([{"count"=>1, "id"=>"computer_and_information_sciences", "title"=>"Computer and information sciences"}])
+      expect(response.dig("data", "datasets", "published")).to eq([{ "count" => 1, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "datasets", "fieldsOfScience")).to eq([{ "count" => 1, "id" => "computer_and_information_sciences", "title" => "Computer and information sciences" }])
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(dataset.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(dataset.identifier)
-      expect(response.dig("data", "datasets", "nodes", 0, "fieldsOfScience")).to eq([{"id"=>"computer_and_information_sciences", "name"=>"Computer and information sciences"}])
+      expect(response.dig("data", "datasets", "nodes", 0, "fieldsOfScience")).to eq([{ "id" => "computer_and_information_sciences", "name" => "Computer and information sciences" }])
     end
   end
 
-  describe "query with citations", elasticsearch: true, vcr:true do
+  describe "query with citations", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -245,16 +249,15 @@ describe DatasetType do
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-    # expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
+      # expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
+      #   expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
+      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end
 
-
-  describe "query with views", elasticsearch: true, vcr:true do
+  describe "query with views", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -296,16 +299,16 @@ describe DatasetType do
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(2)
-     # expect(response.dig("data", "datasets", "nodes", 0, "viewCount")).to be > 1
-     # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").length).to be >= 1
-     # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").first.dig('yearMonth')).not_to be_nil
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
-    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
+      # expect(response.dig("data", "datasets", "nodes", 0, "viewCount")).to be > 1
+      # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").length).to be >= 1
+      # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").first.dig('yearMonth')).not_to be_nil
+      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
+      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
+      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end
 
-  describe "query with references", elasticsearch: true, vcr:true do
+  describe "query with references", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, aasm_state: "findable") }
@@ -357,7 +360,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with versions", elasticsearch: true, vcr:true do
+  describe "query with versions", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -408,7 +411,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with version of", elasticsearch: true, vcr:true do
+  describe "query with version of", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -459,7 +462,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with parts", elasticsearch: true, vcr:true do
+  describe "query with parts", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -516,7 +519,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with part of", elasticsearch: true, vcr:true do
+  describe "query with part of", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }

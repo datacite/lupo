@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :graphql do
-  task :dump_schema => :environment do
+  task dump_schema: :environment do
     # Get a string containing the definition in GraphQL IDL:
     schema_defn = LupoSchema.to_definition
     # Choose a place to write the schema dump:

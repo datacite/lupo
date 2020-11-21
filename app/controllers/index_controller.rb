@@ -1,8 +1,8 @@
 class IndexController < ApplicationController
   include ActionController::MimeResponds
-  
+
   def index
-    render plain: ENV['SITE_TITLE']
+    render plain: ENV["SITE_TITLE"]
   end
 
   def show
@@ -12,7 +12,7 @@ class IndexController < ApplicationController
     respond_to do |format|
       format.html do
         # forward to URL registered in handle system for no content negotiation
-        redirect_to doi.url, status: 303
+        redirect_to doi.url, status: :see_other
       end
       format.citation do
         # extract optional style and locale from header
@@ -29,7 +29,7 @@ class IndexController < ApplicationController
     end
   rescue ActionController::UnknownFormat, ActionController::RoutingError
     # forward to URL registered in handle system for unrecognized format
-    redirect_to doi.url, status: 303
+    redirect_to doi.url, status: :see_other
   end
 
   def routing_error
@@ -37,7 +37,7 @@ class IndexController < ApplicationController
   end
 
   def method_not_allowed
-    response.set_header('Allow', 'POST')
+    response.set_header("Allow", "POST")
     render json: { "message": "This endpoint only supports POST requests." }.to_json, status: :method_not_allowed
   end
 end

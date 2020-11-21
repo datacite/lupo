@@ -4,22 +4,14 @@ class MemberSerializer
   set_type :members
   set_id :uid
   # don't cache members, as they use the provider model
-  
+
   attributes :title, :display_title, :description, :member_type, :organization_type, :focus_area, :region, :country, :year, :logo_url, :email, :website, :joined, :created, :updated
 
-  attribute :title do |object|
-    object.name
-  end
+  attribute :title, &:name
 
-  attribute :display_title do |object|
-    object.display_name
-  end
+  attribute :display_title, &:display_name
 
-  attribute :email do |object|
-    object.group_email
-  end
+  attribute :email, &:group_email
 
-  attribute :country do |object|
-    object.country_code
-  end
+  attribute :country, &:country_code
 end

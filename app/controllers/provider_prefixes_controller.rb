@@ -1,23 +1,23 @@
 class ProviderPrefixesController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_provider_prefix, only: [:show, :update, :destroy]
+  before_action :set_provider_prefix, only: %i[show update destroy]
   before_action :set_include
-  authorize_resource :except => [:index, :show]
+  authorize_resource except: %i[index show]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
 
   def index
     sort = case params[:sort]
-           when "name" then { "prefix_id" => { order: 'asc', unmapped_type: "keyword" }}
-           when "-name" then { "prefix_id" => { order: 'desc', unmapped_type: "keyword" }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
-           else { created_at: { order: 'desc' }}
+           when "name" then { "prefix_id" => { order: "asc", unmapped_type: "keyword" } }
+           when "-name" then { "prefix_id" => { order: "desc", unmapped_type: "keyword" } }
+           when "created" then { created_at: { order: "asc" } }
+           when "-created" then { created_at: { order: "desc" } }
+           else { created_at: { order: "desc" } }
            end
 
     page = page_from_params(params)
 
     if params[:id].present?
-      response = ProviderPrefix.find_by_id(params[:id]) 
+      response = ProviderPrefix.find_by(id: params[:id])
     else
       response = ProviderPrefix.query(params[:query],
                                       prefix_id: params[:prefix_id],
@@ -26,7 +26,7 @@ class ProviderPrefixesController < ApplicationController
                                       consortium_organization_id: params[:consortium_organization_id],
                                       state: params[:state],
                                       year: params[:year],
-                                      page: page, 
+                                      page: page,
                                       sort: sort)
     end
 
@@ -52,23 +52,24 @@ class ProviderPrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next: provider_prefixes.blank? ? nil : request.base_url + "/provider_prefixes?" + {
-        query: params[:query],
-        prefix: params[:prefix],
-        year: params[:year],
-        "page[number]" => page[:number] + 1,
-        "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
+          query: params[:query],
+          prefix: params[:prefix],
+          year: params[:year],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort],
+        }.compact.to_query,
       }.compact
       options[:include] = @include
       options[:is_collection] = true
 
       render json: ProviderPrefixSerializer.new(provider_prefixes, options).serialized_json, status: :ok
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Raven.capture_exception(exception)
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      Raven.capture_exception(e)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
@@ -137,7 +138,7 @@ class ProviderPrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:provider, :prefix, :clients, :client_prefixes]
+      @include = @include & %i[provider prefix clients client_prefixes]
     else
       @include = []
     end
@@ -152,7 +153,7 @@ class ProviderPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :provider, :prefix]
+      params, only: %i[id provider prefix]
     )
   end
 end

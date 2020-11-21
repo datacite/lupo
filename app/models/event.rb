@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Event < ActiveRecord::Base
+class Event < ApplicationRecord
   # include helper module for query caching
   include Cacheable
 
@@ -33,7 +33,7 @@ class Event < ActiveRecord::Base
     state :waiting, initial: true
     state :working, :failed, :done
 
-    # Reset after failure
+    #  Reset after failure
     event :reset do
       transitions from: [:failed], to: :waiting
     end
@@ -70,21 +70,21 @@ class Event < ActiveRecord::Base
     "cites", "is-cited-by",
     "is-supplement-to", "is-supplemented-by",
     "references", "is-referenced-by"
-  ]
+  ].freeze
 
   # renamed to make it clearer that these relation types are grouped together as references
   REFERENCE_RELATION_TYPES = [
     "is-cited-by",
     "is-supplement-to",
-    "references"
-  ]
+    "references",
+  ].freeze
 
   # renamed to make it clearer that these relation types are grouped together as citations
   CITATION_RELATION_TYPES = [
-     "cites",
-     "is-supplemented-by",
-     "is-referenced-by"
-  ]
+    "cites",
+    "is-supplemented-by",
+    "is-referenced-by",
+  ].freeze
 
   RELATIONS_RELATION_TYPES = [
     "compiles", "is-compiled-by",
@@ -101,7 +101,7 @@ class Event < ActiveRecord::Base
     "is-obsolete-by",
     "is-new-version-of", "is-previous-version-of",
     "describes", "is-described-by"
-  ]
+  ].freeze
 
   validates :subj_id, :source_id, :source_token, presence: true
 
@@ -111,7 +111,7 @@ class Event < ActiveRecord::Base
   if Rails.env.test?
     index_name "events-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"events-#{ENV["ES_PREFIX"]}"
+    index_name "events-#{ENV['ES_PREFIX']}"
   else
     index_name "events"
   end
@@ -135,7 +135,7 @@ class Event < ActiveRecord::Base
       registrantId: { type: :keyword },
       cache_key: { type: :keyword },
     }
-    indexes :obj,               type: :object, properties: {
+    indexes :obj, type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       uid: { type: :keyword },
@@ -171,7 +171,7 @@ class Event < ActiveRecord::Base
     indexes :cache_key,        type: :keyword
   end
 
-  def as_indexed_json(options = {})
+  def as_indexed_json(_options = {})
     {
       "uuid" => uuid,
       "subj_id" => subj_id,
@@ -223,56 +223,56 @@ class Event < ActiveRecord::Base
     {
       sources: { terms: { field: "source_id", size: 10, min_doc_count: 1 } },
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
-      registrants: { 
-        terms: { 
+      registrants: {
+        terms: {
           field: "registrant_id", size: 10, min_doc_count: 1
-        }, 
-        aggs: { 
-          year: { 
-            date_histogram: { 
-              field: 'occurred_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 
+        },
+        aggs: {
+          year: {
+            date_histogram: {
+              field: "occurred_at", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1
             },
-            aggs: { 
-              bucket_truncate: { 
-                bucket_sort: { size: 10 }
-              }
-            }
-          }
-        }
+            aggs: {
+              bucket_truncate: {
+                bucket_sort: { size: 10 },
+              },
+            },
+          },
+        },
       },
       citation_types: {
         terms: {
           field: "citation_type", size: 10, min_doc_count: 1
         },
-        aggs: { 
+        aggs: {
           year_month: {
             date_histogram: {
-              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+              field: "occurred_at", interval: "month", format: "yyyy-MM", order: { _key: "desc" }, min_doc_count: 1
             },
-            aggs: { 
+            aggs: {
               bucket_truncate: {
-                bucket_sort: { size: 10 }
-              }
-            }
-          }
-        }
+                bucket_sort: { size: 10 },
+              },
+            },
+          },
+        },
       },
-      relation_types: { 
+      relation_types: {
         terms: {
           field: "relation_type_id", size: 10, min_doc_count: 1
-        }, 
+        },
         aggs: {
-          year_month: { 
-            date_histogram: { 
-              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+          year_month: {
+            date_histogram: {
+              field: "occurred_at", interval: "month", format: "yyyy-MM", order: { _key: "desc" }, min_doc_count: 1
             },
-            aggs: { 
-              bucket_truncate: { 
-                bucket_sort: { size: 10 }
-              }
-            }
-          }
-        }
+            aggs: {
+              bucket_truncate: {
+                bucket_sort: { size: 10 },
+              },
+            },
+          },
+        },
       },
     }
   end
@@ -286,17 +286,17 @@ class Event < ActiveRecord::Base
     options[:page][:size] ||= 1000
     options[:sort] ||= { created_at: { order: "asc" } }
 
-    __elasticsearch__.search({
+    __elasticsearch__.search(
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
       size: options.dig(:page, :size),
       sort: [options[:sort]],
       query: {
         terms: {
-          uuid: ids
-        }
+          uuid: ids,
+        },
       },
-      aggregations: query_aggregations
-    })
+      aggregations: query_aggregations,
+    )
   end
 
   def self.import_by_ids(options = {})
@@ -311,28 +311,28 @@ class Event < ActiveRecord::Base
   end
 
   def self.import_by_id(options = {})
-    return nil unless options[:id].present?
+    return nil if options[:id].blank?
 
     id = options[:id].to_i
     index = if Rails.env.test?
-      "events-test"
-    elsif options[:index].present?
-      options[:index]
-    else
-      self.inactive_index
+              "events-test"
+            elsif options[:index].present?
+              options[:index]
+            else
+              inactive_index
     end
     errors = 0
     count = 0
 
     Event.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |events|
       response = Event.__elasticsearch__.client.bulk \
-        index:   index,
-        type:    Event.document_type,
-        body:    events.map { |event| { index: { _id: event.id, data: event.as_indexed_json } } }
+        index: index,
+        type: Event.document_type,
+        body: events.map { |event| { index: { _id: event.id, data: event.as_indexed_json } } }
 
       # log errors
-      errors += response["items"].map { |k, v| k.values.first["error"] }.compact.length
-      response["items"].select { |k, v| k.values.first["error"].present? }.each do |err|
+      errors += response["items"].map { |k, _v| k.values.first["error"] }.compact.length
+      response["items"].select { |k, _v| k.values.first["error"].present? }.each do |err|
         Rails.logger.error "[Elasticsearch] " + err.inspect
       end
 
@@ -344,8 +344,8 @@ class Event < ActiveRecord::Base
     elsif count > 0
       Rails.logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
     end
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    Rails.logger.info "[Elasticsearch] Error #{error.message} importing events with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
+    Rails.logger.info "[Elasticsearch] Error #{e.message} importing events with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -366,7 +366,7 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.length > 0 do
+      while !response.results.empty?
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
         break unless response.results.length.positive?
 
@@ -412,9 +412,9 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.length > 0 do
+      while !response.results.empty?
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
-        break unless response.results.length > 0
+        break if response.results.empty?
 
         Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -442,9 +442,9 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.length > 0 do
+      while !response.results.empty?
         response = Event.query(query, source_id: source_id, citation_type: citation_type, page: { size: size, cursor: cursor })
-        break unless response.results.length > 0
+        break if response.results.empty?
 
         Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -467,9 +467,9 @@ class Event < ActiveRecord::Base
 
     # walk through results using cursor
     if response.results.total > 0
-      while response.results.length > 0 do
+      while !response.results.empty?
         response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: size, cursor: cursor })
-        break unless response.results.length > 0
+        break if response.results.empty?
 
         Rails.logger.info "[Update] Updating #{response.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -482,9 +482,9 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.import_doi(id, options={})
+  def self.import_doi(id, options = {})
     doi_id = validate_doi(id)
-    return nil unless doi_id.present?
+    return nil if doi_id.blank?
 
     # check whether DOI has been stored with DataCite already
     # unless we want to refresh the metadata
@@ -498,7 +498,7 @@ class Event < ActiveRecord::Base
     return nil if ra.blank? || ra == "datacite"
 
     meta = Bolognese::Metadata.new(input: id, from: "crossref")
-    
+
     # if DOi isn't registered yet
     if meta.state == "not_found"
       Rails.logger.error "[Error saving #{ra} DOI #{doi_id}]: DOI not found"
@@ -514,8 +514,9 @@ class Event < ActiveRecord::Base
       "client_id" => 0,
       "source" => "levriero",
       "agency" => ra,
-      "event" => "publish" }
-    
+      "event" => "publish",
+    }
+
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).each do |a|
       params[a] = meta.send(a.to_s)
     end
@@ -539,7 +540,7 @@ class Event < ActiveRecord::Base
     Rails.logger.warn e.message
   end
 
-  def to_param  # overridden, use uuid instead of id
+  def to_param # overridden, use uuid instead of id
     uuid
   end
 
@@ -547,14 +548,14 @@ class Event < ActiveRecord::Base
   def dois_to_import
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact.reduce([]) do |sum, d|
       prefix = d.split("/", 2).first
-      
+
       # ignore Crossref Funder ID
       next sum if prefix == "10.13039"
 
       # ignore DataCite DOIs
       ra = cached_get_doi_ra(prefix).downcase
       next sum if ra.blank? || ra == "datacite"
-      
+
       sum.push d
       sum
     end
@@ -562,19 +563,20 @@ class Event < ActiveRecord::Base
 
   def send_callback
     data = { "data" => {
-               "id" => uuid,
-               "type" => "events",
-               "state" => aasm_state,
-               "errors" => error_messages,
-               "messageAction" => message_action,
-               "sourceToken" => source_token,
-               "total" => total,
-               "timestamp" => timestamp } }
+      "id" => uuid,
+      "type" => "events",
+      "state" => aasm_state,
+      "errors" => error_messages,
+      "messageAction" => message_action,
+      "sourceToken" => source_token,
+      "total" => total,
+      "timestamp" => timestamp,
+    } }
     Maremma.post(callback, data: data.to_json, token: ENV["API_KEY"])
   end
 
   def access_method
-    if relation_type_id.to_s =~ /(requests|investigations)/
+    if /(requests|investigations)/.match?(relation_type_id.to_s)
       relation_type_id.split("-").last if relation_type_id.present?
     end
   end
@@ -589,7 +591,7 @@ class Event < ActiveRecord::Base
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.length.positive?
-        response = Event.query(nil,  source_id: "datacite-crossref",page: { size: size, cursor: cursor })
+        response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
         break unless response.results.length.positive?
 
         Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
@@ -630,9 +632,9 @@ class Event < ActiveRecord::Base
   def self.camelcase_nested_objects(uuid)
     event = Event.find_by(uuid: uuid)
     if event.present?
-      subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
+      subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
       obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
-      event.update_attributes(subj: subj, obj: obj)
+      event.update(subj: subj, obj: obj)
     end
   end
 
@@ -648,7 +650,7 @@ class Event < ActiveRecord::Base
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
   # +query+:: ES query to filter the index
-  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
+  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
   def self.loop_through_events(options)
     size = (options[:size] || 1000).to_i
     cursor = options[:cursor] || []
@@ -679,7 +681,7 @@ class Event < ActiveRecord::Base
   end
 
   def metric_type
-    if relation_type_id.to_s =~ /(requests|investigations)/
+    if /(requests|investigations)/.match?(relation_type_id.to_s)
       arr = relation_type_id.split("-", 4)
       arr[0..2].join("-")
     end
@@ -687,10 +689,10 @@ class Event < ActiveRecord::Base
 
   def doi
     Array.wrap(subj["proxyIdentifiers"]).grep(/\A10\.\d{4,5}\/.+\z/) { $1 } +
-    Array.wrap(obj["proxyIdentifiers"]).grep(/\A10\.\d{4,5}\/.+\z/) { $1 } +
-    Array.wrap(subj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
-    Array.wrap(obj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
-    [doi_from_url(subj_id), doi_from_url(obj_id)].compact
+      Array.wrap(obj["proxyIdentifiers"]).grep(/\A10\.\d{4,5}\/.+\z/) { $1 } +
+      Array.wrap(subj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
+      Array.wrap(obj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
+      [doi_from_url(subj_id), doi_from_url(obj_id)].compact
   end
 
   def prefix
@@ -699,13 +701,13 @@ class Event < ActiveRecord::Base
 
   def orcid
     Array.wrap(subj["author"]).map { |f| orcid_from_url(f["@id"]) }.compact +
-    Array.wrap(obj["author"]).map { |f| orcid_from_url(f["@id"]) }.compact +
-    [orcid_from_url(subj_id), orcid_from_url(obj_id)].compact
+      Array.wrap(obj["author"]).map { |f| orcid_from_url(f["@id"]) }.compact +
+      [orcid_from_url(subj_id), orcid_from_url(obj_id)].compact
   end
 
   def issn
     Array.wrap(subj.dig("periodical", "issn")).compact +
-    Array.wrap(obj.dig("periodical", "issn")).compact
+      Array.wrap(obj.dig("periodical", "issn")).compact
   rescue TypeError
     nil
   end
@@ -729,7 +731,7 @@ class Event < ActiveRecord::Base
   end
 
   def doi_from_url(url)
-    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match(url)
+    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
       uri = Addressable::URI.parse(url)
       uri.path.gsub(/^\//, "").downcase
     end
@@ -784,7 +786,7 @@ class Event < ActiveRecord::Base
 
   def set_source_and_target_doi
     return nil unless subj_id && obj_id
-    
+
     case relation_type_id
     when *REFERENCE_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(subj_id)
@@ -831,12 +833,12 @@ class Event < ActiveRecord::Base
     self.obj_id = normalize_doi(obj_id) || obj_id
 
     # make sure subj and obj have correct id
-    self.subj = subj.to_h.merge("id" => self.subj_id)
-    self.obj = obj.to_h.merge("id" => self.obj_id)
+    self.subj = subj.to_h.merge("id" => subj_id)
+    self.obj = obj.to_h.merge("id" => obj_id)
 
     ### makes keys camel case to match JSONAPI
-    self.subj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) } 
-    self.obj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) }
+    subj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) }
+    obj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) }
 
     self.total = 1 if total.blank?
     self.relation_type_id = "references" if relation_type_id.blank?

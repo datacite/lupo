@@ -39,15 +39,16 @@ describe PeerReviewType do
 
   describe "query peer reviews by person", elasticsearch: true do
     let!(:peer_reviews) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable") }
-    let!(:peer_review) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable", creators:
+    let!(:peer_review) do
+      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -74,7 +75,7 @@ describe PeerReviewType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "peerReviews", "totalCount")).to eq(3)
-      expect(response.dig("data", "peerReviews", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "peerReviews", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
       expect(response.dig("data", "peerReviews", "nodes").length).to eq(3)
       # expect(response.dig("data", "peerReviews", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end

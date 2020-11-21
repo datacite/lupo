@@ -1,4 +1,4 @@
-class OrcidAutoUpdateByIdJob < ActiveJob::Base
+class OrcidAutoUpdateByIdJob < ApplicationJob
   queue_as :lupo_background
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
@@ -6,15 +6,15 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
 
   # discard_on ActiveJob::DeserializationError
 
-  def perform(id, options={})
+  def perform(id, options = {})
     orcid = orcid_from_url(id)
-    return {} unless orcid.present?
+    return {} if orcid.blank?
 
     # check whether ORCID ID has been stored with DataCite already
     # unless we want to refresh the metadata
     unless options[:refresh]
-      result = Researcher.find_by_id(orcid).results.first
-      return {} unless result.blank?
+      result = Researcher.find_by(id: orcid).results.first
+      return {} if result.present?
     end
 
     # otherwise fetch basic ORCID metadata and store with DataCite
@@ -33,13 +33,13 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
     data = {
       "data" => {
         "type" => "researchers",
-        "attributes" => attributes
-      }
+        "attributes" => attributes,
+      },
     }
     url = "http://localhost/researchers/#{orcid}"
-    response = Maremma.put(url, accept: 'application/vnd.api+json', 
-                                content_type: 'application/vnd.api+json',
-                                data: data.to_json, 
+    response = Maremma.put(url, accept: "application/vnd.api+json",
+                                content_type: "application/vnd.api+json",
+                                data: data.to_json,
                                 username: ENV["ADMIN_USERNAME"],
                                 password: ENV["ADMIN_PASSWORD"])
 
@@ -53,18 +53,17 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
   def parse_message(message: nil)
     given_name = message.dig("name", "given-names", "value")
     family_name = message.dig("name", "family-name", "value")
-    if message.dig("name", "credit-name", "value").present?
-      name = message.dig("name", "credit-name", "value")
-    elsif given_name.present? || family_name.present?
-      name = [given_name, family_name].join(" ")
-    else
-      name = nil
-    end
+    name = if message.dig("name", "credit-name", "value").present?
+             message.dig("name", "credit-name", "value")
+           elsif given_name.present? || family_name.present?
+             [given_name, family_name].join(" ")
+           end
 
     {
       "name" => name,
       "givenName" => given_names,
-      "familyName" => family_name }.compact
+      "familyName" => family_name,
+    }.compact
   end
 
   def orcid_from_url(url)

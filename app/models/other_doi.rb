@@ -5,23 +5,23 @@ class OtherDoi < Doi
   if Rails.env.test?
     index_name "dois-other-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"dois-other-#{ENV["ES_PREFIX"]}"
+    index_name "dois-other-#{ENV['ES_PREFIX']}"
   else
     index_name "dois-other"
   end
 
-  def client_id=(value)
+  def client_id=(_value)
     write_attribute(:datacentre, 0)
   end
 
   def set_defaults
-    self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
+    self.is_active = aasm_state == "findable" ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
     self.datacentre = 0
   end
 
-  def self.import_by_ids(options={})
+  def self.import_by_ids(options = {})
     # TODO remove query for type once STI is enabled
     from_id = (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
     until_id = (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
@@ -35,16 +35,16 @@ class OtherDoi < Doi
     (from_id..until_id).to_a.length
   end
 
-  def self.import_by_id(options={})
+  def self.import_by_id(options = {})
     return nil if options[:id].blank?
 
     id = options[:id].to_i
     index = if Rails.env.test?
-              self.index_name
+              index_name
             elsif options[:index].present?
               options[:index]
             else
-              self.inactive_index
+              inactive_index
             end
     errors = 0
     count = 0
@@ -52,12 +52,12 @@ class OtherDoi < Doi
     # TODO remove query for type once STI is enabled
     OtherDoi.where(type: "OtherDoi").where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = OtherDoi.__elasticsearch__.client.bulk \
-        index:   index,
-        type:    OtherDoi.document_type,
-        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+        index: index,
+        type: OtherDoi.document_type,
+        body: dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors_in_response = response["items"].select { |k, _v| k.values.first["error"].present? }
       errors += errors_in_response.length
       errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
@@ -75,8 +75,8 @@ class OtherDoi < Doi
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    Rails.logger.info "[Elasticsearch] Error #{error.message} importing other DOIs with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
+    Rails.logger.info "[Elasticsearch] Error #{e.message} importing other DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -91,20 +91,20 @@ class OtherDoi < Doi
     count
   end
 
-# Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
   # +query+:: ES query to filter the index
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
-  def self.loop_through_dois(options={})
+  def self.loop_through_dois(options = {})
     size = (options[:size] || 1000).to_i
     filter = options[:filter] || {}
     label = options[:label] || ""
     options[:job_name] ||= ""
     query = options[:query].presence
 
-    if options[:cursor].present? 
+    if options[:cursor].present?
       timestamp, doi = options[:cursor].split(",", 2)
       cursor = [timestamp.to_i, doi]
     else

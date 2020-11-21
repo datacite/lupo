@@ -1,4 +1,4 @@
-class AffiliationJob < ActiveJob::Base
+class AffiliationJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(doi_id)
@@ -13,7 +13,7 @@ class AffiliationJob < ActiveJob::Base
         c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
         c
       end
-      doi.update_attributes(creators: new_creators, contributors: new_contributors)
+      doi.update(creators: new_creators, contributors: new_contributors)
 
       doi.__elasticsearch__.index_document
     else

@@ -38,15 +38,16 @@ describe ConferencePaperType do
 
   describe "query conference papers by person", elasticsearch: true do
     let!(:conference_papers) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Conference paper" }, aasm_state: "findable") }
-    let!(:conference_paper) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Conference paper" }, aasm_state: "findable", creators:
+    let!(:conference_paper) do
+      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Conference paper" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -71,7 +72,7 @@ describe ConferencePaperType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "conferencePapers", "totalCount")).to eq(3)
-      expect(response.dig("data", "conferencePapers", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "conferencePapers", "years")).to eq([{ "count" => 3, "id" => "2011" }])
       expect(response.dig("data", "conferencePapers", "nodes").length).to eq(3)
       expect(response.dig("data", "conferencePapers", "nodes", 0, "id")).to eq(conference_papers.first.identifier)
     end

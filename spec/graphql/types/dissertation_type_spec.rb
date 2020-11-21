@@ -47,11 +47,11 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
-      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
-      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{ "count" => 2, "id" => "datacite", "title" => "DataCite" }])
+      expect(response.dig("data", "dissertations", "licenses")).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id" => "datacite", "name" => "DataCite")
     end
   end
 
@@ -99,14 +99,14 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
-      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
-      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{ "count" => 2, "id" => "datacite", "title" => "DataCite" }])
+      expect(response.dig("data", "dissertations", "licenses")).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "dissertations", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
-        "rightsIdentifier"=>"cc0-1.0",
-        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "rights")).to eq([{ "rights" => "Creative Commons Zero v1.0 Universal",
+                                                                                   "rightsIdentifier" => "cc0-1.0",
+                                                                                   "rightsUri" => "https://creativecommons.org/publicdomain/zero/1.0/legalcode" }])
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id" => "datacite", "name" => "DataCite")
     end
   end
 
@@ -153,31 +153,34 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
-      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
-      expect(response.dig("data", "dissertations", "languages")).to eq([{"count"=>2, "id"=>"de", "title"=>"German"}])
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{ "count" => 2, "id" => "datacite", "title" => "DataCite" }])
+      expect(response.dig("data", "dissertations", "languages")).to eq([{ "count" => 2, "id" => "de", "title" => "German" }])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id" => "datacite", "name" => "DataCite")
     end
   end
 
   describe "query dissertations by person", elasticsearch: true do
-    let!(:dissertations) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", contributors: 
+    let!(:dissertations) do
+      create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", contributors:
       [{
         "name" => "Freie Universität Berlin",
         "contributorType" => "HostingInstitution",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://ror.org/046ak2485", "nameIdentifierScheme"=>"ROR", "schemeUri"=>"https://ror.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://ror.org/046ak2485", "nameIdentifierScheme" => "ROR", "schemeUri" => "https://ror.org" }],
         "nameType" => "Organizational",
-      }]) }
-    let!(:dissertation) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", creators:
+      }])
+    end
+    let!(:dissertation) do
+      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -222,17 +225,17 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(3)
-      expect(response.dig("data", "dissertations", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "dissertations", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(3)
       expect(response.dig("data", "dissertations", "nodes", 0, "dataManagers")).to eq([])
-      expect(response.dig("data", "dissertations", "nodes", 0, "hostingInstitution")).to eq([{"contributorType"=>"HostingInstitution",
-        "id"=>"https://ror.org/046ak2485",
-        "name"=>"Freie Universität Berlin",
-        "type"=>"Organization"}])
-      expect(response.dig("data", "dissertations", "nodes", 0, "contributors")).to eq([{"contributorType"=>"HostingInstitution",
-        "id"=>"https://ror.org/046ak2485",
-        "name"=>"Freie Universität Berlin",
-        "type"=>"Organization"}])
+      expect(response.dig("data", "dissertations", "nodes", 0, "hostingInstitution")).to eq([{ "contributorType" => "HostingInstitution",
+                                                                                               "id" => "https://ror.org/046ak2485",
+                                                                                               "name" => "Freie Universität Berlin",
+                                                                                               "type" => "Organization" }])
+      expect(response.dig("data", "dissertations", "nodes", 0, "contributors")).to eq([{ "contributorType" => "HostingInstitution",
+                                                                                         "id" => "https://ror.org/046ak2485",
+                                                                                         "name" => "Freie Universität Berlin",
+                                                                                         "type" => "Organization" }])
     end
   end
 end

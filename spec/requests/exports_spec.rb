@@ -2,19 +2,19 @@ require "rails_helper"
 
 describe ExportsController, type: :request do
   let(:admin_bearer) { User.generate_token }
-  let(:admin_headers) { { "HTTP_ACCEPT" => "text/csv", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
+  let(:admin_headers) { { "HTTP_ACCEPT" => "text/csv", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer } }
 
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
   let!(:provider) { create(:provider, role_name: "ROLE_CONSORTIUM_ORGANIZATION", name: "University of Virginia", symbol: "UVA", consortium: consortium) }
-  
+
   describe "GET /export/organizations", elasticsearch: true do
     before do
       Provider.import
       sleep 2
     end
 
-    it 'returns organizations', vcr: false do
-      get "/export/organizations", nil, admin_headers
+    it "returns organizations", vcr: false do
+      get "/export/organizations", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -24,8 +24,8 @@ describe ExportsController, type: :request do
       expect(csv[2]).to start_with("University of Virginia,UVA,VIVA,true")
     end
 
-    it 'returns organizations from date', vcr: false do
-      get "/export/organizations?from-date=#{Date.today}", nil, admin_headers
+    it "returns organizations from date", vcr: false do
+      get "/export/organizations?from-date=#{Date.today}", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -46,8 +46,8 @@ describe ExportsController, type: :request do
       sleep 2
     end
 
-    it 'returns repositories', vcr: false do
-      get "/export/repositories", nil, admin_headers
+    it "returns repositories", vcr: false do
+      get "/export/repositories", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -58,8 +58,8 @@ describe ExportsController, type: :request do
       expect(dois_total).to eq(3)
     end
 
-    it 'returns repositories from date', vcr: false do
-      get "/export/repositories?from-date=#{Date.today}", nil, admin_headers
+    it "returns repositories from date", vcr: false do
+      get "/export/repositories?from-date=#{Date.today}", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -77,8 +77,8 @@ describe ExportsController, type: :request do
       sleep 2
     end
 
-    it 'returns all contacts', vcr: false do
-      get "/export/contacts", nil, admin_headers
+    it "returns all contacts", vcr: false do
+      get "/export/contacts", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -94,8 +94,8 @@ describe ExportsController, type: :request do
       expect(csv[8]).to start_with("UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
 
-    it 'returns all contacts from date', vcr: false do
-      get "/export/contacts?from-date=#{Date.today}", nil, admin_headers
+    it "returns all contacts from date", vcr: false do
+      get "/export/contacts?from-date=#{Date.today}", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -111,8 +111,8 @@ describe ExportsController, type: :request do
       expect(csv[8]).to start_with("UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
 
-    it 'returns voting contacts', vcr: false do
-      get "/export/contacts?type=voting", nil, admin_headers
+    it "returns voting contacts", vcr: false do
+      get "/export/contacts?type=voting", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -122,8 +122,8 @@ describe ExportsController, type: :request do
       expect(csv[2]).to start_with("UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
     end
 
-    it 'returns billing contacts', vcr: false do
-      get "/export/contacts?type=billing", nil, admin_headers
+    it "returns billing contacts", vcr: false do
+      get "/export/contacts?type=billing", params: nil, session: admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines

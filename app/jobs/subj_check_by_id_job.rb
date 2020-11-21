@@ -1,7 +1,7 @@
-class SubjCheckByIdJob < ActiveJob::Base
+class SubjCheckByIdJob < ApplicationJob
   queue_as :lupo_background
 
-  def perform(event, options = {})
+  def perform(event, _options = {})
     Event.label_state_event(event)
   end
 end

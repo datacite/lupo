@@ -7,8 +7,8 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before(:each, :js => true) do
-    DatabaseCleaner.strategy = :truncation, { :pre_count => true }
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :truncation, { pre_count: true }
   end
 
   config.before(:each) do

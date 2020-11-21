@@ -2,22 +2,22 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
-    def cached_metadata_count(options={})
+    def cached_metadata_count(options = {})
       Rails.cache.fetch("cached_metadata_count/#{id}", expires_in: 6.hours, force: options[:force]) do
         return [] if Rails.env.test?
 
-        if self.class.name == "Doi"
-          collection = Metadata.where(dataset: id)
-        else
-          collection = Metadata
-        end
+        collection = if self.class.name == "Doi"
+                       Metadata.where(dataset: id)
+                     else
+                       Metadata
+                     end
 
         years = collection.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
-        years = years.map { |k,v| { id: k, title: k, count: v } }
+        years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
-    def cached_media_count(options={})
+    def cached_media_count(options = {})
       Rails.cache.fetch("cached_media_count/#{id}", expires_in: 6.hours, force: options[:force]) do
         return [] if Rails.env.test?
 
@@ -29,11 +29,11 @@ module Cacheable
         end
 
         years = collection.order("YEAR(media.created)").group("YEAR(media.created)").count
-        years = years.map { |k,v| { id: k, title: k, count: v } }
+        years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
-    def cached_prefixes_totals params={}
+    def cached_prefixes_totals(params = {})
       if Rails.application.config.action_controller.perform_caching
         Rails.cache.fetch("cached_prefixes_totals/#{params}", expires_in: 24.hours) do
           prefixes_totals params
@@ -43,7 +43,7 @@ module Cacheable
       end
     end
 
-    def cached_prefix_response(prefix, options={})
+    def cached_prefix_response(prefix, _options = {})
       if Rails.application.config.action_controller.perform_caching
         Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 24.hours) do
           Prefix.where(uid: prefix).first
@@ -62,7 +62,7 @@ module Cacheable
 
     def cached_get_doi_ra(prefix)
       Rails.cache.fetch("ras/#{prefix}", expires_in: 1.month) do
-        self.get_doi_ra(prefix)
+        get_doi_ra(prefix)
       end
     end
 
@@ -89,7 +89,7 @@ module Cacheable
         return [] if Rails.env.test?
 
         years = Metadata.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
-        years = years.map { |k,v| { id: k, title: k, count: v } }
+        years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
@@ -98,13 +98,13 @@ module Cacheable
         return [] if Rails.env.test?
 
         years = Media.order("YEAR(media.created)").group("YEAR(media.created)").count
-        years = years.map { |k,v| { id: k, title: k, count: v } }
+        years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
     def cached_get_doi_ra(prefix)
       Rails.cache.fetch("ras/#{prefix}", expires_in: 1.month) do
-        self.get_doi_ra(prefix)
+        get_doi_ra(prefix)
       end
     end
   end

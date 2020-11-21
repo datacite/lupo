@@ -1,4 +1,4 @@
-class ClientPrefix < ActiveRecord::Base
+class ClientPrefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -19,7 +19,7 @@ class ClientPrefix < ActiveRecord::Base
   if Rails.env.test?
     index_name "client-prefixes-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"client-prefixes-#{ENV["ES_PREFIX"]}"
+    index_name "client-prefixes-#{ENV['ES_PREFIX']}"
   else
     index_name "client-prefixes"
   end
@@ -46,10 +46,10 @@ class ClientPrefix < ActiveRecord::Base
       prefix: { type: :text },
       created_at: { type: :date },
     }
-    indexes :provider_prefix,    type: :object
+    indexes :provider_prefix, type: :object
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -68,7 +68,7 @@ class ClientPrefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      years: { date_histogram: { field: "created_at", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
       clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },

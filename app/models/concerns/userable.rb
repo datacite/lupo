@@ -9,7 +9,7 @@ module Userable
         data = { "data" => { "attributes" => { id => nil },
                              "type" => "users" } }
 
-        result = Maremma.patch(url, content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: jwt, data: data.to_json)
+        result = Maremma.patch(url, content_type: "application/vnd.api+json", accept: "application/vnd.api+json", bearer: jwt, data: data.to_json)
         logger.info result.inspect
       end
     end

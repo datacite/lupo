@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe User, type: :model do
   describe "from token" do
@@ -21,7 +21,7 @@ describe User, type: :model do
     let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
     let(:user) { User.new(credentials, type: "basic") }
 
-    describe 'User attributes' do
+    describe "User attributes" do
       it "has role_id" do
         expect(user.role_id).to eq("staff_admin")
       end
@@ -41,7 +41,7 @@ describe User, type: :model do
     let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
     let(:user) { User.new(credentials, type: "basic") }
 
-    describe 'User attributes' do
+    describe "User attributes" do
       it "has role_id" do
         expect(user.role_id).to eq("provider_admin")
       end
@@ -62,7 +62,7 @@ describe User, type: :model do
     let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
     let(:user) { User.new(credentials, type: "basic") }
 
-    describe 'User attributes' do
+    describe "User attributes" do
       it "has role_id" do
         expect(user.role_id).to eq("consortium_admin")
       end
@@ -83,7 +83,7 @@ describe User, type: :model do
     let(:credentials) { client.encode_auth_param(username: client.symbol, password: 12345) }
     let(:user) { User.new(credentials, type: "basic") }
 
-    describe 'User attributes' do
+    describe "User attributes" do
       it "has role_id" do
         expect(user.role_id).to eq("client_admin")
       end

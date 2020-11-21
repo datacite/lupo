@@ -1,4 +1,4 @@
-class Prefix < ActiveRecord::Base
+class Prefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -9,7 +9,7 @@ class Prefix < ActiveRecord::Base
 
   validates_presence_of :uid
   validates_uniqueness_of :uid
-  validates_format_of :uid, :with => /\A10\.\d{4,9}\z/
+  validates_format_of :uid, with: /\A10\.\d{4,9}\z/
 
   has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
@@ -20,7 +20,7 @@ class Prefix < ActiveRecord::Base
   if Rails.env.test?
     index_name "prefixes-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"prefixes-#{ENV["ES_PREFIX"]}"
+    index_name "prefixes-#{ENV['ES_PREFIX']}"
   else
     index_name "prefixes"
   end
@@ -43,7 +43,7 @@ class Prefix < ActiveRecord::Base
     indexes :provider_prefixes,   type: :object
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(_options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -63,11 +63,11 @@ class Prefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      states: { terms: { field: 'state', size: 3, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      states: { terms: { field: "state", size: 3, min_doc_count: 1 } },
+      years: { date_histogram: { field: "created_at", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_ids_and_names', size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_ids_and_names', size: 10, min_doc_count: 1 } },
+      providers: { terms: { field: "provider_ids_and_names", size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: "client_ids_and_names", size: 10, min_doc_count: 1 } },
     }
   end
 
@@ -79,7 +79,7 @@ class Prefix < ActiveRecord::Base
           uid: id,
         },
       },
-      aggregations: query_aggregations
+      aggregations: query_aggregations,
     )
   end
 

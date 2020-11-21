@@ -5,26 +5,26 @@ class EventsController < ApplicationController
 
   include BatchLoaderHelper
 
-  prepend_before_action :authenticate_user!, except: [:index, :show]
+  prepend_before_action :authenticate_user!, except: %i[index show]
   before_action :detect_crawler
   before_action :load_event, only: [:show]
-  before_action :set_include, only: [:index, :show, :create, :update]
+  before_action :set_include, only: %i[index show create update]
   authorize_resource only: [:destroy]
 
   def create
-    @event = Event.where(subj_id: safe_params[:subj_id])
-                  .where(obj_id: safe_params[:obj_id])
-                  .where(source_id: safe_params[:source_id])
-                  .where(relation_type_id: safe_params[:relation_type_id])
-                  .first
+    @event = Event.where(subj_id: safe_params[:subj_id]).
+      where(obj_id: safe_params[:obj_id]).
+      where(source_id: safe_params[:source_id]).
+      where(relation_type_id: safe_params[:relation_type_id]).
+      first
     exists = @event.present?
 
     # create event if it doesn't exist already
-    @event = Event.new(safe_params.except(:format)) unless @event.present?
+    @event = Event.new(safe_params.except(:format)) if @event.blank?
 
     authorize! :create, @event
 
-    if @event.update_attributes(safe_params)
+    if @event.update(safe_params)
       options = {}
       options[:is_collection] = false
 
@@ -41,11 +41,11 @@ class EventsController < ApplicationController
     exists = @event.present?
 
     # create event if it doesn't exist already
-    @event = Event.new(safe_params.except(:format)) unless @event.present?
+    @event = Event.new(safe_params.except(:format)) if @event.blank?
 
     authorize! :update, @event
 
-    if @event.update_attributes(safe_params)
+    if @event.update(safe_params)
       options = {}
       options[:is_collection] = false
 
@@ -67,51 +67,51 @@ class EventsController < ApplicationController
 
   def index
     sort = case params[:sort]
-           when "relevance" then { "_score" => { order: 'desc' }}
-           when "obj_id" then { "obj_id" => { order: 'asc' }}
-           when "-obj_id" then { "obj_id" => { order: 'desc' }}
-           when "total" then { "total" => { order: 'asc' }}
-           when "-total" then { "total" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
-           when "updated" then { updated_at: { order: 'asc' }}
-           when "-updated" then { updated_at: { order: 'desc' }}
-           when "relation_type_id" then { relation_type_id: { order: 'asc' }}
-           else { updated_at: { order: 'asc' }}
+           when "relevance" then { "_score" => { order: "desc" } }
+           when "obj_id" then { "obj_id" => { order: "asc" } }
+           when "-obj_id" then { "obj_id" => { order: "desc" } }
+           when "total" then { "total" => { order: "asc" } }
+           when "-total" then { "total" => { order: "desc" } }
+           when "created" then { created_at: { order: "asc" } }
+           when "-created" then { created_at: { order: "desc" } }
+           when "updated" then { updated_at: { order: "asc" } }
+           when "-updated" then { updated_at: { order: "desc" } }
+           when "relation_type_id" then { relation_type_id: { order: "asc" } }
+           else { updated_at: { order: "asc" } }
            end
 
     page = page_from_params(params)
 
     if params[:id].present?
-      response = Event.find_by_id(params[:id])
+      response = Event.find_by(id: params[:id])
     elsif params[:ids].present?
       response = Event.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Event.query(params[:query],
-                            subj_id: params[:subj_id],
-                            obj_id: params[:obj_id],
-                            source_doi: params[:source_doi],
-                            target_doi: params[:target_doi],
-                            doi: params[:doi_id] || params[:doi],
-                            orcid: params[:orcid],
-                            prefix: params[:prefix],
-                            subtype: params[:subtype],
-                            citation_type: params[:citation_type],
-                            source_id: params[:source_id],
-                            registrant_id: params[:registrant_id],
-                            relation_type_id: params[:relation_type_id],
-                            source_relation_type_id: params[:source_relation_type_id],
-                            target_relation_type_id: params[:target_relation_type_id],
-                            issn: params[:issn],
-                            publication_year: params[:publication_year],
-                            occurred_at: params[:occurred_at],
-                            year_month: params[:year_month],
-                            aggregations: params[:aggregations],
-                            unique: params[:unique],
-                            state_event: params[:state],
-                            scroll_id: params[:scroll_id],
-                            page: page,
-                            sort: sort)
+                             subj_id: params[:subj_id],
+                             obj_id: params[:obj_id],
+                             source_doi: params[:source_doi],
+                             target_doi: params[:target_doi],
+                             doi: params[:doi_id] || params[:doi],
+                             orcid: params[:orcid],
+                             prefix: params[:prefix],
+                             subtype: params[:subtype],
+                             citation_type: params[:citation_type],
+                             source_id: params[:source_id],
+                             registrant_id: params[:registrant_id],
+                             relation_type_id: params[:relation_type_id],
+                             source_relation_type_id: params[:source_relation_type_id],
+                             target_relation_type_id: params[:target_relation_type_id],
+                             issn: params[:issn],
+                             publication_year: params[:publication_year],
+                             occurred_at: params[:occurred_at],
+                             year_month: params[:year_month],
+                             aggregations: params[:aggregations],
+                             unique: params[:unique],
+                             state_event: params[:state],
+                             scroll_id: params[:scroll_id],
+                             page: page,
+                             sort: sort)
     end
 
     if page[:scroll].present?
@@ -134,8 +134,9 @@ class EventsController < ApplicationController
         next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
           "scroll-id" => response.scroll_id,
           "page[scroll]" => page[:scroll],
-          "page[size]" => page[:size] }.compact.to_query,
-        }.compact
+          "page[size]" => page[:size],
+        }.compact.to_query,
+      }.compact
       options[:is_collection] = true
 
       render json: EventSerializer.new(results, options).serialized_json, status: :ok
@@ -145,7 +146,7 @@ class EventsController < ApplicationController
       citation_types = total.positive? ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
       relation_types = total.positive? ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
       registrants = total.positive? ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-      
+
       results = response.results
 
       options = {}
@@ -180,8 +181,9 @@ class EventsController < ApplicationController
           "year-month" => params[:year_month],
           "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
           "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-          "page[size]" => page[:size] }.compact.to_query
-        }.compact
+          "page[size]" => page[:size],
+        }.compact.to_query,
+      }.compact
 
       options[:is_collection] = true
 
@@ -192,7 +194,7 @@ class EventsController < ApplicationController
   def destroy
     @event = Event.where(uuid: params[:id]).first
     fail ActiveRecord::RecordNotFound if @event.blank?
-    
+
     if @event.destroy
       head :no_content
     else
@@ -204,7 +206,7 @@ class EventsController < ApplicationController
   protected
 
   def load_event
-    response = Event.find_by_id(params[:id])
+    response = Event.find_by(id: params[:id])
     @event = response.results.first
     fail ActiveRecord::RecordNotFound if @event.blank?
   end
@@ -212,7 +214,7 @@ class EventsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:subj, :obj]
+      @include = @include & %i[subj obj]
     else
       @include = []
     end
@@ -221,7 +223,7 @@ class EventsController < ApplicationController
   private
 
   def safe_params
-    nested_params = [:id, :name, { author: ["givenName", "familyName", :name] }, :funder, { funder: ["@id", "@type", :name] }, "alternateName", "proxyIdentifiers", { "proxyIdentifiers" => [] }, :publisher, :periodical, { periodical: [:type, :id, :name, :issn] }, "volumeNumber", "issueNumber", :pagination, :issn, "datePublished", "dateModified", "registrantId", :doi, :url, :type]
+    nested_params = [:id, :name, { author: ["givenName", "familyName", :name] }, :funder, { funder: ["@id", "@type", :name] }, "alternateName", "proxyIdentifiers", { "proxyIdentifiers" => [] }, :publisher, :periodical, {  periodical: %i[type id name issn] }, "volumeNumber", "issueNumber", :pagination, :issn, "datePublished", "dateModified", "registrantId", :doi, :url, :type]
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, "messageAction", "sourceToken", :callback, "subjId", "objId", "relationTypeId", "sourceId", :total, :license, "occurredAt", :subj, :obj, subj: nested_params, obj: nested_params],
               keys: { id: :uuid }

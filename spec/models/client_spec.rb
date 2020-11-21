@@ -16,10 +16,10 @@ describe Client, type: :model do
     it "works" do
       params = client.to_jsonapi
       expect(params.dig("id")).to eq(client.symbol.downcase)
-      expect(params.dig("attributes","symbol")).to eq(client.symbol)
-      expect(params.dig("attributes","system-email")).to eq(client.system_email)
-      expect(params.dig("attributes","provider-id")).to eq(client.provider_id)
-      expect(params.dig("attributes","is-active")).to be true
+      expect(params.dig("attributes", "symbol")).to eq(client.symbol)
+      expect(params.dig("attributes", "system-email")).to eq(client.system_email)
+      expect(params.dig("attributes", "provider-id")).to eq(client.provider_id)
+      expect(params.dig("attributes", "is-active")).to be true
     end
   end
 
@@ -105,10 +105,10 @@ describe Client, type: :model do
   describe "Client prefixes transfer" do
     let!(:prefixes) { create_list(:prefix, 3) }
     let!(:prefix) { prefixes.first }
-     ### Order is important in creating prefixes relations
+    ### Order is important in creating prefixes relations
     let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
-    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix , provider_prefix_id: provider_prefix.uid) }
+    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
     let(:new_provider) { create(:provider, symbol: "QUECHUA") }
 
     it "works" do
@@ -125,7 +125,7 @@ describe Client, type: :model do
 
   describe "methods" do
     it "should not update the symbol" do
-      client.update_attributes :symbol => client.symbol+'foo.bar'
+      client.update symbol: client.symbol + "foo.bar"
       expect(client.reload.symbol).to eq(client.symbol)
     end
   end
@@ -148,12 +148,12 @@ describe Client, type: :model do
     it "should reject invalid issn" do
       client.issn = { "issnl" => "1544-91XX" }
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:issn=>[{:error=>"ISSN-L 1544-91XX is in the wrong format."}])
+      expect(client.errors.details).to eq(issn: [{ error: "ISSN-L 1544-91XX is in the wrong format." }])
     end
   end
 
   describe "certificate" do
-    let(:client)  { build(:client, provider: provider, client_type: "repository") }
+    let(:client) { build(:client, provider: provider, client_type: "repository") }
 
     it "should support certificate" do
       client.certificate = ["CoreTrustSeal"]
@@ -176,7 +176,7 @@ describe Client, type: :model do
     it "should reject unknown certificate" do
       client.certificate = ["MyHomeGrown Certificate"]
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:certificate=>[{:error=>"Certificate MyHomeGrown Certificate is not included in the list of supported certificates."}])
+      expect(client.errors.details).to eq(certificate: [{ error: "Certificate MyHomeGrown Certificate is not included in the list of supported certificates." }])
     end
   end
 
@@ -204,11 +204,11 @@ describe Client, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
-  
+
     it "invalid" do
       subject.salesforce_id = "abc"
       expect(subject.save).to be false
-      expect(subject.errors.details).to eq(:salesforce_id=>[{:error=>:invalid, :value=>"abc"}])
+      expect(subject.errors.details).to eq(salesforce_id: [{ error: :invalid, value: "abc" }])
     end
 
     it "blank" do
@@ -219,7 +219,7 @@ describe Client, type: :model do
   end
 
   describe "client_type" do
-    let(:client)  { build(:client, provider: provider) }
+    let(:client) { build(:client, provider: provider) }
 
     it "repository" do
       client.client_type = "repository"
@@ -236,12 +236,12 @@ describe Client, type: :model do
     it "unsupported" do
       client.client_type = "conference"
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:client_type=>[{:error=>:inclusion, :value=>"conference"}])
+      expect(client.errors.details).to eq(client_type: [{ error: :inclusion, value: "conference" }])
     end
   end
 
   describe "repository_type" do
-    let(:client)  { build(:client, provider: provider, client_type: "repository") }
+    let(:client) { build(:client, provider: provider, client_type: "repository") }
 
     it "should support repository_type" do
       client.repository_type = ["institutional"]
@@ -258,12 +258,12 @@ describe Client, type: :model do
     it "should reject unknown repository_type" do
       client.repository_type = ["interplanetary"]
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:repository_type=>[{:error=>"Repository type interplanetary is not included in the list of supported repository types."}])
+      expect(client.errors.details).to eq(repository_type: [{ error: "Repository type interplanetary is not included in the list of supported repository types." }])
     end
   end
 
   describe "globus_uuid" do
-    let(:client)  { build(:client, provider: provider) }
+    let(:client) { build(:client, provider: provider) }
 
     it "should support version 1 UUID" do
       client.globus_uuid = "6d133cee-3d3f-11ea-b77f-2e728ce88125"
@@ -280,7 +280,7 @@ describe Client, type: :model do
     it "should reject string that is not a UUID" do
       client.globus_uuid = "abc"
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:globus_uuid=>[{:error=>"abc is not a valid UUID"}])
+      expect(client.errors.details).to eq(globus_uuid: [{ error: "abc is not a valid UUID" }])
     end
   end
 

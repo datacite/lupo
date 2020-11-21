@@ -20,7 +20,7 @@ class MemberType < BaseObject
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
-  
+
   field :datasets, DatasetConnectionWithTotalType, null: true, description: "Datasets by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
@@ -47,7 +47,7 @@ class MemberType < BaseObject
     argument :after, String, required: false
   end
 
-  field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications by this provider."  do
+  field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :published, String, required: false
@@ -73,7 +73,7 @@ class MemberType < BaseObject
     argument :after, String, required: false
   end
 
-  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software by this provider."  do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software by this provider." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :published, String, required: false
@@ -175,46 +175,47 @@ class MemberType < BaseObject
   end
 
   def country
-    return {} unless object.country_code.present?
-    { 
+    return {} if object.country_code.blank?
+
+    {
       id: object.country_code,
-      name: ISO3166::Country[object.country_code].name
+      name: ISO3166::Country[object.country_code].name,
     }.compact
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def data_management_plans(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
-  def works(**args)  
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+  def works(**args)
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def prefixes(**args)
     response = ProviderPrefix.query(args[:query], provider_id: object.uid, state: args[:state], year: args[:year], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
-    ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response, context: context, first: args[:first], after: args[:after])
   end
 
   def repositories(**args)
     response = Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
-    ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response, context: context, first: args[:first], after: args[:after])
   end
 
   def view_count

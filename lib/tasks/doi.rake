@@ -3,87 +3,87 @@
 namespace :doi do
   # TODO switch to DataCite DOI index
   desc "Create index for dois"
-  task :create_index => :environment do
+  task create_index: :environment do
     puts Doi.create_index(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Delete index for dois"
-  task :delete_index => :environment do
+  task delete_index: :environment do
     puts Doi.delete_index(index: ENV["INDEX"])
   end
 
   desc "List indices for dois"
-  task :list_indices => :environment do
+  task list_indices: :environment do
     puts Doi.list_indices
   end
 
   desc "Upgrade index for dois"
-  task :upgrade_index => :environment do
+  task upgrade_index: :environment do
     puts Doi.upgrade_index(index: ENV["INDEX"])
   end
 
   desc "Create alias for dois"
-  task :create_alias => :environment do
+  task create_alias: :environment do
     puts Doi.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List aliases for dois"
-  task :list_aliases => :environment do
+  task list_aliases: :environment do
     puts Doi.list_aliases
   end
 
   desc "Delete alias for dois"
-  task :delete_alias => :environment do
+  task delete_alias: :environment do
     puts Doi.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Show index stats for dois"
-  task :index_stats => :environment do
+  task index_stats: :environment do
     puts Doi.index_stats(active_index: ENV["ACTIVE"], inactive_index: ENV["INACTIVE"])
   end
 
   desc "Switch index for dois"
-  task :switch_index => :environment do
+  task switch_index: :environment do
     puts Doi.switch_index(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List templates for dois"
-  task :list_templates => :environment do
+  task list_templates: :environment do
     puts Doi.list_templates(name: "dois*")
   end
 
   desc "Return active index for dois"
-  task :active_index => :environment do
+  task active_index: :environment do
     puts Doi.active_index + " is the active index."
   end
 
   desc "Monitor reindexing for dois"
-  task :monitor_reindex => :environment do
+  task monitor_reindex: :environment do
     puts Doi.monitor_reindex
   end
 
   desc "Delete from index by query"
-  task :delete_by_query => :environment do
-    if ENV['QUERY'].nil?
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
       puts "ENV['QUERY'] is required"
       exit
     end
-    
+
     puts Doi.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
   end
 
-  desc 'Store handle URL'
-  task :set_url => :environment do
+  desc "Store handle URL"
+  task set_url: :environment do
     puts Doi.set_url
   end
 
-  desc 'Set handle'
-  task :set_handle => :environment do
+  desc "Set handle"
+  task set_handle: :environment do
     puts Doi.set_handle
   end
 
-  desc 'Set minted'
-  task :set_minted => :environment do
+  desc "Set minted"
+  task set_minted: :environment do
     puts Doi.set_minted
   end
 
@@ -167,7 +167,7 @@ namespace :doi do
   desc "Trigger DOI update based on query"
   task update_dois_by_query: :environment do
     # Ensure we have specified a query of some kind.
-    if ENV['QUERY'].blank?
+    if ENV["QUERY"].blank?
       puts "ENV['QUERY'] is required"
       exit
     end
@@ -181,20 +181,20 @@ namespace :doi do
     puts Doi.loop_through_dois(options)
   end
 
-  desc 'Import one DOI'
-  task :import_one => :environment do
-    if ENV['DOI'].nil?
+  desc "Import one DOI"
+  task import_one: :environment do
+    if ENV["DOI"].nil?
       puts "ENV['DOI'] is required"
       exit
     end
 
-    Doi.import_one(doi_id: ENV['DOI'])
+    Doi.import_one(doi_id: ENV["DOI"])
   end
 
   desc "Trigger DOI import based on query"
   task import_dois_by_query: :environment do
     # Ensure we have specified a query of some kind.
-    if ENV['QUERY'].blank?
+    if ENV["QUERY"].blank?
       puts "ENV['QUERY'] is required"
       exit
     end
@@ -220,55 +220,55 @@ namespace :doi do
     puts Doi.loop_through_dois(options)
   end
 
-  desc 'Convert affiliations to new format'
-  task :convert_affiliations => :environment do
-    from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
-    until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
+  desc "Convert affiliations to new format"
+  task convert_affiliations: :environment do
+    from_id = (ENV["FROM_ID"] || Doi.minimum(:id)).to_i
+    until_id = (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i
 
     puts Doi.convert_affiliations(from_id: from_id, until_id: until_id)
   end
 
-  desc 'Convert containers to new format'
-  task :convert_containers => :environment do
-    from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
-    until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
+  desc "Convert containers to new format"
+  task convert_containers: :environment do
+    from_id = (ENV["FROM_ID"] || Doi.minimum(:id)).to_i
+    until_id = (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i
 
     puts Doi.convert_containers(from_id: from_id, until_id: until_id)
   end
 
-  desc 'Migrates landing page data handling camelCase changes at same time'
-  task :migrate_landing_page => :environment do
+  desc "Migrates landing page data handling camelCase changes at same time"
+  task migrate_landing_page: :environment do
     puts Doi.migrate_landing_page
   end
 
-  desc 'Perform repairs on landing page data for specific DOI'
-  task :repair_landing_page => :environment do
-    if ENV['ID'].nil?
+  desc "Perform repairs on landing page data for specific DOI"
+  task repair_landing_page: :environment do
+    if ENV["ID"].nil?
       puts "ENV['ID'] is required"
       exit
     end
 
-    puts Doi.repair_landing_page(id: ENV['ID'])
+    puts Doi.repair_landing_page(id: ENV["ID"])
   end
 
-  desc 'Delete dois by a prefix'
-  task :delete_by_prefix => :environment do
-    if ENV['PREFIX'].nil?
+  desc "Delete dois by a prefix"
+  task delete_by_prefix: :environment do
+    if ENV["PREFIX"].nil?
       puts "ENV['PREFIX'] is required."
       exit
     end
 
     puts "Note: This does not delete any associated prefix."
 
-    count = Doi.delete_dois_by_prefix(ENV['PREFIX'])
+    count = Doi.delete_dois_by_prefix(ENV["PREFIX"])
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 
-  desc 'Add type information to dois based on id range'
-  task :add_index_type => :environment do
+  desc "Add type information to dois based on id range"
+  task add_index_type: :environment do
     options = {
-      from_id: ENV['FROM_ID'],
-      until_id: ENV['UNTIL_ID']
+      from_id: ENV["FROM_ID"],
+      until_id: ENV["UNTIL_ID"],
     }
     puts Doi.add_index_type(options)
   end

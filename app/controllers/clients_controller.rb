@@ -1,44 +1,44 @@
 class ClientsController < ApplicationController
   include Countable
 
-  before_action :set_client, only: [:show, :update, :destroy]
+  before_action :set_client, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :totals, :stats]
+  load_and_authorize_resource except: %i[index show totals stats]
 
   def index
     sort = case params[:sort]
-           when "relevance" then { "_score" => { order: 'desc' }}
-           when "name" then { "name.raw" => { order: 'asc' }}
-           when "-name" then { "name.raw" => { order: 'desc' }}
-           when "created" then { created: { order: 'asc' }}
-           when "-created" then { created: { order: 'desc' }}
-           else { "name.raw" => { order: 'asc' }}
+           when "relevance" then { "_score" => { order: "desc" } }
+           when "name" then { "name.raw" => { order: "asc" } }
+           when "-name" then { "name.raw" => { order: "desc" } }
+           when "created" then { created: { order: "asc" } }
+           when "-created" then { created: { order: "desc" } }
+           else { "name.raw" => { order: "asc" } }
            end
 
     page = page_from_params(params)
 
-    if params[:id].present?
-      response = Client.find_by_id(params[:id]) 
-    elsif params[:ids].present?
-      response = Client.find_by_id(params[:ids], page: page, sort: sort)
-    else
-      response = Client.query(
-        params[:query],
-        year: params[:year],
-        from_date: params[:from_date],
-        until_date: params[:until_date],
-        provider_id: params[:provider_id],
-        re3data_id: params[:re3data_id],
-        opendoar_id: params[:opendoar_id],
-        software: params[:software],
-        certificate: params[:certificate],
-        repository_type: params[:repository_type],
-        client_type: params[:client_type],
-        page: page,
-        sort: sort,
-      )
-    end
+    response = if params[:id].present?
+                 Client.find_by(id: params[:id])
+               elsif params[:ids].present?
+                 Client.find_by_id(params[:ids], page: page, sort: sort)
+               else
+                 Client.query(
+                   params[:query],
+                   year: params[:year],
+                   from_date: params[:from_date],
+                   until_date: params[:until_date],
+                   provider_id: params[:provider_id],
+                   re3data_id: params[:re3data_id],
+                   opendoar_id: params[:opendoar_id],
+                   software: params[:software],
+                   certificate: params[:certificate],
+                   repository_type: params[:repository_type],
+                   client_type: params[:client_type],
+                   page: page,
+                   sort: sort,
+                 )
+               end
 
     begin
       total = response.results.total
@@ -49,7 +49,7 @@ class ClientsController < ApplicationController
       client_types = total > 0 ? facet_by_key(response.aggregations.client_types.buckets) : nil
       certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
       repository_types = total > 0 ? facet_by_key(response.aggregations.repository_types.buckets) : nil
-      
+
       @clients = response.results
 
       options = {}
@@ -62,7 +62,7 @@ class ClientsController < ApplicationController
         software: software,
         certificates: certificates,
         repository_types: repository_types,
-        "clientTypes" => client_types
+        "clientTypes" => client_types,
       }.compact
 
       options[:links] = {
@@ -77,8 +77,9 @@ class ClientsController < ApplicationController
           year: params[:year],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],
-          sort: params[:sort] }.compact.to_query
-        }.compact
+          sort: params[:sort],
+        }.compact.to_query,
+      }.compact
       options[:include] = @include
       options[:is_collection] = true
       options[:params] = { current_ability: current_ability }
@@ -89,12 +90,12 @@ class ClientsController < ApplicationController
       else
         render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Raven.capture_exception(exception)
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      Raven.capture_exception(e)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
@@ -116,7 +117,7 @@ class ClientsController < ApplicationController
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
-  
+
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
       Rails.logger.error @client.errors.inspect
@@ -166,7 +167,7 @@ class ClientsController < ApplicationController
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = DataciteDoi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
     registrant = response.results.total.positive? ? clients_totals(response.aggregations.clients_totals.buckets) : []
-    
+
     render json: registrant, status: :ok
   end
 
@@ -187,7 +188,7 @@ class ClientsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:provider, :repository]
+      @include = @include & %i[provider repository]
     else
       @include = []
     end
@@ -204,7 +205,7 @@ class ClientsController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
 
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "systemEmail", "contactEmail", "globusUuid", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
+      params, only: [:symbol, :name, "systemEmail", "contactEmail", "globusUuid", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: %i[issnl electronic print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
               keys: { "systemEmail" => :system_email, "contactEmail" => :system_email, "globusUuid" => :globus_uuid, "salesforceId" => :salesforce_id, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
     )
   end

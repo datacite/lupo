@@ -1,4 +1,4 @@
-class UrlJob < ActiveJob::Base
+class UrlJob < ApplicationJob
   queue_as :lupo
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
@@ -11,15 +11,15 @@ class UrlJob < ActiveJob::Base
 
     if doi.present?
       response = Doi.get_doi(doi: doi.doi, agency: doi.agency)
-      url = response.is_a?(String) ? nil : response.body.dig('data', 'values', 0, 'data', 'value')
+      url = response.is_a?(String) ? nil : response.body.dig("data", "values", 0, "data", "value")
       if url.present?
         if (doi.is_registered_or_findable? || %w(europ).include?(doi.provider_id)) && doi.minted.blank?
-          doi.update_attributes(url: url, minted: Time.zone.now)
+          doi.update(url: url, minted: Time.zone.now)
         else
-          doi.update_attributes(url: url)
+          doi.update(url: url)
         end
 
-        doi.update_attributes(aasm_state: "findable") if doi.type == "OtherDoi"
+        doi.update(aasm_state: "findable") if doi.type == "OtherDoi"
 
         doi.__elasticsearch__.index_document
 

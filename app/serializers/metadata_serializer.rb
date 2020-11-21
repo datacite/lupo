@@ -13,7 +13,5 @@ class MetadataSerializer
     Base64.strict_encode64(object.xml)
   end
 
-  attribute :version do |object|
-    object.metadata_version
-  end
+  attribute :version, &:metadata_version
 end

@@ -83,12 +83,12 @@ describe RepositoryType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "repositories", "totalCount")).to eq(4)
-      expect(response.dig("data", "repositories", "years")).to eq([{"count"=>4, "id"=>"2020", "title"=>"2020"}])
-      expect(response.dig("data", "repositories", "members")).to eq([{"count"=>1, "title"=>"My provider"},
-        {"count"=>1, "title"=>"My provider"},
-        {"count"=>1, "title"=>"My provider"},
-        {"count"=>1, "title"=>"My provider"}])
-      expect(response.dig("data", "repositories", "software")).to eq([{"count"=>4, "id"=>"dataverse", "title"=>"Dataverse"}])
+      expect(response.dig("data", "repositories", "years")).to eq([{ "count" => 4, "id" => "2020", "title" => "2020" }])
+      expect(response.dig("data", "repositories", "members")).to eq([{ "count" => 1, "title" => "My provider" },
+                                                                     { "count" => 1, "title" => "My provider" },
+                                                                     { "count" => 1, "title" => "My provider" },
+                                                                     { "count" => 1, "title" => "My provider" }])
+      expect(response.dig("data", "repositories", "software")).to eq([{ "count" => 4, "id" => "dataverse", "title" => "Dataverse" }])
       expect(response.dig("data", "repositories", "certificates")).to be_empty
       # expect(response.dig("data", "repositories", "clientTypes")).to eq([{"count"=>4, "id"=>"repository", "title"=>"Repository"}])
       # expect(response.dig("data", "repositories", "repositoryTypes")).to be_empty
@@ -151,7 +151,7 @@ describe RepositoryType do
       expect(response.dig("data", "repository", "datasets", "totalCount")).to eq(1)
 
       expect(response.dig("data", "repository", "prefixes", "totalCount")).to eq(3)
-      expect(response.dig("data", "repository", "prefixes", "years")).to eq([{"count"=>3, "id"=>"2020"}])
+      expect(response.dig("data", "repository", "prefixes", "years")).to eq([{ "count" => 3, "id" => "2020" }])
       expect(response.dig("data", "repository", "prefixes", "nodes").length).to eq(3)
       prefix1 = response.dig("data", "repository", "prefixes", "nodes", 0)
       expect(prefix1.fetch("name")).to eq(client_prefixes.first.prefix_id)
@@ -161,15 +161,16 @@ describe RepositoryType do
   describe "find repository with citations", elasticsearch: true, vcr: true do
     let(:provider) { create(:provider, symbol: "TESTR") }
     let(:client) { create(:client, symbol: "TESTR.TESTR", provider: provider) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+    let(:doi) do
+      create(:doi, client: client, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
     let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
@@ -220,8 +221,8 @@ describe RepositoryType do
       expect(response.dig("data", "repository", "name")).to eq("My data center")
       expect(response.dig("data", "repository", "citationCount")).to eq(2)
       expect(response.dig("data", "repository", "works", "totalCount")).to eq(3)
-      expect(response.dig("data", "repository", "works", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "repository", "works", "resourceTypes")).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
+      expect(response.dig("data", "repository", "works", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "repository", "works", "resourceTypes")).to eq([{ "count" => 3, "id" => "dataset", "title" => "Dataset" }])
       expect(response.dig("data", "repository", "works", "nodes").length).to eq(3)
 
       # work = response.dig("data", "repository", "works", "nodes", 0)

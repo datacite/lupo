@@ -24,7 +24,7 @@ module Metadatable
 
       ra = response.fetch("data", [{}]).first.fetch("RA", nil)
       if ra.present?
-        ra = ra.delete(' ').downcase
+        ra = ra.delete(" ").downcase
 
         # store prefix/registration agency pair in Redis unless test
         redis.set prefix_string, ra unless options[:test]
@@ -37,7 +37,7 @@ module Metadatable
 
     # remove non-printing whitespace
     def clean_doi(doi)
-      doi.gsub(/\u200B/, '')
+      doi.gsub(/\u200B/, "")
     end
   end
 end

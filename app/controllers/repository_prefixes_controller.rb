@@ -1,24 +1,24 @@
-require 'uri'
+require "uri"
 
 class RepositoryPrefixesController < ApplicationController
-  before_action :set_client_prefix, only: [:show, :update, :destroy]
+  before_action :set_client_prefix, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
-  
+
   def index
     sort = case params[:sort]
-           when "name" then { "prefix_id" => { order: 'asc' }}
-           when "-name" then { "prefix_id" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
-           else { created_at: { order: 'desc' }}
+           when "name" then { "prefix_id" => { order: "asc" } }
+           when "-name" then { "prefix_id" => { order: "desc" } }
+           when "created" then { created_at: { order: "asc" } }
+           when "-created" then { created_at: { order: "desc" } }
+           else { created_at: { order: "desc" } }
            end
 
     page = page_from_params(params)
 
     if params[:id].present?
-      response = ClientPrefix.find_by_id(params[:id]) 
+      response = ClientPrefix.find_by(id: params[:id])
     else
       response = ClientPrefix.query(params[:query],
                                     client_id: params[:repository_id],
@@ -51,24 +51,25 @@ class RepositoryPrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next: repository_prefixes.blank? ? nil : request.base_url + "/repository-prefixes?" + {
-        query: params[:query],
-        prefix_id: params[:prefix_id],
-        repository_id: params[:repository_id],
-        year: params[:year],
-        "page[number]" => page[:number] + 1,
-        "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
+          query: params[:query],
+          prefix_id: params[:prefix_id],
+          repository_id: params[:repository_id],
+          year: params[:year],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort],
+        }.compact.to_query,
       }.compact
       options[:include] = @include
       options[:is_collection] = true
 
       render json: RepositoryPrefixSerializer.new(repository_prefixes, options).serialized_json, status: :ok
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Raven.capture_exception(exception)
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      Raven.capture_exception(e)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
@@ -140,7 +141,7 @@ class RepositoryPrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:repository, :prefix, :provider_prefix, :provider]
+      @include = @include & %i[repository prefix provider_prefix provider]
     else
       @include = []
     end
@@ -150,7 +151,7 @@ class RepositoryPrefixesController < ApplicationController
 
   def set_client_prefix
     @client_prefix = ClientPrefix.where(uid: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @client_prefix.present?
+    fail ActiveRecord::RecordNotFound if @client_prefix.blank?
   end
 
   def safe_params

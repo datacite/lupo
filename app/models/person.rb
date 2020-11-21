@@ -10,10 +10,10 @@ class Person
 
   def self.find_by_id(id)
     orcid = orcid_from_url(id)
-    return {} unless orcid.present?
+    return {} if orcid.blank?
 
     person = get_orcid(orcid: orcid, endpoint: "person")
-    return {} unless person.present?
+    return {} if person.blank?
 
     employments = get_orcid(orcid: orcid, endpoint: "employments")
 
@@ -23,13 +23,13 @@ class Person
 
     researcher_urls = Array.wrap(person.dig("data", "researcher-urls", "researcher-url")).map do |r|
       { "name" => r["url-name"],
-        "url"  => r.dig("url", "value") }
+        "url" => r.dig("url", "value") }
     end
 
     identifiers = Array.wrap(person.dig("data", "external-identifiers", "external-identifier")).map do |i|
       { "identifierType" => i["external-id-type"],
-        "identifierUrl"  => i.dig("external-id-url", "value"),
-        "identifier"  => i["external-id-value"] }
+        "identifierUrl" => i.dig("external-id-url", "value"),
+        "identifier" => i["external-id-value"] }
     end
 
     employment = get_employments(employments)
@@ -47,7 +47,7 @@ class Person
       "country-code" => person.dig("data", "addresses", "address", 0, "country", "value"),
       "employment" => employment,
     }
-    
+
     data = [parse_message(message: message)]
 
     errors = person.fetch("errors", nil)
@@ -55,14 +55,15 @@ class Person
     { data: data, errors: errors }
   end
 
-  def self.query(query, options={})
+  def self.query(query, options = {})
     options[:limit] ||= 25
     options[:offset] ||= 0
 
     params = {
       q: query || "*",
       "rows" => options[:limit],
-      "start" => options[:offset].to_i * options[:limit].to_i }.compact
+      "start" => options[:offset].to_i * options[:limit].to_i,
+    }.compact
 
     url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 
@@ -70,20 +71,21 @@ class Person
     if response.status >= 400
       message = response.body.dig("errors", 0, "title", "developer-message") || "Something went wrong in ORCID"
       fail ::Faraday::ClientError, message
-    end 
+    end
 
     return [] if response.status != 200
-    
+
     data = Array.wrap(response.body.dig("data", "expanded-result")).map do |message|
       parse_message(message: message)
     end
     meta = { "total" => response.body.dig("data", "num-found").to_i }
     errors = response.body.fetch("errors", nil)
 
-    { 
-      data: data, 
-      meta: meta, 
-      errors: errors }
+    {
+      data: data,
+      meta: meta,
+      errors: errors,
+    }
   end
 
   def self.get_orcid(orcid: nil, endpoint: nil)
@@ -93,10 +95,10 @@ class Person
     if response.status >= 405
       message = response.body.dig("errors", 0, "title", "developer-message") || "Something went wrong in ORCID"
       fail ::Faraday::ClientError, message
-    end 
+    end
 
     return {} if response.status != 200
-    
+
     response.body
   end
 
@@ -105,8 +107,8 @@ class Person
       i = a.dig("summaries", 0, "employment-summary", "organization", "disambiguated-organization") || {}
       s = a.dig("summaries", 0, "employment-summary", "start-date") || {}
       e = a.dig("summaries", 0, "employment-summary", "end-date") || {}
-      
-      { "organization_id"  => i.dig("disambiguation-source") == "GRID" ? "https://grid.ac/institutes/" + i.dig("disambiguated-organization-identifier") : nil,
+
+      { "organization_id" => i.dig("disambiguation-source") == "GRID" ? "https://grid.ac/institutes/" + i.dig("disambiguated-organization-identifier") : nil,
         "organization_name" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
         "role_title" => a.dig("summaries", 0, "employment-summary", "role-title"),
         "start_date" => get_date_from_parts(s.dig("year", "value"), s.dig("month", "value"), s.dig("day", "value")),
@@ -125,23 +127,24 @@ class Person
     identifiers = message.fetch("identifiers", [])
     employment = message.fetch("employment", [])
 
-    if message.fetch("credit-name", nil).present?
-      name = message.fetch("credit-name")
-    elsif given_name.present? || family_name.present?
-      name = [given_name, family_name].join(" ")
-    else
-      name = orcid
-    end
+    name = if message.fetch("credit-name", nil).present?
+             message.fetch("credit-name")
+           elsif given_name.present? || family_name.present?
+             [given_name, family_name].join(" ")
+           else
+             orcid
+           end
 
     if message.fetch("country-code", nil).present?
       c = ISO3166::Country[message.fetch("country-code")]
       country = {
         id: message.fetch("country-code"),
-        name: c.present? ? c.name : message.fetch("country-code") }
+        name: c.present? ? c.name : message.fetch("country-code"),
+      }
     else
       country = nil
     end
-    
+
     Hashie::Mash.new({
       id: orcid_as_url(orcid),
       type: "Person",
@@ -154,6 +157,7 @@ class Person
       links: links,
       identifiers: identifiers,
       country: country,
-      employment: employment }.compact)
+      employment: employment,
+    }.compact)
   end
 end

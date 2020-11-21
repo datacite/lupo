@@ -1,6 +1,6 @@
 class MediaController < ApplicationController
   before_action :set_doi
-  before_action :set_media, only: [:show, :update, :destroy]
+  before_action :set_media, only: %i[show update destroy]
   before_action :set_include
   before_action :authenticate_user!
 
@@ -24,7 +24,7 @@ class MediaController < ApplicationController
     options[:meta] = {
       total: total,
       "totalPages" => total_pages,
-      page: page[:number].to_i
+      page: page[:number].to_i,
     }.compact
 
     options[:links] = {
@@ -32,8 +32,9 @@ class MediaController < ApplicationController
       next: @media.blank? ? nil : request.base_url + "/media?" + {
         "page[number]" => page[:number] + 1,
         "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
-      }.compact
+        sort: params[:sort],
+      }.compact.to_query,
+    }.compact
     options[:include] = @include
     options[:is_collection] = true
 
@@ -57,7 +58,7 @@ class MediaController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: MediaSerializer.new(@media, options).serialized_json, status: :created
     else
       Rails.logger.error @media.errors.inspect
@@ -68,11 +69,11 @@ class MediaController < ApplicationController
   def update
     authorize! :update, @doi
 
-    if @media.update_attributes(safe_params.merge(doi: @doi))
+    if @media.update(safe_params.merge(doi: @doi))
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
     else
       Rails.logger.error @media.errors.inspect
@@ -95,15 +96,15 @@ class MediaController < ApplicationController
 
   def set_doi
     @doi = DataciteDoi.where(doi: params[:datacite_doi_id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
   end
 
   def set_media
     id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
+    fail ActiveRecord::RecordNotFound if id.blank?
 
     @media = Media.where(id: id.to_i).first
-    fail ActiveRecord::RecordNotFound unless @media.present?
+    fail ActiveRecord::RecordNotFound if @media.blank?
   end
 
   def set_include
@@ -118,7 +119,8 @@ class MediaController < ApplicationController
   private
 
   def safe_params
-    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
+
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: ["mediaType", :url],
               keys: { "mediaType" => :media_type }

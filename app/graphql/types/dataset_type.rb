@@ -6,7 +6,7 @@ class DatasetType < BaseObject
   field :usage_reports, DatasetUsageReportConnectionWithTotalType, null: false, description: "Usage reports for this dataset", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
-  
+
   def usage_reports(**args)
     ids = Event.query(nil, obj_id: object.id).results.to_a.map do |e|
       e[:subj_id]

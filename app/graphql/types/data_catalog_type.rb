@@ -71,7 +71,8 @@ class DataCatalogType < BaseObject
       {
         "term_code" => term_code,
         "name" => name,
-        "in_defined_term_set" => "DFG" }
+        "in_defined_term_set" => "DFG",
+      }
     end
   end
 

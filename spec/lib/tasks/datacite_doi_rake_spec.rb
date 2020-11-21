@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 # describe "datacite_doi:create_index", order: :defined do
 #   include ActiveJob::TestHelper
@@ -168,7 +168,7 @@ describe "datacite_doi:import_one", order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let(:doi)  { create(:doi) }
+  let(:doi) { create(:doi) }
   let(:output) { "[MySQL] Imported metadata for DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do
@@ -185,7 +185,7 @@ describe "datacite_doi:index_one", order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let!(:doi)  { create(:doi) }
+  let!(:doi) { create(:doi) }
   let(:output) { "Started indexing DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do

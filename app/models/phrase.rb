@@ -1,4 +1,4 @@
-require 'pwqgen'
+require "pwqgen"
 
 class Phrase
   attr_reader :string

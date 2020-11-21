@@ -1,49 +1,49 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "Client Prefixes", type: :request, elasticsearch: true do
   let(:prefix) { create(:prefix) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
-  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }    
+  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
   let!(:client_prefixes) { create_list(:client_prefix, 5) }
   let(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
-  let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
+  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
-  describe 'GET /client-prefixes' do
+  describe "GET /client-prefixes" do
     before do
       Prefix.import
       ClientPrefix.import
       sleep 2
     end
 
-    it 'returns client-prefixes' do
-      get '/client-prefixes', nil, headers
+    it "returns client-prefixes" do
+      get "/client-prefixes", params: nil, session: headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(5)
+      expect(json["data"].size).to eq(5)
     end
   end
 
-  describe 'GET /client-prefixes/:uid' do
+  describe "GET /client-prefixes/:uid" do
     before do
       Prefix.import
       ClientPrefix.import
       sleep 2
     end
 
-    context 'when the record exists' do
-      it 'returns the client-prefix' do
-        get "/client-prefixes/#{client_prefix.uid}", nil, headers
+    context "when the record exists" do
+      it "returns the client-prefix" do
+        get "/client-prefixes/#{client_prefix.uid}", params: nil, session: headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
       end
     end
 
-    context 'when the record does not exist' do
-      it 'returns status code 404' do
-        get "/client-prefixes/xxx", nil, headers
+    context "when the record does not exist" do
+      it "returns status code 404" do
+        get "/client-prefixes/xxx", params: nil, session: headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
@@ -51,17 +51,17 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
     end
   end
 
-  describe 'PATCH /client-prefixes/:uid' do
-    it 'returns method not supported error' do
-      patch "/client-prefixes/#{client_prefix.uid}", nil, headers
+  describe "PATCH /client-prefixes/:uid" do
+    it "returns method not supported error" do
+      patch "/client-prefixes/#{client_prefix.uid}", params: nil, session: headers
 
       expect(last_response.status).to eq(405)
-      expect(json.dig("errors")).to eq([{ "status"=>"405", "title"=>"Method not allowed"}])
+      expect(json.dig("errors")).to eq([{ "status" => "405", "title" => "Method not allowed" }])
     end
   end
 
-  describe 'POST /client-prefixes' do
-    context 'when the request is valid' do
+  describe "POST /client-prefixes" do
+    context "when the request is valid" do
       let(:valid_attributes) do
         {
           "data" => {
@@ -71,53 +71,53 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
                 "data": {
                   "type": "client",
                   "id": client.symbol.downcase,
-                }
+                },
               },
               "providerPrefix": {
                 "data": {
                   "type": "provider-prefix",
                   "id": provider_prefix.uid,
-                }
+                },
               },
               "prefix": {
                 "data": {
                   "type": "prefix",
                   "id": prefix.uid,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }
       end
 
-      it 'creates a client-prefix' do
-        post '/client-prefixes', valid_attributes, headers
+      it "creates a client-prefix" do
+        post "/client-prefixes", params: valid_attributes, session: headers
 
         expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'id')).not_to be_nil
+        expect(json.dig("data", "id")).not_to be_nil
       end
     end
 
-    context 'when the request is invalid' do
+    context "when the request is invalid" do
       let!(:client) { create(:client) }
       let(:not_valid_attributes) do
         {
           "data" => {
             "type" => "client-prefixes",
-          }
+          },
         }
       end
 
-      it 'returns status code 422' do
-        post '/client-prefixes', not_valid_attributes, headers
+      it "returns status code 422" do
+        post "/client-prefixes", params: not_valid_attributes, session: headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "client", "title"=>"Must exist")
+        expect(json["errors"].first).to eq("source" => "client", "title" => "Must exist")
       end
     end
   end
 
-  describe 'DELETE /client-prefixes/:uid' do
+  describe "DELETE /client-prefixes/:uid" do
     let!(:client_prefix) { create(:client_prefix) }
 
     before do
@@ -125,8 +125,8 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       sleep 2
     end
 
-    it 'deletes the prefix' do
-      delete "/client-prefixes/#{client_prefix.uid}", nil, headers
+    it "deletes the prefix" do
+      delete "/client-prefixes/#{client_prefix.uid}", params: nil, session: headers
       expect(last_response.status).to eq(204)
     end
   end

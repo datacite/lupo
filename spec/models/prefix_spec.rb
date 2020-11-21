@@ -1,9 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Prefix, type: :model do
-  let!(:prefixes)  { create_list(:prefix, 10) }
+  let!(:prefixes) { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
-  
+
   describe "Validations" do
     it { should validate_presence_of(:uid) }
   end

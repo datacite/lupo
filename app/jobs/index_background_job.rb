@@ -1,4 +1,4 @@
-class IndexBackgroundJob < ActiveJob::Base
+class IndexBackgroundJob < ApplicationJob
   queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|

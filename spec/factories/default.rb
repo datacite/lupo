@@ -201,47 +201,51 @@ FactoryBot.define do
       ]
     end
     version { "1" }
-    rights_list {[
-      {
-        "rights"=>"Creative Commons Zero v1.0 Universal",
-        "rightsIdentifier"=>"cc0-1.0",
-        "rightsIdentifierScheme"=>"SPDX",
-        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode",
-        "schemeUri"=>"https://spdx.org/licenses/"
-      }
-    ]}
-    related_identifiers {[
-      {
-        "relatedIdentifier": "10.5061/dryad.8515/1",
-        "relatedIdentifierType": "DOI",
-        "relationType": "HasPart",
-      },
-      {
-        "relatedIdentifier": "10.5061/dryad.8515/2",
-        "relatedIdentifierType": "DOI",
-        "relationType": "HasPart",
-      },
-      {
-        "relatedIdentifier": "10.1371/journal.ppat.1000446",
-        "relatedIdentifierType": "DOI",
-        "relationType": "IsReferencedBy",
-      },
-      {
-        "relatedIdentifier": "10.1371/journal.ppat.1000446",
-        "relatedIdentifierType": "DOI",
-        "relationType": "IsSupplementTo",
-      },
-      {
-        "relatedIdentifier": "19478877",
-        "relatedIdentifierType": "PMID",
-        "relationType": "IsReferencedBy",
-      },
-      {
-        "relatedIdentifier": "19478877",
-        "relatedIdentifierType": "PMID",
-        "relationType": "IsSupplementTo",
-      }
-    ]}
+    rights_list do
+      [
+        {
+          "rights" => "Creative Commons Zero v1.0 Universal",
+          "rightsIdentifier" => "cc0-1.0",
+          "rightsIdentifierScheme" => "SPDX",
+          "rightsUri" => "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+          "schemeUri" => "https://spdx.org/licenses/",
+        },
+      ]
+    end
+    related_identifiers do
+      [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/2",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsSupplementTo",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsSupplementTo",
+        },
+      ]
+    end
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
     type { "DataciteDoi" }
@@ -270,7 +274,7 @@ FactoryBot.define do
 
   factory :provider do
     system_email { "josiah@example.org" }
-    sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    sequence(:symbol, "A") { |n| "TEST#{n}" }
     role_name { "ROLE_ALLOCATOR" }
     globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }

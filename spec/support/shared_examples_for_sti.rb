@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 shared_examples "an STI class" do
   it "should have attribute type" do

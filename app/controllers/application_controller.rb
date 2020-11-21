@@ -53,7 +53,7 @@ class ApplicationController < ActionController::API
   # deep_transform_keys has been removed in Rails 5.1
   # https://stackoverflow.com/questions/35812277/fields-parameters-with-hyphen-in-ruby-on-rails
   def transform_params
-    params.transform_keys! { |key| key.tr('-', '_') }
+    params.transform_keys! { |key| key.tr("-", "_") }
   end
 
   def default_format_json
@@ -77,6 +77,7 @@ class ApplicationController < ActionController::API
 
     @current_user = User.new(credentials, type: type)
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
+
     @current_user
   end
 
@@ -86,9 +87,7 @@ class ApplicationController < ActionController::API
 
   # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
   def type_and_credentials_from_request_headers
-    unless request.headers['Authorization'].nil?
-      request.headers['Authorization'].split
-    end
+    request.headers["Authorization"]&.split
   end
 
   def authenticated_user
@@ -98,7 +97,7 @@ class ApplicationController < ActionController::API
   unless Rails.env.development?
     rescue_from *RESCUABLE_EXCEPTIONS do |exception|
       status = case exception.class.to_s
-               when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError","JWT::VerificationError" then 401
+               when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError", "JWT::VerificationError" then 401
                when "CanCan::AccessDenied" then 403
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
                when "ActionController::UnknownFormat" then 406
@@ -145,7 +144,7 @@ class ApplicationController < ActionController::API
   protected
 
   def is_admin_or_staff?
-    current_user && current_user.is_admin_or_staff? ? 1 : 0
+    current_user&.is_admin_or_staff? ? 1 : 0
   end
 
   private
@@ -160,11 +159,11 @@ class ApplicationController < ActionController::API
       Raven.user_context(
         email: current_user.email,
         id: current_user.uid,
-        ip_address: request.ip
+        ip_address: request.ip,
       )
     else
       Raven.user_context(
-        ip_address: request.ip
+        ip_address: request.ip,
       )
     end
   end

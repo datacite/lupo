@@ -3,7 +3,7 @@ class RepositorySerializer
   set_key_transform :camel_lower
   set_type :repositories
   set_id :uid
-  
+
   attributes :name, :symbol, :re3data, :opendoar, :year, :system_email, :globus_uuid, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :issn, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers
@@ -18,7 +18,7 @@ class RepositorySerializer
   end
 
   attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+    object.is_active.getbyte(0) == 1
   end
 
   attribute :has_password do |object|
@@ -26,14 +26,10 @@ class RepositorySerializer
   end
 
   attribute :service_contact do |object|
-    object.service_contact.present? ? object.service_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.service_contact.present? ? object.service_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
-  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.globus_uuid
-  end
+  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:globus_uuid
 
-  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
-    object.salesforce_id
-  end
+  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true }, &:salesforce_id
 end

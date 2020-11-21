@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PersonConnectionWithTotalType < BaseConnection  
+class PersonConnectionWithTotalType < BaseConnection
   edge_type(PersonEdgeType)
   field_class GraphQL::Cache::Field
 
@@ -14,7 +14,7 @@ class PersonConnectionWithTotalType < BaseConnection
     { "id" => "2017", "title" => "2017", "count" => 1388796 },
     { "id" => "2018", "title" => "2018", "count" => 1585851 },
     { "id" => "2019", "title" => "2019", "count" => 2006672 },
-  ]
+  ].freeze
 
   field :total_count, Integer, null: false, cache: true
   field :years, [FacetType], null: true, cache: true
@@ -24,7 +24,7 @@ class PersonConnectionWithTotalType < BaseConnection
   field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
-    object.total_count 
+    object.total_count
   end
 
   def years
@@ -35,7 +35,7 @@ class PersonConnectionWithTotalType < BaseConnection
     this_year = object.total_count > count ? { "id" => "2020", "title" => "2020", "count" => object.total_count - count } : nil
     this_year ? YEARS << this_year : YEARS
   end
-  
+
   def publication_connection_count
     Event.query(nil, citation_type: "Person-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end

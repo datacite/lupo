@@ -1,4 +1,4 @@
-class UpdateProviderIdJob < ActiveJob::Base
+class UpdateProviderIdJob < ApplicationJob
   queue_as :lupo_transfer
 
   # retry_on ActiveRecord::RecordNotFound, wait: 10.seconds, attempts: 3

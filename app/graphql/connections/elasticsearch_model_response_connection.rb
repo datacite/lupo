@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+  # frozen_string_literal: true
 
   # A Connection wraps a list of items and provides cursor-based pagination over it.
   #
@@ -73,9 +73,9 @@
       # or if one is assigned later.
       @has_max_page_size_override = max_page_size != :not_given
       @max_page_size = if max_page_size == :not_given
-        nil
-      else
-        max_page_size
+                         nil
+                       else
+                         max_page_size
       end
     end
 

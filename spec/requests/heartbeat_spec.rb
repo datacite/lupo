@@ -1,8 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe '/heartbeat', type: :request do
+describe "/heartbeat", type: :request do
   it "get heartbeat" do
-    get '/heartbeat'
+    get "/heartbeat"
 
     expect(last_response.status).to eq(200)
     expect(last_response.body).to eq("OK")

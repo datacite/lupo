@@ -8,16 +8,16 @@ describe "Providers", type: :controller, elasticsearch: true do
       allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
       @providers = create_list(:provider, 3)
     end
-  
+
     it "counts all providers" do
       Provider.import
       sleep 2
-      expect(subject.provider_count).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"},
-        {"count"=>3, "id"=>"2016", "title"=>"2016"},
-        {"count"=>3, "id"=>"2017", "title"=>"2017"},
-        {"count"=>3, "id"=>"2018", "title"=>"2018"},
-        {"count"=>3, "id"=>"2019", "title"=>"2019"},
-        {"count"=>3, "id"=>"2020", "title"=>"2020"}])
+      expect(subject.provider_count).to eq([{ "count" => 3, "id" => "2015", "title" => "2015" },
+                                            { "count" => 3, "id" => "2016", "title" => "2016" },
+                                            { "count" => 3, "id" => "2017", "title" => "2017" },
+                                            { "count" => 3, "id" => "2018", "title" => "2018" },
+                                            { "count" => 3, "id" => "2019", "title" => "2019" },
+                                            { "count" => 3, "id" => "2020", "title" => "2020" }])
     end
 
     it "takes into account deleted providers" do
@@ -25,12 +25,12 @@ describe "Providers", type: :controller, elasticsearch: true do
       @providers.last.update(deleted_at: "2015-06-14")
       Provider.import
       sleep 2
-      expect(subject.provider_count).to eq([{"count"=>1, "id"=>"2018", "title"=>"2018"},
-        {"count"=>1, "id"=>"2019", "title"=>"2019"},
-        {"count"=>1, "id"=>"2020", "title"=>"2020"},
-        {"count"=>2, "id"=>"2015", "title"=>"2015"},
-        {"count"=>2, "id"=>"2016", "title"=>"2016"},
-        {"count"=>2, "id"=>"2017", "title"=>"2017"}])
+      expect(subject.provider_count).to eq([{ "count" => 1, "id" => "2018", "title" => "2018" },
+                                            { "count" => 1, "id" => "2019", "title" => "2019" },
+                                            { "count" => 1, "id" => "2020", "title" => "2020" },
+                                            { "count" => 2, "id" => "2015", "title" => "2015" },
+                                            { "count" => 2, "id" => "2016", "title" => "2016" },
+                                            { "count" => 2, "id" => "2017", "title" => "2017" }])
     end
   end
 
@@ -39,16 +39,16 @@ describe "Providers", type: :controller, elasticsearch: true do
       allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
       @clients = create_list(:client, 3)
     end
-  
+
     it "counts all clients" do
       Client.import
       sleep 2
-      expect(subject.client_count).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"},
-        {"count"=>3, "id"=>"2016", "title"=>"2016"},
-        {"count"=>3, "id"=>"2017", "title"=>"2017"},
-        {"count"=>3, "id"=>"2018", "title"=>"2018"},
-        {"count"=>3, "id"=>"2019", "title"=>"2019"},
-        {"count"=>3, "id"=>"2020", "title"=>"2020"}])
+      expect(subject.client_count).to eq([{ "count" => 3, "id" => "2015", "title" => "2015" },
+                                          { "count" => 3, "id" => "2016", "title" => "2016" },
+                                          { "count" => 3, "id" => "2017", "title" => "2017" },
+                                          { "count" => 3, "id" => "2018", "title" => "2018" },
+                                          { "count" => 3, "id" => "2019", "title" => "2019" },
+                                          { "count" => 3, "id" => "2020", "title" => "2020" }])
     end
 
     it "takes into account deleted clients" do
@@ -56,12 +56,12 @@ describe "Providers", type: :controller, elasticsearch: true do
       @clients.last.update(deleted_at: "2015-06-14")
       Client.import
       sleep 2
-      expect(subject.client_count).to eq([{"count"=>1, "id"=>"2018", "title"=>"2018"},
-        {"count"=>1, "id"=>"2019", "title"=>"2019"},
-        {"count"=>1, "id"=>"2020", "title"=>"2020"},
-        {"count"=>2, "id"=>"2015", "title"=>"2015"},
-        {"count"=>2, "id"=>"2016", "title"=>"2016"},
-        {"count"=>2, "id"=>"2017", "title"=>"2017"}])
+      expect(subject.client_count).to eq([{ "count" => 1, "id" => "2018", "title" => "2018" },
+                                          { "count" => 1, "id" => "2019", "title" => "2019" },
+                                          { "count" => 1, "id" => "2020", "title" => "2020" },
+                                          { "count" => 2, "id" => "2015", "title" => "2015" },
+                                          { "count" => 2, "id" => "2016", "title" => "2016" },
+                                          { "count" => 2, "id" => "2017", "title" => "2017" }])
     end
   end
 
@@ -80,14 +80,14 @@ describe "Providers", type: :controller, elasticsearch: true do
       DataciteDoi.import
       sleep 2
 
-      expect(subject.doi_count).to eq([{"count"=>4, "id"=>"2015", "title"=>"2015"}])
+      expect(subject.doi_count).to eq([{ "count" => 4, "id" => "2015", "title" => "2015" }])
     end
 
     it "counts all consortium dois" do
       DataciteDoi.import
       sleep 2
 
-      expect(subject.doi_count(consortium_id: "dc")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+      expect(subject.doi_count(consortium_id: "dc")).to eq([{ "count" => 3, "id" => "2015", "title" => "2015" }])
     end
 
     it "counts all consortium dois no dois" do
@@ -101,7 +101,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       DataciteDoi.import
       sleep 2
 
-      expect(subject.doi_count(provider_id: "datacite")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+      expect(subject.doi_count(provider_id: "datacite")).to eq([{ "count" => 3, "id" => "2015", "title" => "2015" }])
     end
 
     it "counts all provider dois no dois" do
@@ -115,7 +115,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       DataciteDoi.import
       sleep 2
 
-      expect(subject.doi_count(client_id: "datacite.test")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+      expect(subject.doi_count(client_id: "datacite.test")).to eq([{ "count" => 3, "id" => "2015", "title" => "2015" }])
     end
 
     it "counts all client dois no dois" do

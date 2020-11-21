@@ -1,9 +1,9 @@
-class SchemaVersionJob < ActiveJob::Base
+class SchemaVersionJob < ApplicationJob
   queue_as :lupo_background
 
   include Crosscitable
 
-  def perform(id, options = {})
+  def perform(id, _options = {})
     doi = Doi.where(doi: id, schema_version: nil).first
     xml = doi.xml
     metadata = xml.present? ? parse_xml(xml, doi: id) : {}

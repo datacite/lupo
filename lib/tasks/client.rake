@@ -2,57 +2,57 @@
 
 namespace :client do
   desc "Create index for clients"
-  task :create_index => :environment do
+  task create_index: :environment do
     puts Client.create_index
   end
 
   desc "Delete index for clients"
-  task :delete_index => :environment do
+  task delete_index: :environment do
     puts Client.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for clients"
-  task :upgrade_index => :environment do
+  task upgrade_index: :environment do
     puts Client.upgrade_index
   end
 
   desc "Show index stats for clients"
-  task :index_stats => :environment do
+  task index_stats: :environment do
     puts Client.index_stats
   end
 
   desc "Switch index for clients"
-  task :switch_index => :environment do
+  task switch_index: :environment do
     puts Client.switch_index
   end
 
   desc "Return active index for clients"
-  task :active_index => :environment do
+  task active_index: :environment do
     puts Client.active_index + " is the active index."
   end
 
   desc "Monitor reindexing for clients"
-  task :monitor_reindex => :environment do
+  task monitor_reindex: :environment do
     puts Client.monitor_reindex
   end
 
   desc "Create alias for clients"
-  task :create_alias => :environment do
+  task create_alias: :environment do
     puts Client.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List aliases for clients"
-  task :list_aliases => :environment do
+  task list_aliases: :environment do
     puts Client.list_aliases
   end
 
   desc "Delete alias for clients"
-  task :delete_alias => :environment do
+  task delete_alias: :environment do
     puts Client.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
-  desc 'Import all clients'
-  task :import => :environment do
+  desc "Import all clients"
+  task import: :environment do
     Client.import(index: Client.inactive_index)
   end
 
@@ -74,14 +74,14 @@ namespace :client do
   #   client.index_all_dois
   # end
 
-  desc 'Import DOIs by client'
-  task :import_dois => :environment do
-    if ENV['CLIENT_ID'].nil?
+  desc "Import DOIs by client"
+  task import_dois: :environment do
+    if ENV["CLIENT_ID"].nil?
       puts "ENV['CLIENT_ID'] is required."
       exit
     end
 
-    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    client = Client.where(deleted_at: nil).where(symbol: ENV["CLIENT_ID"]).first
     if client.nil?
       puts "Client not found for client ID #{ENV['CLIENT_ID']}."
       exit
@@ -89,22 +89,22 @@ namespace :client do
 
     # import DOIs for client
     puts "#{client.dois.length} DOIs will be imported."
-    Doi.import_by_client(client_id: ENV['CLIENT_ID'])
+    Doi.import_by_client(client_id: ENV["CLIENT_ID"])
   end
 
-  desc 'Export doi counts'
-  task :export_doi_counts => :environment do
+  desc "Export doi counts"
+  task export_doi_counts: :environment do
     puts Client.export_doi_counts(query: ENV["QUERY"])
   end
 
-  desc 'Delete client transferred to other DOI registration agency'
-  task :delete => :environment do
-    if ENV['CLIENT_ID'].nil?
+  desc "Delete client transferred to other DOI registration agency"
+  task delete: :environment do
+    if ENV["CLIENT_ID"].nil?
       puts "ENV['CLIENT_ID'] is required."
       exit
     end
 
-    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    client = Client.where(deleted_at: nil).where(symbol: ENV["CLIENT_ID"]).first
     if client.nil?
       puts "Client not found for client ID #{ENV['CLIENT_ID']}."
       exit
@@ -114,14 +114,14 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes and DOIs
-    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:uid)
+    prefixes = client.prefixes.where.not("prefixes.uid IN (?)", prefixes_to_keep).pluck(:uid)
     prefixes.each do |prefix|
-      ENV['PREFIX'] = prefix
+      ENV["PREFIX"] = prefix
       Rake::Task["prefix:delete"].reenable
       Rake::Task["prefix:delete"].invoke
     end
 
-    if client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+    if client.update(is_active: nil, deleted_at: Time.zone.now)
       client.send_delete_email(responsible_id: "admin") unless Rails.env.test?
       puts "Client with client ID #{ENV['CLIENT_ID']} deleted."
     else
@@ -129,25 +129,25 @@ namespace :client do
     end
   end
 
-  desc 'Transfer client'
-  task :transfer => :environment do
-    if ENV['CLIENT_ID'].nil?
+  desc "Transfer client"
+  task transfer: :environment do
+    if ENV["CLIENT_ID"].nil?
       puts "ENV['CLIENT_ID'] is required."
       exit
     end
 
-    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    client = Client.where(deleted_at: nil).where(symbol: ENV["CLIENT_ID"]).first
     if client.nil?
       puts "Client not found for client ID #{ENV['CLIENT_ID']}."
       exit
     end
 
-    if ENV['TARGET_ID'].nil?
+    if ENV["TARGET_ID"].nil?
       puts "ENV['TARGET_ID'] is required."
       exit
     end
 
-    target = Client.where(deleted_at: nil).where(symbol: ENV['TARGET_ID']).first
+    target = Client.where(deleted_at: nil).where(symbol: ENV["TARGET_ID"]).first
     if target.nil?
       puts "Client not found for target ID #{ENV['TARGET_ID']}."
       exit
@@ -157,14 +157,14 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes
-    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep)
-    prefix_ids = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:id)
+    prefixes = client.prefixes.where.not("prefixes.uid IN (?)", prefixes_to_keep)
+    prefix_ids = client.prefixes.where.not("prefixes.uid IN (?)", prefixes_to_keep).pluck(:id)
 
     response = client.client_prefixes.destroy_all
     puts "#{response.count} client prefixes deleted."
 
     if prefix_ids.present?
-      response = ProviderPrefix.where('prefix_id IN (?)', prefix_ids).destroy_all
+      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
       puts "#{response.count} provider prefixes deleted."
     end
 

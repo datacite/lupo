@@ -93,22 +93,23 @@ describe DataCatalogType do
 
   describe "query data_catalogs", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3) }
-    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+    let!(:doi) do
+      create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
         "affiliation": [
           {
             "name": "University of Cambridge",
             "affiliationIdentifier": "https://ror.org/013meh722",
-            "affiliationIdentifierScheme": "ROR"
+            "affiliationIdentifierScheme": "ROR",
           },
-        ]
+        ],
       }])
-    }
+    end
 
     before do
       Doi.import
@@ -149,14 +150,14 @@ describe DataCatalogType do
       expect(response.dig("data", "dataCatalogs", "pageInfo", "endCursor")).to eq("OQ")
       expect(response.dig("data", "dataCatalogs", "pageInfo", "hasNextPage")).to eq true
       expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(10)
-      
+
       data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)
       expect(data_catalog.fetch("id")).to eq("https://doi.org/10.17616/r3bw5r")
       expect(data_catalog.fetch("name")).to eq("UCLA Social Science Data Archive Dataverse")
       expect(data_catalog.fetch("alternateName")).to eq(["SSDA Dataverse\r\nUCLA Library Data Science Center"])
       expect(data_catalog.fetch("description")).to start_with("The Social Science Data Archive is still active and maintained as part of the UCLA Library")
       expect(data_catalog.fetch("certificates")).to be_empty
-      expect(data_catalog.fetch("softwareApplication")).to eq([{"name"=>"DataVerse", "softwareVersion"=>nil, "url"=>nil}])
+      expect(data_catalog.fetch("softwareApplication")).to eq([{ "name" => "DataVerse", "softwareVersion" => nil, "url" => nil }])
     end
   end
 end

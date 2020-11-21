@@ -7,10 +7,10 @@ module Processable
     end
 
     def process_data
-      self.start
-      self.finish
-    rescue
-      self.error
+      start
+      finish
+    rescue StandardError
+      error
     end
 
     # Called as part of EventJob.

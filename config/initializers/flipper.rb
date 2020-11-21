@@ -9,12 +9,12 @@ require "flipper/adapters/active_support_cache_store"
 Flipper.configure do |config|
   config.default do
     configuration = {
-      url: ENV['VOLPINO_URL'] + "/flipper",
-      headers: { "Authorization" => "Bearer " + ENV['VOLPINO_TOKEN'] }
+      url: ENV["VOLPINO_URL"] + "/flipper",
+      headers: { "Authorization" => "Bearer " + ENV["VOLPINO_TOKEN"] },
     }
     adapter = Flipper::Adapters::Http.new(configuration)
     unless Rails.env.test?
-      cache = ActiveSupport::Cache::MemCacheStore.new(ENV['MEMCACHE_SERVERS'])
+      cache = ActiveSupport::Cache::MemCacheStore.new(ENV["MEMCACHE_SERVERS"])
       adapter = Flipper::Adapters::ActiveSupportCacheStore.new(adapter, cache, expires_in: 1.hour)
     end
     flipper = Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)

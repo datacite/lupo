@@ -1,10 +1,10 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Person, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://orcid.org/0000-0003-2706-4082"
-      people = Person.find_by_id(id)
+      people = Person.find_by(id: id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-2706-4082")
@@ -21,7 +21,7 @@ describe Person, type: :model, vcr: true do
 
     it "also found" do
       id = "https://orcid.org/0000-0003-3484-6875"
-      people = Person.find_by_id(id)
+      people = Person.find_by(id: id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-3484-6875")
@@ -30,20 +30,20 @@ describe Person, type: :model, vcr: true do
       expect(person.family_name).to eq("Garza")
       expect(person.alternate_name).to eq(["Kristian Javier Garza Gutierrez"])
       expect(person.description).to be_nil
-      expect(person.links).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}, {"name"=>"github", "url"=>"https://github.com/kjgarza"}])
-      expect(person.identifiers).to eq([{"identifier"=>"kjgarza",
-        "identifierType"=>"GitHub",
-        "identifierUrl"=>"https://github.com/kjgarza"}])
-      expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
+      expect(person.links).to eq([{ "name" => "Mendeley profile", "url" => "https://www.mendeley.com/profiles/kristian-g/" }, { "name" => "github", "url" => "https://github.com/kjgarza" }])
+      expect(person.identifiers).to eq([{ "identifier" => "kjgarza",
+                                          "identifierType" => "GitHub",
+                                          "identifierUrl" => "https://github.com/kjgarza" }])
+      expect(person.country).to eq("id" => "DE", "name" => "Germany")
       expect(person.employment.length).to eq(1)
-      expect(person.employment).to eq([{"organization_name"=>"DataCite",
-        "role_title"=>"Application Developer",
-        "start_date"=>"2016-08-01T00:00:00Z"}])
+      expect(person.employment).to eq([{ "organization_name" => "DataCite",
+                                         "role_title" => "Application Developer",
+                                         "start_date" => "2016-08-01T00:00:00Z" }])
     end
 
     it "found with biography" do
       id = "https://orcid.org/0000-0003-1419-2405"
-      people = Person.find_by_id(id)
+      people = Person.find_by(id: id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-1419-2405")
@@ -52,40 +52,40 @@ describe Person, type: :model, vcr: true do
       expect(person.family_name).to eq("Fenner")
       expect(person.alternate_name).to eq(["Martin Hellmut Fenner"])
       expect(person.description).to eq("Martin Fenner is the DataCite Technical Director since 2015. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
-      expect(person.links).to eq([{"name"=>"Twitter", "url"=>"http://twitter.com/mfenner"}])
-      expect(person.identifiers).to eq([{"identifier"=>"7006600825",
-        "identifierType"=>"Scopus Author ID",
-        "identifierUrl"=>
-        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},
-       {"identifier"=>"000000035060549X",
-        "identifierType"=>"ISNI",
-        "identifierUrl"=>"http://isni.org/000000035060549X"},
-        {"identifier"=>"mfenner",
-         "identifierType"=>"GitHub",
-         "identifierUrl"=>"https://github.com/mfenner"}])
-      expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment).to eq([{"organization_id"=>"https://grid.ac/institutes/grid.475826.a",
-        "organization_name"=>"DataCite",
-        "role_title"=>"Technical Director",
-        "start_date"=>"2015-08-01T00:00:00Z"},
-       {"end_date"=>"2017-05-01T00:00:00Z",
-        "organization_id"=>"https://grid.ac/institutes/grid.10423.34",
-        "organization_name"=>"Hannover Medical School",
-        "role_title"=>"Clinical Fellow in Hematology and Oncology",
-        "start_date"=>"2005-11-01T00:00:00Z"},
-       {"end_date"=>"2015-07-01T00:00:00Z",
-        "organization_name"=>"Public Library of Science",
-        "role_title"=>"Technical lead article-level metrics project (contractor)",
-        "start_date"=>"2012-04-01T00:00:00Z"},
-       {"end_date"=>"2005-10-01T00:00:00Z",
-        "organization_name"=>"Charité Universitätsmedizin Berlin",
-        "role_title"=>"Resident in Internal Medicine",
-        "start_date"=>"1998-09-01T00:00:00Z"}])
+      expect(person.links).to eq([{ "name" => "Twitter", "url" => "http://twitter.com/mfenner" }])
+      expect(person.identifiers).to eq([{ "identifier" => "7006600825",
+                                          "identifierType" => "Scopus Author ID",
+                                          "identifierUrl" =>
+        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS" },
+                                        { "identifier" => "000000035060549X",
+                                          "identifierType" => "ISNI",
+                                          "identifierUrl" => "http://isni.org/000000035060549X" },
+                                        { "identifier" => "mfenner",
+                                          "identifierType" => "GitHub",
+                                          "identifierUrl" => "https://github.com/mfenner" }])
+      expect(person.country).to eq("id" => "DE", "name" => "Germany")
+      expect(person.employment).to eq([{ "organization_id" => "https://grid.ac/institutes/grid.475826.a",
+                                         "organization_name" => "DataCite",
+                                         "role_title" => "Technical Director",
+                                         "start_date" => "2015-08-01T00:00:00Z" },
+                                       { "end_date" => "2017-05-01T00:00:00Z",
+                                         "organization_id" => "https://grid.ac/institutes/grid.10423.34",
+                                         "organization_name" => "Hannover Medical School",
+                                         "role_title" => "Clinical Fellow in Hematology and Oncology",
+                                         "start_date" => "2005-11-01T00:00:00Z" },
+                                       { "end_date" => "2015-07-01T00:00:00Z",
+                                         "organization_name" => "Public Library of Science",
+                                         "role_title" => "Technical lead article-level metrics project (contractor)",
+                                         "start_date" => "2012-04-01T00:00:00Z" },
+                                       { "end_date" => "2005-10-01T00:00:00Z",
+                                         "organization_name" => "Charité Universitätsmedizin Berlin",
+                                         "role_title" => "Resident in Internal Medicine",
+                                         "start_date" => "1998-09-01T00:00:00Z" }])
     end
 
     it "found with X in ID" do
       id = "https://orcid.org/0000-0001-7701-701X"
-      people = Person.find_by_id(id)
+      people = Person.find_by(id: id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0001-7701-701X")
@@ -98,19 +98,19 @@ describe Person, type: :model, vcr: true do
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
       expect(person.employment.length).to eq(1)
-      expect(person.employment).to eq([{"organization_name"=>"University of Cambridge",
-        "role_title"=>"Senior Lecturer in Latin American Literature and Culture",
-        "start_date"=>"2006-01-01T00:00:00Z"}])
+      expect(person.employment).to eq([{ "organization_name" => "University of Cambridge",
+                                         "role_title" => "Senior Lecturer in Latin American Literature and Culture",
+                                         "start_date" => "2006-01-01T00:00:00Z" }])
     end
 
     it "account locked" do
       id = "https://orcid.org/0000-0003-1315-5960"
-      expect { Person.find_by_id(id) }.to raise_error(Faraday::ClientError, /ORCID record is locked/)
+      expect { Person.find_by(id: id) }.to raise_error(Faraday::ClientError, /ORCID record is locked/)
     end
 
     it "not found" do
       id = "https://orcid.org/xxxxx"
-      people = Person.find_by_id(id)
+      people = Person.find_by(id: id)
       expect(people[:data]).to be_nil
       expect(people[:errors]).to be_nil
     end

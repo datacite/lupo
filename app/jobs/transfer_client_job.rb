@@ -1,4 +1,4 @@
-class TransferClientJob < ActiveJob::Base
+class TransferClientJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(client, options = {})

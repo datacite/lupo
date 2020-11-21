@@ -13,7 +13,7 @@ class OtherConnectionWithTotalType < BaseConnection
   field :languages, [FacetType], null: true, cache: true
 
   def total_count
-    object.total_count 
+    object.total_count
   end
 
   def years

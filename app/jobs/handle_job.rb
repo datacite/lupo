@@ -1,4 +1,4 @@
-class HandleJob < ActiveJob::Base
+class HandleJob < ApplicationJob
   queue_as :lupo
 
   # retry_on ActiveRecord::RecordNotFound, wait: 10.seconds, attempts: 3

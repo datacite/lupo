@@ -10,7 +10,7 @@ class LupoSchema < GraphQL::Schema
   # custom connection wrapper for external REST APIs
   connections.add(Hash, HashConnection)
 
-  use GraphQL::Tracing::DataDogTracing, service: 'graphql'
+  use GraphQL::Tracing::DataDogTracing, service: "graphql"
   use ApolloFederation::Tracing
   use GraphQL::Batch
   use GraphQL::Cache
@@ -23,7 +23,7 @@ class LupoSchema < GraphQL::Schema
 end
 
 GraphQL::Errors.configure(LupoSchema) do
-  rescue_from ActiveRecord::RecordNotFound do |exception|
+  rescue_from ActiveRecord::RecordNotFound do |_exception|
     GraphQL::ExecutionError.new("Record not found")
   end
 

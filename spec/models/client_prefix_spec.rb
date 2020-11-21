@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe ClientPrefix, type: :model do
   let(:provider) { create(:provider) }

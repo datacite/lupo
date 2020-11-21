@@ -6,7 +6,7 @@ class ResourceTypesController < ApplicationController
     options[:meta] = {
       total: @resource_types.dig(:meta, :total),
       "total-pages" => 1,
-      page: @resource_types.dig(:meta, :page)
+      page: @resource_types.dig(:meta, :page),
     }.compact
     options[:is_collection] = true
 
@@ -15,7 +15,7 @@ class ResourceTypesController < ApplicationController
 
   def show
     @resource_type = ResourceType.where(id: params[:id])
-    fail AbstractController::ActionNotFound unless @resource_type.present?
+    fail AbstractController::ActionNotFound if @resource_type.blank?
 
     options = {}
     options[:is_collection] = false

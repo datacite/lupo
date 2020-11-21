@@ -1,4 +1,4 @@
-class SubjCheckJob < ActiveJob::Base
+class SubjCheckJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(events, options = {})

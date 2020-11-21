@@ -2,12 +2,12 @@ ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
 
 # set up Code Climate
-require 'simplecov'
+require "simplecov"
 SimpleCov.start
 
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path("../config/environment", __dir__)
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 require "rspec/rails"
 require "shoulda-matchers"
@@ -15,16 +15,16 @@ require "webmock/rspec"
 require "rack/test"
 require "colorize"
 require "database_cleaner"
-require 'aasm/rspec'
+require "aasm/rspec"
 require "strip_attributes/matchers"
-require 'rspec-benchmark'
+require "rspec-benchmark"
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
 
 WebMock.disable_net_connect!(
-  allow: ['codeclimate.com:443', ENV['PRIVATE_IP'], ENV['ES_HOST']],
-  allow_localhost: true
+  allow: ["codeclimate.com:443", ENV["PRIVATE_IP"], ENV["ES_HOST"]],
+  allow_localhost: true,
 )
 
 # configure shoulda matchers to use rspec as the test framework and full matcher libraries for rails
@@ -58,7 +58,7 @@ RSpec.configure do |config|
     config.before(:each) do
       Bullet.start_request
     end
-  
+
     config.after(:each) do
       Bullet.perform_out_of_channel_notifications if Bullet.notification?
       Bullet.end_request
@@ -67,13 +67,13 @@ RSpec.configure do |config|
 end
 
 VCR.configure do |c|
-  vcr_mode = ENV['VCR_MODE'] =~ /rec/i ? :all : :once
+  vcr_mode = /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
 
   mds_token = Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
   admin_token = Base64.strict_encode64("#{ENV['ADMIN_USERNAME']}:#{ENV['ADMIN_PASSWORD']}")
   handle_token = Base64.strict_encode64("300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}")
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
-  sqs_host = "sqs.#{ENV['AWS_REGION'].to_s}.amazonaws.com"
+  sqs_host = "sqs.#{ENV['AWS_REGION']}.amazonaws.com"
 
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock
@@ -86,10 +86,10 @@ VCR.configure do |c|
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.filter_sensitive_data("<SLACK_WEBHOOK_URL>") { ENV["SLACK_WEBHOOK_URL"] }
   c.configure_rspec_metadata!
-  c.default_cassette_options = { :match_requests_on => %i[method uri body] }
+  c.default_cassette_options = { match_requests_on: %i[method uri body] }
 end
 
-def capture_stdout(&block)
+def capture_stdout
   original_stdout = $stdout
   $stdout = fake = StringIO.new
   begin

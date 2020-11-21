@@ -1,25 +1,25 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "Organization", vcr: true do
   subject { Organization }
 
   context "find_by_wikidata_id" do
-    it 'for entity' do
+    it "for entity" do
       id = "Q35794"
-      result = subject.find_by_wikidata_id(id)
+      result = subject.find_by(wikidata_id: id)
       organization = result[:data].first
 
       expect(organization.id).to eq("Q35794")
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
+      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
       expect(organization.ringgold).to eq("2152")
     end
   end
 
   context "fetch_wikidata_by_id" do
-    it 'for entity' do
+    it "for entity" do
       id = "Q35794"
       response = subject.fetch_wikidata_by_id(id)
 
@@ -33,7 +33,7 @@ describe "Organization", vcr: true do
   end
 
   context "parse_wikidata_message" do
-    it 'for entity' do
+    it "for entity" do
       id = "Q35794"
       message = subject.fetch_wikidata_by_id(id).dig("data")
       organization = subject.parse_wikidata_message(id: id, message: message)
@@ -42,7 +42,7 @@ describe "Organization", vcr: true do
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
+      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
       expect(organization.ringgold).to eq("2152")
     end
   end
@@ -58,23 +58,23 @@ describe "Person", vcr: true do
       employment = subject.get_employments(employments)
       response = subject.wikidata_query(employment)
 
-      expect(response).to eq([{"organization_id"=>"https://grid.ac/institutes/grid.475826.a",
-        "organization_name"=>"DataCite",
-        "role_title"=>"Technical Director",
-        "start_date"=>"2015-08-01T00:00:00Z"},
-       {"end_date"=>"2017-05-01T00:00:00Z",
-        "organization_id"=>"https://grid.ac/institutes/grid.10423.34",
-        "organization_name"=>"Hannover Medical School",
-        "role_title"=>"Clinical Fellow in Hematology and Oncology",
-        "start_date"=>"2005-11-01T00:00:00Z"},
-       {"end_date"=>"2015-07-01T00:00:00Z",
-        "organization_name"=>"Public Library of Science",
-        "role_title"=>"Technical lead article-level metrics project (contractor)",
-        "start_date"=>"2012-04-01T00:00:00Z"},
-       {"end_date"=>"2005-10-01T00:00:00Z",
-        "organization_name"=>"Charité Universitätsmedizin Berlin",
-        "role_title"=>"Resident in Internal Medicine",
-        "start_date"=>"1998-09-01T00:00:00Z"}])
+      expect(response).to eq([{ "organization_id" => "https://grid.ac/institutes/grid.475826.a",
+                                "organization_name" => "DataCite",
+                                "role_title" => "Technical Director",
+                                "start_date" => "2015-08-01T00:00:00Z" },
+                              { "end_date" => "2017-05-01T00:00:00Z",
+                                "organization_id" => "https://grid.ac/institutes/grid.10423.34",
+                                "organization_name" => "Hannover Medical School",
+                                "role_title" => "Clinical Fellow in Hematology and Oncology",
+                                "start_date" => "2005-11-01T00:00:00Z" },
+                              { "end_date" => "2015-07-01T00:00:00Z",
+                                "organization_name" => "Public Library of Science",
+                                "role_title" => "Technical lead article-level metrics project (contractor)",
+                                "start_date" => "2012-04-01T00:00:00Z" },
+                              { "end_date" => "2005-10-01T00:00:00Z",
+                                "organization_name" => "Charité Universitätsmedizin Berlin",
+                                "role_title" => "Resident in Internal Medicine",
+                                "start_date" => "1998-09-01T00:00:00Z" }])
     end
 
     it "empty" do

@@ -6,13 +6,13 @@ module Paginatable
     def page_from_params(params)
       p = params.to_unsafe_h.dig(:page)
 
-      if p.is_a?(Hash)
-        page = p.symbolize_keys
-      else
-        page = {}
-      end
+      page = if p.is_a?(Hash)
+               p.symbolize_keys
+             else
+               {}
+             end
 
-      # Use scroll API for large number of results, e.g. to generate sitemaps      
+      # Use scroll API for large number of results, e.g. to generate sitemaps
       # Alternatively use cursor
       # All cursors will need to be decoded from the param
       # Check for presence of :cursor key, value can be empty
@@ -32,10 +32,10 @@ module Paginatable
       # max number of results per page is 1000
       if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
-        max_number = page[:size] > 0 ? 10000/page[:size] : 1
+        max_number = page[:size] > 0 ? 10000 / page[:size] : 1
       else
         page[:size] = 25
-        max_number = 10000/page[:size]
+        max_number = 10000 / page[:size]
       end
       page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 

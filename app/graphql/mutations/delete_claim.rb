@@ -15,14 +15,14 @@ class DeleteClaim < BaseMutation
     if [200, 204].include?(response.status)
       {
         message: "Claim #{id} deleted.",
-        errors: []
+        errors: [],
       }
     else
       errors = response.body["errors"].present? ? ": " + response.body.dig("errors", 0, "title") : ""
       Rails.logger.error "Error deleting claim id #{id} for user #{context[:current_user].uid}" + errors
       {
         message: "Error deleting claim #{id}.",
-        errors: response.body["errors"]
+        errors: response.body["errors"],
       }
     end
   end

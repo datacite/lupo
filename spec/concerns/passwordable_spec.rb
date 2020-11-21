@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Provider, type: :model do
   subject { create(:provider) }

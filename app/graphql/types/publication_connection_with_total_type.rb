@@ -21,7 +21,7 @@ class PublicationConnectionWithTotalType < BaseConnection
   field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
-    object.total_count 
+    object.total_count
   end
 
   def published

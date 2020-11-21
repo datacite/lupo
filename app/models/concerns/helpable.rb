@@ -1,10 +1,10 @@
 module Helpable
   extend ActiveSupport::Concern
 
-  require 'bolognese'
-  require 'csv'
-  require 'securerandom'
-  require 'base32/url'
+  require "bolognese"
+  require "csv"
+  require "securerandom"
+  require "base32/url"
 
   UPPER_LIMIT = 1073741823
 
@@ -13,16 +13,16 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url
-      unless url.present?
-        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": url missing."
+      if url.blank?
+        raise ActionController::BadRequest.new, "[Handle] Error updating DOI " + doi + ": url missing."
       end
 
-      unless client_id.present?
-        raise ActionController::BadRequest.new(), "[Handle] Error updating DOI " + doi + ": client ID missing."
+      if client_id.blank?
+        raise ActionController::BadRequest.new, "[Handle] Error updating DOI " + doi + ": client ID missing."
       end
 
       unless is_registered_or_findable?
-        raise ActionController::BadRequest.new(), "DOI is not registered or findable."
+        raise ActionController::BadRequest.new, "DOI is not registered or findable."
       end
 
       payload = [
@@ -32,11 +32,11 @@ module Helpable
           "data" => {
             "format" => "admin",
             "value" => {
-              "handle" => ENV['HANDLE_USERNAME'],
+              "handle" => ENV["HANDLE_USERNAME"],
               "index" => 300,
-              "permissions" => "111111111111"
-            }
-          }
+              "permissions" => "111111111111",
+            },
+          },
         },
         {
           "index" => 1,
@@ -44,21 +44,21 @@ module Helpable
           "data" => {
             "format" => "string",
             "value" => url,
-          }
-        }
+          },
+        },
       ].to_json
 
       handle_url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
-      response = Maremma.put(handle_url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      response = Maremma.put(handle_url, content_type: "application/json;charset=UTF-8", data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV["HANDLE_PASSWORD"], ssl_self_signed: true, timeout: 10)
 
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
         success = true
-        success = self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
+        success = update(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
         Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         if success
-          self.__elasticsearch__.index_document
+          __elasticsearch__.index_document
         end
       elsif response.status == 404
         Rails.logger.info "[Handle] Error updating URL for DOI " + doi + ": not found"
@@ -90,15 +90,15 @@ module Helpable
       "6:X".gen
     end
 
-    def generate_random_dois(str, options={})
+    def generate_random_dois(str, options = {})
       prefix = validate_prefix(str)
-      fail IdentifierError, "No valid prefix found" unless prefix.present?
+      fail IdentifierError, "No valid prefix found" if prefix.blank?
 
       shoulder = str.split("/", 2)[1].to_s
       encode_doi(prefix, shoulder: shoulder, number: options[:number], size: options[:size])
     end
 
-    def encode_doi(prefix, options={})
+    def encode_doi(prefix, options = {})
       return nil if prefix.blank?
 
       number = options[:number].to_s.scan(/\d+/).join("").to_i
@@ -108,7 +108,7 @@ module Helpable
       split = 4
       size = (options[:size] || 1).to_i
 
-      Array.new(size).map do |a|
+      Array.new(size).map do |_a|
         n = number.positive? ? number : SecureRandom.random_number(UPPER_LIMIT)
         prefix.to_s + "/" + shoulder + Base32::URL.encode(n, split: split, length: length, checksum: true)
       end.uniq
@@ -143,7 +143,7 @@ module Helpable
   end
 
   module ClassMethods
-    def get_dois(options={})
+    def get_dois(options = {})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) if options[:prefix].blank?
 
       count_url = ENV["HANDLE_URL"] + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
@@ -165,7 +165,7 @@ module Helpable
             text = "Error " + response.body["errors"].inspect
 
             Rails.logger.error "[Handle] " + text
-            User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+            User.send_notification_to_slack(text, title: "Error #{response.status}", level: "danger") unless Rails.env.test?
           end
         end
       end
@@ -175,7 +175,7 @@ module Helpable
       dois
     end
 
-    def get_doi(options={})
+    def get_doi(options = {})
       return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) if options[:doi].blank?
 
       url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
@@ -190,17 +190,17 @@ module Helpable
         text = "Error " + response.body["errors"].inspect
 
         Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        User.send_notification_to_slack(text, title: "Error #{response.status}", level: "danger") unless Rails.env.test?
         OpenStruct.new(status: 400, body: { "errors" => [{ "status" => 400, "title" => response.body["errors"].inspect }] })
       end
     end
 
-    def delete_doi(options={})
+    def delete_doi(options = {})
       return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) if options[:doi].blank?
       return OpenStruct.new(body: { "errors" => [{ "title" => "Only DOIs with prefix 10.5072 can be deleted" }] }) unless options[:doi].start_with?("10.5072")
 
       url = "#{ENV['HANDLE_URL']}/api/handles/#{options[:doi]}"
-      response = Maremma.delete(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      response = Maremma.delete(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV["HANDLE_PASSWORD"], ssl_self_signed: true, timeout: 10)
 
       if response.status == 200
         response
@@ -210,20 +210,20 @@ module Helpable
         text = "Error " + response.body["errors"].inspect
 
         Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        User.send_notification_to_slack(text, title: "Error #{response.status}", level: "danger") unless Rails.env.test?
         response
       end
     end
 
-    def parse_attributes(element, options={})
+    def parse_attributes(element, options = {})
       content = options[:content] || "__content__"
 
       if element.is_a?(String) && options[:content].nil?
         CGI.unescapeHTML(element)
       elsif element.is_a?(Hash)
-        element.fetch( CGI.unescapeHTML(content), nil)
+        element.fetch(CGI.unescapeHTML(content), nil)
       elsif element.is_a?(Array)
-        a = element.map { |e| e.is_a?(Hash) ? e.fetch( CGI.unescapeHTML(content), nil) : e }.uniq
+        a = element.map { |e| e.is_a?(Hash) ? e.fetch(CGI.unescapeHTML(content), nil) : e }.uniq
         options[:first] ? a.first : a.unwrap
       end
     end

@@ -4,7 +4,7 @@ require "rails_helper"
 
 describe EventsController, type: :request, elasticsearch: true, vcr: true do
   let(:provider) { create(:provider, symbol: "DATACITE") }
-  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+  let(:client) { create(:client, provider: provider, symbol: ENV["MDS_USERNAME"], password: ENV["MDS_PASSWORD"]) }
 
   before(:each) do
     allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
@@ -15,33 +15,34 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
   let(:errors) { [{ "status" => "401", "title" => "Bad credentials." }] }
 
   # Successful response from creating via the API.
-  let(:success) { { "id" => event.uuid,
-                    "type" => "events",
-                    "attributes" => {
-                      "subj-id" => "http://www.citeulike.org/user/dbogartoit",
-                      "obj-id" => "http://doi.org/10.1371/journal.pmed.0030186",
-                      "message-action" => "create",
-                      "source-token" => "citeulike_123",
-                      "relation-type-id" => "bookmarks",
-                      "source-id" => "citeulike",
-                      "total" => 1,
-                      "license" => "https://creativecommons.org/publicdomain/zero/1.0/",
-                      "occurred-at" => "2015-04-08T00:00:00.000Z",
-                      "subj" => { "@id" => "http://www.citeulike.org/user/dbogartoit",
-                                  "@type" => "CreativeWork",
-                                  "author" => [{ "givenName" => "dbogartoit" }],
-                                  "name" => "CiteULike bookmarks for user dbogartoit",
-                                  "publisher" => { "@type" => "Organization", "name" => "CiteULike" },
-                                  "periodical" => { "@type" => "Periodical",  "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike", "issn" => "9812-847X" },
-                                  "funder" => { "@type" => "Organization", "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike" },
-                                  "version" => "1.0",
-                                  "proxy-identifiers" => ["10.13039/100011326"],
-                                  "date-published" => "2006-06-13T16:14:19Z",
-                                  "date-modified" => "2006-06-13T16:14:19Z",
-                                  "url" => "http://www.citeulike.org/user/dbogartoit"
-                      },
-                      "obj" => {}
-                    } }}
+  let(:success) do
+    { "id" => event.uuid,
+      "type" => "events",
+      "attributes" => {
+        "subj-id" => "http://www.citeulike.org/user/dbogartoit",
+        "obj-id" => "http://doi.org/10.1371/journal.pmed.0030186",
+        "message-action" => "create",
+        "source-token" => "citeulike_123",
+        "relation-type-id" => "bookmarks",
+        "source-id" => "citeulike",
+        "total" => 1,
+        "license" => "https://creativecommons.org/publicdomain/zero/1.0/",
+        "occurred-at" => "2015-04-08T00:00:00.000Z",
+        "subj" => { "@id" => "http://www.citeulike.org/user/dbogartoit",
+                    "@type" => "CreativeWork",
+                    "author" => [{ "givenName" => "dbogartoit" }],
+                    "name" => "CiteULike bookmarks for user dbogartoit",
+                    "publisher" => { "@type" => "Organization", "name" => "CiteULike" },
+                    "periodical" => { "@type" => "Periodical",  "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike", "issn" => "9812-847X" },
+                    "funder" => { "@type" => "Organization", "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike" },
+                    "version" => "1.0",
+                    "proxy-identifiers" => ["10.13039/100011326"],
+                    "date-published" => "2006-06-13T16:14:19Z",
+                    "date-modified" => "2006-06-13T16:14:19Z",
+                    "url" => "http://www.citeulike.org/user/dbogartoit" },
+        "obj" => {},
+      } }
+  end
 
   let(:token) { User.generate_token(role_id: "staff_admin") }
   let(:uuid) { SecureRandom.uuid }
@@ -61,12 +62,13 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "obj-id" => event.obj_id,
                       "relation-type-id" => event.relation_type_id,
                       "source-id" => event.source_id,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     context "as admin user" do
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -85,11 +87,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                         "obj-id" => url,
                         "relation-type-id" => event.relation_type_id,
                         "source-id" => "datacite-url",
-                        "source-token" => event.source_token } } }
+                        "source-token" => event.source_token,
+                      } } }
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -102,7 +105,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -114,7 +117,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -128,11 +131,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "attributes" => {
                         "uuid" => uuid,
                         "subj-id" => event.subj_id,
-                        "source-id" => event.source_id } } }
+                        "source-id" => event.source_id,
+                      } } }
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source token can't be blank" }])
@@ -146,11 +150,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "attributes" => {
                         "uuid" => uuid,
                         "subj-id" => event.subj_id,
-                        "source-token" => event.source_token } } }
+                        "source-token" => event.source_token,
+                      } } }
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source can't be blank" }])
@@ -164,11 +169,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "attributes" => {
                         "uuid" => uuid,
                         "source-id" => event.source_id,
-                        "source-token" => event.source_token } } }
+                        "source-token" => event.source_token,
+                      } } }
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Subj can't be blank" }])
@@ -183,7 +189,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
         expect(last_response.status).to eq(401)
 
         expect(json["errors"]).to eq(errors)
@@ -194,13 +200,14 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     context "with missing data param" do
       let(:params) do
         { "event" => { "type" => "events",
-                         "attributes" => {
-                           "uuid" => uuid,
-                           "source-token" => "123" } } }
+                       "attributes" => {
+                         "uuid" => uuid,
+                         "source-token" => "123",
+                       } } }
       end
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -212,7 +219,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:params) { { "data" => "10.1371/journal.pone.0036790 2012-05-15 New Dromaeosaurids (Dinosauria: Theropoda) from the Lower Cretaceous of Utah, and the Evolution of the Dromaeosaurid Tail" } }
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -226,7 +233,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let!(:event) { create(:event) }
 
       it "JSON" do
-        post uri, params, headers
+        post uri, params: params, session: headers
         puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -241,16 +248,17 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         { "data" => { "type" => "events",
                       "attributes" => {
                         "subj-id" => "https://doi.org/10.18713/jimis-170117-1-2",
-                        "subj" => { "@id":"https://doi.org/10.18713/jimis-170117-1-2", "@type":"ScholarlyArticle", "datePublished":"2017", "proxyIdentifiers":[], "registrantId":"datacite.inist.umr7300" },
-                        "obj" => { "@id":"https://doi.org/10.1016/j.jastp.2013.05.001", "@type":"ScholarlyArticle", "datePublished":"2013-09", "proxyIdentifiers":["13646826"], "registrantId":"datacite.crossref.citations" },
+                        "subj" => { "@id": "https://doi.org/10.18713/jimis-170117-1-2", "@type": "ScholarlyArticle", "datePublished": "2017", "proxyIdentifiers": [], "registrantId": "datacite.inist.umr7300" },
+                        "obj" => { "@id": "https://doi.org/10.1016/j.jastp.2013.05.001", "@type": "ScholarlyArticle", "datePublished": "2013-09", "proxyIdentifiers": ["13646826"], "registrantId": "datacite.crossref.citations" },
                         "obj-id" => "https://doi.org/10.1016/j.jastp.2013.05.001",
                         "relation-type-id" => "references",
                         "source-id" => "datacite-crossref",
-                        "source-token" => "source-token" } } }
+                        "source-token" => "source-token",
+                      } } }
       end
 
       it "has registrant aggregation" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -259,7 +267,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
         Event.import
         sleep 2
-        get uri, nil, headers
+        get uri, params: nil, session: headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
         expect(json.dig("meta", "registrants", 0, "id")).to eq("datacite.crossref.citations")
@@ -272,22 +280,23 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         { "data" => { "type" => "events",
                       "attributes" => {
                         "subj-id" => "https://doi.org/10.18713/jimis-170117-1-2",
-                        "subj" => { "@id":"https://doi.org/10.18713/jimis-170117-1-2", "@type":"ScholarlyArticle", "datePublished":"2017", "proxyIdentifiers":[], "registrantId":"datacite.inist.umr7300" },
-                        "obj" => { "@id":"https://doi.org/10.1016/j.jastp.2013.05.001", "@type":"ScholarlyArticle", "datePublished":"2013-09", "proxyIdentifiers":["13646826"], "registrantId":"datacite.crossref.citations" },
+                        "subj" => { "@id": "https://doi.org/10.18713/jimis-170117-1-2", "@type": "ScholarlyArticle", "datePublished": "2017", "proxyIdentifiers": [], "registrantId": "datacite.inist.umr7300" },
+                        "obj" => { "@id": "https://doi.org/10.1016/j.jastp.2013.05.001", "@type": "ScholarlyArticle", "datePublished": "2013-09", "proxyIdentifiers": ["13646826"], "registrantId": "datacite.crossref.citations" },
                         "obj-id" => "https://doi.org/10.1016/j.jastp.2013.05.001",
                         "relation-type-id" => "references",
                         "source-id" => "datacite-crossref",
-                        "source-token" => "source-token" } } }
+                        "source-token" => "source-token",
+                      } } }
       end
 
       it "are correctly stored" do
-        post uri, params, headers
+        post uri, params: params, session: headers
 
         expect(last_response.status).to eq(201)
         event = Event.where(uuid: json.dig("data", "id")).first
-        expect(event[:obj].has_key?('datePublished')).to be_truthy
-        expect(event[:obj].has_key?('registrantId')).to be_truthy
-        expect(event[:obj].has_key?('proxyIdentifiers')).to be_truthy
+        expect(event[:obj].has_key?("datePublished")).to be_truthy
+        expect(event[:obj].has_key?("registrantId")).to be_truthy
+        expect(event[:obj].has_key?("proxyIdentifiers")).to be_truthy
       end
     end
   end
@@ -300,11 +309,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.7554/elife.01567",
                       "source-id" => "crossref-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -321,11 +331,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.3389/fmicb.2019.01425",
                       "source-id" => "crossref-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "not registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
       puts json
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -342,11 +353,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.3280/ecag2018-001005",
                       "source-id" => "medra-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -354,7 +366,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       expect(json.dig("data", "attributes", "subj-id")).to eq("https://doi.org/10.3280/ecag2018-001005")
     end
   end
- 
+
   context "create kisti doi", vcr: true do
     let(:uri) { "/events" }
     let(:params) do
@@ -363,11 +375,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.5012/bkcs.2013.34.10.2889",
                       "source-id" => "kisti-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -375,7 +388,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       expect(json.dig("data", "attributes", "subj-id")).to eq("https://doi.org/10.5012/bkcs.2013.34.10.2889")
     end
   end
-  
+
   context "create jalc doi", vcr: true do
     let(:uri) { "/events" }
     let(:params) do
@@ -384,18 +397,19 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.1241/johokanri.39.979",
                       "source-id" => "jalc-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
       expect(json.dig("data", "id")).to be_present
       expect(json.dig("data", "attributes", "subj-id")).to eq("https://doi.org/10.1241/johokanri.39.979")
     end
-  end 
+  end
 
   context "create op doi", vcr: true do
     let(:uri) { "/events" }
@@ -405,11 +419,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "subj-id" => "https://doi.org/10.2903/j.efsa.2018.5239",
                       "source-id" => "op-import",
                       "relation-type-id" => nil,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     it "registered" do
-      post uri, params, headers
+      post uri, params: params, session: headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -429,12 +444,13 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "obj-id" => event.obj_id,
                       "relation-type-id" => event.relation_type_id,
                       "source-id" => event.source_id,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     context "as admin user" do
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -447,7 +463,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -459,7 +475,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -473,11 +489,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "id" => uuid,
                       "attributes" => {
                         "subj-id" => event.subj_id,
-                        "source-id" => event.source_id } } }
+                        "source-id" => event.source_id,
+                      } } }
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source token can't be blank" }])
@@ -491,11 +508,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "id" => uuid,
                       "attributes" => {
                         "subj-id" => event.subj_id,
-                        "source-token" => event.source_token } } }
+                        "source-token" => event.source_token,
+                      } } }
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source can't be blank" }])
@@ -509,11 +527,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "id" => uuid,
                       "attributes" => {
                         "source-id" => event.source_id,
-                        "source-token" => event.source_token } } }
+                        "source-token" => event.source_token,
+                      } } }
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "status" => 422, "title" => "Subj can't be blank" }])
@@ -528,7 +547,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(401)
         expect(json["errors"]).to eq(errors)
@@ -541,11 +560,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         { "event" => { "type" => "events",
                        "id" => uuid,
                        "attributes" => {
-                         "source-token" => "123" } } }
+                         "source-token" => "123",
+                       } } }
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -557,7 +577,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:params) { { "data" => "10.1371/journal.pone.0036790 2012-05-15 New Dromaeosaurids (Dinosauria: Theropoda) from the Lower Cretaceous of Utah, and the Evolution of the Dromaeosaurid Tail" } }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -571,7 +591,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let!(:event) { create(:event) }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -594,12 +614,13 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
                       "obj-id" => event.obj_id,
                       "relation-type-id" => event.relation_type_id,
                       "source-id" => event.source_id,
-                      "source-token" => event.source_token } } }
+                      "source-token" => event.source_token,
+                    } } }
     end
 
     context "as admin user" do
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -611,7 +632,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -623,7 +644,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -638,7 +659,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(401)
         expect(json["errors"]).to eq(errors)
@@ -651,11 +672,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         { "event" => { "type" => "events",
                        "id" => uuid,
                        "attributes" => {
-                         "source-token" => "123" } } }
+                         "source-token" => "123",
+                       } } }
       end
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -667,7 +689,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:params) { { "data" => "10.1371/journal.pone.0036790 2012-05-15 New Dromaeosaurids (Dinosauria: Theropoda) from the Lower Cretaceous of Utah, and the Evolution of the Dromaeosaurid Tail" } }
 
       it "JSON" do
-        put uri, params, headers
+        put uri, params: params, session: headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -693,12 +715,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     context "as admin user" do
       it "JSON" do
-        get uri, nil, headers
+        get uri, params: nil, session: headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'relation-type-id')).to eq("is-referenced-by")
-        expect(json.dig('data', 'attributes', 'subj-id')).to eq("https://doi.org/#{doi.doi.downcase}")
-        expect(json.dig('data', 'attributes', 'obj-id')).to eq("https://doi.org/#{source_doi.doi.downcase}")
+        expect(json.dig("data", "attributes", "relation-type-id")).to eq("is-referenced-by")
+        expect(json.dig("data", "attributes", "subj-id")).to eq("https://doi.org/#{doi.doi.downcase}")
+        expect(json.dig("data", "attributes", "obj-id")).to eq("https://doi.org/#{source_doi.doi.downcase}")
       end
     end
 
@@ -706,12 +728,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        get uri, nil, headers
+        get uri, params: nil, session: headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'relation-type-id')).to eq("is-referenced-by")
-        expect(json.dig('data', 'attributes', 'subj-id')).to eq("https://doi.org/#{doi.doi.downcase}")
-        expect(json.dig('data', 'attributes', 'obj-id')).to eq("https://doi.org/#{source_doi.doi.downcase}")
+        expect(json.dig("data", "attributes", "relation-type-id")).to eq("is-referenced-by")
+        expect(json.dig("data", "attributes", "subj-id")).to eq("https://doi.org/#{doi.doi.downcase}")
+        expect(json.dig("data", "attributes", "obj-id")).to eq("https://doi.org/#{source_doi.doi.downcase}")
       end
     end
 
@@ -719,7 +741,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:uri) { "/events/#{event.uuid}x" }
 
       it "JSON" do
-        get uri, nil, headers
+        get uri, params: nil, session: headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
@@ -729,8 +751,8 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
   end
 
   context "index" do
-  #   # let!(:event) { create(:event) }
-  #   # let(:uri) { "/events" }
+    #   # let!(:event) { create(:event) }
+    #   # let(:uri) { "/events" }
 
     context "query by source-id by Crawler" do
       let(:uri) { "/events?query=datacite" }
@@ -742,7 +764,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "json" do
-        get uri, nil, headers
+        get uri, params: nil, session: headers
         expect(last_response.status).to eq(404)
       end
     end

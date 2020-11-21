@@ -13,12 +13,12 @@ class User
 
   attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :has_orcid_token, :errors
 
-  def initialize(credentials, options={})
-    if credentials.present? && options.fetch(:type, "").downcase == "basic"
+  def initialize(credentials, options = {})
+    if credentials.present? && options.fetch(:type, "").casecmp("basic").zero?
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
       @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30, aud: Rails.env))
-    elsif credentials.present? && options.fetch(:type, "").downcase == "oidc"
+    elsif credentials.present? && options.fetch(:type, "").casecmp("oidc").zero?
       payload = decode_alb_token(credentials)
 
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
@@ -77,13 +77,13 @@ class User
   end
 
   def provider
-    return nil unless provider_id.present?
+    return nil if provider_id.blank?
 
     Provider.where(symbol: provider_id).where(deleted_at: nil).first
   end
 
   def client
-    return nil unless client_id.present?
+    return nil if client_id.blank?
 
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
   end
@@ -101,7 +101,7 @@ class User
       provider_id = uid
     end
 
-    return {} unless user.present?
+    return {} if user.blank?
 
     payload = {
       "uid" => uid,
@@ -112,28 +112,28 @@ class User
     }.compact
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
-    url = ENV['BRACCO_URL'] + "?jwt=" + jwt
-    reset_url = ENV['BRACCO_URL'] + "/reset"
-    if Rails.env == "stage" 
-      title = ENV['ES_PREFIX'].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
+    url = ENV["BRACCO_URL"] + "?jwt=" + jwt
+    reset_url = ENV["BRACCO_URL"] + "/reset"
+    if Rails.env.stage?
+      title = ENV["ES_PREFIX"].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
     else
       title = "DataCite Fabrica"
     end
     subject = "#{title}: Password Reset Request"
-    account_type = user.class.name == "Provider" ? user.member_type.humanize : user.client_type.humanize  
+    account_type = user.class.name == "Provider" ? user.member_type.humanize : user.client_type.humanize
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
-    response = self.send_email_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
+    response = send_email_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
 
     fields = [
       { title: "Account ID", value: uid.upcase, short: true },
       { title: "Account type", value: account_type, short: true },
       { title: "Account name", value: user.name, short: true },
-      { title: "System email", value: user.system_email, short: true }
+      { title: "System email", value: user.system_email, short: true },
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
     level = response[:status] == 200 ? "good" : "danger"
-    self.send_notification_to_slack(nil, title: slack_title, level: level, fields: fields)
+    send_notification_to_slack(nil, title: slack_title, level: level, fields: fields)
 
     response
   end

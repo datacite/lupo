@@ -13,7 +13,7 @@ module ActorItem
 
   definition_methods do
     # Determine what object type to use for `object`
-    def resolve_type(object, context)
+    def resolve_type(object, _context)
       if object.type == "Person"
         PersonType
       elsif object.type == "Organization"

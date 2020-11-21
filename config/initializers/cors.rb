@@ -9,11 +9,11 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, logger: (-> { Rails.logger }) do
   allow do
-    origins '*'
+    origins "*"
 
-    resource '*',
-      headers: :any,
-      expose: ["X-Credential-Username", "X-Anonymous-Consumer"],
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+    resource "*",
+             headers: :any,
+             expose: ["X-Credential-Username", "X-Anonymous-Consumer"],
+             methods: %i[get post put patch delete options head]
   end
 end

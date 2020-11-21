@@ -1,11 +1,11 @@
-class TargetDoiByIdJob < ActiveJob::Base
+class TargetDoiByIdJob < ApplicationJob
   queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
   end
 
-  def perform(id, options = nil)
+  def perform(id, _options = nil)
     item = Event.where(uuid: id).first
     return false if item.blank?
 

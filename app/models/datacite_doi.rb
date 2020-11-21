@@ -1,11 +1,11 @@
 class DataciteDoi < Doi
   include Elasticsearch::Model
-  
+
   # use different index for testing
   if Rails.env.test?
     index_name "dois-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"dois-#{ENV["ES_PREFIX"]}"
+    index_name "dois-#{ENV['ES_PREFIX']}"
   else
     index_name "dois"
   end
@@ -19,7 +19,7 @@ class DataciteDoi < Doi
   # end
 
   # TODO remove query for type once STI is enabled
-  def self.import_by_ids(options={})
+  def self.import_by_ids(options = {})
     from_id = (options[:from_id] || DataciteDoi.where(type: "DataciteDoi").minimum(:id)).to_i
     until_id = (options[:until_id] || DataciteDoi.where(type: "DataciteDoi").maximum(:id)).to_i
 
@@ -32,16 +32,16 @@ class DataciteDoi < Doi
     (from_id..until_id).to_a.length
   end
 
-  def self.import_by_id(options={})
+  def self.import_by_id(options = {})
     return nil if options[:id].blank?
 
     id = options[:id].to_i
     index = if Rails.env.test?
-              self.index_name
+              index_name
             elsif options[:index].present?
               options[:index]
             else
-              self.inactive_index
+              inactive_index
             end
     errors = 0
     count = 0
@@ -49,12 +49,12 @@ class DataciteDoi < Doi
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "DataciteDoi").where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = DataciteDoi.__elasticsearch__.client.bulk \
-        index:   index,
-        type:    DataciteDoi.document_type,
-        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+        index: index,
+        type: DataciteDoi.document_type,
+        body: dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors_in_response = response["items"].select { |k, _v| k.values.first["error"].present? }
       errors += errors_in_response.length
       errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
@@ -72,8 +72,8 @@ class DataciteDoi < Doi
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    Rails.logger.info "[Elasticsearch] Error #{error.message} importing DataCite DOIs with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
+    Rails.logger.info "[Elasticsearch] Error #{e.message} importing DataCite DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 

@@ -1,34 +1,34 @@
-require 'base32/url'
-require 'uri'
+require "base32/url"
+require "uri"
 
 class ClientPrefixesController < ApplicationController
-  before_action :set_client_prefix, only: [:show, :update, :destroy]
+  before_action :set_client_prefix, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :set_created, :set_provider]
+  load_and_authorize_resource except: %i[index show set_created set_provider]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
 
   def index
     sort = case params[:sort]
-           when "name" then { "prefix.uid" => { order: 'asc' }}
-           when "-name" then { "prefix.uid" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
-           else { created_at: { order: 'desc' }}
+           when "name" then { "prefix.uid" => { order: "asc" } }
+           when "-name" then { "prefix.uid" => { order: "desc" } }
+           when "created" then { created_at: { order: "asc" } }
+           when "-created" then { created_at: { order: "desc" } }
+           else { created_at: { order: "desc" } }
            end
 
     page = page_from_params(params)
 
-    if params[:id].present?
-      response = ClientPrefix.find_by_id(params[:id]) 
-    else
-      response = ClientPrefix.query(params[:query],
+    response = if params[:id].present?
+                 ClientPrefix.find_by(id: params[:id])
+               else
+                 ClientPrefix.query(params[:query],
                                     client_id: params[:client_id],
                                     prefix_id: params[:prefix_id],
                                     year: params[:year],
                                     page: page,
                                     sort: sort)
-    end
+               end
 
     begin
       total = response.results.total
@@ -46,29 +46,30 @@ class ClientPrefixesController < ApplicationController
         page: page[:number],
         years: years,
         providers: providers,
-        clients: clients
+        clients: clients,
       }.compact
 
       options[:links] = {
-      self: request.original_url,
-      next: client_prefixes.blank? ? nil : request.base_url + "/client-prefixes?" + {
-        query: params[:query],
-        prefix: params[:prefix],
-        year: params[:year],
-        "page[number]" => page[:number] + 1,
-        "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
+        self: request.original_url,
+        next: client_prefixes.blank? ? nil : request.base_url + "/client-prefixes?" + {
+          query: params[:query],
+          prefix: params[:prefix],
+          year: params[:year],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort],
+        }.compact.to_query,
       }.compact
       options[:include] = @include
       options[:is_collection] = true
 
       render json: ClientPrefixSerializer.new(client_prefixes, options).serialized_json, status: :ok
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Raven.capture_exception(exception)
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      Raven.capture_exception(e)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
@@ -138,7 +139,7 @@ class ClientPrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:client, :prefix, :provider_prefix, :provider]
+      @include = @include & %i[client prefix provider_prefix provider]
     else
       @include = []
     end
@@ -153,7 +154,7 @@ class ClientPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :client, :prefix, :providerPrefix],
+      params, only: %i[id client prefix providerPrefix],
               keys: { "providerPrefix" => :provider_prefix }
     )
   end

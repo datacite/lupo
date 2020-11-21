@@ -5,16 +5,16 @@ module DoiItem
   include Bolognese::MetadataUtils
 
   REGISTRATION_AGENCIES = {
-    "airiti" =>   "Airiti",
-    "cnki" =>     "CNKI",
+    "airiti" => "Airiti",
+    "cnki" => "CNKI",
     "crossref" => "Crossref",
     "datacite" => "DataCite",
-    "istic" =>    "ISTIC",
-    "jalc" =>     "JaLC",
-    "kisti" =>    "KISTI",
-    "medra" =>    "mEDRA",
-    "op" =>       "OP"
-  }
+    "istic" => "ISTIC",
+    "jalc" => "JaLC",
+    "kisti" => "KISTI",
+    "medra" => "mEDRA",
+    "op" => "OP",
+  }.freeze
 
   description "Information about DOIs"
 
@@ -75,7 +75,7 @@ module DoiItem
   field :citations_over_time, [YearTotalType], null: true, description: "Citations by year"
   field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month"
   field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month"
-  
+
   field :references, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -253,39 +253,41 @@ module DoiItem
   end
 
   def language
-    return {} unless object.language.present?
-    la = ISO_639.find_by_code(object.language)
+    return {} if object.language.blank?
 
-    { 
+    la = ISO_639.find_by(code: object.language)
+
+    {
       id: object.language,
-      name: la.present? ? la.english_name.split(/\W+/).first : object.language
+      name: la.present? ? la.english_name.split(/\W+/).first : object.language,
     }.compact
   end
 
   def registration_agency
-    return {} unless object.agency.present?
+    return {} if object.agency.blank?
 
-    { 
+    {
       id: object.agency,
-      name: REGISTRATION_AGENCIES[object.agency]
+      name: REGISTRATION_AGENCIES[object.agency],
     }.compact
   end
 
   def fields_of_science
-    Array.wrap(object.subjects)
-      .select { |s| s["subjectScheme"] == "Fields of Science and Technology (FOS)" }
-      .map do |s|
+    Array.wrap(object.subjects).
+      select { |s| s["subjectScheme"] == "Fields of Science and Technology (FOS)" }.
+      map do |s|
         name = s["subject"].gsub("FOS: ", "")
         {
-          "id" => name.parameterize(separator: '_'),
-          "name" => name }
+          "id" => name.parameterize(separator: "_"),
+          "name" => name,
+        }
       end.uniq
   end
 
   def creators(**args)
     Array.wrap(object.creators)[0...args[:first]].map do |c|
       Hashie::Mash.new(
-        "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
+        "id" => c.fetch("nameIdentifiers", []).detect { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "name_type" => c.fetch("nameType", nil),
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),
@@ -293,7 +295,8 @@ module DoiItem
         "affiliation" => c.fetch("affiliation", []).map do |a|
           { "id" => a["affiliationIdentifier"],
             "name" => a["name"] }.compact
-        end)
+        end,
+      )
     end
   end
 
@@ -302,7 +305,7 @@ module DoiItem
     contrib = contrib.select { |c| c["contributorType"] == args[:contributor_type] } if args[:contributor_type].present?
     contrib.map do |c|
       Hashie::Mash.new(
-        "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
+        "id" => c.fetch("nameIdentifiers", []).detect { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "contributor_type" => c.fetch("contributorType", nil),
         "name_type" => c.fetch("nameType", nil),
         "name" => c.fetch("name", nil),
@@ -311,7 +314,8 @@ module DoiItem
         "affiliation" => c.fetch("affiliation", []).map do |a|
           { "id" => a["affiliationIdentifier"],
             "name" => a["name"] }.compact
-        end)
+        end,
+      )
     end
   end
 
@@ -344,7 +348,7 @@ module DoiItem
       issue: object.container.to_h["issue"],
       pages: pages,
       publisher: object.publisher,
-      year: object.publication_year
+      year: object.publication_year,
     }.compact
     BibTeX::Entry.new(bib).to_s
   end
@@ -354,7 +358,7 @@ module DoiItem
   end
 
   def schema_org
-    hsh = { 
+    hsh = {
       "@context" => "http://schema.org",
       "@type" => object.types.present? ? object.types["schemaOrg"] : nil,
       "@id" => normalize_doi(object.doi),
@@ -390,19 +394,19 @@ module DoiItem
       "includedInDataCatalog" => object.types.present? ? ((object.types["schemaOrg"] == "Dataset") && object.container.present? ? to_schema_org_container(object.container, type: "Dataset") : nil) : nil,
       "publisher" => object.publisher.present? ? { "@type" => "Organization", "name" => object.publisher } : nil,
       "funder" => to_schema_org_funder(object.funding_references),
-      "provider" => object.agency.present? ? { "@type" => "Organization", "name" => object.agency } : nil
+      "provider" => object.agency.present? ? { "@type" => "Organization", "name" => object.agency } : nil,
     }.compact
 
     JSON.pretty_generate hsh
   end
 
   def reverse
-    { "citation" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsReferencedBy" }.map do |r| 
-      { "@id" => normalize_doi(r["relatedIdentifier"]),
-        "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
-        "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
-      end.unwrap,
-      "isBasedOn" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsSupplementTo" }.map do |r| 
+    { "citation" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsReferencedBy" }.map do |r|
+                      { "@id" => normalize_doi(r["relatedIdentifier"]),
+                        "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
+                        "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
+                    end.unwrap,
+      "isBasedOn" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsSupplementTo" }.map do |r|
         { "@id" => normalize_doi(r["relatedIdentifier"]),
           "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
           "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
@@ -414,7 +418,7 @@ module DoiItem
     cp = CiteProc::Processor.new(style: style || "apa", locale: locale || "en-US", format: "html")
     cp.import Array.wrap(citeproc_hsh)
     bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
-    url = object.doi 
+    url = object.doi
     unless /^https?:\/\//i.match?(object.doi)
       url = "https://doi.org/#{object.doi}"
     end
@@ -423,38 +427,38 @@ module DoiItem
 
   def references(**args)
     args[:ids] = object.reference_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
-  
+
   def citations(**args)
     args[:ids] = object.citation_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def parts(**args)
     args[:ids] = object.part_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def part_of(**args)
     args[:ids] = object.part_of_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def versions(**args)
     args[:ids] = object.version_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def version_of(**args)
     args[:ids] = object.version_of_ids
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def response(**args)
     # make sure no dois are returnded if there are no :ids
     args[:ids] = "999" if args[:ids].blank?
-    
+
     Doi.gql_query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], published: args[:published], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_affiliation: args[:has_affiliation], has_member: args[:has_member], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], pid_entity: args[:pid_entity], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 
@@ -484,7 +488,7 @@ module DoiItem
       "author" => author,
       "contributor" => to_citeproc(object.contributors),
       "issued" => get_date(object.dates, "Issued") ? get_date_parts(get_date(object.dates, "Issued")) : nil,
-      "submitted" => Array.wrap(object.dates).find { |d| d["dateType"] == "Submitted" }.to_h.fetch("__content__", nil),
+      "submitted" => Array.wrap(object.dates).detect { |d| d["dateType"] == "Submitted" }.to_h.fetch("__content__", nil),
       "abstract" => parse_attributes(object.descriptions, content: "description", first: true),
       "container-title" => object.container.to_h["title"],
       "DOI" => object.doi,
@@ -494,7 +498,7 @@ module DoiItem
       "publisher" => object.publisher,
       "title" => parse_attributes(object.titles, content: "title", first: true),
       "URL" => object.url,
-      "version" => object.version_info
+      "version" => object.version_info,
     }.compact.symbolize_keys
   end
 end

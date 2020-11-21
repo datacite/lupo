@@ -41,7 +41,7 @@ class PersonType < BaseObject
     argument :after, String, required: false
   end
 
-  field :publications, PublicationConnectionWithTotalType, null: true, description: "Authored publications"  do
+  field :publications, PublicationConnectionWithTotalType, null: true, description: "Authored publications" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :published, String, required: false
@@ -66,7 +66,7 @@ class PersonType < BaseObject
     argument :after, String, required: false
   end
 
-  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Authored software"  do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Authored software" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :published, String, required: false
@@ -118,21 +118,21 @@ class PersonType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def works(**args)
-    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
   def view_count

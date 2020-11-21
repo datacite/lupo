@@ -1,7 +1,7 @@
 module Passwordable
   extend ActiveSupport::Concern
 
-  require 'digest'
+  require "digest"
 
   included do
     # "yes", "not set" (used in serializer) and a blank value are not allowed for new password

@@ -24,29 +24,31 @@ describe OrganizationType do
   end
 
   describe "find organization", elasticsearch: true, vcr: true do
-    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+    let!(:doi) do
+      create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
         "affiliation": [
           {
             "name": "University of Cambridge",
             "affiliationIdentifier": "https://ror.org/013meh722",
-            "affiliationIdentifierScheme": "ROR"
+            "affiliationIdentifierScheme": "ROR",
           },
-        ]
+        ],
       }])
-    }
-    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+    end
+    let!(:funder_doi) do
+      create(:doi, aasm_state: "findable", funding_references:
       [{
         "funderIdentifier" => "https://doi.org/10.13039/501100000735",
         "funderIdentifierType" => "Crossref Funder ID",
-        "funderName" => "University of Cambridge"
+        "funderName" => "University of Cambridge",
       }])
-    }
+    end
     let(:provider) { create(:provider, symbol: "LPSW", ror_id: "https://ror.org/013meh722") }
     let(:client) { create(:client, provider: provider) }
     let!(:member_doi) { create(:doi, aasm_state: "findable", client: client) }
@@ -117,47 +119,49 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => 52.205277777778, "pointLongitude" => 0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "10.13039/501100000735", "identifierType" => "fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(3)
-      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>3, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{ "count" => 3, "title" => "Dataset" }])
       # TODO should be 3 nodes
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
-      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.") 
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
     end
   end
 
   describe "find organization by grid_id", elasticsearch: true, vcr: true do
-    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+    let!(:doi) do
+      create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
         "affiliation": [
           {
             "name": "University of Cambridge",
             "affiliationIdentifier": "https://ror.org/013meh722",
-            "affiliationIdentifierScheme": "ROR"
+            "affiliationIdentifierScheme": "ROR",
           },
-        ]
+        ],
       }])
-    }
-    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+    end
+    let!(:funder_doi) do
+      create(:doi, aasm_state: "findable", funding_references:
       [{
         "funderIdentifier" => "https://doi.org/10.13039/501100000735",
         "funderIdentifierType" => "Crossref Funder ID",
-        "funderName" => "University of Cambridge"
+        "funderName" => "University of Cambridge",
       }])
-    }
+    end
 
     before do
       Doi.import
@@ -219,15 +223,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => 52.205277777778, "pointLongitude" => 0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "10.13039/501100000735", "identifierType" => "fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
-      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "published")).to eq([{ "count" => 2, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{ "count" => 2, "title" => "Dataset" }])
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
@@ -236,29 +240,31 @@ describe OrganizationType do
   end
 
   describe "find organization by crossref_funder_id", elasticsearch: true, vcr: true do
-    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+    let!(:doi) do
+      create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
         "affiliation": [
           {
             "name": "University of Cambridge",
             "affiliationIdentifier": "https://ror.org/013meh722",
-            "affiliationIdentifierScheme": "ROR"
+            "affiliationIdentifierScheme": "ROR",
           },
-        ]
+        ],
       }])
-    }
-    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+    end
+    let!(:funder_doi) do
+      create(:doi, aasm_state: "findable", funding_references:
       [{
         "funderIdentifier" => "https://doi.org/10.13039/501100000735",
         "funderIdentifierType" => "Crossref Funder ID",
-        "funderName" => "University of Cambridge"
+        "funderName" => "University of Cambridge",
       }])
-    }
+    end
 
     before do
       Doi.import
@@ -320,15 +326,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => 52.205277777778, "pointLongitude" => 0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "10.13039/501100000735", "identifierType" => "fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
-      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
-      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "published")).to eq([{ "count" => 2, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{ "count" => 2, "title" => "Dataset" }])
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
@@ -342,7 +348,7 @@ describe OrganizationType do
         organization(id: "https://ror.org/02q0ygf45") {
           id
           name
-          alternateName 
+          alternateName
           wikipediaUrl
           twitter
           geolocation {
@@ -366,10 +372,10 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "wikipediaUrl")).to be_nil
       expect(response.dig("data", "organization", "twitter")).to be_nil
       expect(response.dig("data", "organization", "inception_year")).to be_nil
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>nil, "pointLongitude"=>nil)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => nil, "pointLongitude" => nil)
       expect(response.dig("data", "organization", "identifiers").count).to eq(2)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"grid.487335.e", "identifierType"=>"grid")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000403987680", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "grid.487335.e", "identifierType" => "grid")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000403987680", "identifierType" => "isni")
     end
   end
 
@@ -415,14 +421,14 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "country")).to eq("id"=>"GB", "name"=>"United Kingdom")
+      expect(response.dig("data", "organization", "country")).to eq("id" => "GB", "name" => "United Kingdom")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => 52.205277777778, "pointLongitude" => 0.11722222222222)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "10.13039/501100000735", "identifierType" => "fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(response.dig("data", "organization", "people", "totalCount")).to eq(14181)
       expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
@@ -477,10 +483,10 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
-      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude" => 52.205277777778, "pointLongitude" => 0.11722222222222)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
-      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier" => "10.13039/501100000735", "identifierType" => "fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(response.dig("data", "organization", "people", "totalCount")).to eq(1988)
       expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
@@ -530,7 +536,7 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
-      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"Record not found", "path"=>["organization"]}])
+      expect(response.dig("errors")).to eq([{ "locations" => [{ "column" => 9, "line" => 2 }], "message" => "Record not found", "path" => ["organization"] }])
     end
   end
 
@@ -552,29 +558,30 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organizations", "totalCount")).to eq(98332)
-      expect(response.dig("data", "organizations", "years").first).to eq("count"=>80248, "id"=>"2017", "title"=>"2017")
-      expect(response.dig("data", "organizations", "years").last).to eq("count"=>513, "id"=>"2020", "title"=>"2020")
+      expect(response.dig("data", "organizations", "years").first).to eq("count" => 80248, "id" => "2017", "title" => "2017")
+      expect(response.dig("data", "organizations", "years").last).to eq("count" => 513, "id" => "2020", "title" => "2020")
     end
   end
 
   describe "query organizations", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3) }
-    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+    let!(:doi) do
+      create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
         "affiliation": [
           {
             "name": "University of Cambridge",
             "affiliationIdentifier": "https://ror.org/013meh722",
-            "affiliationIdentifierScheme": "ROR"
+            "affiliationIdentifierScheme": "ROR",
           },
-        ]
+        ],
       }])
-    }
+    end
 
     before do
       Doi.import
@@ -633,27 +640,27 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "totalCount")).to eq(10790)
       expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("Mg")
       expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
-      
+
       expect(response.dig("data", "organizations", "types").length).to eq(8)
-      expect(response.dig("data", "organizations", "types").first).to eq("count"=>9630, "id"=>"education", "title"=>"Education")
+      expect(response.dig("data", "organizations", "types").first).to eq("count" => 9630, "id" => "education", "title" => "Education")
       expect(response.dig("data", "organizations", "countries").length).to eq(10)
-      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1771, "id" => "us", "title"=>"United States of America")
+      expect(response.dig("data", "organizations", "countries").first).to eq("count" => 1771, "id" => "us", "title" => "United States of America")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
 
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       expect(organization.fetch("types")).to eq(["Education"])
-      expect(organization.fetch("country")).to eq("id"=>"GB", "name"=>"United Kingdom")
+      expect(organization.fetch("country")).to eq("id" => "GB", "name" => "United Kingdom")
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("url")).to eq(["http://www.cam.ac.uk/"])
       expect(organization.fetch("wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
 
       expect(organization.fetch("identifiers").length).to eq(38)
-      expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
+      expect(organization.fetch("identifiers").last).to eq("identifier" => "0000000121885934", "identifierType" => "isni")
 
       expect(organization.dig("works", "totalCount")).to eq(1)
-      expect(organization.dig("works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(organization.dig("works", "published")).to eq([{ "count" => 1, "id" => "2011", "title" => "2011" }])
     end
   end
 
@@ -699,24 +706,24 @@ describe OrganizationType do
     it "returns organization information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "organizations", "totalCount")).to eq(10)      
+      expect(response.dig("data", "organizations", "totalCount")).to eq(10)
       expect(response.dig("data", "organizations", "types").length).to eq(5)
-      expect(response.dig("data", "organizations", "types").first).to eq("count"=>4, "id"=>"education", "title"=>"Education")
+      expect(response.dig("data", "organizations", "types").first).to eq("count" => 4, "id" => "education", "title" => "Education")
       expect(response.dig("data", "organizations", "countries").length).to eq(1)
-      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>10, "id"=>"de", "title"=>"Germany")
+      expect(response.dig("data", "organizations", "countries").first).to eq("count" => 10, "id" => "de", "title" => "Germany")
       expect(response.dig("data", "organizations", "nodes").length).to eq(10)
       organization = response.dig("data", "organizations", "nodes", 0)
 
       expect(organization.fetch("id")).to eq("https://ror.org/01856cw59")
       expect(organization.fetch("name")).to eq("University Hospital Münster")
       expect(organization.fetch("types")).to eq(["Healthcare"])
-      expect(organization.fetch("country")).to eq("id"=>"DE", "name"=>"Germany")
+      expect(organization.fetch("country")).to eq("id" => "DE", "name" => "Germany")
       expect(organization.fetch("alternateName")).to eq(["UKM"])
       expect(organization.fetch("url")).to eq(["http://klinikum.uni-muenster.de/"])
       expect(organization.fetch("wikipediaUrl")).to be_nil
 
       expect(organization.fetch("identifiers").length).to eq(2)
-      expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000405514246", "identifierType"=>"isni")
+      expect(organization.fetch("identifiers").last).to eq("identifier" => "0000000405514246", "identifierType" => "isni")
     end
   end
 
@@ -771,20 +778,20 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "totalCount")).to eq(182)
       expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("Mg")
       expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
-      
+
       expect(response.dig("data", "organizations", "types").length).to eq(1)
-      expect(response.dig("data", "organizations", "types").first).to eq("count"=>182, "id"=>"government", "title"=>"Government")
+      expect(response.dig("data", "organizations", "types").first).to eq("count" => 182, "id" => "government", "title" => "Government")
       expect(response.dig("data", "organizations", "countries").length).to eq(1)
-      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>182, "id"=>"de", "title"=>"Germany")
+      expect(response.dig("data", "organizations", "countries").first).to eq("count" => 182, "id" => "de", "title" => "Germany")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/04bqwzd17")
       expect(organization.fetch("name")).to eq("Bayerisches Landesamt für Gesundheit und Lebensmittelsicherheit")
       expect(organization.fetch("types")).to eq(["Government"])
-      expect(organization.fetch("country")).to eq("id"=>"DE", "name"=>"Germany")
+      expect(organization.fetch("country")).to eq("id" => "DE", "name" => "Germany")
       expect(organization.fetch("alternateName")).to eq(["LGL"])
       expect(organization.fetch("identifiers").length).to eq(2)
-      expect(organization.fetch("identifiers").first).to eq("identifier"=>"grid.414279.d", "identifierType"=>"grid")
+      expect(organization.fetch("identifiers").first).to eq("identifier" => "grid.414279.d", "identifierType" => "grid")
 
       expect(organization.dig("works", "totalCount")).to eq(0)
     end

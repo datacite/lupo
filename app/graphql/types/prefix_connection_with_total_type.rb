@@ -3,7 +3,7 @@
 class PrefixConnectionWithTotalType < BaseConnection
   edge_type(PrefixEdgeType)
   field_class GraphQL::Cache::Field
-  
+
   field :total_count, Integer, null: false, cache: true
   field :states, [FacetType], null: false, cache: true
   field :years, [FacetType], null: false, cache: true

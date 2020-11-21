@@ -1,4 +1,4 @@
-class OtherDoiRefreshJob < ActiveJob::Base
+class OtherDoiRefreshJob < ApplicationJob
   queue_as :lupo_background
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
@@ -10,7 +10,7 @@ class OtherDoiRefreshJob < ActiveJob::Base
     Rails.logger.error error.message
   end
 
-  def perform(id, options={})
+  def perform(id, options = {})
     Event.import_doi(id, options.merge(refresh: true))
   end
 end

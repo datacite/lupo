@@ -37,21 +37,21 @@ namespace :provider do
   end
 
   desc "Create alias for providers"
-  task :create_alias => :environment do
+  task create_alias: :environment do
     puts Provider.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List aliases for providers"
-  task :list_aliases => :environment do
+  task list_aliases: :environment do
     puts Provider.list_aliases
   end
 
   desc "Delete alias for providers"
-  task :delete_alias => :environment do
+  task delete_alias: :environment do
     puts Provider.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
-  desc 'Import all providers'
+  desc "Import all providers"
   task import: :environment do
     Provider.import(index: Provider.inactive_index)
   end

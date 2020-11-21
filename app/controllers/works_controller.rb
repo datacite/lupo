@@ -1,54 +1,53 @@
 class WorksController < ApplicationController
   before_action :set_doi, only: [:show]
-  before_action :set_include, only: [:index, :show]
+  before_action :set_include, only: %i[index show]
 
   def index
     sort = case params[:sort]
-          when "name" then { "doi" => { order: 'asc' }}
-          when "-name" then { "doi" => { order: 'desc' }}
-          when "created" then { created: { order: 'asc' }}
-          when "-created" then { created: { order: 'desc' }}
-          when "updated" then { updated: { order: 'asc' }}
-          when "-updated" then { updated: { order: 'desc' }}
-          when "relevance" then { "_score": { "order": "desc" }}
-          else { updated: { order: 'desc' }}
+           when "name" then { "doi" => { order: "asc" } }
+           when "-name" then { "doi" => { order: "desc" } }
+           when "created" then { created: { order: "asc" } }
+           when "-created" then { created: { order: "desc" } }
+           when "updated" then { updated: { order: "asc" } }
+           when "-updated" then { updated: { order: "desc" } }
+           when "relevance" then { "_score": { "order": "desc" } }
+           else { updated: { order: "desc" } }
           end
 
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
-                          when "client" then "client_id"
-                          when "data-center" then "client_id"
-                          when "provider" then "provider_id"
-                          when "resource-type" then "types.resourceTypeGeneral"
-                          else nil
-                         end
+                         when "client" then "client_id"
+                         when "data-center" then "client_id"
+                         when "provider" then "provider_id"
+                         when "resource-type" then "types.resourceTypeGeneral"
+                          end
 
     if params[:id].present?
-      response = DataciteDoi.find_by_id(params[:id])
+      response = DataciteDoi.find_by(id: params[:id])
     elsif params[:ids].present?
       response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
       response = DataciteDoi.query(params[:query],
-                          state: "findable",
-                          exclude_registration_agencies: true,
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:member_id],
-                          client_id: params[:data_center_id],
-                          affiliation_id: params[:affiliation_id],
-                          prefix: params[:prefix],
-                          user_id: params[:person_id],
-                          resource_type_id: params[:resource_type_id],
-                          has_citations: params[:has_citations],
-                          has_views: params[:has_views],
-                          has_downloads: params[:has_downloads],
-                          schema_version: params[:schema_version],
-                          sample_group: sample_group_field,
-                          sample_size: params[:sample],
-                          page: page,
-                          sort: sort,
-                          random: params[:sample].present? ? true : false)
+                                   state: "findable",
+                                   exclude_registration_agencies: true,
+                                   created: params[:created],
+                                   registered: params[:registered],
+                                   provider_id: params[:member_id],
+                                   client_id: params[:data_center_id],
+                                   affiliation_id: params[:affiliation_id],
+                                   prefix: params[:prefix],
+                                   user_id: params[:person_id],
+                                   resource_type_id: params[:resource_type_id],
+                                   has_citations: params[:has_citations],
+                                   has_views: params[:has_views],
+                                   has_downloads: params[:has_downloads],
+                                   schema_version: params[:schema_version],
+                                   sample_group: sample_group_field,
+                                   sample_size: params[:sample],
+                                   page: page,
+                                   sort: sort,
+                                   random: params[:sample].present? ? true : false)
     end
 
     begin
@@ -71,14 +70,14 @@ class WorksController < ApplicationController
         affiliations: affiliations,
         total: total,
         "total-pages" => total_pages,
-        page: page[:number]
+        page: page[:number],
       }.compact
 
       options[:include] = @include
       options[:is_collection] = true
       options[:links] = nil
       options[:params] = {
-        :current_ability => current_ability,
+        current_ability: current_ability,
       }
 
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
@@ -92,17 +91,13 @@ class WorksController < ApplicationController
       end
 
       # Results to return are either our sample group dois or the regular hit results
-      if sample_dois
-        @dois = sample_dois
-      else
-        @dois = response.results
-      end
+      @dois = sample_dois || response.results
 
       render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 

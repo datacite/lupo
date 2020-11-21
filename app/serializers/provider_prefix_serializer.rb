@@ -8,5 +8,5 @@ class ProviderPrefixSerializer
   belongs_to :provider, record_type: :providers
   belongs_to :prefix, record_type: :prefixes
   has_many :clients, record_type: :clients
-  has_many :client_prefixes, :record_type => "client-prefixes"
+  has_many :client_prefixes, record_type: "client-prefixes"
 end

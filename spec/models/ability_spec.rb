@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 require "cancan/matchers"
 
 describe User, type: :model do
@@ -12,10 +12,10 @@ describe User, type: :model do
   let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
   let(:doi) { create(:doi, client: client) }
   let(:media) { create(:media, doi: doi) }
-  let(:xml) { file_fixture('datacite.xml').read }
+  let(:xml) { file_fixture("datacite.xml").read }
   let(:metadata) { create(:metadata, xml: xml, doi: doi) }
 
-  describe 'User attributes', :order => :defined do
+  describe "User attributes", order: :defined do
     it "is valid with valid attributes" do
       expect(user.name).to eq("Josiah Carberry")
     end
@@ -25,7 +25,7 @@ describe User, type: :model do
     subject { Ability.new(user) }
 
     context "when is a user" do
-      let(:token){ User.generate_token(role_id: "user") }
+      let(:token) { User.generate_token(role_id: "user") }
 
       it { is_expected.to be_able_to(:read, user) }
       it { is_expected.to be_able_to(:read, provider) }
@@ -53,7 +53,7 @@ describe User, type: :model do
     end
 
     context "when is a client admin" do
-      let(:token){ User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
+      let(:token) { User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
 
       it { is_expected.to be_able_to(:read, user) }
       it { is_expected.to be_able_to(:read, provider) }
@@ -86,7 +86,7 @@ describe User, type: :model do
     end
 
     context "when is a client user" do
-      let(:token){ User.generate_token(role_id: "client_user", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
+      let(:token) { User.generate_token(role_id: "client_user", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
 
       it { is_expected.to be_able_to(:read, user) }
       it { is_expected.to be_able_to(:read, provider) }
@@ -119,7 +119,7 @@ describe User, type: :model do
     end
 
     context "when is a provider admin" do
-      let(:token){ User.generate_token(role_id: "provider_admin", provider_id: provider.symbol.downcase) }
+      let(:token) { User.generate_token(role_id: "provider_admin", provider_id: provider.symbol.downcase) }
 
       it { is_expected.to be_able_to(:read, user) }
 
@@ -152,7 +152,7 @@ describe User, type: :model do
     end
 
     context "when is a consortium admin" do
-      let(:token){ User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
+      let(:token) { User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
 
       it { is_expected.to be_able_to(:read, user) }
 
@@ -190,7 +190,7 @@ describe User, type: :model do
     end
 
     context "when is a provider user" do
-      let(:token){ User.generate_token(role_id: "provider_user", provider_id: provider.symbol.downcase) }
+      let(:token) { User.generate_token(role_id: "provider_user", provider_id: provider.symbol.downcase) }
 
       it { is_expected.to be_able_to(:read, user) }
 
@@ -244,7 +244,7 @@ describe User, type: :model do
     end
 
     context "when is a staff user" do
-      let(:token){ User.generate_token(role_id: "staff_user") }
+      let(:token) { User.generate_token(role_id: "staff_user") }
 
       it { is_expected.to be_able_to(:read, user) }
 

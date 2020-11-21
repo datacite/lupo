@@ -39,15 +39,16 @@ describe BookChapterType do
 
   describe "query book chapters by person", elasticsearch: true do
     let!(:book_chapters) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "BookChapter" }, aasm_state: "findable") }
-    let!(:book_chapter) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "BookChapter" }, aasm_state: "findable", creators:
+    let!(:book_chapter) do
+      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "BookChapter" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
         "givenName" => "Kristian",
         "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
         "nameType" => "Personal",
       }])
-    }
+    end
     before do
       Doi.import
       sleep 2
@@ -74,7 +75,7 @@ describe BookChapterType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "bookChapters", "totalCount")).to eq(3)
-      expect(response.dig("data", "bookChapters", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "bookChapters", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
       expect(response.dig("data", "bookChapters", "nodes").length).to eq(3)
       # expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end

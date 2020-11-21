@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "Mailable", type: :model, vcr: true do
   let(:token) { User.generate_token }
@@ -32,8 +32,8 @@ describe "Mailable", type: :model, vcr: true do
 
   it "format_message_text welcome" do
     template = "users/welcome.text.erb"
-    url = ENV['BRACCO_URL'] + "?jwt=" + token
-    reset_url = ENV['BRACCO_URL'] + "/reset"
+    url = ENV["BRACCO_URL"] + "?jwt=" + token
+    reset_url = ENV["BRACCO_URL"] + "/reset"
     text = User.format_message_text(template: template, title: title, contact_name: client.name, name: client.symbol, url: url, reset_url: reset_url)
     line = text.split("\n").first
     expect(line).to eq("Dear #{client.name},")
@@ -41,8 +41,8 @@ describe "Mailable", type: :model, vcr: true do
 
   it "format_message_html welcome" do
     template = "users/welcome.html.erb"
-    url = ENV['BRACCO_URL'] + "?jwt=" + token
-    reset_url = ENV['BRACCO_URL'] + "/reset"
+    url = ENV["BRACCO_URL"] + "?jwt=" + token
+    reset_url = ENV["BRACCO_URL"] + "/reset"
     html = User.format_message_html(template: template, title: title, contact_name: client.name, name: client.symbol, url: url, reset_url: reset_url)
     line = html.split("\n")[41]
     expect(line.strip).to eq("<h1 style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold;\" align=\"left\">Dear #{client.name},</h1>")

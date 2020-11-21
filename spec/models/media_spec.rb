@@ -1,12 +1,12 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Media, type: :model do
   it { should validate_presence_of(:url) }
 end
 
 context "validations" do
-  let(:provider)  { create(:provider, symbol: "ADMIN") }
-  let(:client)  { create(:client, provider: provider) }
+  let(:provider) { create(:provider, symbol: "ADMIN") }
+  let(:client) { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client) }
 
   it "URL valid" do

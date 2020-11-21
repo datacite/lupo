@@ -1,4 +1,4 @@
-class ProviderPrefix < ActiveRecord::Base
+class ProviderPrefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -20,11 +20,11 @@ class ProviderPrefix < ActiveRecord::Base
   if Rails.env.test?
     index_name "provider-prefixes-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"provider-prefixes-#{ENV["ES_PREFIX"]}"
+    index_name "provider-prefixes-#{ENV['ES_PREFIX']}"
   else
     index_name "provider-prefixes"
   end
-  
+
   mapping dynamic: "false" do
     indexes :id,                type: :keyword
     indexes :uid,               type: :keyword
@@ -53,7 +53,7 @@ class ProviderPrefix < ActiveRecord::Base
     indexes :client_prefixes,    type: :object
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -75,10 +75,10 @@ class ProviderPrefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      states: { terms: { field: "state", size: 2, min_doc_count: 1 } },
+      years: { date_histogram: { field: "created_at", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
+      providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
     }
   end
 

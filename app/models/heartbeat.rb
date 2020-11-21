@@ -14,10 +14,10 @@ class Heartbeat
   end
 
   def memcached_up?
-    memcached_client = Dalli::Client.new(ENV['MEMCACHE_SERVERS'])
+    memcached_client = Dalli::Client.new(ENV["MEMCACHE_SERVERS"])
     memcached_client.alive!
     true
-  rescue
+  rescue StandardError
     false
   end
 end

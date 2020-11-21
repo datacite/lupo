@@ -11,7 +11,7 @@ class UsageReportType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def datasets(**args)
+  def datasets(**_args)
     ids = Event.query(nil, subj_id: object[:id]).results.to_a.map do |e|
       doi_from_url(e[:obj_id])
     end

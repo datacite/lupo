@@ -12,12 +12,10 @@ class ProviderSerializer
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_id }
   has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium" }
 
-  attribute :country do |object|
-    object.country_code
-  end
+  attribute :country, &:country_code
 
   attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+    object.is_active.getbyte(0) == 1
   end
 
   attribute :has_password do |object|
@@ -25,47 +23,41 @@ class ProviderSerializer
   end
 
   attribute :billing_information, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.billing_information.present? ? object.billing_information.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.billing_information.present? ? object.billing_information.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
-  attribute :twitter_handle, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.twitter_handle
-  end
+  attribute :twitter_handle, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:twitter_handle
 
-  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.globus_uuid
-  end
+  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:globus_uuid
 
   # Convert all contacts json models back to json style camelCase
   attribute :technical_contact do |object|
-    object.technical_contact.present? ? object.technical_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.technical_contact.present? ? object.technical_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :secondary_technical_contact do |object|
-    object.secondary_technical_contact.present? ? object.secondary_technical_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.secondary_technical_contact.present? ? object.secondary_technical_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :billing_contact do |object|
-    object.billing_contact.present? ? object.billing_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.billing_contact.present? ? object.billing_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :secondary_billing_contact do |object|
-    object.secondary_billing_contact.present? ? object.secondary_billing_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.secondary_billing_contact.present? ? object.secondary_billing_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :service_contact do |object|
-    object.service_contact.present? ? object.service_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.service_contact.present? ? object.service_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :secondary_service_contact do |object|
-    object.secondary_service_contact.present? ? object.secondary_service_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.secondary_service_contact.present? ? object.secondary_service_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :voting_contact do |object|
-    object.voting_contact.present? ? object.voting_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+    object.voting_contact.present? ? object.voting_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
   end
 
-  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
-    object.salesforce_id
-  end
+  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true }, &:salesforce_id
 end

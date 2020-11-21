@@ -1,7 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Provider, type: :model do
-  let(:provider)  { create(:provider) }
+  let(:provider) { create(:provider) }
 
   describe "validations" do
     it { should validate_presence_of(:symbol) }
@@ -52,7 +52,7 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
-  
+
     it "for-profit" do
       subject.non_profit_status = "for-profit"
       expect(subject.save).to be true
@@ -68,26 +68,26 @@ describe Provider, type: :model do
     it "not_supported" do
       subject.non_profit_status = "super-profit"
       expect(subject.save).to be false
-      expect(subject.errors.details).to eq(:non_profit_status=>[{:error=>:inclusion, :value=>"super-profit"}])
+      expect(subject.errors.details).to eq(non_profit_status: [{ error: :inclusion, value: "super-profit" }])
     end
   end
 
   describe "logo" do
     subject { build(:provider) }
-    
+
     it "with logo" do
       subject.logo = "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read)
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
       expect(subject.logo.file?).to be true
-      expect(subject.logo.url).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
-      expect(subject.logo.url(:medium)).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
+      expect(subject.logo.url).to start_with("/images/members/" + subject.symbol.downcase + ".png")
+      expect(subject.logo.url(:medium)).to start_with("/images/members/" + subject.symbol.downcase + ".png")
       expect(subject.logo_url).to start_with("/images/members/" + subject.symbol.downcase + ".png")
       expect(subject.logo_file_name).to eq(subject.symbol.downcase + ".png")
       expect(subject.logo.content_type).to eq("image/png")
       expect(subject.logo.size).to be > 10
     end
-  
+
     it "without logo" do
       subject.logo = nil
       expect(subject.save).to be true
@@ -105,11 +105,11 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
-  
+
     it "invalid" do
       subject.salesforce_id = "abc"
       expect(subject.save).to be false
-      expect(subject.errors.details).to eq(:salesforce_id=>[{:error=>:invalid, :value=>"abc"}])
+      expect(subject.errors.details).to eq(salesforce_id: [{ error: :invalid, value: "abc" }])
     end
 
     it "blank" do
@@ -149,14 +149,14 @@ describe Provider, type: :model do
       expect(subject.consortium.member_type).to eq("consortium")
     end
   end
-  
+
   describe "to_jsonapi" do
     it "works" do
       params = provider.to_jsonapi
       expect(params.dig("id")).to eq(provider.symbol.downcase)
-      expect(params.dig("attributes","symbol")).to eq(provider.symbol)
-      expect(params.dig("attributes","system-email")).to eq(provider.system_email)
-      expect(params.dig("attributes","is-active")).to be true
+      expect(params.dig("attributes", "symbol")).to eq(provider.symbol)
+      expect(params.dig("attributes", "system-email")).to eq(provider.system_email)
+      expect(params.dig("attributes", "is-active")).to be true
     end
   end
 
@@ -176,7 +176,7 @@ describe Provider, type: :model do
   end
 
   describe "globus_uuid" do
-    let(:provider)  { build(:provider) }
+    let(:provider) { build(:provider) }
 
     it "should support version 1 UUID" do
       provider.globus_uuid = "6d133cee-3d3f-11ea-b77f-2e728ce88125"
@@ -193,7 +193,7 @@ describe Provider, type: :model do
     it "should reject string that is not a UUID" do
       provider.globus_uuid = "abc"
       expect(provider.save).to be false
-      expect(provider.errors.details).to eq(:globus_uuid=>[{:error=>"abc is not a valid UUID"}])
+      expect(provider.errors.details).to eq(globus_uuid: [{ error: "abc is not a valid UUID" }])
     end
   end
 

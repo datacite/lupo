@@ -1,9 +1,9 @@
 module Mailable
   extend ActiveSupport::Concern
 
-  require 'mailgun'
-  require 'premailer'
-  require 'slack-notifier'
+  require "mailgun"
+  require "premailer"
+  require "slack-notifier"
 
   included do
     def send_welcome_email(responsible_id: nil)
@@ -20,14 +20,14 @@ module Mailable
         "role_id" => "temporary",
         "name" => name,
         "client_id" => client_id,
-        "provider_id" => provider_id
+        "provider_id" => provider_id,
       }.compact
 
       jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
-      url = ENV['BRACCO_URL'] + "?jwt=" + jwt
-      reset_url = ENV['BRACCO_URL'] + "/reset"
-      if Rails.env == "stage" 
-        title = ENV['ES_PREFIX'].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
+      url = ENV["BRACCO_URL"] + "?jwt=" + jwt
+      reset_url = ENV["BRACCO_URL"] + "/reset"
+      if Rails.env.stage?
+        title = ENV["ES_PREFIX"].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
       else
         title = "DataCite Fabrica"
       end
@@ -38,13 +38,13 @@ module Mailable
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
       response = User.send_email_message(name: name, email: system_email, subject: subject, text: text, html: html)
-      
+
       fields = [
         { title: "Account ID", value: symbol, short: true },
         { title: "Account type", value: account_type, short: true },
         { title: "Account name", value: name, short: true },
         { title: "System email", value: system_email, short: true },
-        { title: "Responsible Account ID", value: responsible_id }
+        { title: "Responsible Account ID", value: responsible_id },
       ]
       User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
 
@@ -66,7 +66,7 @@ module Mailable
         { title: "Account type", value: account_type, short: true },
         { title: "Account name", value: name, short: true },
         { title: "System email", value: system_email, short: true },
-        { title: "Responsible Account ID", value: responsible_id }
+        { title: "Responsible Account ID", value: responsible_id },
       ]
       User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
 
@@ -76,10 +76,10 @@ module Mailable
 
   module ClassMethods
     # icon for Slack messages
-    SLACK_ICON_URL = "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png"
+    SLACK_ICON_URL = "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png".freeze
 
     class NoOpHTTPClient
-      def self.post uri, params={}
+      def self.post(_uri, params = {})
         Rails.logger.info JSON.parse(params[:payload])
         OpenStruct.new(body: "ok", status: 200)
       end
@@ -89,7 +89,7 @@ module Mailable
       ActionController::Base.render(
         assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
-        layout: false
+        layout: false,
       )
     end
 
@@ -97,7 +97,7 @@ module Mailable
       input = ActionController::Base.render(
         assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
-        layout: "application"
+        layout: "application",
       )
 
       premailer = Premailer.new(input, with_html_string: true, warn_level: Premailer::Warnings::SAFE)
@@ -105,49 +105,49 @@ module Mailable
     end
 
     def send_email_message(name: nil, email: nil, subject: nil, text: nil, html: nil)
-      mg_client = Mailgun::Client.new ENV['MAILGUN_API_KEY']
+      mg_client = Mailgun::Client.new ENV["MAILGUN_API_KEY"]
       mg_client.enable_test_mode! if Rails.env.test?
       mb_obj = Mailgun::MessageBuilder.new
 
-      mb_obj.from(ENV['MG_FROM'], "last" => "DataCite Support")
+      mb_obj.from(ENV["MG_FROM"], "last" => "DataCite Support")
       mb_obj.add_recipient(:to, email, "last" => name)
       mb_obj.subject(subject)
       mb_obj.body_text(text)
       mb_obj.body_html(html)
 
-      response = mg_client.send_message(ENV['MG_DOMAIN'], mb_obj)
+      response = mg_client.send_message(ENV["MG_DOMAIN"], mb_obj)
       body = JSON.parse(response.body)
 
       { id: body["id"], message: body["message"], status: response.code }
     end
 
-    def send_notification_to_slack(text, options={})
-      return nil unless ENV['SLACK_WEBHOOK_URL'].present?
+    def send_notification_to_slack(text, options = {})
+      return nil if ENV["SLACK_WEBHOOK_URL"].blank?
 
       attachment = {
         title: options[:title] || "Fabrica Message",
         text: text,
         color: options[:level] || "good",
-        fields: options[:fields]
+        fields: options[:fields],
       }.compact
 
       # don't send message to Slack API in test and development environments
-      if Rails.env.test? || Rails.env.development?
-        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
+      notifier = if Rails.env.test? || Rails.env.development?
+                   Slack::Notifier.new ENV["SLACK_WEBHOOK_URL"],
                                        username: "Fabrica",
                                        icon_url: SLACK_ICON_URL do
                      http_client NoOpHTTPClient
                    end
-      else
-        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
+                 else
+                   Slack::Notifier.new ENV["SLACK_WEBHOOK_URL"],
                                        username: "Fabrica",
                                        icon_url: SLACK_ICON_URL
-      end
+                 end
 
       response = notifier.ping attachments: [attachment]
       response.first.body
-    rescue Slack::Notifier::APIError => exception
-      Rails.logger.error exception.message unless exception.message.include?("HTTP Code 429")
+    rescue Slack::Notifier::APIError => e
+      Rails.logger.error e.message unless e.message.include?("HTTP Code 429")
     end
   end
 end

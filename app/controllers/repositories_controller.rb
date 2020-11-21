@@ -2,26 +2,26 @@ class RepositoriesController < ApplicationController
   include ActionController::MimeResponds
   include Countable
 
-  before_action :set_repository, only: [:show, :update, :destroy]
+  before_action :set_repository, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random, :stats]
+  load_and_authorize_resource :client, parent: false, except: %i[index show create totals random stats]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
-  
+
   def index
     sort = case params[:sort]
-           when "relevance" then { "_score" => { order: 'desc' }}
-           when "name" then { "name.raw" => { order: 'asc' }}
-           when "-name" then { "name.raw" => { order: 'desc' }}
-           when "created" then { created: { order: 'asc' }}
-           when "-created" then { created: { order: 'desc' }}
-           else { "name.raw" => { order: 'asc' }}
+           when "relevance" then { "_score" => { order: "desc" } }
+           when "name" then { "name.raw" => { order: "asc" } }
+           when "-name" then { "name.raw" => { order: "desc" } }
+           when "created" then { created: { order: "asc" } }
+           when "-created" then { created: { order: "desc" } }
+           else { "name.raw" => { order: "asc" } }
            end
 
     page = page_from_params(params)
 
     if params[:id].present?
-      response = Client.find_by_id(params[:id])
+      response = Client.find_by(id: params[:id])
     elsif params[:ids].present?
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
@@ -63,7 +63,7 @@ class RepositoriesController < ApplicationController
             "clientTypes" => client_types,
             "repositoryTypes" => repository_types,
             certificates: certificates,
-            software: software
+            software: software,
           }.compact
 
           options[:links] = {
@@ -78,8 +78,9 @@ class RepositoriesController < ApplicationController
               year: params[:year],
               "page[number]" => page[:number] + 1,
               "page[size]" => page[:size],
-              sort: params[:sort] }.compact.to_query
-            }.compact
+              sort: params[:sort],
+            }.compact.to_query,
+          }.compact
           options[:include] = @include
           options[:is_collection] = true
           options[:params] = { current_ability: current_ability }
@@ -106,21 +107,22 @@ class RepositoriesController < ApplicationController
           description
           url
           software
-          system_email)
+          system_email
+        )
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Raven.capture_exception(exception)
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+      Raven.capture_exception(e)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      message = JSON.parse(e.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => message } }.to_json, status: :bad_request
     end
   end
 
   def show
     repository = Client.where(symbol: params[:id]).where(deleted_at: nil).first
-    fail ActiveRecord::RecordNotFound unless repository.present?
+    fail ActiveRecord::RecordNotFound if repository.blank?
 
     options = {}
     options[:meta] = {
@@ -183,7 +185,7 @@ class RepositoriesController < ApplicationController
       status = 400
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+    elsif @client.update(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
@@ -241,7 +243,7 @@ class RepositoriesController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
 
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "globusUuid", "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
+      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "globusUuid", "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: %i[issnl electronic print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
               keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "globusUuid" => :globus_uuid, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
     )
   end

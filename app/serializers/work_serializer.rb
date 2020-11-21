@@ -13,7 +13,7 @@ class WorkSerializer
 
   attribute :author do |object|
     Array.wrap(object.creators).map do |c|
-      if (c["givenName"].present? || c["familyName"].present?)
+      if c["givenName"].present? || c["familyName"].present?
         { "given" => c["givenName"],
           "family" => c["familyName"] }.compact
       else
@@ -34,9 +34,7 @@ class WorkSerializer
     Array.wrap(object.descriptions).first.to_h.fetch("description", nil)
   end
 
-  attribute :container_title do |object|
-    object.publisher
-  end
+  attribute :container_title, &:publisher
 
   attribute :resource_type_subtype do |object|
     object.types.to_h.fetch("resourceType", nil)
@@ -44,24 +42,14 @@ class WorkSerializer
 
   attribute :resource_type_id do |object|
     rt = object.types.to_h.fetch("resourceTypeGeneral", nil)
-    if rt
-      rt.downcase.dasherize
-    else
-      nil
-    end
+    rt&.downcase&.dasherize
   end
 
-  attribute :data_center_id do |object|
-    object.client_id
-  end
+  attribute :data_center_id, &:client_id
 
-  attribute :member_id do |object|
-    object.provider_id
-  end
+  attribute :member_id, &:provider_id
 
-  attribute :version do |object|
-    object.version_info
-  end
+  attribute :version, &:version_info
 
   attribute :schema_version do |object|
     object.schema_version.to_s.split("-", 2).last.presence
@@ -71,11 +59,11 @@ class WorkSerializer
     Array.wrap(object.rights_list).first.to_h.fetch("rightsUri", nil)
   end
 
-  attribute :results do |object|
+  attribute :results do |_object|
     []
   end
 
-  attribute :related_identifiers do |object|
+  attribute :related_identifiers do |_object|
     []
   end
 
@@ -87,7 +75,7 @@ class WorkSerializer
     Base64.strict_encode64(object.xml) if object.xml.present?
   end
 
-  attribute :checked do |object|
+  attribute :checked do |_object|
     nil
   end
 end

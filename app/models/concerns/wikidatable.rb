@@ -11,17 +11,17 @@ module Wikidatable
       message = response.fetch("data", {})
       data = [parse_wikidata_message(id: wikidata_id, message: message)]
       errors = response.fetch("errors", nil)
-  
+
       { data: data, errors: errors }
     end
 
     def fetch_wikidata_by_id(wikidata_id)
-      return {} unless wikidata_id.present?
-  
+      return {} if wikidata_id.blank?
+
       url = "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=#{wikidata_id}&languages=en&props=labels|descriptions|claims&format=json"
-      
+
       response = Maremma.get(url, host: true)
-  
+
       return {} if response.status != 200
 
       response.body
@@ -29,27 +29,28 @@ module Wikidatable
 
     def parse_wikidata_message(id: nil, message: nil)
       name = message.dig("entities", id, "labels", "en", "value")
-  
+
       claims = message.dig("entities", id, "claims") || {}
       twitter = claims.dig("P2002", 0, "mainsnak", "datavalue", "value")
       inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
       # extract year, e.g. +1961-00-00 to 1961
       inception_year = inception[1..4] if inception.present?
-      geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") || 
-                    claims.dig("P625", 0, "datavalue", "value") || 
-                    claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
+      geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") ||
+        claims.dig("P625", 0, "datavalue", "value") ||
+        claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
       ringgold = claims.dig("P3500", 0, "mainsnak", "datavalue", "value")
 
-      Hashie::Mash.new({
+      Hashie::Mash.new(
         id: id,
         type: "Organization",
         name: name,
         twitter: twitter,
         inception_year: inception_year,
         geolocation: geolocation.extract!("longitude", "latitude"),
-        ringgold: ringgold }) 
+        ringgold: ringgold,
+      )
     end
-    
+
     def wikidata_query(employment)
       return [] if employment.blank?
 
@@ -69,7 +70,7 @@ module Wikidatable
       endpoint = "https://query.wikidata.org/sparql"
       sparql = <<"SPARQL".chop
       PREFIX wikibase: <http://wikiba.se/ontology#>
-      PREFIX wd: <http://www.wikidata.org/entity/> 
+      PREFIX wd: <http://www.wikidata.org/entity/>
       PREFIX wdt: <http://www.wikidata.org/prop/direct/>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       PREFIX p: <http://www.wikidata.org/prop/>
@@ -79,7 +80,7 @@ module Wikidatable
         ?item wdt:P6782 ?ror.
         OPTIONAL { ?item wdt:P2427 ?grid. }
         OPTIONAL { ?item wdt:P3500 ?ringgold. }
-        
+
         FILTER(?ringgold in ("#{ringgold_filter}") || ?grid in ("#{grid_filter}")).
            SERVICE wikibase:label {
              bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .
@@ -88,8 +89,8 @@ module Wikidatable
 SPARQL
 
       client = SPARQL::Client.new(endpoint,
-                            :method => :get,
-                            headers: { 'User-Agent' => user_agent })
+                                  method: :get,
+                                  headers: { "User-Agent" => user_agent })
       response = client.query(sparql)
 
       ringgold_to_ror = Array.wrap(response).reduce({}) do |sum, r|
