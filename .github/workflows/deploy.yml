@@ -18,7 +18,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
-          - 3306
+          - 3306:3306
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
         env:
@@ -33,7 +33,6 @@ jobs:
     env:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
-      MYSQL_PORT: ${{ jobs.test.services.mysql.ports[3306] }}
       ES_HOST: "localhost:9200"
       ELASTIC_PASSWORD: "changeme"
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
