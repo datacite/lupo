@@ -30,6 +30,7 @@ jobs:
           http.cors.allow-origin: "*"
         ports:
           - 9200
+        options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
     env:
       MEMCACHE_SERVERS: "127.0.0.1:11211"
       MYSQL_HOST: "127.0.0.1"
@@ -67,7 +68,9 @@ jobs:
           bundle exec rails db:setup RAILS_ENV=test      
       - name: Lint and Test
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          ES_HOST: "localhost:9200"
+          ELASTIC_PASSWORD: "changeme"
         run: |
           bundle exec rubocop
           bundle exec rspec
