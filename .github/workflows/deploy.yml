@@ -7,7 +7,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      ELASTIC_PASSWORD: changeme
+      MEMCACHE_SERVERS: "localhost:11211"
+      MYSQL_HOST: "localhost:3306"
+      ES_HOST: "localhost:9200"
+      ELASTIC_PASSWORD: "changeme"
     services:
       memcached:
         image: memcached:1.4.31

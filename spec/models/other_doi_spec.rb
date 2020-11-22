@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe OtherDoi, type: :model, vcr: true do
+describe OtherDoi, type: :model do
   it_behaves_like "an STI class"
 
   describe "import_by_ids", elasticsearch: true do
@@ -18,6 +18,7 @@ describe OtherDoi, type: :model, vcr: true do
 
     it "import by id" do
       response = OtherDoi.import_by_id(id: doi.id)
+      sleep 2
       expect(response).to eq(3)
     end
   end

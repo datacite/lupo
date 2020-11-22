@@ -8,7 +8,7 @@ describe "Organization", vcr: true do
   context "find_by_wikidata_id" do
     it "for entity" do
       id = "Q35794"
-      result = subject.find_by(wikidata_id: id)
+      result = subject.find_by_wikidata_id(id)
       organization = result[:data].first
 
       expect(organization.id).to eq("Q35794")
