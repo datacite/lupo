@@ -6,17 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      MEMCACHE_SERVERS: "localhost:11211"
-      MYSQL_HOST: "localhost"
-      ES_HOST: "localhost:9200"
-      ELASTIC_PASSWORD: "changeme"
-      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-      SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
-      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
-      MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
-      MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
     services:
       memcached:
         image: memcached:1.4.31
@@ -29,7 +18,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
-          - 3306:3306
+          - 3306
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
         env:
@@ -41,6 +30,18 @@ jobs:
           http.cors.allow-origin: "*"
         ports:
           - 9200:9200
+    env:
+      MEMCACHE_SERVERS: "localhost:11211"
+      MYSQL_HOST: "127.0.0.1"
+      MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+      ES_HOST: "localhost:9200"
+      ELASTIC_PASSWORD: "changeme"
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
+      JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+      MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
+      MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby 2.6
