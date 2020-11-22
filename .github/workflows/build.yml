@@ -33,11 +33,11 @@ jobs:
         run: |
           cp .env.build .env
           docker-compose up -d
-          docker-compose exec -T web bundle exec rake db:setup RAILS_ENV=test
+          docker exec -it lupo_web_1 bundle exec rake db:setup RAILS_ENV=test
       - name: Lint and Test
         run: |
-          docker-compose exec -T web bundle exec rubocop -a
-          docker-compose exec -T web bundle exec rspec
+          docker exec -it lupo_web_1 bundle exec rubocop -a
+          docker exec -it lupo_web_1 bundle exec rspec
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
