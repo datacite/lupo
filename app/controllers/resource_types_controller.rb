@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResourceTypesController < ApplicationController
   def index
     @resource_types = ResourceType.where(params)
@@ -10,7 +12,10 @@ class ResourceTypesController < ApplicationController
     }.compact
     options[:is_collection] = true
 
-    render json: ResourceTypeSerializer.new(@resource_types[:data], options).serialized_json, status: :ok
+    render json:
+             ResourceTypeSerializer.new(@resource_types[:data], options).
+               serialized_json,
+           status: :ok
   end
 
   def show
@@ -20,6 +25,9 @@ class ResourceTypesController < ApplicationController
     options = {}
     options[:is_collection] = false
 
-    render json: ResourceTypeSerializer.new(@resource_type[:data], options).serialized_json, status: :ok
+    render json:
+             ResourceTypeSerializer.new(@resource_type[:data], options).
+               serialized_json,
+           status: :ok
   end
 end

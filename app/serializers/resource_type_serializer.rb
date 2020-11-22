@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResourceTypeSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :dash

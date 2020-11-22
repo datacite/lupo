@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HandleJob < ApplicationJob
   queue_as :lupo
 
@@ -12,7 +14,8 @@ class HandleJob < ApplicationJob
     if doi.present?
       doi.register_url
     else
-      Rails.logger.info "[Handle] Error updating URL for DOI " + doi_id + ": not found."
+      Rails.logger.info "[Handle] Error updating URL for DOI " + doi_id +
+        ": not found."
     end
   end
 end

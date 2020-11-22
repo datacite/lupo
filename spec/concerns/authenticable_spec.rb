@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe User, type: :model do
@@ -85,128 +87,199 @@ describe User, type: :model do
       it "staff_admin" do
         token = User.generate_token(role_id: "staff_admin")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "staff_user" do
         token = User.generate_token(role_id: "staff_user")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "consortium_admin" do
-        token = User.generate_token(role_id: "consortium_admin", provider_id: "datacite")
+        token =
+          User.generate_token(
+            role_id: "consortium_admin", provider_id: "datacite",
+          )
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "provider_admin" do
-        token = User.generate_token(role_id: "provider_admin", provider_id: "datacite")
+        token =
+          User.generate_token(
+            role_id: "provider_admin", provider_id: "datacite",
+          )
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "provider_user" do
-        token = User.generate_token(role_id: "provider_user", provider_id: "datacite")
+        token =
+          User.generate_token(role_id: "provider_user", provider_id: "datacite")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "client_admin" do
-        token = User.generate_token(role_id: "client_admin", client_id: "datacite.rph")
+        token =
+          User.generate_token(
+            role_id: "client_admin", client_id: "datacite.rph",
+          )
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "client_user" do
-        token = User.generate_token(role_id: "client_user", client_id: "datacite.rph")
+        token =
+          User.generate_token(role_id: "client_user", client_id: "datacite.rph")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "user" do
         token = User.generate_token(role_id: "user")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "temporary" do
         token = User.generate_token(role_id: "temporary")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "anonymous" do
         token = User.generate_token(role_id: "anonymous")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
     end
 
     context "draft doi" do
-      let(:consortium) { create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM") }
-      let(:provider) { create(:provider, symbol: "DATACITE", consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
-      let(:client) { create(:client, provider: provider, symbol: "DATACITE.RPH") }
+      let(:consortium) do
+        create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM")
+      end
+      let(:provider) do
+        create(
+          :provider,
+          symbol: "DATACITE",
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        )
+      end
+      let(:client) do
+        create(:client, provider: provider, symbol: "DATACITE.RPH")
+      end
       let(:doi) { create(:doi, client: client) }
 
       it "staff_admin" do
         token = User.generate_token(role_id: "staff_admin")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "staff_user" do
         token = User.generate_token(role_id: "staff_user")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "consortium_admin" do
-        token = User.generate_token(role_id: "consortium_admin", provider_id: "dc")
+        token =
+          User.generate_token(role_id: "consortium_admin", provider_id: "dc")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "provider_admin" do
-        token = User.generate_token(role_id: "provider_admin", provider_id: "datacite")
+        token =
+          User.generate_token(
+            role_id: "provider_admin", provider_id: "datacite",
+          )
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "provider_user" do
-        token = User.generate_token(role_id: "provider_user", provider_id: "datacite")
+        token =
+          User.generate_token(role_id: "provider_user", provider_id: "datacite")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "client_admin" do
-        token = User.generate_token(role_id: "client_admin", client_id: "datacite.rph")
+        token =
+          User.generate_token(
+            role_id: "client_admin", client_id: "datacite.rph",
+          )
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "client_user" do
-        token = User.generate_token(role_id: "client_user", client_id: "datacite.rph")
+        token =
+          User.generate_token(role_id: "client_user", client_id: "datacite.rph")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
       end
 
       it "user" do
         token = User.generate_token(role_id: "user")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be true
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be true
       end
 
       it "temporary" do
         token = User.generate_token(role_id: "temporary")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be true
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be true
       end
 
       it "anonymous" do
         token = User.generate_token(role_id: "anonymous")
         subject = User.new(token)
-        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be true
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be true
       end
     end
   end
@@ -253,7 +326,8 @@ describe Provider, type: :model do
 
   describe "encode_auth_param" do
     it "works" do
-      credentials = subject.encode_auth_param(username: subject.symbol, password: 12345)
+      credentials =
+        subject.encode_auth_param(username: subject.symbol, password: 12_345)
       expect(credentials).to start_with("VEVT")
     end
 
@@ -266,17 +340,45 @@ describe Provider, type: :model do
 
   describe "decode_auth_param" do
     it "provider" do
-      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid" => subject.symbol.downcase, "name" => subject.name, "email" => subject.system_email, "role_id" => "provider_admin", "provider_id" => subject.symbol.downcase)
+      expect(
+        subject.decode_auth_param(username: subject.symbol, password: "12345"),
+      ).to eq(
+        "uid" => subject.symbol.downcase,
+        "name" => subject.name,
+        "email" => subject.system_email,
+        "role_id" => "provider_admin",
+        "provider_id" => subject.symbol.downcase,
+      )
     end
 
     it "admin" do
-      subject = create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345")
-      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid" => subject.symbol.downcase, "name" => subject.name, "email" => subject.system_email, "role_id" => "staff_admin")
+      subject =
+        create(
+          :provider,
+          symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345",
+        )
+      expect(
+        subject.decode_auth_param(username: subject.symbol, password: "12345"),
+      ).to eq(
+        "uid" => subject.symbol.downcase,
+        "name" => subject.name,
+        "email" => subject.system_email,
+        "role_id" => "staff_admin",
+      )
     end
 
     it "consortium" do
-      subject = create(:provider, role_name: "ROLE_CONSORTIUM", password_input: "12345")
-      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid" => subject.symbol.downcase, "name" => subject.name, "email" => subject.system_email, "role_id" => "consortium_admin", "provider_id" => subject.symbol.downcase)
+      subject =
+        create(:provider, role_name: "ROLE_CONSORTIUM", password_input: "12345")
+      expect(
+        subject.decode_auth_param(username: subject.symbol, password: "12345"),
+      ).to eq(
+        "uid" => subject.symbol.downcase,
+        "name" => subject.name,
+        "email" => subject.system_email,
+        "role_id" => "consortium_admin",
+        "provider_id" => subject.symbol.downcase,
+      )
     end
   end
 end
@@ -286,13 +388,35 @@ describe Client, type: :model do
 
   describe "decode_auth_param" do
     it "works" do
-      expect(subject.decode_auth_param(username: subject.symbol, password: 12345)).to eq("uid" => subject.symbol.downcase, "name" => subject.name, "email" => subject.system_email, "password" => "12345", "role_id" => "client_admin", "provider_id" => subject.provider_id, "client_id" => subject.symbol.downcase)
+      expect(
+        subject.decode_auth_param(username: subject.symbol, password: 12_345),
+      ).to eq(
+        "uid" => subject.symbol.downcase,
+        "name" => subject.name,
+        "email" => subject.system_email,
+        "password" => "12345",
+        "role_id" => "client_admin",
+        "provider_id" => subject.provider_id,
+        "client_id" => subject.symbol.downcase,
+      )
     end
   end
 
   describe "get_payload" do
     it "works" do
-      expect(subject.get_payload(uid: subject.symbol.downcase, user: subject, password: 12345)).to eq("uid" => subject.symbol.downcase, "name" => subject.name, "email" => subject.system_email, "password" => 12345, "role_id" => "client_admin", "provider_id" => subject.provider_id, "client_id" => subject.symbol.downcase)
+      expect(
+        subject.get_payload(
+          uid: subject.symbol.downcase, user: subject, password: 12_345,
+        ),
+      ).to eq(
+        "uid" => subject.symbol.downcase,
+        "name" => subject.name,
+        "email" => subject.system_email,
+        "password" => 12_345,
+        "role_id" => "client_admin",
+        "provider_id" => subject.provider_id,
+        "client_id" => subject.symbol.downcase,
+      )
     end
   end
 end

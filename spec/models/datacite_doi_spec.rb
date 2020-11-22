@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe DataciteDoi, type: :model, vcr: true do
@@ -6,8 +8,21 @@ describe DataciteDoi, type: :model, vcr: true do
   describe "import_by_ids", elasticsearch: true do
     let(:provider) { create(:provider) }
     let(:client) { create(:client, provider: provider) }
-    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
+    let(:target) do
+      create(
+        :client,
+        provider: provider,
+        symbol: provider.symbol + ".TARGET",
+        name: "Target Client",
+      )
+    end
+    let!(:dois) do
+      create_list(
+        :doi,
+        3,
+        client: client, aasm_state: "findable", type: "DataciteDoi",
+      )
+    end
     let(:doi) { dois.first }
 
     it "import by ids" do

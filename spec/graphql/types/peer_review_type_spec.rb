@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe PeerReviewType do
@@ -9,7 +11,16 @@ describe PeerReviewType do
   end
 
   describe "query peer reviews", elasticsearch: true do
-    let!(:peer_reviews) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable") }
+    let!(:peer_reviews) do
+      create_list(
+        :doi,
+        3,
+        types: {
+          "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\""
+        },
+        aasm_state: "findable",
+      )
+    end
 
     before do
       Doi.import
@@ -18,14 +29,14 @@ describe PeerReviewType do
     end
 
     let(:query) do
-      %(query {
+      "query {
         peerReviews {
           totalCount
           nodes {
             id
           }
         }
-      })
+      }"
     end
 
     it "returns all peer reviews" do
@@ -38,16 +49,39 @@ describe PeerReviewType do
   end
 
   describe "query peer reviews by person", elasticsearch: true do
-    let!(:peer_reviews) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable") }
+    let!(:peer_reviews) do
+      create_list(
+        :doi,
+        3,
+        types: {
+          "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\""
+        },
+        aasm_state: "findable",
+      )
+    end
     let!(:peer_review) do
-      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\"" }, aasm_state: "findable", creators:
-      [{
-        "familyName" => "Garza",
-        "givenName" => "Kristian",
-        "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
-        "nameType" => "Personal",
-      }])
+      create(
+        :doi,
+        types: {
+          "resourceTypeGeneral" => "Text", "resourceType" => "\"Peer review\""
+        },
+        aasm_state: "findable",
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+          },
+        ],
+      )
     end
     before do
       Doi.import
@@ -56,8 +90,8 @@ describe PeerReviewType do
     end
 
     let(:query) do
-      %(query {
-        peerReviews(userId: "https://orcid.org/0000-0003-1419-2405") {
+      "query {
+        peerReviews(userId: \"https://orcid.org/0000-0003-1419-2405\") {
           totalCount
           published {
             id
@@ -68,14 +102,16 @@ describe PeerReviewType do
             id
           }
         }
-      })
+      }"
     end
 
     it "returns peer reviews" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "peerReviews", "totalCount")).to eq(3)
-      expect(response.dig("data", "peerReviews", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "peerReviews", "published")).to eq(
+        [{ "count" => 3, "id" => "2011", "title" => "2011" }],
+      )
       expect(response.dig("data", "peerReviews", "nodes").length).to eq(3)
       # expect(response.dig("data", "peerReviews", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end

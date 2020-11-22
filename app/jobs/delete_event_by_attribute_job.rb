@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DeleteEventByAttributeJob < ApplicationJob
   queue_as :lupo_background
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Authenticable
   extend ActiveSupport::Concern
 
@@ -10,7 +12,8 @@ module Authenticable
       return nil if payload.blank?
 
       # replace newline characters with actual newlines
-      private_key = OpenSSL::PKey::RSA.new(ENV["JWT_PRIVATE_KEY"].to_s.gsub('\n', "\n"))
+      private_key =
+        OpenSSL::PKey::RSA.new(ENV["JWT_PRIVATE_KEY"].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, "RS256")
     rescue OpenSSL::PKey::RSAError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -23,7 +26,13 @@ module Authenticable
       return nil if payload.blank? || !Rails.env.test?
 
       # replace newline characters with actual newlines
-      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
+      private_key =
+        OpenSSL::PKey.read(
+          File.read(
+            Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").
+              to_s,
+          ),
+        )
       JWT.encode(payload, private_key, "ES256")
     rescue OpenSSL::PKey::ECError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -36,7 +45,13 @@ module Authenticable
       return nil if payload.blank? || !Rails.env.test?
 
       # replace newline characters with actual newlines
-      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
+      private_key =
+        OpenSSL::PKey.read(
+          File.read(
+            Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").
+              to_s,
+          ),
+        )
       JWT.encode(payload, private_key, "RS512")
     rescue OpenSSL::PKey::ECError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -56,18 +71,24 @@ module Authenticable
       case header["alg"]
       when "RS256"
         # DataCite JWT
-        public_key = OpenSSL::PKey::RSA.new(ENV["JWT_PUBLIC_KEY"].to_s.gsub('\n', "\n"))
+        public_key =
+          OpenSSL::PKey::RSA.new(ENV["JWT_PUBLIC_KEY"].to_s.gsub('\n', "\n"))
         payload = (JWT.decode token, public_key, true, algorithm: "RS256").first
       when "RS512"
         # Globus JWT
-        public_key = OpenSSL::PKey::RSA.new(cached_globus_public_key.fetch("n", nil).to_s.gsub('\n', "\n"))
+        public_key =
+          OpenSSL::PKey::RSA.new(
+            cached_globus_public_key.fetch("n", nil).to_s.gsub('\n', "\n"),
+          )
         payload = (JWT.decode token, public_key, true, algorithm: "RS512").first
       else
         raise JWT::DecodeError, "Algorithm #{header['alg']} is not supported."
       end
 
       # check whether token has expired
-      fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
+      unless Time.now.to_i < payload["exp"].to_i
+        fail JWT::ExpiredSignature, "The token has expired."
+      end
 
       payload
     rescue JWT::ExpiredSignature => e
@@ -78,14 +99,21 @@ module Authenticable
       { errors: "The token could not be decoded." }
     rescue OpenSSL::PKey::RSAError => e
       public_key = ENV["JWT_PUBLIC_KEY"].presence || "nil"
-      Rails.logger.error "OpenSSL::PKey::RSAError: " + e.message + " for " + public_key
+      Rails.logger.error "OpenSSL::PKey::RSAError: " + e.message + " for " +
+        public_key
       { errors: "An error occured." }
     end
 
     # decode JWT token from AWS ALB using SHA-256 hash algorithm
     def decode_alb_token(token)
       if Rails.env.test?
-        public_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").to_s))
+        public_key =
+          OpenSSL::PKey.read(
+            File.read(
+              Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").
+                to_s,
+            ),
+          )
       else
         header = JSON.parse(Base64.urlsafe_decode64(token.split(".").first))
         kid = header["kid"]
@@ -97,7 +125,9 @@ module Authenticable
       fail NoMethodError, "Payload is not a hash" unless payload.is_a?(Hash)
 
       # check whether token has expired
-      fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
+      unless Time.now.to_i < payload["exp"].to_i
+        fail JWT::ExpiredSignature, "The token has expired."
+      end
 
       payload
     rescue NoMethodError => e
@@ -125,13 +155,17 @@ module Authenticable
     def decode_auth_param(username: nil, password: nil)
       return {} unless username.present? && password.present?
 
-      user = if username.include?(".")
-               Client.where(symbol: username.upcase).first
-             else
-               Provider.unscoped.where(symbol: username.upcase).first
-             end
+      user =
+        if username.include?(".")
+          Client.where(symbol: username.upcase).first
+        else
+          Provider.unscoped.where(symbol: username.upcase).first
+        end
 
-      return {} unless user && secure_compare(user.password, encrypt_password_sha256(password))
+      unless user &&
+          secure_compare(user.password, encrypt_password_sha256(password))
+        return {}
+      end
 
       uid = username.downcase
 
@@ -187,10 +221,22 @@ module Authenticable
       return true if doi.blank?
       return false if doi.aasm_state == "findable"
       return true if user.blank?
-      return false if %w(staff_admin staff_user).include?(user.role_id)
-      return false if %w(consortium_admin).include?(user.role_id) && user.provider_id.present? && user.provider_id.upcase == doi.provider.consortium_id
-      return false if %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.provider_id
-      return false if %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present? && user.client_id == doi.client_id
+      return false if %w[staff_admin staff_user].include?(user.role_id)
+      if %w[consortium_admin].include?(user.role_id) &&
+          user.provider_id.present? &&
+          user.provider_id.upcase == doi.provider.consortium_id
+        return false
+      end
+      if %w[provider_admin provider_user].include?(user.role_id) &&
+          user.provider_id.present? &&
+          user.provider_id == doi.provider_id
+        return false
+      end
+      if %w[client_admin client_user user temporary].include?(user.role_id) &&
+          user.client_id.present? &&
+          user.client_id == doi.client_id
+        return false
+      end
 
       true
     end
@@ -202,7 +248,8 @@ module Authenticable
       return nil if payload.blank?
 
       # replace newline characters with actual newlines
-      private_key = OpenSSL::PKey::RSA.new(ENV["JWT_PRIVATE_KEY"].to_s.gsub('\n', "\n"))
+      private_key =
+        OpenSSL::PKey::RSA.new(ENV["JWT_PRIVATE_KEY"].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, "RS256")
     rescue OpenSSL::PKey::RSAError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -215,7 +262,13 @@ module Authenticable
     def encode_alb_token(payload)
       return nil if payload.blank? || !Rails.env.test?
 
-      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
+      private_key =
+        OpenSSL::PKey.read(
+          File.read(
+            Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").
+              to_s,
+          ),
+        )
       JWT.encode(payload, private_key, "ES256")
     rescue OpenSSL::PKey::ECError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -228,7 +281,13 @@ module Authenticable
     def encode_globus_token(payload)
       return nil if payload.blank? || !Rails.env.test?
 
-      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
+      private_key =
+        OpenSSL::PKey.read(
+          File.read(
+            Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").
+              to_s,
+          ),
+        )
       JWT.encode(payload, private_key, "RS512")
     rescue OpenSSL::PKey::ECError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
@@ -264,7 +323,8 @@ module Authenticable
     end
 
     def generate_alb_token(attributes = {})
-      preferred_username = attributes.fetch(:preferred_username, "0000-0001-5489-3594@orcid.org")
+      preferred_username =
+        attributes.fetch(:preferred_username, "0000-0001-5489-3594@orcid.org")
 
       payload = {
         uid: preferred_username[0..18],

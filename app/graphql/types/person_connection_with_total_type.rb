@@ -6,14 +6,14 @@ class PersonConnectionWithTotalType < BaseConnection
 
   # data from Tom Demeranville (ORCID) on Sep 15, 2020
   YEARS = [
-    { "id" => "2012", "title" => "2012", "count" => 44270 },
-    { "id" => "2013", "title" => "2013", "count" => 426775 },
-    { "id" => "2014", "title" => "2014", "count" => 612300 },
-    { "id" => "2015", "title" => "2015", "count" => 788650 },
-    { "id" => "2016", "title" => "2016", "count" => 1068295 },
-    { "id" => "2017", "title" => "2017", "count" => 1388796 },
-    { "id" => "2018", "title" => "2018", "count" => 1585851 },
-    { "id" => "2019", "title" => "2019", "count" => 2006672 },
+    { "id" => "2012", "title" => "2012", "count" => 44_270 },
+    { "id" => "2013", "title" => "2013", "count" => 426_775 },
+    { "id" => "2014", "title" => "2014", "count" => 612_300 },
+    { "id" => "2015", "title" => "2015", "count" => 788_650 },
+    { "id" => "2016", "title" => "2016", "count" => 1_068_295 },
+    { "id" => "2017", "title" => "2017", "count" => 1_388_796 },
+    { "id" => "2018", "title" => "2018", "count" => 1_585_851 },
+    { "id" => "2019", "title" => "2019", "count" => 2_006_672 },
   ].freeze
 
   field :total_count, Integer, null: false, cache: true
@@ -28,27 +28,55 @@ class PersonConnectionWithTotalType < BaseConnection
   end
 
   def years
-    count = YEARS.reduce(0) do |sum, i|
-      sum += i["count"]
-      sum
-    end
-    this_year = object.total_count > count ? { "id" => "2020", "title" => "2020", "count" => object.total_count - count } : nil
+    count =
+      YEARS.reduce(0) do |sum, i|
+        sum += i["count"]
+        sum
+      end
+    this_year =
+      if object.total_count > count
+        {
+          "id" => "2020",
+          "title" => "2020",
+          "count" => object.total_count - count,
+        }
+      end
     this_year ? YEARS << this_year : YEARS
   end
 
   def publication_connection_count
-    Event.query(nil, citation_type: "Person-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
+    Event.query(
+      nil,
+      citation_type: "Person-ScholarlyArticle", page: { number: 1, size: 0 },
+    ).
+      results.
+      total
   end
 
   def dataset_connection_count
-    Event.query(nil, citation_type: "Dataset-Person", page: { number: 1, size: 0 }).results.total
+    Event.query(
+      nil,
+      citation_type: "Dataset-Person", page: { number: 1, size: 0 },
+    ).
+      results.
+      total
   end
 
   def software_connection_count
-    Event.query(nil, citation_type: "Person-SoftwareSourceCode", page: { number: 1, size: 0 }).results.total
+    Event.query(
+      nil,
+      citation_type: "Person-SoftwareSourceCode", page: { number: 1, size: 0 },
+    ).
+      results.
+      total
   end
 
   def organization_connection_count
-    Event.query(nil, citation_type: "Organization-Person", page: { number: 1, size: 0 }).results.total
+    Event.query(
+      nil,
+      citation_type: "Organization-Person", page: { number: 1, size: 0 },
+    ).
+      results.
+      total
   end
 end

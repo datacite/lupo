@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class XmlSchemaValidator < ActiveModel::EachValidator
   # mapping of DataCite schema properties to database fields
   def schema_attributes(el)
@@ -37,18 +39,29 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     kernel = get_valid_kernel(record.schema_version)
     return false if kernel.blank?
 
-    if record.new_record? && ["http://datacite.org/schema/kernel-2.1", "http://datacite.org/schema/kernel-2.2"].include?(record.schema_version)
-      record.errors[:xml] << "Schema #{record.schema_version} is no longer supported"
+    if record.new_record? &&
+        %w[
+          http://datacite.org/schema/kernel-2.1
+          http://datacite.org/schema/kernel-2.2
+        ].include?(record.schema_version)
+      record.errors[:xml] <<
+        "Schema #{record.schema_version} is no longer supported"
       return false
     end
 
-    filepath = Bundler.rubygems.find_name("bolognese").first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
-    schema = Nokogiri::XML::Schema(open(filepath))
+    filepath =
+      Bundler.rubygems.find_name("bolognese").first.full_gem_path +
+      "/resources/#{kernel}/metadata.xsd"
+    schema = Nokogiri::XML.Schema(open(filepath))
 
-    schema.validate(Nokogiri::XML(value, nil, "UTF-8")).reduce({}) do |_sum, error|
+    schema.validate(Nokogiri.XML(value, nil, "UTF-8")).reduce(
+      {},
+    ) do |_sum, error|
       location, level, source, text = error.message.split(": ", 4)
       line, column = location.split(":", 2)
-      title = text.to_s.strip + " at line #{line}, column #{column}" if line.present?
+      if line.present?
+        title = text.to_s.strip + " at line #{line}, column #{column}"
+      end
       source = source.split("}").last[0..-2] if line.present?
       source = schema_attributes(source) if source.present?
       record.errors[source.to_sym] << title

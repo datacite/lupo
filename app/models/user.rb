@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User
   # include jwt encode and decode
   include Authenticable
@@ -11,28 +13,53 @@ class User
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :has_orcid_token, :errors
+  attr_accessor :name,
+                :uid,
+                :email,
+                :role_id,
+                :jwt,
+                :password,
+                :provider_id,
+                :client_id,
+                :beta_tester,
+                :has_orcid_token,
+                :errors
 
   def initialize(credentials, options = {})
     if credentials.present? && options.fetch(:type, "").casecmp("basic").zero?
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
-      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30, aud: Rails.env))
+      @jwt =
+        encode_token(
+          payload.merge(
+            iat: Time.now.to_i,
+            exp: Time.now.to_i + 3_600 * 24 * 30,
+            aud: Rails.env,
+          ),
+        )
     elsif credentials.present? && options.fetch(:type, "").casecmp("oidc").zero?
       payload = decode_alb_token(credentials)
 
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
       # default to role user unless database says otherwise
-      uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
+      uid =
+        if payload["preferred_username"].present?
+          payload["preferred_username"][0..18]
+        end
 
       if uid.present?
         payload = {
-          "uid" => uid,
-          "name" => payload["name"],
-          "email" => payload["email"],
+          "uid" => uid, "name" => payload["name"], "email" => payload["email"]
         }
 
-        @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30, aud: Rails.env))
+        @jwt =
+          encode_token(
+            payload.merge(
+              iat: Time.now.to_i,
+              exp: Time.now.to_i + 3_600 * 24 * 30,
+              aud: Rails.env,
+            ),
+          )
       end
     elsif credentials.present?
       payload = decode_token(credentials)
@@ -68,7 +95,7 @@ class User
 
   # Helper method to check for admin or staff user
   def is_admin_or_staff?
-    ["staff_admin", "staff_user"].include?(role_id)
+    %w[staff_admin staff_user].include?(role_id)
   end
 
   # Helper method to check for beta tester
@@ -111,19 +138,56 @@ class User
       "provider_id" => provider_id,
     }.compact
 
-    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
+    jwt =
+      encode_token(
+        payload.merge(
+          iat: Time.now.to_i, exp: Time.now.to_i + 3_600 * 24, aud: Rails.env,
+        ),
+      )
     url = ENV["BRACCO_URL"] + "?jwt=" + jwt
     reset_url = ENV["BRACCO_URL"] + "/reset"
-    if Rails.env.stage?
-      title = ENV["ES_PREFIX"].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
+    title = if Rails.env.stage?
+      if ENV["ES_PREFIX"].present?
+        "DataCite Fabrica Stage"
+      else
+        "DataCite Fabrica Test"
+      end
     else
-      title = "DataCite Fabrica"
+      "DataCite Fabrica"
     end
     subject = "#{title}: Password Reset Request"
-    account_type = user.class.name == "Provider" ? user.member_type.humanize : user.client_type.humanize
-    text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
-    html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
-    response = send_email_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
+    account_type =
+      if user.instance_of?(Provider)
+        user.member_type.humanize
+      else
+        user.client_type.humanize
+      end
+    text =
+      User.format_message_text(
+        template: "users/reset.text.erb",
+        title: title,
+        contact_name: user.name,
+        name: user.symbol,
+        url: url,
+        reset_url: reset_url,
+      )
+    html =
+      User.format_message_html(
+        template: "users/reset.html.erb",
+        title: title,
+        contact_name: user.name,
+        name: user.symbol,
+        url: url,
+        reset_url: reset_url,
+      )
+    response =
+      send_email_message(
+        name: user.name,
+        email: user.system_email,
+        subject: subject,
+        text: text,
+        html: html,
+      )
 
     fields = [
       { title: "Account ID", value: uid.upcase, short: true },
@@ -133,7 +197,10 @@ class User
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
     level = response[:status] == 200 ? "good" : "danger"
-    send_notification_to_slack(nil, title: slack_title, level: level, fields: fields)
+    send_notification_to_slack(
+      nil,
+      title: slack_title, level: level, fields: fields,
+    )
 
     response
   end

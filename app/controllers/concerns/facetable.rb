@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facetable
   extend ActiveSupport::Concern
 
@@ -57,22 +59,26 @@ module Facetable
     "ogl-canada-2.0" => "OGL-Canada-2.0",
   }.freeze
 
-  LOWER_BOUND_YEAR = 2010
+  LOWER_BOUND_YEAR = 2_010
 
   included do
     def facet_by_key_as_string(arr)
       arr.map do |hsh|
-        { "id" => hsh["key_as_string"],
+        {
+          "id" => hsh["key_as_string"],
           "title" => hsh["key_as_string"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_year(arr)
       arr.map do |hsh|
-        { "id" => hsh["key_as_string"][0..3],
+        {
+          "id" => hsh["key_as_string"][0..3],
           "title" => hsh["key_as_string"][0..3],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
@@ -80,21 +86,27 @@ module Facetable
     def facet_by_range(arr)
       interval = Date.current.year - LOWER_BOUND_YEAR
 
-      arr.select { |a| a["key_as_string"].to_i <= Date.current.year }[0..interval].map do |hsh|
-        { "id" => hsh["key_as_string"],
+      arr.select { |a| a["key_as_string"].to_i <= Date.current.year }[
+        0..interval
+      ].
+        map do |hsh|
+        {
+          "id" => hsh["key_as_string"],
           "title" => hsh["key_as_string"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def metric_facet_by_year(arr)
       arr.reduce([]) do |sum, hsh|
         if hsh.dig("metric_count", "value").to_i > 0
-          sum << {
-            "id" => hsh["key_as_string"][0..3],
-            "title" => hsh["key_as_string"][0..3],
-            "count" => hsh.dig("metric_count", "value").to_i,
-          }
+          sum <<
+            {
+              "id" => hsh["key_as_string"][0..3],
+              "title" => hsh["key_as_string"][0..3],
+              "count" => hsh.dig("metric_count", "value").to_i,
+            }
         end
 
         sum
@@ -103,49 +115,61 @@ module Facetable
 
     def facet_annual(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"][0..3],
+        {
+          "id" => hsh["key"][0..3],
           "title" => hsh["key"][0..3],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_date(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"][0..9],
+        {
+          "id" => hsh["key"][0..9],
           "title" => hsh["key"][0..9],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_cumulative_year(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].to_s,
+        {
+          "id" => hsh["key"].to_s,
           "title" => hsh["key"].to_s,
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_key(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"].titleize,
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_software(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].parameterize(separator: "_"),
+        {
+          "id" => hsh["key"].parameterize(separator: "_"),
           "title" => hsh["key"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_license(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => LICENSES[hsh["key"]] || hsh["key"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
@@ -153,136 +177,164 @@ module Facetable
       arr.map do |hsh|
         id = hsh["key"].split("-").last
 
-        { "id" => id,
-          "title" => "Schema #{id}",
-          "count" => hsh["doc_count"] }
+        { "id" => id, "title" => "Schema #{id}", "count" => hsh["doc_count"] }
       end
     end
 
     def facet_by_region(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].downcase,
+        {
+          "id" => hsh["key"].downcase,
           "title" => REGIONS[hsh["key"]] || hsh["key"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_resource_type(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].underscore.dasherize,
+        {
+          "id" => hsh["key"].underscore.dasherize,
           "title" => hsh["key"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_source(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => SOURCES[hsh["key"]] || hsh["key"],
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
 
     def facet_by_relation_type(arr)
       arr.map do |hsh|
-        year_month_arr = hsh.dig("year_month", "buckets").map do |h|
-          {
-            "id" => h["key_as_string"],
-            "title" => h["key_as_string"],
-            "sum" => h["doc_count"],
-          }
-        end
+        year_month_arr =
+          hsh.dig("year_month", "buckets").map do |h|
+            {
+              "id" => h["key_as_string"],
+              "title" => h["key_as_string"],
+              "sum" => h["doc_count"],
+            }
+          end
 
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "yearMonths" => year_month_arr }
+          "yearMonths" => year_month_arr,
+        }
       end
     end
 
     def facet_by_relation_type_v1(arr)
       arr.map do |hsh|
-        year_month_arr = hsh.dig("year_month", "buckets").map do |h|
-          {
-            "id" => h["key_as_string"],
-            "title" => h["key_as_string"],
-            "sum" => h["doc_count"],
-          }
-        end
+        year_month_arr =
+          hsh.dig("year_month", "buckets").map do |h|
+            {
+              "id" => h["key_as_string"],
+              "title" => h["key_as_string"],
+              "sum" => h["doc_count"],
+            }
+          end
 
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year-months" => year_month_arr }
+          "year-months" => year_month_arr,
+        }
       end
     end
 
     def facet_by_citation_type(arr)
       arr.map do |hsh|
-        year_month_arr = hsh.dig("year_month", "buckets").map do |h|
-          {
-            "id" => h["key_as_string"],
-            "title" => h["key_as_string"],
-            "sum" => h["doc_count"],
-          }
-        end
+        year_month_arr =
+          hsh.dig("year_month", "buckets").map do |h|
+            {
+              "id" => h["key_as_string"],
+              "title" => h["key_as_string"],
+              "sum" => h["doc_count"],
+            }
+          end
 
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "yearMonths" => year_month_arr }
+          "yearMonths" => year_month_arr,
+        }
       end
     end
 
     def facet_by_citation_type_v1(arr)
       arr.map do |hsh|
-        year_month_arr = hsh.dig("year_month", "buckets").map do |h|
-          {
-            "id" => h["key_as_string"],
-            "title" => h["key_as_string"],
-            "sum" => h["doc_count"],
-          }
-        end
+        year_month_arr =
+          hsh.dig("year_month", "buckets").map do |h|
+            {
+              "id" => h["key_as_string"],
+              "title" => h["key_as_string"],
+              "sum" => h["doc_count"],
+            }
+          end
 
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year-months" => year_month_arr }
+          "year-months" => year_month_arr,
+        }
       end
     end
 
     def facet_by_registrants(arr)
       arr.map do |hsh|
-        year_arr = hsh.dig("year", "buckets").map do |h|
-          {
-            "id" => h["key_as_string"],
-            "title" => h["key_as_string"],
-            "sum" => h["doc_count"],
-          }
-        end
+        year_arr =
+          hsh.dig("year", "buckets").map do |h|
+            {
+              "id" => h["key_as_string"],
+              "title" => h["key_as_string"],
+              "sum" => h["doc_count"],
+            }
+          end
 
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "years" => year_arr }
+          "years" => year_arr,
+        }
       end
     end
 
     def providers_totals(arr)
-      providers = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR')").where(deleted_at: nil).pluck(:symbol, :name).to_h
+      providers =
+        Provider.unscoped.where(
+          "allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR')",
+        ).
+          where(deleted_at: nil).
+          pluck(:symbol, :name).
+          to_h
 
       arr.reduce([]) do |sum, hsh|
         if providers[hsh["key"].upcase]
-          sum << { "id" => hsh["key"],
-                   "title" => providers[hsh["key"].upcase],
-                   "count" => hsh["doc_count"],
-                   "temporal" => {
-                     "this_month" => facet_annual(hsh.this_month.buckets),
-                     "this_year" => facet_annual(hsh.this_year.buckets),
-                     "last_year" => facet_annual(hsh.last_year.buckets),
-                     "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
-                   },
-                   "states" => facet_by_key(hsh.states.buckets) }
+          sum <<
+            {
+              "id" => hsh["key"],
+              "title" => providers[hsh["key"].upcase],
+              "count" => hsh["doc_count"],
+              "temporal" => {
+                "this_month" => facet_annual(hsh.this_month.buckets),
+                "this_year" => facet_annual(hsh.this_year.buckets),
+                "last_year" => facet_annual(hsh.last_year.buckets),
+                "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
+              },
+              "states" => facet_by_key(hsh.states.buckets),
+            }
         end
 
         sum
@@ -291,7 +343,8 @@ module Facetable
 
     def prefixes_totals(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
+        {
+          "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
           "temporal" => {
@@ -299,43 +352,47 @@ module Facetable
             "this_year" => facet_annual(hsh.this_year.buckets),
             "last_year" => facet_annual(hsh.last_year.buckets),
           },
-          "states" => facet_by_key(hsh.states.buckets) }
+          "states" => facet_by_key(hsh.states.buckets),
+        }
       end
     end
 
     def clients_totals(arr)
       clients = Client.all.pluck(:symbol, :name).to_h
 
-      arr = arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => clients[hsh["key"].upcase],
-          "count" => hsh["doc_count"],
-          "temporal" => {
-            "this_month" => facet_annual(hsh.this_month.buckets),
-            "this_year" => facet_annual(hsh.this_year.buckets),
-            "last_year" => facet_annual(hsh.last_year.buckets),
-            "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
-          },
-          "states" => facet_by_key(hsh.states.buckets) }
-      end
+      arr =
+        arr.map do |hsh|
+          {
+            "id" => hsh["key"],
+            "title" => clients[hsh["key"].upcase],
+            "count" => hsh["doc_count"],
+            "temporal" => {
+              "this_month" => facet_annual(hsh.this_month.buckets),
+              "this_year" => facet_annual(hsh.this_year.buckets),
+              "last_year" => facet_annual(hsh.last_year.buckets),
+              "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
+            },
+            "states" => facet_by_key(hsh.states.buckets),
+          }
+        end
     end
 
     def facet_by_combined_key(arr)
       arr.map do |hsh|
         id, title = hsh["key"].split(":", 2)
 
-        { "id" => id,
-          "title" => title,
-          "count" => hsh["doc_count"] }
+        { "id" => id, "title" => title, "count" => hsh["doc_count"] }
       end
     end
 
     def facet_by_fos(arr)
       arr.map do |hsh|
         title = hsh["key"].gsub("FOS: ", "")
-        { "id" => title.parameterize(separator: "_"),
+        {
+          "id" => title.parameterize(separator: "_"),
           "title" => title,
-          "count" => hsh["doc_count"] }
+          "count" => hsh["doc_count"],
+        }
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Media < ApplicationRecord
   include Bolognese::Utils
   include Bolognese::DoiUtils
@@ -9,8 +11,10 @@ class Media < ApplicationRecord
   alias_attribute :datacite_doi_id, :doi_id
 
   validates_presence_of :url
-  validates_format_of :url, with: /\A(ftp|http|https|gs|s3|dos):\/\/[\S]+/, if: :url?
-  validates_format_of :media_type, with: /[\S]+\/[\S]+/, if: :media_type?
+  validates_format_of :url,
+                      with: %r{\A(ftp|http|https|gs|s3|dos)://\S+},
+                      if: :url?
+  validates_format_of :media_type, with: %r{\S+/\S+}, if: :media_type?
   validates_associated :doi
 
   belongs_to :doi, foreign_key: :dataset, inverse_of: :media
@@ -46,7 +50,8 @@ class Media < ApplicationRecord
   end
 
   def set_defaults
-    current_media = Media.where(dataset: dataset).order("media.created DESC").first
+    current_media =
+      Media.where(dataset: dataset).order("media.created DESC").first
     self.version = current_media.present? ? current_media.version + 1 : 0
     self.media_type = "text/plain" if media_type.blank?
     self.updated = Time.zone.now.utc.iso8601

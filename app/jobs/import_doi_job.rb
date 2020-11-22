@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ImportDoiJob < ApplicationJob
   queue_as :lupo_background
 

@@ -1,10 +1,17 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe PrefixesController, type: :request, elasticsearch: true do
   let!(:prefixes) { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }
-  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
+  let(:headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + bearer,
+    }
+  end
 
   describe "GET /prefixes" do
     before do
@@ -54,7 +61,10 @@ describe PrefixesController, type: :request, elasticsearch: true do
         get "/prefixes/10.1234", params: nil, session: headers
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq(
+          "status" => "404",
+          "title" => "The resource you are looking for doesn't exist.",
+        )
       end
     end
 
@@ -63,7 +73,10 @@ describe PrefixesController, type: :request, elasticsearch: true do
         get "/prefixes/xxx", params: nil, session: headers
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq(
+          "status" => "404",
+          "title" => "The resource you are looking for doesn't exist.",
+        )
       end
     end
   end
@@ -73,7 +86,9 @@ describe PrefixesController, type: :request, elasticsearch: true do
       patch "/prefixes/#{prefix_id}", params: nil, session: headers
 
       expect(last_response.status).to eq(405)
-      expect(json.dig("errors")).to eq([{ "status" => "405", "title" => "Method not allowed" }])
+      expect(json.dig("errors")).to eq(
+        [{ "status" => "405", "title" => "Method not allowed" }],
+      )
     end
   end
 
@@ -86,12 +101,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
     context "when the request is valid" do
       let!(:provider) { create(:provider) }
       let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "prefixes",
-            "id" => "10.17177",
-          },
-        }
+        { "data" => { "type" => "prefixes", "id" => "10.17177" } }
       end
 
       it "returns status code 201" do
@@ -106,10 +116,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       let(:not_valid_attributes) do
         {
           "data" => {
-            "type" => "prefixes",
-            "attributes" => {
-              "uid" => "dsds10.33342",
-            },
+            "type" => "prefixes", "attributes" => { "uid" => "dsds10.33342" }
           },
         }
       end
@@ -118,7 +125,9 @@ describe PrefixesController, type: :request, elasticsearch: true do
         post "/prefixes", params: not_valid_attributes, session: headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "uid", "title" => "Can't be blank")
+        expect(json["errors"].first).to eq(
+          "source" => "uid", "title" => "Can't be blank",
+        )
       end
     end
   end

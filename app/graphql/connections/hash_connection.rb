@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class HashConnection
-  class PaginationImplementationMissingError < GraphQL::Error
-  end
+  class PaginationImplementationMissingError < GraphQL::Error; end
 
   # @return [Class] The class to use for wrapping items as `edges { ... }`. Defaults to `Connection::Edge`
   def self.edge_class
@@ -48,7 +47,15 @@ class HashConnection
   # @param last [Integer, nil] Limit parameter from the client, if provided
   # @param before [String, nil] A cursor for pagination, if the client provided one.
   # @param max_page_size [Integer, nil] A configured value to cap the result size. Applied as `first` if neither first or last are given.
-  def initialize(items, context: nil, first: nil, after: nil, max_page_size: :not_given, last: nil, before: nil)
+  def initialize(
+    items,
+    context: nil,
+    first: nil,
+    after: nil,
+    max_page_size: :not_given,
+    last: nil,
+    before: nil
+  )
     @items = items[:data]
     @context = context
     @nodes = items[:data]
@@ -61,11 +68,7 @@ class HashConnection
     # This is only true if the object was _initialized_ with an override
     # or if one is assigned later.
     @has_max_page_size_override = max_page_size != :not_given
-    @max_page_size = if max_page_size == :not_given
-                       nil
-                     else
-                       max_page_size
-    end
+    @max_page_size = max_page_size == :not_given ? nil : max_page_size
   end
 
   def max_page_size=(new_value)
@@ -85,22 +88,21 @@ class HashConnection
     @has_max_page_size_override
   end
 
-  attr_writer :first
+  attr_writer :first, :last
+
   # @return [Integer, nil]
   #   A clamped `first` value.
   #   (The underlying instance variable doesn't have limits on it.)
   #   If neither `first` nor `last` is given, but `max_page_size` is present, max_page_size is used for first.
   def first
-    @first ||= begin
-      capped = limit_pagination_argument(@first_value, max_page_size)
-      if capped.nil?
-        capped = max_page_size
+    @first ||=
+      begin
+        capped = limit_pagination_argument(@first_value, max_page_size)
+        capped = max_page_size if capped.nil?
+        capped
       end
-      capped
-    end
   end
 
-  attr_writer :last
   # @return [Integer, nil] A clamped `last` value. (The underlying instance variable doesn't have limits on it)
   def last
     raise PaginationImplementationMissingError, "last is not implemented"
@@ -124,7 +126,10 @@ class HashConnection
 
   # @return [Boolean] True if there were items before these items
   def has_previous_page
-    raise PaginationImplementationMissingError, "Implement #{self.class}#has_previous_page to return the previous-page check"
+    raise PaginationImplementationMissingError,
+          "Implement #{
+            self.class
+          }#has_previous_page to return the previous-page check"
   end
 
   # @return [String] The cursor of the first item in {nodes}
@@ -141,47 +146,49 @@ class HashConnection
   # @param item [Object] one of the passed in {items}, taken from {nodes}
   # @return [String]
   def cursor_for(item)
-    raise PaginationImplementationMissingError, "Implement #{self.class}#cursor_for(item) to return the cursor for #{item.inspect}"
+    raise PaginationImplementationMissingError,
+          "Implement #{self.class}#cursor_for(item) to return the cursor for #{
+            item.inspect
+          }"
   end
 
   private
+    # @param argument [nil, Integer] `first` or `last`, as provided by the client
+    # @param max_page_size [nil, Integer]
+    # @return [nil, Integer] `nil` if the input was `nil`, otherwise a value between `0` and `max_page_size`
+    def limit_pagination_argument(argument, max_page_size)
+      if argument
+        if argument < 0
+          argument = 0
+        elsif max_page_size && argument > max_page_size
+          argument = max_page_size
+        end
+      end
+      argument
+    end
 
-  # @param argument [nil, Integer] `first` or `last`, as provided by the client
-  # @param max_page_size [nil, Integer]
-  # @return [nil, Integer] `nil` if the input was `nil`, otherwise a value between `0` and `max_page_size`
-  def limit_pagination_argument(argument, max_page_size)
-    if argument
-      if argument < 0
-        argument = 0
-      elsif max_page_size && argument > max_page_size
-        argument = max_page_size
+    def decode(cursor)
+      context.schema.cursor_encoder.decode(cursor, nonce: true)
+    end
+
+    def encode(cursor)
+      context.schema.cursor_encoder.encode(cursor, nonce: true)
+    end
+
+    # A wrapper around paginated items. It includes a {cursor} for pagination
+    # and could be extended with custom relationship-level data.
+    class Edge
+      def initialize(item, connection)
+        @connection = connection
+        @item = item
+      end
+
+      def node
+        @item
+      end
+
+      def cursor
+        @connection.cursor_for(@item)
       end
     end
-    argument
-  end
-
-  def decode(cursor)
-    context.schema.cursor_encoder.decode(cursor, nonce: true)
-  end
-
-  def encode(cursor)
-    context.schema.cursor_encoder.encode(cursor, nonce: true)
-  end
-
-  # A wrapper around paginated items. It includes a {cursor} for pagination
-  # and could be extended with custom relationship-level data.
-  class Edge
-    def initialize(item, connection)
-      @connection = connection
-      @item = item
-    end
-
-    def node
-      @item
-    end
-
-    def cursor
-      @connection.cursor_for(@item)
-    end
-  end
 end

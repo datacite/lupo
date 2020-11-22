@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe MembersController, type: :request do
@@ -51,7 +53,10 @@ describe MembersController, type: :request do
         get "/members/xxx"
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq(
+          "status" => "404",
+          "title" => "The resource you are looking for doesn't exist.",
+        )
       end
     end
   end

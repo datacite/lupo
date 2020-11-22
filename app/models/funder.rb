@@ -1,15 +1,21 @@
+# frozen_string_literal: true
+
 class Funder
   # include helper module for PORO models
   include Modelable
 
   def self.find_by_id(id)
     doi = doi_from_url(id)
-    return { errors: [{ "status" => 422, "title" => "Not a valid DOI." }] } if doi.blank?
+    if doi.blank?
+      return { errors: [{ "status" => 422, "title" => "Not a valid DOI." }] }
+    end
 
     url = "https://api.crossref.org/funders/#{doi}"
     response = Maremma.get(url, host: true)
 
-    return { errors: [{ "status" => 404, "title" => "Not found." }] } if response.status == 404
+    if response.status == 404
+      return { errors: [{ "status" => 404, "title" => "Not found." }] }
+    end
     return {} if response.status != 200
 
     message = response.body.dig("data", "message")
@@ -25,7 +31,10 @@ class Funder
     offset = options[:offset] || 0
 
     if query.present?
-      url = "https://api.crossref.org/funders?query=#{query}&rows=#{rows}&offset=#{offset}"
+      url =
+        "https://api.crossref.org/funders?query=#{query}&rows=#{rows}&offset=#{
+          offset
+        }"
     else
       url = "https://api.crossref.org/funders?rows=#{rows}&offset=#{offset}"
     end
@@ -34,27 +43,23 @@ class Funder
 
     return {} if response.status != 200
 
-    data = response.body.dig("data", "message", "items").map do |message|
-      parse_message(id: "https://doi.org/10.13039/#{message['id']}", message: message)
-    end
+    data =
+      response.body.dig("data", "message", "items").map do |message|
+        parse_message(
+          id: "https://doi.org/10.13039/#{message['id']}", message: message,
+        )
+      end
     meta = { "total" => response.body.dig("data", "message", "total-results") }
     errors = response.body.fetch("errors", nil)
 
-    {
-      data: data,
-      meta: meta,
-      errors: errors,
-    }
+    { data: data, meta: meta, errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)
     if message["location"].present?
       c = ISO3166::Country.find_country_by_name(message["location"])
       code = c.present? ? c.alpha2 : nil
-      country = {
-        "code" => code,
-        "name" => message["location"],
-      }
+      country = { "code" => code, "name" => message["location"] }
     else
       country = nil
     end

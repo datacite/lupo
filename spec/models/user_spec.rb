@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe User, type: :model do
@@ -17,8 +19,15 @@ describe User, type: :model do
   end
 
   describe "from basic_auth admin" do
-    let(:provider) { create(:provider, role_name: "ROLE_ADMIN", symbol: "ADMIN", password_input: "12345") }
-    let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
+    let(:provider) do
+      create(
+        :provider,
+        role_name: "ROLE_ADMIN", symbol: "ADMIN", password_input: "12345",
+      )
+    end
+    let(:credentials) do
+      provider.encode_auth_param(username: provider.symbol, password: 12_345)
+    end
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
@@ -38,7 +47,9 @@ describe User, type: :model do
 
   describe "from basic_auth provider" do
     let(:provider) { create(:provider, password_input: "12345") }
-    let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
+    let(:credentials) do
+      provider.encode_auth_param(username: provider.symbol, password: 12_345)
+    end
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
@@ -58,8 +69,12 @@ describe User, type: :model do
   end
 
   describe "from basic_auth consortium" do
-    let(:provider) { create(:provider, password_input: "12345", role_name: "ROLE_CONSORTIUM") }
-    let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
+    let(:provider) do
+      create(:provider, password_input: "12345", role_name: "ROLE_CONSORTIUM")
+    end
+    let(:credentials) do
+      provider.encode_auth_param(username: provider.symbol, password: 12_345)
+    end
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
@@ -80,7 +95,9 @@ describe User, type: :model do
 
   describe "from basic_auth client" do
     let(:client) { create(:client, password_input: "12345") }
-    let(:credentials) { client.encode_auth_param(username: client.symbol, password: 12345) }
+    let(:credentials) do
+      client.encode_auth_param(username: client.symbol, password: 12_345)
+    end
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
@@ -104,8 +121,17 @@ describe User, type: :model do
   end
 
   describe "reset client password", vcr: true do
-    let(:provider) { create(:provider, symbol: "DATACITE", password_input: "12345") }
-    let(:client) { create(:client, provider: provider, symbol: "DATACITE.DATACITE", system_email: "test@datacite.org") }
+    let(:provider) do
+      create(:provider, symbol: "DATACITE", password_input: "12345")
+    end
+    let(:client) do
+      create(
+        :client,
+        provider: provider,
+        symbol: "DATACITE.DATACITE",
+        system_email: "test@datacite.org",
+      )
+    end
 
     it "sends message" do
       response = User.reset(client.symbol)

@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe OtherDoi, type: :model, vcr: true do
   it_behaves_like "an STI class"
 
   describe "import_by_ids", elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, aasm_state: "findable", type: "OtherDoi") }
+    let!(:dois) do
+      create_list(:doi, 3, aasm_state: "findable", type: "OtherDoi")
+    end
     let(:doi) { dois.first }
 
     it "import by ids" do

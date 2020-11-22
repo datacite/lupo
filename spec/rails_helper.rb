@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
 
@@ -55,9 +57,7 @@ RSpec.configure do |config|
   ActiveJob::Base.queue_adapter = :test
 
   if Bullet.enable?
-    config.before(:each) do
-      Bullet.start_request
-    end
+    config.before(:each) { Bullet.start_request }
 
     config.after(:each) do
       Bullet.perform_out_of_channel_notifications if Bullet.notification?
@@ -69,9 +69,14 @@ end
 VCR.configure do |c|
   vcr_mode = /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
 
-  mds_token = Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
-  admin_token = Base64.strict_encode64("#{ENV['ADMIN_USERNAME']}:#{ENV['ADMIN_PASSWORD']}")
-  handle_token = Base64.strict_encode64("300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}")
+  mds_token =
+    Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
+  admin_token =
+    Base64.strict_encode64("#{ENV['ADMIN_USERNAME']}:#{ENV['ADMIN_PASSWORD']}")
+  handle_token =
+    Base64.strict_encode64(
+      "300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}",
+    )
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
   sqs_host = "sqs.#{ENV['AWS_REGION']}.amazonaws.com"
 

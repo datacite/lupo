@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe UpdateStateJob, type: :job do
@@ -5,8 +7,9 @@ describe UpdateStateJob, type: :job do
   subject(:job) { UpdateStateJob.perform_later(doi.doi) }
 
   it "queues the job" do
-    expect { job }.to have_enqueued_job(UpdateStateJob).
-      on_queue("test_lupo_background")
+    expect { job }.to have_enqueued_job(UpdateStateJob).on_queue(
+      "test_lupo_background",
+    )
   end
 
   after do

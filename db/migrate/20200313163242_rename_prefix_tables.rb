@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenamePrefixTables < ActiveRecord::Migration[5.2]
   def change
     rename_column :prefix, :created, :created_at
@@ -10,13 +12,13 @@ class RenamePrefixTables < ActiveRecord::Migration[5.2]
     rename_column :allocator_prefixes, :prefixes, :prefix_id
     add_column :allocator_prefixes, :uid, :string, null: false
     rename_table :allocator_prefixes, :provider_prefixes
-    add_index :provider_prefixes, [:uid], length: 128
+    add_index :provider_prefixes, %i[uid], length: 128
 
     rename_column :datacentre_prefixes, :datacentre, :client_id
     rename_column :datacentre_prefixes, :prefixes, :prefix_id
     rename_column :datacentre_prefixes, :allocator_prefixes, :provider_prefix_id
     add_column :datacentre_prefixes, :uid, :string, null: false
     rename_table :datacentre_prefixes, :client_prefixes
-    add_index :client_prefixes, [:uid], length: 128
+    add_index :client_prefixes, %i[uid], length: 128
   end
 end

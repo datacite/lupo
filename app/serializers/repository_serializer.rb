@@ -1,10 +1,30 @@
+# frozen_string_literal: true
+
 class RepositorySerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :repositories
   set_id :uid
 
-  attributes :name, :symbol, :re3data, :opendoar, :year, :system_email, :globus_uuid, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :issn, :url, :salesforce_id, :created, :updated
+  attributes :name,
+             :symbol,
+             :re3data,
+             :opendoar,
+             :year,
+             :system_email,
+             :globus_uuid,
+             :alternate_name,
+             :description,
+             :client_type,
+             :repository_type,
+             :language,
+             :certificate,
+             :domains,
+             :issn,
+             :url,
+             :salesforce_id,
+             :created,
+             :updated
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
@@ -14,7 +34,9 @@ class RepositorySerializer
   end
 
   attribute :opendoar do |object|
-    "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}" if object.opendoar_id.present?
+    if object.opendoar_id.present?
+      "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}"
+    end
   end
 
   attribute :is_active do |object|
@@ -26,10 +48,33 @@ class RepositorySerializer
   end
 
   attribute :service_contact do |object|
-    object.service_contact.present? ? object.service_contact.transform_keys! { |key| key.to_s.camelcase(:lower) } : {}
+    if object.service_contact.present?
+      object.service_contact.transform_keys! do |key|
+        key.to_s.camelcase(:lower)
+      end
+    else
+      {}
+    end
   end
 
-  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:globus_uuid
+  attribute :globus_uuid,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_billing_information,
+                    object,
+                  ) ==
+                    true
+              },
+            &:globus_uuid
 
-  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true }, &:salesforce_id
+  attribute :salesforce_id,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(:read_salesforce_id, object) ==
+                    true
+              },
+            &:salesforce_id
 end

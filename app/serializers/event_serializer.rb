@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventSerializer
   include FastJsonapi::ObjectSerializer
   # include BatchLoaderHelper
@@ -6,7 +8,19 @@ class EventSerializer
   set_type :events
   set_id :uuid
 
-  attributes :subj_id, :obj_id, :source_id, :target_doi, :relation_type_id, :source_relation_type_id, :target_relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
+  attributes :subj_id,
+             :obj_id,
+             :source_id,
+             :target_doi,
+             :relation_type_id,
+             :source_relation_type_id,
+             :target_relation_type_id,
+             :total,
+             :message_action,
+             :source_token,
+             :license,
+             :occurred_at,
+             :timestamp
 
   attribute :timestamp, &:updated_at
 

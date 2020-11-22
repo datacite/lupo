@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OtherDoi < Doi
   include Elasticsearch::Model
 
@@ -23,13 +25,20 @@ class OtherDoi < Doi
 
   def self.import_by_ids(options = {})
     # TODO remove query for type once STI is enabled
-    from_id = (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
-    until_id = (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
+    from_id =
+      (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
+    until_id =
+      (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       OtherDoiImportByIdJob.perform_later(options.merge(id: id))
-      Rails.logger.info "Queued importing for other DOIs with IDs starting with #{id}." unless Rails.env.test?
+      unless Rails.env.test?
+        Rails.
+          logger.info "Queued importing for other DOIs with IDs starting with #{
+                            id
+                          }."
+      end
     end
 
     (from_id..until_id).to_a.length
@@ -39,25 +48,38 @@ class OtherDoi < Doi
     return nil if options[:id].blank?
 
     id = options[:id].to_i
-    index = if Rails.env.test?
-              index_name
-            elsif options[:index].present?
-              options[:index]
-            else
-              inactive_index
-            end
+    index =
+      if Rails.env.test?
+        index_name
+      elsif options[:index].present?
+        options[:index]
+      else
+        inactive_index
+      end
     errors = 0
     count = 0
 
     # TODO remove query for type once STI is enabled
-    OtherDoi.where(type: "OtherDoi").where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
-      response = OtherDoi.__elasticsearch__.client.bulk \
-        index: index,
-        type: OtherDoi.document_type,
-        body: dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+    OtherDoi.where(type: "OtherDoi").where(id: id..(id + 499)).find_in_batches(
+      batch_size: 500,
+    ) do |dois|
+      response =
+        OtherDoi.__elasticsearch__.client.bulk index: index,
+                                               type: OtherDoi.document_type,
+                                               body:
+                                                 dois.map { |doi|
+                                                   {
+                                                     index: {
+                                                       _id: doi.id,
+                                                       data:
+                                                         doi.as_indexed_json,
+                                                     },
+                                                   }
+                                                 }
 
       # try to handle errors
-      errors_in_response = response["items"].select { |k, _v| k.values.first["error"].present? }
+      errors_in_response =
+        response["items"].select { |k, _v| k.values.first["error"].present? }
       errors += errors_in_response.length
       errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
@@ -69,24 +91,35 @@ class OtherDoi < Doi
     end
 
     if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} other DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
+                           count
+                         } other DOIs with IDs #{id} - #{id + 499}."
     elsif count > 0
-      Rails.logger.info "[Elasticsearch] Imported #{count} other DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{
+                          count
+                        } other DOIs with IDs #{id} - #{id + 499}."
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.info "[Elasticsearch] Error #{e.message} importing other DOIs with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+         Faraday::ConnectionFailed,
+         ActiveRecord::LockWaitTimeout => e
+    Rails.logger.info "[Elasticsearch] Error #{
+                        e.message
+                      } importing other DOIs with IDs #{id} - #{id + 499}."
 
     count = 0
 
     # TODO remove query for type once STI is enabled
-    OtherDoi.where(type: "OtherDoi").where(id: id..(id + 499)).find_each do |doi|
+    OtherDoi.where(type: "OtherDoi").where(id: id..(id + 499)).
+      find_each do |doi|
       IndexJob.perform_later(doi)
       count += 1
     end
 
-    Rails.logger.info "[Elasticsearch] Imported #{count} other DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} other DOIs with IDs #{
+                        id
+                      } - #{id + 499}."
 
     count
   end
@@ -98,7 +131,7 @@ class OtherDoi < Doi
   # +query+:: ES query to filter the index
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
   def self.loop_through_dois(options = {})
-    size = (options[:size] || 1000).to_i
+    size = (options[:size] || 1_000).to_i
     filter = options[:filter] || {}
     label = options[:label] || ""
     options[:job_name] ||= ""
@@ -111,16 +144,25 @@ class OtherDoi < Doi
       cursor = []
     end
 
-    response = OtherDoi.query(query, filter.merge(page: { size: 1, cursor: [] }))
+    response =
+      OtherDoi.query(query, filter.merge(page: { size: 1, cursor: [] }))
     message = "#{label} #{response.results.total} other dois with #{label}."
 
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.results.length.positive?
-        response = OtherDoi.query(query, filter.merge(page: { size: size, cursor: cursor }))
+        response =
+          OtherDoi.query(
+            query,
+            filter.merge(page: { size: size, cursor: cursor }),
+          )
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "#{label} #{response.results.results.length} other dois starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{
+                            response.results.results.length
+                          } other dois starting with _id #{
+                            response.results.to_a.first[:_id]
+                          }."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 

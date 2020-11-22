@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe "Indexable", vcr: true do
@@ -69,7 +71,15 @@ describe "Indexable class methods", elasticsearch: true do
   end
 
   context "doi" do
-    let!(:doi) { create(:doi, titles: { title: "Soil investigations" }, publisher: "Pangaea", descriptions: { description: "this is a description" }, aasm_state: "findable") }
+    let!(:doi) do
+      create(
+        :doi,
+        titles: { title: "Soil investigations" },
+        publisher: "Pangaea",
+        descriptions: { description: "this is a description" },
+        aasm_state: "findable",
+      )
+    end
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
@@ -133,7 +143,11 @@ describe "Indexable class methods", elasticsearch: true do
       expect(response.results.to_a.length).to eq(2)
 
       # Move onto next based on scroll_id
-      response = Doi.query(nil, page: { size: 1, scroll: "1m" }, scroll_id: response.scroll_id)
+      response =
+        Doi.query(
+          nil,
+          page: { size: 1, scroll: "1m" }, scroll_id: response.scroll_id,
+        )
       expect(response.results.to_a.length).to eq(2)
     end
 

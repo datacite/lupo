@@ -1,7 +1,16 @@
+# frozen_string_literal: true
+
 class Handle
   include Searchable
 
-  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :cache_key, :updated
+  attr_reader :id,
+              :prefix,
+              :registration_agency,
+              :clients,
+              :providers,
+              :created,
+              :cache_key,
+              :updated
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",
@@ -38,11 +47,7 @@ class Handle
   end
 
   def self.get_query_url(options = {})
-    if options[:id].present?
-      "#{url}/#{options[:id]}"
-    else
-      url
-    end
+    options[:id].present? ? "#{url}/#{options[:id]}" : url
   end
 
   def self.parse_data(result, options = {})
@@ -52,7 +57,10 @@ class Handle
       response_code = result.body.dig("data", "responseCode")
       return nil unless response_code == 1
 
-      record = result.body.fetch("data", {}).fetch("values", []).detect { |hs| hs["type"] == "HS_SERV" }
+      record =
+        result.body.fetch("data", {}).fetch("values", []).detect do |hs|
+          hs["type"] == "HS_SERV"
+        end
 
       fail ActiveRecord::RecordNotFound if record.blank?
 

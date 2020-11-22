@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Activity < Audited::Audit
   include Elasticsearch::Model
 
@@ -24,16 +26,16 @@ class Activity < Audited::Audit
   end
 
   mapping dynamic: "false" do
-    indexes :id,                             type: :keyword
-    indexes :auditable_id,                   type: :keyword
-    indexes :uid,                            type: :keyword
-    indexes :auditable_type,                 type: :keyword
-    indexes :username,                       type: :keyword
-    indexes :action,                         type: :keyword
-    indexes :version,                        type: :keyword
-    indexes :request_uuid,                   type: :keyword
-    indexes :changes,                        type: :object
-    indexes :created,                        type: :date, ignore_malformed: true
+    indexes :id, type: :keyword
+    indexes :auditable_id, type: :keyword
+    indexes :uid, type: :keyword
+    indexes :auditable_type, type: :keyword
+    indexes :username, type: :keyword
+    indexes :action, type: :keyword
+    indexes :version, type: :keyword
+    indexes :request_uuid, type: :keyword
+    indexes :changes, type: :object
+    indexes :created, type: :date, ignore_malformed: true
   end
 
   def as_indexed_json(_options = {})
@@ -55,7 +57,15 @@ class Activity < Audited::Audit
   end
 
   def self.query_fields
-    ["uid^10", "username^5", "action", "changes", "was_derived_from", "was_attributed_to", "was_generated_by"]
+    %w[
+      uid^10
+      username^5
+      action
+      changes
+      was_derived_from
+      was_attributed_to
+      was_generated_by
+    ]
   end
 
   def self.query_aggregations
@@ -78,40 +88,62 @@ class Activity < Audited::Audit
     return nil if options[:id].blank?
 
     id = options[:id].to_i
-    index = if Rails.env.test?
-              "activities-test"
-            elsif options[:index].present?
-              options[:index]
-            else
-              inactive_index
-    end
+    index =
+      if Rails.env.test?
+        "activities-test"
+      elsif options[:index].present?
+        options[:index]
+      else
+        inactive_index
+      end
     errors = 0
     count = 0
 
-    Activity.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |activities|
-      response = Activity.__elasticsearch__.client.bulk \
-        index: index,
-        type: Activity.document_type,
-        body: activities.map { |activity| { index: { _id: activity.id, data: activity.as_indexed_json } } }
+    Activity.where(id: id..(id + 499)).find_in_batches(
+      batch_size: 500,
+    ) do |activities|
+      response =
+        Activity.__elasticsearch__.client.bulk index: index,
+                                               type: Activity.document_type,
+                                               body:
+                                                 activities.map { |activity|
+                                                   {
+                                                     index: {
+                                                       _id: activity.id,
+                                                       data:
+                                                         activity.
+                                                           as_indexed_json,
+                                                     },
+                                                   }
+                                                 }
 
       # log errors
-      errors += response["items"].map { |k, _v| k.values.first["error"] }.compact.length
-      response["items"].select { |k, _v| k.values.first["error"].present? }.each do |err|
-        Rails.logger.error "[Elasticsearch] " + err.inspect
-      end
+      errors +=
+        response["items"].map { |k, _v| k.values.first["error"] }.compact.length
+      response["items"].select do |k, _v|
+        k.values.first["error"].present?
+      end.each { |err| Rails.logger.error "[Elasticsearch] " + err.inspect }
 
       count += activities.length
     end
 
     if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} activities with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
+                           count
+                         } activities with IDs #{id} - #{id + 499}."
     elsif count.positive?
-      Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{
+                          count
+                        } activities with IDs #{id} - #{id + 499}."
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[Elasticsearch] Error #{e.message} importing activities with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+         Faraday::ConnectionFailed,
+         ActiveRecord::LockWaitTimeout => e
+    Rails.logger.error "[Elasticsearch] Error #{
+                         e.message
+                       } importing activities with IDs #{id} - #{id + 499}."
 
     count = 0
 
@@ -120,7 +152,9 @@ class Activity < Audited::Audit
       count += 1
     end
 
-    Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{
+                        id
+                      } - #{id + 499}."
 
     count
   end
@@ -132,7 +166,11 @@ class Activity < Audited::Audit
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       ActivityConvertAffiliationByIdJob.perform_later(options.merge(id: id))
-      Logger.info "Queued converting affiliations for activities with IDs starting with #{id}." unless Rails.env.test?
+      unless Rails.env.test?
+        Logger.info "Queued converting affiliations for activities with IDs starting with #{
+                      id
+                    }."
+      end
     end
 
     (from_id..until_id).to_a.length
@@ -147,42 +185,44 @@ class Activity < Audited::Audit
     Activity.where(id: id..(id + 499)).find_each do |activity|
       should_update = false
       audited_changes = activity.audited_changes
-      creators = Array.wrap(audited_changes["creators"]).map do |c|
-        # c is an array if there are changes
-        return [] if c.blank?
+      creators =
+        Array.wrap(audited_changes["creators"]).map do |c|
+          return if c.blank?
 
-        c = c.last if c.is_a?(Array)
+          c = c.last if c.is_a?(Array)
 
-        if c["affiliation"].nil?
-          c["affiliation"] = []
-          should_update = true
-        elsif c["affiliation"].is_a?(String)
-          c["affiliation"] = [{ "name" => c["affiliation"] }]
-          should_update = true
-        else c["affiliation"].is_a?(Hash)
-             c["affiliation"] = Array.wrap(c["affiliation"])
-             should_update = true
+          if c["affiliation"].nil?
+            c["affiliation"] = []
+            should_update = true
+          elsif c["affiliation"].is_a?(String)
+            c["affiliation"] = [{ "name" => c["affiliation"] }]
+            should_update = true
+          else
+            c["affiliation"].is_a?(Hash)
+            c["affiliation"] = Array.wrap(c["affiliation"])
+            should_update = true
+          end
+
+          c
         end
+      contributors =
+        Array.wrap(audited_changes["contributors"]).map do |c|
+          return if c.blank?
 
-        c
-      end
-      contributors = Array.wrap(audited_changes["contributors"]).map do |c|
-        # c is an array if there are changes
-        return [] if c.blank?
+          c = c.last if c.is_a?(Array)
 
-        c = c.last if c.is_a?(Array)
+          if c["affiliation"].nil?
+            c["affiliation"] = []
+          elsif c["affiliation"].is_a?(String)
+            c["affiliation"] = [{ "name" => c["affiliation"] }]
+          else
+            c["affiliation"].is_a?(Hash)
+            c["affiliation"] = Array.wrap(c["affiliation"])
+          end
 
-        if c["affiliation"].nil?
-          c["affiliation"] = []
-        elsif c["affiliation"].is_a?(String)
-          c["affiliation"] = [{ "name" => c["affiliation"] }]
-        else c["affiliation"].is_a?(Hash)
-             c["affiliation"] = Array.wrap(c["affiliation"])
+          should_update = true
+          c
         end
-
-        should_update = true
-        c
-      end
 
       if should_update
         audited_changes["creators"] = creators
@@ -192,11 +232,21 @@ class Activity < Audited::Audit
       end
     end
 
-    Rails.logger.info "[Elasticsearch] Converted affiliations for #{count} activities with IDs #{id} - #{(id + 499)}." if count > 0
+    if count > 0
+      Rails.logger.info "[Elasticsearch] Converted affiliations for #{
+                          count
+                        } activities with IDs #{id} - #{id + 499}."
+    end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.info "[Elasticsearch] Error #{e.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+         Faraday::ConnectionFailed,
+         ActiveRecord::LockWaitTimeout => e
+    Rails.logger.info "[Elasticsearch] Error #{
+                        e.message
+                      } converting affiliations for DOIs with IDs #{id} - #{
+                        id + 499
+                      }."
   end
 
   def uid
@@ -204,12 +254,21 @@ class Activity < Audited::Audit
   end
 
   def url
-    Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
+    if Rails.env.production?
+      "https://api.datacite.org"
+    else
+      "https://api.test.datacite.org"
+    end
   end
 
   def was_derived_from
     if auditable_type == "Doi"
-      handle_url = Rails.env.production? ? "https://doi.org/" : "https://handle.test.datacite.org/"
+      handle_url =
+        if Rails.env.production?
+          "https://doi.org/"
+        else
+          "https://handle.test.datacite.org/"
+        end
       handle_url + uid
     elsif auditable_type == "Provider"
       url + "/providers/" + uid
@@ -220,7 +279,11 @@ class Activity < Audited::Audit
 
   def was_attributed_to
     if username.present?
-      username.include?(".") ? url + "/repositories/" + username : url + "/providers/" + username
+      if username.include?(".")
+        url + "/repositories/" + username
+      else
+        url + "/providers/" + username
+      end
     end
   end
 

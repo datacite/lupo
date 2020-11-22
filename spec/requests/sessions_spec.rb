@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe "Provider session", type: :request do
   let!(:provider) { create(:provider, password_input: "12345") }
 
   context "request is valid" do
-    let(:params) { "grant_type=password&username=#{provider.symbol}&password=12345" }
+    let(:params) do
+      "grant_type=password&username=#{provider.symbol}&password=12345"
+    end
 
     it "creates a provider token" do
       post "/token", params: params
@@ -18,13 +22,19 @@ describe "Provider session", type: :request do
   end
 
   context "wrong grant_type" do
-    let(:params) { "grant_type=client_credentials&client_id=#{provider.symbol}&client_secret=12345" }
+    let(:params) do
+      "grant_type=client_credentials&client_id=#{
+        provider.symbol
+      }&client_secret=12345"
+    end
 
     it "returns an error" do
       post "/token", params: params
 
       expect(last_response.status).to eq(400)
-      expect(json.fetch("errors", {})).to eq([{ "status" => "400", "title" => "Wrong grant type." }])
+      expect(json.fetch("errors", {})).to eq(
+        [{ "status" => "400", "title" => "Wrong grant type." }],
+      )
     end
   end
 
@@ -35,27 +45,43 @@ describe "Provider session", type: :request do
       post "/token", params: params
 
       expect(last_response.status).to eq(400)
-      expect(json.fetch("errors", {})).to eq([{ "status" => "400", "title" => "Missing account ID or password." }])
+      expect(json.fetch("errors", {})).to eq(
+        [{ "status" => "400", "title" => "Missing account ID or password." }],
+      )
     end
   end
 
   context "wrong password" do
-    let(:params) { "grant_type=password&username=#{provider.symbol}&password=12346" }
+    let(:params) do
+      "grant_type=password&username=#{provider.symbol}&password=12346"
+    end
 
     it "returns an error" do
       post "/token", params: params
 
       expect(last_response.status).to eq(400)
-      expect(json.fetch("errors", {})).to eq([{ "status" => "400", "title" => "Wrong account ID or password." }])
+      expect(json.fetch("errors", {})).to eq(
+        [{ "status" => "400", "title" => "Wrong account ID or password." }],
+      )
     end
   end
 end
 
 describe "Admin session", type: :request do
-  let!(:provider) { create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN", password_input: "12345") }
+  let!(:provider) do
+    create(
+      :provider,
+      role_name: "ROLE_ADMIN",
+      name: "Admin",
+      symbol: "ADMIN",
+      password_input: "12345",
+    )
+  end
 
   context "request is valid" do
-    let(:params) { "grant_type=password&username=#{provider.symbol}&password=12345" }
+    let(:params) do
+      "grant_type=password&username=#{provider.symbol}&password=12345"
+    end
 
     it "creates a provider token" do
       post "/token", params: params
@@ -72,7 +98,9 @@ describe "Client session", type: :request do
   let!(:client) { create(:client, password_input: "12345") }
 
   context "request is valid" do
-    let(:params) { "grant_type=password&username=#{client.symbol}&password=12345" }
+    let(:params) do
+      "grant_type=password&username=#{client.symbol}&password=12345"
+    end
 
     it "creates a client token" do
       post "/token", params: params
@@ -87,8 +115,15 @@ describe "Client session", type: :request do
 end
 
 describe "reset", type: :request, vcr: true do
-  let(:provider) { create(:provider, symbol: "DATACITE", password_input: "12345") }
-  let!(:client) { create(:client, symbol: "DATACITE.DATACITE", password_input: "12345", provider: provider) }
+  let(:provider) do
+    create(:provider, symbol: "DATACITE", password_input: "12345")
+  end
+  let!(:client) do
+    create(
+      :client,
+      symbol: "DATACITE.DATACITE", password_input: "12345", provider: provider,
+    )
+  end
 
   context "account exists" do
     let(:params) { "username=#{client.symbol}" }

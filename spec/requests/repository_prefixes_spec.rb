@@ -1,14 +1,28 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe RepositoryPrefixesController, type: :request do
   let(:prefix) { create(:prefix) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
-  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+  let(:provider_prefix) do
+    create(:provider_prefix, provider: provider, prefix: prefix)
+  end
   let!(:client_prefixes) { create_list(:client_prefix, 5) }
-  let(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+  let(:client_prefix) do
+    create(
+      :client_prefix,
+      client: client, prefix: prefix, provider_prefix: provider_prefix,
+    )
+  end
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
-  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
+  let(:headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + bearer,
+    }
+  end
 
   describe "GET /repository-prefixes", elasticsearch: true do
     before do
@@ -25,14 +39,18 @@ describe RepositoryPrefixesController, type: :request do
     end
 
     it "returns repository-prefixes by repository-id" do
-      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}", params: nil, session: headers
+      get "/repository-prefixes?repository-id=#{
+            client_prefixes.first.client_id
+          }",
+          params: nil, session: headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
     end
 
     it "returns repository-prefixes by prefix-id" do
-      get "/repository-prefixes?prefix-id=#{client_prefixes.first.prefix_id}", params: nil, session: headers
+      get "/repository-prefixes?prefix-id=#{client_prefixes.first.prefix_id}",
+          params: nil, session: headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -46,14 +64,18 @@ describe RepositoryPrefixesController, type: :request do
     end
 
     it "returns repository-prefixes by repository-id and prefix-id" do
-      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}&#{client_prefixes.first.prefix_id}", params: nil, session: headers
+      get "/repository-prefixes?repository-id=#{
+            client_prefixes.first.client_id
+          }&#{client_prefixes.first.prefix_id}",
+          params: nil, session: headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
     end
 
     it "returns prefixes by client-id" do
-      get "/prefixes?client-id=#{client_prefixes.first.client_id}", params: nil, session: headers
+      get "/prefixes?client-id=#{client_prefixes.first.client_id}",
+          params: nil, session: headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -63,7 +85,8 @@ describe RepositoryPrefixesController, type: :request do
   describe "GET /repository-prefixes/:uid" do
     context "when the record exists" do
       it "returns the repository-prefix" do
-        get "/repository-prefixes/#{client_prefix.uid}", params: nil, session: headers
+        get "/repository-prefixes/#{client_prefix.uid}",
+            params: nil, session: headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
@@ -75,22 +98,33 @@ describe RepositoryPrefixesController, type: :request do
         get "/repository-prefixes/xxx", params: nil, session: headers
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq(
+          "status" => "404",
+          "title" => "The resource you are looking for doesn't exist.",
+        )
       end
     end
   end
 
   describe "PATCH /repository-prefixes/:uid" do
     it "returns method not supported error" do
-      patch "/repository-prefixes/#{client_prefix.uid}", params: nil, session: headers
+      patch "/repository-prefixes/#{client_prefix.uid}",
+            params: nil, session: headers
 
       expect(last_response.status).to eq(405)
-      expect(json.dig("errors")).to eq([{ "status" => "405", "title" => "Method not allowed" }])
+      expect(json.dig("errors")).to eq(
+        [{ "status" => "405", "title" => "Method not allowed" }],
+      )
     end
   end
 
   describe "DELETE /repository-prefixes/:uid", elasticsearch: true do
-    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+    let!(:client_prefix) do
+      create(
+        :client_prefix,
+        client: client, prefix: prefix, provider_prefix: provider_prefix,
+      )
+    end
 
     before do
       ClientPrefix.import
@@ -98,7 +132,8 @@ describe RepositoryPrefixesController, type: :request do
     end
 
     it "deletes a repository-prefix" do
-      delete "/repository-prefixes/#{client_prefix.uid}", params: nil, session: headers
+      delete "/repository-prefixes/#{client_prefix.uid}",
+             params: nil, session: headers
 
       expect(last_response.status).to eq(204)
     end
@@ -120,23 +155,12 @@ describe RepositoryPrefixesController, type: :request do
             "type" => "client-prefixes",
             "relationships": {
               "repository": {
-                "data": {
-                  "type": "repository",
-                  "id": client.symbol.downcase,
-                },
+                "data": { "type": "repository", "id": client.symbol.downcase },
               },
               "provider-prefix": {
-                "data": {
-                  "type": "provider-prefix",
-                  "id": provider_prefix.uid,
-                },
+                "data": { "type": "provider-prefix", "id": provider_prefix.uid },
               },
-              "prefix": {
-                "data": {
-                  "type": "prefix",
-                  "id": prefix.uid,
-                },
-              },
+              "prefix": { "data": { "type": "prefix", "id": prefix.uid } },
             },
           },
         }
@@ -153,18 +177,17 @@ describe RepositoryPrefixesController, type: :request do
     context "when the request is invalid" do
       let!(:client) { create(:client) }
       let(:not_valid_attributes) do
-        {
-          "data" => {
-            "type" => "repository-prefixes",
-          },
-        }
+        { "data" => { "type" => "repository-prefixes" } }
       end
 
       it "returns status code 422" do
-        post "/repository-prefixes", params: not_valid_attributes, session: headers
+        post "/repository-prefixes",
+             params: not_valid_attributes, session: headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "client", "title" => "Must exist")
+        expect(json["errors"].first).to eq(
+          "source" => "client", "title" => "Must exist",
+        )
       end
     end
   end

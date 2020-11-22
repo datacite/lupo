@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 # describe "doi:create_index", order: :defined do
@@ -77,7 +79,9 @@ describe "doi:set_handle", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "0 DOIs found that are not registered in the Handle system.\n" }
+  let(:output) do
+    "0 DOIs found that are not registered in the Handle system.\n"
+  end
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -125,7 +129,9 @@ describe "doi:set_registration_agency", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetRegistrationAgency] 0 Dois with [SetRegistrationAgency].\n" }
+  let(:output) do
+    "[SetRegistrationAgency] 0 Dois with [SetRegistrationAgency].\n"
+  end
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -253,22 +259,25 @@ describe "doi:repair_landing_page", elasticsearch: true do
   include_context "rake"
 
   let(:doi) do
-    create(:doi, aasm_state: "findable", landing_page:
-    {
-      "checked" => Time.zone.now.utc.iso8601,
-      "status" => 200,
-      "url" => "https://example.org",
-      "contentType" => "text/html",
-      "error" => nil,
-      "redirectCount" => 0,
-      "redirectUrls" => [],
-      "downloadLatency" => 200,
-      "hasSchemaOrg" => true,
-      "schemaOrgId" => "10.14454/10703",
-      "dcIdentifier" => nil,
-      "citationDoi" => nil,
-      "bodyHasPid" => true,
-    })
+    create(
+      :doi,
+      aasm_state: "findable",
+      landing_page: {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => "https://example.org",
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => [],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => "10.14454/10703",
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true,
+      },
+    )
   end
   let(:output) { "Updated landing page data for DOI #{doi.doi}\n" }
 

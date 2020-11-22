@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe Organization, type: :model, vcr: true do
@@ -21,22 +23,30 @@ describe Organization, type: :model, vcr: true do
   describe "crossref_funder_id_from_url" do
     it "full url" do
       crossref_funder_id = "https://doi.org/10.13039/501100000780"
-      expect(Organization.crossref_funder_id_from_url(crossref_funder_id)).to eq("10.13039/501100000780")
+      expect(
+        Organization.crossref_funder_id_from_url(crossref_funder_id),
+      ).to eq("10.13039/501100000780")
     end
 
     it "without https" do
       crossref_funder_id = "doi.org/10.13039/501100000780"
-      expect(Organization.crossref_funder_id_from_url(crossref_funder_id)).to eq("10.13039/501100000780")
+      expect(
+        Organization.crossref_funder_id_from_url(crossref_funder_id),
+      ).to eq("10.13039/501100000780")
     end
 
     it "without full path" do
       crossref_funder_id = "10.13039/501100000780"
-      expect(Organization.crossref_funder_id_from_url(crossref_funder_id)).to eq("10.13039/501100000780")
+      expect(
+        Organization.crossref_funder_id_from_url(crossref_funder_id),
+      ).to eq("10.13039/501100000780")
     end
 
     it "without full path" do
       crossref_funder_id = "10.1038/501100000780"
-      expect(Organization.crossref_funder_id_from_url(crossref_funder_id)).to be_nil
+      expect(
+        Organization.crossref_funder_id_from_url(crossref_funder_id),
+      ).to be_nil
     end
   end
 
@@ -70,11 +80,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
-      expect(organization.labels).to eq([{ "code" => "ES", "name" => "Universidad Lincoln" }])
-      expect(organization.links).to eq(["http://www.lincoln.edu/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "ES", "name" => "Universidad Lincoln" }],
+      )
+      expect(organization.links).to eq(%w[http://www.lincoln.edu/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1854")
-      expect(organization.geolocation).to eq("latitude" => 39.808333333333, "longitude" => -75.927777777778)
+      expect(organization.geolocation).to eq(
+        "latitude" => 39.808333333333, "longitude" => -75.927777777778,
+      )
       expect(organization.ringgold).to eq("4558")
     end
 
@@ -85,27 +99,42 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.labels).to eq([{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }])
-      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }],
+      )
+      expect(organization.links).to eq(%w[http://www.cam.ac.uk/])
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
+      expect(organization.geolocation).to eq(
+        "latitude" => 52.205277777778, "longitude" => 0.11722222222222,
+      )
       expect(organization.ringgold).to eq("2152")
     end
 
     it "found datacite member" do
-      member = create(:provider, role_name: "ROLE_CONSORTIUM_ORGANIZATION", name: "University of Cambridge", symbol: "LPSW", ror_id: "https://ror.org/013meh722")
+      member =
+        create(
+          :provider,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+          name: "University of Cambridge",
+          symbol: "LPSW",
+          ror_id: "https://ror.org/013meh722",
+        )
       id = "https://ror.org/013meh722"
       organizations = Organization.find_by(id: id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.labels).to eq([{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }])
-      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }],
+      )
+      expect(organization.links).to eq(%w[http://www.cam.ac.uk/])
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
+      expect(organization.geolocation).to eq(
+        "latitude" => 52.205277777778, "longitude" => 0.11722222222222,
+      )
       expect(organization.ringgold).to eq("2152")
     end
 
@@ -116,11 +145,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
-      expect(organization.labels).to eq([{ "code" => "EN", "name" => "German Research Foundation" }])
-      expect(organization.links).to eq(["http://www.dfg.de/en/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "EN", "name" => "German Research Foundation" }],
+      )
+      expect(organization.links).to eq(%w[http://www.dfg.de/en/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1951")
-      expect(organization.geolocation).to eq("latitude" => 50.699443, "longitude" => 7.14777)
+      expect(organization.geolocation).to eq(
+        "latitude" => 50.699443, "longitude" => 7.14777,
+      )
       expect(organization.ringgold).to eq("39045")
     end
 
@@ -132,7 +165,7 @@ describe Organization, type: :model, vcr: true do
       expect(organization.id).to eq("https://ror.org/02q0ygf45")
       expect(organization.name).to eq("OBS Medical (United Kingdom)")
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["http://www.obsmedical.com/"])
+      expect(organization.links).to eq(%w[http://www.obsmedical.com/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to be_nil
       expect(organization.geolocation).to be_empty
@@ -155,11 +188,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
-      expect(organization.labels).to eq([{ "code" => "ES", "name" => "Universidad Lincoln" }])
-      expect(organization.links).to eq(["http://www.lincoln.edu/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "ES", "name" => "Universidad Lincoln" }],
+      )
+      expect(organization.links).to eq(%w[http://www.lincoln.edu/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1854")
-      expect(organization.geolocation).to eq("latitude" => 39.808333333333, "longitude" => -75.927777777778)
+      expect(organization.geolocation).to eq(
+        "latitude" => 39.808333333333, "longitude" => -75.927777777778,
+      )
       expect(organization.ringgold).to eq("4558")
     end
 
@@ -170,11 +207,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.labels).to eq([{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }])
-      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }],
+      )
+      expect(organization.links).to eq(%w[http://www.cam.ac.uk/])
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
+      expect(organization.geolocation).to eq(
+        "latitude" => 52.205277777778, "longitude" => 0.11722222222222,
+      )
       expect(organization.ringgold).to eq("2152")
     end
 
@@ -185,11 +226,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
-      expect(organization.labels).to eq([{ "code" => "EN", "name" => "German Research Foundation" }])
-      expect(organization.links).to eq(["http://www.dfg.de/en/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "EN", "name" => "German Research Foundation" }],
+      )
+      expect(organization.links).to eq(%w[http://www.dfg.de/en/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1951")
-      expect(organization.geolocation).to eq("latitude" => 50.699443, "longitude" => 7.14777)
+      expect(organization.geolocation).to eq(
+        "latitude" => 50.699443, "longitude" => 7.14777,
+      )
       expect(organization.ringgold).to eq("39045")
     end
 
@@ -201,7 +246,7 @@ describe Organization, type: :model, vcr: true do
       expect(organization.id).to eq("https://ror.org/02q0ygf45")
       expect(organization.name).to eq("OBS Medical (United Kingdom)")
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["http://www.obsmedical.com/"])
+      expect(organization.links).to eq(%w[http://www.obsmedical.com/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to be_nil
       expect(organization.geolocation).to be_empty
@@ -224,11 +269,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
-      expect(organization.labels).to eq([{ "code" => "ES", "name" => "Universidad Lincoln" }])
-      expect(organization.links).to eq(["http://www.lincoln.edu/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "ES", "name" => "Universidad Lincoln" }],
+      )
+      expect(organization.links).to eq(%w[http://www.lincoln.edu/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1854")
-      expect(organization.geolocation).to eq("latitude" => 39.808333333333, "longitude" => -75.927777777778)
+      expect(organization.geolocation).to eq(
+        "latitude" => 39.808333333333, "longitude" => -75.927777777778,
+      )
       expect(organization.ringgold).to eq("4558")
     end
 
@@ -239,11 +288,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.labels).to eq([{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }])
-      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "CY", "name" => "Prifysgol Caergrawnt" }],
+      )
+      expect(organization.links).to eq(%w[http://www.cam.ac.uk/])
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
+      expect(organization.geolocation).to eq(
+        "latitude" => 52.205277777778, "longitude" => 0.11722222222222,
+      )
       expect(organization.ringgold).to eq("2152")
     end
 
@@ -254,11 +307,15 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
-      expect(organization.labels).to eq([{ "code" => "EN", "name" => "German Research Foundation" }])
-      expect(organization.links).to eq(["http://www.dfg.de/en/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "EN", "name" => "German Research Foundation" }],
+      )
+      expect(organization.links).to eq(%w[http://www.dfg.de/en/])
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1951")
-      expect(organization.geolocation).to eq("latitude" => 50.699443, "longitude" => 7.14777)
+      expect(organization.geolocation).to eq(
+        "latitude" => 50.699443, "longitude" => 7.14777,
+      )
       expect(organization.ringgold).to eq("39045")
     end
 
@@ -280,7 +337,9 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
-      expect(organization.geolocation).to eq("latitude" => 52.205277777778, "longitude" => 0.11722222222222)
+      expect(organization.geolocation).to eq(
+        "latitude" => 52.205277777778, "longitude" => 0.11722222222222,
+      )
       expect(organization.ringgold).to eq("2152")
     end
 
@@ -293,7 +352,9 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("German Research Foundation")
       expect(organization.twitter).to be_nil
       expect(organization.inception_year).to eq("1951")
-      expect(organization.geolocation).to eq("latitude" => 50.699443, "longitude" => 7.14777)
+      expect(organization.geolocation).to eq(
+        "latitude" => 50.699443, "longitude" => 7.14777,
+      )
       expect(organization.ringgold).to eq("39045")
     end
   end
@@ -302,25 +363,27 @@ describe Organization, type: :model, vcr: true do
     it "all" do
       query = nil
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(98332)
+      expect(organizations.dig(:meta, "total")).to eq(98_332)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/027bk5v43")
       expect(organization.name).to eq("Illinois Department of Public Health")
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["http://www.dph.illinois.gov/"])
+      expect(organization.links).to eq(%w[http://www.dph.illinois.gov/])
     end
 
     it "found" do
       query = "lincoln university"
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(10764)
+      expect(organizations.dig(:meta, "total")).to eq(10_764)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04ps1r162")
       expect(organization.name).to eq("Lincoln University")
-      expect(organization.labels).to eq([{ "code" => "MI", "name" => "Te Whare Wanaka o Aoraki" }])
-      expect(organization.links).to eq(["http://www.lincoln.ac.nz/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "MI", "name" => "Te Whare Wanaka o Aoraki" }],
+      )
+      expect(organization.links).to eq(%w[http://www.lincoln.ac.nz/])
     end
 
     it "found with umlaut" do
@@ -331,56 +394,65 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/01856cw59")
       expect(organization.name).to eq("University Hospital Münster")
-      expect(organization.labels).to eq([{ "code" => "DE", "name" => "Universitätsklinikum Münster" }])
-      expect(organization.links).to eq(["http://klinikum.uni-muenster.de/"])
+      expect(organization.labels).to eq(
+        [{ "code" => "DE", "name" => "Universitätsklinikum Münster" }],
+      )
+      expect(organization.links).to eq(%w[http://klinikum.uni-muenster.de/])
     end
 
     it "found page 2" do
       query = "lincoln university"
       organizations = Organization.query(query, offset: 2)
-      expect(organizations.dig(:meta, "total")).to eq(10764)
+      expect(organizations.dig(:meta, "total")).to eq(10_764)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/01qb09m39")
       expect(organization.name).to eq("Lincoln Agritech (New Zealand)")
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["https://www.lincolnagritech.co.nz/"])
+      expect(organization.links).to eq(%w[https://www.lincolnagritech.co.nz/])
     end
 
     it "found by types government" do
       organizations = Organization.query(nil, types: "government")
-      expect(organizations.dig(:meta, "total")).to eq(5762)
+      expect(organizations.dig(:meta, "total")).to eq(5_762)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/027bk5v43")
       expect(organization.name).to eq("Illinois Department of Public Health")
-      expect(organization.types).to eq(["Government"])
+      expect(organization.types).to eq(%w[Government])
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["http://www.dph.illinois.gov/"])
+      expect(organization.links).to eq(%w[http://www.dph.illinois.gov/])
     end
 
     it "found by country gb" do
       organizations = Organization.query(nil, country: "gb")
-      expect(organizations.dig(:meta, "total")).to eq(7166)
+      expect(organizations.dig(:meta, "total")).to eq(7_166)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04jzmdh37")
       expect(organization.name).to eq("Centre for Economic Policy Research")
-      expect(organization.types).to eq(["Nonprofit"])
+      expect(organization.types).to eq(%w[Nonprofit])
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["http://www.cepr.org/"])
+      expect(organization.links).to eq(%w[http://www.cepr.org/])
     end
 
     it "found by types and country" do
-      organizations = Organization.query(nil, types: "government", country: "gb")
+      organizations =
+        Organization.query(nil, types: "government", country: "gb")
       expect(organizations.dig(:meta, "total")).to eq(314)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04jswqb94")
-      expect(organization.name).to eq("Defence Science and Technology Laboratory")
-      expect(organization.types).to eq(["Government"])
+      expect(organization.name).to eq(
+        "Defence Science and Technology Laboratory",
+      )
+      expect(organization.types).to eq(%w[Government])
       expect(organization.labels).to eq([])
-      expect(organization.links).to eq(["https://www.gov.uk/government/organisations/defence-science-and-technology-laboratory"])
+      expect(organization.links).to eq(
+        %w[
+          https://www.gov.uk/government/organisations/defence-science-and-technology-laboratory
+        ],
+      )
     end
 
     it "not found" do
@@ -390,7 +462,8 @@ describe Organization, type: :model, vcr: true do
     end
 
     it "status code not 200" do
-      url = "https://api.ror.org/organizations?query=lincoln%20university&page=1"
+      url =
+        "https://api.ror.org/organizations?query=lincoln%20university&page=1"
       stub = stub_request(:get, url).and_return(status: [408])
 
       query = "lincoln university"

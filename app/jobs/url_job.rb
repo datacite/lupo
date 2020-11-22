@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UrlJob < ApplicationJob
   queue_as :lupo
 
@@ -11,9 +13,18 @@ class UrlJob < ApplicationJob
 
     if doi.present?
       response = Doi.get_doi(doi: doi.doi, agency: doi.agency)
-      url = response.is_a?(String) ? nil : response.body.dig("data", "values", 0, "data", "value")
+      url =
+        if response.is_a?(String)
+          nil
+        else
+          response.body.dig("data", "values", 0, "data", "value")
+        end
+
       if url.present?
-        if (doi.is_registered_or_findable? || %w(europ).include?(doi.provider_id)) && doi.minted.blank?
+        if (
+           doi.is_registered_or_findable? || %w[europ].include?(doi.provider_id)
+         ) &&
+            doi.minted.blank?
           doi.update(url: url, minted: Time.zone.now)
         else
           doi.update(url: url)
@@ -23,12 +34,22 @@ class UrlJob < ApplicationJob
 
         doi.__elasticsearch__.index_document
 
-        Rails.logger.info "[Handle] URL #{url} set for DOI #{doi.doi}." unless Rails.env.test?
+        unless Rails.env.test?
+          Rails.logger.info "[Handle] URL #{url} set for DOI #{doi.doi}."
+        end
       else
-        Rails.logger.info "[Handle] Error updating URL for DOI #{doi.doi}: URL not found." unless Rails.env.test?
+        unless Rails.env.test?
+          Rails.logger.info "[Handle] Error updating URL for DOI #{
+                              doi.doi
+                            }: URL not found."
+        end
       end
     else
-      Rails.logger.info "[Handle] Error updating URL for DOI #{doi_id}: DOI not found" unless Rails.env.test?
+      unless Rails.env.test?
+        Rails.logger.info "[Handle] Error updating URL for DOI #{
+                            doi_id
+                          }: DOI not found"
+      end
     end
   end
 end

@@ -1,13 +1,34 @@
+# frozen_string_literal: true
+
 class ClientSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :clients
   set_id :uid
 
-  attributes :name, :symbol, :year, :contact_email, :globus_uuid, :alternate_name, :description, :language, :client_type, :domains, :re3data, :opendoar, :issn, :url, :salesforce_id, :created, :updated
+  attributes :name,
+             :symbol,
+             :year,
+             :contact_email,
+             :globus_uuid,
+             :alternate_name,
+             :description,
+             :language,
+             :client_type,
+             :domains,
+             :re3data,
+             :opendoar,
+             :issn,
+             :url,
+             :salesforce_id,
+             :created,
+             :updated
 
   belongs_to :provider, record_type: :providers
-  belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |client| client.consortium_id }
+  belongs_to :consortium,
+             record_type: :providers,
+             serializer: ProviderSerializer,
+             if: Proc.new(&:consortium_id)
   has_many :prefixes, record_type: :prefixes
 
   attribute :is_active do |object|
@@ -20,15 +41,34 @@ class ClientSerializer
 
   attribute :contact_email, &:system_email
 
-  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true }, &:salesforce_id
+  attribute :salesforce_id,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(:read_salesforce_id, object) ==
+                    true
+              },
+            &:salesforce_id
 
-  attribute :globus_uuid, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true }, &:globus_uuid
+  attribute :globus_uuid,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_billing_information,
+                    object,
+                  ) ==
+                    true
+              },
+            &:globus_uuid
 
   attribute :re3data do |object|
     "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?
   end
 
   attribute :opendoar do |object|
-    "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}" if object.opendoar_id.present?
+    if object.opendoar_id.present?
+      "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}"
+    end
   end
 end

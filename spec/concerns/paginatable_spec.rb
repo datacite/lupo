@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe "Dois", type: :controller do
@@ -30,21 +32,30 @@ describe "Dois", type: :controller do
 
   it "page size too high" do
     params = ActionController::Parameters.new(page: { size: "1001" })
-    expect(subject.page_from_params(params)).to eq(number: 1, size: 1000)
+    expect(subject.page_from_params(params)).to eq(number: 1, size: 1_000)
   end
 
   it "page cursor" do
-    params = ActionController::Parameters.new(page: { cursor: "MTMwMjUyMTAxNjAwMCwxMC40MTIyLzEuMTAwMDAwMDAyMg" })
-    expect(subject.page_from_params(params)).to eq(cursor: ["1302521016000", "10.4122/1.1000000022"], number: 1, size: 25)
+    params =
+      ActionController::Parameters.new(
+        page: { cursor: "MTMwMjUyMTAxNjAwMCwxMC40MTIyLzEuMTAwMDAwMDAyMg" },
+      )
+    expect(subject.page_from_params(params)).to eq(
+      cursor: %w[1302521016000 10.4122/1.1000000022], number: 1, size: 25,
+    )
   end
 
   it "page invalid cursor" do
     params = ActionController::Parameters.new(page: { cursor: "A" })
-    expect(subject.page_from_params(params)).to eq(cursor: [], number: 1, size: 25)
+    expect(subject.page_from_params(params)).to eq(
+      cursor: [], number: 1, size: 25,
+    )
   end
 
   it "page empty cursor" do
     params = ActionController::Parameters.new(page: { cursor: nil })
-    expect(subject.page_from_params(params)).to eq(cursor: [], number: 1, size: 25)
+    expect(subject.page_from_params(params)).to eq(
+      cursor: [], number: 1, size: 25,
+    )
   end
 end

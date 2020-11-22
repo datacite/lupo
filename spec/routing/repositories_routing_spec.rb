@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe RepositoriesController, type: :routing do
@@ -19,11 +21,17 @@ describe RepositoriesController, type: :routing do
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/repositories/1").to route_to("repositories#update", id: "1")
+      expect(patch: "/repositories/1").to route_to(
+        "repositories#update",
+        id: "1",
+      )
     end
 
     it "routes to #destroy" do
-      expect(delete: "/repositories/1").to route_to("repositories#destroy", id: "1")
+      expect(delete: "/repositories/1").to route_to(
+        "repositories#destroy",
+        id: "1",
+      )
     end
   end
 end

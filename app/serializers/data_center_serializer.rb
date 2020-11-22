@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DataCenterSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :dash
@@ -5,7 +7,13 @@ class DataCenterSerializer
   set_id :uid
   # don't cache data-centers, as they use the client model
 
-  attributes :title, :other_names, :prefixes, :member_id, :year, :created, :updated
+  attributes :title,
+             :other_names,
+             :prefixes,
+             :member_id,
+             :year,
+             :created,
+             :updated
 
   belongs_to :provider, key: :member, record_type: :members, serializer: :Member
 

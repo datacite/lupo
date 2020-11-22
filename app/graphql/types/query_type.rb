@@ -193,12 +193,12 @@ class QueryType < BaseObject
 
   def actor(id:)
     result = if orcid_from_url(id)
-               Person.find_by(id: id).fetch(:data, []).first
-             elsif ror_id_from_url(id)
-               Organization.find_by(id: id).fetch(:data, []).first
-             elsif doi_from_url(id).to_s.starts_with?("10.13039")
-               Funder.find_by(id: id).fetch(:data, []).first
-             end
+      Person.find_by(id: id).fetch(:data, []).first
+    elsif ror_id_from_url(id)
+      Organization.find_by(id: id).fetch(:data, []).first
+    elsif doi_from_url(id).to_s.starts_with?("10.13039")
+      Funder.find_by(id: id).fetch(:data, []).first
+    end
 
     fail ActiveRecord::RecordNotFound if result.nil?
 

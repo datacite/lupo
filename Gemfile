@@ -80,13 +80,14 @@ group :development, :test do
   gem "binding_of_caller"
   gem "bullet", "~> 6.1"
   gem "byebug", platforms: %i[mri mingw x64_mingw]
-  gem "prettier", "~> 0.13.0"
   gem "rspec-benchmark", "~> 0.4.0"
   gem "rspec-graphql_matchers", "~> 1.1"
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
-  gem "rubocop", "~> 0.77.0"
+  gem "rubocop", "~> 1.3", ">= 1.3.1"
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
-  gem "rubocop-rails", "~> 2.4"
+  gem "rubocop-rails", "~> 2.8", ">= 2.8.1"
+  gem "rubocop-packaging", "~> 0.5.1"
+  gem "rubocop-rspec", "~> 2.0", require: false
 end
 
 group :development do

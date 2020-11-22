@@ -7,13 +7,17 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, logger: (-> { Rails.logger }) do
+Rails.application.config.middleware.insert_before 0,
+                                                  Rack::Cors,
+                                                  debug: true,
+                                                  logger:
+                                                    (-> { Rails.logger }) do
   allow do
     origins "*"
 
     resource "*",
              headers: :any,
-             expose: ["X-Credential-Username", "X-Anonymous-Consumer"],
+             expose: %w[X-Credential-Username X-Anonymous-Consumer],
              methods: %i[get post put patch delete options head]
   end
 end

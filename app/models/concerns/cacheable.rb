@@ -1,43 +1,55 @@
+# frozen_string_literal: true
+
 module Cacheable
   extend ActiveSupport::Concern
 
   included do
     def cached_metadata_count(options = {})
-      Rails.cache.fetch("cached_metadata_count/#{id}", expires_in: 6.hours, force: options[:force]) do
+      Rails.cache.fetch(
+        "cached_metadata_count/#{id}",
+        expires_in: 6.hours, force: options[:force],
+      ) do
         return [] if Rails.env.test?
 
-        collection = if self.class.name == "Doi"
-                       Metadata.where(dataset: id)
-                     else
-                       Metadata
-                     end
+        collection =
+          instance_of?(Doi) ? Metadata.where(dataset: id) : Metadata
 
-        years = collection.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
+        years =
+          collection.order("YEAR(metadata.created)").group(
+            "YEAR(metadata.created)",
+          ).
+            count
         years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
     def cached_media_count(options = {})
-      Rails.cache.fetch("cached_media_count/#{id}", expires_in: 6.hours, force: options[:force]) do
+      Rails.cache.fetch(
+        "cached_media_count/#{id}",
+        expires_in: 6.hours, force: options[:force],
+      ) do
         return [] if Rails.env.test?
 
-        if self.class.name == "Doi"
+        if instance_of?(Doi)
           collection = Media.where(dataset: id)
           return [] if collection.blank?
         else
           collection = Media
         end
 
-        years = collection.order("YEAR(media.created)").group("YEAR(media.created)").count
+        years =
+          collection.order("YEAR(media.created)").group("YEAR(media.created)").
+            count
         years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
     def cached_prefixes_totals(params = {})
       if Rails.application.config.action_controller.perform_caching
-        Rails.cache.fetch("cached_prefixes_totals/#{params}", expires_in: 24.hours) do
-          prefixes_totals params
-        end
+        Rails.cache.fetch(
+          "cached_prefixes_totals/#{params}",
+          expires_in: 24.hours,
+        ) { prefixes_totals params }
       else
         prefixes_totals params
       end
@@ -88,7 +100,11 @@ module Cacheable
       Rails.cache.fetch("cached_metadata_count", expires_in: 6.hours) do
         return [] if Rails.env.test?
 
-        years = Metadata.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
+        years =
+          Metadata.order("YEAR(metadata.created)").group(
+            "YEAR(metadata.created)",
+          ).
+            count
         years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
@@ -97,7 +113,8 @@ module Cacheable
       Rails.cache.fetch("cached_media_count", expires_in: 6.hours) do
         return [] if Rails.env.test?
 
-        years = Media.order("YEAR(media.created)").group("YEAR(media.created)").count
+        years =
+          Media.order("YEAR(media.created)").group("YEAR(media.created)").count
         years = years.map { |k, v| { id: k, title: k, count: v } }
       end
     end

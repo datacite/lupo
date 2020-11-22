@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResourceType
   include Searchable
 
@@ -30,66 +32,21 @@ class ResourceType
 
   def self.get_data(_options = {})
     [
-      {
-        "id" => "audiovisual",
-        "title" => "Audiovisual",
-      },
-      {
-        "id" => "collection",
-        "title" => "Collection",
-      },
-      {
-        "id" => "data-paper",
-        "title" => "DataPaper",
-      },
-      {
-        "id" => "dataset",
-        "title" => "Dataset",
-      },
-      {
-        "id" => "event",
-        "title" => "Event",
-      },
-      {
-        "id" => "image",
-        "title" => "Image",
-      },
-      {
-        "id" => "interactive-resource",
-        "title" => "InteractiveResource",
-      },
-      {
-        "id" => "model",
-        "title" => "Model",
-      },
-      {
-        "id" => "physical-object",
-        "title" => "PhysicalObject",
-      },
-      {
-        "id" => "service",
-        "title" => "Service",
-      },
-      {
-        "id" => "software",
-        "title" => "Software",
-      },
-      {
-        "id" => "sound",
-        "title" => "Sound",
-      },
-      {
-        "id" => "text",
-        "title" => "Text",
-      },
-      {
-        "id" => "workflow",
-        "title" => "Workflow",
-      },
-      {
-        "id" => "other",
-        "title" => "Other",
-      },
+      { "id" => "audiovisual", "title" => "Audiovisual" },
+      { "id" => "collection", "title" => "Collection" },
+      { "id" => "data-paper", "title" => "DataPaper" },
+      { "id" => "dataset", "title" => "Dataset" },
+      { "id" => "event", "title" => "Event" },
+      { "id" => "image", "title" => "Image" },
+      { "id" => "interactive-resource", "title" => "InteractiveResource" },
+      { "id" => "model", "title" => "Model" },
+      { "id" => "physical-object", "title" => "PhysicalObject" },
+      { "id" => "service", "title" => "Service" },
+      { "id" => "software", "title" => "Software" },
+      { "id" => "sound", "title" => "Sound" },
+      { "id" => "text", "title" => "Text" },
+      { "id" => "workflow", "title" => "Workflow" },
+      { "id" => "other", "title" => "Other" },
     ]
   end
 
@@ -100,10 +57,25 @@ class ResourceType
 
       { data: parse_item(item) }
     else
-      items = items.select { |i| (i.fetch("title", "").downcase + i.fetch("description", "").downcase).include?(options[:query]) } if options[:query]
+      if options[:query]
+        items =
+          items.select do |i|
+            (
+              i.fetch("title", "").downcase +
+                i.fetch("description", "").downcase
+            ).
+              include?(options[:query])
+          end
+      end
 
       page = (options.dig(:page, :number) || 1).to_i
-      per_page = options.dig(:page, :size) && (1..1000).cover?(options.dig(:page, :size).to_i) ? options.dig(:page, :size).to_i : 25
+      per_page =
+        if options.dig(:page, :size) &&
+            (1..1_000).cover?(options.dig(:page, :size).to_i)
+          options.dig(:page, :size).to_i
+        else
+          25
+        end
       total_pages = (items.length.to_f / per_page).ceil
 
       meta = { total: items.length, "total-pages" => total_pages, page: page }

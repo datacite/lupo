@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OtherDoiRefreshJob < ApplicationJob
   queue_as :lupo_background
 
@@ -6,7 +8,8 @@ class OtherDoiRefreshJob < ApplicationJob
 
   # discard_on ActiveJob::DeserializationError
 
-  rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+  rescue_from ActiveJob::DeserializationError,
+              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
   end
 

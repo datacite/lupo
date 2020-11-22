@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchable
   extend ActiveSupport::Concern
   extend ActiveModel::Naming
@@ -23,9 +25,7 @@ module Searchable
     end
 
     def parse_items(items, options = {})
-      Array(items).map do |item|
-        parse_item(item, options)
-      end
+      Array(items).map { |item| parse_item(item, options) }
     end
 
     def parse_item(item, options = {})

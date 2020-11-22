@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BatchLoaderHelper
   extend ActiveSupport::Concern
   ### TODO: remove after benchmark

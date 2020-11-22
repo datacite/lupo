@@ -15,7 +15,12 @@ Flipper.configure do |config|
     adapter = Flipper::Adapters::Http.new(configuration)
     unless Rails.env.test?
       cache = ActiveSupport::Cache::MemCacheStore.new(ENV["MEMCACHE_SERVERS"])
-      adapter = Flipper::Adapters::ActiveSupportCacheStore.new(adapter, cache, expires_in: 1.hour)
+      adapter =
+        Flipper::Adapters::ActiveSupportCacheStore.new(
+          adapter,
+          cache,
+          expires_in: 1.hour,
+        )
     end
     flipper = Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)
   end
@@ -23,7 +28,8 @@ end
 
 if Rails.env.development?
   require "flipper/instrumentation/log_subscriber"
-  Flipper::Instrumentation::LogSubscriber.logger = ActiveSupport::Logger.new(STDOUT)
+  Flipper::Instrumentation::LogSubscriber.logger =
+    ActiveSupport::Logger.new(STDOUT)
 end
 
 Flipper.register(:staff) do |actor|

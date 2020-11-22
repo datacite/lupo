@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dateable
   extend ActiveSupport::Concern
 
@@ -8,7 +10,9 @@ module Dateable
     end
 
     def set_date(dates, date, date_type)
-      dd = Array.wrap(dates).detect { |d| d["dateType"] == date_type } || { "dateType" => date_type }
+      dd =
+        Array.wrap(dates).detect { |d| d["dateType"] == date_type } ||
+        { "dateType" => date_type }
       dd["date"] = date
     end
 
@@ -24,8 +28,11 @@ module Dateable
   module ClassMethods
     def get_solr_date_range(from_date, until_date)
       from_date_string = get_datetime_from_input(from_date) || "*"
-      until_date_string = get_datetime_from_input(until_date, until_date: true) || "*"
-      until_date_string = get_datetime_from_input(from_date, until_date: true) if until_date_string != "*" && until_date_string < from_date_string
+      until_date_string =
+        get_datetime_from_input(until_date, until_date: true) || "*"
+      if until_date_string != "*" && until_date_string < from_date_string
+        until_date_string = get_datetime_from_input(from_date, until_date: true)
+      end
 
       "[" + from_date_string + " TO " + until_date_string + "]"
     end
@@ -42,7 +49,12 @@ module Dateable
     def get_date_from_parts(year, month = nil, day = nil)
       return nil if year.blank?
 
-      iso8601_time = [year.to_s.rjust(4, "0"), month.to_s.rjust(2, "0"), day.to_s.rjust(2, "0")].reject { |part| part == "00" }.join("-")
+      iso8601_time =
+        [
+          year.to_s.rjust(4, "0"),
+          month.to_s.rjust(2, "0"),
+          day.to_s.rjust(2, "0"),
+        ].reject { |part| part == "00" }.join("-")
       get_datetime_from_iso8601(iso8601_time)
     end
 
@@ -54,7 +66,8 @@ module Dateable
         if iso8601_time[8..9].present?
           ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_day.iso8601
         elsif iso8601_time[5..6].present?
-          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_month.iso8601
+          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_month.
+            iso8601
         else
           ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_year.iso8601
         end

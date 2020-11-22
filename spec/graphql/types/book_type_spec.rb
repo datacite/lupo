@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe BookType do
@@ -9,7 +11,14 @@ describe BookType do
   end
 
   describe "query books", elasticsearch: true do
-    let!(:books) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" }, aasm_state: "findable") }
+    let!(:books) do
+      create_list(
+        :doi,
+        3,
+        types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" },
+        aasm_state: "findable",
+      )
+    end
 
     before do
       Doi.import
@@ -18,14 +27,14 @@ describe BookType do
     end
 
     let(:query) do
-      %(query {
+      "query {
         books {
           totalCount
           nodes {
             id
           }
         }
-      })
+      }"
     end
 
     it "returns all books" do
@@ -33,21 +42,42 @@ describe BookType do
 
       expect(response.dig("data", "books", "totalCount")).to eq(3)
       expect(response.dig("data", "books", "nodes").length).to eq(3)
-      expect(response.dig("data", "books", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "books", "nodes", 0, "id")).to eq(
+        @dois.first.identifier,
+      )
     end
   end
 
   describe "query books by person", elasticsearch: true do
-    let!(:books) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" }, aasm_state: "findable") }
+    let!(:books) do
+      create_list(
+        :doi,
+        3,
+        types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" },
+        aasm_state: "findable",
+      )
+    end
     let!(:book) do
-      create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" }, aasm_state: "findable", creators:
-      [{
-        "familyName" => "Garza",
-        "givenName" => "Kristian",
-        "name" => "Garza, Kristian",
-        "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
-        "nameType" => "Personal",
-      }])
+      create(
+        :doi,
+        types: { "resourceTypeGeneral" => "Text", "resourceType" => "Book" },
+        aasm_state: "findable",
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+          },
+        ],
+      )
     end
     before do
       Doi.import
@@ -56,8 +86,8 @@ describe BookType do
     end
 
     let(:query) do
-      %(query {
-        books(userId: "https://orcid.org/0000-0003-1419-2405") {
+      "query {
+        books(userId: \"https://orcid.org/0000-0003-1419-2405\") {
           totalCount
           published {
             id
@@ -68,14 +98,16 @@ describe BookType do
             id
           }
         }
-      })
+      }"
     end
 
     it "returns books" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "books", "totalCount")).to eq(3)
-      expect(response.dig("data", "books", "published")).to eq([{ "count" => 3, "id" => "2011", "title" => "2011" }])
+      expect(response.dig("data", "books", "published")).to eq(
+        [{ "count" => 3, "id" => "2011", "title" => "2011" }],
+      )
       expect(response.dig("data", "books", "nodes").length).to eq(3)
       # expect(response.dig("data", "books", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end

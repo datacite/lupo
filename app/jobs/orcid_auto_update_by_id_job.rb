@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OrcidAutoUpdateByIdJob < ApplicationJob
   queue_as :lupo_background
 
@@ -30,43 +32,42 @@ class OrcidAutoUpdateByIdJob < ApplicationJob
 
     message = response.body.fetch("data", {})
     attributes = parse_message(message: message)
-    data = {
-      "data" => {
-        "type" => "researchers",
-        "attributes" => attributes,
-      },
-    }
+    data = { "data" => { "type" => "researchers", "attributes" => attributes } }
     url = "http://localhost/researchers/#{orcid}"
-    response = Maremma.put(url, accept: "application/vnd.api+json",
-                                content_type: "application/vnd.api+json",
-                                data: data.to_json,
-                                username: ENV["ADMIN_USERNAME"],
-                                password: ENV["ADMIN_PASSWORD"])
+    response =
+      Maremma.put(
+        url,
+        accept: "application/vnd.api+json",
+        content_type: "application/vnd.api+json",
+        data: data.to_json,
+        username: ENV["ADMIN_USERNAME"],
+        password: ENV["ADMIN_PASSWORD"],
+      )
 
     if [200, 201].include?(response.status)
       Rails.logger.info "ORCID #{orcid} added."
     else
-      Rails.logger.error "[Error for ORCID #{orcid}]: " + response.body["errors"].inspect
+      Rails.logger.error "[Error for ORCID #{orcid}]: " +
+        response.body["errors"].inspect
     end
   end
 
   def parse_message(message: nil)
     given_name = message.dig("name", "given-names", "value")
     family_name = message.dig("name", "family-name", "value")
-    name = if message.dig("name", "credit-name", "value").present?
-             message.dig("name", "credit-name", "value")
-           elsif given_name.present? || family_name.present?
-             [given_name, family_name].join(" ")
-           end
+    name =
+      if message.dig("name", "credit-name", "value").present?
+        message.dig("name", "credit-name", "value")
+      elsif given_name.present? || family_name.present?
+        [given_name, family_name].join(" ")
+      end
 
     {
-      "name" => name,
-      "givenName" => given_names,
-      "familyName" => family_name,
+      "name" => name, "givenName" => given_names, "familyName" => family_name
     }.compact
   end
 
   def orcid_from_url(url)
-    Array(/\A(http|https):\/\/orcid\.org\/(.+)/.match(url)).last
+    Array(%r{\A(http|https)://orcid\.org/(.+)}.match(url)).last
   end
 end

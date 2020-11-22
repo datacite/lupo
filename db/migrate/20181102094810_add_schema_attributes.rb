@@ -23,6 +23,6 @@ class AddSchemaAttributes < ActiveRecord::Migration[5.2]
     add_column :dataset, :subjects, :json
     add_column :dataset, :schema_version, :string, limit: 191
     add_column :dataset, :content_url, :json
-    add_column :dataset, :xml, :binary, limit: 16777215
+    add_column :dataset, :xml, :binary, limit: 16_777_215
   end
 end

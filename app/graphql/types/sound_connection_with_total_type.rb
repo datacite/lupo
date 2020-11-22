@@ -21,7 +21,9 @@ class SoundConnectionWithTotalType < BaseConnection
   end
 
   def registration_agencies
-    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
+    facet_by_registration_agency(
+      object.aggregations.registration_agencies.buckets,
+    )
   end
 
   def repositories

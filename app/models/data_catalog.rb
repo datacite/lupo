@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DataCatalog
   # include helper module for PORO models
   include Modelable
@@ -9,7 +11,9 @@ class DataCatalog
     url = "https://api.datacite.org/re3data/#{doi}"
     response = Maremma.get(url, host: true)
 
-    return {} if response.status != 200 || response.body.dig("data", "id") != doi.upcase
+    if response.status != 200 || response.body.dig("data", "id") != doi.upcase
+      return {}
+    end
 
     message = response.body.dig("data", "attributes")
     data = [parse_message(id: id, message: message)]
@@ -41,17 +45,16 @@ class DataCatalog
 
     return [] if response.status != 200
 
-    data = Array.wrap(response.body.fetch("data", nil)).map do |message|
-      parse_message(id: doi_as_url(message["id"]), message: message["attributes"])
-    end
+    data =
+      Array.wrap(response.body.fetch("data", nil)).map do |message|
+        parse_message(
+          id: doi_as_url(message["id"]), message: message["attributes"],
+        )
+      end
     meta = { "total" => response.body.dig("meta", "total") }
     errors = response.body.fetch("errors", nil)
 
-    {
-      data: data,
-      meta: meta,
-      errors: errors,
-    }
+    { data: data, meta: meta, errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)

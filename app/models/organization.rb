@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Organization
   # include helper module for working with Wikidata
   include Wikidatable
@@ -24,7 +26,9 @@ class Organization
 
     wikidata = data.dig(0, "wikidata", 0)
     wikidata_data = find_by(wikidata_id: wikidata)
-    data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+    if wikidata_data
+      data = [data.first.reverse_merge(wikidata_data[:data].first)]
+    end
 
     errors = response.body.fetch("errors", nil)
 
@@ -45,7 +49,9 @@ class Organization
 
     wikidata = data.dig(0, "wikidata", 0)
     wikidata_data = find_by(wikidata_id: wikidata)
-    data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+    if wikidata_data
+      data = [data.first.reverse_merge(wikidata_data[:data].first)]
+    end
 
     errors = response.body.fetch("errors", nil)
 
@@ -56,7 +62,10 @@ class Organization
     crossref_funder_id = crossref_funder_id_from_url(id)
     return {} if crossref_funder_id.blank?
 
-    url = "https://api.ror.org/organizations?query=\"#{crossref_funder_id.split('/', 2).last}\""
+    url =
+      "https://api.ror.org/organizations?query=\"#{
+        crossref_funder_id.split('/', 2).last
+      }\""
     response = Maremma.get(url, host: true)
 
     message = response.body.dig("data", "items", 0) || {}
@@ -66,7 +75,9 @@ class Organization
 
     wikidata = data.dig(0, "wikidata", 0)
     wikidata_data = find_by(wikidata_id: wikidata)
-    data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+    if wikidata_data
+      data = [data.first.reverse_merge(wikidata_data[:data].first)]
+    end
 
     errors = response.body.fetch("errors", nil)
 
@@ -82,7 +93,10 @@ class Organization
     url = "https://api.ror.org/organizations?page=#{page}"
     url += "&query=#{query}" if query.present?
     if types.present? && country.present?
-      url += "&filter=types:#{types.upcase_first},country.country_code:#{country.upcase}"
+      url +=
+        "&filter=types:#{types.upcase_first},country.country_code:#{
+          country.upcase
+        }"
     elsif types.present?
       url += "&filter=types:#{types.upcase_first}"
     elsif country.present?
@@ -93,17 +107,21 @@ class Organization
 
     return {} if response.status != 200
 
-    data = Array.wrap(response.body.dig("data", "items")).map do |message|
-      parse_message(message)
-    end
+    data =
+      Array.wrap(response.body.dig("data", "items")).map do |message|
+        parse_message(message)
+      end
 
-    countries = Array.wrap(response.body.dig("data", "meta", "countries")).map do |hsh|
-      country = ISO3166::Country[hsh["id"]]
+    countries =
+      Array.wrap(response.body.dig("data", "meta", "countries")).map do |hsh|
+        country = ISO3166::Country[hsh["id"]]
 
-      { "id" => hsh["id"],
-        "title" => country.present? ? country.name : hsh["id"],
-        "count" => hsh["count"] }
-    end
+        {
+          "id" => hsh["id"],
+          "title" => country.present? ? country.name : hsh["id"],
+          "count" => hsh["count"],
+        }
+      end
 
     meta = {
       "total" => response.body.dig("data", "number_of_results"),
@@ -113,11 +131,7 @@ class Organization
 
     errors = response.body.fetch("errors", nil)
 
-    {
-      data: data,
-      meta: meta,
-      errors: errors,
-    }
+    { data: data, meta: meta, errors: errors }
   end
 
   def self.parse_message(message)
@@ -126,23 +140,23 @@ class Organization
       name: message.dig("country", "country_name"),
     }.compact
 
-    labels = Array.wrap(message["labels"]).map do |label|
-      code = label["iso639"].present? ? label["iso639"].upcase : nil
-      {
-        code: code,
-        name: label["label"],
-      }.compact
-    end
+    labels =
+      Array.wrap(message["labels"]).map do |label|
+        code = label["iso639"].present? ? label["iso639"].upcase : nil
+        { code: code, name: label["label"] }.compact
+      end
 
     # remove whitespace from isni identifier
-    isni = Array.wrap(message.dig("external_ids", "ISNI", "all")).map do |i|
-      i.gsub(/ /, "")
-    end
+    isni =
+      Array.wrap(message.dig("external_ids", "ISNI", "all")).map do |i|
+        i.gsub(/ /, "")
+      end
 
     # add DOI prefix to Crossref Funder ID
-    fundref = Array.wrap(message.dig("external_ids", "FundRef", "all")).map do |f|
-      "10.13039/#{f}"
-    end
+    fundref =
+      Array.wrap(message.dig("external_ids", "FundRef", "all")).map do |f|
+        "10.13039/#{f}"
+      end
 
     Hashie::Mash.new(
       id: message["id"],
@@ -163,15 +177,21 @@ class Organization
   end
 
   def self.ror_id_from_url(url)
-    i = Array(/\A(https?:\/\/)?(ror\.org\/)?(0\w{6}\d{2})\z/.match(url)).last
+    i = Array(%r{\A(https?://)?(ror\.org/)?(0\w{6}\d{2})\z}.match(url)).last
     i = "ror.org/#{i}" if i.present?
   end
 
   def self.crossref_funder_id_from_url(url)
-    Array(/\A(https?:\/\/)?(dx\.)?(doi.org\/)?(doi:)?(10\.13039\/.+)\z/.match(url)).last
+    Array(
+      %r{\A(https?://)?(dx\.)?(doi.org/)?(doi:)?(10\.13039/.+)\z}.match(
+        url,
+      ),
+    ).
+      last
   end
 
   def self.grid_id_from_url(url)
-    Array(/\A(https?:\/\/)?(grid\.ac\/)?(institutes\/)?(grid\..+)/.match(url)).last
+    Array(%r{\A(https?://)?(grid\.ac/)?(institutes/)?(grid\..+)}.match(url)).
+      last
   end
 end

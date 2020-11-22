@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateStateJob < ApplicationJob
   queue_as :lupo_background
 
@@ -5,11 +7,14 @@ class UpdateStateJob < ApplicationJob
     doi = Doi.where(doi: doi_id).first
 
     if doi.blank?
-      Rails.logger.error "[State] Error updating state for DOI " + doi_id + ": not found"
+      Rails.logger.error "[State] Error updating state for DOI " + doi_id +
+        ": not found"
     elsif doi.update(aasm_state: options[:state])
       Rails.logger.info "[State] Successfully updated state for DOI " + doi_id
     else
-      Rails.logger.error "[State] Error updating state for DOI " + doi_id + ": " + errors.inspect
+      Rails.logger.error "[State] Error updating state for DOI " + doi_id +
+        ": " +
+        errors.inspect
     end
   end
 end

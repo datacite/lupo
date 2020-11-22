@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails"
@@ -68,10 +70,14 @@ module Lupo
     config.load_defaults 5.2
 
     # include graphql
-    config.paths.add Rails.root.join("app", "graphql", "types").to_s, eager_load: true
-    config.paths.add Rails.root.join("app", "graphql", "mutations").to_s, eager_load: true
-    config.paths.add Rails.root.join("app", "graphql", "connections").to_s, eager_load: true
-    config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s, eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "types").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "mutations").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "connections").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
+                     eager_load: true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -88,7 +94,9 @@ module Lupo
     # enable datadog tracing here so that we can inject tracing
     # information into logs
     Datadog.configure do |c|
-      c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
+      c.tracer hostname: "datadog.local",
+               enabled: Rails.env.production?,
+               env: Rails.env
       c.use :rails, service_name: "client-api"
       c.use :elasticsearch
       c.use :active_record, analytics_enabled: false
@@ -103,28 +111,32 @@ module Lupo
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
-    config.logger = config.lograge.logger        ## LogStashLogger needs to be pass to rails logger, see roidrage/lograge#26
-    config.log_level = ENV["LOG_LEVEL"].to_sym   ## Log level in a config level configuration
+    config.logger = config.lograge.logger ## LogStashLogger needs to be pass to rails logger, see roidrage/lograge#26
+    config.log_level = ENV["LOG_LEVEL"].to_sym ## Log level in a config level configuration
 
-    config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
+    config.lograge.ignore_actions = %w[
+      HeartbeatController#index
+      IndexController#index
+    ]
     config.lograge.ignore_custom = lambda do |event|
-      event.payload.inspect.length > 100000
+      event.payload.inspect.length > 100_000
     end
     config.lograge.base_controller_class = "ActionController::API"
 
     config.lograge.custom_options = lambda do |event|
       # Retrieves trace information for current thread
-      correlation = Datadog.tracer.active_correlation
+      correlation =
+        Datadog.tracer.active_correlation
 
-      exceptions = %w(controller action format id)
+      exceptions = %w[controller action format id]
 
       {
-        # Adds IDs as tags to log output
         dd: {
+          # Adds IDs as tags to log output
           trace_id: correlation.trace_id,
           span_id: correlation.span_id,
         },
-        ddsource: ["ruby"],
+        ddsource: %w[ruby],
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
       }
@@ -136,11 +148,26 @@ module Lupo
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :log
 
-    config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
+    config.action_view.sanitized_allowed_tags = %w[
+      strong
+      em
+      b
+      i
+      code
+      pre
+      sub
+      sup
+      br
+    ]
     config.action_view.sanitized_allowed_attributes = []
 
     # make sure all input is UTF-8
-    config.middleware.insert 0, Rack::UTF8Sanitizer, additional_content_types: ["application/vnd.api+json", "application/xml"]
+    config.middleware.insert 0,
+                             Rack::UTF8Sanitizer,
+                             additional_content_types: %w[
+                               application/vnd.api+json
+                               application/xml
+                             ]
 
     # detect bots and crawlers
     config.middleware.use Rack::CrawlerDetect
@@ -152,26 +179,20 @@ module Lupo
     config.middleware.use BatchLoader::Middleware
 
     # set Active Job queueing backend
-    config.active_job.queue_adapter = if ENV["AWS_REGION"]
-                                        :shoryuken
-                                      else
-                                        :inline
-                                      end
+    config.active_job.queue_adapter = ENV["AWS_REGION"] ? :shoryuken : :inline
 
     # use SQS based on environment, use "test" prefix for test system
     if Rails.env.stage?
-      config.active_job.queue_name_prefix = ENV["ES_PREFIX"].present? ? "stage" : "test"
+      config.active_job.queue_name_prefix =
+        ENV["ES_PREFIX"].present? ? "stage" : "test"
     else
       config.active_job.queue_name_prefix = Rails.env
     end
 
-    config.generators do |g|
-      g.fixture_replacement :factory_bot
-    end
+    config.generators { |g| g.fixture_replacement :factory_bot }
 
     config.paperclip_defaults = {
-      storage: :filesystem,
-      url: "/images/members/:filename",
+      storage: :filesystem, url: "/images/members/:filename"
     }
   end
 end

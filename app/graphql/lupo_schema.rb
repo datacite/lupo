@@ -5,7 +5,10 @@ class LupoSchema < GraphQL::Schema
 
   use GraphQL::Pagination::Connections
   # custom connection wrapper for Elasticsearch
-  connections.add(Elasticsearch::Model::Response::Response, ElasticsearchModelResponseConnection)
+  connections.add(
+    Elasticsearch::Model::Response::Response,
+    ElasticsearchModelResponseConnection,
+  )
 
   # custom connection wrapper for external REST APIs
   connections.add(Hash, HashConnection)
@@ -15,7 +18,7 @@ class LupoSchema < GraphQL::Schema
   use GraphQL::Batch
   use GraphQL::Cache
 
-  default_max_page_size 1000
+  default_max_page_size 1_000
   max_depth 10
 
   mutation(MutationType)
@@ -28,7 +31,9 @@ GraphQL::Errors.configure(LupoSchema) do
   end
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
-    GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"))
+    GraphQL::ExecutionError.new(
+      exception.record.errors.full_messages.join("\n"),
+    )
   end
 
   rescue_from CSL::ParseError do |exception|
@@ -39,7 +44,12 @@ GraphQL::Errors.configure(LupoSchema) do
 
   rescue_from StandardError do |exception|
     Raven.capture_exception(exception)
-    message = Rails.env.production? ? "We are sorry, but an error has occured. This problem has been logged and support has been notified. Please try again later. If the error persists please contact support." : exception.message
+    message =
+      if Rails.env.production?
+        "We are sorry, but an error has occured. This problem has been logged and support has been notified. Please try again later. If the error persists please contact support."
+      else
+        exception.message
+      end
     GraphQL::ExecutionError.new(message)
   end
 end

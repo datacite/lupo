@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 # describe "datacite_doi:create_index", order: :defined do

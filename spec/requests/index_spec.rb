@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe IndexController, type: :request do
@@ -6,12 +8,17 @@ describe IndexController, type: :request do
   describe "content_negotation" do
     context "application/vnd.jats+xml" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
 
         expect(last_response.status).to eq(200)
-        jats = Maremma.from_xml(last_response.body).fetch("element_citation", {})
+        jats =
+          Maremma.from_xml(last_response.body).fetch("element_citation", {})
         expect(jats.dig("publication_type")).to eq("data")
-        expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
+        expect(jats.dig("data_title")).to eq(
+          "Data from: A new malaria agent in African hominids.",
+        )
       end
     end
 
@@ -20,21 +27,30 @@ describe IndexController, type: :request do
         get "/application/vnd.jats+xml/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
-        jats = Maremma.from_xml(last_response.body).fetch("element_citation", {})
+        jats =
+          Maremma.from_xml(last_response.body).fetch("element_citation", {})
         expect(jats.dig("publication_type")).to eq("data")
-        expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
+        expect(jats.dig("data_title")).to eq(
+          "Data from: A new malaria agent in African hominids.",
+        )
       end
     end
 
     context "application/vnd.datacite.datacite+xml" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml",
+            }
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
         expect(data.dig("publisher")).to eq("Dryad Digital Repository")
-        expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
+        expect(data.dig("titles", "title")).to eq(
+          "Data from: A new malaria agent in African hominids.",
+        )
       end
     end
 
@@ -46,7 +62,9 @@ describe IndexController, type: :request do
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
         expect(data.dig("publisher")).to eq("Dryad Digital Repository")
-        expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
+        expect(data.dig("titles", "title")).to eq(
+          "Data from: A new malaria agent in African hominids.",
+        )
       end
     end
 
@@ -67,16 +85,31 @@ describe IndexController, type: :request do
 
     context "application/vnd.datacite.datacite+xml not found" do
       it "returns error message" do
-        get "/xxx", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" }
+        get "/xxx",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml",
+            }
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
+        expect(json["errors"]).to eq(
+          [
+            {
+              "status" => "404",
+              "title" => "The resource you are looking for doesn't exist.",
+            },
+          ],
+        )
       end
     end
 
     context "application/vnd.datacite.datacite+json" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json",
+            }
 
         expect(last_response.status).to eq(200)
         expect(json["doi"]).to eq(doi.doi)
@@ -94,7 +127,11 @@ describe IndexController, type: :request do
 
     context "application/vnd.crosscite.crosscite+json" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json",
+            }
 
         expect(last_response.status).to eq(200)
         expect(json["doi"]).to eq(doi.doi)
@@ -112,7 +149,9 @@ describe IndexController, type: :request do
 
     context "application/vnd.schemaorg.ld+json" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json" }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -130,7 +169,8 @@ describe IndexController, type: :request do
 
     context "application/ld+json" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/ld+json" }
+        get "/#{doi.doi}",
+            params: nil, session: { "HTTP_ACCEPT" => "application/ld+json" }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -148,7 +188,11 @@ describe IndexController, type: :request do
 
     context "application/vnd.citationstyles.csl+json" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json",
+            }
 
         expect(last_response.status).to eq(200)
         expect(json["type"]).to eq("dataset")
@@ -166,7 +210,9 @@ describe IndexController, type: :request do
 
     context "application/x-research-info-systems" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/x-research-info-systems" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: { "HTTP_ACCEPT" => "application/x-research-info-systems" }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("TY  - DATA")
@@ -184,10 +230,13 @@ describe IndexController, type: :request do
 
     context "application/x-bibtex" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/x-bibtex" }
+        get "/#{doi.doi}",
+            params: nil, session: { "HTTP_ACCEPT" => "application/x-bibtex" }
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
+        expect(last_response.body).to start_with(
+          "@misc{https://doi.org/#{doi.doi.downcase}",
+        )
       end
     end
 
@@ -196,7 +245,9 @@ describe IndexController, type: :request do
         get "/application/x-bibtex/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
+        expect(last_response.body).to start_with(
+          "@misc{https://doi.org/#{doi.doi.downcase}",
+        )
       end
     end
 
@@ -221,7 +272,8 @@ describe IndexController, type: :request do
     context "text/x-bibliography" do
       context "default style" do
         it "returns the Doi" do
-          get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography" }
+          get "/#{doi.doi}",
+              params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography" }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo, B.")
@@ -229,14 +281,20 @@ describe IndexController, type: :request do
       end
 
       it "header with style" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography; style=ieee" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: { "HTTP_ACCEPT" => "text/x-bibliography; style=ieee" }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("B. Ollomo")
       end
 
       it "header with style and locale" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography; style=vancouver; locale=de" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: {
+              "HTTP_ACCEPT" => "text/x-bibliography; style=vancouver; locale=de",
+            }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("Ollomo B")
@@ -263,7 +321,9 @@ describe IndexController, type: :request do
 
     context "unknown content type" do
       it "returns the Doi" do
-        get "/#{doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.ms-excel" }
+        get "/#{doi.doi}",
+            params: nil,
+            session: { "HTTP_ACCEPT" => "application/vnd.ms-excel" }
 
         expect(last_response.status).to eq(303)
         expect(last_response.headers["Location"]).to eq(doi.url)

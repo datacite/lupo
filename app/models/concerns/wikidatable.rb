@@ -18,7 +18,10 @@ module Wikidatable
     def fetch_wikidata_by_id(wikidata_id)
       return {} if wikidata_id.blank?
 
-      url = "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=#{wikidata_id}&languages=en&props=labels|descriptions|claims&format=json"
+      url =
+        "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=#{
+          wikidata_id
+        }&languages=en&props=labels|descriptions|claims&format=json"
 
       response = Maremma.get(url, host: true)
 
@@ -32,12 +35,23 @@ module Wikidatable
 
       claims = message.dig("entities", id, "claims") || {}
       twitter = claims.dig("P2002", 0, "mainsnak", "datavalue", "value")
-      inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
+      inception =
+        claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
       # extract year, e.g. +1961-00-00 to 1961
       inception_year = inception[1..4] if inception.present?
-      geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") ||
+      geolocation =
+        claims.dig("P625", 0, "mainsnak", "datavalue", "value") ||
         claims.dig("P625", 0, "datavalue", "value") ||
-        claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
+        claims.dig(
+          "P159",
+          0,
+          "qualifiers",
+          "P625",
+          0,
+          "datavalue",
+          "value",
+        ) ||
+        {}
       ringgold = claims.dig("P3500", 0, "mainsnak", "datavalue", "value")
 
       Hashie::Mash.new(
@@ -54,21 +68,24 @@ module Wikidatable
     def wikidata_query(employment)
       return [] if employment.blank?
 
-      ringgold_filter = Array.wrap(employment).reduce([]) do |sum, f|
-        sum << f["ringgold"] if f["ringgold"]
+      ringgold_filter =
+        Array.wrap(employment).reduce([]) do |sum, f|
+          sum << f["ringgold"] if f["ringgold"]
 
-        sum
-      end.join('", "')
+          sum
+        end.join("\", \"")
 
-      grid_filter = Array.wrap(employment).reduce([]) do |sum, f|
-        sum << f["grid"] if f["grid"]
+      grid_filter =
+        Array.wrap(employment).reduce([]) do |sum, f|
+          sum << f["grid"] if f["grid"]
 
-        sum
-      end.join('", "')
+          sum
+        end.join("\", \"")
 
-      user_agent = "Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)"
+      user_agent =
+        "Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)"
       endpoint = "https://query.wikidata.org/sparql"
-      sparql = <<"SPARQL".chop
+      sparql = <<"SPARQL".
       PREFIX wikibase: <http://wikiba.se/ontology#>
       PREFIX wd: <http://www.wikidata.org/entity/>
       PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -81,27 +98,40 @@ module Wikidatable
         OPTIONAL { ?item wdt:P2427 ?grid. }
         OPTIONAL { ?item wdt:P3500 ?ringgold. }
 
-        FILTER(?ringgold in ("#{ringgold_filter}") || ?grid in ("#{grid_filter}")).
+        FILTER(?ringgold in ("#{
+        ringgold_filter
+      }") || ?grid in ("#{
+        grid_filter
+      }")).
            SERVICE wikibase:label {
              bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .
            }
          }
 SPARQL
+        chop
 
-      client = SPARQL::Client.new(endpoint,
-                                  method: :get,
-                                  headers: { "User-Agent" => user_agent })
+      client =
+        SPARQL::Client.new(
+          endpoint,
+          method: :get, headers: { "User-Agent" => user_agent },
+        )
       response = client.query(sparql)
 
-      ringgold_to_ror = Array.wrap(response).reduce({}) do |sum, r|
-        sum[r[:ringgold].to_s] = "https://ror.org/" + r[:ror] if r[:ror] && r[:ringgold]
-        sum
-      end
+      ringgold_to_ror =
+        Array.wrap(response).reduce({}) do |sum, r|
+          if r[:ror] && r[:ringgold]
+            sum[r[:ringgold].to_s] = "https://ror.org/" + r[:ror]
+          end
+          sum
+        end
 
-      grid_to_ror = Array.wrap(response).reduce({}) do |sum, r|
-        sum[r[:grid].to_s] = "https://ror.org/" + r[:ror] if r[:ror] && r[:grid]
-        sum
-      end
+      grid_to_ror =
+        Array.wrap(response).reduce({}) do |sum, r|
+          if r[:ror] && r[:grid]
+            sum[r[:grid].to_s] = "https://ror.org/" + r[:ror]
+          end
+          sum
+        end
 
       Array.wrap(employment).reduce([]) do |sum, e|
         if ringgold_to_ror[e["ringgold"]]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Prefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -26,21 +28,21 @@ class Prefix < ApplicationRecord
   end
 
   mapping dynamic: "false" do
-    indexes :id,                  type: :keyword
-    indexes :uid,                 type: :keyword
-    indexes :provider_ids,        type: :keyword
-    indexes :client_ids,          type: :keyword
+    indexes :id, type: :keyword
+    indexes :uid, type: :keyword
+    indexes :provider_ids, type: :keyword
+    indexes :client_ids, type: :keyword
     indexes :provider_prefix_ids, type: :keyword
-    indexes :client_prefix_ids,   type: :keyword
-    indexes :state,               type: :keyword
-    indexes :prefix,              type: :text
-    indexes :created_at,          type: :date
+    indexes :client_prefix_ids, type: :keyword
+    indexes :state, type: :keyword
+    indexes :prefix, type: :text
+    indexes :created_at, type: :date
 
     # index associations
-    indexes :clients,             type: :object
-    indexes :providers,           type: :object
-    indexes :client_prefixes,     type: :object
-    indexes :provider_prefixes,   type: :object
+    indexes :clients, type: :object
+    indexes :providers, type: :object
+    indexes :client_prefixes, type: :object
+    indexes :provider_prefixes, type: :object
   end
 
   def as_indexed_json(_options = {})
@@ -54,32 +56,49 @@ class Prefix < ApplicationRecord
       "state" => state,
       "prefix" => prefix,
       "created_at" => created_at,
-      "clients" => clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
-      "providers" => providers.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
-      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
-      "provider_prefixes" => provider_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "clients" =>
+        clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "providers" =>
+        providers.map do |m|
+          m.try(:as_indexed_json, exclude_associations: true)
+        end,
+      "client_prefixes" =>
+        client_prefixes.map do |m|
+          m.try(:as_indexed_json, exclude_associations: true)
+        end,
+      "provider_prefixes" =>
+        provider_prefixes.map do |m|
+          m.try(:as_indexed_json, exclude_associations: true)
+        end,
     }
   end
 
   def self.query_aggregations
     {
       states: { terms: { field: "state", size: 3, min_doc_count: 1 } },
-      years: { date_histogram: { field: "created_at", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: "provider_ids_and_names", size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: "client_ids_and_names", size: 10, min_doc_count: 1 } },
+      years: {
+        date_histogram: {
+          field: "created_at",
+          interval: "year",
+          format: "year",
+          order: { _key: "desc" },
+          min_doc_count: 1,
+        },
+        aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
+      },
+      providers: {
+        terms: { field: "provider_ids_and_names", size: 10, min_doc_count: 1 },
+      },
+      clients: {
+        terms: { field: "client_ids_and_names", size: 10, min_doc_count: 1 },
+      },
     }
   end
 
   # return results for one prefix
   def self.find_by_id(id)
     __elasticsearch__.search(
-      query: {
-        term: {
-          uid: id,
-        },
-      },
-      aggregations: query_aggregations,
+      query: { term: { uid: id } }, aggregations: query_aggregations,
     )
   end
 
@@ -88,9 +107,7 @@ class Prefix < ApplicationRecord
   end
 
   def client_ids_and_name
-    clients.pluck(:symbol, :name).map do |p|
-      "#{p[0].downcase}:#{p[1]}"
-    end
+    clients.pluck(:symbol, :name).map { |p| "#{p[0].downcase}:#{p[1]}" }
   end
 
   def provider_ids
@@ -98,9 +115,7 @@ class Prefix < ApplicationRecord
   end
 
   def provider_ids_and_names
-    providers.pluck(:symbol, :name).map do |p|
-      "#{p[0].downcase}:#{p[1]}"
-    end
+    providers.pluck(:symbol, :name).map { |p| "#{p[0].downcase}:#{p[1]}" }
   end
 
   def client_prefix_ids

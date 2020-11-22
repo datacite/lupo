@@ -1,10 +1,18 @@
+# frozen_string_literal: true
+
 class ActivitySerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :activities
   set_id :request_uuid
 
-  attributes "prov:wasGeneratedBy", "prov:generatedAtTime", "prov:wasDerivedFrom", "prov:wasAttributedTo", :action, :version, :changes
+  attributes "prov:wasGeneratedBy",
+             "prov:generatedAtTime",
+             "prov:wasDerivedFrom",
+             "prov:wasAttributedTo",
+             :action,
+             :version,
+             :changes
 
   attribute "prov:wasDerivedFrom", &:was_derived_from
 

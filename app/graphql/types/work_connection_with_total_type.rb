@@ -5,7 +5,8 @@ class WorkConnectionWithTotalType < BaseConnection
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
-  field :totalCountFromCrossref, resolver: TotalCountFromCrossref, null: true, cache: true
+  field :totalCountFromCrossref,
+        resolver: TotalCountFromCrossref, null: true, cache: true
   field :published, [FacetType], null: true, cache: true
   field :resource_types, [FacetType], null: true, cache: true
   field :registration_agencies, [FacetType], null: true, cache: true
@@ -28,7 +29,9 @@ class WorkConnectionWithTotalType < BaseConnection
   end
 
   def registration_agencies
-    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
+    facet_by_registration_agency(
+      object.aggregations.registration_agencies.buckets,
+    )
   end
 
   def repositories

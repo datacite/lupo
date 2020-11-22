@@ -1,8 +1,15 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe "random", type: :request do
   let(:token) { User.generate_token }
-  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + token } }
+  let(:headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + token,
+    }
+  end
 
   context "random string" do
     it "creates a random string" do

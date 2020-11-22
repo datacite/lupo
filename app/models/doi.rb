@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "maremma"
 require "benchmark"
 
@@ -100,8 +102,8 @@ class Doi < ApplicationRecord
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
-  validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
+  validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
@@ -939,16 +941,16 @@ class Doi < ApplicationRecord
     options[:page][:size] ||= 25
 
     aggregations = if options[:totals_agg] == "provider"
-                     provider_aggregations
-                   elsif options[:totals_agg] == "client"
-                     client_aggregations
-                   elsif options[:totals_agg] == "client_export"
-                     client_export_aggregations
-                   elsif options[:totals_agg] == "prefix"
-                     prefix_aggregations
-                   else
-                     query_aggregations
-                   end
+      provider_aggregations
+    elsif options[:totals_agg] == "client"
+      client_aggregations
+    elsif options[:totals_agg] == "client_export"
+      client_export_aggregations
+    elsif options[:totals_agg] == "prefix"
+      prefix_aggregations
+    else
+      query_aggregations
+    end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
     if options.fetch(:page, {}).key?(:cursor)
@@ -1246,9 +1248,9 @@ class Doi < ApplicationRecord
     return nil if client.blank?
 
     index = if Rails.env.test?
-              "dois-test"
-            else
-              active_index
+      "dois-test"
+    else
+      active_index
     end
     errors = 0
     count = 0
@@ -1288,12 +1290,12 @@ class Doi < ApplicationRecord
 
     id = options[:id].to_i
     index = if Rails.env.test?
-              "dois-test"
-            elsif options[:index].present?
-              options[:index]
-            else
-              inactive_index
-            end
+      "dois-test"
+    elsif options[:index].present?
+      options[:index]
+    else
+      inactive_index
+    end
     errors = 0
     count = 0
 
@@ -1313,14 +1315,14 @@ class Doi < ApplicationRecord
     end
 
     if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{id + 499}."
     elsif count > 0
-      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{id + 499}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.info "[Elasticsearch] Error #{e.message} importing DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Error #{e.message} importing DOIs with IDs #{id} - #{id + 499}."
 
     count = 0
 
@@ -1329,7 +1331,7 @@ class Doi < ApplicationRecord
       count += 1
     end
 
-    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{id + 499}."
 
     count
   end
@@ -1573,11 +1575,11 @@ class Doi < ApplicationRecord
       end
     end
 
-    Rails.logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{id + 499}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{id + 499}."
     count
   end
 
@@ -1628,11 +1630,11 @@ class Doi < ApplicationRecord
       end
     end
 
-    Rails.logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{id + 499}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{id + 499}."
     count
   end
 
@@ -2163,8 +2165,8 @@ class Doi < ApplicationRecord
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by(code: lang) || ISO_639.find_by(english_name: lang.upcase_first)
     self.language = if entry.present? && entry.alpha2.present?
-                      entry.alpha2
-                    end
+      entry.alpha2
+    end
   end
 
   def update_field_of_science
@@ -2248,56 +2250,54 @@ class Doi < ApplicationRecord
 
     # Handle camel casing first.
     Doi.where.not("last_landing_page_status_result" => nil).find_each do |doi|
-      begin
-        # First we try and fix into camel casing
-        result = doi.last_landing_page_status_result
-        mappings = {
-          "body-has-pid" => "bodyHasPid",
-          "dc-identifier" => "dcIdentifier",
-          "citation-doi" => "citationDoi",
-          "redirect-urls" => "redirectUrls",
-          "schema-org-id" => "schemaOrgId",
-          "has-schema-org" => "hasSchemaOrg",
-          "redirect-count" => "redirectCount",
-          "download-latency" => "downloadLatency",
-        }
-        result = result.map { |k, v| [mappings[k] || k, v] }.to_h
-        # doi.update_columns("last_landing_page_status_result": result)
+      # First we try and fix into camel casing
+      result = doi.last_landing_page_status_result
+      mappings = {
+        "body-has-pid" => "bodyHasPid",
+        "dc-identifier" => "dcIdentifier",
+        "citation-doi" => "citationDoi",
+        "redirect-urls" => "redirectUrls",
+        "schema-org-id" => "schemaOrgId",
+        "has-schema-org" => "hasSchemaOrg",
+        "redirect-count" => "redirectCount",
+        "download-latency" => "downloadLatency",
+      }
+      result = result.transform_keys { |k| mappings[k] || k }
+      # doi.update_columns("last_landing_page_status_result": result)
 
-        # Do a fix of the stored download Latency
-        # Sometimes was floating point precision, we dont need this
-        download_latency = result["downloadLatency"]
-        download_latency = download_latency.nil? ? download_latency : download_latency.round
+      # Do a fix of the stored download Latency
+      # Sometimes was floating point precision, we dont need this
+      download_latency = result["downloadLatency"]
+      download_latency = download_latency.nil? ? download_latency : download_latency.round
 
-        # Try to put the checked date into ISO8601
-        # If we dont have one (there was legacy reasons) then set to unix epoch
-        checked = doi.last_landing_page_status_check
-        checked = checked.nil? ? Time.at(0) : checked
-        checked = checked.iso8601
+      # Try to put the checked date into ISO8601
+      # If we dont have one (there was legacy reasons) then set to unix epoch
+      checked = doi.last_landing_page_status_check
+      checked = checked.nil? ? Time.at(0) : checked
+      checked = checked.iso8601
 
-        # Next we want to build a new landing_page result.
-        landing_page = {
-          "checked" => checked,
-          "status" => doi.last_landing_page_status,
-          "url" => doi.last_landing_page,
-          "contentType" => doi.last_landing_page_content_type,
-          "error" => result["error"],
-          "redirectCount" => result["redirectCount"],
-          "redirectUrls" => result["redirectUrls"],
-          "downloadLatency" => download_latency,
-          "hasSchemaOrg" => result["hasSchemaOrg"],
-          "schemaOrgId" => result["schemaOrgId"],
-          "dcIdentifier" => result["dcIdentifier"],
-          "citationDoi" => result["citationDoi"],
-          "bodyHasPid" => result["bodyHasPid"],
-        }
+      # Next we want to build a new landing_page result.
+      landing_page = {
+        "checked" => checked,
+        "status" => doi.last_landing_page_status,
+        "url" => doi.last_landing_page,
+        "contentType" => doi.last_landing_page_content_type,
+        "error" => result["error"],
+        "redirectCount" => result["redirectCount"],
+        "redirectUrls" => result["redirectUrls"],
+        "downloadLatency" => download_latency,
+        "hasSchemaOrg" => result["hasSchemaOrg"],
+        "schemaOrgId" => result["schemaOrgId"],
+        "dcIdentifier" => result["dcIdentifier"],
+        "citationDoi" => result["citationDoi"],
+        "bodyHasPid" => result["bodyHasPid"],
+      }
 
-        doi.update_columns("landing_page": landing_page)
+      doi.update_columns("landing_page": landing_page)
 
-        Rails.logger.info "Updated " + doi.doi
-      rescue TypeError, NoMethodError => e
-        Rails.logger.error "Error updating landing page " + doi.doi + ": " + e.message
-      end
+      Rails.logger.info "Updated " + doi.doi
+    rescue TypeError, NoMethodError => e
+      Rails.logger.error "Error updating landing page " + doi.doi + ": " + e.message
     end
 
     "Finished migrating landing pages."
@@ -2315,38 +2315,36 @@ class Doi < ApplicationRecord
     Rails.logger.info "[migration_index_types] adding type information for DOIs with IDs #{from_id} - #{until_id}."
 
     Doi.where(id: from_id..until_id).where("type" => nil).find_each(batch_size: 500) do |doi|
-      begin
-        agency = doi.agency
+      agency = doi.agency
 
-        type = if agency.blank? || agency.casecmp?("datacite")
-                 "DataciteDoi"
-               elsif agency.casecmp?("crossref")
-                 "OtherDoi"
-               elsif agency.casecmp?("kisti")
-                 "OtherDoi"
-               elsif agency.casecmp?("medra")
-                 "OtherDoi"
-               elsif agency.casecmp?("istic")
-                 "OtherDoi"
-               elsif agency.casecmp?("jalc")
-                 "OtherDoi"
-               elsif agency.casecmp?("airiti")
-                 "OtherDoi"
-               elsif agency.casecmp?("cnki")
-                 "OtherDoi"
-               elsif agency.casecmp?("op")
-                 "OtherDoi"
-               else
-                 "DataciteDoi"
-               end
-
-        doi.update_columns("type" => type)
-
-        count += 1
-        Rails.logger.info "Updated #{doi.doi} (#{doi.id})"
-      rescue StandardError => e
-        Rails.logger.error "Error updating #{doi.doi} (#{doi.id}), #{e.message}"
+      type = if agency.blank? || agency.casecmp?("datacite")
+        "DataciteDoi"
+      elsif agency.casecmp?("crossref")
+        "OtherDoi"
+      elsif agency.casecmp?("kisti")
+        "OtherDoi"
+      elsif agency.casecmp?("medra")
+        "OtherDoi"
+      elsif agency.casecmp?("istic")
+        "OtherDoi"
+      elsif agency.casecmp?("jalc")
+        "OtherDoi"
+      elsif agency.casecmp?("airiti")
+        "OtherDoi"
+      elsif agency.casecmp?("cnki")
+        "OtherDoi"
+      elsif agency.casecmp?("op")
+        "OtherDoi"
+      else
+        "DataciteDoi"
       end
+
+      doi.update_columns("type" => type)
+
+      count += 1
+      Rails.logger.info "Updated #{doi.doi} (#{doi.id})"
+    rescue StandardError => e
+      Rails.logger.error "Error updating #{doi.doi} (#{doi.id}), #{e.message}"
     end
 
     "Finished updating dois, total #{count}"
