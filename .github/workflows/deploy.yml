@@ -25,10 +25,24 @@ jobs:
           http.cors.enabled: "true"
           http.cors.allow-origin: "*"
     steps:
-      - name: Run
+      - uses: actions/checkout@v2
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6.x' 
+      - name: Setup
         run: |
           cp .env.build .env
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:setup RAILS_ENV=test      
+      - name: Lint and Test
+        run: |
+          bundle exec rubocop
+          bundle exec rspec
+
   build_and_push:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
