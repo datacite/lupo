@@ -32,7 +32,7 @@ class RepositoriesController < ApplicationController
     page = page_from_params(params)
 
     response = if params[:id].present?
-      Client.find_by(id: params[:id])
+      Client.find_by_id(params[:id])
     elsif params[:ids].present?
       Client.find_by_id(params[:ids], page: page, sort: sort)
     else

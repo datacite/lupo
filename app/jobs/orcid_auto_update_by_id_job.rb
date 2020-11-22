@@ -15,7 +15,7 @@ class OrcidAutoUpdateByIdJob < ApplicationJob
     # check whether ORCID ID has been stored with DataCite already
     # unless we want to refresh the metadata
     unless options[:refresh]
-      result = Researcher.find_by(id: orcid).results.first
+      result = Researcher.find_by_id(orcid).results.first
       return {} if result.present?
     end
 

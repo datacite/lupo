@@ -481,7 +481,7 @@ class Client < ApplicationRecord
   end
 
   def target_id=(value)
-    c = self.class.find_by(id: value)
+    c = self.class.find_by_id(value)
     return nil if c.blank?
 
     client_target = c.records.first

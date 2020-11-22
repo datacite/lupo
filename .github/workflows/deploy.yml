@@ -19,6 +19,9 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
           - 3306
+        options: |
+          --health-cmd="mysqladmin ping" --health-interval=10s \
+          --health-timeout=5s --health-retries=3
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
         env:
@@ -61,6 +64,7 @@ jobs:
           gem install bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
+          sudo /etc/init.d/mysql start
           bundle exec rails db:setup RAILS_ENV=test      
       - name: Lint and Test
         run: |

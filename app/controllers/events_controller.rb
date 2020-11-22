@@ -108,7 +108,7 @@ class EventsController < ApplicationController
     page = page_from_params(params)
 
     response = if params[:id].present?
-      Event.find_by(id: params[:id])
+      Event.find_by_id(params[:id])
     elsif params[:ids].present?
       Event.find_by_id(params[:ids], page: page, sort: sort)
     else
@@ -277,7 +277,7 @@ class EventsController < ApplicationController
 
   protected
     def load_event
-      response = Event.find_by(id: params[:id])
+      response = Event.find_by_id(params[:id])
       @event = response.results.first
       fail ActiveRecord::RecordNotFound if @event.blank?
     end

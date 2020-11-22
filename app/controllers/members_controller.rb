@@ -23,7 +23,7 @@ class MembersController < ApplicationController
     page = page_from_params(params)
 
     response = if params[:id].present?
-      Provider.find_by(id: params[:id])
+      Provider.find_by_id(params[:id])
     elsif params[:ids].present?
       Provider.find_by_id(params[:ids], page: page, sort: sort)
     else

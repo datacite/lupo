@@ -28,7 +28,7 @@ class PrefixesController < ApplicationController
 
     response =
       if params[:id].present?
-        Prefix.find_by(id: params[:id])
+        Prefix.find_by_id(params[:id])
       else
         Prefix.query(
           params[:query],

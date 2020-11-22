@@ -25,7 +25,7 @@ class ProviderPrefixesController < ApplicationController
     page = page_from_params(params)
 
     if params[:id].present?
-      response = ProviderPrefix.find_by(id: params[:id])
+      response = ProviderPrefix.find_by_id(params[:id])
     else
       response =
         ProviderPrefix.query(

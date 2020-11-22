@@ -31,12 +31,12 @@ describe "Indexable class methods", elasticsearch: true do
     end
 
     it "find_by_id" do
-      result = Client.find_by(id: client.symbol).results.first
+      result = Client.find_by_id(client.symbol).results.first
       expect(result.symbol).to eq(client.symbol)
     end
 
     it "find_by_id multiple" do
-      results = Client.find_by(id: client.symbol).results
+      results = Client.find_by_id(client.symbol).results
       expect(results.total).to eq(1)
     end
 
@@ -55,12 +55,12 @@ describe "Indexable class methods", elasticsearch: true do
     end
 
     it "find_by_id" do
-      result = Provider.find_by(id: provider.symbol).results.first
+      result = Provider.find_by_id(provider.symbol).results.first
       expect(result.symbol).to eq(provider.symbol)
     end
 
     it "find_by_id multiple" do
-      results = Provider.find_by(id: provider.symbol).results
+      results = Provider.find_by_id(provider.symbol).results
       expect(results.total).to eq(1)
     end
 

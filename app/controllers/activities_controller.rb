@@ -21,7 +21,7 @@ class ActivitiesController < ApplicationController
     page = page_from_params(params)
 
     response = if params[:id].present?
-      Activity.find_by(id: params[:id])
+      Activity.find_by_id(params[:id])
     elsif params[:ids].present?
       Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
@@ -136,7 +136,7 @@ class ActivitiesController < ApplicationController
 
   protected
     def set_activity
-      response = Activity.find_by(id: params[:id])
+      response = Activity.find_by_id(params[:id])
       @activity = response.results.first
       fail ActiveRecord::RecordNotFound if @activity.blank?
     end

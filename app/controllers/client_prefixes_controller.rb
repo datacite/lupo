@@ -29,7 +29,7 @@ class ClientPrefixesController < ApplicationController
 
     response =
       if params[:id].present?
-        ClientPrefix.find_by(id: params[:id])
+        ClientPrefix.find_by_id(params[:id])
       else
         ClientPrefix.query(
           params[:query],

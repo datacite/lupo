@@ -85,7 +85,7 @@ class QueryType < BaseObject
   end
 
   def funder(id:)
-    result = Funder.find_by(id: id).fetch(:data, []).first
+    result = Funder.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -96,7 +96,7 @@ class QueryType < BaseObject
   end
 
   def data_catalog(id:)
-    result = DataCatalog.find_by(id: id).fetch(:data, []).first
+    result = DataCatalog.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -135,11 +135,11 @@ class QueryType < BaseObject
     result = nil
 
     if id.present?
-      result = Organization.find_by(id: id).fetch(:data, []).first
+      result = Organization.find_by_id(id).fetch(:data, []).first
     elsif grid_id.present?
-      result = Organization.find_by(grid_id: grid_id).fetch(:data, []).first
+      result = Organization.find_by_grid_id(grid_id).fetch(:data, []).first
     elsif crossref_funder_id.present?
-      result = Organization.find_by(crossref_funder_id: crossref_funder_id).fetch(:data, []).first
+      result = Organization.find_by_crossref_funder_id(crossref_funder_id).fetch(:data, []).first
     end
 
     fail ActiveRecord::RecordNotFound if result.nil?
@@ -152,7 +152,7 @@ class QueryType < BaseObject
   end
 
   def person(id:)
-    result = Person.find_by(id: id).fetch(:data, []).first
+    result = Person.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -193,11 +193,11 @@ class QueryType < BaseObject
 
   def actor(id:)
     result = if orcid_from_url(id)
-      Person.find_by(id: id).fetch(:data, []).first
+      Person.find_by_id(id).fetch(:data, []).first
     elsif ror_id_from_url(id)
-      Organization.find_by(id: id).fetch(:data, []).first
+      Organization.find_by_id(id).fetch(:data, []).first
     elsif doi_from_url(id).to_s.starts_with?("10.13039")
-      Funder.find_by(id: id).fetch(:data, []).first
+      Funder.find_by_id(id).fetch(:data, []).first
     end
 
     fail ActiveRecord::RecordNotFound if result.nil?

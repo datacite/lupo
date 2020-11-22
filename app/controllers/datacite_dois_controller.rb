@@ -69,7 +69,7 @@ class DataciteDoisController < ApplicationController
     end
 
     if params[:id].present?
-      response = DataciteDoi.find_by(id: params[:id])
+      response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
       response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
