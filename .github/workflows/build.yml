@@ -32,7 +32,7 @@ jobs:
       - name: Lint and Test
         run: |
           cp .env.build .env
-          docker-compose up -d --abort-on-container-exit --exit-code-from web
+          docker-compose up -d
           docker-compose exec -T web bundle exec rubocop -a
           docker-compose exec -T web bundle exec rake db:setup RAILS_ENV=test
           docker-compose exec -T web bundle exec rspec
