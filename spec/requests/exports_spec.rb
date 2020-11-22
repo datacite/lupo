@@ -36,7 +36,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns organizations", vcr: false do
-      get "/export/organizations", params: nil, session: admin_headers
+      get "/export/organizations", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -50,7 +50,7 @@ describe ExportsController, type: :request do
 
     it "returns organizations from date", vcr: false do
       get "/export/organizations?from-date=#{Date.today}",
-          params: nil, session: admin_headers
+          nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -81,7 +81,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns repositories", vcr: false do
-      get "/export/repositories", params: nil, session: admin_headers
+      get "/export/repositories", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -98,7 +98,7 @@ describe ExportsController, type: :request do
 
     it "returns repositories from date", vcr: false do
       get "/export/repositories?from-date=#{Date.today}",
-          params: nil, session: admin_headers
+          nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -121,7 +121,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns all contacts", vcr: false do
-      get "/export/contacts", params: nil, session: admin_headers
+      get "/export/contacts", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -157,7 +157,7 @@ describe ExportsController, type: :request do
 
     it "returns all contacts from date", vcr: false do
       get "/export/contacts?from-date=#{Date.today}",
-          params: nil, session: admin_headers
+          nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -192,7 +192,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns voting contacts", vcr: false do
-      get "/export/contacts?type=voting", params: nil, session: admin_headers
+      get "/export/contacts?type=voting", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -209,7 +209,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns billing contacts", vcr: false do
-      get "/export/contacts?type=billing", params: nil, session: admin_headers
+      get "/export/contacts?type=billing", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines

@@ -42,7 +42,7 @@ describe MetadataController, type: :request do
     context "when the record exists" do
       it "returns the Metadata" do
         get "/dois/#{datacite_doi.doi}/metadata/#{metadata.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(json).not_to be_empty
         expect(json.dig("data", "id")).to eq(metadata.uid)
@@ -50,7 +50,7 @@ describe MetadataController, type: :request do
 
       it "returns status code 200" do
         get "/dois/#{datacite_doi.doi}/metadata/#{metadata.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
       end
@@ -59,14 +59,14 @@ describe MetadataController, type: :request do
     context "when the record does not exist" do
       it "returns status code 404" do
         get "/dois/#{datacite_doi.doi}/metadata/xxxx",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a not found message" do
         get "/dois/#{datacite_doi.doi}/metadata/xxxx",
-            params: nil, session: headers
+            nil, headers
 
         expect(json["errors"]).to eq(
           [
@@ -93,7 +93,7 @@ describe MetadataController, type: :request do
 
       it "creates a metadata record" do
         post "/dois/#{datacite_doi.doi}/metadata",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(Base64.decode64(json.dig("data", "attributes", "xml"))).to eq(
           xml,
@@ -105,7 +105,7 @@ describe MetadataController, type: :request do
 
       it "returns status code 201" do
         post "/dois/#{datacite_doi.doi}/metadata",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
@@ -116,14 +116,14 @@ describe MetadataController, type: :request do
 
       it "returns status code 422" do
         post "/dois/#{datacite_doi.doi}/metadata",
-             params: not_valid_attributes, session: headers
+             not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
       end
 
       it "returns a validation failure message" do
         post "/dois/#{datacite_doi.doi}/metadata",
-             params: not_valid_attributes, session: headers
+             not_valid_attributes, headers
 
         expect(json["errors"]).to eq(
           [{ "source" => "xml", "title" => "Can't be blank" }],
@@ -149,7 +149,7 @@ describe MetadataController, type: :request do
 
       it "returns status code 201" do
         post "/dois/#{datacite_doi.doi}/metadata",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
@@ -182,7 +182,7 @@ describe MetadataController, type: :request do
     #       }
     #     }
     #   end
-    #   before { post '/metadata', params: valid_attributes.to_json, headers: headers }
+    #   before { post '/metadata', valid_attributes.to_json, headers: headers }
     #
     #   it 'returns status code 422' do
     #     expect(response).to have_http_status(422)
@@ -198,7 +198,7 @@ describe MetadataController, type: :request do
     context "when the resources does exist" do
       it "returns status code 204" do
         delete "/dois/#{datacite_doi.doi}/metadata/#{metadata.uid}",
-               params: nil, session: headers
+               nil, headers
 
         expect(last_response.status).to eq(204)
       end
@@ -207,14 +207,14 @@ describe MetadataController, type: :request do
     context "when the resources doesnt exist" do
       it "returns status code 404" do
         delete "/dois/#{datacite_doi.doi}/metadata/xxx",
-               params: nil, session: headers
+               nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a validation failure message" do
         delete "/dois/#{datacite_doi.doi}/metadata/xxx",
-               params: nil, session: headers
+               nil, headers
 
         expect(json["errors"]).to eq(
           [

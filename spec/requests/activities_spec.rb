@@ -42,7 +42,7 @@ describe ActivitiesController, type: :request do
     context "without username" do
       it "returns the activities" do
         get "/dois/#{doi.doi.downcase}/activities",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(1)
@@ -81,7 +81,7 @@ describe ActivitiesController, type: :request do
     context "repository" do
       it "returns the activities" do
         get "/repositories/#{client.symbol.downcase}/activities",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(1)
@@ -117,7 +117,7 @@ describe ActivitiesController, type: :request do
     context "provider" do
       it "returns the activities" do
         get "/providers/#{provider.symbol.downcase}/activities",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(1)
@@ -153,7 +153,7 @@ describe ActivitiesController, type: :request do
     context "query" do
       it "returns the activities" do
         get "/activities?query=#{doi.doi.downcase}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(1)

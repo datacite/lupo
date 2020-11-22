@@ -36,7 +36,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   describe "GET /provider-prefixes by consortium" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?consortium-id=#{consortium.symbol.downcase}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -67,7 +67,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   describe "GET /provider-prefixes by provider" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?provider-id=#{provider.symbol.downcase}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -77,7 +77,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   describe "GET /provider-prefixes by prefix" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?prefix-id=#{provider_prefixes.first.prefix_id}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -89,7 +89,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       get "/provider-prefixes?provider-id=#{
             provider.symbol.downcase
           }&prefix-id=#{provider_prefixes.first.prefix_id}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -98,7 +98,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
   describe "GET /provider-prefixes by partial prefix" do
     it "returns provider-prefixes" do
-      get "/provider-prefixes?query=10.508", params: nil, session: headers
+      get "/provider-prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -107,7 +107,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
   describe "GET /provider-prefixes" do
     it "returns provider-prefixes" do
-      get "/provider-prefixes", params: nil, session: headers
+      get "/provider-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -118,7 +118,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
     context "when the record exists" do
       it "returns the provider-prefix" do
         get "/provider-prefixes/#{provider_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(provider_prefix.uid)
@@ -127,7 +127,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/provider-prefixes/xxx", params: nil, session: headers
+        get "/provider-prefixes/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -141,7 +141,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   describe "PATCH /provider-prefixes/:uid" do
     it "returns method not supported error" do
       patch "/provider-prefixes/#{provider_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq(
@@ -167,7 +167,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider-prefix" do
-        post "/provider-prefixes", params: valid_attributes, session: headers
+        post "/provider-prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "id")).not_to be_nil
@@ -182,7 +182,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
       it "returns status code 422" do
         post "/provider-prefixes",
-             params: not_valid_attributes, session: headers
+             not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -202,7 +202,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
     it "deletes the prefix" do
       delete "/provider-prefixes/#{provider_prefix.uid}",
-             params: nil, session: headers
+             nil, headers
       expect(last_response.status).to eq(204)
     end
   end

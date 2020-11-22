@@ -32,7 +32,7 @@ describe RepositoryPrefixesController, type: :request do
     end
 
     it "returns repository-prefixes" do
-      get "/repository-prefixes", params: nil, session: headers
+      get "/repository-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -42,7 +42,7 @@ describe RepositoryPrefixesController, type: :request do
       get "/repository-prefixes?repository-id=#{
             client_prefixes.first.client_id
           }",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -50,14 +50,14 @@ describe RepositoryPrefixesController, type: :request do
 
     it "returns repository-prefixes by prefix-id" do
       get "/repository-prefixes?prefix-id=#{client_prefixes.first.prefix_id}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
     end
 
     it "returns repository-prefixes by partial prefix" do
-      get "/repository-prefixes?query=10.508", params: nil, session: headers
+      get "/repository-prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -67,7 +67,7 @@ describe RepositoryPrefixesController, type: :request do
       get "/repository-prefixes?repository-id=#{
             client_prefixes.first.client_id
           }&#{client_prefixes.first.prefix_id}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -75,7 +75,7 @@ describe RepositoryPrefixesController, type: :request do
 
     it "returns prefixes by client-id" do
       get "/prefixes?client-id=#{client_prefixes.first.client_id}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -86,7 +86,7 @@ describe RepositoryPrefixesController, type: :request do
     context "when the record exists" do
       it "returns the repository-prefix" do
         get "/repository-prefixes/#{client_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
@@ -95,7 +95,7 @@ describe RepositoryPrefixesController, type: :request do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/repository-prefixes/xxx", params: nil, session: headers
+        get "/repository-prefixes/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -109,7 +109,7 @@ describe RepositoryPrefixesController, type: :request do
   describe "PATCH /repository-prefixes/:uid" do
     it "returns method not supported error" do
       patch "/repository-prefixes/#{client_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq(
@@ -133,7 +133,7 @@ describe RepositoryPrefixesController, type: :request do
 
     it "deletes a repository-prefix" do
       delete "/repository-prefixes/#{client_prefix.uid}",
-             params: nil, session: headers
+             nil, headers
 
       expect(last_response.status).to eq(204)
     end
@@ -167,7 +167,7 @@ describe RepositoryPrefixesController, type: :request do
       end
 
       it "creates a repository-prefix" do
-        post "/repository-prefixes", params: valid_attributes, session: headers
+        post "/repository-prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "id")).not_to be_nil
@@ -182,7 +182,7 @@ describe RepositoryPrefixesController, type: :request do
 
       it "returns status code 422" do
         post "/repository-prefixes",
-             params: not_valid_attributes, session: headers
+             not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(

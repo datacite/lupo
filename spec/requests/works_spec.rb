@@ -100,7 +100,7 @@ describe WorksController, type: :request do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/works/10.5256/xxxx", params: nil, session: headers
+        get "/works/10.5256/xxxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json).to eq(
@@ -118,7 +118,7 @@ describe WorksController, type: :request do
       let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi") }
 
       it "returns 404 status" do
-        get "/works/#{datacite_doi.doi}", params: nil, session: headers
+        get "/works/#{datacite_doi.doi}", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json).to eq(

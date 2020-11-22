@@ -70,7 +70,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     it "returns repositories" do
-      get "/repositories", params: nil, session: headers
+      get "/repositories", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -117,7 +117,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   describe "GET /repositories/:id" do
     context "when the record exists" do
       it "returns the repository" do
-        get "/repositories/#{client.uid}", params: nil, session: headers
+        get "/repositories/#{client.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(client.name)
@@ -130,7 +130,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/repositories/xxx", params: nil, session: headers
+        get "/repositories/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -158,7 +158,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     it "returns repositories" do
-      get "/repositories/totals", params: nil, session: headers
+      get "/repositories/totals", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.first.dig("count")).to eq(3)
@@ -232,7 +232,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   describe "POST /repositories" do
     context "when the request is valid" do
       it "creates a repository" do
-        post "/repositories", params: params, session: headers
+        post "/repositories", params, headers
 
         expect(last_response.status).to eq(201)
         attributes = json.dig("data", "attributes")
@@ -250,7 +250,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     context "consortium" do
       it "creates a repository" do
-        post "/repositories", params: params, session: consortium_headers
+        post "/repositories", params, consortium_headers
 
         expect(last_response.status).to eq(201)
         attributes = json.dig("data", "attributes")
@@ -285,7 +285,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 422" do
-        post "/repositories", params: params, session: headers
+        post "/repositories", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -314,7 +314,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -344,7 +344,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
       it "updates the record" do
         put "/repositories/#{client.symbol}",
-            params: params, session: consortium_headers
+            params, consortium_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -368,7 +368,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("My data center")
@@ -415,7 +415,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
       it "updates the record" do
         put "/repositories/#{client.symbol}",
-            params: params, session: staff_headers
+            params, staff_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("My data center")
@@ -455,7 +455,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -486,7 +486,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -511,7 +511,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -540,7 +540,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 422" do
-        put "/repositories/#{client.symbol}", params: params, session: headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -552,27 +552,27 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
   describe "DELETE /repositories/:id" do
     it "returns status code 204" do
-      delete "/repositories/#{client.uid}", params: nil, session: headers
+      delete "/repositories/#{client.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
     end
 
     it "returns status code 204 with consortium" do
       delete "/repositories/#{client.uid}",
-             params: nil, session: consortium_headers
+             nil, consortium_headers
 
       expect(last_response.status).to eq(204)
     end
 
     context "when the resource doesnt exist" do
       it "returns status code 404" do
-        delete "/repositories/xxx", params: nil, session: headers
+        delete "/repositories/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a validation failure message" do
-        delete "/repositories/xxx", params: nil, session: headers
+        delete "/repositories/xxx", nil, headers
 
         expect(json["errors"].first).to eq(
           "status" => "404",
@@ -607,7 +607,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     it "transfered all DOIs" do
-      put "/repositories/#{client.symbol}", params: params, session: headers
+      put "/repositories/#{client.symbol}", params, headers
       sleep 1
 
       expect(last_response.status).to eq(200)
@@ -617,7 +617,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     it "transfered all DOIs consortium" do
       put "/repositories/#{client.symbol}",
-          params: params, session: consortium_headers
+          params, consortium_headers
       sleep 1
 
       expect(last_response.status).to eq(200)

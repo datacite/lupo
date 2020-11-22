@@ -20,21 +20,21 @@ describe PrefixesController, type: :request, elasticsearch: true do
     end
 
     it "returns prefixes" do
-      get "/prefixes", params: nil, session: headers
+      get "/prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
     end
 
     it "returns prefixes by id" do
-      get "/prefixes?id=#{prefixes.first.uid}", params: nil, session: headers
+      get "/prefixes?id=#{prefixes.first.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
     end
 
     it "returns prefixes by query" do
-      get "/prefixes?query=10.508", params: nil, session: headers
+      get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
@@ -49,7 +49,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
     context "when the record exists" do
       it "returns status code 200" do
-        get "/prefixes/#{prefix_id}", params: nil, session: headers
+        get "/prefixes/#{prefix_id}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(prefix_id)
@@ -58,7 +58,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
     context "when the prefix does not exist" do
       it "returns status code 404" do
-        get "/prefixes/10.1234", params: nil, session: headers
+        get "/prefixes/10.1234", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -70,7 +70,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/prefixes/xxx", params: nil, session: headers
+        get "/prefixes/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -83,7 +83,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
   describe "PATCH /prefixes/:prefix_id" do
     it "returns method not supported error" do
-      patch "/prefixes/#{prefix_id}", params: nil, session: headers
+      patch "/prefixes/#{prefix_id}", nil, headers
 
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq(
@@ -105,7 +105,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 201" do
-        post "/prefixes", params: valid_attributes, session: headers
+        post "/prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
@@ -122,7 +122,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 422" do
-        post "/prefixes", params: not_valid_attributes, session: headers
+        post "/prefixes", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -134,7 +134,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
   describe "DELETE /prefixes/:id" do
     it "returns status code 204" do
-      delete "/prefixes/#{prefix_id}", params: nil, session: headers
+      delete "/prefixes/#{prefix_id}", nil, headers
 
       expect(last_response.status).to eq(204)
     end

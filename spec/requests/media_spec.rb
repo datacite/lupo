@@ -27,7 +27,7 @@ describe MediaController,
 
   describe "GET /dois/DOI/media" do
     it "returns media" do
-      get "/dois/#{datacite_doi.doi}/media", params: nil, session: headers
+      get "/dois/#{datacite_doi.doi}/media", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json).not_to be_empty
@@ -39,7 +39,7 @@ describe MediaController,
 
   describe "GET /media query by doi not found" do
     it "returns media" do
-      get "/dois/xxx/media", params: nil, session: headers
+      get "/dois/xxx/media", nil, headers
 
       expect(json).not_to be_empty
       expect(json["errors"]).to eq(
@@ -53,7 +53,7 @@ describe MediaController,
     end
 
     it "returns status code 404" do
-      get "/dois/xxx/media", params: nil, session: headers
+      get "/dois/xxx/media", nil, headers
 
       expect(last_response.status).to eq(404)
     end
@@ -63,7 +63,7 @@ describe MediaController,
     context "when the record exists" do
       it "returns the media" do
         get "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(json).not_to be_empty
         expect(json.dig("data", "id")).to eq(media.uid)
@@ -71,7 +71,7 @@ describe MediaController,
 
       it "returns status code 200" do
         get "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
       end
@@ -80,14 +80,14 @@ describe MediaController,
     context "when the record does not exist" do
       it "returns status code 404" do
         get "/dois/#{datacite_doi.doi}/media/xxxx",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a not found message" do
         get "/dois/#{datacite_doi.doi}/media/xxxx",
-            params: nil, session: headers
+            nil, headers
 
         expect(json["errors"].first).to eq(
           "status" => "404",
@@ -111,7 +111,7 @@ describe MediaController,
 
       it "creates a media record" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(json.dig("data", "attributes", "mediaType")).to eq(media_type)
         expect(json.dig("data", "attributes", "url")).to eq(url)
@@ -119,7 +119,7 @@ describe MediaController,
 
       it "returns status code 201" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
@@ -137,14 +137,14 @@ describe MediaController,
 
       it "returns status code 201" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
 
       it "creates a media record" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(json.dig("data", "attributes", "url")).to eq(url)
       end
@@ -168,14 +168,14 @@ describe MediaController,
 
       it "returns status code 422" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(last_response.status).to eq(422)
       end
 
       it "returns a validation failure message" do
         post "/dois/#{datacite_doi.doi}/media",
-             params: valid_attributes, session: headers
+             valid_attributes, headers
 
         expect(json["errors"]).to eq(
           [{ "source" => "media_type", "title" => "Is invalid" }],
@@ -202,7 +202,7 @@ describe MediaController,
 
       it "updates the record" do
         patch "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-              params: valid_attributes, session: headers
+              valid_attributes, headers
 
         expect(json.dig("data", "attributes", "mediaType")).to eq(media_type)
         expect(json.dig("data", "attributes", "url")).to eq(url)
@@ -211,7 +211,7 @@ describe MediaController,
 
       it "returns status code 200" do
         patch "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-              params: valid_attributes, session: headers
+              valid_attributes, headers
 
         expect(last_response.status).to eq(200)
       end
@@ -235,14 +235,14 @@ describe MediaController,
 
       it "returns status code 422" do
         patch "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-              params: params, session: headers
+              params, headers
 
         expect(last_response.status).to eq(422)
       end
 
       it "returns a validation failure message" do
         patch "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-              params: params, session: headers
+              params, headers
 
         expect(json["errors"].first).to eq(
           "source" => "url", "title" => "Is invalid",
@@ -255,7 +255,7 @@ describe MediaController,
     context "when the resources does exist" do
       it "returns status code 204" do
         delete "/dois/#{datacite_doi.doi}/media/#{media.uid}",
-               params: nil, session: headers
+               nil, headers
 
         expect(last_response.status).to eq(204)
       end
@@ -264,14 +264,14 @@ describe MediaController,
     context "when the resources doesnt exist" do
       it "returns status code 404" do
         delete "/dois/#{datacite_doi.doi}/media/xxx",
-               params: nil, session: headers
+               nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a validation failure message" do
         delete "/dois/#{datacite_doi.doi}/media/xxx",
-               params: nil, session: headers
+               nil, headers
 
         expect(json["errors"].first).to eq(
           "status" => "404",

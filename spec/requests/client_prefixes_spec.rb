@@ -32,7 +32,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
     end
 
     it "returns client-prefixes" do
-      get "/client-prefixes", params: nil, session: headers
+      get "/client-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -49,7 +49,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
     context "when the record exists" do
       it "returns the client-prefix" do
         get "/client-prefixes/#{client_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
@@ -58,7 +58,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/client-prefixes/xxx", params: nil, session: headers
+        get "/client-prefixes/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -72,7 +72,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
   describe "PATCH /client-prefixes/:uid" do
     it "returns method not supported error" do
       patch "/client-prefixes/#{client_prefix.uid}",
-            params: nil, session: headers
+            nil, headers
 
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq(
@@ -101,7 +101,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       end
 
       it "creates a client-prefix" do
-        post "/client-prefixes", params: valid_attributes, session: headers
+        post "/client-prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "id")).not_to be_nil
@@ -115,7 +115,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       end
 
       it "returns status code 422" do
-        post "/client-prefixes", params: not_valid_attributes, session: headers
+        post "/client-prefixes", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -135,7 +135,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
 
     it "deletes the prefix" do
       delete "/client-prefixes/#{client_prefix.uid}",
-             params: nil, session: headers
+             nil, headers
       expect(last_response.status).to eq(204)
     end
   end

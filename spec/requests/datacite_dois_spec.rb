@@ -26,7 +26,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois" do
-      get "/dois", params: nil, session: headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
@@ -34,7 +34,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with scroll" do
-      get "/dois?page[scroll]=1m&page[size]=4", params: nil, session: headers
+      get "/dois?page[scroll]=1m&page[size]=4", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -43,7 +43,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -52,7 +52,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(2)
@@ -62,7 +62,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with offset" do
-      get "/dois?page[number]=1&page[size]=4", params: nil, session: headers
+      get "/dois?page[number]=1&page[size]=4", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -71,7 +71,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=4")
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -80,7 +80,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/dois?page%5Bnumber%5D=3&page%5Bsize%5D=4")
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(2)
@@ -89,7 +89,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with cursor" do
-      get "/dois?page[cursor]&page[size]=4", params: nil, session: headers
+      get "/dois?page[cursor]&page[size]=4", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -100,7 +100,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -111,7 +111,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
 
-      get next_link, params: nil, session: headers
+      get next_link, nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(2)
@@ -121,7 +121,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with extra detail", vcr: true do
-      get "/dois?detail=true", params: nil, session: headers
+      get "/dois?detail=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
@@ -131,7 +131,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns related provider when detail is enabled", vcr: true do
-      get "/dois?detail=true", params: nil, session: headers
+      get "/dois?detail=true", nil, headers
 
       expect(last_response.status).to eq(200)
       json["data"].each do |doi|
@@ -176,7 +176,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with short orcid id", vcr: true do
-      get "/dois?user-id=0000-0003-3484-6875", params: nil, session: headers
+      get "/dois?user-id=0000-0003-3484-6875", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -184,7 +184,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with orcid id", vcr: true do
-      get "/dois?user-id=orcid.org/0000-0003-3484-6875", params: nil, session: headers
+      get "/dois?user-id=orcid.org/0000-0003-3484-6875", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -192,7 +192,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with orcid id as url", vcr: true do
-      get "/dois?user-id=https://orcid.org/0000-0003-3484-6875", params: nil, session: headers
+      get "/dois?user-id=https://orcid.org/0000-0003-3484-6875", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -200,7 +200,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with crossref funder id", vcr: true do
-      get "/dois?funder-id=10.13039/501100009053", params: nil, session: headers
+      get "/dois?funder-id=10.13039/501100009053", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -208,7 +208,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with multiple crossref funder id", vcr: true do
-      get "/dois?funder-id=10.13039/501100009053,10.13039/501100000735", params: nil, session: headers
+      get "/dois?funder-id=10.13039/501100009053,10.13039/501100000735", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -216,7 +216,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with crossref funder id as url", vcr: true do
-      get "/dois?funder-id=https://doi.org/10.13039/501100009053", params: nil, session: headers
+      get "/dois?funder-id=https://doi.org/10.13039/501100009053", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -224,7 +224,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with short ror id", vcr: true do
-      get "/dois?affiliation-id=046ak2485&affiliation=true", params: nil, session: headers
+      get "/dois?affiliation-id=046ak2485&affiliation=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -232,7 +232,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with ror id", vcr: true do
-      get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", params: nil, session: headers
+      get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -240,7 +240,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with ror id as url", vcr: true do
-      get "/dois?affiliation-id=https://ror.org/046ak2485&affiliation=true", params: nil, session: headers
+      get "/dois?affiliation-id=https://ror.org/046ak2485&affiliation=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -248,7 +248,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with re3data id", vcr: true do
-      get "/dois?re3data-id=10.17616/R3XS37&include=client", params: nil, session: headers
+      get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -256,7 +256,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with re3data id as url", vcr: true do
-      get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", params: nil, session: headers
+      get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -264,7 +264,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with full name", vcr: true do
-      get "/dois?query=Kristian%20Garza&affiliation=true", params: nil, session: headers
+      get "/dois?query=Kristian%20Garza&affiliation=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -272,7 +272,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "returns dois with field of science", vcr: true do
-      get "/dois?field-of-science=computer_and_information_sciences", params: nil, session: headers
+      get "/dois?field-of-science=computer_and_information_sciences", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
@@ -291,7 +291,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "when the record exists" do
       it "returns the Doi" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(last_response.status).to eq(200)
         result = json.dig("data")
@@ -305,7 +305,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/dois/10.5256/xxxx", params: nil, session: headers
+        get "/dois/10.5256/xxxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors" => [{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
@@ -317,7 +317,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:provider_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + provider_bearer } }
 
       it "returns the Doi" do
-        get "/dois/#{doi.doi}", params: nil, session: provider_headers
+        get "/dois/#{doi.doi}", nil, provider_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -344,7 +344,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns the creators as list" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "creators")).to eq([doi.creators])
@@ -361,7 +361,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "filter for dissertations" do
-      get "/dois?resource-type=Dissertation", params: nil, session: headers
+      get "/dois?resource-type=Dissertation", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -380,7 +380,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "filter for instruments" do
-      get "/dois?resource-type=Instrument", params: nil, session: headers
+      get "/dois?resource-type=Instrument", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -399,7 +399,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "filter for interactive resources" do
-      get "/dois?resource-type-id=interactive-resource", params: nil, session: headers
+      get "/dois?resource-type-id=interactive-resource", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -419,7 +419,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "filter for fake resources" do
-      get "/dois?resource-type-id=fake", params: nil, session: headers
+      get "/dois?resource-type-id=fake", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -443,7 +443,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     # TODO aggregations in meta should not be by publication year
     it "includes events" do
-      get "/dois", params: nil, session: headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -469,7 +469,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "has views" do
-      get "/dois/#{doi.doi}", params: nil, session: headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("data", "attributes", "url")).to eq(doi.url)
@@ -480,7 +480,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "has views meta" do
-      get "/dois", params: nil, session: headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "views")).to eq([{ "count" => 75, "id" => "2011", "title" => "2011" }])
@@ -498,7 +498,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "has downloads" do
-      get "/dois/#{doi.doi}", params: nil, session: headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("data", "attributes", "url")).to eq(doi.url)
@@ -509,7 +509,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "has downloads meta" do
-      get "/dois", params: nil, session: headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "downloads")).to eq([{ "count" => 30, "id" => "2011", "title" => "2011" }])
@@ -643,7 +643,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "fetches the record" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq(doi.url)
@@ -669,7 +669,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates the record" do
-        patch "/dois/#{doi_id}", params: valid_attributes, session: headers
+        patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi_id.downcase)
@@ -693,7 +693,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates the record" do
-        patch "/dois/#{doi_id}", params: valid_attributes, session: headers
+        patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank" }])
@@ -715,7 +715,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi_id}", params: valid_attributes, session: headers
+        patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi_id.downcase)
@@ -739,7 +739,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi_id}", params: valid_attributes, session: headers
+        patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank" }])
@@ -760,7 +760,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -784,7 +784,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -811,7 +811,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -820,7 +820,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "sets state to draft" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(json.dig("data", "attributes", "state")).to eq("draft")
       end
@@ -854,7 +854,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -873,7 +873,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "raises an error" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(400)
         expect(json.dig("errors")).to eq([{ "status" => "400", "title" => "You need to provide a payload following the JSONAPI spec" }])
@@ -896,7 +896,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the doi" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: admin_headers
+        put "/dois/#{doi.doi}", valid_attributes, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "sizes")).to eq(sizes)
@@ -919,7 +919,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the doi" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: admin_headers
+        put "/dois/#{doi.doi}", valid_attributes, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "formats")).to eq(formats)
@@ -942,7 +942,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns error" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
@@ -954,7 +954,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:valid_attributes) { JSON.parse(file_fixture("datacite_89.json").read) }
 
       it "returns no errors" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
@@ -977,7 +977,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns status code 422" do
-        patch "/dois/10.14454/10703", params: valid_attributes, session: headers
+        patch "/dois/10.14454/10703", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
@@ -1001,7 +1001,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns no errors" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -1026,7 +1026,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates the record" do
-        put "/dois/#{doi_id}", params: valid_attributes, session: headers
+        put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1053,7 +1053,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns error" do
-        put "/dois/#{doi_id}", params: valid_attributes, session: headers
+        put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
@@ -1079,7 +1079,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns error" do
-        put "/dois/#{doi_id}", params: valid_attributes, session: headers
+        put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
@@ -1101,7 +1101,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1110,7 +1110,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "sets state to registered" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(json.dig("data", "attributes", "state")).to eq("draft")
       end
@@ -1136,7 +1136,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1164,7 +1164,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1192,7 +1192,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "error" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string." }])
@@ -1217,7 +1217,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1244,7 +1244,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -1282,17 +1282,17 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates the record" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
       end
 
       it "revert the changes" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
-        post "/dois/undo", params: undo_attributes, session: headers
+        post "/dois/undo", undo_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
@@ -1327,17 +1327,17 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "titles")).to eq(titles)
       end
 
       it "revert the changes" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
-        post "/dois/undo", params: undo_attributes, session: headers
+        post "/dois/undo", undo_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
@@ -1362,7 +1362,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1383,7 +1383,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:valid_attributes) { file_fixture("transfer.json").read }
 
       it "returns errors" do
-        put "/dois/#{doi.doi}", params: valid_attributes.to_json, session: provider_headers
+        put "/dois/#{doi.doi}", valid_attributes.to_json, provider_headers
 
         expect(last_response.status).to eq(403)
       end
@@ -1417,7 +1417,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the client id" do
-        put "/dois/#{doi.doi}", params: valid_attributes.to_json, session: provider_headers
+        put "/dois/#{doi.doi}", valid_attributes.to_json, provider_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
@@ -1450,7 +1450,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the client id" do
-        put "/dois/#{doi.doi}", params: valid_attributes, session: admin_headers
+        put "/dois/#{doi.doi}", valid_attributes, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
@@ -1476,7 +1476,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/#{doi.doi}", params: valid_attributes, session: headers
+        patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
@@ -1506,7 +1506,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -1547,7 +1547,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "fails to create a Doi" do
-        post "/dois", params: valid_attributes
+        post "/dois", valid_attributes
 
         expect(last_response.status).to eq(401)
       end
@@ -1574,7 +1574,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "fails to create a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "url", "title" => "URL is not allowed by repository domain settings." }])
@@ -1598,7 +1598,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "create a draft Doi with version" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "version")).to eq("45")
@@ -1623,7 +1623,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -1667,7 +1667,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -1729,7 +1729,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -1803,7 +1803,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -1853,7 +1853,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "validates a Doi" do
-        post "/dois", params: params, session: headers
+        post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en-US", "title" => "Full DataCite XML Example" }, { "lang" => "en-US", "title" => "Demonstration of DataCite Properties.", "titleType" => "Subtitle" }])
@@ -1882,7 +1882,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "validates a Doi" do
-        post "/dois", params: params, session: headers
+        post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en-US", "title" => "Full DataCite XML Example" }, { "lang" => "en-US", "title" => "Demonstration of DataCite Properties.", "titleType" => "Subtitle" }])
@@ -1910,7 +1910,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "validates a Doi" do
-        post "/dois", params: params, session: headers
+        post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en-US", "title" => "Full DataCite XML Example" }, { "lang" => "en-US", "title" => "Demonstration of DataCite Properties.", "titleType" => "Subtitle" }])
@@ -1953,7 +1953,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "validates a Doi" do
-        post "/dois?affiliation=true", params: params, session: headers
+        post "/dois?affiliation=true", params, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en-US", "title" => "Full DataCite XML Example" }, { "lang" => "en-US", "title" => "Demonstration of DataCite Properties.", "titleType" => "Subtitle" }])
@@ -1998,7 +1998,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/10.14454/8na3-9s47", params: valid_attributes, session: headers
+        patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
@@ -2084,7 +2084,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "created the record" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
@@ -2119,7 +2119,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the record" do
-        patch "/dois/10.14454/q6g15xs4", params: valid_attributes, session: headers
+        patch "/dois/10.14454/q6g15xs4", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://datashare.ucsf.edu/stash/dataset/doi:10.7272/Q6G15XS4")
@@ -2150,7 +2150,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -2181,7 +2181,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "No matching global declaration available for the validation root. at line 2, column 0" }])
@@ -2192,7 +2192,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:valid_attributes) { JSON.parse(file_fixture("datacite_wrong_nameIdentifiers.json").read) }
 
       it "fails to create a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
         expect(last_response.status).to eq(422)
       end
     end
@@ -2201,7 +2201,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
       it "fails to create a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
       end
@@ -2223,7 +2223,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     #     }
     #   end
 
-    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
+    #   before { post '/dois', valid_attributes.to_json, headers: headers }
 
     #   it 'creates a Doi' do
     #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
@@ -2262,7 +2262,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns an error that schema is no longer supported" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
@@ -2286,7 +2286,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2313,7 +2313,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2340,7 +2340,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns an error that schema is no longer supported" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
@@ -2367,7 +2367,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2396,7 +2396,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2423,7 +2423,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2451,7 +2451,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2480,7 +2480,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2508,7 +2508,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns validation error" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid" }])
@@ -2533,7 +2533,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns validation error" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors")).to eq([{ "source" => "metadata", "title" => "Is invalid" }, { "source" => "metadata", "title" => "Is invalid" }])
@@ -2556,7 +2556,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10704")
@@ -2578,7 +2578,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns a validation failure message" do
-        post "/dois", params: not_valid_attributes, session: headers
+        post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
@@ -2601,7 +2601,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: not_valid_attributes, session: headers
+        post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2628,7 +2628,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns a validation failure message" do
-        post "/dois", params: not_valid_attributes, session: headers
+        post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
@@ -2651,7 +2651,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2675,7 +2675,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "returns validation error" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid" }])
         end
@@ -2696,7 +2696,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2720,7 +2720,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json["errors"].size).to eq(1)
@@ -2743,7 +2743,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json["errors"].size).to eq(1)
@@ -2766,7 +2766,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates types are in right format" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json["errors"].first).to eq("source" => "creatorName', attribute 'nameType", "title" => "[facet 'enumeration'] The value 'personal' is not an element of the set {'Organizational', 'Personal'}. at line 12, column 0")
@@ -2788,7 +2788,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2812,7 +2812,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2836,7 +2836,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2860,7 +2860,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2884,7 +2884,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2908,7 +2908,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2932,7 +2932,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
 
         it "validates a Doi" do
-          post "/dois/validate", params: params, session: headers
+          post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2971,7 +2971,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes, session: headers
+        post "/dois", valid_attributes, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
@@ -2982,7 +2982,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       # it 'updates to schema 4.0' do
-      #   put "/dois/10.14454/10703", params: update_attributes.to_json, headers: headers
+      #   put "/dois/10.14454/10703", update_attributes.to_json, headers: headers
 
       #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
       #   expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
@@ -3024,12 +3024,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "add metadata" do
-        put "/dois/10.14454/10703", params: update, session: headers
+        put "/dois/10.14454/10703", update, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
 
-        put "/dois/10.14454/10703", params: valid_attributes, session: headers
+        put "/dois/10.14454/10703", valid_attributes, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
@@ -3051,7 +3051,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "contributors", "title" => "Contributor type Funder is not supported in schema 4." }])
@@ -3072,12 +3072,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         DataciteDoi.import
         sleep 2
 
-        get "/dois", params: nil, session: headers
+        get "/dois", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json["data"].size).to eq(1)
@@ -3110,12 +3110,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         DataciteDoi.import
         sleep 2
 
-        get "/dois", params: nil, session: headers
+        get "/dois", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json["data"].size).to eq(1)
@@ -3145,7 +3145,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
@@ -3170,7 +3170,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "contentUrl")).to eq(content_url)
@@ -3191,7 +3191,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}?affiliation=true", params: update, session: headers
+        patch "/dois/#{doi.doi}?affiliation=true", update, headers
 
         expect(json.dig("data", "attributes", "creators")).to eq(creators)
 
@@ -3281,7 +3281,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         expect(json.dig("data", "attributes", "descriptions")).to eq(descriptions)
         expect(json.dig("data", "attributes", "container")).to be_empty
@@ -3319,19 +3319,19 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids." }])
         expect(json.dig("data", "attributes", "container")).to be_empty
 
-        patch "/dois/#{doi.doi}", params: update, session: headers
+        patch "/dois/#{doi.doi}", update, headers
 
         expect(json.dig("data", "attributes", "descriptions").size).to eq(2)
         expect(json.dig("data", "attributes", "titles", 0, "title")).to eq("Percussive Scoop Sampling in Extreme Terrain")
         expect(json.dig("data", "attributes", "descriptions").last).to eq("description" => "Keck Institute for Space Studies", "descriptionType" => "SeriesInformation")
         expect(json.dig("data", "attributes", "container")).to eq("title" => "Keck Institute for Space Studies", "type" => "Series")
 
-        patch "/dois/#{doi.doi}", params: update_attributes_again, session: headers
+        patch "/dois/#{doi.doi}", update_attributes_again, headers
 
         expect(json.dig("data", "attributes", "descriptions").size).to eq(1)
         expect(json.dig("data", "attributes", "container")).to be_empty
@@ -3374,7 +3374,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a doi" do
-        post "/dois", params: valid_attributes.to_json, session: { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        post "/dois", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq(url)
@@ -3385,7 +3385,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "fails to create a doi with bad data" do
         valid_attributes["data"]["attributes"]["landingPage"] = "http://example.com"
-        post "/dois", params: valid_attributes.to_json, session: { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        post "/dois", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(422)
       end
@@ -3424,7 +3424,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a doi" do
-        put "/dois/#{doi.doi}", params: valid_attributes.to_json, session: { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer }
+        put "/dois/#{doi.doi}", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer }
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -3471,7 +3471,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        post "/dois", params: valid_attributes.to_json, session: { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        post "/dois", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq(url)
@@ -3486,7 +3486,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "draft") }
 
     it "returns status code 204" do
-      delete "/dois/#{doi.doi}", params: nil, session: headers
+      delete "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(204)
       expect(last_response.body).to be_empty
@@ -3497,7 +3497,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
     it "returns status code 405" do
-      delete "/dois/#{doi.doi}", params: nil, session: headers
+      delete "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(405)
       expect(json["errors"]).to eq([{ "status" => "405", "title" => "Method not allowed" }])
@@ -3508,7 +3508,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, client: client, url: nil) }
 
     it "returns dois" do
-      post "/dois/set-url", params: nil, session: admin_headers
+      post "/dois/set-url", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       expect(json["message"]).to eq("Adding missing URLs queued.")
@@ -3572,7 +3572,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json" } }
 
       it "returns without landing page results" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
         expect(json.dig("data", "attributes", "landingPage")).to eq(nil)
@@ -3584,7 +3584,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
       it "returns with landing page results" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
         # expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
@@ -3596,7 +3596,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
       it "returns with landing page results" do
-        get "/dois/#{other_doi.doi}", params: nil, session: headers
+        get "/dois/#{other_doi.doi}", nil, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq(other_doi.doi)
         expect(json.dig("data", "attributes", "landingPage")).to eq(nil)
@@ -3608,7 +3608,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer } }
 
       it "returns with landing page results" do
-        get "/dois/#{doi.doi}", params: nil, session: headers
+        get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
         expect(json.dig("data", "attributes", "landingPage")).to eq(landing_page)
@@ -3618,7 +3618,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
   describe "GET /dois/random?prefix" do
     it "returns random doi with prefix" do
-      get "/dois/random?prefix=#{prefix.uid}", params: nil, session: headers
+      get "/dois/random?prefix=#{prefix.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["dois"].first).to start_with("10.14454")
@@ -3629,7 +3629,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let(:number) { 122149076 }
 
     it "returns predictable doi" do
-      get "/dois/random?prefix=10.14454&number=#{number}", params: nil, session: headers
+      get "/dois/random?prefix=10.14454&number=#{number}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["dois"].first).to eq("10.14454/3mfp-6m52")
@@ -3646,7 +3646,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns url" do
-        get "/dois/#{doi.doi}/get-url", params: nil, session: headers
+        get "/dois/#{doi.doi}/get-url", nil, headers
 
         expect(json["url"]).to eq("https://blog.datacite.org/data-driven-development/")
         expect(last_response.status).to eq(200)
@@ -3662,7 +3662,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns url" do
-        get "/dois/#{doi.doi}/get-url", params: nil, session: headers
+        get "/dois/#{doi.doi}/get-url", nil, headers
 
         expect(json["url"]).to eq("https://example.org")
         expect(last_response.status).to eq(200)
@@ -3678,7 +3678,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns not found" do
-        get "/dois/#{datacite_doi.doi}/get-url", params: nil, session: headers
+        get "/dois/#{datacite_doi.doi}/get-url", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"]).to eq([{ "status" => 404, "title" => "Not found" }])
@@ -3694,7 +3694,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "returns not found" do
-        get "/dois/#{doi.doi}/get-url", params: nil, session: headers
+        get "/dois/#{doi.doi}/get-url", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json["url"]).to eq(doi.url)
@@ -3718,7 +3718,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
     it "returns all dois" do
-      get "/dois/get-dois", params: nil, session: headers
+      get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["dois"].length).to eq(449)
@@ -3750,7 +3750,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:datacite_doi) { create(:doi) }
 
       it "returns error message" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.jats+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors" => [{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
@@ -3761,7 +3761,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:datacite_doi) { create(:doi) }
 
       it "returns error message" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors" => [{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
@@ -3770,7 +3770,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.jats+xml" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.jats+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         jats = Maremma.from_xml(last_response.body).fetch("element_citation", {})
@@ -3792,7 +3792,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.datacite.datacite+xml" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
@@ -3819,7 +3819,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let(:datacite_doi) { create(:doi, xml: xml, client: client, regenerate: false) }
 
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
@@ -3845,7 +3845,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.datacite.datacite+xml not found" do
       it "returns error message" do
-        get "/dois/xxx", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/xxx", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(404)
         expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
@@ -3854,7 +3854,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.datacite.datacite+json" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json["doi"]).to eq(datacite_doi.doi)
@@ -3872,7 +3872,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.crosscite.crosscite+json" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json["doi"]).to eq(datacite_doi.doi)
@@ -3890,7 +3890,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.schemaorg.ld+json" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -3908,7 +3908,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/ld+json" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/ld+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -3926,7 +3926,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/vnd.citationstyles.csl+json" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json["type"]).to eq("dataset")
@@ -3944,7 +3944,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/x-research-info-systems" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/x-research-info-systems", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-research-info-systems", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("TY  - DATA")
@@ -3962,7 +3962,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "application/x-bibtex" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/x-bibtex", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-bibtex", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("@misc{https://doi.org/#{datacite_doi.doi.downcase}")
@@ -3980,7 +3980,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "text/csv" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "text/csv", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "text/csv", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to include(datacite_doi.doi)
@@ -3999,7 +3999,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     context "text/x-bibliography" do
       context "default style" do
         it "returns the Doi" do
-          get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+          get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo, B.")
@@ -4017,7 +4017,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       context "ieee style" do
         it "returns the Doi" do
-          get "/dois/#{datacite_doi.doi}?style=ieee", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+          get "/dois/#{datacite_doi.doi}?style=ieee", nil, { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("B. Ollomo")
@@ -4035,7 +4035,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       context "style and locale" do
         it "returns the Doi" do
-          get "/dois/#{datacite_doi.doi}?style=vancouver&locale=de", params: nil, session: { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+          get "/dois/#{datacite_doi.doi}?style=vancouver&locale=de", nil, { "HTTP_ACCEPT" => "text/x-bibliography", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo B")
@@ -4045,7 +4045,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "unknown content type" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_ACCEPT" => "application/vnd.ms-excel", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.ms-excel", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(406)
         expect(json["errors"]).to eq([{ "status" => "406", "title" => "The content type is not recognized." }])
@@ -4054,7 +4054,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "missing content type" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}", params: nil, session: { "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}",nil, { "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(datacite_doi.doi.downcase)

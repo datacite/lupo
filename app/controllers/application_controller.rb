@@ -77,6 +77,8 @@ class ApplicationController < ActionController::API
       raise JWT::VerificationError
     end
 
+    puts credentials
+
     @current_user = User.new(credentials, type: type)
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 

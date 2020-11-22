@@ -45,7 +45,7 @@
 #   describe "GET #index" do
 #     it "returns a success response" do
 #       metadata = Metadata.create! valid_attributes
-#       get :index, params: {}, session: valid_session
+#       get :index, {}, valid_session
 #       expect(response).to be_success
 #     end
 #   end
@@ -53,7 +53,7 @@
 #   describe "GET #show" do
 #     it "returns a success response" do
 #       metadata = Metadata.create! valid_attributes
-#       get :show, params: {id: metadata.to_param}, session: valid_session
+#       get :show, {id: metadata.to_param}, valid_session
 #       expect(response).to be_success
 #     end
 #   end
@@ -62,13 +62,13 @@
 #     context "with valid params" do
 #       it "creates a new Metadata" do
 #         expect {
-#           post :create, params: {metadata: valid_attributes}, session: valid_session
+#           post :create, {metadata: valid_attributes}, valid_session
 #         }.to change(Metadata, :count).by(1)
 #       end
 #
 #       it "renders a JSON response with the new metadata" do
 #
-#         post :create, params: {metadata: valid_attributes}, session: valid_session
+#         post :create, {metadata: valid_attributes}, valid_session
 #         expect(response).to have_http_status(:created)
 #         expect(response.content_type).to eq('application/json')
 #         expect(response.location).to eq(metadata_url(Metadata.last))
@@ -78,7 +78,7 @@
 #     context "with invalid params" do
 #       it "renders a JSON response with errors for the new metadata" do
 #
-#         post :create, params: {metadata: invalid_attributes}, session: valid_session
+#         post :create, {metadata: invalid_attributes}, valid_session
 #         expect(response).to have_http_status(:unprocessable_entity)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -93,7 +93,7 @@
 #
 #       it "updates the requested metadata" do
 #         metadata = Metadata.create! valid_attributes
-#         put :update, params: {id: metadata.to_param, metadata: new_attributes}, session: valid_session
+#         put :update, {id: metadata.to_param, metadata: new_attributes}, valid_session
 #         metadata.reload
 #         skip("Add assertions for updated state")
 #       end
@@ -101,7 +101,7 @@
 #       it "renders a JSON response with the metadata" do
 #         metadata = Metadata.create! valid_attributes
 #
-#         put :update, params: {id: metadata.to_param, metadata: valid_attributes}, session: valid_session
+#         put :update, {id: metadata.to_param, metadata: valid_attributes}, valid_session
 #         expect(response).to have_http_status(:ok)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -111,7 +111,7 @@
 #       it "renders a JSON response with errors for the metadata" do
 #         metadata = Metadata.create! valid_attributes
 #
-#         put :update, params: {id: metadata.to_param, metadata: invalid_attributes}, session: valid_session
+#         put :update, {id: metadata.to_param, metadata: invalid_attributes}, valid_session
 #         expect(response).to have_http_status(:unprocessable_entity)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -122,7 +122,7 @@
 #     it "destroys the requested metadata" do
 #       metadata = Metadata.create! valid_attributes
 #       expect {
-#         delete :destroy, params: {id: metadata.to_param}, session: valid_session
+#         delete :destroy, {id: metadata.to_param}, valid_session
 #       }.to change(Metadata, :count).by(-1)
 #     end
 #   end

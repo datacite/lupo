@@ -53,7 +53,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
 
     it "returns providers" do
-      get "/providers", params: nil, session: headers
+      get "/providers", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -79,7 +79,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
 
     it "returns providers" do
-      get "/providers?consortium-id=dc", params: nil, session: headers
+      get "/providers?consortium-id=dc", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -91,7 +91,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     context "when the record exists" do
       it "returns the provider" do
         get "/providers/#{provider.symbol.downcase}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
@@ -101,7 +101,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "returns the provider info for member page" do
         get "/providers/#{provider.symbol.downcase}",
-            params: nil, session: headers
+            nil, headers
 
         expect(json["data"]["attributes"]["twitterHandle"]).to eq(
           provider.twitter_handle,
@@ -125,7 +125,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "get provider" do
         get "/providers/#{provider.symbol.downcase}",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(provider.symbol.downcase)
@@ -134,7 +134,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns a not found message" do
-        get "/providers/xxx", params: nil, session: headers
+        get "/providers/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -147,8 +147,8 @@ describe ProvidersController, type: :request, elasticsearch: true do
     context "text/csv" do
       it "returns status code 200" do
         get "/providers/",
-            params: nil,
-            session: {
+            nil,
+            {
               "HTTP_ACCEPT" => "text/csv", "Authorization" => "Bearer " + token
             }
 
@@ -171,7 +171,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
     it "returns provider" do
       get "/providers/#{provider.symbol.downcase}",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("data", "id")).to eq(provider.symbol.downcase)
@@ -194,7 +194,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
 
     it "returns providers" do
-      get "/providers/totals", params: nil, session: headers
+      get "/providers/totals", nil, headers
 
       expect(last_response.status).to eq(200)
       # expect(json['data'].size).to eq(4)
@@ -223,7 +223,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
     it "returns provider" do
       get "/providers/#{provider.symbol.downcase}/stats",
-          params: nil, session: headers
+          nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["clients"]).to eq(
@@ -270,7 +270,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: headers
+        post "/providers", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("British Library")
@@ -304,7 +304,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "has no permission" do
         get "/providers/#{providers.first.symbol}",
-            params: nil, session: headers_last
+            nil, headers_last
 
         expect(json["data"].dig("attributes", "symbol")).to eq(
           providers.first.symbol,
@@ -334,7 +334,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -374,7 +374,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: headers
+        post "/providers", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -393,7 +393,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         get "/providers/#{
               consortium.symbol.downcase
             }?include=consortium-organizations",
-            params: nil, session: headers
+            nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("included", 0, "attributes", "systemEmail")).to eq(
@@ -444,7 +444,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: headers
+        post "/providers", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -485,7 +485,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -536,7 +536,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -613,7 +613,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(
@@ -707,7 +707,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -734,7 +734,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -777,7 +777,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: headers
+        post "/providers", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -803,7 +803,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "creates a provider" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "symbol")).to match(
@@ -829,7 +829,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "returns a validation failure message" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -854,7 +854,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 400" do
-        post "/providers", params: params, session: admin_headers
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(400)
       end
@@ -893,7 +893,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/providers/#{provider.symbol}", params: params, session: headers
+        put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "displayName")).to eq(
@@ -945,8 +945,8 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "updates the record" do
         put "/providers/#{provider.symbol}",
-            params: params, session: consortium_headers
-
+            params, consortium_headers
+        puts consortium_headers
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "displayName")).to eq(
           "British Library",
@@ -990,7 +990,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "updates the record" do
         put "/providers/#{provider.symbol}",
-            params: params, session: consortium_organization_headers
+            params, consortium_organization_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "displayName")).to eq(
@@ -1012,7 +1012,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/providers/#{provider.symbol}", params: params, session: headers
+        put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "displayName")).to eq(
@@ -1032,7 +1032,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/providers/#{provider.symbol}", params: params, session: headers
+        put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -1052,7 +1052,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "raises error" do
-        put "/providers/#{provider.symbol}", params: params, session: headers
+        put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -1094,7 +1094,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/providers/#{provider.symbol}", params: params, session: headers
+        put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "systemEmail")).to eq(
@@ -1121,7 +1121,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 404" do
-        put "/providers/xxx", params: params, session: headers
+        put "/providers/xxx", params, headers
 
         expect(last_response.status).to eq(404)
       end
@@ -1138,7 +1138,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
     it "deletes the provider" do
       delete "/providers/#{provider.symbol.downcase}",
-             params: nil, session: admin_headers
+             nil, admin_headers
       expect(last_response.status).to eq(204)
     end
   end

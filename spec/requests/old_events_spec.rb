@@ -94,7 +94,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     context "as admin user" do
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -124,7 +124,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -137,7 +137,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -156,7 +156,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -186,7 +186,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -211,7 +211,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -236,7 +236,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -255,7 +255,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
         expect(last_response.status).to eq(401)
 
         expect(json["errors"]).to eq(errors)
@@ -274,7 +274,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -291,7 +291,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -305,7 +305,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let!(:event) { create(:event) }
 
       it "JSON" do
-        post uri, params: params, session: headers
+        post uri, params, headers
         puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -346,7 +346,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "has registrant aggregation" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -357,7 +357,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
         Event.import
         sleep 2
-        get uri, params: nil, session: headers
+        get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
         expect(json.dig("meta", "registrants", 0, "id")).to eq(
@@ -398,7 +398,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "are correctly stored" do
-        post uri, params: params, session: headers
+        post uri, params, headers
 
         expect(last_response.status).to eq(201)
         event = Event.where(uuid: json.dig("data", "id")).first
@@ -426,7 +426,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -454,7 +454,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "not registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
       puts json
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -482,7 +482,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -510,7 +510,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -538,7 +538,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -566,7 +566,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     end
 
     it "registered" do
-      post uri, params: params, session: headers
+      post uri, params, headers
 
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
@@ -598,7 +598,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     context "as admin user" do
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -611,7 +611,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -630,7 +630,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -659,7 +659,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -683,7 +683,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -708,7 +708,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -727,7 +727,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(401)
         expect(json["errors"]).to eq(errors)
@@ -747,7 +747,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -764,7 +764,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -778,7 +778,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let!(:event) { create(:event) }
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -811,7 +811,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     context "as admin user" do
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
@@ -823,7 +823,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -842,7 +842,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(403)
         expect(json["errors"]).to eq(
@@ -866,7 +866,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(401)
         expect(json["errors"]).to eq(errors)
@@ -886,7 +886,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
@@ -903,7 +903,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "JSON" do
-        put uri, params: params, session: headers
+        put uri, params, headers
 
         expect(last_response.status).to eq(422)
         error = json["errors"].first
@@ -936,7 +936,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     context "as admin user" do
       it "JSON" do
-        get uri, params: nil, session: headers
+        get uri, nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "relation-type-id")).to eq(
@@ -955,7 +955,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:token) { User.generate_token(role_id: "user") }
 
       it "JSON" do
-        get uri, params: nil, session: headers
+        get uri, nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "relation-type-id")).to eq(
@@ -974,7 +974,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       let(:uri) { "/events/#{event.uuid}x" }
 
       it "JSON" do
-        get uri, params: nil, session: headers
+        get uri, nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"]).to eq(
@@ -1007,7 +1007,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "json" do
-        get uri, params: nil, session: headers
+        get uri, nil, headers
         expect(last_response.status).to eq(404)
       end
     end

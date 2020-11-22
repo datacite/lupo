@@ -13,7 +13,7 @@ describe "random", type: :request do
 
   context "random string" do
     it "creates a random string" do
-      get "/random", params: nil, session: headers
+      get "/random", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["phrase"]).to be_present

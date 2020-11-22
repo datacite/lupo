@@ -45,7 +45,7 @@
 #   describe "GET #index" do
 #     it "returns a success response" do
 #       doi = Doi.create! valid_attributes
-#       get :index, params: {}, session: valid_session
+#       get :index, {}, valid_session
 #       expect(response).to be_success
 #     end
 #   end
@@ -53,7 +53,7 @@
 #   describe "GET #show" do
 #     it "returns a success response" do
 #       doi = Doi.create! valid_attributes
-#       get :show, params: {id: doi.to_param}, session: valid_session
+#       get :show, {id: doi.to_param}, valid_session
 #       expect(response).to be_success
 #     end
 #   end
@@ -62,13 +62,13 @@
 #     context "with valid params" do
 #       it "creates a new Doi" do
 #         expect {
-#           post :create, params: {doi: valid_attributes}, session: valid_session
+#           post :create, {doi: valid_attributes}, valid_session
 #         }.to change(Doi, :count).by(1)
 #       end
 #
 #       it "renders a JSON response with the new doi" do
 #
-#         post :create, params: {doi: valid_attributes}, session: valid_session
+#         post :create, {doi: valid_attributes}, valid_session
 #         expect(response).to have_http_status(:created)
 #         expect(response.content_type).to eq('application/json')
 #         expect(response.location).to eq(doi_url(Doi.last))
@@ -78,7 +78,7 @@
 #     context "with invalid params" do
 #       it "renders a JSON response with errors for the new doi" do
 #
-#         post :create, params: {doi: invalid_attributes}, session: valid_session
+#         post :create, {doi: invalid_attributes}, valid_session
 #         expect(response).to have_http_status(:unprocessable_entity)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -93,7 +93,7 @@
 #
 #       it "updates the requested doi" do
 #         doi = Doi.create! valid_attributes
-#         put :update, params: {id: doi.to_param, doi: new_attributes}, session: valid_session
+#         put :update, {id: doi.to_param, doi: new_attributes}, valid_session
 #         doi.reload
 #         skip("Add assertions for updated state")
 #       end
@@ -101,7 +101,7 @@
 #       it "renders a JSON response with the doi" do
 #         doi = Doi.create! valid_attributes
 #
-#         put :update, params: {id: doi.to_param, doi: valid_attributes}, session: valid_session
+#         put :update, {id: doi.to_param, doi: valid_attributes}, valid_session
 #         expect(response).to have_http_status(:ok)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -111,7 +111,7 @@
 #       it "renders a JSON response with errors for the doi" do
 #         doi = Doi.create! valid_attributes
 #
-#         put :update, params: {id: doi.to_param, doi: invalid_attributes}, session: valid_session
+#         put :update, {id: doi.to_param, doi: invalid_attributes}, valid_session
 #         expect(response).to have_http_status(:unprocessable_entity)
 #         expect(response.content_type).to eq('application/json')
 #       end
@@ -122,7 +122,7 @@
 #     it "destroys the requested doi" do
 #       doi = Doi.create! valid_attributes
 #       expect {
-#         delete :destroy, params: {id: doi.to_param}, session: valid_session
+#         delete :destroy, {id: doi.to_param}, valid_session
 #       }.to change(Doi, :count).by(-1)
 #     end
 #   end

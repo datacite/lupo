@@ -42,7 +42,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
 
     it "returns clients" do
-      get "/clients", params: nil, session: headers
+      get "/clients", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
@@ -83,7 +83,7 @@ describe ClientsController, type: :request, elasticsearch: true do
   describe "GET /clients/:id" do
     context "when the record exists" do
       it "returns the client" do
-        get "/clients/#{client.uid}", params: nil, session: headers
+        get "/clients/#{client.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(client.name)
@@ -95,7 +95,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/clients/xxx", params: nil, session: headers
+        get "/clients/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -123,7 +123,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
 
     it "returns clients" do
-      get "/clients/totals", params: nil, session: headers
+      get "/clients/totals", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.first.dig("count")).to eq(3)
@@ -137,7 +137,7 @@ describe ClientsController, type: :request, elasticsearch: true do
   describe "POST /clients" do
     context "when the request is valid" do
       it "creates a client" do
-        post "/clients", params: params, session: headers
+        post "/clients", params, headers
 
         expect(last_response.status).to eq(201)
         attributes = json.dig("data", "attributes")
@@ -153,7 +153,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         Client.import
         sleep 2
 
-        get "/clients", params: nil, session: headers
+        get "/clients", nil, headers
 
         expect(json["data"].size).to eq(2)
         expect(json.dig("meta", "clientTypes")).to eq(
@@ -181,13 +181,13 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "returns status code 422" do
-        post "/clients", params: params, session: headers
+        post "/clients", params, headers
 
         expect(last_response.status).to eq(422)
       end
 
       it "returns a validation failure message" do
-        post "/clients", params: params, session: headers
+        post "/clients", params, headers
 
         expect(json["errors"]).to eq(
           [
@@ -214,7 +214,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -238,7 +238,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "clientType")).to eq("periodical")
@@ -255,7 +255,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("My data center")
@@ -296,7 +296,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("My data center")
@@ -338,7 +338,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -369,7 +369,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(
@@ -394,7 +394,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
 
       it "returns a validation failure message" do
-        put "/clients/#{client.symbol}", params: params, session: headers
+        put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -406,20 +406,20 @@ describe ClientsController, type: :request, elasticsearch: true do
 
   describe "DELETE /clients/:id" do
     it "returns status code 204" do
-      delete "/clients/#{client.uid}", params: nil, session: headers
+      delete "/clients/#{client.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
     end
 
     context "when the resource doesnt exist" do
       it "returns status code 404" do
-        delete "/clients/xxx", params: nil, session: headers
+        delete "/clients/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a validation failure message" do
-        delete "/clients/xxx", params: nil, session: headers
+        delete "/clients/xxx", nil, headers
 
         expect(json["errors"].first).to eq(
           "status" => "404",
@@ -453,7 +453,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
 
     it "returns status code 200" do
-      put "/clients/#{client.symbol}", params: params, session: headers
+      put "/clients/#{client.symbol}", params, headers
       sleep 1
 
       expect(last_response.status).to eq(200)

@@ -11,7 +11,7 @@ describe "Provider session", type: :request do
     end
 
     it "creates a provider token" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(200)
       payload = provider.decode_token(json.fetch("access_token", {}))
@@ -29,7 +29,7 @@ describe "Provider session", type: :request do
     end
 
     it "returns an error" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(400)
       expect(json.fetch("errors", {})).to eq(
@@ -42,7 +42,7 @@ describe "Provider session", type: :request do
     let(:params) { "grant_type=password&username=#{provider.symbol}" }
 
     it "returns an error" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(400)
       expect(json.fetch("errors", {})).to eq(
@@ -57,7 +57,7 @@ describe "Provider session", type: :request do
     end
 
     it "returns an error" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(400)
       expect(json.fetch("errors", {})).to eq(
@@ -84,7 +84,7 @@ describe "Admin session", type: :request do
     end
 
     it "creates a provider token" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(200)
       payload = provider.decode_token(json.fetch("access_token", {}))
@@ -103,7 +103,7 @@ describe "Client session", type: :request do
     end
 
     it "creates a client token" do
-      post "/token", params: params
+      post "/token", params
 
       expect(last_response.status).to eq(200)
       payload = client.decode_token(json.fetch("access_token", {}))
@@ -129,7 +129,7 @@ describe "reset", type: :request, vcr: true do
     let(:params) { "username=#{client.symbol}" }
 
     it "sends a message" do
-      post "/reset", params: params
+      post "/reset", params
 
       expect(last_response.status).to eq(200)
       expect(json["message"]).to eq("Queued. Thank you.")
@@ -140,7 +140,7 @@ describe "reset", type: :request, vcr: true do
     let(:params) { "username=a" }
 
     it "sends a message" do
-      post "/reset", params: params
+      post "/reset", params
 
       expect(last_response.status).to eq(200)
       expect(json["message"]).to eq("Account not found.")
@@ -151,7 +151,7 @@ describe "reset", type: :request, vcr: true do
     let(:params) { "username=" }
 
     it "sends a message" do
-      post "/reset", params: params
+      post "/reset", params
 
       expect(last_response.status).to eq(200)
       expect(json["message"]).to eq("Missing account ID.")
