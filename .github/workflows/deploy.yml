@@ -10,7 +10,7 @@ jobs:
       memcached:
         image: memcached:1.4.31
         ports:
-          - 11211:11211
+          - 11211
       mysql:
         image: mysql:5.7
         env:
@@ -18,7 +18,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
-          - 3306:3306
+          - 3306
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
         env:
@@ -29,10 +29,11 @@ jobs:
           http.cors.enabled: "true"
           http.cors.allow-origin: "*"
         ports:
-          - 9200:9200
+          - 9200
     env:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
+      MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
       ES_HOST: "localhost:9200"
       ELASTIC_PASSWORD: "changeme"
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
@@ -59,7 +60,6 @@ jobs:
           gem install bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
-          sudo /etc/init.d/mysql start
           bundle exec rails db:setup RAILS_ENV=test      
       - name: Lint and Test
         run: |
