@@ -772,7 +772,7 @@ class Doi < ApplicationRecord
       cursor = [timestamp.to_i, uid.to_s]
     end
 
-    from = 0
+    # from = 0
     search_after = cursor
     sort = [{ created: "asc", uid: "asc" }]
 
@@ -1579,7 +1579,7 @@ class Doi < ApplicationRecord
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{id + 499}."
+    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{id + 499}: #{e.message}."
     count
   end
 
@@ -1634,7 +1634,7 @@ class Doi < ApplicationRecord
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{id + 499}."
+    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{id + 499}: #{e.message}."
     count
   end
 
@@ -2057,7 +2057,7 @@ class Doi < ApplicationRecord
     query = options[:query] || "*"
     size = (options[:size] || 1000).to_i
 
-    response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: 1, cursor: [] })
+    response = Doi.query(query, client_id: options[:client_id].downcase, page: { size: 1, cursor: [] })
     Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:client_target_id] && response.results.total > 0

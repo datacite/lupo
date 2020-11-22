@@ -546,17 +546,17 @@ describe Doi, vcr: true do
   end
 
   context "update_xml" do
-    it "from schema 4" do
-      string = file_fixture("datacite.xml").read
-      subject = create(:doi, xml: string)
+    # it "from schema 4" do
+    #   string = file_fixture("datacite.xml").read
+    #   subject = create(:doi, xml: string)
 
-      # TODO
-      # expect(subject.doi).to eq("10.14454/4k3m-nyvg")
-      # expect(subject.creators).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
-      # expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
-      # expect(subject.publication).to eq("2016")
-      # expect(meta["publisher"]).to eq("DataCite")
-    end
+    #   # TODO
+    #   # expect(subject.doi).to eq("10.14454/4k3m-nyvg")
+    #   # expect(subject.creators).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+    #   # expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
+    #   # expect(subject.publication).to eq("2016")
+    #   # expect(meta["publisher"]).to eq("DataCite")
+    # end
 
     it "from schema 3" do
       string = file_fixture("datacite_schema_3.xml").read

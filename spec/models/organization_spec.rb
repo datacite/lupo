@@ -112,9 +112,8 @@ describe Organization, type: :model, vcr: true do
     end
 
     it "found datacite member" do
-      member =
-        create(
-          :provider,
+      create(
+        :provider,
           role_name: "ROLE_CONSORTIUM_ORGANIZATION",
           name: "University of Cambridge",
           symbol: "LPSW",

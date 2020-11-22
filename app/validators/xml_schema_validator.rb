@@ -57,7 +57,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     schema.validate(Nokogiri.XML(value, nil, "UTF-8")).reduce(
       {},
     ) do |_sum, error|
-      location, level, source, text = error.message.split(": ", 4)
+      location, _level, source, text = error.message.split(": ", 4)
       line, column = location.split(":", 2)
       if line.present?
         title = text.to_s.strip + " at line #{line}, column #{column}"
@@ -67,7 +67,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       record.errors[source.to_sym] << title
     end
   rescue Nokogiri::XML::SyntaxError => e
-    line, column, level, text = e.message.split(":", 4)
+    line, column, _level, text = e.message.split(":", 4)
     message = text.strip + " at line #{line}, column #{column}"
     record.errors[:xml] << message
   end

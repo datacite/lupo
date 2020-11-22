@@ -5,7 +5,6 @@ class UsageReport
   include Modelable
 
   def self.find_by_id(id)
-    ids = id.split(",")
     base_url =
       if Rails.env.production?
         "https://api.datacite.org/reports"

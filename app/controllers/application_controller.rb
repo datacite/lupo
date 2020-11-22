@@ -65,7 +65,7 @@ class ApplicationController < ActionController::API
   def authenticate_user_with_basic_auth!
     @user = authenticate_user!
 
-    request_http_basic_authentication(realm = ENV["REALM"]) if !@user
+    request_http_basic_authentication(ENV["REALM"]) if !@user
 
     @user
   end

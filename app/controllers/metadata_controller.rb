@@ -115,7 +115,7 @@ class MetadataController < ApplicationController
     end
 
     def set_metadata
-      id = Base32::URL.decode(URI.decode(params[:id]))
+      id = Base32::URL.decode(CGI.unescape(params[:id]))
       fail ActiveRecord::RecordNotFound if id.blank?
 
       @metadata = Metadata.where(id: id.to_i).first

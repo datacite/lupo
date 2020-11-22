@@ -121,15 +121,14 @@ module Crosscitable
         ].map { |a| [a.to_sym, send(a.to_s)] }.to_h.
           compact
 
-      meta =
-        if from.present?
-          send(
-            "read_" + from,
-            { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs),
-          )
-        else
-          {}
-        end
+      if from.present?
+        send(
+          "read_" + from,
+          { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs),
+        )
+      else
+        {}
+      end
 
       xml = datacite_xml
 
@@ -142,7 +141,7 @@ module Crosscitable
 
         # enforce utf-8
         string = string.force_encoding("UTF-8")
-      rescue ArgumentError, Encoding::CompatibilityError => e
+      rescue ArgumentError, Encoding::CompatibilityError
         # convert utf-16 to utf-8
         string = string.force_encoding("UTF-16").encode("UTF-8")
         string.gsub!("encoding=\"UTF-16\"", "encoding=\"UTF-8\"")
@@ -191,7 +190,7 @@ module Crosscitable
 
       valid = linter.send(:check_not_empty?, string, errors_array)
       valid &&= linter.send(:check_syntax_valid?, string, errors_array)
-      valid &&= linter.send(:check_overlapping_keys?, string, errors_array)
+      valid && linter.send(:check_overlapping_keys?, string, errors_array)
 
       raise JSON::ParserError, errors_array.join("\n") if errors_array.present?
 

@@ -622,8 +622,7 @@ class Event < ApplicationRecord
       "event" => "publish",
     }
 
-    attrs =
-      %w[
+    %w[
         creators
         contributors
         titles

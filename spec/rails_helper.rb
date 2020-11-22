@@ -67,7 +67,7 @@ RSpec.configure do |config|
 end
 
 VCR.configure do |c|
-  vcr_mode = /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
+  /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
 
   mds_token =
     Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")

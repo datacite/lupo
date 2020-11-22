@@ -22,7 +22,7 @@ Flipper.configure do |config|
           expires_in: 1.hour,
         )
     end
-    flipper = Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)
+    Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)
   end
 end
 

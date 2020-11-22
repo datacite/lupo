@@ -19,7 +19,7 @@ module Cacheable
             "YEAR(metadata.created)",
           ).
             count
-        years = years.map { |k, v| { id: k, title: k, count: v } }
+        years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
@@ -40,7 +40,7 @@ module Cacheable
         years =
           collection.order("YEAR(media.created)").group("YEAR(media.created)").
             count
-        years = years.map { |k, v| { id: k, title: k, count: v } }
+        years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
@@ -105,7 +105,7 @@ module Cacheable
             "YEAR(metadata.created)",
           ).
             count
-        years = years.map { |k, v| { id: k, title: k, count: v } }
+        years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 
@@ -115,7 +115,7 @@ module Cacheable
 
         years =
           Media.order("YEAR(media.created)").group("YEAR(media.created)").count
-        years = years.map { |k, v| { id: k, title: k, count: v } }
+        years.map { |k, v| { id: k, title: k, count: v } }
       end
     end
 

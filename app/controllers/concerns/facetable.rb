@@ -360,21 +360,20 @@ module Facetable
     def clients_totals(arr)
       clients = Client.all.pluck(:symbol, :name).to_h
 
-      arr =
-        arr.map do |hsh|
-          {
-            "id" => hsh["key"],
-            "title" => clients[hsh["key"].upcase],
-            "count" => hsh["doc_count"],
-            "temporal" => {
-              "this_month" => facet_annual(hsh.this_month.buckets),
-              "this_year" => facet_annual(hsh.this_year.buckets),
-              "last_year" => facet_annual(hsh.last_year.buckets),
-              "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
-            },
-            "states" => facet_by_key(hsh.states.buckets),
-          }
-        end
+      arr.map do |hsh|
+        {
+          "id" => hsh["key"],
+          "title" => clients[hsh["key"].upcase],
+          "count" => hsh["doc_count"],
+          "temporal" => {
+            "this_month" => facet_annual(hsh.this_month.buckets),
+            "this_year" => facet_annual(hsh.this_year.buckets),
+            "last_year" => facet_annual(hsh.last_year.buckets),
+            "two_years_ago" => facet_annual(hsh.two_years_ago.buckets),
+          },
+          "states" => facet_by_key(hsh.states.buckets),
+        }
+      end
     end
 
     def facet_by_combined_key(arr)

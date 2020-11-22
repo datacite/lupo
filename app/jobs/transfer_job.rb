@@ -11,13 +11,8 @@ class TransferJob < ApplicationJob
   def perform(doi_id, options = {})
     doi = Doi.where(doi: doi_id).first
 
-    # Success starts as true because update_attributes only returns false on error.
-
     if doi.present? && options[:client_target_id].present?
-      success = true
-      success = doi.update(datacentre: options[:client_target_id])
-
-      __elasticsearch__.index_document if success
+      __elasticsearch__.index_document if doi.update(datacentre: options[:client_target_id]) == true
 
       Rails.logger.info "[Transfer] Transferred DOI #{doi.doi}."
     elsif doi.present?

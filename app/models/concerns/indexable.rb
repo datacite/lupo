@@ -376,10 +376,10 @@ module Indexable
         end
 
         if options[:subj_id].present?
-          filter << { term: { subj_id: URI.decode(options[:subj_id]) } }
+          filter << { term: { subj_id: CGI.unescape(options[:subj_id]) } }
         end
         if options[:obj_id].present?
-          filter << { term: { obj_id: URI.decode(options[:obj_id]) } }
+          filter << { term: { obj_id: CGI.unescape(options[:obj_id]) } }
         end
         if options[:citation_type].present?
           filter << { term: { citation_type: options[:citation_type] } }
@@ -713,7 +713,7 @@ module Indexable
     def create_alias(options = {})
       alias_name = options[:alias] || index_name
       index_name = options[:index] || self.index_name + "_v1"
-      alternate_index_name = options[:index] || self.index_name + "_v2"
+      # alternate_index_name = options[:index] || self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
 
@@ -858,14 +858,14 @@ module Indexable
 
     # delete index and both indexes used for aliasing
     def delete_index(options = {})
-      client = Elasticsearch::Model.client
+      # client = Elasticsearch::Model.client
 
       if options[:index]
         __elasticsearch__.delete_index!(index: options[:index])
         return "Deleted index #{options[:index]}."
       end
 
-      alias_name = index_name
+      # alias_name = index_name
       index_name = self.index_name + "_v1"
       alternate_index_name = self.index_name + "_v2"
 

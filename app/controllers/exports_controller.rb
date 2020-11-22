@@ -61,11 +61,11 @@ class ExportsController < ApplicationController
       contacts = {}
 
       add_contact =
-        Proc.new do |contacts, email, id, firstname, lastname, type|
+        Proc.new do |con, email, id, firstname, lastname, type|
           if email
             fabrica_id = id + "-" + email
-            unless contacts.has_key?(fabrica_id)
-              contacts[fabrica_id] = {
+            unless con.has_key?(fabrica_id)
+              con[fabrica_id] = {
                 "fabricaAccountId" => id,
                 "fabricaId" => fabrica_id,
                 "email" => email,
@@ -74,10 +74,10 @@ class ExportsController < ApplicationController
               }
             end
 
-            if contacts[fabrica_id].has_key?("type")
-              contacts[fabrica_id]["type"] += ";" + type
+            if con[fabrica_id].has_key?("type")
+              con[fabrica_id]["type"] += ";" + type
             else
-              contacts[fabrica_id]["type"] = type
+              con[fabrica_id]["type"] = type
             end
           end
         end

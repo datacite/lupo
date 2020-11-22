@@ -110,6 +110,7 @@ class WorksController < ApplicationController
       options[:meta] = {
         "resource-types" => resource_types,
         registered: registered,
+        providers: providers,
         "data-centers" => clients,
         affiliations: affiliations,
         total: total,

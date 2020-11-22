@@ -89,8 +89,8 @@ class Person
     return [] if response.status != 200
 
     data =
-      Array.wrap(response.body.dig("data", "expanded-result")).map do |message|
-        parse_message(message: message)
+      Array.wrap(response.body.dig("data", "expanded-result")).map do |msg|
+        parse_message(message: msg)
       end
     meta = { "total" => response.body.dig("data", "num-found").to_i }
     errors = response.body.fetch("errors", nil)

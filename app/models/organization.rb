@@ -178,7 +178,7 @@ class Organization
 
   def self.ror_id_from_url(url)
     i = Array(%r{\A(https?://)?(ror\.org/)?(0\w{6}\d{2})\z}.match(url)).last
-    i = "ror.org/#{i}" if i.present?
+    "ror.org/#{i}" if i.present?
   end
 
   def self.crossref_funder_id_from_url(url)

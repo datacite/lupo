@@ -60,7 +60,7 @@ context "validations" do
   end
 
   it "Media type not unique" do
-    media = create(:media, doi: doi)
+    create(:media, doi: doi)
     subject = build(:media, doi: doi, media_type: "text/plain")
     expect(subject).to be_valid
     expect(subject.media_type).to eq("text/plain")

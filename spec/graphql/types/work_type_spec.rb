@@ -553,8 +553,6 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(
         @works[8].identifier,
       )
-      end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
-
       expect(response.dig("data", "associated", "totalCount")).to eq(4)
       expect(response.dig("data", "associated", "published")).to eq(
         [{ "count" => 4, "id" => "2011", "title" => "2011" }],
