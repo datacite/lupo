@@ -1,10 +1,10 @@
-name: Build
+name: Deploy
 on:
   push:
     branches:
       - "master"
 jobs:
-  run:
+  test:
     runs-on: ubuntu-latest
     services:
       memcached:
@@ -15,8 +15,6 @@ jobs:
           MYSQL_DATABASE: datacite
           MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        ports:
-          - "3306:3306"
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
         env:
@@ -26,12 +24,12 @@ jobs:
           xpack.security.enabled: "false"
           http.cors.enabled: "true"
           http.cors.allow-origin: "*"
-        ports:
-          - "9200:9200"
-          - "9300:9300"
-        options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
-    env:
-      COMPOSE_INTERACTIVE_NO_CLI: 1
+    steps:
+      - name: Run
+        run: |
+          cp .env.build .env
+  build_and_push:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,22 +42,18 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      - name: Build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile
-          load: true
-          tags: ${{ github.repository }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Run
-        run: |
-          cp .env.build .env
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push to DockerHub
-        run: docker push ${{ github.repository }}
+      - name: Build and push 
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ github.repository }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
