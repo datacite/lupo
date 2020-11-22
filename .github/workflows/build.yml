@@ -26,12 +26,14 @@ jobs:
           context: .
           file: ./Dockerfile
           load: true
-          tags: lupo:latest
+          tags: datacite/lupo:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Lint and Test
         run: |
           cp .env.build .env
           docker-compose up -d
-          docker-compose exec -T web bundle exec rubocop -a || true
+          docker-compose exec -T web bundle exec rubocop -a
           docker-compose exec -T web bundle exec rake db:setup RAILS_ENV=test
           docker-compose exec -T web bundle exec rspec
       - name: Login to DockerHub
