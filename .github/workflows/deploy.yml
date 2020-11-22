@@ -33,7 +33,6 @@ jobs:
     env:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
-      MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
       ES_HOST: "localhost:9200"
       ELASTIC_PASSWORD: "changeme"
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
@@ -55,6 +54,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gems-
       - name: Install
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
         run: |
           cp .env.build .env
           gem install bundler
