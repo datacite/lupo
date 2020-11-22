@@ -69,7 +69,7 @@ jobs:
       - name: Lint and Test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          ES_HOST: "localhost:9200"
+          ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: "changeme"
         run: |
           bundle exec rubocop
