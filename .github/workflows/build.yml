@@ -6,6 +6,30 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    services:
+      memcached:
+        image: memcached:1.4.31
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: datacite
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+          - "3306:3306"
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+        env:
+          discovery.type: single-node
+          ES_JAVA_OPTS: -Xms512m -Xmx512m
+          ELASTIC_PASSWORD: changeme
+          xpack.security.enabled: "false"
+          http.cors.enabled: "true"
+          http.cors.allow-origin: "*"
+        ports:
+          - "9200:9200"
+          - "9300:9300"
+        options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
     env:
       COMPOSE_INTERACTIVE_NO_CLI: 1
     steps:
@@ -32,12 +56,6 @@ jobs:
       - name: Run
         run: |
           cp .env.build .env
-          docker-compose up -d
-          docker exec -it lupo_web_1 bundle exec rake db:setup RAILS_ENV=test
-      - name: Lint and Test
-        run: |
-          docker exec -it lupo_web_1 bundle exec rubocop -a
-          docker exec -it lupo_web_1 bundle exec rspec
       - name: Login to DockerHub
         uses: docker/login-action@v1 
         with:
