@@ -7,7 +7,7 @@ describe UsageReport, type: :model, vcr: true do
     it "found" do
       id =
         "https://api.test.datacite.org/reports/0498876e-dd55-42b0-b2a6-850df004a0e4"
-      usage_reports = UsageReport.find_by(id: id)
+      usage_reports = UsageReport.find_by_id(id)
       expect(usage_reports[:data].size).to eq(1)
       expect(usage_reports[:data].first).to eq(
         id:
@@ -18,7 +18,7 @@ describe UsageReport, type: :model, vcr: true do
 
     it "not found" do
       id = "xxx"
-      funder = UsageReport.find_by(id: id)
+      funder = UsageReport.find_by_id(id)
       expect(funder).to be_empty
     end
   end

@@ -75,7 +75,7 @@ describe Organization, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://ror.org/0521rfb23"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
@@ -94,7 +94,7 @@ describe Organization, type: :model, vcr: true do
 
     it "also found" do
       id = "https://ror.org/013meh722"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
@@ -120,7 +120,7 @@ describe Organization, type: :model, vcr: true do
           ror_id: "https://ror.org/013meh722",
         )
       id = "https://ror.org/013meh722"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
@@ -139,7 +139,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found funder" do
       id = "https://ror.org/018mejw64"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
@@ -158,7 +158,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found no wikidata id" do
       id = "https://ror.org/02q0ygf45"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/02q0ygf45")
@@ -173,7 +173,7 @@ describe Organization, type: :model, vcr: true do
 
     it "not found in ror" do
       id = "https://doi.org/10.13039/100011105"
-      organizations = Organization.find_by(id: id)
+      organizations = Organization.find_by_id(id)
       expect(organizations[:data]).to be_nil
       expect(organizations[:errors]).to be_nil
     end
@@ -182,7 +182,7 @@ describe Organization, type: :model, vcr: true do
   describe "find_by_grid_id" do
     it "found" do
       id = "https://grid.ac/institutes/grid.417434.1"
-      organizations = Organization.find_by(grid_id: id)
+      organizations = Organization.find_by_grid_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
@@ -201,7 +201,7 @@ describe Organization, type: :model, vcr: true do
 
     it "also found" do
       id = "https://grid.ac/institutes/grid.5335.0"
-      organizations = Organization.find_by(grid_id: id)
+      organizations = Organization.find_by_grid_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
@@ -220,7 +220,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found funder" do
       id = "https://grid.ac/institutes/grid.424150.6"
-      organizations = Organization.find_by(grid_id: id)
+      organizations = Organization.find_by_grid_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
@@ -239,7 +239,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found no wikidata id" do
       id = "https://grid.ac/institutes/grid.487335.e"
-      organizations = Organization.find_by(grid_id: id)
+      organizations = Organization.find_by_grid_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/02q0ygf45")
@@ -254,7 +254,7 @@ describe Organization, type: :model, vcr: true do
 
     it "not found" do
       id = "https://grid.ac/institutes/xxx"
-      organizations = Organization.find_by(grid_id: id)
+      organizations = Organization.find_by_grid_id(id)
       expect(organizations[:data]).to be_nil
       expect(organizations[:errors]).to be_nil
     end
@@ -263,7 +263,7 @@ describe Organization, type: :model, vcr: true do
   describe "find_by_crossref_funder_id" do
     it "found" do
       id = "https://doi.org/10.13039/100007032"
-      organizations = Organization.find_by(crossref_funder_id: id)
+      organizations = Organization.find_by_crossref_funder_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
@@ -282,7 +282,7 @@ describe Organization, type: :model, vcr: true do
 
     it "also found" do
       id = "https://doi.org/10.13039/100010441"
-      organizations = Organization.find_by(crossref_funder_id: id)
+      organizations = Organization.find_by_crossref_funder_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/013meh722")
@@ -301,7 +301,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found funder" do
       id = "https://doi.org/10.13039/501100001659"
-      organizations = Organization.find_by(crossref_funder_id: id)
+      organizations = Organization.find_by_crossref_funder_id(id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/018mejw64")
@@ -320,7 +320,7 @@ describe Organization, type: :model, vcr: true do
 
     it "not found" do
       id = "https://doi.org/10.13039/xxx"
-      organizations = Organization.find_by(crossref_funder_id: id)
+      organizations = Organization.find_by_crossref_funder_id(id)
       expect(organizations[:data]).to be_nil
       expect(organizations[:errors]).to be_nil
     end
@@ -329,7 +329,7 @@ describe Organization, type: :model, vcr: true do
   describe "find_by_wikidata_id" do
     it "found" do
       wikidata_id = "Q35794"
-      organizations = Organization.find_by(wikidata_id: wikidata_id)
+      organizations = Organization.find_by_wikidata_id(wikidata_id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("Q35794")
@@ -344,7 +344,7 @@ describe Organization, type: :model, vcr: true do
 
     it "found funder" do
       wikidata_id = "Q707283"
-      organizations = Organization.find_by(wikidata_id: wikidata_id)
+      organizations = Organization.find_by_wikidata_id(wikidata_id)
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("Q707283")

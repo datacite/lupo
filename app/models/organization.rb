@@ -25,7 +25,7 @@ class Organization
     data = [parse_message(message)]
 
     wikidata = data.dig(0, "wikidata", 0)
-    wikidata_data = find_by(wikidata_id: wikidata)
+    wikidata_data = find_by_wikidata_id(wikidata)
     if wikidata_data
       data = [data.first.reverse_merge(wikidata_data[:data].first)]
     end
@@ -48,7 +48,7 @@ class Organization
     data = [parse_message(message)]
 
     wikidata = data.dig(0, "wikidata", 0)
-    wikidata_data = find_by(wikidata_id: wikidata)
+    wikidata_data = find_by_wikidata_id(wikidata)
     if wikidata_data
       data = [data.first.reverse_merge(wikidata_data[:data].first)]
     end
@@ -74,7 +74,7 @@ class Organization
     data = [parse_message(message)]
 
     wikidata = data.dig(0, "wikidata", 0)
-    wikidata_data = find_by(wikidata_id: wikidata)
+    wikidata_data = find_by_wikidata_id(wikidata)
     if wikidata_data
       data = [data.first.reverse_merge(wikidata_data[:data].first)]
     end

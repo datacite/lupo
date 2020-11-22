@@ -1932,7 +1932,7 @@ class Doi < ApplicationRecord
   end
 
   def check_language
-    entry = ISO_639.find_by(code: language) || ISO_639.find_by(english_name: language.upcase_first)
+    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
     errors.add(:language, "Language #{language} not found.") if entry.blank?
   end
 
@@ -2163,7 +2163,7 @@ class Doi < ApplicationRecord
 
   def update_language
     lang = language.to_s.split("-").first
-    entry = ISO_639.find_by(code: lang) || ISO_639.find_by(english_name: lang.upcase_first)
+    entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
     self.language = if entry.present? && entry.alpha2.present?
       entry.alpha2
     end

@@ -1178,7 +1178,7 @@ class QueryType < BaseObject
   end
 
   def usage_report(id:)
-    result = UsageReport.find_by(id: id).fetch(:data, []).first
+    result = UsageReport.find_by_id(id: id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result

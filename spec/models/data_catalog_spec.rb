@@ -6,7 +6,7 @@ describe DataCatalog, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://doi.org/10.17616/r3qp53"
-      data_catalogs = DataCatalog.find_by(id: id)
+      data_catalogs = DataCatalog.find_by_id(id)
       expect(data_catalogs[:data].size).to eq(1)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3qp53")
@@ -18,7 +18,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "not found" do
       id = "https://doi.org/10.17616/xxxxx"
-      data_catalogs = DataCatalog.find_by(id: id)
+      data_catalogs = DataCatalog.find_by_id(id)
       expect(data_catalogs[:data]).to be_nil
       expect(data_catalogs[:errors]).to be_nil
     end

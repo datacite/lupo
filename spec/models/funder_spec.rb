@@ -6,7 +6,7 @@ describe Funder, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://doi.org/10.13039/501100006568"
-      funder = Funder.find_by(id: id)
+      funder = Funder.find_by_id(id)
       expect(funder[:data].size).to eq(1)
       funder = funder[:data].first
       expect(funder.id).to eq("https://doi.org/10.13039/501100006568")
@@ -23,7 +23,7 @@ describe Funder, type: :model, vcr: true do
 
     it "not found" do
       id = "https://doi.org/10.13039/xxxxx"
-      funder = Funder.find_by(id: id)
+      funder = Funder.find_by_id(id)
       expect(funder[:data]).to be_nil
       expect(funder[:errors]).to eq(
         [{ "status" => 404, "title" => "Not found." }],
@@ -32,7 +32,7 @@ describe Funder, type: :model, vcr: true do
 
     it "not a doi" do
       id = "xxxxx"
-      funder = Funder.find_by(id: id)
+      funder = Funder.find_by_id(id)
       expect(funder[:data]).to be_nil
       expect(funder[:errors]).to eq(
         [{ "status" => 422, "title" => "Not a valid DOI." }],

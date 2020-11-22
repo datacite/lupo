@@ -6,7 +6,7 @@ describe Person, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://orcid.org/0000-0003-2706-4082"
-      people = Person.find_by(id: id)
+      people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-2706-4082")
@@ -23,7 +23,7 @@ describe Person, type: :model, vcr: true do
 
     it "also found" do
       id = "https://orcid.org/0000-0003-3484-6875"
-      people = Person.find_by(id: id)
+      people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-3484-6875")
@@ -65,7 +65,7 @@ describe Person, type: :model, vcr: true do
 
     it "found with biography" do
       id = "https://orcid.org/0000-0003-1419-2405"
-      people = Person.find_by(id: id)
+      people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-1419-2405")
@@ -134,7 +134,7 @@ describe Person, type: :model, vcr: true do
 
     it "found with X in ID" do
       id = "https://orcid.org/0000-0001-7701-701X"
-      people = Person.find_by(id: id)
+      people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0001-7701-701X")
@@ -161,7 +161,7 @@ describe Person, type: :model, vcr: true do
 
     it "account locked" do
       id = "https://orcid.org/0000-0003-1315-5960"
-      expect { Person.find_by(id: id) }.to raise_error(
+      expect { Person.find_by_id(id) }.to raise_error(
         Faraday::ClientError,
         /ORCID record is locked/,
       )
@@ -169,7 +169,7 @@ describe Person, type: :model, vcr: true do
 
     it "not found" do
       id = "https://orcid.org/xxxxx"
-      people = Person.find_by(id: id)
+      people = Person.find_by_id(id)
       expect(people[:data]).to be_nil
       expect(people[:errors]).to be_nil
     end
