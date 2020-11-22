@@ -4054,7 +4054,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "missing content type" do
       it "returns the Doi" do
-        get "/dois/#{datacite_doi.doi}",nil, { "HTTP_AUTHORIZATION" => "Bearer " + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "doi")).to eq(datacite_doi.doi.downcase)
