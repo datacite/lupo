@@ -66,6 +66,8 @@ jobs:
           sudo /etc/init.d/mysql start
           bundle exec rails db:setup RAILS_ENV=test      
       - name: Lint and Test
+        env:
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
         run: |
           bundle exec rubocop
           bundle exec rspec
