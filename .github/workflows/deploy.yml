@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MEMCACHE_SERVERS: "localhost:11211"
-      MYSQL_HOST: "localhost:3306"
+      MYSQL_HOST: "localhost"
       ES_HOST: "localhost:9200"
       ELASTIC_PASSWORD: "changeme"
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
     services:
       memcached:
         image: memcached:1.4.31
@@ -35,17 +37,23 @@ jobs:
           http.cors.allow-origin: "*"
         ports:
           - 9200:9200
-          - 9300:9300
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby 2.6
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.6.x' 
+          ruby-version: '2.6.x'
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
       - name: Install
         run: |
           cp .env.build .env
           gem install bundler
+          bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           bundle exec rails db:setup RAILS_ENV=test      
       - name: Lint and Test
