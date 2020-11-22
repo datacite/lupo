@@ -33,6 +33,8 @@ jobs:
     env:
       MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
+      MYSQL_DATABASE: datacite
+      MYSQL_USER: root
       ES_HOST: "localhost:9200"
       ELASTIC_PASSWORD: "changeme"
       SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
