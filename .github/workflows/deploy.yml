@@ -31,7 +31,7 @@ jobs:
         ports:
           - 9200
     env:
-      MEMCACHE_SERVERS: "localhost:11211"
+      MEMCACHE_SERVERS: "127.0.0.1:11211"
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: datacite
       MYSQL_USER: root
