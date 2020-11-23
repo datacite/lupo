@@ -131,6 +131,7 @@ jobs:
         with:
           # public repo with terraform configuration
           repository: 'datacite/mastino'
+          persist-credentials: false
       - name: Commit changes to terraform config repository
         run: |
           git config --local user.email "action@github.com"
