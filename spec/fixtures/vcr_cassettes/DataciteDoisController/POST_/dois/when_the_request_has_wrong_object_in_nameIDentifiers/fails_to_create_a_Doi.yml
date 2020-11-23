@@ -17,53 +17,20 @@ http_interactions:
       - Basic <HANDLE_TOKEN>
   response:
     status:
-      code: 200
-      message: OK
+      code: 500
+      message: Server Error
     headers:
       Date:
-      - Wed, 11 Nov 2020 08:50:59 GMT
+      - Mon, 23 Nov 2020 19:13:49 GMT
       Content-Type:
       - application/json;charset=UTF-8
+      Content-Length:
+      - '71'
       Connection:
       - keep-alive
-      Vary:
-      - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/10703"}'
+      string: '{"responseCode":2,"message":"Internal Error","handle":"10.14454/10703"}'
     http_version: null
-  recorded_at: Wed, 11 Nov 2020 08:50:59 GMT
-- request:
-    method: put
-    uri: https://handle.test.datacite.org/api/handles/10.14454/10703
-    body:
-      encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://need.org/10.14454/10703"}}]'
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Content-Type:
-      - application/json;charset=UTF-8
-      Authorization:
-      - Basic <HANDLE_TOKEN>
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Wed, 11 Nov 2020 08:51:00 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Vary:
-      - Accept-Encoding
-    body:
-      encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/10703"}'
-    http_version: null
-  recorded_at: Wed, 11 Nov 2020 08:51:00 GMT
+  recorded_at: Mon, 23 Nov 2020 19:13:46 GMT
 recorded_with: VCR 5.1.0
