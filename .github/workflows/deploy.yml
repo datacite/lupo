@@ -116,7 +116,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        # generate tfvars file with GIT_SHA and GIT_TAG values
+      - name: Generate tfvars file
         run: |
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
@@ -126,12 +126,13 @@ jobs:
           ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl
           echo "::set-output name=tfvars::$(STDOUT)"
         id: set_tfvars
-      - name: Update terraform
+      - name: Checkout terraform repo
         uses: actions/checkout@v2
-        # write updated tfvars file to terraform configuration
         with:
           # public repo with terraform configuration
           repository: 'datacite/mastino'
+      - name: Update terraform settings
+        # write updated tfvars file to terraform configuration
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
