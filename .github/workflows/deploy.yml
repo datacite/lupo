@@ -131,6 +131,7 @@ jobs:
         with:
           # public repo with terraform configuration
           repository: 'datacite/mastino'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Update terraform settings
         # write updated tfvars file to terraform configuration
         run: |
