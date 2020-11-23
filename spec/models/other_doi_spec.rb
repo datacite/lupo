@@ -18,7 +18,7 @@ describe OtherDoi, type: :model do
 
     it "import by id" do
       response = OtherDoi.import_by_id(id: doi.id)
-      sleep 2
+      sleep 3
       expect(response).to eq(3)
     end
   end
