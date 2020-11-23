@@ -131,13 +131,16 @@ jobs:
         with:
           # public repo with terraform configuration
           repository: 'datacite/mastino'
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Update terraform settings
-        # write updated tfvars file to terraform configuration
+      - name: Commit changes to terraform config repository
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           echo ${{ steps.set_tfvars.outputs.tfvars }} >> stage/services/client-api/_lupo.auto.tfvars
           git add stage/services/client-api/_lupo.auto.tfvars
           git commit -m "Adding lupo git variables for latest commit"
-          git push
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: 'refs/heads/master'
+          tags: false
