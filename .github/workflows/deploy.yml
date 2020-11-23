@@ -112,9 +112,15 @@ jobs:
   deploy:
     needs: [test, build]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'stage/services/client-api'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          # public repo with terraform configuration
+          repository: 'datacite/mastino'
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
