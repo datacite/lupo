@@ -121,7 +121,7 @@ jobs:
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
-          export GIT_SHA=${{ GITHUB_SHA::8 }} 
+          export GIT_SHA=$(git rev-parse --short HEAD) 
           export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl
           echo "::set-output name=tfvars::$(STDOUT)"
