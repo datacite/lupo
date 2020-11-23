@@ -3024,7 +3024,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "add metadata" do
-        put "/dois/10.14454/10703", update, headers
+        put "/dois/10.14454/10703", update_attributes, headers
 
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
@@ -3051,7 +3051,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "contributors", "title" => "Contributor type Funder is not supported in schema 4." }])
@@ -3072,7 +3072,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         DataciteDoi.import
         sleep 2
@@ -3110,7 +3110,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         DataciteDoi.import
         sleep 2
@@ -3145,7 +3145,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
@@ -3170,7 +3170,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "contentUrl")).to eq(content_url)
@@ -3191,7 +3191,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}?affiliation=true", update, headers
+        patch "/dois/#{doi.doi}?affiliation=true", update_attributes, headers
 
         expect(json.dig("data", "attributes", "creators")).to eq(creators)
 
@@ -3281,7 +3281,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "updates the Doi" do
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig("data", "attributes", "descriptions")).to eq(descriptions)
         expect(json.dig("data", "attributes", "container")).to be_empty
@@ -3324,7 +3324,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids." }])
         expect(json.dig("data", "attributes", "container")).to be_empty
 
-        patch "/dois/#{doi.doi}", update, headers
+        patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig("data", "attributes", "descriptions").size).to eq(2)
         expect(json.dig("data", "attributes", "titles", 0, "title")).to eq("Percussive Scoop Sampling in Extreme Terrain")

@@ -33,7 +33,7 @@ jobs:
           - 9200
         options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
     env:
-      MEMCACHE_SERVERS: "127.0.0.1:11211"
+      MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: datacite
       MYSQL_USER: root
@@ -72,6 +72,7 @@ jobs:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: "changeme"
+          MEMCACHE_SERVERS: "localhost:11211"
         run: |
           bundle exec rubocop
           bundle exec rspec

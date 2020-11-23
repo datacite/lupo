@@ -143,7 +143,7 @@ module Lupo
     end
 
     # configure caching
-    config.cache_store = :dalli_store, nil, { namespace: ENV["APPLICATION"] }
+    config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { namespace: ENV["APPLICATION"] }
 
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :log

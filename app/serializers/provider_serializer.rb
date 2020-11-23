@@ -44,7 +44,7 @@ class ProviderSerializer
   belongs_to :consortium,
              record_type: :providers,
              serializer: ProviderSerializer,
-             if: Proc.new(&:consortium_id)
+             if: Proc.new { |provider| provider.consortium_id }
   has_many :consortium_organizations,
            record_type: :providers,
            serializer: ProviderSerializer,
