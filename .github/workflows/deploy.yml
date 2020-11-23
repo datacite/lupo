@@ -117,14 +117,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Generate tfvars file
-        env:
-          GIT_SHA: $(git rev-parse --short=4 ${{ github.sha }})
-          GIT_TAG: $(git describe --tags $(git rev-list --tags --max-count=1))
         run: |
-          echo $GIT_SHA
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
+          export GIT_SHA=$(git rev-parse --short=4 ${{ github.sha }})
+          export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl
           echo "::set-output name=tfvars::$(STDOUT)"
         id: set_tfvars
