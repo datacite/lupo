@@ -74,6 +74,7 @@ jobs:
         run: |
           bundle exec rubocop
           bundle exec rspec
+          echo $?
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
         env:
