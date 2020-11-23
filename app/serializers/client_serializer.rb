@@ -28,7 +28,7 @@ class ClientSerializer
   belongs_to :consortium,
              record_type: :providers,
              serializer: ProviderSerializer,
-             if: Proc.new(&:consortium_id)
+             if: Proc.new { |provider| provider.consortium_id }
   has_many :prefixes, record_type: :prefixes
 
   attribute :is_active do |object|
