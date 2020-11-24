@@ -21,7 +21,7 @@ class OrganizationConnectionWithTotalType < BaseConnection
 
   def years
     count =
-      YEARS.reduce(0) do |sum, i|
+      YEARS.dup.reduce(0) do |sum, i|
         sum += i["count"]
         sum
       end
@@ -33,7 +33,7 @@ class OrganizationConnectionWithTotalType < BaseConnection
           "count" => object.total_count - count,
         }
       end
-    this_year ? YEARS << this_year : YEARS
+    this_year ? YEARS.dup << this_year : YEARS
   end
 
   def total_count
