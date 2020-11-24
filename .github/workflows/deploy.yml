@@ -31,7 +31,7 @@ jobs:
         ports:
           - 9200
     env:
-      MEMCACHE_SERVERS: "127.0.0.1:11211"
+      MEMCACHE_SERVERS: "localhost:11211"
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: datacite
       MYSQL_USER: root
@@ -43,6 +43,7 @@ jobs:
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
       MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
       MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby 2.6
@@ -70,10 +71,10 @@ jobs:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: "changeme"
-          MEMCACHE_SERVERS: "127.0.0.1:11211"
+          MEMCACHE_SERVERS: "localhost:11211"
         run: |
           bundle exec rubocop
-          bundle exec rake
+          bundle exec rspec
           echo $?
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
