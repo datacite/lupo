@@ -73,7 +73,7 @@ jobs:
           MEMCACHE_SERVERS: "127.0.0.1:11211"
         run: |
           bundle exec rubocop
-          bundle exec rspec
+          bundle exec rake
           echo $?
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.4
