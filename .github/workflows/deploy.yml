@@ -130,8 +130,6 @@ jobs:
           persist-credentials: false
       - name: Commit changes to terraform config repository
         run: |
-          echo ${{ steps.set_git_vars.outputs.GIT_SHA }}
-          echo ${{ steps.set_git_vars.outputs.GIT_TAG }}
           export GIT_SHA=${{ steps.set_git_vars.outputs.GIT_SHA }}
           export GIT_TAG=${{ steps.set_git_vars.outputs.GIT_TAG }}
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
@@ -142,7 +140,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add stage/services/client-api/_lupo.auto.tfvars
-          git commit -m "Adding lupo git variables for latest commit"
+          git commit -m "Adding lupo git variables for commit $(GIT_SHA)"
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
