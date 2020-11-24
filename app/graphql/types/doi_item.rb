@@ -393,7 +393,7 @@ module DoiItem
   def language
     return {} if object.language.blank?
 
-    la = ISO_639.find_by(code: object.language)
+    la = ISO_639.find_by_code(object.language)
 
     {
       id: object.language,

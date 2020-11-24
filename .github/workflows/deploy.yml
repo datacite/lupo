@@ -129,6 +129,8 @@ jobs:
           repository: 'datacite/mastino'
           persist-credentials: false
       - name: Commit changes to terraform config repository
+        # use go template in terraform config repository to update git sha and tag
+        # commit and push changes to trigger terraform workflow
         run: |
           export GIT_SHA=${{ steps.set_git_vars.outputs.GIT_SHA }}
           export GIT_TAG=${{ steps.set_git_vars.outputs.GIT_TAG }}

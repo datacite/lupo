@@ -174,7 +174,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   def facet_by_language(arr)
     arr.map do |hsh|
-      la = ISO_639.find_by(code: hsh["key"])
+      la = ISO_639.find_by_code(hsh["key"])
       {
         "id" => hsh["key"],
         "title" =>
