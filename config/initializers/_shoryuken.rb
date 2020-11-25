@@ -5,12 +5,10 @@ module Shoryuken
   module Middleware
     module Server
       class RavenReporter
-        def call(worker_instance, queue, sqs_msg, body)
-          tags = { job: body['job_class'], queue: queue }
+        def call(_worker_instance, queue, _sqs_msg, body)
+          tags = { job: body["job_class"], queue: queue }
           context = { message: body }
-          Raven.capture(tags: tags, extra: context) do
-            yield
-          end
+          Raven.capture(tags: tags, extra: context) { yield }
         end
       end
     end

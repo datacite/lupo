@@ -20,7 +20,7 @@ namespace :handle do
 
     response = Doi.get_doi(doi: ENV["DOI"])
     url = response.body.dig("data", "values", 0, "data", "value")
-    puts "DOI #{ENV["DOI"]} uses URL #{url}" if url.present?
+    puts "DOI #{ENV['DOI']} uses URL #{url}" if url.present?
   end
 
   desc "Delete DOI"
@@ -34,7 +34,7 @@ namespace :handle do
     end
 
     response = Doi.delete_doi(doi: ENV["DOI"])
-    puts "Deleted DOI #{ENV["DOI"]}." if response.body.dig("data", "responseCode") == 1
+    puts "Deleted DOI #{ENV['DOI']}." if response.body.dig("data", "responseCode") == 1
   end
 
   desc "Delete DOIs with test prefix"

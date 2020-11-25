@@ -7,27 +7,66 @@ class DataCatalogType < BaseObject
   field :type, String, null: false, description: "The type of the item."
   field :identifier, [IdentifierType], null: true, description: "re3data ID"
   field :name, String, null: true, description: "The name of the data catalog."
-  field :alternate_name, [String], null: true, description: "An alias for the data catalog."
-  field :url, String, null: true, hash_key: "repositoryUrl", description: "URL of the data catalog."
-  field :contacts, [String], null: true, description: "Repository contact information"
-  field :description, String, null: true, description: "A description of the data catalog."
-  field :certificates, [DefinedTermType], null: true, description: "Certificates of the data catalog."
-  field :subjects, [DefinedTermType], null: true, description: "Subject areas covered by the data catalog."
+  field :alternate_name,
+        [String],
+        null: true, description: "An alias for the data catalog."
+  field :url,
+        String,
+        null: true,
+        hash_key: "repositoryUrl",
+        description: "URL of the data catalog."
+  field :contacts,
+        [String],
+        null: true, description: "Repository contact information"
+  field :description,
+        String,
+        null: true, description: "A description of the data catalog."
+  field :certificates,
+        [DefinedTermType],
+        null: true, description: "Certificates of the data catalog."
+  field :subjects,
+        [DefinedTermType],
+        null: true, description: "Subject areas covered by the data catalog."
   # field :types, [String], null: true, description: "Repository types"
   # field :content_types, [SchemeType], null: true, description: "Content types"
   field :provider_types, [String], null: true, description: "Provider types"
-  field :in_language, [String], null: true, description: "The language of the content of the data catalog."
-  field :keywords, String, null: true, description: "Keywords or tags used to describe this data catalog. Multiple entries in a keywords list are typically delimited by commas."
-  field :data_accesses, [TextRestrictionType], null: true, description: "Data accesses"
-  field :data_uploads, [TextRestrictionType], null: true, description: "Data uploads"
+  field :in_language,
+        [String],
+        null: true,
+        description: "The language of the content of the data catalog."
+  field :keywords,
+        String,
+        null: true,
+        description:
+          "Keywords or tags used to describe this data catalog. Multiple entries in a keywords list are typically delimited by commas."
+  field :data_accesses,
+        [TextRestrictionType],
+        null: true, description: "Data accesses"
+  field :data_uploads,
+        [TextRestrictionType],
+        null: true, description: "Data uploads"
   field :pid_systems, [String], null: true, description: "PID Systems"
   # field :apis, [ApiType], null: true, description: "APIs"
-  field :software_application, [SoftwareApplicationType], null: true, description: "Software"
-  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
-  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
-  field :citation_count, Integer, null: true, description: "The number of citations."
+  field :software_application,
+        [SoftwareApplicationType],
+        null: true, description: "Software"
+  field :view_count,
+        Integer,
+        null: true,
+        description:
+          "The number of views according to the Counter Code of Practice."
+  field :download_count,
+        Integer,
+        null: true,
+        description:
+          "The number of downloads according to the Counter Code of Practice."
+  field :citation_count,
+        Integer,
+        null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Funded datasets" do
+  field :datasets,
+        DatasetConnectionWithTotalType,
+        null: true, description: "Funded datasets" do
     argument :query, String, required: false
     argument :user_id, String, required: false
     argument :published, String, required: false
@@ -45,7 +84,9 @@ class DataCatalogType < BaseObject
   end
 
   def identifier
-    Array.wrap(object.re3data_id).map { |o| { "name" => "re3data", "value" => "r3d#{o}" } }
+    Array.wrap(object.re3data_id).map do |o|
+      { "name" => "re3data", "value" => "r3d#{o}" }
+    end
   end
 
   def alternate_name
@@ -69,9 +110,8 @@ class DataCatalogType < BaseObject
       term_code, name = s["text"].split(" ", 2)
 
       {
-        "term_code" => term_code,
-        "name" => name,
-        "in_defined_term_set" => "DFG" }
+        "term_code" => term_code, "name" => name, "in_defined_term_set" => "DFG"
+      }
     end
   end
 
@@ -80,22 +120,61 @@ class DataCatalogType < BaseObject
   end
 
   def datasets(**args)
-    Doi.gql_query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], resource_type: args[:resource_type], provider_id: args[:member_id], license: args[:license], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", published: args[:published], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
+    Doi.gql_query(
+      args[:query],
+      re3data_id: object[:id],
+      user_id: args[:user_id],
+      client_id: args[:repository_id],
+      resource_type: args[:resource_type],
+      provider_id: args[:member_id],
+      license: args[:license],
+      has_citations: args[:has_citations],
+      has_parts: args[:has_parts],
+      has_versions: args[:has_versions],
+      has_views: args[:has_views],
+      has_downloads: args[:has_downloads],
+      resource_type_id: "Dataset",
+      published: args[:published],
+      state: "findable",
+      page: {
+        cursor:
+          args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil,
+        size: args[:size],
+      },
+    )
   end
 
   def view_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : 0
+    if response.results.total.positive?
+      aggregate_count(response.response.aggregations.views.buckets)
+    else
+      0
+    end
   end
 
   def download_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : 0
+    if response.results.total.positive?
+      aggregate_count(response.response.aggregations.downloads.buckets)
+    else
+      0
+    end
   end
 
   def citation_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : 0
+    if response.results.total.positive?
+      aggregate_count(response.response.aggregations.citations.buckets)
+    else
+      0
+    end
   end
 
   def response
-    @response ||= Doi.gql_query(nil, re3data_id: object[:id], state: "findable", page: { number: 1, size: 0 })
+    @response ||=
+      Doi.gql_query(
+        nil,
+        re3data_id: object[:id],
+        state: "findable",
+        page: { number: 1, size: 0 },
+      )
   end
 end

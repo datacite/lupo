@@ -1,9 +1,11 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 RSpec.describe Prefix, type: :model do
-  let!(:prefixes)  { create_list(:prefix, 10) }
+  let!(:prefixes) { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
-  
+
   describe "Validations" do
     it { should validate_presence_of(:uid) }
   end
@@ -21,7 +23,8 @@ RSpec.describe Prefix, type: :model do
     end
 
     it "prefixes with where year" do
-      collection = Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
+      collection =
+        Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
       single = collection.first
       expect(single.created_at.year).to eq(prefix.created_at.year)
       expect(single.uid).to eq(prefix.uid)

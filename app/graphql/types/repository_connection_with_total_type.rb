@@ -3,7 +3,7 @@
 class RepositoryConnectionWithTotalType < BaseConnection
   edge_type(RepositoryEdgeType)
   field_class GraphQL::Cache::Field
-  
+
   field :total_count, Integer, null: true, cache: true
   field :years, [FacetType], null: true, cache: true
   field :members, [FacetType], null: true, cache: true

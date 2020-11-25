@@ -1,4 +1,6 @@
-class UpdateProviderIdJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class UpdateProviderIdJob < ApplicationJob
   queue_as :lupo_transfer
 
   # retry_on ActiveRecord::RecordNotFound, wait: 10.seconds, attempts: 3
@@ -14,9 +16,11 @@ class UpdateProviderIdJob < ActiveJob::Base
 
       Rails.logger.warn "[Transfer] updated DOI #{doi.doi}."
     elsif doi.present?
-      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id + ": no target client"
+      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id +
+        ": no target client"
     else
-      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id + ": not found"
+      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id +
+        ": not found"
     end
   end
 end

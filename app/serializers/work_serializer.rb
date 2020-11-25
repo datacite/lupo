@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :dash
@@ -5,17 +7,47 @@ class WorkSerializer
   set_id :identifier
   cache_options enabled: true, cache_length: 24.hours
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :version, :license, :schema_version, :results, :related_identifiers, :citation_count, :citations_over_time, :view_count, :views_over_time, :download_count, :downloads_over_time, :published, :registered, :checked, :updated, :media, :xml
+  attributes :doi,
+             :identifier,
+             :url,
+             :author,
+             :title,
+             :container_title,
+             :description,
+             :resource_type_subtype,
+             :data_center_id,
+             :member_id,
+             :resource_type_id,
+             :version,
+             :license,
+             :schema_version,
+             :results,
+             :related_identifiers,
+             :citation_count,
+             :citations_over_time,
+             :view_count,
+             :views_over_time,
+             :download_count,
+             :downloads_over_time,
+             :published,
+             :registered,
+             :checked,
+             :updated,
+             :media,
+             :xml
 
-  belongs_to :client, key: "data-center", record_type: "data-centers", serializer: :DataCenter
+  belongs_to :client,
+             key: "data-center",
+             record_type: "data-centers",
+             serializer: :DataCenter
   belongs_to :provider, key: :member, record_type: :members, serializer: :Member
-  belongs_to :resource_type, record_type: "resource-types", serializer: :ResourceType
+  belongs_to :resource_type,
+             record_type: "resource-types", serializer: :ResourceType
 
   attribute :author do |object|
     Array.wrap(object.creators).map do |c|
-      if (c["givenName"].present? || c["familyName"].present?)
-        { "given" => c["givenName"],
-          "family" => c["familyName"] }.compact
+      if c["givenName"].present? || c["familyName"].present?
+        { "given" => c["givenName"], "family" => c["familyName"] }.compact
       else
         { "literal" => c["name"] }.presence
       end
@@ -34,9 +66,7 @@ class WorkSerializer
     Array.wrap(object.descriptions).first.to_h.fetch("description", nil)
   end
 
-  attribute :container_title do |object|
-    object.publisher
-  end
+  attribute :container_title, &:publisher
 
   attribute :resource_type_subtype do |object|
     object.types.to_h.fetch("resourceType", nil)
@@ -44,24 +74,14 @@ class WorkSerializer
 
   attribute :resource_type_id do |object|
     rt = object.types.to_h.fetch("resourceTypeGeneral", nil)
-    if rt
-      rt.downcase.dasherize
-    else
-      nil
-    end
+    rt&.downcase&.dasherize
   end
 
-  attribute :data_center_id do |object|
-    object.client_id
-  end
+  attribute :data_center_id, &:client_id
 
-  attribute :member_id do |object|
-    object.provider_id
-  end
+  attribute :member_id, &:provider_id
 
-  attribute :version do |object|
-    object.version_info
-  end
+  attribute :version, &:version_info
 
   attribute :schema_version do |object|
     object.schema_version.to_s.split("-", 2).last.presence
@@ -71,11 +91,11 @@ class WorkSerializer
     Array.wrap(object.rights_list).first.to_h.fetch("rightsUri", nil)
   end
 
-  attribute :results do |object|
+  attribute :results do |_object|
     []
   end
 
-  attribute :related_identifiers do |object|
+  attribute :related_identifiers do |_object|
     []
   end
 
@@ -87,7 +107,7 @@ class WorkSerializer
     Base64.strict_encode64(object.xml) if object.xml.present?
   end
 
-  attribute :checked do |object|
+  attribute :checked do |_object|
     nil
   end
 end

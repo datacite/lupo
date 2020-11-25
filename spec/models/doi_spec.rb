@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe Doi, type: :model, vcr: true do
   it_behaves_like "an STI class"
@@ -178,8 +180,8 @@ describe Doi, type: :model, vcr: true do
     let(:current_user) { User.new(token) }
 
     context "draft doi" do
-      let(:provider)  { create(:provider, symbol: "ADMIN") }
-      let(:client)  { create(:client, provider: provider) }
+      let(:provider) { create(:provider, symbol: "ADMIN") }
+      let(:client) { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
       subject { build(:doi, client: client, current_user: current_user) }
 
@@ -189,8 +191,8 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "registered doi" do
-      let(:provider)  { create(:provider, symbol: "ADMIN") }
-      let(:client)  { create(:client, provider: provider) }
+      let(:provider) { create(:provider, symbol: "ADMIN") }
+      let(:client) { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
       subject { build(:doi, client: client, current_user: current_user) }
 
@@ -202,7 +204,7 @@ describe Doi, type: :model, vcr: true do
 
     context "findable doi" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
-      let(:client)  { create(:client, provider: provider) }
+      let(:client) { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
       subject { build(:doi, client: client, current_user: current_user) }
 
@@ -214,7 +216,7 @@ describe Doi, type: :model, vcr: true do
 
     context "provider europ" do
       let(:provider)  { create(:provider, symbol: "EUROP") }
-      let(:client)  { create(:client, provider: provider) }
+      let(:client) { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
       subject { build(:doi, client: client, current_user: current_user) }
 
@@ -225,8 +227,8 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "no current_user" do
-      let(:provider)  { create(:provider, symbol: "ADMIN") }
-      let(:client)  { create(:client, provider: provider) }
+      let(:provider) { create(:provider, symbol: "ADMIN") }
+      let(:client) { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
       subject { build(:doi, client: client, current_user: nil) }
 
@@ -268,7 +270,7 @@ describe Doi, type: :model, vcr: true do
     it "string" do
       doi.descriptions = ["This is a description."]
       expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:descriptions=>[{:error=>"Description 'This is a description.' should be an object instead of a string."}])
+      expect(doi.errors.details).to eq(descriptions: [{ error: "Description 'This is a description.' should be an object instead of a string." }])
     end
   end
 
@@ -317,35 +319,35 @@ describe Doi, type: :model, vcr: true do
       doi.rights_list = ["Creative Commons Attribution 4.0 International license (CC BY 4.0)"]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
+      expect(doi.rights_list).to eq([{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }])
     end
 
     it "hash rights" do
       doi.rights_list = [{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
+      expect(doi.rights_list).to eq([{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }])
     end
 
     it "hash rightsIdentifier" do
       doi.rights_list = [{ "rightsIdentifier" => "CC-BY-4.0" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+      expect(doi.rights_list).to eq([{ "rights" => "Creative Commons Attribution 4.0 International", "rightsUri" => "https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier" => "cc-by-4.0", "rightsIdentifierScheme" => "SPDX", "schemeUri" => "https://spdx.org/licenses/" }])
     end
 
     it "hash rightsUri" do
-      doi.rights_list = [{ "rightsURI"=>"https://creativecommons.org/licenses/by/4.0/legalcode" }]
+      doi.rights_list = [{ "rightsURI" => "https://creativecommons.org/licenses/by/4.0/legalcode" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+      expect(doi.rights_list).to eq([{ "rights" => "Creative Commons Attribution 4.0 International", "rightsUri" => "https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier" => "cc-by-4.0", "rightsIdentifierScheme" => "SPDX", "schemeUri" => "https://spdx.org/licenses/" }])
     end
 
     it "hash rightsUri http" do
-      doi.rights_list = [{ "rightsURI"=>"http://creativecommons.org/licenses/by/4.0/" }]
+      doi.rights_list = [{ "rightsURI" => "http://creativecommons.org/licenses/by/4.0/" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+      expect(doi.rights_list).to eq([{ "rights" => "Creative Commons Attribution 4.0 International", "rightsUri" => "https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier" => "cc-by-4.0", "rightsIdentifierScheme" => "SPDX", "schemeUri" => "https://spdx.org/licenses/" }])
     end
   end
 
@@ -356,14 +358,14 @@ describe Doi, type: :model, vcr: true do
       doi.subjects = [{ "subject" => "Tree" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
+      expect(doi.subjects).to eq([{ "subject" => "Tree" }])
     end
 
     it "string" do
       doi.subjects = ["Tree"]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
+      expect(doi.subjects).to eq([{ "subject" => "Tree" }])
     end
   end
 
@@ -409,7 +411,7 @@ describe Doi, type: :model, vcr: true do
     it "string" do
       doi.dates = ["2019-08-01"]
       expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 2019-08-01 should be an object instead of a string."}])
+      expect(doi.errors.details).to eq(dates: [{ error: "Date 2019-08-01 should be an object instead of a string." }])
     end
 
     # it "invalid" do
@@ -428,24 +430,24 @@ describe Doi, type: :model, vcr: true do
   describe "identifiers" do
     it "publisher id" do
       subject = build(:doi, identifiers: [{
-        "identifierType": "publisher ID",
-        "identifier": "pk-1234",
-      }])
+                        "identifierType": "publisher ID",
+                        "identifier": "pk-1234",
+                      }])
       expect(subject).to be_valid
-      expect(subject.identifiers).to eq([{"identifier"=>"pk-1234", "identifierType"=>"publisher ID"}])
+      expect(subject.identifiers).to eq([{ "identifier" => "pk-1234", "identifierType" => "publisher ID" }])
     end
 
     it "string" do
       subject = build(:doi, identifiers: ["pk-1234"])
       expect(subject).to_not be_valid
-      expect(subject.errors.messages).to eq(:identifiers=>["Identifier 'pk-1234' should be an object instead of a string."])
+      expect(subject.errors.messages).to eq(identifiers: ["Identifier 'pk-1234' should be an object instead of a string."])
     end
 
     it "doi" do
       subject = build(:doi, identifiers: [{
-        "identifierType": "DOI",
-        "identifier": "10.4224/abc",
-      }])
+                        "identifierType": "DOI",
+                        "identifier": "10.4224/abc",
+                      }])
       expect(subject).to be_valid
       expect(subject.errors.messages).to be_empty
       expect(subject.identifiers).to be_empty
@@ -458,35 +460,35 @@ describe Doi, type: :model, vcr: true do
     it "string" do
       doi.types = "Dataset"
       expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:types=>[{:error=>"Types 'Dataset' should be an object instead of a string."}])
+      expect(doi.errors.details).to eq(types: [{ error: "Types 'Dataset' should be an object instead of a string." }])
     end
 
     it "only resource_type_general" do
       doi.types = { "resourceTypeGeneral" => "Dataset" }
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"DATA", "schemaOrg"=>"Dataset")
+      expect(doi.types).to eq("bibtex" => "misc", "citeproc" => "dataset", "resourceTypeGeneral" => "Dataset", "ris" => "DATA", "schemaOrg" => "Dataset")
     end
 
     it "resource_type and resource_type_general" do
-      doi.types = { "resourceTypeGeneral" => "Dataset", "resourceType" => "EEG data"}
+      doi.types = { "resourceTypeGeneral" => "Dataset", "resourceType" => "EEG data" }
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "resourceType" => "EEG data", "ris"=>"DATA", "schemaOrg"=>"Dataset")
+      expect(doi.types).to eq("bibtex" => "misc", "citeproc" => "dataset", "resourceTypeGeneral" => "Dataset", "resourceType" => "EEG data", "ris" => "DATA", "schemaOrg" => "Dataset")
     end
 
     it "resource_type_general and different schema_org" do
       doi.types = { "resourceTypeGeneral" => "Dataset", "schemaOrg" => "JournalArticle" }
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"DATA", "schemaOrg"=>"JournalArticle")
+      expect(doi.types).to eq("bibtex" => "misc", "citeproc" => "dataset", "resourceTypeGeneral" => "Dataset", "ris" => "DATA", "schemaOrg" => "JournalArticle")
     end
 
     it "resource_type_general and different ris" do
       doi.types = { "resourceTypeGeneral" => "Dataset", "ris" => "GEN" }
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"GEN", "schemaOrg"=>"Dataset")
+      expect(doi.types).to eq("bibtex" => "misc", "citeproc" => "dataset", "resourceTypeGeneral" => "Dataset", "ris" => "GEN", "schemaOrg" => "Dataset")
     end
   end
 
@@ -509,19 +511,19 @@ describe Doi, type: :model, vcr: true do
   # end
 
   describe "metadata" do
-    subject  { create(:doi) }
+    subject { create(:doi) }
 
     it "valid" do
       expect(subject.valid?).to be true
     end
 
     it "titles" do
-      expect(subject.titles).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      expect(subject.titles).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
     end
 
     it "creators" do
       expect(subject.creators.length).to eq(8)
-      expect(subject.creators.first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
+      expect(subject.creators.first).to eq("familyName" => "Ollomo", "givenName" => "Benjamin", "name" => "Ollomo, Benjamin", "nameType" => "Personal")
     end
 
     it "dates" do
@@ -537,12 +539,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      doc = Nokogiri::XML(subject.xml, nil, "UTF-8", &:noblanks)
       expect(doc.at_css("identifier").content).to eq(subject.doi)
     end
 
     it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, "UTF-8", &:noblanks)
       expect(doc.at_css("identifier").content).to eq(subject.doi)
     end
 
@@ -552,24 +554,25 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "change metadata" do
-    let(:xml) { File.read(file_fixture('datacite_f1000.xml')) }
+    let(:xml) { File.read(file_fixture("datacite_f1000.xml")) }
     let(:title) { "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }
-    let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+    let(:creators) { [{ "name" => "Ollomi, Benjamin" }, { "name" => "Duran, Patrick" }] }
     let(:publisher) { "Zenodo" }
     let(:publication_year) { 2011 }
     let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
     let(:description) { "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }
 
-    subject  { create(:doi,
-      xml: xml,
-      titles: [{ "title" => title }],
-      creators: creators,
-      publisher: publisher,
-      publication_year: publication_year,
-      types: types,
-      descriptions: [{ "description" => description }],
-      event: "publish")
-    }
+    subject do
+      create(:doi,
+             xml: xml,
+             titles: [{ "title" => title }],
+             creators: creators,
+             publisher: publisher,
+             publication_year: publication_year,
+             types: types,
+             descriptions: [{ "description" => description }],
+             event: "publish")
+    end
 
     it "titles" do
       expect(subject.titles).to eq([{ "title" => title }])
@@ -582,7 +585,7 @@ describe Doi, type: :model, vcr: true do
       expect(subject.creators).to eq(creators)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+      expect(xml.dig("creators", "creator")).to eq([{ "creatorName" => "Ollomi, Benjamin" }, { "creatorName" => "Duran, Patrick" }])
     end
 
     it "publisher" do
@@ -603,14 +606,14 @@ describe Doi, type: :model, vcr: true do
       expect(subject.types["resourceType"]).to eq("BlogPosting")
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Software", "__content__"=>"BlogPosting")
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral" => "Software", "__content__" => "BlogPosting")
     end
 
     it "resource_type_general" do
       expect(subject.types["resourceTypeGeneral"]).to eq("Software")
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Software", "__content__"=>"BlogPosting")
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral" => "Software", "__content__" => "BlogPosting")
     end
 
     it "descriptions" do
@@ -629,16 +632,16 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "to_jsonapi" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: client) }
 
     it "works" do
       params = doi.to_jsonapi
       expect(params.dig("id")).to eq(doi.doi)
-      expect(params.dig("attributes","state")).to eq("draft")
-      expect(params.dig("attributes","created")).to eq(doi.created)
-      expect(params.dig("attributes","updated")).to eq(doi.updated)
+      expect(params.dig("attributes", "state")).to eq("draft")
+      expect(params.dig("attributes", "created")).to eq(doi.created)
+      expect(params.dig("attributes", "updated")).to eq(doi.updated)
     end
   end
 
@@ -650,12 +653,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "generates datacite_xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      doc = Nokogiri::XML(subject.xml, nil, "UTF-8", &:noblanks)
       expect(doc.at_css("identifier").content).to eq(subject.doi)
     end
 
     it "generates bibtex" do
-      bibtex = BibTeX.parse(subject.bibtex).to_a(quotes: '').first
+      bibtex = BibTeX.parse(subject.bibtex).to_a(quotes: "").first
       expect(bibtex[:bibtex_type].to_s).to eq("misc")
       expect(bibtex[:title].to_s).to eq("Data from: A new malaria agent in African hominids.")
     end
@@ -675,7 +678,7 @@ describe Doi, type: :model, vcr: true do
     it "generates datacite_json" do
       json = JSON.parse(subject.datacite_json)
       expect(json["doi"]).to eq("10.5438/4K3M-NYVG")
-      expect(json["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      expect(json["titles"]).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
     end
 
     it "generates codemeta" do
@@ -692,8 +695,8 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "transfer", elasticsearch: true do
-    let(:provider)  { create(:provider) }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider) }
+    let(:client) { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
     let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
 
@@ -716,7 +719,7 @@ describe Doi, type: :model, vcr: true do
     it "has views" do
       expect(doi.view_events.count).to eq(3)
       expect(doi.view_count).to eq(75)
-      expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
+      expect(doi.views_over_time.first).to eq("total" => 25, "yearMonth" => "2015-06")
 
       view = doi.view_events.first
       expect(view.target_doi).to eq(doi.doi)
@@ -770,7 +773,7 @@ describe Doi, type: :model, vcr: true do
       expect(doi.citations.count).to eq(2)
       expect(doi.citation_ids.count).to eq(2)
       expect(doi.citation_count).to eq(2)
-      expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
+      expect(doi.citations_over_time).to eq([{ "total" => 1, "year" => "2015" }, { "total" => 1, "year" => "2016" }])
 
       citation_id = doi.citation_ids.first
       expect(citation_id).to eq(source_doi.doi.downcase)
@@ -842,17 +845,19 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "convert_affiliations" do
-    let(:doi) { create(:doi)}
+    let(:doi) { create(:doi) }
 
     context "affiliation nil" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": nil
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": nil,
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
@@ -860,14 +865,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "affiliation empty array" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": []
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": [],
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(0)
@@ -875,14 +882,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "affiliation array of hashes" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": [{ "name": "Department of Microbiology; Tartu University; Tartu Estonia" }]
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": [{ "name": "Department of Microbiology; Tartu University; Tartu Estonia" }],
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(0)
@@ -890,14 +899,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "affiliation hash" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": { "name": "Department of Microbiology; Tartu University; Tartu Estonia" }
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": { "name": "Department of Microbiology; Tartu University; Tartu Estonia" },
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
@@ -905,14 +916,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "affiliation array of strings" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": ["Andrology Centre; Tartu University Hospital; Tartu Estonia", "Department of Surgery; Tartu University; Tartu Estonia"]
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": ["Andrology Centre; Tartu University Hospital; Tartu Estonia", "Department of Surgery; Tartu University; Tartu Estonia"],
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
@@ -920,14 +933,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "affiliation string" do
-      let(:creators) { [{
-        "name": "Ausmees, K.",
-        "nameType": "Personal",
-        "givenName": "K.",
-        "familyName": "Ausmees",
-        "affiliation": "Andrology Centre; Tartu University Hospital; Tartu Estonia"
-      }] }
-      let(:doi) { create(:doi, creators: creators, contributors: [])}
+      let(:creators) do
+        [{
+          "name": "Ausmees, K.",
+          "nameType": "Personal",
+          "givenName": "K.",
+          "familyName": "Ausmees",
+          "affiliation": "Andrology Centre; Tartu University Hospital; Tartu Estonia",
+        }]
+      end
+      let(:doi) { create(:doi, creators: creators, contributors: []) }
 
       it "convert" do
         expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
@@ -936,11 +951,11 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "convert_containers" do
-    let(:doi) { create(:doi)}
+    let(:doi) { create(:doi) }
 
     context "container nil" do
       let(:container) { nil }
-      let(:doi) { create(:doi, container: container)}
+      let(:doi) { create(:doi, container: container) }
 
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(0)
@@ -948,17 +963,19 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "container hash with strings" do
-      let(:container) { {
-        "type": "Journal",
-        "issue": "6",
-        "title": "Journal of Crustacean Biology",
-        "volume": "32",
-        "lastPage": "961",
-        "firstPage": "949",
-        "identifier": "1937-240X",
-        "identifierType": "ISSN"
-      } }
-      let(:doi) { create(:doi, container: container)}
+      let(:container) do
+        {
+          "type": "Journal",
+          "issue": "6",
+          "title": "Journal of Crustacean Biology",
+          "volume": "32",
+          "lastPage": "961",
+          "firstPage": "949",
+          "identifier": "1937-240X",
+          "identifierType": "ISSN",
+        }
+      end
+      let(:doi) { create(:doi, container: container) }
 
       it "not convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(0)
@@ -966,17 +983,19 @@ describe Doi, type: :model, vcr: true do
     end
 
     context "container hash with hashes" do
-      let(:container) { {
-        "type": "Journal",
-        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"},
-        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"},
-        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"},
-        "lastPage": "961",
-        "firstPage": "949",
-        "identifier": "1937-240X",
-        "identifierType": "ISSN"
-      } }
-      let(:doi) { create(:doi, container: container)}
+      let(:container) do
+        {
+          "type": "Journal",
+          "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6" },
+          "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology" },
+          "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32" },
+          "lastPage": "961",
+          "firstPage": "949",
+          "identifier": "1937-240X",
+          "identifierType": "ISSN",
+        }
+      end
+      let(:doi) { create(:doi, container: container) }
 
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
@@ -985,53 +1004,57 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "repair landing page" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
     let(:time_now) { Time.zone.now.iso8601 }
 
-    let(:landing_page) { {
-      "checked" => time_now,
-      "status" => 200,
-      "url" => "http://example.com",
-      "contentType" => "text/html",
-      "error" => nil,
-      "redirectCount" => 0,
-      "redirectUrls" => ["http://example.com", "https://example.com"],
-      "downloadLatency" => 200,
-      "hasSchemaOrg" => true,
-      "schemaOrgId" => [
-        {
+    let(:landing_page) do
+      {
+        "checked" => time_now,
+        "status" => 200,
+        "url" => "http://example.com",
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => ["http://example.com", "https://example.com"],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => [
+          {
             "@type": "PropertyValue",
             "propertyID": "URL",
-            "value": "http://dx.doi.org/10.4225/06/565BCE14467D0"
-        }
-      ],
-      "dcIdentifier" => nil,
-      "citationDoi" => nil,
-      "bodyHasPid" => true
-    } }
+            "value": "http://dx.doi.org/10.4225/06/565BCE14467D0",
+          },
+        ],
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true,
+      }
+    end
 
-    let(:doi) {
+    let(:doi) do
       create(:doi, client: client, landing_page: landing_page)
-    }
+    end
 
     before { doi.save }
 
-    let(:fixed_landing_page) { {
-      "checked" => time_now,
-      "status" => 200,
-      "url" => "http://example.com",
-      "contentType" => "text/html",
-      "error" => nil,
-      "redirectCount" => 0,
-      "redirectUrls" => ["http://example.com", "https://example.com"],
-      "downloadLatency" => 200,
-      "hasSchemaOrg" => true,
-      "schemaOrgId" => "http://dx.doi.org/10.4225/06/565BCE14467D0",
-      "dcIdentifier" => nil,
-      "citationDoi" => nil,
-      "bodyHasPid" => true
-    } }
+    let(:fixed_landing_page) do
+      {
+        "checked" => time_now,
+        "status" => 200,
+        "url" => "http://example.com",
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => ["http://example.com", "https://example.com"],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => "http://dx.doi.org/10.4225/06/565BCE14467D0",
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true,
+      }
+    end
 
     it "repairs data" do
       Doi.repair_landing_page(id: doi.id)
@@ -1043,49 +1066,52 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "migrates landing page" do
-    let(:provider)  { create(:provider, symbol: "ADMIN") }
-    let(:client)  { create(:client, provider: provider) }
+    let(:provider) { create(:provider, symbol: "ADMIN") }
+    let(:client) { create(:client, provider: provider) }
 
-    let(:last_landing_page_status_result) { {
-      "error" => nil,
-      "redirect-count" => 0,
-      "redirect-urls" => ["http://example.com", "https://example.com"],
-      "download-latency" => 200.323232,
-      "has-schema-org" => true,
-      "schema-org-id" => "10.14454/10703",
-      "dc-identifier" => nil,
-      "citation-doi" => nil,
-      "body-has-pid" => true
-    } }
+    let(:last_landing_page_status_result) do
+      {
+        "error" => nil,
+        "redirect-count" => 0,
+        "redirect-urls" => ["http://example.com", "https://example.com"],
+        "download-latency" => 200.323232,
+        "has-schema-org" => true,
+        "schema-org-id" => "10.14454/10703",
+        "dc-identifier" => nil,
+        "citation-doi" => nil,
+        "body-has-pid" => true,
+      }
+    end
 
     let(:time_now) { Time.zone.now.iso8601 }
 
-    let(:doi) {
+    let(:doi) do
       create(:doi,
-        client: client,
-        last_landing_page_status: 200,
-        last_landing_page_status_check: time_now,
-        last_landing_page_content_type: "text/html",
-        last_landing_page: "http://example.com",
-        last_landing_page_status_result: last_landing_page_status_result
-        )
-    }
+             client: client,
+             last_landing_page_status: 200,
+             last_landing_page_status_check: time_now,
+             last_landing_page_content_type: "text/html",
+             last_landing_page: "http://example.com",
+             last_landing_page_status_result: last_landing_page_status_result)
+    end
 
-    let(:landing_page) { {
-      "checked" => time_now,
-      "status" => 200,
-      "url" => "http://example.com",
-      "contentType" => "text/html",
-      "error" => nil,
-      "redirectCount" => 0,
-      "redirectUrls" => ["http://example.com", "https://example.com"],
-      "downloadLatency" => 200,
-      "hasSchemaOrg" => true,
-      "schemaOrgId" => "10.14454/10703",
-      "dcIdentifier" => nil,
-      "citationDoi" => nil,
-      "bodyHasPid" => true
-    } }
+    let(:landing_page) do
+      {
+        "checked" => time_now,
+        "status" => 200,
+        "url" => "http://example.com",
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => ["http://example.com", "https://example.com"],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => "10.14454/10703",
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true,
+      }
+    end
 
     before { doi.save }
 
@@ -1117,7 +1143,7 @@ describe Doi, type: :model, vcr: true do
 
       response = subject.stats_query
       expect(response.results.total).to eq(4)
-      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>4, "key"=>1420070400000, "key_as_string"=>"2015"}])
+      expect(response.aggregations.created.buckets).to eq([{ "doc_count" => 4, "key" => 1420070400000, "key_as_string" => "2015" }])
     end
 
     it "counts all consortia dois" do
@@ -1126,7 +1152,7 @@ describe Doi, type: :model, vcr: true do
 
       response = subject.stats_query(consortium_id: "dc")
       expect(response.results.total).to eq(3)
-      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+      expect(response.aggregations.created.buckets).to eq([{ "doc_count" => 3, "key" => 1420070400000, "key_as_string" => "2015" }])
     end
 
     it "counts all consortia dois no dois" do
@@ -1144,7 +1170,7 @@ describe Doi, type: :model, vcr: true do
 
       response = subject.stats_query(provider_id: "datacite")
       expect(response.results.total).to eq(3)
-      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+      expect(response.aggregations.created.buckets).to eq([{ "doc_count" => 3, "key" => 1420070400000, "key_as_string" => "2015" }])
     end
 
     it "counts all provider dois no dois" do
@@ -1162,7 +1188,7 @@ describe Doi, type: :model, vcr: true do
 
       response = subject.stats_query(client_id: "datacite.test")
       expect(response.results.total).to eq(3)
-      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+      expect(response.aggregations.created.buckets).to eq([{ "doc_count" => 3, "key" => 1420070400000, "key_as_string" => "2015" }])
     end
 
     it "counts all client dois no dois" do

@@ -1,4 +1,6 @@
-class ProviderPrefix < ActiveRecord::Base
+# frozen_string_literal: true
+
+class ProviderPrefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -20,40 +22,42 @@ class ProviderPrefix < ActiveRecord::Base
   if Rails.env.test?
     index_name "provider-prefixes-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"provider-prefixes-#{ENV["ES_PREFIX"]}"
+    index_name "provider-prefixes-#{ENV['ES_PREFIX']}"
   else
     index_name "provider-prefixes"
   end
-  
+
   mapping dynamic: "false" do
-    indexes :id,                type: :keyword
-    indexes :uid,               type: :keyword
-    indexes :state,             type: :keyword
-    indexes :provider_id,       type: :keyword
+    indexes :id, type: :keyword
+    indexes :uid, type: :keyword
+    indexes :state, type: :keyword
+    indexes :provider_id, type: :keyword
     indexes :provider_id_and_name, type: :keyword
-    indexes :consortium_id,     type: :keyword
-    indexes :prefix_id,         type: :keyword
-    indexes :client_ids,        type: :keyword
+    indexes :consortium_id, type: :keyword
+    indexes :prefix_id, type: :keyword
+    indexes :client_ids, type: :keyword
     indexes :client_prefix_ids, type: :keyword
-    indexes :created_at,        type: :date
-    indexes :updated_at,        type: :date
+    indexes :created_at, type: :date
+    indexes :updated_at, type: :date
 
     # index associations
-    indexes :provider,           type: :object
-    indexes :prefix,             type: :object, properties: {
-      id: { type: :keyword },
-      uid: { type: :keyword },
-      provider_ids: { type: :keyword },
-      client_ids: { type: :keyword },
-      state: { type: :keyword },
-      prefix: { type: :text },
-      created_at: { type: :date },
-    }
-    indexes :clients,            type: :object
-    indexes :client_prefixes,    type: :object
+    indexes :provider, type: :object
+    indexes :prefix,
+            type: :object,
+            properties: {
+              id: { type: :keyword },
+              uid: { type: :keyword },
+              provider_ids: { type: :keyword },
+              client_ids: { type: :keyword },
+              state: { type: :keyword },
+              prefix: { type: :text },
+              created_at: { type: :date },
+            }
+    indexes :clients, type: :object
+    indexes :client_prefixes, type: :object
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -67,18 +71,47 @@ class ProviderPrefix < ActiveRecord::Base
       "created_at" => created_at,
       "updated_at" => updated_at,
       "provider" => provider.try(:as_indexed_json, exclude_associations: true),
-      "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json, exclude_associations: true),
-      "clients" => options[:exclude_associations] ? nil : clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
-      "client_prefixes" => options[:exclude_associations] ? nil : client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "prefix" =>
+        if options[:exclude_associations]
+          nil
+        else
+          prefix.try(:as_indexed_json, exclude_associations: true)
+        end,
+      "clients" =>
+        if options[:exclude_associations]
+          nil
+        else
+          clients.map do |m|
+            m.try(:as_indexed_json, exclude_associations: true)
+          end
+        end,
+      "client_prefixes" =>
+        if options[:exclude_associations]
+          nil
+        else
+          client_prefixes.map do |m|
+            m.try(:as_indexed_json, exclude_associations: true)
+          end
+        end,
     }
   end
 
   def self.query_aggregations
     {
-      states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
+      states: { terms: { field: "state", size: 2, min_doc_count: 1 } },
+      years: {
+        date_histogram: {
+          field: "created_at",
+          interval: "year",
+          format: "year",
+          order: { _key: "desc" },
+          min_doc_count: 1,
+        },
+        aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
+      },
+      providers: {
+        terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 },
+      },
     }
   end
 
@@ -125,17 +158,12 @@ class ProviderPrefix < ActiveRecord::Base
   end
 
   def state
-    if client_prefix_ids.present?
-      "with-repository"
-    else
-      "without-repository"
-    end
+    client_prefix_ids.present? ? "with-repository" : "without-repository"
   end
 
   private
-
-  # uuid for public id
-  def set_uid
-    self.uid = SecureRandom.uuid
-  end
+    # uuid for public id
+    def set_uid
+      self.uid = SecureRandom.uuid
+    end
 end

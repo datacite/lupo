@@ -1,7 +1,9 @@
-class CamelcaseNestedObjectsByIdJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class CamelcaseNestedObjectsByIdJob < ApplicationJob
   queue_as :lupo_background
 
-  def perform(uuid, options = {})
+  def perform(uuid, _options = {})
     Event.camelcase_nested_objects(uuid)
   end
 end

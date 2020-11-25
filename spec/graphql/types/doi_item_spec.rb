@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe DoiItem do
@@ -27,7 +29,11 @@ describe DoiItem do
     it { is_expected.to have_field(:url).of_type("Url") }
     it { is_expected.to have_field(:repository).of_type("Repository") }
     it { is_expected.to have_field(:member).of_type("Member") }
-    it { is_expected.to have_field(:registrationAgency).of_type("RegistrationAgency") }
+    it do
+      is_expected.to have_field(:registrationAgency).of_type(
+        "RegistrationAgency",
+      )
+    end
     it { is_expected.to have_field(:formattedCitation).of_type("String") }
     it { is_expected.to have_field(:xml).of_type("String!") }
     it { is_expected.to have_field(:bibtex).of_type("String!") }
@@ -41,13 +47,27 @@ describe DoiItem do
     it { is_expected.to have_field(:partCount).of_type("Int") }
     it { is_expected.to have_field(:partOfCount).of_type("Int") }
     it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
-    it { is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]") }
-    it { is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]") }
-    it { is_expected.to have_field(:citations).of_type("WorkConnectionWithTotal") }
-    it { is_expected.to have_field(:references).of_type("WorkConnectionWithTotal") }
+    it do
+      is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]")
+    end
+    it do
+      is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]")
+    end
+    it do
+      is_expected.to have_field(:citations).of_type("WorkConnectionWithTotal")
+    end
+    it do
+      is_expected.to have_field(:references).of_type("WorkConnectionWithTotal")
+    end
     it { is_expected.to have_field(:parts).of_type("WorkConnectionWithTotal") }
-    it { is_expected.to have_field(:part_of).of_type("WorkConnectionWithTotal") }
-    it { is_expected.to have_field(:versions).of_type("WorkConnectionWithTotal") }
-    it { is_expected.to have_field(:version_of).of_type("WorkConnectionWithTotal") }
+    it do
+      is_expected.to have_field(:part_of).of_type("WorkConnectionWithTotal")
+    end
+    it do
+      is_expected.to have_field(:versions).of_type("WorkConnectionWithTotal")
+    end
+    it do
+      is_expected.to have_field(:version_of).of_type("WorkConnectionWithTotal")
+    end
   end
 end

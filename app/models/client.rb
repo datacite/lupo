@@ -1,5 +1,17 @@
-class Client < ActiveRecord::Base
-  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :comments, :experiments, :version, :doi_quota_allowed, :doi_quota_used]
+# frozen_string_literal: true
+
+class Client < ApplicationRecord
+  audited except: %i[
+    globus_uuid
+    salesforce_id
+    password
+    updated
+    comments
+    experiments
+    version
+    doi_quota_allowed
+    doi_quota_used
+  ]
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -33,19 +45,31 @@ class Client < ActiveRecord::Base
   delegate :symbol, to: :provider, prefix: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
-  attr_accessor :password_input
+  attr_accessor :password_input, :target_id
 
   validates_presence_of :symbol, :name, :system_email
-  validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
-  validates_format_of :symbol, :with => /\A([A-Z]+\.[A-Z0-9]+(-[A-Z0-9]+)?)\Z/, message: "should only contain capital letters, numbers, and at most one hyphen"
+  validates_uniqueness_of :symbol,
+                          message: "This Client ID has already been taken"
+  validates_format_of :symbol,
+                      with: /\A([A-Z]+\.[A-Z0-9]+(-[A-Z0-9]+)?)\Z/,
+                      message:
+                        "should only contain capital letters, numbers, and at most one hyphen"
   validates_length_of :symbol, minimum: 5, maximum: 18
-  validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
-  validates_format_of :salesforce_id, :with => /[a-zA-Z0-9]{18}/, message: "wrong format for salesforce id", if: :salesforce_id?
-  validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
-  validates_inclusion_of :client_type, :in => %w( repository periodical ), :message => "Client type %s is not included in the list"
+  validates_format_of :system_email,
+                      with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  validates_format_of :salesforce_id,
+                      with: /[a-zA-Z0-9]{18}/,
+                      message: "wrong format for salesforce id",
+                      if: :salesforce_id?
+  validates_inclusion_of :role_name,
+                         in: %w[ROLE_DATACENTRE],
+                         message: "Role %s is not included in the list"
+  validates_inclusion_of :client_type,
+                         in: %w[repository periodical],
+                         message: "Client type %s is not included in the list"
   validates_associated :provider
-  validate :check_id, :on => :create
-  validate :freeze_symbol, :on => :update
+  validate :check_id, on: :create
+  validate :freeze_symbol, on: :update
   validate :check_issn, if: :issn?
   validate :check_certificate, if: :certificate?
   validate :check_repository_type, if: :repository_type?
@@ -63,13 +87,11 @@ class Client < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  attr_accessor :target_id
-
   # use different index for testing
   if Rails.env.test?
     index_name "clients-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"clients-#{ENV["ES_PREFIX"]}"
+    index_name "clients-#{ENV['ES_PREFIX']}"
   else
     index_name "clients"
   end
@@ -77,143 +99,236 @@ class Client < ActiveRecord::Base
   settings index: {
     analysis: {
       analyzer: {
-        string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
+        string_lowercase: {
+          tokenizer: "keyword", filter: %w[lowercase ascii_folding]
+        },
       },
       normalizer: {
-        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+        keyword_lowercase: { type: "custom", filter: %w[lowercase] },
       },
       filter: {
-        ascii_folding: { type: 'asciifolding', preserve_original: true }
-      }
-    }
+        ascii_folding: {
+          type: "asciifolding", preserve_original: true
+        },
+      },
+    },
   } do
-    mapping dynamic: 'false' do
-      indexes :id,            type: :keyword
-      indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
-      indexes :symbol,        type: :keyword
-      indexes :provider_id,   type: :keyword
+    mapping dynamic: "false" do
+      indexes :id, type: :keyword
+      indexes :uid, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :symbol, type: :keyword
+      indexes :provider_id, type: :keyword
       indexes :provider_id_and_name, type: :keyword
       indexes :consortium_id, type: :keyword
-      indexes :re3data_id,    type: :keyword
-      indexes :opendoar_id,   type: :integer
+      indexes :re3data_id, type: :keyword
+      indexes :opendoar_id, type: :integer
       indexes :salesforce_id, type: :keyword
-      indexes :globus_uuid,   type: :keyword
-      indexes :issn,          type: :object, properties: {
-        issnl: { type: :keyword },
-        electronic: { type: :keyword },
-        print: { type: :keyword }}
-      indexes :prefix_ids,    type: :keyword
-      indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
-      indexes :alternate_name, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
-      indexes :description,   type: :text
-      indexes :system_email,  type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :service_contact, type: :object, properties: {
-        email: { type: :text },
-        given_name: { type: :text},
-        family_name: { type: :text }
-      }
-      indexes :certificate,   type: :keyword
-      indexes :language,      type: :keyword
+      indexes :globus_uuid, type: :keyword
+      indexes :issn,
+              type: :object,
+              properties: {
+                issnl: { type: :keyword },
+                electronic: { type: :keyword },
+                print: { type: :keyword },
+              }
+      indexes :prefix_ids, type: :keyword
+      indexes :name,
+              type: :text,
+              fields: {
+                keyword: { type: "keyword" },
+                raw: {
+                  type: "text", analyzer: "string_lowercase", "fielddata": true
+                },
+              }
+      indexes :alternate_name,
+              type: :text,
+              fields: {
+                keyword: { type: "keyword" },
+                raw: {
+                  type: "text", analyzer: "string_lowercase", "fielddata": true
+                },
+              }
+      indexes :description, type: :text
+      indexes :system_email,
+              type: :text, fields: { keyword: { type: "keyword" } }
+      indexes :service_contact,
+              type: :object,
+              properties: {
+                email: { type: :text },
+                given_name: { type: :text },
+                family_name: { type: :text },
+              }
+      indexes :certificate, type: :keyword
+      indexes :language, type: :keyword
       indexes :repository_type, type: :keyword
-      indexes :version,       type: :integer
-      indexes :is_active,     type: :keyword
-      indexes :domains,       type: :text
-      indexes :year,          type: :integer
-      indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :software,      type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
-      indexes :cache_key,     type: :keyword
-      indexes :client_type,   type: :keyword
-      indexes :created,       type: :date
-      indexes :updated,       type: :date
-      indexes :deleted_at,    type: :date
+      indexes :version, type: :integer
+      indexes :is_active, type: :keyword
+      indexes :domains, type: :text
+      indexes :year, type: :integer
+      indexes :url, type: :text, fields: { keyword: { type: "keyword" } }
+      indexes :software,
+              type: :text,
+              fields: {
+                keyword: { type: "keyword" },
+                raw: {
+                  type: "text", analyzer: "string_lowercase", "fielddata": true
+                },
+              }
+      indexes :cache_key, type: :keyword
+      indexes :client_type, type: :keyword
+      indexes :created, type: :date
+      indexes :updated, type: :date
+      indexes :deleted_at, type: :date
       indexes :cumulative_years, type: :integer, index: "false"
 
       # include parent objects
-      indexes :provider,                       type: :object, properties: {
-        id: { type: :keyword },
-        uid: { type: :keyword },
-        symbol: { type: :keyword },
-        globus_uuid: { type: :keyword },
-        client_ids: { type: :keyword },
-        prefix_ids: { type: :keyword },
-        name: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }} },
-        display_name: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }} },
-        system_email: { type: :text, fields: { keyword: { type: "keyword" }} },
-        group_email: { type: :text, fields: { keyword: { type: "keyword" }} },
-        version: { type: :integer },
-        is_active: { type: :keyword },
-        year: { type: :integer },
-        description: { type: :text },
-        website: { type: :text, fields: { keyword: { type: "keyword" }} },
-        logo_url: { type: :text },
-        region: { type: :keyword },
-        focus_area: { type: :keyword },
-        organization_type: { type: :keyword },
-        member_type: { type: :keyword },
-        consortium_id: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }} },
-        consortium_organization_ids: { type: :keyword },
-        country_code: { type: :keyword },
-        role_name: { type: :keyword },
-        cache_key: { type: :keyword },
-        joined: { type: :date },
-        twitter_handle: { type: :keyword },
-        ror_id: { type: :keyword },
-        salesforce_id: { type: :keyword },
-        billing_information: { type: :object, properties: {
-          postCode: { type: :keyword },
-          state: { type: :text},
-          organization: { type: :text},
-          department: { type: :text},
-          city: { type: :text },
-          country: { type: :text },
-          address: { type: :text }
-        } },
-        technical_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        secondary_technical_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        billing_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        secondary_billing_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        service_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        secondary_service_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        voting_contact: { type: :object, properties: {
-          email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
-        } },
-        created: { type: :date },
-        updated: { type: :date },
-        deleted_at: { type: :date },
-        cumulative_years: { type: :integer, index: "false" },
-        consortium: { type: :object },
-        consortium_organizations: { type: :object }
-      }
+      indexes :provider,
+              type: :object,
+              properties: {
+                id: { type: :keyword },
+                uid: { type: :keyword },
+                symbol: { type: :keyword },
+                globus_uuid: { type: :keyword },
+                client_ids: { type: :keyword },
+                prefix_ids: { type: :keyword },
+                name: {
+                  type: :text,
+                  fields: {
+                    keyword: { type: "keyword" },
+                    raw: {
+                      type: "text",
+                      "analyzer": "string_lowercase",
+                      "fielddata": true,
+                    },
+                  },
+                },
+                display_name: {
+                  type: :text,
+                  fields: {
+                    keyword: { type: "keyword" },
+                    raw: {
+                      type: "text",
+                      "analyzer": "string_lowercase",
+                      "fielddata": true,
+                    },
+                  },
+                },
+                system_email: {
+                  type: :text, fields: { keyword: { type: "keyword" } }
+                },
+                group_email: {
+                  type: :text, fields: { keyword: { type: "keyword" } }
+                },
+                version: { type: :integer },
+                is_active: { type: :keyword },
+                year: { type: :integer },
+                description: { type: :text },
+                website: {
+                  type: :text, fields: { keyword: { type: "keyword" } }
+                },
+                logo_url: { type: :text },
+                region: { type: :keyword },
+                focus_area: { type: :keyword },
+                organization_type: { type: :keyword },
+                member_type: { type: :keyword },
+                consortium_id: {
+                  type: :text,
+                  fields: {
+                    keyword: { type: "keyword" },
+                    raw: {
+                      type: "text",
+                      "analyzer": "string_lowercase",
+                      "fielddata": true,
+                    },
+                  },
+                },
+                consortium_organization_ids: { type: :keyword },
+                country_code: { type: :keyword },
+                role_name: { type: :keyword },
+                cache_key: { type: :keyword },
+                joined: { type: :date },
+                twitter_handle: { type: :keyword },
+                ror_id: { type: :keyword },
+                salesforce_id: { type: :keyword },
+                billing_information: {
+                  type: :object,
+                  properties: {
+                    postCode: { type: :keyword },
+                    state: { type: :text },
+                    organization: { type: :text },
+                    department: { type: :text },
+                    city: { type: :text },
+                    country: { type: :text },
+                    address: { type: :text },
+                  },
+                },
+                technical_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                secondary_technical_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                billing_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                secondary_billing_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                service_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                secondary_service_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                voting_contact: {
+                  type: :object,
+                  properties: {
+                    email: { type: :text },
+                    given_name: { type: :text },
+                    family_name: { type: :text },
+                  },
+                },
+                created: { type: :date },
+                updated: { type: :date },
+                deleted_at: { type: :date },
+                cumulative_years: { type: :integer, index: "false" },
+                consortium: { type: :object },
+                consortium_organizations: { type: :object },
+              }
     end
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -247,24 +362,65 @@ class Client < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
-      "provider" => options[:exclude_associations] ? nil : provider.as_indexed_json(exclude_associations: true)
+      "provider" =>
+        if options[:exclude_associations]
+          nil
+        else
+          provider.as_indexed_json(exclude_associations: true)
+        end,
     }
   end
 
   def self.query_fields
-    ['uid^10', 'symbol^10', 'name^5', 'description^5', 'system_email^5', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
+    %w[
+      uid^10
+      symbol^10
+      name^5
+      description^5
+      system_email^5
+      url
+      software^3
+      repository.subjects.text^3
+      repository.certificates.text^3
+      _all
+    ]
   end
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 20, min_doc_count: 1, order: { _count: "asc" } } },
-      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
-      software: { terms: { field: 'software.keyword', size: 10, min_doc_count: 1 } },
-      client_types: { terms: { field: 'client_type', size: 10, min_doc_count: 1 } },
-      repository_types: { terms: { field: 'repository_type', size: 10, min_doc_count: 1 } },
-      certificates: { terms: { field: 'certificate', size: 10, min_doc_count: 1 } }
+      years: {
+        date_histogram: {
+          field: "created",
+          interval: "year",
+          format: "year",
+          order: { _key: "desc" },
+          min_doc_count: 1,
+        },
+        aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
+      },
+      cumulative_years: {
+        terms: {
+          field: "cumulative_years",
+          size: 20,
+          min_doc_count: 1,
+          order: { _count: "asc" },
+        },
+      },
+      providers: {
+        terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 },
+      },
+      software: {
+        terms: { field: "software.keyword", size: 10, min_doc_count: 1 },
+      },
+      client_types: {
+        terms: { field: "client_type", size: 10, min_doc_count: 1 },
+      },
+      repository_types: {
+        terms: { field: "repository_type", size: 10, min_doc_count: 1 },
+      },
+      certificates: {
+        terms: { field: "certificate", size: 10, min_doc_count: 1 },
+      },
     }
   end
 
@@ -272,9 +428,9 @@ class Client < ActiveRecord::Base
     client = {
       name: name,
       client_id: symbol,
-      provider_id: provider.present? ? provider.symbol : '',
+      provider_id: provider.present? ? provider.symbol : "",
       salesforce_id: salesforce_id,
-      consortium_salesforce_id: provider.present? ? provider.salesforce_id : '',
+      consortium_salesforce_id: provider.present? ? provider.salesforce_id : "",
       is_active: is_active == "\x01",
       created: created,
       updated: updated,
@@ -305,7 +461,7 @@ class Client < ActiveRecord::Base
 
   def provider_id=(value)
     r = Provider.where(symbol: value).first
-    return nil unless r.present?
+    return nil if r.blank?
 
     write_attribute(:allocator, r.id)
   end
@@ -326,7 +482,7 @@ class Client < ActiveRecord::Base
 
   def target_id=(value)
     c = self.class.find_by_id(value)
-    return nil unless c.present?
+    return nil if c.blank?
 
     client_target = c.records.first
     Rails.logger.info "[Transfer] with target client #{client_target.symbol}"
@@ -341,8 +497,13 @@ class Client < ActiveRecord::Base
       return nil
     end
 
-    target_provider = Provider.where("role_name IN (?)", %w(ROLE_ALLOCATOR ROLE_CONSORTIUM_ORGANIZATION))
-                              .where(symbol: provider_target_id).first
+    target_provider =
+      Provider.where(
+        "role_name IN (?)",
+        %w[ROLE_ALLOCATOR ROLE_CONSORTIUM_ORGANIZATION],
+      ).
+        where(symbol: provider_target_id).
+        first
 
     if target_provider.blank?
       Rails.logger.error "[Transfer] Provider doesn't exist."
@@ -358,16 +519,20 @@ class Client < ActiveRecord::Base
     transfer_prefixes(provider_target_id: target_provider.symbol)
 
     # Update DOIs
-    TransferClientJob.perform_later(self, provider_target_id: provider_target_id)
+    TransferClientJob.perform_later(
+      self,
+      provider_target_id: provider_target_id,
+    )
   end
 
   # use keyword arguments consistently
   def transfer_prefixes(provider_target_id: nil)
     # These prefixes are used by multiple clients
-    prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
+    prefixes_to_keep = %w[10.4124 10.4225 10.4226 10.4227]
 
     # delete all associated prefixes
-    associated_prefixes = prefixes.reject{ |prefix| prefixes_to_keep.include?(prefix.uid)}
+    associated_prefixes =
+      prefixes.reject { |prefix| prefixes_to_keep.include?(prefix.uid) }
     prefix_ids = associated_prefixes.pluck(:id)
     prefixes_names = associated_prefixes.pluck(:uid)
 
@@ -378,24 +543,35 @@ class Client < ActiveRecord::Base
 
     # Assign prefix(es) to provider and client
     prefixes_names.each do |prefix|
-      provider_prefix = ProviderPrefix.create(provider_id: provider_target_id, prefix_id: prefix)
-      Rails.logger.info "[Transfer][Prefix] Provider prefix for provider #{provider_target_id} and prefix #{prefix} created."
+      provider_prefix =
+        ProviderPrefix.create(
+          provider_id: provider_target_id, prefix_id: prefix,
+        )
+      Rails.logger.info "[Transfer][Prefix] Provider prefix for provider #{
+                          provider_target_id
+                        } and prefix #{prefix} created."
 
-      ClientPrefix.create(client_id: symbol, provider_prefix_id: provider_prefix.uid, prefix_id: prefix)
-      Rails.logger.info "[Transfer][Prefix] Client prefix for client #{symbol} and prefix #{prefix} created."
+      ClientPrefix.create(
+        client_id: symbol,
+        provider_prefix_id: provider_prefix.uid,
+        prefix_id: prefix,
+      )
+      Rails.logger.info "[Transfer][Prefix] Client prefix for client #{symbol} and prefix #{
+                          prefix
+                        } created."
     end
   end
 
   def service_contact_email
-    service_contact.fetch("email",nil) if service_contact.present?
+    service_contact.fetch("email", nil) if service_contact.present?
   end
 
   def service_contact_given_name
-    service_contact.fetch("given_name",nil) if service_contact.present?
+    service_contact.fetch("given_name", nil) if service_contact.present?
   end
 
   def service_contact_family_name
-    service_contact.fetch("family_name",nil) if service_contact.present?
+    service_contact.fetch("family_name", nil) if service_contact.present?
   end
 
   # def index_all_dois
@@ -440,149 +616,204 @@ class Client < ActiveRecord::Base
       "opendoar_id" => opendoar_id,
       "domains" => domains,
       "provider-id" => provider_id,
-      "prefixes" => prefixes.map { |p| p.prefix },
+      "prefixes" => prefixes.map(&:prefix),
       "is-active" => is_active.getbyte(0) == 1,
       "version" => version,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
-      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
+      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
+    }
 
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
   def self.export_doi_counts(query: nil)
-    begin
-      # Loop through all clients
-      page = { size: 1000, number: 1 }
+    # Loop through all clients
+    page = { size: 1_000, number: 1 }
+    response = self.query(query, page: page)
+    clients = response.results.to_a
+
+    total = response.results.total
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+    # keep going for all pages
+    page_num = 2
+    while page_num <= total_pages
+      page = { size: 1_000, number: page_num }
       response = self.query(query, page: page)
-      clients = response.results.to_a
+      clients = clients + response.results.to_a
+      page_num += 1
+    end
 
-      total = response.results.total
-      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+    # Get doi counts via DOIs query and combine next to clients.
+    response =
+      DataciteDoi.query(
+        nil,
+        page: { size: 0, number: 1 }, totals_agg: "client_export",
+      )
 
-      # keep going for all pages
-      page_num = 2
-      while page_num <= total_pages
-        page = { size: 1000, number: page_num }
-        response = self.query(query, page: page)
-        clients = clients + response.results.to_a
-        page_num += 1
-      end
+    client_totals = {}
+    totals_buckets = response.aggregations.clients_totals.buckets
+    totals_buckets.each do |totals|
+      client_totals[totals["key"]] = { "count" => totals["doc_count"] }
+    end
 
-      # Get doi counts via DOIs query and combine next to clients.
-      response = DataciteDoi.query(nil, page: { size: 0, number: 1 }, totals_agg: "client_export")
+    headers = [
+      "Repository Name",
+      "Repository ID",
+      "Organization",
+      "doisTotal",
+      "missing",
+    ]
 
-      client_totals = {}
-      totals_buckets = response.aggregations.clients_totals.buckets
-      totals_buckets.each do |totals|
-        client_totals[totals["key"]] = {
-          "count" => totals["doc_count"]
-        }
-      end
-
-      headers = [
-        "Repository Name",
-        "Repository ID",
-        "Organization",
-        "doisTotal",
-        "missing"
-      ]
-
-      csv = clients.reduce(headers.to_csv) do |sum, client|
-        db_total = DataciteDoi.where(datacentre: client.id).count
-        es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
-        if db_total - es_total > 0
+    dois_by_client = DataciteDoi.group(:datacentre).count
+    rows =
+      clients.reduce([]) do |sum, client|
+        db_total = dois_by_client.dig(client.id).to_i
+        es_total =
+          client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
+        if (db_total - es_total) > 0
           # Limit for salesforce default of max 80 chars
           name = +client.name.truncate(80)
           # Clean the name to remove quotes, which can break csv parsers
-          name.gsub! /["']/, ''
+          name.gsub!(/["']/, "")
 
           row = {
             accountName: name,
             fabricaAccountId: client.symbol,
-            parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
+            parentFabricaAccountId:
+              client.provider.present? ? client.provider.symbol : nil,
             doisCountTotal: db_total,
-            doisMissing: db_total - es_total
+            doisMissing: db_total - es_total,
           }.values
 
-          sum += CSV.generate_line row
+          puts CSV.generate_line(row)
+
+          sum << CSV.generate_line(row)
         end
 
         sum
       end
 
-      logger.warn "Found #{csv.lines.count - 1} repositories with missing DOIs."
+    csv = CSV::Table.new(rows, headers: headers)
 
-      csv
-    end
+    logger.warn "Found #{csv.count} repositories with missing DOIs."
+
+    csv.to_csv
   end
 
   protected
-
-  def check_issn
-    Array.wrap(issn).each do |i|
-      if !(i.is_a?(Hash))
-        errors.add(:issn, "ISSN should be an object and not a string.")
-      elsif i["issnl"].present?
-        errors.add(:issn, "ISSN-L #{i["issnl"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["issnl"])
+    def check_issn
+      Array.wrap(issn).each do |i|
+        if !i.is_a?(Hash)
+          errors.add(:issn, "ISSN should be an object and not a string.")
+        elsif i["issnl"].present?
+          unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match?(i["issnl"])
+            errors.add(:issn, "ISSN-L #{i['issnl']} is in the wrong format.")
+          end
+        end
+        if i["electronic"].present?
+          unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match?(i["electronic"])
+            errors.add(
+              :issn,
+              "ISSN (electronic) #{i['electronic']} is in the wrong format.",
+            )
+          end
+        end
+        if i["print"].present?
+          unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match?(i["print"])
+            errors.add(
+              :issn,
+              "ISSN (print) #{i['print']} is in the wrong format.",
+            )
+          end
+        end
       end
-      if i["electronic"].present?
-        errors.add(:issn, "ISSN (electronic) #{i["electronic"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["electronic"])
+    end
+
+    def check_language
+      Array.wrap(language).each do |l|
+        errors.add(:issn, "Language can't be empty.") if l.blank?
       end
-      if i["print"].present?
-        errors.add(:issn, "ISSN (print) #{i["print"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["print"])
+    end
+
+    def check_certificate
+      Array.wrap(certificate).each do |c|
+        unless [
+          "CoreTrustSeal",
+          "DIN 31644",
+          "DINI",
+          "DSA",
+          "RatSWD",
+          "WDS",
+          "CLARIN",
+        ].include?(c)
+          errors.add(
+            :certificate,
+            "Certificate #{
+            c
+          } is not included in the list of supported certificates.",
+          )
+        end
       end
     end
-  end
 
-  def check_language
-    Array.wrap(language).each do |l|
-      errors.add(:issn, "Language can't be empty.") unless l.present?
+    def check_repository_type
+      Array.wrap(repository_type).each do |r|
+        unless %w[
+          disciplinary
+          governmental
+          institutional
+          multidisciplinary
+          project-related
+          other
+        ].include?(r)
+          errors.add(
+            :repository_type,
+            "Repository type #{
+            r
+          } is not included in the list of supported repository types.",
+          )
+        end
+      end
     end
-  end
 
-  def check_certificate
-    Array.wrap(certificate).each do |c|
-      errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless ["CoreTrustSeal", "DIN 31644", "DINI", "DSA", "RatSWD", "WDS", "CLARIN"].include?(c)
+    def uuid_format
+      unless UUID.validate(globus_uuid)
+        errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
+      end
     end
-  end
 
-  def check_repository_type
-    Array.wrap(repository_type).each do |r|
-      errors.add(:repository_type, "Repository type #{r} is not included in the list of supported repository types.") unless %w(disciplinary governmental institutional multidisciplinary project-related other).include?(r)
+    def freeze_symbol
+      errors.add(:symbol, "cannot be changed") if symbol_changed?
     end
-  end
 
-  def uuid_format
-    errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID") unless UUID.validate(globus_uuid)
-  end
-
-  def freeze_symbol
-    errors.add(:symbol, "cannot be changed") if symbol_changed?
-  end
-
-  def check_id
-    if symbol && symbol.split(".").first != provider.symbol
-      errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
+    def check_id
+      if symbol && symbol.split(".").first != provider.symbol
+        errors.add(
+          :symbol,
+          ", Your Client ID must include the name of your provider. Separated by a dot '.' ",
+        )
+      end
     end
-  end
 
-  def user_url
-    ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
-  end
+    def user_url
+      ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
+    end
 
   private
-
-  def set_defaults
-    self.domains = "*" unless domains.present?
-    self.client_type = "repository" if client_type.blank?
-    self.issn = {} if issn.blank? || client_type == "repository"
-    self.certificate = [] if certificate.blank? || client_type == "periodical"
-    self.repository_type = [] if repository_type.blank? || client_type == "periodical"
-    self.is_active = is_active ? "\x01" : "\x00"
-    self.version = version.present? ? version + 1 : 0
-    self.role_name = "ROLE_DATACENTRE" unless role_name.present?
-    self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
-    self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
-  end
+    def set_defaults
+      self.domains = "*" if domains.blank?
+      self.client_type = "repository" if client_type.blank?
+      self.issn = {} if issn.blank? || client_type == "repository"
+      self.certificate = [] if certificate.blank? || client_type == "periodical"
+      if repository_type.blank? || client_type == "periodical"
+        self.repository_type = []
+      end
+      self.is_active = is_active ? "\x01" : "\x00"
+      self.version = version.present? ? version + 1 : 0
+      self.role_name = "ROLE_DATACENTRE" if role_name.blank?
+      self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
+      self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+    end
 end

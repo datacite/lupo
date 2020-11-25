@@ -1,4 +1,6 @@
-class SubjCheckJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class SubjCheckJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(events, options = {})

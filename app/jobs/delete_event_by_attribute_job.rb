@@ -1,4 +1,6 @@
-class DeleteEventByAttributeJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class DeleteEventByAttributeJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(id, options = {})

@@ -2,6 +2,6 @@
 
 class SchemaVersionIndex < ActiveRecord::Migration[5.2]
   def change
-    add_index :dataset, [:schema_version]
+    add_index :dataset, %i[schema_version]
   end
 end

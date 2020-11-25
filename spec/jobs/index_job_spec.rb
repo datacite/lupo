@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe IndexJob, type: :job do
@@ -5,8 +7,9 @@ describe IndexJob, type: :job do
   subject(:job) { IndexJob.perform_later(doi) }
 
   it "queues the job" do
-    expect { job }.to have_enqueued_job(IndexJob)
-      .on_queue("test_lupo").at_least(1).times
+    expect { job }.to have_enqueued_job(IndexJob).on_queue("test_lupo").
+      at_least(1).
+      times
   end
 
   after do

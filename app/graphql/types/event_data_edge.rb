@@ -5,22 +5,28 @@ class EventDataEdge < GraphQL::Relay::Edge
     "funds" => "isFundedBy",
     "isFundedBy" => "funds",
     "authors" => "isAuthoredBy",
-    "isAuthoredBy" => "authors"
-  }
+    "isAuthoredBy" => "authors",
+  }.freeze
 
   def event_data
-    @event_data ||= begin
-      return nil unless self.node.present?
-      Event.query(nil, subj_id: doi_from_node(self.node), obj_id: self.parent.id).results.first.to_h.fetch("_source", nil)
-    end
+    @event_data ||=
+      begin
+        return nil if node.blank?
+
+        Event.query(nil, subj_id: doi_from_node(node), obj_id: parent.id).
+          results.
+          first.
+          to_h.
+          fetch("_source", nil)
+      end
   end
 
   def source_id
-    self.node.identifier if self.node.present?
+    node.identifier if node.present?
   end
 
   def target_id
-    self.parent.id
+    parent.id
   end
 
   def source
@@ -28,7 +34,9 @@ class EventDataEdge < GraphQL::Relay::Edge
   end
 
   def relation_type
-    event_data.relation_type_id.underscore.camelcase(:lower) if event_data.present?
+    if event_data.present?
+      event_data.relation_type_id.underscore.camelcase(:lower)
+    end
   end
 
   def total
@@ -36,7 +44,7 @@ class EventDataEdge < GraphQL::Relay::Edge
   end
 
   def doi_from_node(node)
-    return nil unless node.present?
+    return nil if node.blank?
 
     "https://doi.org/#{node.uid.downcase}"
   end

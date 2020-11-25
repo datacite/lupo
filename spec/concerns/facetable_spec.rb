@@ -1,4 +1,4 @@
-
+# frozen_string_literal: true
 # require 'rails_helper'
 
 # describe 'Clients', type: :controller do
@@ -9,8 +9,8 @@
 #   let(:params2)  { {year: clients.first.created.year} }
 
 #   # describe "facet by year" do
-#   #   before do 
-#   #     Provider.create(provider)         
+#   #   before do
+#   #     Provider.create(provider)
 #   #     clients.each { |item| Client.create(item) }
 #   #     sleep 2
 #   #   end

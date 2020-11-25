@@ -5,8 +5,8 @@ class ActorConnectionType < BaseConnection
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
-  
+
   def total_count
-    object.total_count 
+    object.total_count
   end
 end

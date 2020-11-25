@@ -1,12 +1,14 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe Media, type: :model do
   it { should validate_presence_of(:url) }
 end
 
 context "validations" do
-  let(:provider)  { create(:provider, symbol: "ADMIN") }
-  let(:client)  { create(:client, provider: provider) }
+  let(:provider) { create(:provider, symbol: "ADMIN") }
+  let(:client) { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client) }
 
   it "URL valid" do
@@ -58,7 +60,7 @@ context "validations" do
   end
 
   it "Media type not unique" do
-    media = create(:media, doi: doi)
+    create(:media, doi: doi)
     subject = build(:media, doi: doi, media_type: "text/plain")
     expect(subject).to be_valid
     expect(subject.media_type).to eq("text/plain")

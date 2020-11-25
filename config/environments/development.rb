@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -37,7 +39,7 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  require 'flipper/middleware/memoizer'
+  require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
 
   # config.after_initialize do
@@ -47,4 +49,4 @@ Rails.application.configure do
   # end
 end
 
-BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
+BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]

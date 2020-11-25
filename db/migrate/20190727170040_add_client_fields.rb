@@ -2,9 +2,9 @@
 
 class AddClientFields < ActiveRecord::Migration[5.2]
   def change
-    remove_index :datacentre, [:re3data]
+    remove_index :datacentre, %i[re3data]
     rename_column :datacentre, :re3data, :re3data_id
-    add_index :datacentre, [:re3data_id]
+    add_index :datacentre, %i[re3data_id]
 
     add_column :datacentre, :issn, :json
     add_column :datacentre, :certificate, :json

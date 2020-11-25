@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include Authenticable
@@ -53,7 +55,7 @@ class ApplicationController < ActionController::API
   # deep_transform_keys has been removed in Rails 5.1
   # https://stackoverflow.com/questions/35812277/fields-parameters-with-hyphen-in-ruby-on-rails
   def transform_params
-    params.transform_keys! { |key| key.tr('-', '_') }
+    params.transform_keys! { |key| key.tr("-", "_") }
   end
 
   def default_format_json
@@ -63,9 +65,7 @@ class ApplicationController < ActionController::API
   def authenticate_user_with_basic_auth!
     @user = authenticate_user!
 
-    if !@user
-      request_http_basic_authentication(realm = ENV["REALM"])
-    end
+    request_http_basic_authentication(ENV["REALM"]) if !@user
 
     @user
   end
@@ -73,10 +73,15 @@ class ApplicationController < ActionController::API
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
     return false if credentials.blank?
-    raise JWT::VerificationError if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
+    if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
+      raise JWT::VerificationError
+    end
+
+    puts credentials
 
     @current_user = User.new(credentials, type: type)
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
+
     @current_user
   end
 
@@ -86,9 +91,7 @@ class ApplicationController < ActionController::API
 
   # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
   def type_and_credentials_from_request_headers
-    unless request.headers['Authorization'].nil?
-      request.headers['Authorization'].split
-    end
+    request.headers["Authorization"]&.split
   end
 
   def authenticated_user
@@ -96,18 +99,31 @@ class ApplicationController < ActionController::API
   end
 
   unless Rails.env.development?
-    rescue_from *RESCUABLE_EXCEPTIONS do |exception|
-      status = case exception.class.to_s
-               when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError","JWT::VerificationError" then 401
-               when "CanCan::AccessDenied" then 403
-               when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
-               when "ActionController::UnknownFormat" then 406
-               when "ActiveRecord::RecordNotUnique" then 409
-               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument" then 422
-               when "ActionController::BadRequest" then 400
-               when "SocketError" then 500
-               else 400
-               end
+    rescue_from(*RESCUABLE_EXCEPTIONS) do |exception|
+      status =
+        case exception.class.to_s
+        when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError",
+             "JWT::VerificationError"
+          401
+        when "CanCan::AccessDenied"
+          403
+        when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound",
+             "ActionController::RoutingError"
+          404
+        when "ActionController::UnknownFormat"
+          406
+        when "ActiveRecord::RecordNotUnique"
+          409
+        when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing",
+             "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument"
+          422
+        when "ActionController::BadRequest"
+          400
+        when "SocketError"
+          500
+        else
+          400
+        end
 
       if status == 401
         message = "Bad credentials."
@@ -122,7 +138,12 @@ class ApplicationController < ActionController::API
         message = "The content type is not recognized."
       elsif status == 409
         message = "The resource already exists."
-      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError", "ActionController::BadRequest"].include?(exception.class.to_s)
+      elsif %w[
+        JSON::ParserError
+        Nokogiri::XML::SyntaxError
+        ActionDispatch::Http::Parameters::ParseError
+        ActionController::BadRequest
+      ].include?(exception.class.to_s)
         message = exception.message
       else
         Raven.capture_exception(exception)
@@ -130,7 +151,10 @@ class ApplicationController < ActionController::API
         message = exception.message
       end
 
-      render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
+      render json: {
+        errors: [{ status: status.to_s, title: message }],
+      }.to_json,
+             status: status
     end
   end
 
@@ -143,29 +167,23 @@ class ApplicationController < ActionController::API
   end
 
   protected
-
-  def is_admin_or_staff?
-    current_user && current_user.is_admin_or_staff? ? 1 : 0
-  end
+    def is_admin_or_staff?
+      current_user&.is_admin_or_staff? ? 1 : 0
+    end
 
   private
-
-  def append_info_to_payload(payload)
-    super
-    payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
-  end
-
-  def set_raven_context
-    if current_user.try(:uid)
-      Raven.user_context(
-        email: current_user.email,
-        id: current_user.uid,
-        ip_address: request.ip
-      )
-    else
-      Raven.user_context(
-        ip_address: request.ip
-      )
+    def append_info_to_payload(payload)
+      super
+      payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
     end
-  end
+
+    def set_raven_context
+      if current_user.try(:uid)
+        Raven.user_context(
+          email: current_user.email, id: current_user.uid, ip_address: request.ip,
+        )
+      else
+        Raven.user_context(ip_address: request.ip)
+      end
+    end
 end

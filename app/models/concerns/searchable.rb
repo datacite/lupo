@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchable
   extend ActiveSupport::Concern
   extend ActiveModel::Naming
@@ -8,7 +10,7 @@ module Searchable
       collect_data
     end
 
-    def where(options={})
+    def where(options = {})
       collect_data(options)
     end
 
@@ -17,19 +19,17 @@ module Searchable
       parse_data(data, options)
     end
 
-    def get_data(options={})
+    def get_data(options = {})
       query_url = get_query_url(options)
       Maremma.get(query_url, options)
     end
 
-    def parse_items(items, options={})
-      Array(items).map do |item|
-        parse_item(item, options)
-      end
+    def parse_items(items, options = {})
+      Array(items).map { |item| parse_item(item, options) }
     end
 
-    def parse_item(item, options={})
-      self.new(item, options)
+    def parse_item(item, options = {})
+      new(item, options)
     end
 
     def parse_include(klass, params)

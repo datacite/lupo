@@ -1,4 +1,6 @@
-class TransferClientJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class TransferClientJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(client, options = {})
@@ -14,9 +16,12 @@ class TransferClientJob < ActiveJob::Base
 
       Doi.loop_through_dois(options)
 
-      Rails.logger.info "[Transfer] DOIs updating has started for #{symbol} to #{options[:provider_target_id]}."
+      Rails.logger.info "[Transfer] DOIs updating has started for #{
+                          symbol
+                        } to #{options[:provider_target_id]}."
     else
-      Rails.logger.error "[Transfer] Error updating DOIs " + symbol + ": not found"
+      Rails.logger.error "[Transfer] Error updating DOIs " + symbol +
+        ": not found"
     end
   end
 end

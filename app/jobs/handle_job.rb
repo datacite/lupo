@@ -1,4 +1,6 @@
-class HandleJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class HandleJob < ApplicationJob
   queue_as :lupo
 
   # retry_on ActiveRecord::RecordNotFound, wait: 10.seconds, attempts: 3
@@ -12,7 +14,8 @@ class HandleJob < ActiveJob::Base
     if doi.present?
       doi.register_url
     else
-      Rails.logger.info "[Handle] Error updating URL for DOI " + doi_id + ": not found."
+      Rails.logger.info "[Handle] Error updating URL for DOI " + doi_id +
+        ": not found."
     end
   end
 end

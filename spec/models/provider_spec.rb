@@ -1,7 +1,9 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe Provider, type: :model do
-  let(:provider)  { create(:provider) }
+  let(:provider) { create(:provider) }
 
   describe "validations" do
     it { should validate_presence_of(:symbol) }
@@ -17,7 +19,9 @@ describe Provider, type: :model do
   end
 
   describe "admin" do
-    subject { create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN") }
+    subject do
+      create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN")
+    end
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_ADMIN")
@@ -25,7 +29,14 @@ describe Provider, type: :model do
   end
 
   describe "provider with ROLE_CONTRACTUAL_PROVIDER" do
-    subject { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRCTR") }
+    subject do
+      create(
+        :provider,
+        role_name: "ROLE_CONTRACTUAL_PROVIDER",
+        name: "Contractor",
+        symbol: "CONTRCTR",
+      )
+    end
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")
@@ -35,7 +46,14 @@ describe Provider, type: :model do
   end
 
   describe "provider with ROLE_REGISTRATION_AGENCY" do
-    subject { create(:provider, role_name: "ROLE_REGISTRATION_AGENCY", name: "Crossref", symbol: "CROSSREF") }
+    subject do
+      create(
+        :provider,
+        role_name: "ROLE_REGISTRATION_AGENCY",
+        name: "Crossref",
+        symbol: "CROSSREF",
+      )
+    end
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_REGISTRATION_AGENCY")
@@ -52,7 +70,7 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
-  
+
     it "for-profit" do
       subject.non_profit_status = "for-profit"
       expect(subject.save).to be true
@@ -68,26 +86,36 @@ describe Provider, type: :model do
     it "not_supported" do
       subject.non_profit_status = "super-profit"
       expect(subject.save).to be false
-      expect(subject.errors.details).to eq(:non_profit_status=>[{:error=>:inclusion, :value=>"super-profit"}])
+      expect(subject.errors.details).to eq(
+        non_profit_status: [{ error: :inclusion, value: "super-profit" }],
+      )
     end
   end
 
   describe "logo" do
     subject { build(:provider) }
-    
+
     it "with logo" do
-      subject.logo = "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read)
+      subject.logo =
+        "data:image/png;base64," +
+        Base64.strict_encode64(file_fixture("bl.png").read)
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
       expect(subject.logo.file?).to be true
-      expect(subject.logo.url).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
-      expect(subject.logo.url(:medium)).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
-      expect(subject.logo_url).to start_with("/images/members/" + subject.symbol.downcase + ".png")
+      expect(subject.logo.url).to start_with(
+        "/images/members/" + subject.symbol.downcase + ".png",
+      )
+      expect(subject.logo.url(:medium)).to start_with(
+        "/images/members/" + subject.symbol.downcase + ".png",
+      )
+      expect(subject.logo_url).to start_with(
+        "/images/members/" + subject.symbol.downcase + ".png",
+      )
       expect(subject.logo_file_name).to eq(subject.symbol.downcase + ".png")
       expect(subject.logo.content_type).to eq("image/png")
       expect(subject.logo.size).to be > 10
     end
-  
+
     it "without logo" do
       subject.logo = nil
       expect(subject.save).to be true
@@ -105,11 +133,13 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
-  
+
     it "invalid" do
       subject.salesforce_id = "abc"
       expect(subject.save).to be false
-      expect(subject.errors.details).to eq(:salesforce_id=>[{:error=>:invalid, :value=>"abc"}])
+      expect(subject.errors.details).to eq(
+        salesforce_id: [{ error: :invalid, value: "abc" }],
+      )
     end
 
     it "blank" do
@@ -120,9 +150,23 @@ describe Provider, type: :model do
   end
 
   describe "provider with ROLE_CONSORTIUM" do
-    subject { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
+    subject do
+      create(
+        :provider,
+        role_name: "ROLE_CONSORTIUM",
+        name: "Virtual Library of Virginia",
+        symbol: "VIVA",
+      )
+    end
 
-    let!(:consortium_organizations) { create_list(:provider, 3, role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_id: subject.symbol) }
+    let!(:consortium_organizations) do
+      create_list(
+        :provider,
+        3,
+        role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        consortium_id: subject.symbol,
+      )
+    end
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONSORTIUM")
@@ -131,14 +175,30 @@ describe Provider, type: :model do
       expect(subject.consortium_organizations.length).to eq(3)
       consortium_organization = subject.consortium_organizations.last
       expect(consortium_organization.consortium_id).to eq("VIVA")
-      expect(consortium_organization.member_type).to eq("consortium_organization")
+      expect(consortium_organization.member_type).to eq(
+        "consortium_organization",
+      )
     end
   end
 
   describe "provider with ROLE_CONSORTIUM_ORGANIZATION" do
-    let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
+    let(:consortium) do
+      create(
+        :provider,
+        role_name: "ROLE_CONSORTIUM",
+        name: "Virtual Library of Virginia",
+        symbol: "VIVA",
+      )
+    end
 
-    subject { create(:provider, name: "University of Virginia", role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_id: consortium.symbol) }
+    subject do
+      create(
+        :provider,
+        name: "University of Virginia",
+        role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        consortium_id: consortium.symbol,
+      )
+    end
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONSORTIUM_ORGANIZATION")
@@ -149,14 +209,16 @@ describe Provider, type: :model do
       expect(subject.consortium.member_type).to eq("consortium")
     end
   end
-  
+
   describe "to_jsonapi" do
     it "works" do
       params = provider.to_jsonapi
       expect(params.dig("id")).to eq(provider.symbol.downcase)
-      expect(params.dig("attributes","symbol")).to eq(provider.symbol)
-      expect(params.dig("attributes","system-email")).to eq(provider.system_email)
-      expect(params.dig("attributes","is-active")).to be true
+      expect(params.dig("attributes", "symbol")).to eq(provider.symbol)
+      expect(params.dig("attributes", "system-email")).to eq(
+        provider.system_email,
+      )
+      expect(params.dig("attributes", "is-active")).to be true
     end
   end
 
@@ -165,7 +227,9 @@ describe Provider, type: :model do
     subject { create(:provider, password_input: password_input) }
 
     it "should use password_input" do
-      expect(subject.password).to eq(subject.encrypt_password_sha256(password_input))
+      expect(subject.password).to eq(
+        subject.encrypt_password_sha256(password_input),
+      )
     end
 
     it "should not use password_input when it is blank" do
@@ -176,7 +240,7 @@ describe Provider, type: :model do
   end
 
   describe "globus_uuid" do
-    let(:provider)  { build(:provider) }
+    let(:provider) { build(:provider) }
 
     it "should support version 1 UUID" do
       provider.globus_uuid = "6d133cee-3d3f-11ea-b77f-2e728ce88125"
@@ -193,24 +257,28 @@ describe Provider, type: :model do
     it "should reject string that is not a UUID" do
       provider.globus_uuid = "abc"
       expect(provider.save).to be false
-      expect(provider.errors.details).to eq(:globus_uuid=>[{:error=>"abc is not a valid UUID"}])
+      expect(provider.errors.details).to eq(
+        globus_uuid: [{ error: "abc is not a valid UUID" }],
+      )
     end
   end
 
   describe "cumulative_years" do
     before(:each) do
-      allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
-      allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+      allow(Time).to receive(:now).and_return(Time.mktime(2_015, 4, 8))
+      allow(Time.zone).to receive(:now).and_return(Time.mktime(2_015, 4, 8))
     end
 
     it "should show all cumulative years" do
       provider = create(:provider)
-      expect(provider.cumulative_years).to eq([2015, 2016, 2017, 2018, 2019, 2020])
+      expect(provider.cumulative_years).to eq(
+        [2_015, 2_016, 2_017, 2_018, 2_019, 2_020],
+      )
     end
 
     it "should show years before deleted" do
       provider = create(:provider, deleted_at: "2018-06-14")
-      expect(provider.cumulative_years).to eq([2015, 2016, 2017])
+      expect(provider.cumulative_years).to eq([2_015, 2_016, 2_017])
     end
 
     it "empty if deleted in creation year" do

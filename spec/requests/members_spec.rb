@@ -1,8 +1,10 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe MembersController, type: :request do
-  let!(:providers)  { create_list(:provider, 10) }
-  let(:provider)  { create(:provider) }
+  let!(:providers) { create_list(:provider, 10) }
+  let(:provider) { create(:provider) }
 
   # describe 'GET /members', elasticsearch: true do
   #   before do
@@ -36,22 +38,25 @@ describe MembersController, type: :request do
   #   end
   # end
 
-  describe 'GET /members/:id' do
-    context 'when the record exists' do
-      it 'returns the member' do
+  describe "GET /members/:id" do
+    context "when the record exists" do
+      it "returns the member" do
         get "/members/#{provider.uid}"
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'title')).to eq(provider.name)
+        expect(json.dig("data", "attributes", "title")).to eq(provider.name)
       end
     end
 
-    context 'when the record does not exist' do
-      it 'returns status code 404' do
+    context "when the record does not exist" do
+      it "returns status code 404" do
         get "/members/xxx"
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq(
+          "status" => "404",
+          "title" => "The resource you are looking for doesn't exist.",
+        )
       end
     end
   end

@@ -12,6 +12,8 @@ class DataCatalogConnectionWithTotalType < BaseConnection
   end
 
   def dataset_connection_count
-    @dataset_connection_count ||= Doi.gql_query("client.re3data_id:*", page: { number: 1, size: 0 }).results.total
+    @dataset_connection_count ||=
+      Doi.gql_query("client.re3data_id:*", page: { number: 1, size: 0 }).results.
+        total
   end
 end

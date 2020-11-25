@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ErrorSerializable
   extend ActiveSupport::Concern
 
@@ -5,15 +7,21 @@ module ErrorSerializable
     def serialize_errors(errors)
       return nil if errors.nil?
 
-      arr = Array.wrap(errors).reduce([]) do |sum, err|
-        source = err.keys.first
+      arr =
+        Array.wrap(errors).reduce([]) do |sum, err|
+          source = err.keys.first
 
-        Array.wrap(err.values.first).each do |title|
-          sum << { source: source, title: title.is_a?(String) ? title.sub(/^./, &:upcase) : title.to_s }
+          Array.wrap(err.values.first).each do |title|
+            sum <<
+              {
+                source: source,
+                title:
+                  title.is_a?(String) ? title.sub(/^./, &:upcase) : title.to_s,
+              }
+          end
+
+          sum
         end
-
-        sum
-      end
 
       { errors: arr }.to_json
     end

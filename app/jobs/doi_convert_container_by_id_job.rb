@@ -1,11 +1,14 @@
-class DoiConvertContainerByIdJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class DoiConvertContainerByIdJob < ApplicationJob
   queue_as :lupo_background
 
-  rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+  rescue_from ActiveJob::DeserializationError,
+              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
   end
 
-  def perform(options={})
+  def perform(options = {})
     Doi.convert_container_by_id(options)
   end
 end

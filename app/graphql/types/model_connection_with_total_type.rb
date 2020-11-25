@@ -13,7 +13,7 @@ class ModelConnectionWithTotalType < BaseConnection
   field :languages, [FacetType], null: true, cache: true
 
   def total_count
-    object.total_count 
+    object.total_count
   end
 
   def published
@@ -21,7 +21,9 @@ class ModelConnectionWithTotalType < BaseConnection
   end
 
   def registration_agencies
-    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
+    facet_by_registration_agency(
+      object.aggregations.registration_agencies.buckets,
+    )
   end
 
   def repositories

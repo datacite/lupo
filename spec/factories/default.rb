@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "faker"
 
 FactoryBot.define do
@@ -32,7 +34,12 @@ FactoryBot.define do
       orcid_token { nil }
     end
 
-    initialize_with { User.new(User.generate_alb_token(uid: uid, role_id: role_id), type: "oidc") }
+    initialize_with do
+      User.new(
+        User.generate_alb_token(uid: uid, role_id: role_id),
+        type: "oidc",
+      )
+    end
   end
 
   factory :client do
@@ -144,104 +151,75 @@ FactoryBot.define do
       ]
     end
     titles do
-      [
-        {
-          "title": "Data from: A new malaria agent in African hominids.",
-        },
-      ]
+      [{ "title": "Data from: A new malaria agent in African hominids." }]
     end
     descriptions do
-      [
-        {
-          "description": "Data from: A new malaria agent in African hominids.",
-        },
-      ]
+      [{ "description": "Data from: A new malaria agent in African hominids." }]
     end
     publisher { "Dryad Digital Repository" }
     subjects do
       [
-        {
-          "subject": "Phylogeny",
-        },
-        {
-          "subject": "Malaria",
-        },
-        {
-          "subject": "Parasites",
-        },
-        {
-          "subject": "Taxonomy",
-        },
-        {
-          "subject": "Mitochondrial genome",
-        },
-        {
-          "subject": "Africa",
-        },
-        {
-          "subject": "Plasmodium",
-        },
+        { "subject": "Phylogeny" },
+        { "subject": "Malaria" },
+        { "subject": "Parasites" },
+        { "subject": "Taxonomy" },
+        { "subject": "Mitochondrial genome" },
+        { "subject": "Africa" },
+        { "subject": "Plasmodium" },
       ]
     end
-    dates do
-      [
-        {
-          "date": "2011",
-          "dateType": "Issued",
-        },
-      ]
-    end
-    publication_year { 2011 }
+    dates { [{ "date": "2011", "dateType": "Issued" }] }
+    publication_year { 2_011 }
     identifiers do
-      [
-        {
-          "identifierType": "publisher ID",
-          "identifier": "pk-1234",
-        },
-      ]
+      [{ "identifierType": "publisher ID", "identifier": "pk-1234" }]
     end
     version { "1" }
-    rights_list {[
-      {
-        "rights"=>"Creative Commons Zero v1.0 Universal",
-        "rightsIdentifier"=>"cc0-1.0",
-        "rightsIdentifierScheme"=>"SPDX",
-        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode",
-        "schemeUri"=>"https://spdx.org/licenses/"
-      }
-    ]}
-    related_identifiers {[
-      {
-        "relatedIdentifier": "10.5061/dryad.8515/1",
-        "relatedIdentifierType": "DOI",
-        "relationType": "HasPart",
-      },
-      {
-        "relatedIdentifier": "10.5061/dryad.8515/2",
-        "relatedIdentifierType": "DOI",
-        "relationType": "HasPart",
-      },
-      {
-        "relatedIdentifier": "10.1371/journal.ppat.1000446",
-        "relatedIdentifierType": "DOI",
-        "relationType": "IsReferencedBy",
-      },
-      {
-        "relatedIdentifier": "10.1371/journal.ppat.1000446",
-        "relatedIdentifierType": "DOI",
-        "relationType": "IsSupplementTo",
-      },
-      {
-        "relatedIdentifier": "19478877",
-        "relatedIdentifierType": "PMID",
-        "relationType": "IsReferencedBy",
-      },
-      {
-        "relatedIdentifier": "19478877",
-        "relatedIdentifierType": "PMID",
-        "relationType": "IsSupplementTo",
-      }
-    ]}
+    rights_list do
+      [
+        {
+          "rights" => "Creative Commons Zero v1.0 Universal",
+          "rightsIdentifier" => "cc0-1.0",
+          "rightsIdentifierScheme" => "SPDX",
+          "rightsUri" =>
+            "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+          "schemeUri" => "https://spdx.org/licenses/",
+        },
+      ]
+    end
+    related_identifiers do
+      [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/2",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsSupplementTo",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsSupplementTo",
+        },
+      ]
+    end
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
     type { "DataciteDoi" }
@@ -270,7 +248,7 @@ FactoryBot.define do
 
   factory :provider do
     system_email { "josiah@example.org" }
-    sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    sequence(:symbol, "A") { |n| "TEST#{n}" }
     role_name { "ROLE_ALLOCATOR" }
     globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }
@@ -361,16 +339,18 @@ FactoryBot.define do
     sequence(:subj_id) { |n| "http://www.citeulike.org/user/dbogartoit/#{n}" }
     obj_id { "http://doi.org/10.1371/journal.pmed.0030186" }
     subj do
-      { "@id" => "http://www.citeulike.org/user/dbogartoit",
+      {
+        "@id" => "http://www.citeulike.org/user/dbogartoit",
         "@type" => "CreativeWork",
         "uid" => "http://www.citeulike.org/user/dbogartoit",
         "author" => [{ "given" => "dbogartoit" }],
         "name" => "CiteULike bookmarks for user dbogartoit",
         "publisher" => "CiteULike",
         "datePublished" => "2006-06-13T16:14:19Z",
-        "url" => "http://www.citeulike.org/user/dbogartoit" }
+        "url" => "http://www.citeulike.org/user/dbogartoit",
+      }
     end
-    obj {}
+    obj { }
     relation_type_id { "bookmarks" }
     updated_at { Time.zone.now }
     occurred_at { Time.zone.now }
@@ -379,7 +359,12 @@ FactoryBot.define do
       source_id { "datacite_related" }
       source_token { "datacite_related_123" }
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
-      subj { { "date_published" => "2006-06-13T16:14:19Z", "registrant_id" => "datacite.datacite" } }
+      subj do
+        {
+          "date_published" => "2006-06-13T16:14:19Z",
+          "registrant_id" => "datacite.datacite",
+        }
+      end
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "references" }
     end
@@ -458,7 +443,9 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { 25 }
-      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) do |_n|
+        "https://api.test.datacite.org/report/#{SecureRandom.uuid}"
+      end
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
@@ -470,7 +457,9 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { 10 }
-      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) do |_n|
+        "https://api.test.datacite.org/report/#{SecureRandom.uuid}"
+      end
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
@@ -482,9 +471,11 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { rand(1..100).to_int }
-      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) do |_n|
+        "https://api.test.datacite.org/report/#{SecureRandom.uuid}"
+      end
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
-      obj {}
+      obj { }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "unique-dataset-investigations-regular" }
       occurred_at { "2015-06-13T16:14:19Z" }
@@ -494,7 +485,9 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { rand(1..100).to_int }
-      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) do |_n|
+        "https://api.test.datacite.org/report/#{SecureRandom.uuid}"
+      end
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }

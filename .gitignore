@@ -51,6 +51,7 @@ doc/dependencies*
 .env.*
 !.env.example
 !.env.travis
+!.env.build
 docker-compose.override.yml
 .ruby-version
 .vscode

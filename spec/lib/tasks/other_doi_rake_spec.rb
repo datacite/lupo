@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 # describe "other_doi:create_index", order: :defined do
 #   include ActiveJob::TestHelper
@@ -136,7 +138,7 @@ describe "other_doi:import_one", order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let(:doi)  { create(:doi) }
+  let(:doi) { create(:doi) }
   let(:output) { "[MySQL] Imported metadata for DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do
@@ -153,7 +155,7 @@ describe "other_doi:index_one", order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let!(:doi)  { create(:doi, type: "OtherDoi") }
+  let!(:doi) { create(:doi, type: "OtherDoi") }
   let(:output) { "Started indexing DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do

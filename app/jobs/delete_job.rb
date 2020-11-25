@@ -1,7 +1,9 @@
-class DeleteJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class DeleteJob < ApplicationJob
   queue_as :lupo_background
 
-  def perform(doi_id, options={})
+  def perform(doi_id, _options = {})
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?

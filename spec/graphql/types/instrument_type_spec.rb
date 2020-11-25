@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe InstrumentType do
@@ -9,7 +11,16 @@ describe InstrumentType do
   end
 
   describe "query instruments", elasticsearch: true do
-    let!(:instruments) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, aasm_state: "findable") }
+    let!(:instruments) do
+      create_list(
+        :doi,
+        3,
+        types: {
+          "resourceTypeGeneral" => "Other", "resourceType" => "Instrument"
+        },
+        aasm_state: "findable",
+      )
+    end
 
     before do
       Doi.import
@@ -18,14 +29,14 @@ describe InstrumentType do
     end
 
     let(:query) do
-      %(query {
+      "query {
         instruments {
           totalCount
           nodes {
             id
           }
         }
-      })
+      }"
     end
 
     it "returns all instruments" do
@@ -33,7 +44,9 @@ describe InstrumentType do
 
       expect(response.dig("data", "instruments", "totalCount")).to eq(3)
       expect(response.dig("data", "instruments", "nodes").length).to eq(3)
-      expect(response.dig("data", "instruments", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "instruments", "nodes", 0, "id")).to eq(
+        @dois.first.identifier,
+      )
     end
   end
 end

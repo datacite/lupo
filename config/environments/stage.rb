@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -68,13 +70,13 @@ Rails.application.configure do
     preserve_files: true,
     s3_host_name: "s3-eu-west-1.amazonaws.com",
     s3_credentials: {
-      access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-      secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-      s3_region: ENV['AWS_REGION']
+      access_key_id: ENV["AWS_ACCESS_KEY_ID"],
+      secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
+      s3_region: ENV["AWS_REGION"],
     },
-    bucket: ENV['AWS_S3_BUCKET']
+    bucket: ENV["AWS_S3_BUCKET"],
   }
 
-  require 'flipper/middleware/memoizer'
+  require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
 end

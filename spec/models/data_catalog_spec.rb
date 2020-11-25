@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe DataCatalog, type: :model, vcr: true do
   describe "find_by_id" do
@@ -26,13 +28,15 @@ describe DataCatalog, type: :model, vcr: true do
     it "all" do
       query = nil
       data_catalogs = DataCatalog.query(query)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1723)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1_723)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")
       expect(data_catalog.re3data_id).to eq("r3d100011565")
       expect(data_catalog.name).to eq("1000 Functional Connectomes Project")
-      expect(data_catalog.url).to eq("http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html")
+      expect(data_catalog.url).to eq(
+        "http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html",
+      )
       expect(data_catalog.certificates).to eq([])
     end
 
@@ -58,8 +62,10 @@ describe DataCatalog, type: :model, vcr: true do
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3p32s")
       expect(data_catalog.re3data_id).to eq("r3d100010621")
       expect(data_catalog.name).to eq("CDC - Climate Data Center")
-      expect(data_catalog.url).to eq("https://cdc.dwd.de/catalogue/srv/en/main.home")
-      expect(data_catalog.certificates).to eq([{"text"=>"other"}])
+      expect(data_catalog.url).to eq(
+        "https://cdc.dwd.de/catalogue/srv/en/main.home",
+      )
+      expect(data_catalog.certificates).to eq([{ "text" => "other" }])
     end
 
     it "pid" do
@@ -71,7 +77,7 @@ describe DataCatalog, type: :model, vcr: true do
       expect(data_catalog.re3data_id).to eq("r3d100010216")
       expect(data_catalog.name).to eq("4TU.Centre for Research Data")
       expect(data_catalog.url).to eq("https://researchdata.4tu.nl/en/home/")
-      expect(data_catalog.pid_systems).to eq([{"text"=>"DOI"}])
+      expect(data_catalog.pid_systems).to eq([{ "text" => "DOI" }])
     end
 
     it "certified" do
@@ -83,19 +89,23 @@ describe DataCatalog, type: :model, vcr: true do
       expect(data_catalog.re3data_id).to eq("r3d100010216")
       expect(data_catalog.name).to eq("4TU.Centre for Research Data")
       expect(data_catalog.url).to eq("https://researchdata.4tu.nl/en/home/")
-      expect(data_catalog.certificates).to eq([{"text"=>"DSA"}])
+      expect(data_catalog.certificates).to eq([{ "text" => "DSA" }])
     end
 
     it "open" do
       data_catalogs = DataCatalog.query(nil, open: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1516)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1_516)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")
       expect(data_catalog.re3data_id).to eq("r3d100011565")
       expect(data_catalog.name).to eq("1000 Functional Connectomes Project")
-      expect(data_catalog.url).to eq("http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html")
-      expect(data_catalog.data_accesses).to eq([{"restrictions"=>[], "type"=>"open"}])
+      expect(data_catalog.url).to eq(
+        "http://fcon_1000.projects.nitrc.org/fcpClassic/FcpTable.html",
+      )
+      expect(data_catalog.data_accesses).to eq(
+        [{ "restrictions" => [], "type" => "open" }],
+      )
     end
 
     it "not found" do

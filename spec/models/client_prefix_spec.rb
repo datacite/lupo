@@ -1,11 +1,20 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 describe ClientPrefix, type: :model do
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
   let(:prefix) { create(:prefix, uid: "10.5083") }
-  let(:provider_prefix) { create(:provider_prefix, prefix: prefix, provider: provider) }
-  subject { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+  let(:provider_prefix) do
+    create(:provider_prefix, prefix: prefix, provider: provider)
+  end
+  subject do
+    create(
+      :client_prefix,
+      client: client, prefix: prefix, provider_prefix: provider_prefix,
+    )
+  end
 
   describe "Validations" do
     it { should validate_presence_of(:client) }

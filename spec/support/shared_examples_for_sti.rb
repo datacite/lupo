@@ -1,4 +1,6 @@
-require 'rails_helper'
+# frozen_string_literal: true
+
+require "rails_helper"
 
 shared_examples "an STI class" do
   it "should have attribute type" do

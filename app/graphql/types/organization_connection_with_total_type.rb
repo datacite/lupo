@@ -8,10 +8,10 @@ class OrganizationConnectionWithTotalType < BaseConnection
   # using latest release in any given year, starting with end of 2017,
   # right before ROR was launched in January 2018
   YEARS = [
-    { "id" => "2017", "title" => "2017", "count" => 80248 },
-    { "id" => "2018", "title" => "2018", "count" => 11392 },
-    { "id" => "2019", "title" => "2019", "count" => 6179 },
-  ]
+    { "id" => "2017", "title" => "2017", "count" => 80_248 },
+    { "id" => "2018", "title" => "2018", "count" => 11_392 },
+    { "id" => "2019", "title" => "2019", "count" => 6_179 },
+  ].freeze
 
   field :total_count, Integer, null: false, cache: true
   field :years, [FacetType], null: true, cache: true
@@ -20,12 +20,20 @@ class OrganizationConnectionWithTotalType < BaseConnection
   field :person_connection_count, Integer, null: false, cache: true
 
   def years
-    count = YEARS.reduce(0) do |sum, i|
-      sum += i["count"]
-      sum
-    end
-    this_year = object.total_count > count ? { "id" => "2020", "title" => "2020", "count" => object.total_count - count } : nil
-    this_year ? YEARS << this_year : YEARS
+    count =
+      YEARS.dup.reduce(0) do |sum, i|
+        sum += i["count"]
+        sum
+      end
+    this_year =
+      if object.total_count > count
+        {
+          "id" => "2020",
+          "title" => "2020",
+          "count" => object.total_count - count,
+        }
+      end
+    this_year ? YEARS.dup << this_year : YEARS
   end
 
   def total_count
@@ -41,6 +49,7 @@ class OrganizationConnectionWithTotalType < BaseConnection
   end
 
   def person_connection_count
-    @person_connection_count ||= Event.query(nil, citation_type: "Organization-Person").results.total
+    @person_connection_count ||=
+      Event.query(nil, citation_type: "Organization-Person").results.total
   end
 end

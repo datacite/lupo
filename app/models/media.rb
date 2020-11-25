@@ -1,4 +1,6 @@
-class Media < ActiveRecord::Base
+# frozen_string_literal: true
+
+class Media < ApplicationRecord
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
@@ -8,9 +10,11 @@ class Media < ActiveRecord::Base
   alias_attribute :updated_at, :updated
   alias_attribute :datacite_doi_id, :doi_id
 
-  validates_presence_of  :url
-  validates_format_of :url, :with => /\A(ftp|http|https|gs|s3|dos):\/\/[\S]+/, if: :url?
-  validates_format_of :media_type, :with => /[\S]+\/[\S]+/, if: :media_type?
+  validates_presence_of :url
+  validates_format_of :url,
+                      with: %r{\A(ftp|http|https|gs|s3|dos)://\S+},
+                      if: :url?
+  validates_format_of :media_type, with: %r{\S+/\S+}, if: :media_type?
   validates_associated :doi
 
   belongs_to :doi, foreign_key: :dataset, inverse_of: :media
@@ -18,7 +22,7 @@ class Media < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save :set_defaults
 
-  def as_indexed_json(options={})
+  def as_indexed_json(_options = {})
     {
       "id" => uid,
       "uid" => uid,
@@ -26,7 +30,8 @@ class Media < ActiveRecord::Base
       "url" => url,
       "media_type" => media_type,
       "created" => created,
-      "updated" => updated }
+      "updated" => updated,
+    }
   end
 
   def uid
@@ -39,13 +44,14 @@ class Media < ActiveRecord::Base
 
   def doi_id=(value)
     r = Doi.where(doi: value).first
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
     write_attribute(:dataset, r.id)
   end
 
   def set_defaults
-    current_media = Media.where(dataset: dataset).order('media.created DESC').first
+    current_media =
+      Media.where(dataset: dataset).order("media.created DESC").first
     self.version = current_media.present? ? current_media.version + 1 : 0
     self.media_type = "text/plain" if media_type.blank?
     self.updated = Time.zone.now.utc.iso8601

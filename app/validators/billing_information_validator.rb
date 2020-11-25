@@ -1,25 +1,25 @@
+# frozen_string_literal: true
+
 class BillingInformationValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     # Don't try to validate if we have nothing
-    return unless value.present?
+    return if value.blank?
 
-    unless value["city"].present? 
-      record.errors[attribute] << "has no city specified"
-    end
+    record.errors[attribute] << "has no city specified" if value["city"].blank?
 
-    unless value["state"].present? 
+    if value["state"].blank?
       record.errors[attribute] << "has no state/province specified"
     end
 
-    unless value["country"].present? 
+    if value["country"].blank?
       record.errors[attribute] << "has no country specified"
     end
 
-    unless value["department"].present? 
+    if value["department"].blank?
       record.errors[attribute] << "has no department specified"
     end
 
-    unless value["address"].present? 
+    if value["address"].blank?
       record.errors[attribute] << "has no street address specified"
     end
 
@@ -27,7 +27,7 @@ class BillingInformationValidator < ActiveModel::EachValidator
       record.errors[attribute] << "has no post/zip code specified"
     end
 
-    unless value["organization"].present? 
+    if value["organization"].blank?
       record.errors[attribute] << "has no organization specified"
     end
   end

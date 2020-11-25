@@ -14,7 +14,7 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   field :languages, [FacetType], null: true, cache: true
 
   def total_count
-    object.total_count 
+    object.total_count
   end
 
   def published
@@ -22,7 +22,9 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   end
 
   def registration_agencies
-    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
+    facet_by_registration_agency(
+      object.aggregations.registration_agencies.buckets,
+    )
   end
 
   def repositories
@@ -32,7 +34,7 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   def affiliations
     facet_by_combined_key(object.aggregations.affiliations.buckets)
   end
-  
+
   def fields_of_science
     facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
   end

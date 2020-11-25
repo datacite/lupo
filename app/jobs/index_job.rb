@@ -1,7 +1,10 @@
-class IndexJob < ActiveJob::Base
+# frozen_string_literal: true
+
+class IndexJob < ApplicationJob
   queue_as :lupo
 
-  rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+  rescue_from ActiveJob::DeserializationError,
+              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
   end
 

@@ -23,7 +23,9 @@ class ServiceConnectionWithTotalType < BaseConnection
   end
 
   def registration_agencies
-    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
+    facet_by_registration_agency(
+      object.aggregations.registration_agencies.buckets,
+    )
   end
 
   def repositories
@@ -37,7 +39,7 @@ class ServiceConnectionWithTotalType < BaseConnection
   def pid_entities
     facet_by_software(object.aggregations.pid_entities.subject.buckets)
   end
-  
+
   def fields_of_science
     facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
   end
