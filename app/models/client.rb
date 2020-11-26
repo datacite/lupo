@@ -698,7 +698,7 @@ class Client < ApplicationRecord
 
     logger.warn "Found #{csv.size} repositories with missing DOIs."
 
-    csv.join("\n")
+    csv.join("")
   end
 
   protected
