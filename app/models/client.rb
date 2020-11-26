@@ -688,8 +688,6 @@ class Client < ApplicationRecord
             doisMissing: db_total - es_total,
           }.values
 
-          puts CSV.generate_line(row)
-
           sum << CSV.generate_line(row)
         end
 
@@ -700,7 +698,7 @@ class Client < ApplicationRecord
 
     logger.warn "Found #{csv.size} repositories with missing DOIs."
 
-    csv.join(",")
+    csv.join("\n")
   end
 
   protected
