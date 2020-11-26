@@ -662,11 +662,12 @@ class Client < ApplicationRecord
       "Repository Name",
       "Repository ID",
       "Organization",
-      "doisTotal",
-      "missing",
+      "DOIs in Index",
+      "DOIs in Database",
+      "DOIs missing",
     ]
 
-    dois_by_client = DataciteDoi.group(:datacentre).count
+    dois_by_client = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
     rows =
       clients.reduce([]) do |sum, client|
         db_total = dois_by_client[client.id.to_i].to_i
@@ -694,7 +695,7 @@ class Client < ApplicationRecord
         sum
       end
 
-    csv = [headers] + rows
+    csv = [CSV.generate_line(headers)] + rows
 
     logger.warn "Found #{csv.size} repositories with missing DOIs."
 
