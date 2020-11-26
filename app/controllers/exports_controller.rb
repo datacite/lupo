@@ -389,9 +389,14 @@ class ExportsController < ApplicationController
       "doisCurrentYear",
       "doisPreviousYear",
       "doisTotal",
+      "doisDbTotal",
+      "doisMissing"
     ]
 
     csv = headers.to_csv
+
+    # get doi counts from database
+    dois_by_client = DataciteDoi.group(:datacentre).count
 
     clients.each do |client|
       # Limit for salesforce default of max 80 chars
@@ -399,6 +404,9 @@ class ExportsController < ApplicationController
         +client.name.truncate(80)
       # Clean the name to remove quotes, which can break csv parsers
       name.gsub!(/["']/, "")
+
+      db_total = dois_by_client[client.id.to_i].to_i
+      es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
 
       row = {
         accountName: name,
@@ -435,8 +443,9 @@ class ExportsController < ApplicationController
           else
             0
           end,
-        doisCountTotal:
-          client_totals[client.uid] ? client_totals[client.uid]["count"] : 0,
+        doisCountTotal: es_total,
+        doisDbTotal: db_total,
+        doisMissing: db_total - es_total,
       }.values
 
       csv += CSV.generate_line row
