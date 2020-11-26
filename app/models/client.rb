@@ -510,6 +510,8 @@ class Client < ApplicationRecord
       return nil
     end
 
+    Rails.logger.info "[Transfer] Client transfer starting from #{provider_id} to #{target_provider.id}"
+
     # Transfer client
     update_attribute(:allocator, target_provider.id)
 
@@ -535,11 +537,8 @@ class Client < ApplicationRecord
     prefixes_names = associated_prefixes.pluck(:uid)
 
     if prefix_ids.present?
-      response =
-        ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
-      Rails.logger.info "[Transfer] #{
-                          response.count
-                        } provider prefixes deleted."
+      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
+      Rails.logger.info "[Transfer][Prefix] #{response.count} provider prefixes deleted. #{prefix_ids}"
     end
 
     # Assign prefix(es) to provider and client
@@ -548,7 +547,7 @@ class Client < ApplicationRecord
         ProviderPrefix.create(
           provider_id: provider_target_id, prefix_id: prefix,
         )
-      Rails.logger.info "[Transfer] Provider prefix for provider #{
+      Rails.logger.info "[Transfer][Prefix] Provider prefix for provider #{
                           provider_target_id
                         } and prefix #{prefix} created."
 
@@ -557,7 +556,7 @@ class Client < ApplicationRecord
         provider_prefix_id: provider_prefix.uid,
         prefix_id: prefix,
       )
-      Rails.logger.info "Client prefix for client #{symbol} and prefix #{
+      Rails.logger.info "[Transfer][Prefix] Client prefix for client #{symbol} and prefix #{
                           prefix
                         } created."
     end
