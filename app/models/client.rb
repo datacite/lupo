@@ -672,25 +672,25 @@ class Client < ApplicationRecord
         db_total = dois_by_client.dig(client.id).to_i
         es_total =
           client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
-        if (db_total - es_total) > 0
-          # Limit for salesforce default of max 80 chars
-          name = +client.name.truncate(80)
-          # Clean the name to remove quotes, which can break csv parsers
-          name.gsub!(/["']/, "")
+        # if (db_total - es_total) > 0
+        # Limit for salesforce default of max 80 chars
+        name = +client.name.truncate(80)
+        # Clean the name to remove quotes, which can break csv parsers
+        name.gsub!(/["']/, "")
 
-          row = {
-            accountName: name,
-            fabricaAccountId: client.symbol,
-            parentFabricaAccountId:
-              client.provider.present? ? client.provider.symbol : nil,
-            doisCountTotal: db_total,
-            doisMissing: db_total - es_total,
-          }.values
+        row = {
+          accountName: name,
+          fabricaAccountId: client.symbol,
+          parentFabricaAccountId:
+            client.provider.present? ? client.provider.symbol : nil,
+          doisCountTotal: db_total,
+          doisMissing: db_total - es_total,
+        }.values
 
-          puts CSV.generate_line(row)
+        puts CSV.generate_line(row)
 
-          sum << CSV.generate_line(row)
-        end
+        sum << CSV.generate_line(row)
+        # end
 
         sum
       end
