@@ -372,6 +372,24 @@ class ExportsController < ApplicationController
       }
     end
 
+    draft_response =
+      DataciteDoi.query(
+        nil,
+        state: "draft",
+        page: { size: 0, number: 1 },
+        totals_agg: "client_export",
+      )
+
+    draft_client_totals = {}
+    draft_totals_buckets = draft_response.aggregations.clients_totals.buckets
+    draft_totals_buckets.each do |totals|
+      draft_client_totals[totals["key"]] = {
+        "count" => totals["doc_count"],
+        "this_year" => totals.this_year.buckets[0]["doc_count"],
+        "last_year" => totals.last_year.buckets[0]["doc_count"],
+      }
+    end
+
     headers = [
       "Repository Name",
       "Repository ID",
@@ -389,6 +407,7 @@ class ExportsController < ApplicationController
       "doisCurrentYear",
       "doisPreviousYear",
       "doisTotal",
+      "doisDraftTotal",
       "doisDbTotal",
       "doisMissing"
     ]
@@ -396,7 +415,7 @@ class ExportsController < ApplicationController
     csv = headers.to_csv
 
     # get doi counts from database
-    dois_by_client = DataciteDoi.where.not(aasm_state: "draft").group(:datacentre).count
+    dois_by_client = DataciteDoi.group(:datacentre).count
 
     clients.each do |client|
       # Limit for salesforce default of max 80 chars
@@ -407,6 +426,7 @@ class ExportsController < ApplicationController
 
       db_total = dois_by_client[client.id.to_i].to_i
       es_total = client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
+      es_draft_total = draft_client_totals[client.uid] ? draft_client_totals[client.uid]["count"] : 0
 
       row = {
         accountName: name,
@@ -444,8 +464,9 @@ class ExportsController < ApplicationController
             0
           end,
         doisCountTotal: es_total,
+        doisCountDraftTotal: es_draft_total,
         doisDbTotal: db_total,
-        doisMissing: db_total - es_total,
+        doisMissing: db_total - (es_total + es_draft_total),
       }.values
 
       csv += CSV.generate_line row

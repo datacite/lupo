@@ -94,7 +94,7 @@ describe ExportsController, type: :request do
       )
       dois_total = csv[1].strip.split(",")[15].to_i
       expect(dois_total).to eq(3)
-      dois_missing = csv[1].strip.split(",")[17].to_i
+      dois_missing = csv[1].strip.split(",")[18].to_i
       expect(dois_missing).to eq(0)
     end
 
@@ -113,7 +113,7 @@ describe ExportsController, type: :request do
       )
       dois_total = csv[1].strip.split(",")[15].to_i
       expect(dois_total).to eq(3)
-      dois_missing = csv[1].strip.split(",")[17].to_i
+      dois_missing = csv[1].strip.split(",")[18].to_i
       expect(dois_missing).to eq(0)
     end
   end
