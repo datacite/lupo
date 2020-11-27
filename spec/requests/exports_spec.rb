@@ -229,4 +229,32 @@ describe ExportsController, type: :request do
       )
     end
   end
+
+  describe "GET /export/check-indexed-dois", elasticsearch: true do
+    let(:client) do
+      create(
+        :client,
+        provider: provider,
+        symbol: "UVA.LIBRARY",
+        name: "University of Virginia Library",
+      )
+    end
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      DataciteDoi.import
+      Client.import
+      sleep 2
+    end
+
+    it "returns repositories with dois not indexed", vcr: false do
+      get "/export/check-indexed-dois",
+          nil, admin_headers
+      puts last_response.body
+      expect(last_response.status).to eq(200)
+      csv = last_response.body.lines
+      expect(csv.length).to eq(1)
+      expect(csv[0].strip).to be_blank
+    end
+  end
 end

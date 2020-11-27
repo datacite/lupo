@@ -307,13 +307,6 @@ class RepositoriesController < ApplicationController
     render json: meta, status: :ok
   end
 
-  def check_links
-    csv = Client.export_doi_counts
-    filename = "repositories-not-fully-indexed-#{Date.today}.csv"
-
-    send_data csv, filename: filename
-  end
-
   protected
     def set_include
       if params[:include].present?

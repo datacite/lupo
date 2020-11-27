@@ -488,6 +488,13 @@ class ExportsController < ApplicationController
            status: :bad_request
   end
 
+  def check_indexed_dois
+    csv = Client.export_doi_counts
+    filename = "repositories-not-fully-indexed-#{Date.today}.csv"
+
+    send_data csv, filename: filename
+  end
+
   def export_date(date)
     DateTime.strptime(date, "%Y-%m-%dT%H:%M:%S").strftime(
       "%d/%m/%YT%H:%M:%S.%3NUTC%:z",
