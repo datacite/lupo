@@ -396,7 +396,7 @@ class ExportsController < ApplicationController
     csv = headers.to_csv
 
     # get doi counts from database
-    dois_by_client = DataciteDoi.where(type: "DataciteDoi").where(aasm_state: ["findable", "registered"]).group(:datacentre).count
+    dois_by_client = DataciteDoi.where.not(aasm_state: "draft").group(:datacentre).count
 
     clients.each do |client|
       # Limit for salesforce default of max 80 chars
