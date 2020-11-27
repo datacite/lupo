@@ -169,6 +169,7 @@ Rails.application.routes.draw do
   get "export/repositories",
       to: "exports#repositories", defaults: { format: :csv }
   get "export/contacts", to: "exports#contacts", defaults: { format: :csv }
+  get "repositories/check-links", to: "repositories#check_links"
 
   resources :heartbeat, only: %i[index]
 
