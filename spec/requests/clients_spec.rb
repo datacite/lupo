@@ -295,6 +295,11 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
+      before do
+        ProviderPrefix.import
+        sleep 2
+      end
+
       it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
@@ -325,6 +330,15 @@ describe ClientsController, type: :request, elasticsearch: true do
         expect(
           json.dig("data", "relationships", "clients", "data").first.dig("id"),
         ).to eq(client.symbol.downcase)
+
+        get "provider-prefixes?query=#{prefix.uid}"
+        puts json
+        expect(
+          json.dig("meta", "total"),
+        ).to eq(1)
+        expect(
+          json.dig("data").first.dig("relationships", "provider", "data", "id"),
+        ).to eq("quechua")
       end
     end
 
