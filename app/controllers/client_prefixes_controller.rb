@@ -128,27 +128,6 @@ class ClientPrefixesController < ApplicationController
     authorize! :create, @client_prefix
 
     if @client_prefix.save
-      if @client_prefix.__elasticsearch__.index_document.dig("result") !=
-          "created"
-        logger.error "Error adding Client Prefix #{
-                       @client_prefix.uid
-                     } to Elasticsearch index."
-      end
-      if @client_prefix.prefix.__elasticsearch__.index_document.dig("result") !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Prefix #{
-                       @client_prefix.prefix.uid
-                     }."
-      end
-      if @client_prefix.provider_prefix.__elasticsearch__.index_document.dig(
-        "result",
-      ) !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Provider Prefix #{
-                       @client_prefix.provider_prefix.uid
-                     }."
-      end
-
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -174,27 +153,8 @@ class ClientPrefixesController < ApplicationController
 
   def destroy
     message = "Client prefix #{@client_prefix.uid} deleted."
-
     if @client_prefix.destroy
-      if @client_prefix.__elasticsearch__.delete_document.dig("result") !=
-          "deleted"
-        logger.error "Error deleting Client Prefix #{
-                       @client_prefix.uid
-                     } from Elasticsearch index."
-      end
-      if @client_prefix.prefix.__elasticsearch__.index_document.dig("result") !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Prefix #{
-                       @client_prefix.prefix.uid
-                     }."
-      end
-      if @client_prefix.provider_prefix.__elasticsearch__.index_document
-        logger.error "Error updating Elasticsearch index for Provider Prefix #{
-                       @client_prefix.provider_prefix.uid
-                     }."
-      end
-
-      logger.warn message
+      Rails.logger.warn message
       head :no_content
     else
       Rails.logger.error @client_prefix.errors.inspect

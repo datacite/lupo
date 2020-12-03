@@ -10,6 +10,8 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       unless %w[ProviderPrefix ClientPrefix].include?(self.class.name)
         IndexJob.perform_later(self)
+      else
+        __elasticsearch__.index_document
       end
 
       if (
@@ -30,13 +32,30 @@ module Indexable
     end
 
     after_touch do
-      # use index_document instead of update_document to also update virtual attributes
-      IndexBackgroundJob.perform_later(self)
+      # prefixes need to be reindexed sooner
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        __elasticsearch__.index_document
+      else
+        IndexBackgroundJob.perform_later(self)
+      end
     end
 
-    after_commit on: %i[destroy] do
-      unless %w[ProviderPrefix ClientPrefix].include?(self.class.name)
+    after_commit on: [:destroy] do
+      begin
         __elasticsearch__.delete_document
+        if self.class.name == "Event"
+          Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
+        else
+          Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        end
+        # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
+
+        # reindex prefix
+        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+          IndexJob.perform_later(self.prefix)
+        end
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        Rails.logger.error e.message
       end
       if instance_of?(Event)
         Rails.logger.info "#{self.class.name} #{
