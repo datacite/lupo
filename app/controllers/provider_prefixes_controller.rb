@@ -125,29 +125,8 @@ class ProviderPrefixesController < ApplicationController
     @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 
-    if @provider_prefix.save
-      if @provider_prefix.__elasticsearch__.index_document.dig("result") !=
-          "created"
-        logger.error "Error adding Provider Prefix #{
-                       @provider_prefix.uid
-                     } to Elasticsearch index."
-      end
-      if @provider_prefix.prefix.__elasticsearch__.index_document.dig(
-        "result",
-      ) !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Prefix #{
-                       @provider_prefix.prefix.uid
-                     }."
-      end
-      if @provider_prefix.provider.__elasticsearch__.index_document.dig(
-        "result",
-      ) !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Provider #{
-                       @provider_prefix.provider.uid
-                     }."
-      end
+    if @provider_prefix.save && @provider_prefix.__elasticsearch__.index_document.dig("result") == "created"
+      @provider_prefix.prefix.__elasticsearch__.index_document
 
       options = {}
       options[:include] = @include
@@ -173,32 +152,9 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def destroy
-    message = "Provider Prefix #{@provider_prefix.uid} deleted."
+    message = "Provider prefix #{@provider_prefix.uid} deleted."
     if @provider_prefix.destroy
-      if @provider_prefix.__elasticsearch__.delete_document.dig("result") !=
-          "deleted"
-        logger.error "Error deleting Provider Prefix #{
-                       @provider_prefix.uid
-                     } from Elasticsearch index."
-      end
-      if @provider_prefix.prefix.__elasticsearch__.index_document.dig(
-        "result",
-      ) !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Prefix #{
-                       @provider_prefix.prefix.uid
-                     }."
-      end
-      if @provider_prefix.provider.__elasticsearch__.index_document.dig(
-        "result",
-      ) !=
-          "updated"
-        logger.error "Error updating Elasticsearch index for Provider #{
-                       @provider_prefix.provider.uid
-                     }."
-      end
-
-      logger.info message
+      Rails.logger.warn message
       head :no_content
     else
       Rails.logger.error @provider_prefix.errors.inspect
