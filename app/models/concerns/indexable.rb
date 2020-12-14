@@ -1219,7 +1219,7 @@ module Indexable
 
       client = Elasticsearch::Model.client
       response =
-        client.delete_by_query(index: options[:index], body: { query: { query_string: { query: options[:query] }}})
+        client.delete_by_query(index: options[:index], body: { query: { query_string: { query: options[:query] } } })
 
       if response.to_h["deleted"]
         "Deleted #{response.to_h['deleted'].to_i} DOIs."
