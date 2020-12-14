@@ -44,6 +44,16 @@ namespace :activity do
     Activity.import_by_ids(from_id: from_id, until_id: until_id)
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts Activity.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc "Convert affiliations to new format"
   task convert_affiliations: :environment do
     from_id = (ENV["FROM_ID"] || Doi.minimum(:id)).to_i

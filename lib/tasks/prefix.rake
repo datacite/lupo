@@ -41,6 +41,16 @@ namespace :prefix do
     Prefix.import(index: ENV["INDEX"] || Prefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts Prefix.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc "Delete prefix and associated DOIs"
   task delete: :environment do
     # These prefixes are used by multiple prefixes and can't be deleted

@@ -41,6 +41,16 @@ namespace :provider_prefix do
     ProviderPrefix.import(index: ENV["INDEX"] || ProviderPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts ProviderPrefix.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc "Generate uid"
   task generate_uid: :environment do
     ProviderPrefix.where(uid: [nil, ""]).each do |pp|

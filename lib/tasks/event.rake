@@ -54,6 +54,16 @@ namespace :event do
     Event.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"])
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts Activity.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc "update registrant metadata"
   task update_registrant: :environment do
     cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []

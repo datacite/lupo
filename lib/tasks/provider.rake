@@ -55,4 +55,14 @@ namespace :provider do
   task import: :environment do
     Provider.import(index: Provider.inactive_index)
   end
+
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts Provider.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
 end

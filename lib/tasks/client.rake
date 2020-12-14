@@ -56,6 +56,16 @@ namespace :client do
     Client.import(index: Client.inactive_index)
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts Client.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   # desc 'Index DOIs by client'
   # task :index_all_dois => :environment do
   #   if ENV['CLIENT_ID'].nil?

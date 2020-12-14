@@ -41,6 +41,16 @@ namespace :client_prefix do
     ClientPrefix.import(index: ENV["INDEX"] || ClientPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
+  desc "Delete from index by query"
+  task delete_by_query: :environment do
+    if ENV["QUERY"].nil?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    puts ClientPrefix.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
+  end
+
   desc "Generate uid"
   task generate_uid: :environment do
     ClientPrefix.where(uid: [nil, ""]).each do |cp|
