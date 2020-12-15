@@ -69,7 +69,7 @@ class RepositorySerializer
     object.system_email
   end
 
-  attribute :service_email,
+  attribute :service_contact,
             if:
               Proc.new { |object, params|
                 params[:current_ability] &&
