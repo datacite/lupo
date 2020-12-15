@@ -6,6 +6,7 @@ class Provider < ApplicationRecord
   audited except: %i[
     globus_uuid
     system_email
+    group_email
     technical_contact
     secondary_technical_contact
     service_contact
@@ -13,6 +14,7 @@ class Provider < ApplicationRecord
     billing_contact
     secondary_billing_contact
     voting_contact
+    billing_information
     salesforce_id
     password
     updated
