@@ -56,6 +56,19 @@ class RepositorySerializer
     object.password.present?
   end
 
+  attribute :system_email,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.system_email
+  end
+
   attribute :service_email,
             if:
               Proc.new { |object, params|
