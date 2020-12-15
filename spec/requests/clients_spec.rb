@@ -297,7 +297,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
       before do
         ProviderPrefix.import
-        sleep 2
+        sleep 3
       end
 
       it "updates the record" do
@@ -332,7 +332,6 @@ describe ClientsController, type: :request, elasticsearch: true do
         ).to eq(client.symbol.downcase)
 
         get "provider-prefixes?query=#{prefix.uid}"
-        puts json
         expect(
           json.dig("meta", "total"),
         ).to eq(1)

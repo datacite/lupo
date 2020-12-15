@@ -43,6 +43,19 @@ class RepositorySerializer
     object.is_active.getbyte(0) == 1
   end
 
+  attribute :domains,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.domains
+  end
+
   attribute :has_password,
             if:
               Proc.new { |object, params|
