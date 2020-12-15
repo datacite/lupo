@@ -12,6 +12,7 @@ class RepositorySerializer
              :opendoar,
              :year,
              :system_email,
+             :service_contact,
              :globus_uuid,
              :alternate_name,
              :description,
