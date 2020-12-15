@@ -43,11 +43,29 @@ class RepositorySerializer
     object.is_active.getbyte(0) == 1
   end
 
-  attribute :has_password do |object|
+  attribute :has_password,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     object.password.present?
   end
 
-  attribute :service_contact do |object|
+  attribute :service_email,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.service_contact.present?
       object.service_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)

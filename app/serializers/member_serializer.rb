@@ -27,7 +27,18 @@ class MemberSerializer
 
   attribute :display_title, &:display_name
 
-  attribute :email, &:group_email
+  attribute :email,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.group_email
+  end
 
   attribute :country, &:country_code
 end

@@ -447,9 +447,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         post "/providers", params, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "systemEmail")).to eq(
-          "doe@joe.joe",
-        )
+        expect(json.dig("data", "attributes", "systemEmail")).to be_nil
         expect(json.dig("data", "attributes", "name")).to eq("Figshare")
         expect(json.dig("data", "attributes", "memberType")).to eq(
           "direct_member",

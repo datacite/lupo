@@ -35,11 +35,31 @@ class ClientSerializer
     object.is_active.getbyte(0) == 1
   end
 
-  attribute :has_password do |object|
+  attribute :has_password,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     object.password.present?
   end
 
-  attribute :contact_email, &:system_email
+  attribute :contact_email,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.system_email
+  end
 
   attribute :salesforce_id,
             if:

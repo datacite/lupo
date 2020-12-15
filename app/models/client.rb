@@ -2,6 +2,8 @@
 
 class Client < ApplicationRecord
   audited except: %i[
+    system_email
+    service_contact
     globus_uuid
     salesforce_id
     password

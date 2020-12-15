@@ -24,19 +24,19 @@ class Ability
       can :export, :organizations
       can :export, :repositories
     elsif user.role_id == "staff_user"
-      can :read, :all
+      can %i[read read_billing_information read_contact_information], :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
-      can %i[manage read_billing_information], Provider do |provider|
+      can %i[manage read_billing_information read_contact_information], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
-      can %i[update read read_billing_information],
+      can %i[update read read_billing_information read_contact_information],
           Provider,
           symbol: user.provider_id.upcase
       can %i[manage], ProviderPrefix do |provider_prefix|
         provider_prefix.provider &&
           user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
-      can %i[manage transfer], Client do |client|
+      can %i[manage transfer read_contact_information], Client do |client|
         client.provider &&
           user.provider_id.casecmp(client.provider.consortium_id)
       end
@@ -60,11 +60,11 @@ class Ability
             user.provider_id.casecmp(activity.doi.provider.consortium_id)
       end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
-      can %i[update read read_billing_information],
+      can %i[update read read_billing_information read_contact_information],
           Provider,
           symbol: user.provider_id.upcase
       can %i[manage], ProviderPrefix, provider_id: user.provider_id
-      can %i[manage], Client, provider_id: user.provider_id
+      can %i[manage read_contact_information], Client, provider_id: user.provider_id
       cannot %i[transfer], Client
       can %i[manage], ClientPrefix # , :client_id => user.provider_id
 
@@ -84,12 +84,12 @@ class Ability
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
     elsif user.role_id == "provider_user" && user.provider_id.present?
-      can %i[read read_billing_information],
+      can %i[read read_billing_information read_contact_information],
           Provider,
           symbol: user.provider_id.upcase
       can %i[read], Provider
       can %i[read], ProviderPrefix, provider_id: user.provider_id
-      can %i[read], Client, provider_id: user.provider_id
+      can %i[read read_contact_information], Client, provider_id: user.provider_id
       can %i[read], ClientPrefix # , :client_id => user.client_id
       can %i[read get_url read_landing_page_results],
           Doi,
@@ -102,7 +102,7 @@ class Ability
       end
     elsif user.role_id == "client_admin" && user.client_id.present?
       can %i[read], Provider
-      can %i[read update], Client, symbol: user.client_id.upcase
+      can %i[read update read_contact_information], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
 
       # if Flipper[:delete_doi].enabled?(user)
@@ -136,7 +136,7 @@ class Ability
       end
     elsif user.role_id == "client_user" && user.client_id.present?
       can %i[read], Provider
-      can %i[read], Client, symbol: user.client_id.upcase
+      can %i[read read_contact_information], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
       can %i[read get_url read_landing_page_results],
           Doi,

@@ -56,7 +56,16 @@ class ProviderSerializer
     object.is_active.getbyte(0) == 1
   end
 
-  attribute :has_password do |object|
+  attribute :has_password,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     object.password.present?
   end
 
@@ -103,8 +112,43 @@ class ProviderSerializer
               },
             &:globus_uuid
 
+  attribute :system_email,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.system_email
+  end
+
+  attribute :group_email,
+    if:
+      Proc.new { |object, params|
+        params[:current_ability] &&
+          params[:current_ability].can?(
+            :read_contact_information,
+            object,
+          ) ==
+            true
+      } do |object|
+    object.group_email
+  end
+
   # Convert all contacts json models back to json style camelCase
-  attribute :technical_contact do |object|
+  attribute :technical_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.technical_contact.present?
       object.technical_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -114,7 +158,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :secondary_technical_contact do |object|
+  attribute :secondary_technical_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.secondary_technical_contact.present?
       object.secondary_technical_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -124,7 +177,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :billing_contact do |object|
+  attribute :billing_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.billing_contact.present?
       object.billing_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -134,7 +196,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :secondary_billing_contact do |object|
+  attribute :secondary_billing_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.secondary_billing_contact.present?
       object.secondary_billing_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -144,7 +215,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :service_contact do |object|
+  attribute :service_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.service_contact.present?
       object.service_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -154,7 +234,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :secondary_service_contact do |object|
+  attribute :secondary_service_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.secondary_service_contact.present?
       object.secondary_service_contact.transform_keys! do |key|
         key.to_s.camelcase(:lower)
@@ -164,7 +253,16 @@ class ProviderSerializer
     end
   end
 
-  attribute :voting_contact do |object|
+  attribute :voting_contact,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
     if object.voting_contact.present?
       object.voting_contact.transform_keys! { |key| key.to_s.camelcase(:lower) }
     else

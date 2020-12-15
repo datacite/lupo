@@ -5,6 +5,14 @@ require "countries"
 class Provider < ApplicationRecord
   audited except: %i[
     globus_uuid
+    system_email
+    technical_contact
+    secondary_technical_contact
+    service_contact
+    secondary_service_contact
+    billing_contact
+    secondary_billing_contact
+    voting_contact
     salesforce_id
     password
     updated
