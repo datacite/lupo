@@ -2103,7 +2103,7 @@ class Doi < ApplicationRecord
         response = Doi.query(query, filter.merge(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "#{label} #{response.results.results.length}  Dois starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{response.results.results.length} Dois starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 

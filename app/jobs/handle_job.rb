@@ -8,7 +8,7 @@ class HandleJob < ApplicationJob
 
   # discard_on ActiveJob::DeserializationError
 
-  def perform(doi_id)
+  def perform(doi_id, _options = {})
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?

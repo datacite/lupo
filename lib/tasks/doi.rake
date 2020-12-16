@@ -208,6 +208,23 @@ namespace :doi do
     puts Doi.loop_through_dois(options)
   end
 
+  desc "Trigger DOI handle registration based on query"
+  task register_dois_by_query: :environment do
+    # Ensure we have specified a query of some kind.
+    if ENV["QUERY"].blank?
+      puts "ENV['QUERY'] is required"
+      exit
+    end
+
+    options = {
+      query: ENV["QUERY"],
+      label: "[RegisterDoiByQuery]",
+      job_name: "HandleJob",
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
+    }
+    puts Doi.loop_through_dois(options)
+  end
+
   # until all Crossref DOIs are indexed as otherDoi
   desc "Refresh metadata"
   task refresh: :environment do
