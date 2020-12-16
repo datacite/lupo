@@ -31,6 +31,11 @@ namespace :client_prefix do
     puts ClientPrefix.active_index + " is the active index."
   end
 
+  desc "Return inactive index for client_prefixes"
+  task inactive_index: :environment do
+    puts ClientPrefix.inactive_index + " is the inactive index."
+  end
+
   desc "Monitor reindexing for client_prefixes"
   task monitor_reindex: :environment do
     puts ClientPrefix.monitor_reindex
@@ -39,6 +44,21 @@ namespace :client_prefix do
   desc "Import all client_prefixes"
   task import: :environment do
     ClientPrefix.import(index: ENV["INDEX"] || ClientPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
+  end
+
+  desc "Create alias for client_prefixes"
+  task create_alias: :environment do
+    puts ClientPrefix.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "List aliases for client_prefixes"
+  task list_aliases: :environment do
+    puts ClientPrefix.list_aliases
+  end
+
+  desc "Delete alias for client_prefixes"
+  task delete_alias: :environment do
+    puts ClientPrefix.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Delete from index by query"

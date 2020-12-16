@@ -31,6 +31,11 @@ namespace :prefix do
     puts Prefix.active_index + " is the active index."
   end
 
+  desc "Return inactive index for prefixes"
+  task inactive_index: :environment do
+    puts Prefix.inactive_index + " is the inactive index."
+  end
+
   desc "Monitor reindexing for prefixes"
   task monitor_reindex: :environment do
     puts Prefix.monitor_reindex
@@ -39,6 +44,21 @@ namespace :prefix do
   desc "Import all prefixes"
   task import: :environment do
     Prefix.import(index: ENV["INDEX"] || Prefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
+  end
+
+  desc "Create alias for prefixes"
+  task create_alias: :environment do
+    puts Prefix.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "List aliases for prefixes"
+  task list_aliases: :environment do
+    puts Prefix.list_aliases
+  end
+
+  desc "Delete alias for prefixes"
+  task delete_alias: :environment do
+    puts Prefix.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Delete from index by query"

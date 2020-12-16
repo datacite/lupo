@@ -31,6 +31,11 @@ namespace :provider_prefix do
     puts ProviderPrefix.active_index + " is the active index."
   end
 
+  desc "Return inactive index for provider_prefixes"
+  task inactive_index: :environment do
+    puts ProviderPrefix.inactive_index + " is the inactive index."
+  end
+
   desc "Monitor reindexing for provider_prefixes"
   task monitor_reindex: :environment do
     puts ProviderPrefix.monitor_reindex
@@ -39,6 +44,21 @@ namespace :provider_prefix do
   desc "Import all provider_prefixes"
   task import: :environment do
     ProviderPrefix.import(index: ENV["INDEX"] || ProviderPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
+  end
+
+  desc "Create alias for provider_prefixes"
+  task create_alias: :environment do
+    puts ProviderPrefix.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "List aliases for provider_prefixes"
+  task list_aliases: :environment do
+    puts ProviderPrefixefix.list_aliases
+  end
+
+  desc "Delete alias for provider_prefixes"
+  task delete_alias: :environment do
+    puts ProviderPrefix.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Delete from index by query"

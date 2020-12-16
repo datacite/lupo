@@ -924,7 +924,7 @@ module Indexable
     # delete and create inactive index to use current mappings
     # Needs to run every time we change the mappings
     def upgrade_index(options = {})
-      inactive_index ||= (options[:index] || inactive_index)
+      inactive_index ||= (options[:index] || self.inactive_index)
 
       __elasticsearch__.create_index!(index: inactive_index, force: true)
       "Upgraded inactive index #{inactive_index}."
