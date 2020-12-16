@@ -325,6 +325,32 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:destroy, doi) }
     end
 
+    context "when is temporary" do
+      let(:token) { User.generate_token(role_id: "temporary", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
+
+      it { is_expected.to be_able_to(:read, user) }
+
+      it { is_expected.to be_able_to(:read, provider) }
+      it { is_expected.not_to be_able_to(:create, provider) }
+      it { is_expected.to be_able_to(:update, provider) }
+      it { is_expected.not_to be_able_to(:destroy, provider) }
+      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
+      it { is_expected.to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.to be_able_to(:read, client) }
+      it { is_expected.not_to be_able_to(:create, client) }
+      it { is_expected.to be_able_to(:update, client) }
+      it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
+      it { is_expected.to be_able_to(:read_contact_information, client) }
+
+      it { is_expected.to be_able_to(:read, doi) }
+      it { is_expected.not_to be_able_to(:transfer, doi) }
+      it { is_expected.not_to be_able_to(:create, doi) }
+      it { is_expected.not_to be_able_to(:update, doi) }
+      it { is_expected.not_to be_able_to(:destroy, doi) }
+    end
+
     context "when is anonymous" do
       let(:token) { nil }
 
