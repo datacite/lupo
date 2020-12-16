@@ -164,12 +164,12 @@ class Ability
       end
     elsif user.role_id == "temporary"
       can %i[read], Provider
-      can %i[update], Provider, symbol: "ADMIN" if user.uid == "admin"
+      can %i[update read_contact_information], Provider, symbol: "ADMIN" if user.uid == "admin"
       if user.provider_id.present?
-        can %i[update], Provider, symbol: user.provider_id.upcase
+        can %i[update read_contact_information], Provider, symbol: user.provider_id.upcase
       end
       if user.client_id.present?
-        can %i[read update], Client, symbol: user.client_id.upcase
+        can %i[read update read_contact_information], Client, symbol: user.client_id.upcase
       end
       can %i[read], Doi, client_id: user.client_id if user.client_id.present?
       can %i[read get_url], Doi
