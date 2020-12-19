@@ -1243,7 +1243,7 @@ class Doi < ApplicationRecord
     message
   end
 
-  def self.import_by_client(client_id, options={})
+  def self.import_by_client(client_id, options = {})
     client = ::Client.where(symbol: client_id).first
     return nil if client.blank?
 
