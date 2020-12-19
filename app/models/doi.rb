@@ -1243,7 +1243,7 @@ class Doi < ApplicationRecord
     message
   end
 
-  def self.import_by_client(client_id: nil)
+  def self.import_by_client(client_id: nil, total_count: nil)
     client = ::Client.where(symbol: client_id).first
     return nil if client.blank?
 
@@ -1271,18 +1271,18 @@ class Doi < ApplicationRecord
       end
 
       count += dois.length
-      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for repository #{client_id}." if total_count > 500
     end
 
     if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for client #{client_id}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for repository #{client_id}."
     elsif count > 0
-      Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs for client #{client_id}."
+      Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs for repository #{client_id}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
-    Rails.logger.error "[Elasticsearch] Error #{e.message} importing DOIs for client #{client_id}."
+    Rails.logger.error "[Elasticsearch] Error #{e.message} importing DOIs for repository #{client_id}."
   end
 
   def self.index_by_id(options = {})
@@ -2095,7 +2095,7 @@ class Doi < ApplicationRecord
     query = options[:query].presence
 
     response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
-    message = "#{label} #{response.results.total} Dois with #{label}."
+    message = "#{label} #{response.results.total} Dois."
 
     # walk through results using cursor
     if response.results.total.positive?

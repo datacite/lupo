@@ -102,6 +102,11 @@ namespace :client do
     Doi.import_by_client(client_id: ENV["CLIENT_ID"])
   end
 
+  desc "Import dois not indexed"
+  task import_dois_not_indexed: :environment do
+    puts Client.import_dois_not_indexed(query: ENV["QUERY"])
+  end
+
   desc "Export doi counts"
   task export_doi_counts: :environment do
     puts Client.export_doi_counts(query: ENV["QUERY"])
