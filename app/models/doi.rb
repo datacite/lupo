@@ -1243,7 +1243,7 @@ class Doi < ApplicationRecord
     message
   end
 
-  def self.import_by_client(client_id: nil)
+  def self.import_by_client(client_id, options={})
     client = ::Client.where(symbol: client_id).first
     return nil if client.blank?
 
@@ -1271,14 +1271,10 @@ class Doi < ApplicationRecord
       end
 
       count += dois.length
-      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for repository #{client_id}."
+      Rails.logger.info "[Elasticsearch] So far imported #{count} DOIs for repository #{client_id}."
     end
 
-    if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for repository #{client_id}."
-    elsif count > 0
-      Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs for repository #{client_id}."
-    end
+    Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs (#{options[:missing_count].to_i - errors} out of #{options[:missing_count].to_i} errors resolved) for repository #{client_id}."
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => e
