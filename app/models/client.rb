@@ -718,17 +718,8 @@ class Client < ApplicationRecord
 
     # loop through repositories that have DOIs not indexed in Elasticsearch
     table.each do |row|
-      client = ::Client.where(deleted_at: nil).where(symbol: row["Repository ID"]).first
-      if client.nil?
-        puts "Client not found for client ID #{row["Repository ID"]}."
-        exit
-      end
-
-      # import DOIs for client. Ignore repositories with more than 10K DOIs
-      if client.dois.length <= 10000
-        puts "#{client.dois.length} DOIs for repository #{client.symbol} will be imported."
-        Doi.import_by_client(client_id: client.symbol, total_count: client.dois.length)
-      end
+      Rails.logger.info "Indexing missing DOIs for repository #{row["Repository ID"]}."
+      DoiNotIndexedJob.perform_later(row["Repository ID"])
     end
   end
 

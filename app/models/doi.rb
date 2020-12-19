@@ -1243,7 +1243,7 @@ class Doi < ApplicationRecord
     message
   end
 
-  def self.import_by_client(client_id: nil, total_count: nil)
+  def self.import_by_client(client_id: nil)
     client = ::Client.where(symbol: client_id).first
     return nil if client.blank?
 
@@ -1271,7 +1271,7 @@ class Doi < ApplicationRecord
       end
 
       count += dois.length
-      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for repository #{client_id}." if total_count > 500
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for repository #{client_id}."
     end
 
     if errors > 1
