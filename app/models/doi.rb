@@ -1212,7 +1212,7 @@ class Doi < ApplicationRecord
     else
       doi = Doi.where(id: id).first
     end
-    
+
     if doi.blank?
       message = "[MySQL] Error importing DOI #{doi_id}: not found"
       Rails.logger.error message
