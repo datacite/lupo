@@ -26,12 +26,12 @@ describe DataciteDoi, type: :model, vcr: true do
     let(:doi) { dois.first }
 
     it "import by ids" do
-      response = DataciteDoi.import_by_ids
+      response = Doi.import_by_ids(model: "DataciteDoi")
       expect(response).to be > 0
     end
 
     it "import by id" do
-      response = DataciteDoi.import_by_id(id: doi.id)
+      response = Doi.import_by_id(model: "DataciteDoi", id: doi.id)
       expect(response).to eq(3)
     end
   end

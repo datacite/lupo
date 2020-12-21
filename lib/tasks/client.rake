@@ -99,7 +99,7 @@ namespace :client do
 
     # import DOIs for client
     puts "#{client.dois.length} DOIs will be imported."
-    Doi.import_by_client(ENV["CLIENT_ID"])
+    Doi.import_by_ids(model: "Client", client_id: ENV["CLIENT_ID"])
   end
 
   desc "Import dois not indexed"

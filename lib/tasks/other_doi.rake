@@ -60,7 +60,7 @@ namespace :other_doi do
   task import: :environment do
     from_id = (ENV["FROM_ID"] || OtherDoi.minimum(:id)).to_i
     until_id = (ENV["UNTIL_ID"] || OtherDoi.maximum(:id)).to_i
-    puts OtherDoi.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"] || OtherDoi.inactive_index)
+    puts Doi.import_by_ids(model: "OtherDoi", from_id: from_id, until_id: until_id, index: ENV["INDEX"] || OtherDoi.inactive_index)
   end
 
   desc "Import one other DOI"

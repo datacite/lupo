@@ -113,7 +113,7 @@ describe "doi:set_schema_version", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetSchemaVersion] 0 Dois with [SetSchemaVersion].\n" }
+  let(:output) { "[SetSchemaVersion] 0 Dois.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -130,7 +130,7 @@ describe "doi:set_registration_agency", elasticsearch: true do
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
   let(:output) do
-    "[SetRegistrationAgency] 0 Dois with [SetRegistrationAgency].\n"
+    "[SetRegistrationAgency] 0 Dois.\n"
   end
 
   it "prerequisites should include environment" do
@@ -147,7 +147,7 @@ describe "doi:set_license", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetLicense] 0 Dois with [SetLicense].\n" }
+  let(:output) { "[SetLicense] 0 Dois.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -163,7 +163,7 @@ describe "doi:set_language", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetLanguage] 0 Dois with [SetLanguage].\n" }
+  let(:output) { "[SetLanguage] 0 Dois.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -179,7 +179,7 @@ describe "doi:set_identifiers", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetIdentifiers] 0 Dois with [SetIdentifiers].\n" }
+  let(:output) { "[SetIdentifiers] 0 Dois.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -195,7 +195,7 @@ describe "doi:set_field_of_science", elasticsearch: true do
   include_context "rake"
 
   let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "[SetFieldOfScience] 0 Dois with [SetFieldOfScience].\n" }
+  let(:output) { "[SetFieldOfScience] 0 Dois.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
