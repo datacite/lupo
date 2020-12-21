@@ -1278,7 +1278,7 @@ class Doi < ApplicationRecord
       DoiImportByIdJob.perform_later(options.merge(id: id))
       unless Rails.env.test?
         Rails.
-          logger.info "Queued importing for #{model} DOIs with IDs starting with #{
+          logger.info "Queued importing for #{options[:model]} DOIs with IDs starting with #{
                             id
                           }."
       end
@@ -1386,7 +1386,7 @@ class Doi < ApplicationRecord
 
     count = 0
 
-    model.where(id: id..(id + 499)).
+    collection.where(id: id..(id + 499)).
       find_each do |doi|
       IndexJob.perform_later(doi)
       count += 1
