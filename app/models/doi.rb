@@ -1249,12 +1249,14 @@ class Doi < ApplicationRecord
   end
 
   def self.import_by_ids(options = {})
+    model = options[:model] || "Doi"
+
     # TODO remove query for type once STI is enabled
-    if options[:model] = "DataciteDoi"
+    if model == "DataciteDoi"
       collection = DataciteDoi.where(type: "DataciteDoi")
-    elsif options[:model] = "OtherDoi"
+    elsif model == "OtherDoi"
       collection = OtherDoi.where(type: "OtherDoi")
-    elsif options[:model] = "Client"
+    elsif model == "Client"
       client = ::Client.where(symbol: options[:client_id]).first
       return nil if client.blank?
 
@@ -1278,7 +1280,7 @@ class Doi < ApplicationRecord
       DoiImportByIdJob.perform_later(options.merge(id: id))
       unless Rails.env.test?
         Rails.
-          logger.info "Queued importing for #{options[:model]} DOIs with IDs starting with #{
+          logger.info "Queued importing for #{model} DOIs with IDs starting with #{
                             id
                           }."
       end
@@ -1291,11 +1293,12 @@ class Doi < ApplicationRecord
     return nil if options[:id].blank?
 
     id = options[:id].to_i
+    model = options[:model] || "Doi"
     errors = 0
     count = 0
 
     # TODO remove query for type once STI is enabled
-    if options[:model] = "DataciteDoi"
+    if model == "DataciteDoi"
       collection = DataciteDoi.where(type: "DataciteDoi")
       index = if Rails.env.test?
         "dois-test"
@@ -1304,7 +1307,7 @@ class Doi < ApplicationRecord
       else
         "dois"
       end
-    elsif options[:model] = "OtherDoi"
+    elsif model == "OtherDoi"
       collection = OtherDoi.where(type: "OtherDoi")
       index = if Rails.env.test?
         "dois-other-test"
@@ -1313,7 +1316,7 @@ class Doi < ApplicationRecord
       else
         "dois-other"
       end
-    elsif options[:model] = "Client"
+    elsif model == "Client"
       client = ::Client.where(symbol: options[:client_id]).first
       return nil if client.blank?
 
@@ -1369,11 +1372,11 @@ class Doi < ApplicationRecord
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
                            count
-                         } #{collection} DOIs with IDs #{id} - #{id + 499}."
+                         } #{model} DOIs with IDs #{id} - #{id + 499}."
     elsif count > 0
       Rails.logger.info "[Elasticsearch] Imported #{
                           count
-                        } #{collection} DOIs with IDs #{id} - #{id + 499}."
+                        } #{model} DOIs with IDs #{id} - #{id + 499}."
     end
 
     count
@@ -1382,7 +1385,7 @@ class Doi < ApplicationRecord
          ActiveRecord::LockWaitTimeout => e
     Rails.logger.info "[Elasticsearch] Error #{
                         e.message
-                      } importing #{collection} DOIs with IDs #{id} - #{id + 499}."
+                      } importing #{model} DOIs with IDs #{id} - #{id + 499}."
 
     count = 0
 
@@ -1394,7 +1397,7 @@ class Doi < ApplicationRecord
 
     Rails.logger.info "[Elasticsearch] Imported #{
                         count
-                      } #{collection} DOIs with IDs #{id} - #{id + 499}."
+                      } #{model} DOIs with IDs #{id} - #{id + 499}."
 
     count
   end
