@@ -719,7 +719,7 @@ class Client < ApplicationRecord
     # loop through repositories that have DOIs not indexed in Elasticsearch
     table.each do |row|
       Rails.logger.info "Started to import #{row["DOIs in Database"]} DOIs (#{row["DOIs missing"]} missing) for repository #{row["Repository ID"]}."
-      DoiNotIndexedJob.perform_later(row["Repository ID"], doi_count: row["DOIs in Database"], missing_count: row["DOIs missing"])
+      DoiNotIndexedJob.perform_later(model: "Client", client_id: row["Repository ID"])
     end
   end
 
