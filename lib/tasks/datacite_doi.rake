@@ -71,12 +71,12 @@ namespace :datacite_doi do
 
   desc "Import one datacite DOI"
   task import_one: :environment do
-    if ENV["DOI"].nil?
-      puts "ENV['DOI'] is required"
+    if ENV["DOI"].nil? && ENV["ID"].nil?
+      puts "Either ENV variable DOI or ID are required"
       exit
     end
 
-    puts DataciteDoi.import_one(doi_id: ENV["DOI"])
+    puts DataciteDoi.import_one(doi_id: ENV["DOI"], id: ENV["ID"])
   end
 
   desc "Index one datacite DOI"

@@ -183,12 +183,12 @@ namespace :doi do
 
   desc "Import one DOI"
   task import_one: :environment do
-    if ENV["DOI"].nil?
-      puts "ENV['DOI'] is required"
+    if ENV["DOI"].nil? && ENV["ID"].nil?
+      puts "Either ENV variable DOI or ID are required"
       exit
     end
 
-    Doi.import_one(doi_id: ENV["DOI"])
+    puts Doi.import_one(doi_id: ENV["DOI"], id: ENV["ID"])
   end
 
   desc "Trigger DOI import based on query"

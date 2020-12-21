@@ -1206,8 +1206,13 @@ class Doi < ApplicationRecord
     "Started indexing DOI #{doi.doi}."
   end
 
-  def self.import_one(doi_id: nil)
-    doi = Doi.where(doi: doi_id).first
+  def self.import_one(doi_id: nil, id: nil)
+    if doi_id
+      doi = Doi.where(doi: doi_id).first
+    else
+      doi = Doi.where(id: id).first
+    end
+    
     if doi.blank?
       message = "[MySQL] Error importing DOI #{doi_id}: not found"
       Rails.logger.error message
