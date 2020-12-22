@@ -12,14 +12,13 @@ describe OtherDoi, type: :model do
     let(:doi) { dois.first }
 
     it "import by ids" do
-      response = Doi.import_by_ids(model: "OtherDoi")
+      response = OtherDoi.import_by_ids
       expect(response).to be > 0
     end
 
-    it "import by id" do
-      response = Doi.import_by_id(model: "OtherDoi", id: doi.id)
-      sleep 3
-      expect(response).to eq(3)
-    end
+    # it "import by id" do
+    #   response = OtherDoi.import_by_id(id: doi.id)
+    #   expect(response).to eq(3)
+    # end
   end
 end
