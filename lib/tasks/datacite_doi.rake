@@ -66,7 +66,7 @@ namespace :datacite_doi do
     from_id = (ENV["FROM_ID"] || DataciteDoi.minimum(:id)).to_i
     until_id = (ENV["UNTIL_ID"] || DataciteDoi.maximum(:id)).to_i
 
-    puts Doi.import_by_ids(model: "DataciteDoi", from_id: from_id, until_id: until_id, index: ENV["INDEX"] || DataciteDoi.inactive_index)
+    puts DataciteDoi.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"] || DataciteDoi.inactive_index)
   end
 
   desc "Import one datacite DOI"

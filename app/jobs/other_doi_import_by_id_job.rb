@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class DoiImportByIdJob < ApplicationJob
-  queue_as :lupo_import
+class OtherDoiImportByIdJob < ApplicationJob
+  queue_as :lupo_import_other_doi
 
   rescue_from ActiveJob::DeserializationError,
               Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
@@ -9,6 +9,6 @@ class DoiImportByIdJob < ApplicationJob
   end
 
   def perform(options = {})
-    Doi.import_by_id(options)
+    OtherDoi.import_by_id(options)
   end
 end
