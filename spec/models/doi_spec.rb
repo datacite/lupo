@@ -338,6 +338,13 @@ describe Doi, type: :model, vcr: true do
       expect(doi.errors.details).to eq(rights_list: [{ error: "Rights should not have a length of more than 2000 characters." }])
     end
 
+    it "nil rights" do
+      doi.rights_list = [{ "rights" => nil }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([])
+    end
+
     it "hash rightsIdentifier" do
       doi.rights_list = [{ "rightsIdentifier" => "CC-BY-4.0" }]
       expect(doi.save).to be true
