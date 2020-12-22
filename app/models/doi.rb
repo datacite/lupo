@@ -1779,6 +1779,7 @@ class Doi < ApplicationRecord
   def check_rights_list
     Array.wrap(rights_list).each do |r|
       errors.add(:rights_list, "Rights '#{r}' should be an object instead of a string.") unless r.is_a?(Hash)
+      errors.add(:rights_list, "Rights should not have a length of more than 2000 characters.") if r["rights"].length > 2000
     end
   end
 
