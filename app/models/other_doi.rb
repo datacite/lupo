@@ -162,7 +162,7 @@ class OtherDoi < Doi
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e
 
-    Rails.logger.error "[Elasticsearch] Error #{class} with message #{
+    Rails.logger.error "[Elasticsearch] Error #{e.class} with message #{
                    e.message
                  } importing Other DOIs."
   end
