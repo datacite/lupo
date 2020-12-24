@@ -360,9 +360,9 @@ class Client < ApplicationRecord
       "password" => password,
       "cache_key" => cache_key,
       "client_type" => client_type,
-      "created" => created,
-      "updated" => updated,
-      "deleted_at" => deleted_at,
+      "created" => created.try(:iso8601),
+      "updated" => updated.try(:iso8601),
+      "deleted_at" => deleted_at.try(:iso8601),
       "cumulative_years" => cumulative_years,
       "provider" =>
         if options[:exclude_associations]
@@ -712,6 +712,18 @@ class Client < ApplicationRecord
     csv.join("")
   end
 
+  def self.import_dois(client_id)
+    client = self.where(deleted_at: nil).where(symbol: client_id).first
+    if client.nil?
+      logger.error "Client not found for client ID #{client_id}."
+      exit
+    end
+
+    # import DOIs for client
+    logger.info "#{client.dois.length} DOIs will be imported."
+    DoiImportByClientJob.perform_later(client.id)
+  end
+
   # import all DOIs not indexed in Elasticsearch
   def self.import_dois_not_indexed(query: nil)
     table = CSV.parse(export_doi_counts(query: query), headers: true)
@@ -719,7 +731,7 @@ class Client < ApplicationRecord
     # loop through repositories that have DOIs not indexed in Elasticsearch
     table.each do |row|
       Rails.logger.info "Started to import #{row["DOIs in Database"]} DOIs (#{row["DOIs missing"]} missing) for repository #{row["Repository ID"]}."
-      DoiNotIndexedJob.perform_later(client_id: row["Repository ID"])
+      DoiImportByClientJob.perform_later(row["Repository ID"])
     end
   end
 

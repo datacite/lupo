@@ -528,10 +528,10 @@ class Doi < ApplicationRecord
       "reason" => reason,
       "source" => source,
       "cache_key" => cache_key,
-      "registered" => registered,
-      "created" => created,
-      "updated" => updated,
-      "published" => published,
+      "registered" => registered.try(:iso8601),
+      "created" => created.try(:iso8601),
+      "updated" => updated.try(:iso8601),
+      "published" => published.try(:iso8601),
       "client" => client.try(:as_indexed_json, exclude_associations: true),
       "provider" => provider.try(:as_indexed_json, exclude_associations: true),
       "resource_type" => resource_type.try(:as_indexed_json),
@@ -1248,15 +1248,6 @@ class Doi < ApplicationRecord
     message
   end
 
-  def self.import_by_client(client_id: nil)
-    client = ::Client.where(symbol: client_id).first
-    return nil if client.blank?
-
-    Doi.where(datacentre: client.id).find_each do |doi|
-      IndexJob.perform_later(doi)
-    end
-  end
-
   def uid
     doi.downcase
   end
@@ -1404,7 +1395,7 @@ class Doi < ApplicationRecord
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
 
-    # get every id between from_id and end_id
+    # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertAffiliationByIdJob.perform_later(options.merge(id: id))
       Rails.logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
@@ -1508,7 +1499,7 @@ class Doi < ApplicationRecord
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
 
-    # get every id between from_id and end_id
+    # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertContainerByIdJob.perform_later(options.merge(id: id))
       Rails.logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
@@ -2231,7 +2222,7 @@ class Doi < ApplicationRecord
     from_id = options[:from_id].to_i
     until_id = (options[:until_id] || (from_id + 499)).to_i
 
-    # get every id between from_id and end_id
+    # get every id between from_id and until_id
     count = 0
 
     Rails.logger.info "[migration_index_types] adding type information for DOIs with IDs #{from_id} - #{until_id}."

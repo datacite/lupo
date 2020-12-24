@@ -29,10 +29,5 @@ describe DataciteDoi, type: :model, vcr: true do
       response = DataciteDoi.import_by_ids
       expect(response).to be > 0
     end
-
-    it "import by id" do
-      response = DataciteDoi.import_by_id(id: doi.id)
-      expect(response).to eq(3)
-    end
   end
 end

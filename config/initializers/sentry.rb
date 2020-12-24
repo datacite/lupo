@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Raven.configure do |config|
+  config.environments = %w(stage production)
   config.dsn = ENV["SENTRY_DSN"]
   config.release = "lupo:" + Lupo::Application::VERSION
   config.sanitize_fields =

@@ -22,6 +22,14 @@ class DataciteDoi < Doi
 
   # TODO remove query for type once STI is enabled
   def self.import_by_ids(options = {})
+    index =
+      if Rails.env.test?
+        index_name
+      elsif options[:index].present?
+        options[:index]
+      else
+        inactive_index
+      end
     from_id =
       (options[:from_id] || DataciteDoi.where(type: "DataciteDoi").minimum(:id)).
         to_i
@@ -31,25 +39,37 @@ class DataciteDoi < Doi
           DataciteDoi.where(type: "DataciteDoi").maximum(:id)
       ).
         to_i
+    count = 0
 
-    # get every id between from_id and end_id
-    (from_id..until_id).step(500).each do |id|
-      DataciteDoiImportByIdJob.perform_later(options.merge(id: id))
-      unless Rails.env.test?
-        Rails.
-          logger.info "Queued importing for DataCite DOIs with IDs starting with #{
-                            id
-                          }."
+    # TODO remove query for type once STI is enabled
+    # SQS message size limit is 256 kB, up to 2 GB with S3
+    DataciteDoi.where(type: "DataciteDoi").where(id: from_id..until_id).
+      find_in_batches(batch_size: 100) do |dois|
+      mapped_dois = dois.map do |doi|
+        { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
       end
+      DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: index)
+      count += dois.length
     end
 
-    (from_id..until_id).to_a.length
+    logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
+    count
   end
 
-  def self.import_by_id(options = {})
-    return nil if options[:id].blank?
+  def self.import_by_client(client_id)
+    return nil if client_id.blank?
 
-    id = options[:id].to_i
+    # TODO remove query for type once STI is enabled
+    DataciteDoi.where(type: "DataciteDoi").where(datacentre: client_id).
+      find_in_batches(batch_size: 250) do |dois|
+      mapped_dois = dois.map do |doi|
+        { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
+      end
+      DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: self.active_index)
+    end
+  end
+
+  def self.import_in_bulk(dois, options = {})
     index =
       if Rails.env.test?
         index_name
@@ -61,68 +81,48 @@ class DataciteDoi < Doi
     errors = 0
     count = 0
 
-    # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "DataciteDoi").where(id: id..(id + 499)).
-      find_in_batches(batch_size: 500) do |dois|
-      response =
-        DataciteDoi.__elasticsearch__.client.bulk index: index,
-                                                  type:
-                                                    DataciteDoi.document_type,
-                                                  body:
-                                                    dois.map { |doi|
-                                                      {
-                                                        index: {
-                                                          _id: doi.id,
-                                                          data:
-                                                            doi.as_indexed_json,
-                                                        },
-                                                      }
+    response =
+      DataciteDoi.__elasticsearch__.client.bulk index: index,
+                                                type:
+                                                  DataciteDoi.document_type,
+                                                body:
+                                                  dois.map { |doi|
+                                                    {
+                                                      index: {
+                                                        _id: doi["id"],
+                                                        data:
+                                                          doi["as_indexed_json"],
+                                                      },
                                                     }
+                                                  }
 
-      # try to handle errors
-      errors_in_response =
-        response["items"].select { |k, _v| k.values.first["error"].present? }
-      errors += errors_in_response.length
-      errors_in_response.each do |item|
-        Rails.logger.error "[Elasticsearch] " + item.inspect
-        doi_id = item.dig("index", "_id").to_i
-        import_one(doi_id: doi_id) if doi_id > 0
-      end
-
-      count += dois.length
+    # report errors
+    errors_in_response =
+      response["items"].select { |k, _v| k.values.first["error"].present? }
+    errors += errors_in_response.length
+    errors_in_response.each do |item|
+      Rails.logger.error "[Elasticsearch] " + item.inspect
     end
+
+    count += dois.length
 
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
                            count
-                         } DataCite DOIs with IDs #{id} - #{id + 499}."
+                         } DataCite DOIs."
     elsif count > 0
       Rails.logger.info "[Elasticsearch] Imported #{
                           count
-                        } DataCite DOIs with IDs #{id} - #{id + 499}."
+                        } DataCite DOIs."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
-         Faraday::ConnectionFailed,
-         ActiveRecord::LockWaitTimeout => e
-    Rails.logger.info "[Elasticsearch] Error #{
-                        e.message
-                      } importing DataCite DOIs with IDs #{id} - #{id + 499}."
+    Faraday::ConnectionFailed,
+    ActiveRecord::LockWaitTimeout => e
 
-    count = 0
-
-    # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "DataciteDoi").where(id: id..(id + 499)).
-      find_each do |doi|
-      IndexJob.perform_later(doi)
-      count += 1
-    end
-
-    Rails.logger.info "[Elasticsearch] Imported #{
-                        count
-                      } DataCite DOIs with IDs #{id} - #{id + 499}."
-
-    count
+    Rails.logger.error "[Elasticsearch] Error #{
+                   e.message
+                 } importing DataCite DOIs."
   end
 end

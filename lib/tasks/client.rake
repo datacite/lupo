@@ -91,15 +91,7 @@ namespace :client do
       exit
     end
 
-    client = Client.where(deleted_at: nil).where(symbol: ENV["CLIENT_ID"]).first
-    if client.nil?
-      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
-      exit
-    end
-
-    # import DOIs for client
-    puts "#{client.dois.length} DOIs will be imported."
-    Doi.import_by_client(client_id: ENV["CLIENT_ID"])
+    Client.import_dois(ENV["CLIENT_ID"])
   end
 
   desc "Import dois not indexed"

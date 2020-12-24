@@ -76,7 +76,7 @@ class Activity < Audited::Audit
     from_id = (options[:from_id] || Activity.minimum(:id)).to_i
     until_id = (options[:until_id] || Activity.maximum(:id)).to_i
 
-    # get every id between from_id and end_id
+    # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       ActivityImportByIdJob.perform_later(options.merge(id: id))
     end
@@ -163,7 +163,7 @@ class Activity < Audited::Audit
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
 
-    # get every id between from_id and end_id
+    # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       ActivityConvertAffiliationByIdJob.perform_later(options.merge(id: id))
       unless Rails.env.test?
