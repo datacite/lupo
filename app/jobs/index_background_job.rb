@@ -10,6 +10,7 @@ class IndexBackgroundJob < ApplicationJob
 
   def perform(obj)
     response = obj.__elasticsearch__.index_document
-    Rails.logger.error "[Elasticsearch] Error indexing id #{response["_id"]} in index #{response["_index"]}" if response["result"] != "created"
+    # Rails.logger.error "[Elasticsearch] Error indexing id #{response["_id"]} in index #{response["_index"]}" if response["result"] != "created"
+    Rails.logger.error "[Elasticsearch] Error #{response.inspect}" if response["result"] != "created"
   end
 end
