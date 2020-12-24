@@ -105,6 +105,8 @@ class OtherDoi < Doi
 
     logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
     count
+  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
+    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
   end
 
   def self.import_in_bulk(dois, options = {})
@@ -156,10 +158,11 @@ class OtherDoi < Doi
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+    Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e
 
-    Rails.logger.error "[Elasticsearch] Error #{
+    Rails.logger.error "[Elasticsearch] Error #{class} with message #{
                    e.message
                  } importing Other DOIs."
   end

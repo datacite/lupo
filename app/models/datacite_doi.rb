@@ -54,6 +54,8 @@ class DataciteDoi < Doi
 
     logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
     count
+  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
+    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
   end
 
   def self.import_by_client(client_id)
@@ -67,6 +69,8 @@ class DataciteDoi < Doi
       end
       DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: self.active_index)
     end
+  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
+    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
   end
 
   def self.import_in_bulk(dois, options = {})
@@ -118,10 +122,11 @@ class DataciteDoi < Doi
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+    Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e
 
-    Rails.logger.error "[Elasticsearch] Error #{
+    Rails.logger.error "[Elasticsearch] Error #{e.class} with message #{
                    e.message
                  } importing DataCite DOIs."
   end
