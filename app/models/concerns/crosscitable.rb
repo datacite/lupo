@@ -64,7 +64,7 @@ module Crosscitable
 
       Rails.logger.error "Error " + e.message.to_s + " for doi " + @doi.to_s +
         "."
-      Rails.logger.error exception.inspect
+      Rails.logger.error e.inspect
 
       {}
     end
