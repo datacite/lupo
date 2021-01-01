@@ -47,7 +47,7 @@ class DataCentersController < ApplicationController
           facet_by_year(response.response.aggregations.years.buckets)
         end
       providers =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(
             response.response.aggregations.providers.buckets,
           )

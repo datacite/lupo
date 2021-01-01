@@ -33,7 +33,7 @@ class PublicationConnectionWithTotalType < BaseConnection
   end
 
   def repositories
-    facet_by_combined_key(object.aggregations.clients.buckets)
+    facet_by_combined_key(object.try(:aggregations.clients.buckets))
   end
 
   def affiliations

@@ -78,27 +78,27 @@ class WorksController < ApplicationController
         end
 
       resource_types =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(
             response.response.aggregations.resource_types.buckets,
           )
         end
       registered =
-        if total > 0
+        if total.positive?
           facet_by_year(response.response.aggregations.registered.buckets)
         end
       providers =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(
             response.response.aggregations.providers.buckets,
           )
         end
       clients =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(response.response.aggregations.clients.buckets)
         end
       affiliations =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(
             response.response.aggregations.affiliations.buckets,
           )

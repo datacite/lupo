@@ -58,23 +58,23 @@ class ClientsController < ApplicationController
           facet_by_key_as_string(response.aggregations.years.buckets)
         end
       providers =
-        if total > 0
+        if total.positive?
           facet_by_combined_key(response.aggregations.providers.buckets)
         end
       software =
-        if total > 0
+        if total.positive?
           facet_by_software(response.aggregations.software.buckets)
         end
       client_types =
-        if total > 0
+        if total.positive?
           facet_by_key(response.aggregations.client_types.buckets)
         end
       certificates =
-        if total > 0
-          facet_by_key(response.aggregations.certificates.buckets)
-        end
+         if total.positive?
+           facet_by_key(response.aggregations.certificates.buckets)
+         end
       repository_types =
-        if total > 0
+        if total.positive?
           facet_by_key(response.aggregations.repository_types.buckets)
         end
 
