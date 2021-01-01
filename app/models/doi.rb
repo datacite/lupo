@@ -981,6 +981,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/rightsList/, "rights_list")
       query = query.gsub(/fundingReferences/, "funding_references")
       query = query.gsub(/geoLocations/, "geo_locations")
+      query = query.gsub(/version:/, "version_info:")
       query = query.gsub(/landingPage/, "landing_page")
       query = query.gsub(/contentUrl/, "content_url")
       query = query.gsub(/citationCount/, "citation_count")

@@ -17,7 +17,7 @@ describe DataciteDoisController, type: :request, vcr: true do
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
   describe "GET /dois", elasticsearch: true do
-    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
 
     before do
       DataciteDoi.import
@@ -118,6 +118,16 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", 1, "id")).to eq(@dois[9].uid)
       expect(json.dig("meta", "total")).to eq(10)
       expect(json.dig("links", "next")).to be_nil
+    end
+
+    it "returns dois with version query", vcr: true do
+      get "/dois?query=version:testtag", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      json["data"].each do |doi|
+        expect(doi.dig("attributes")).to include("version")
+      end
     end
 
     it "returns dois with extra detail", vcr: true do
