@@ -1,9 +1,10 @@
-[![Identifier](https://img.shields.io/badge/doi-10.5438%2F8gb0--v673-fca709.svg)](https://doi.org/10.5438/8gb0-v673)
-[![Build Status](https://travis-ci.org/datacite/lupo.svg?branch=master)](https://travis-ci.org/datacite/lupo) [![Docker Build Status](https://img.shields.io/docker/build/datacite/lupo.svg)](https://hub.docker.com/r/datacite/lupo/) [![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage) [![Discourse users](https://img.shields.io/discourse/https/www.pidforum.org/users)](https://www.pidforum.org/c/pid-developers)
-
 # DataCite REST API
 
-Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the [JSONAPI](http://jsonapi.org/) specification.
+[![Identifier](https://img.shields.io/badge/doi-10.5438%2F8gb0--v673-fca709.svg)](https://doi.org/10.5438/8gb0-v673)
+![Release](https://github.com/datacite/lupo/workflows/Release/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage) [!
+
+Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API usesthe [JSONAPI](http://jsonapi.org/) specification.
 
 ## Installation
 
@@ -31,7 +32,7 @@ bundle exec rake db:schema:load
 bundle exec rake db:seed:development:base
 ```
 
-All other seed opntion can be found using rake --tasks
+All other seed options can be found using rake --tasks
 
 We use Rspec for testing:
 
@@ -49,11 +50,11 @@ Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
 
 ### Note on Patches/Pull Requests
 
-* Fork the project
-* Write tests for your new feature or a test that reproduces a bug
-* Implement your feature or make a bug fix
-* Do not mess with Rakefile, version or history
-* Commit, push and make a pull request. Bonus points for topical branches.
+- Fork the project
+- Write tests for your new feature or a test that reproduces a bug
+- Implement your feature or make a bug fix
+- Do not mess with Rakefile, version or history
+- Commit, push and make a pull request. Bonus points for topical branches.
 
 ## License
 
