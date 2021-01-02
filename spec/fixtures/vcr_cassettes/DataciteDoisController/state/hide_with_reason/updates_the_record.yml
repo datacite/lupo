@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: put
-    uri: https://handle.test.datacite.org/api/handles/10.14454/579VTYKX
+    uri: https://handle.test.datacite.org/api/handles/10.14454/0ETFA87K9P
     body:
       encoding: UTF-8
       string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
@@ -21,7 +21,7 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Fri, 23 Oct 2020 21:15:49 GMT
+      - Sat, 02 Jan 2021 08:18:20 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -30,7 +30,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/579VTYKX"}'
+      string: '{"responseCode":1,"handle":"10.14454/0ETFA87K9P"}'
     http_version: null
-  recorded_at: Fri, 23 Oct 2020 21:15:49 GMT
+  recorded_at: Sat, 02 Jan 2021 08:18:20 GMT
 recorded_with: VCR 5.1.0

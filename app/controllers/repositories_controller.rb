@@ -58,7 +58,7 @@ class RepositoriesController < ApplicationController
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
       years =
-        if total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
+        total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
       providers =
         if total.positive?
           facet_by_combined_key(response.aggregations.providers.buckets)

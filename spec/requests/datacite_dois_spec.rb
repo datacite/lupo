@@ -780,7 +780,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "hide with reason" do
-      let(:doi) { create(:doi, client: client, url: "https://datacite.org", aasm_state: "findable") }
+      let(:doi) { create(:doi, doi: "10.14454/0etfa87k9p", client: client, url: "https://datacite.org", aasm_state: "findable") }
       let(:valid_attributes) do
         {
           "data" => {
@@ -1238,13 +1238,14 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the xml field has datacite_json" do
+      let(:doi_id) { "10.14454/077d-fj48" }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite-user-example.json").read) }
       let(:valid_attributes) do
         {
           "data" => {
-            "id" => doi.doi,
+            "id" => doi_id,
             "attributes" => {
-              "doi" => doi.doi,
+              "doi" => doi_id,
               "xml" => xml,
               "event" => "publish",
             },
@@ -2198,21 +2199,20 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
-    context "when the request has wrong object in nameIDentifiers" do
+    context "when the request has wrong object in nameIdentifiers" do
       let(:valid_attributes) { JSON.parse(file_fixture("datacite_wrong_nameIdentifiers.json").read) }
 
       it "fails to create a Doi" do
         post "/dois", valid_attributes, headers
-        expect(last_response.status).to eq(422)
+        expect(last_response.status).to eq(201)
       end
     end
 
-    context "when the request has wrong object in nameIDentifiers" do
+    context "when the request has wrong object in nameIdentifiers nasa" do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
       it "fails to create a Doi" do
         post "/dois", valid_attributes, headers
-
         expect(last_response.status).to eq(201)
       end
     end

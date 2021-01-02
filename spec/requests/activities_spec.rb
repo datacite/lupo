@@ -150,9 +150,9 @@ describe ActivitiesController, type: :request do
       sleep 2
     end
 
-    context "query" do
+    context "query by doi" do
       it "returns the activities" do
-        get "/activities?query=#{doi.doi.downcase}",
+        get "/activities?datacite-doi-id=#{doi.doi.downcase}",
             nil, headers
 
         expect(last_response.status).to eq(200)
