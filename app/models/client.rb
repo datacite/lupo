@@ -713,15 +713,14 @@ class Client < ApplicationRecord
   end
 
   def self.import_dois(client_id)
-    client = self.where(deleted_at: nil).where(symbol: client_id).first
-    if client.nil?
-      logger.error "Client not found for client ID #{client_id}."
+    if client_id.blank?
+      logger.error "Repository not found for client ID #{client_id}."
       exit
     end
 
     # import DOIs for client
-    logger.info "#{client.dois.length} DOIs will be imported."
-    DoiImportByClientJob.perform_later(client.id)
+    logger.info "Started to import DOIs for repository #{client_id}."
+    DoiImportByClientJob.perform_later(client_id)
   end
 
   # import all DOIs not indexed in Elasticsearch

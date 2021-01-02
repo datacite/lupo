@@ -59,10 +59,22 @@ class DataciteDoi < Doi
   end
 
   def self.import_by_client(client_id)
-    return nil if client_id.blank?
+    if client_id.blank?
+      logger.error "Missing client ID."
+      exit
+    end
+
+    client = ::Client.where(deleted_at: nil).where(symbol: client_id).first
+    if client.nil?
+      logger.error "Repository not found for client ID #{client_id}."
+      exit
+    end
+
+    # import DOIs for client
+    logger.info "#{client.dois.length} DOIs for repository #{client_id} will be imported."
 
     # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "DataciteDoi").where(datacentre: client_id).
+    DataciteDoi.where(type: "DataciteDoi").where(datacentre: client.id).
       find_in_batches(batch_size: 250) do |dois|
       mapped_dois = dois.map do |doi|
         { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
@@ -70,7 +82,7 @@ class DataciteDoi < Doi
       DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: self.active_index)
     end
   rescue Aws::SQS::Errors::RequestEntityTooLarge => e
-    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
+    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes for repository #{client_id}."
   end
 
   def self.import_in_bulk(dois, options = {})
