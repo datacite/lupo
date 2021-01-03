@@ -701,20 +701,20 @@ class Client < ApplicationRecord
       end
 
     if rows.blank?
-      logger.warn "Found 0 repositories with missing DOIs."
+      Rails.logger.warn "Found 0 repositories with missing DOIs."
       return nil
     end
 
     csv = [CSV.generate_line(headers)] + rows
 
-    logger.warn "Found #{csv.size} repositories with missing DOIs."
+    Rails.logger.warn "Found #{csv.size - 1} repositories with missing DOIs."
 
     csv.join("")
   end
 
   def self.import_dois(client_id)
     if client_id.blank?
-      logger.error "Repository not found for client ID #{client_id}."
+      Rails.logger.error "Repository not found for client ID #{client_id}."
       exit
     end
 
