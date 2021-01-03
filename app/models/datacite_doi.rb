@@ -44,18 +44,14 @@ class DataciteDoi < Doi
     # TODO remove query for type once STI is enabled
     # SQS message size limit is 256 kB, up to 2 GB with S3
     DataciteDoi.where(type: "DataciteDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 100) do |dois|
-      mapped_dois = dois.map do |doi|
-        { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
-      end
-      DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: index)
-      count += dois.length
+      find_in_batches(batch_size: 500) do |dois|
+      ids = dois.pluck(:id)
+      DataciteDoiImportInBulkJob.perform_later(ids, index: index)
+      count += ids.length
     end
 
     logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
     count
-  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
-    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
   end
 
   def self.import_by_client(client_id)
@@ -71,21 +67,17 @@ class DataciteDoi < Doi
     end
 
     # import DOIs for client
-    logger.info "#{client.dois.length} DOIs for repository #{client_id} will be imported."
+    logger.info "Started import of #{client.dois.length} DOIs for repository #{client_id}."
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "DataciteDoi").where(datacentre: client.id).
-      find_in_batches(batch_size: 250) do |dois|
-      mapped_dois = dois.map do |doi|
-        { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
-      end
-      DataciteDoiImportInBulkJob.perform_later(mapped_dois, index: self.active_index)
+      find_in_batches(batch_size: 500) do |dois|
+      ids = dois.pluck(:id)
+      DataciteDoiImportInBulkJob.perform_later(ids, index: self.active_index)
     end
-  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
-    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes for repository #{client_id}."
   end
 
-  def self.import_in_bulk(dois, options = {})
+  def self.import_in_bulk(ids, options = {})
     index =
       if Rails.env.test?
         index_name
@@ -97,6 +89,9 @@ class DataciteDoi < Doi
     errors = 0
     count = 0
 
+    # get database records from array of database ids
+    dois = DataciteDoi.where(id: ids)
+
     response =
       DataciteDoi.__elasticsearch__.client.bulk index: index,
                                                 type:
@@ -105,9 +100,9 @@ class DataciteDoi < Doi
                                                   dois.map { |doi|
                                                     {
                                                       index: {
-                                                        _id: doi["id"],
+                                                        _id: doi.id,
                                                         data:
-                                                          doi["as_indexed_json"],
+                                                          doi.as_indexed_json,
                                                       },
                                                     }
                                                   }

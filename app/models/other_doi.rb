@@ -95,21 +95,17 @@ class OtherDoi < Doi
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "OtherDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 100) do |dois|
-      mapped_dois = dois.map do |doi|
-        { "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }
-      end
-      OtherDoiImportInBulkJob.perform_later(mapped_dois, index: index)
-      count += dois.length
+      find_in_batches(batch_size: 500) do |dois|
+      ids = dois.pluck(:id)
+      OtherDoiImportInBulkJob.perform_later(ids, index: index)
+      count += ids.length
     end
 
     logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
     count
-  rescue Aws::SQS::Errors::RequestEntityTooLarge => e
-    Rails.logger.error "[Elasticsearch] Error #{e.class}: #{mapped_dois.bytesize} bytes"
   end
 
-  def self.import_in_bulk(dois, options = {})
+  def self.import_in_bulk(ids, options = {})
     index =
       if Rails.env.test?
         index_name
@@ -121,6 +117,9 @@ class OtherDoi < Doi
     errors = 0
     count = 0
 
+    # get database records from array of database ids
+    dois = OtherDoi.where(id: ids)
+
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,
                                                 type:
@@ -129,9 +128,9 @@ class OtherDoi < Doi
                                                   dois.map { |doi|
                                                     {
                                                       index: {
-                                                        _id: doi["id"],
+                                                        _id: doi.id,
                                                         data:
-                                                          doi["as_indexed_json"],
+                                                          doi.as_indexed_json,
                                                       },
                                                     }
                                                   }

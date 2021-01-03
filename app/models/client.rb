@@ -718,8 +718,6 @@ class Client < ApplicationRecord
       exit
     end
 
-    # import DOIs for client
-    logger.info "Started to import DOIs for repository #{client_id}."
     DoiImportByClientJob.perform_later(client_id)
   end
 
@@ -729,7 +727,7 @@ class Client < ApplicationRecord
 
     # loop through repositories that have DOIs not indexed in Elasticsearch
     table.each do |row|
-      Rails.logger.info "Started to import #{row["DOIs in Database"]} DOIs (#{row["DOIs missing"]} missing) for repository #{row["Repository ID"]}."
+      Rails.logger.info "Started import of #{row["DOIs in Database"]} DOIs (#{row["DOIs missing"]} missing) for repository #{row["Repository ID"]}."
       DoiImportByClientJob.perform_later(row["Repository ID"])
     end
   end

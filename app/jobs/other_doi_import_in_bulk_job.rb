@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class DataciteDoiImportInBulkJob < ApplicationJob
+class OtherDoiImportInBulkJob < ApplicationJob
   queue_as :lupo_import_other_doi
 
-  def perform(dois, options = {})
-    OtherDoi.import_in_bulk(dois, options)
+  def perform(ids, options = {})
+    OtherDoi.import_in_bulk(ids, options)
   end
 end

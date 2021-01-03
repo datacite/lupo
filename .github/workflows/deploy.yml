@@ -117,12 +117,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        # get the current git sha and tag from source code repo
-      - name: Get git sha and tag
+
+      - name: Extract variables
+        shell: bash
         run: |
-          echo "::set-output name=GIT_SHA::$(git rev-parse --short HEAD)"
-          echo "::set-output name=GIT_TAG::$(git describe --tags $(git rev-list --tags --max-count=1))"
-        id: set_git_vars
+          echo "::set-output name=BRANCH::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
+          echo "::set-output name=TAG::$(git tag --points-at HEAD)"
+          echo "::set-output name=GIT_SHA::$(git rev-parse HEAD)"
+          echo "::set-output name=GIT_SHA_SHORT::$(git rev-parse --short HEAD)"  
+        id: extract_variables
+
       - name: Checkout terraform config repo
         uses: actions/checkout@v2
         with:
@@ -133,8 +137,8 @@ jobs:
         # use go template in terraform config repository to update git sha and tag
         # commit and push changes to trigger terraform workflow
         run: |
-          export GIT_SHA=${{ steps.set_git_vars.outputs.GIT_SHA }}
-          export GIT_TAG=${{ steps.set_git_vars.outputs.GIT_TAG }}
+          export GIT_SHA=${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}
+          export GIT_TAG=${{ steps.extract_variables.outputs.GIT_TAG }}
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
@@ -143,7 +147,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add stage/services/client-api/_lupo.auto.tfvars
-          git commit -m "Adding lupo git variables for commit ${{ steps.set_git_vars.outputs.GIT_SHA }}"
+          git commit -m "Adding lupo git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
@@ -151,3 +155,17 @@ jobs:
           repository: 'datacite/mastino'
           branch: 'refs/heads/master'
           tags: false
+
+      - name: Notify Slack
+        uses: edge/simple-slack-notify@master
+        with:
+          channel: '#ops'
+          color: 'good'
+          text: 'A new version of the <https://api.stage.datacite.org|REST API> has been deployed to stage.'
+          failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
+          fields: |
+            [{ "title": "Commit message", "value": "${{ github.event.head_commit.message }}" },
+             { "title": "Committed by", "value": "<https://github.com/${{ github.repository }}/commits?author=${{ github.actor }}|${{ github.actor }}>", "short": true },
+             { "title": "Commit SHA", "value": "<https://github.com/${{ github.repository }}/commit/${{ steps.extract_variables.outputs.GIT_SHA }}|${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}>", "short": true },
+             { "title": "Repository", "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>", "short": true },
+             { "title": "Branch", "value": "<https://github.com/${{ github.repository }}/tree/${{ steps.extract_variables.outputs.BRANCH }}|${{ steps.extract_variables.outputs.BRANCH }}>", "short": true }]
