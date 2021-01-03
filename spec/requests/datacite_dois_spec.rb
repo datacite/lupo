@@ -1588,7 +1588,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "url", "title" => "URL is not allowed by repository domain settings." }])
+        expect(json.dig("errors", 0, "title")).to end_with("is not allowed by repository #{doi.client.uid} domain settings.")
       end
     end
 

@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://doi.org/ra/10.14454
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Sun, 03 Jan 2021 19:42:13 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=d6b9e658d262cb556d10dbfb44b8fb3911609702933; expires=Tue, 02-Feb-21
+        19:42:13 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 076b5e9b15000063c54325b000000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?s=nYILO2MrAmy6cncBC5N%2Bz%2BMF6eN9hOa%2BL3RQ0PaLJH7OPJpzBhh1%2FbPXtSzA3JgVVUG%2BpFrofe%2Fk7dOc7Juu6Ag7IC8JSAK8"}],"group":"cf-nel","max_age":604800}'
+      Nel:
+      - '{"report_to":"cf-nel","max_age":604800}'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 60bf33a4eee163c5-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.14454",
+            "RA": "DataCite"
+          }
+        ]
+    http_version: null
+  recorded_at: Sun, 03 Jan 2021 19:42:13 GMT
+recorded_with: VCR 5.1.0

@@ -1757,7 +1757,7 @@ class Doi < ApplicationRecord
 
   def check_url
     unless url.blank? || client.blank? || match_url_with_domains(url: url, domains: client.domains)
-      errors.add(:url, "URL is not allowed by repository domain settings.")
+      errors.add(:url, "URL #{url} is not allowed by repository #{client.uid} domain settings.")
     end
   end
 

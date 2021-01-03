@@ -653,7 +653,7 @@ class Event < ApplicationRecord
     end
 
     if doi.save
-      Rails.logger.info "Record for #{ra} DOI #{doi.doi}" +
+      Rails.logger.debug "Record for #{ra} DOI #{doi.doi}" +
         (options[:refresh] ? " updated." : " created.")
     else
       Rails.logger.error "[Error saving #{ra} DOI #{doi.doi}]: " +
@@ -663,7 +663,7 @@ class Event < ApplicationRecord
     doi
   rescue ActiveRecord::RecordNotUnique => e
     # handle race condition, no need to do anything else
-    Rails.logger.warn e.message
+    Rails.logger.debug e.message
   end
 
   def to_param
