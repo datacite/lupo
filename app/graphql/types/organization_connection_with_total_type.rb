@@ -28,8 +28,8 @@ class OrganizationConnectionWithTotalType < BaseConnection
     this_year =
       if object.total_count > count
         {
-          "id" => "2020",
-          "title" => "2020",
+          "id" => "2021",
+          "title" => "2021",
           "count" => object.total_count - count,
         }
       end

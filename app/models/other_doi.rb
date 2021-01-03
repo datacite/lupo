@@ -101,7 +101,7 @@ class OtherDoi < Doi
       count += ids.length
     end
 
-    logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
+    Rails.logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
     count
   end
 
