@@ -168,7 +168,7 @@ jobs:
         with:
           channel: '#ops'
           color: 'good'
-          text: 'Version <https://github.com/${{ github.repository }}/releases/tag/${{ steps.extract_variables.outputs.TAG }}|${{ steps.extract_variables.outputs.TAG }}> of the <https://api.datacite.org|REST API> has been released to production and test.'
+          text: 'Version <https://github.com/${{ github.repository }}/releases/tag/${{ steps.extract_variables.outputs.TAG }}|${{ steps.extract_variables.outputs.TAG }}> of the <https://api.datacite.org|REST API> has been released to test and production.'
           failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
           fields: |
             [{ "title": "Committed by", "value": "<https://github.com/${{ github.repository }}/commits?author=${{ github.actor }}|${{ github.actor }}>", "short": true },

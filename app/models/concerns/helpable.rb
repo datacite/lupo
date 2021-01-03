@@ -70,7 +70,7 @@ module Helpable
           success = update(minted: Time.zone.now, updated: Time.zone.now)
         end
         unless Rails.env.test?
-          Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " +
+          Rails.logger.debug "[Handle] URL for DOI " + doi + " updated to " +
             url +
             "."
         end
