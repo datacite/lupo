@@ -50,24 +50,24 @@ class DataciteDoi < Doi
       count += ids.length
     end
 
-    logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
+    Rails.logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
     count
   end
 
   def self.import_by_client(client_id)
     if client_id.blank?
-      logger.error "Missing client ID."
+      Rails.logger.error "Missing client ID."
       exit
     end
 
     client = ::Client.where(deleted_at: nil).where(symbol: client_id).first
     if client.nil?
-      logger.error "Repository not found for client ID #{client_id}."
+      Rails.logger.error "Repository not found for client ID #{client_id}."
       exit
     end
 
     # import DOIs for client
-    logger.info "Started import of #{client.dois.length} DOIs for repository #{client_id}."
+    Rails.logger.info "Started import of #{client.dois.length} DOIs for repository #{client_id}."
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "DataciteDoi").where(datacentre: client.id).
