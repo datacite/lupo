@@ -475,7 +475,7 @@ describe PersonType do
         "count" => 44_270, "id" => "2012", "title" => "2012",
       )
       expect(response.dig("data", "people", "years").last).to eq(
-        "count" => 1_767_011, "id" => "2020", "title" => "2020",
+        "count" => 1_767_011, "id" => "2021", "title" => "2021",
       )
     end
   end

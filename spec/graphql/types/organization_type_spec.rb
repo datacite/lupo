@@ -785,7 +785,7 @@ describe OrganizationType do
         "count" => 80_248, "id" => "2017", "title" => "2017",
       )
       expect(response.dig("data", "organizations", "years").last).to eq(
-        "count" => 513, "id" => "2020", "title" => "2020",
+        "count" => 513, "id" => "2021", "title" => "2021",
       )
     end
   end
