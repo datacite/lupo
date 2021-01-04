@@ -252,8 +252,8 @@ class ProvidersController < ApplicationController
       render json: ProviderSerializer.new(@provider, options).serialized_json,
              status: :ok
     else
-      Rails.logger.error @provider.errors.inspect
-      render json: serialize_errors(@provider.errors),
+      # Rails.logger.error @provider.errors.inspect
+      render json: serialize_errors(@provider.errors, uid: @provider.uid),
              status: :unprocessable_entity
     end
   end
@@ -268,8 +268,8 @@ class ProvidersController < ApplicationController
       render json: ProviderSerializer.new(@provider, options).serialized_json,
              status: :ok
     else
-      Rails.logger.error @provider.errors.inspect
-      render json: serialize_errors(@provider.errors),
+      # Rails.logger.error @provider.errors.inspect
+      render json: serialize_errors(@provider.errors, uid: @provider.uid),
              status: :unprocessable_entity
     end
   end
@@ -291,8 +291,8 @@ class ProvidersController < ApplicationController
       end
       head :no_content
     else
-      Rails.logger.error @provider.errors.inspect
-      render json: serialize_errors(@provider.errors),
+      # Rails.logger.error @provider.errors.inspect
+      render json: serialize_errors(@provider.errors, uid: @provider.uid),
              status: :unprocessable_entity
     end
   end

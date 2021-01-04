@@ -4,7 +4,7 @@ module ErrorSerializable
   extend ActiveSupport::Concern
 
   included do
-    def serialize_errors(errors)
+    def serialize_errors(errors, options = {})
       return nil if errors.nil?
 
       arr =
@@ -15,9 +15,10 @@ module ErrorSerializable
             sum <<
               {
                 source: source,
+                uid: options[:uid],
                 title:
                   title.is_a?(String) ? title.sub(/^./, &:upcase) : title.to_s,
-              }
+              }.compact
           end
 
           sum

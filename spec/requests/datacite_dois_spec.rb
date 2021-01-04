@@ -706,7 +706,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank" }])
+        expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
@@ -752,7 +752,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank" }])
+        expect(json["errors"]).to eq([{ "source" => "url", "title" => "Can't be blank", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
@@ -955,7 +955,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => doi.uid }])
       end
     end
 
@@ -990,7 +990,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/10.14454/10703", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -1066,7 +1066,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
@@ -1092,7 +1092,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
@@ -1205,7 +1205,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string." }])
+        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string.", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
@@ -2195,7 +2195,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "No matching global declaration available for the validation root. at line 2, column 0" }])
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "No matching global declaration available for the validation root. at line 2, column 0", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -2275,7 +2275,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -2353,7 +2353,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported" }])
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "Schema http://datacite.org/schema/kernel-2.2 is no longer supported", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -2521,7 +2521,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid" }])
+        expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid", "uid" => "10.14454/107+03" }])
       end
     end
 
@@ -2546,7 +2546,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig("errors")).to eq([{ "source" => "metadata", "title" => "Is invalid" }, { "source" => "metadata", "title" => "Is invalid" }])
+        expect(json.dig("errors")).to eq([{ "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }, { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -2641,7 +2641,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
@@ -2687,7 +2687,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         it "returns validation error" do
           post "/dois/validate", params, headers
 
-          expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid" }])
+          expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid", "uid" => "10.14454/107+03" }])
         end
       end
 
@@ -2734,7 +2734,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
           expect(last_response.status).to eq(200)
           expect(json["errors"].size).to eq(1)
-          expect(json["errors"].first).to eq("source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0")
+          expect(json["errors"].first).to eq("source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/10703")
         end
       end
 
@@ -2757,7 +2757,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
           expect(last_response.status).to eq(200)
           expect(json["errors"].size).to eq(1)
-          expect(json["errors"].first).to eq("source" => "creatorName", "title" => "This element is not expected. Expected is ( {http://datacite.org/schema/kernel-4}affiliation ). at line 16, column 0")
+          expect(json["errors"].first).to eq("source" => "creatorName", "title" => "This element is not expected. Expected is ( {http://datacite.org/schema/kernel-4}affiliation ). at line 16, column 0", "uid" => "10.14454/10703")
         end
       end
 
@@ -2779,7 +2779,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           post "/dois/validate", params, headers
 
           expect(last_response.status).to eq(200)
-          expect(json["errors"].first).to eq("source" => "creatorName', attribute 'nameType", "title" => "[facet 'enumeration'] The value 'personal' is not an element of the set {'Organizational', 'Personal'}. at line 12, column 0")
+          expect(json["errors"].first).to eq("source" => "creatorName', attribute 'nameType", "title" => "[facet 'enumeration'] The value 'personal' is not an element of the set {'Organizational', 'Personal'}. at line 12, column 0", "uid" => "10.14454/10703")
         end
       end
 
@@ -3064,7 +3064,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "contributors", "title" => "Contributor type Funder is not supported in schema 4." }])
+        expect(json["errors"]).to eq([{ "source" => "contributors", "title" => "Contributor type Funder is not supported in schema 4.", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 

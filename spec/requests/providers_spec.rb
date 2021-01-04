@@ -489,6 +489,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         expect(json["errors"].first).to eq(
           "source" => "consortium_id",
           "title" => "The consortium must be of member_type consortium",
+          "uid" => "fg"
         )
       end
     end
@@ -832,6 +833,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
           "source" => "system_email", "title" => "Can't be blank",
+          "uid" => "bl"
         )
       end
     end
@@ -1034,7 +1036,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
-          "source" => "globus_uuid", "title" => "Abc is not a valid UUID",
+          "source" => "globus_uuid", "title" => "Abc is not a valid UUID", "uid" => provider.uid
         )
       end
     end
@@ -1054,7 +1056,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
-          "source" => "ror_id", "title" => "ROR ID should be a url",
+          "source" => "ror_id", "title" => "ROR ID should be a url", "uid" => provider.uid
         )
       end
     end

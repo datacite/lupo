@@ -137,7 +137,7 @@ class ProviderPrefixesController < ApplicationController
                  serialized_json,
              status: :created
     else
-      Rails.logger.error @provider_prefix.errors.inspect
+      # Rails.logger.error @provider_prefix.errors.inspect
       render json: serialize_errors(@provider_prefix.errors),
              status: :unprocessable_entity
     end
@@ -157,8 +157,8 @@ class ProviderPrefixesController < ApplicationController
       Rails.logger.warn message
       head :no_content
     else
-      Rails.logger.error @provider_prefix.errors.inspect
-      render json: serialize_errors(@provider_prefix.errors),
+      # Rails.logger.error @provider_prefix.errors.inspect
+      render json: serialize_errors(@provider_prefix.errors, uid: @provider_prefix.uid),
              status: :unprocessable_entity
     end
   end

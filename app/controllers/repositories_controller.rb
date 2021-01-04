@@ -209,8 +209,8 @@ class RepositoriesController < ApplicationController
       render json: RepositorySerializer.new(@client, options).serialized_json,
              status: :created
     else
-      Rails.logger.error @client.errors.inspect
-      render json: serialize_errors(@client.errors),
+      # Rails.logger.error @client.errors.inspect
+      render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
   end
@@ -231,8 +231,8 @@ class RepositoriesController < ApplicationController
       render json: RepositorySerializer.new(@client, options).serialized_json,
              status: :ok
     else
-      Rails.logger.error @client.errors.inspect
-      render json: serialize_errors(@client.errors),
+      # Rails.logger.error @client.errors.inspect
+      render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
   end
@@ -252,8 +252,8 @@ class RepositoriesController < ApplicationController
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      Rails.logger.error @client.errors.inspect
-      render json: serialize_errors(@client.errors),
+      # Rails.logger.error @client.errors.inspect
+      render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
   end

@@ -19,12 +19,12 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   end
   let(:bearer) do
     User.generate_token(
-      role_id: "provider_admin", provider_id: provider.symbol.downcase,
+      role_id: "provider_admin", provider_id: provider.uid,
     )
   end
   let(:consortium_bearer) do
     User.generate_token(
-      role_id: "consortium_admin", provider_id: consortium.symbol.downcase,
+      role_id: "consortium_admin", provider_id: consortium.uid,
     )
   end
   let(:params) do
@@ -41,7 +41,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         },
         "relationships": {
           "provider": {
-            "data": { "type": "providers", "id": provider.symbol.downcase },
+            "data": { "type": "providers", "id": provider.uid },
           },
         },
       },
@@ -78,7 +78,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       expect(json.dig("meta", "providers").length).to eq(4)
       expect(json.dig("meta", "providers").first).to eq(
         "count" => 1,
-        "id" => provider.symbol.downcase,
+        "id" => provider.uid,
         "title" => "My provider",
       )
     end
@@ -243,7 +243,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
         relationships = json.dig("data", "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.symbol.downcase,
+          provider.uid,
         )
       end
     end
@@ -261,7 +261,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
         relationships = json.dig("data", "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.symbol.downcase,
+          provider.uid,
         )
       end
     end
@@ -277,7 +277,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
             },
             "relationships": {
               "provider": {
-                "data": { "type": "providers", "id": provider.symbol.downcase },
+                "data": { "type": "providers", "id": provider.uid },
               },
             },
           },
@@ -290,8 +290,8 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
           [
-            { "source" => "system_email", "title" => "Can't be blank" },
-            { "source" => "system_email", "title" => "Is invalid" },
+            { "source" => "system_email", "title" => "Can't be blank", "uid" => "#{provider.uid}.imperial" },
+            { "source" => "system_email", "title" => "Is invalid", "uid" => "#{provider.uid}.imperial" },
           ],
         )
       end
@@ -441,7 +441,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         get "/prefixes/#{prefix.uid}"
         expect(
           json.dig("data", "relationships", "clients", "data").first.dig("id"),
-        ).to eq(client.symbol.downcase)
+        ).to eq(client.uid)
       end
     end
 
@@ -460,6 +460,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
           "source" => "globus_uuid", "title" => "Abc is not a valid UUID",
+          "uid" => client.uid
         )
       end
     end
@@ -475,7 +476,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
       let(:credentials) do
         provider.encode_auth_param(
-          username: provider.symbol.downcase, password: "12345",
+          username: provider.uid, password: "12345",
         )
       end
       let(:headers) do
@@ -545,6 +546,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
           "source" => "symbol", "title" => "Cannot be changed",
+          "uid" => client.uid + "m"
         )
       end
     end

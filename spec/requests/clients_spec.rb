@@ -19,7 +19,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         },
         "relationships": {
           "provider": {
-            "data": { "type": "providers", "id": provider.symbol.downcase },
+            "data": { "type": "providers", "id": provider.uid },
           },
         },
       },
@@ -147,7 +147,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
         relationships = json.dig("data", "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.symbol.downcase,
+          provider.uid,
         )
 
         Client.import
@@ -173,7 +173,7 @@ describe ClientsController, type: :request, elasticsearch: true do
             },
             "relationships": {
               "provider": {
-                "data": { "type": "providers", "id": provider.symbol.downcase },
+                "data": { "type": "providers", "id": provider.uid },
               },
             },
           },
@@ -191,8 +191,8 @@ describe ClientsController, type: :request, elasticsearch: true do
 
         expect(json["errors"]).to eq(
           [
-            { "source" => "system_email", "title" => "Can't be blank" },
-            { "source" => "system_email", "title" => "Is invalid" },
+            { "source" => "system_email", "title" => "Can't be blank", "uid" => provider.uid + ".imperial" },
+            { "source" => "system_email", "title" => "Is invalid", "uid" => provider.uid + ".imperial" },
           ],
         )
       end
@@ -329,7 +329,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         get "/prefixes/#{prefix.uid}"
         expect(
           json.dig("data", "relationships", "clients", "data").first.dig("id"),
-        ).to eq(client.symbol.downcase)
+        ).to eq(client.uid)
 
         get "provider-prefixes?query=#{prefix.uid}"
         expect(
@@ -356,6 +356,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
           "source" => "globus_uuid", "title" => "Abc is not a valid UUID",
+          "uid" => client.uid
         )
       end
     end
@@ -371,7 +372,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
       let(:credentials) do
         provider.encode_auth_param(
-          username: provider.symbol.downcase, password: "12345",
+          username: provider.uid, password: "12345",
         )
       end
       let(:headers) do
@@ -412,6 +413,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
           "source" => "symbol", "title" => "Cannot be changed",
+          "uid" => client.uid + "m"
         )
       end
     end

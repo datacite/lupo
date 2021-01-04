@@ -136,8 +136,8 @@ class RepositoryPrefixesController < ApplicationController
                  serialized_json,
              status: :created
     else
-      Rails.logger.error @client_prefix.errors.inspect
-      render json: serialize_errors(@client_prefix.errors),
+      # Rails.logger.error @client_prefix.errors.inspect
+      render json: serialize_errors(@client_prefix.errors, uid: @client_prefix.uid),
              status: :unprocessable_entity
     end
   end
@@ -158,8 +158,8 @@ class RepositoryPrefixesController < ApplicationController
       Rails.logger.warn message
       head :no_content
     else
-      Rails.logger.error @client_prefix.errors.inspect
-      render json: serialize_errors(@client_prefix.errors),
+      # Rails.logger.error @client_prefix.errors.inspect
+      render json: serialize_errors(@client_prefix.errors, uid: @client_prefix.uid),
              status: :unprocessable_entity
     end
   end
