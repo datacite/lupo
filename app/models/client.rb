@@ -707,7 +707,12 @@ class Client < ApplicationRecord
 
     csv = [CSV.generate_line(headers)] + rows
 
-    Rails.logger.warn "Found #{csv.size - 1} repositories with missing DOIs."
+    total_missing = rows.reduce(0) do |sum, row|
+      sum = sum + row.split(",").last.to_i
+      sum
+    end
+
+    Rails.logger.warn "Found #{csv.size - 1} repositories with #{total_missing} missing DOIs."
 
     csv.join("")
   end
