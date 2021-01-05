@@ -700,8 +700,20 @@ class Client < ApplicationRecord
         sum
       end
 
+    title = if Rails.env.stage?
+      if ENV["ES_PREFIX"].present?
+        "DataCite Fabrica Stage"
+      else
+        "DataCite Fabrica Test"
+      end
+    else
+      "DataCite Fabrica"
+    end
+
     if rows.blank?
-      Rails.logger.warn "Found 0 repositories with missing DOIs."
+      message = "Found 0 repositories with DOIs not indexed."
+      Rails.logger.warn message
+      self.send_notification_to_slack(title + ": " + message, level: "good")
       return nil
     end
 
@@ -712,7 +724,9 @@ class Client < ApplicationRecord
       sum
     end
 
-    Rails.logger.warn "Found #{csv.size - 1} repositories with #{total_missing} missing DOIs."
+    message = "Found #{csv.size - 1} repositories with #{total_missing} DOIs not indexed."
+    Rails.logger.warn message
+    self.send_notification_to_slack(title + ": " + message, level: "warning")
 
     csv.join("")
   end

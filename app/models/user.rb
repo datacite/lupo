@@ -7,7 +7,7 @@ class User
   # include helper module for setting password
   include Passwordable
 
-  # include helper module for setting emails via Mailgun API
+  # include helper module for sending emails via Mailgun API
   include Mailable
 
   # include helper module for caching infrequently changing resources

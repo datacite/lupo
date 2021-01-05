@@ -148,7 +148,6 @@ module Mailable
     SLACK_ICON_URL =
       "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png"
 
-
     class NoOpHTTPClient
       def self.post(_uri, params = {})
         Rails.logger.info JSON.parse(params[:payload])

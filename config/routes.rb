@@ -169,7 +169,7 @@ Rails.application.routes.draw do
   get "export/repositories",
       to: "exports#repositories", defaults: { format: :csv }
   get "export/contacts", to: "exports#contacts", defaults: { format: :csv }
-  get "export/check-indexed-dois", to: "exports#check_indexed_dois"
+  get "export/check-indexed-dois", to: "exports#import_dois_not_indexed"
 
   resources :heartbeat, only: %i[index]
 

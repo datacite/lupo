@@ -488,11 +488,11 @@ class ExportsController < ApplicationController
            status: :bad_request
   end
 
-  def check_indexed_dois
-    csv = Client.export_doi_counts
-    filename = "repositories-not-fully-indexed-#{Date.today}.csv"
-
-    send_data csv, filename: filename
+  def import_dois_not_indexed
+    ImportDoisNotIndexJob.perform_later(nil)
+    render plain: "OK",
+           status: 202,
+           content_type: "text/plain"
   end
 
   def export_date(date)
