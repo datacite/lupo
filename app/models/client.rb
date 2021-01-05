@@ -713,7 +713,7 @@ class Client < ApplicationRecord
     if rows.blank?
       message = "Found 0 repositories with DOIs not indexed."
       Rails.logger.warn message
-      self.send_notification_to_slack(title + ": " + message, level: "good")
+      self.send_notification_to_slack(message, title: title + ": DOIs in Elasticsearch", level: "good")
       return nil
     end
 
@@ -726,7 +726,7 @@ class Client < ApplicationRecord
 
     message = "Found #{csv.size - 1} repositories with #{total_missing} DOIs not indexed."
     Rails.logger.warn message
-    self.send_notification_to_slack(title + ": " + message, level: "warning")
+    self.send_notification_to_slack(message, title: title + ": DOIs in Elasticsearch", level: "warning")
 
     csv.join("")
   end
