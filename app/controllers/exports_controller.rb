@@ -489,7 +489,7 @@ class ExportsController < ApplicationController
   end
 
   def import_dois_not_indexed
-    ImportDoisNotIndexJob.perform_later(nil)
+    ImportDoisNotIndexedJob.perform_later(nil)
     render plain: "OK",
            status: 202,
            content_type: "text/plain"
