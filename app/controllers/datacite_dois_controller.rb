@@ -568,7 +568,7 @@ class DataciteDoisController < ApplicationController
              status: :created,
              location: @doi
     else
-      # logger.error @doi.errors.inspect
+      logger.error @doi.errors.inspect
       render json: serialize_errors(@doi.errors, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
@@ -625,7 +625,7 @@ class DataciteDoisController < ApplicationController
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
              status: exists ? :ok : :created
     else
-      # logger.error @doi.errors.messages
+      logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
