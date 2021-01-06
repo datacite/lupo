@@ -44,7 +44,7 @@ class DataciteDoi < Doi
     # TODO remove query for type once STI is enabled
     # SQS message size limit is 256 kB, up to 2 GB with S3
     DataciteDoi.where(type: "DataciteDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 200) do |dois|
+      find_in_batches(batch_size: 100) do |dois|
       ids = dois.pluck(:id)
       DataciteDoiImportInBulkJob.perform_later(ids, index: index)
       count += ids.length
@@ -71,7 +71,7 @@ class DataciteDoi < Doi
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "DataciteDoi").where(datacentre: client.id).
-      find_in_batches(batch_size: 200) do |dois|
+      find_in_batches(batch_size: 100) do |dois|
       ids = dois.pluck(:id)
       DataciteDoiImportInBulkJob.perform_later(ids, index: self.active_index)
     end
@@ -87,7 +87,6 @@ class DataciteDoi < Doi
         inactive_index
       end
     errors = 0
-    count = 0
 
     # get database records from array of database ids
     dois = DataciteDoi.where(id: ids)
@@ -115,19 +114,17 @@ class DataciteDoi < Doi
       Rails.logger.error "[Elasticsearch] " + item.inspect
     end
 
-    count += dois.length
-
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
-                           count
+                          dois.length
                          } DataCite DOIs."
-    elsif count > 0
-      Rails.logger.debug "[Elasticsearch] Imported #{
-                          count
+    elsif dois.length > 0
+      Rails.logger.info "[Elasticsearch] Imported #{
+                         dois.length
                         } DataCite DOIs."
     end
 
-    count
+    dois.length
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
     Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,

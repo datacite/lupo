@@ -95,7 +95,7 @@ class OtherDoi < Doi
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "OtherDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 200) do |dois|
+      find_in_batches(batch_size: 100) do |dois|
       ids = dois.pluck(:id)
       OtherDoiImportInBulkJob.perform_later(ids, index: index)
       count += ids.length
@@ -115,7 +115,6 @@ class OtherDoi < Doi
         inactive_index
       end
     errors = 0
-    count = 0
 
     # get database records from array of database ids
     dois = OtherDoi.where(id: ids)
@@ -143,15 +142,13 @@ class OtherDoi < Doi
       Rails.logger.error "[Elasticsearch] " + item.inspect
     end
 
-    count += dois.length
-
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
-                           count
+                           dois.length
                          } Other DOIs."
-    elsif count > 0
+    elsif dois.length > 0
       Rails.logger.debug "[Elasticsearch] Imported #{
-                          count
+                          dois.length
                         } Other DOIs."
     end
 
