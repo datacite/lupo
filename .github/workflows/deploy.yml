@@ -163,7 +163,7 @@ jobs:
         with:
           channel: '#ops'
           color: 'good'
-          text: 'A new version of the <https://api.stage.datacite.org|REST API> has been deployed to stage.'
+          text: 'A new version of the <https://api.stage.datacite.org|REST API> is been deployed to stage.'
           failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
           fields: |
             [{ "title": "Commit message", "value": "${{ github.event.head_commit.message }}" },
