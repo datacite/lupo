@@ -545,42 +545,44 @@ class Doi < ApplicationRecord
     }
   end
 
-  def self.gql_query_aggregations
-    {
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 16, min_doc_count: 1 } },
-      published: {
-        date_histogram: {
-          field: "publication_year",
-          interval: "year",
-          format: "year",
-          order: {
-            _key: "desc",
+  def self.gql_query_aggregations(facet_count: 10)
+    if facet_count.positive?
+      {
+        resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1 } },
+        published: {
+          date_histogram: {
+            field: "publication_year",
+            interval: "year",
+            format: "year",
+            order: {
+              _key: "desc",
+            },
+            min_doc_count: 1,
           },
-          min_doc_count: 1,
         },
-      },
-      registration_agencies: { terms: { field: "agency", size: 10, min_doc_count: 1 } },
-      affiliations: { terms: { field: "affiliation_id_and_name", size: 10, min_doc_count: 1 } },
-      pid_entities: {
-        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
+        affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1 } },
+        pid_entities: {
+          filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+          aggs: {
+            subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
+                                include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+          },
         },
-      },
-      fields_of_science: {
-        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: "FOS:.*" } },
+        fields_of_science: {
+          filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+          aggs: {
+            subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
+                                include: "FOS:.*" } },
+          },
         },
-      },
-      licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
-      languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
-      view_count: { sum: { field: "view_count" } },
-      download_count: { sum: { field: "download_count" } },
-      citation_count: { sum: { field: "citation_count" } },
-    }
+        licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
+        languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
+        view_count: { sum: { field: "view_count" } },
+        download_count: { sum: { field: "download_count" } },
+        citation_count: { sum: { field: "citation_count" } },
+      }
+    end
   end
 
   def self.query_aggregations
@@ -759,7 +761,8 @@ class Doi < ApplicationRecord
   # query for graphql, removing options that are not needed
   def self.gql_query(query, options = {})
     options[:page] ||= {}
-    aggregations = gql_query_aggregations
+    options[:facet_count] ||= 10
+    aggregations = gql_query_aggregations(facet_count: options[:facet_count])
 
     # cursor nav uses search_after, this should always be an array of values that match the sort.
     # make sure we have a valid cursor

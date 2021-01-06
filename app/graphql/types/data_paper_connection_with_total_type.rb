@@ -9,6 +9,7 @@ class DataPaperConnectionWithTotalType < BaseConnection
   field :registration_agencies, [FacetType], null: true, cache: true
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
+  field :fields_of_science, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 

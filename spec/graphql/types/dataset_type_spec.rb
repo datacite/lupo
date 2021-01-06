@@ -290,6 +290,88 @@ describe DatasetType do
     end
   end
 
+  describe "query datasets by field of science no facets", elasticsearch: true do
+    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
+    let!(:dataset) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        subjects: [
+          {
+            "subject": "FOS: Computer and information sciences",
+            "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+            "subjectScheme": "Fields of Science and Technology (FOS)",
+          },
+        ],
+      )
+    end
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query {
+        datasets(fieldOfScience: \"computer_and_information_sciences\", facetCount: 0) {
+          totalCount
+          published {
+            id
+            title
+            count
+          }
+          fieldsOfScience {
+            id
+            title
+            count
+          }
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+            fieldsOfScience {
+              id
+              name
+            }
+          }
+        }
+      }"
+    end
+
+    it "returns datasets" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "published")).to be_empty
+      expect(response.dig("data", "datasets", "fieldsOfScience")).to be_empty
+      expect(
+        Base64.urlsafe_decode64(
+          response.dig("data", "datasets", "pageInfo", "endCursor"),
+        ).
+          split(",", 2).
+          last,
+      ).to eq(dataset.uid)
+      expect(
+        response.dig("data", "datasets", "pageInfo", "hasNextPage"),
+      ).to be false
+      expect(response.dig("data", "datasets", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(
+        dataset.identifier,
+      )
+      expect(
+        response.dig("data", "datasets", "nodes", 0, "fieldsOfScience"),
+      ).to eq(
+        [
+          {
+            "id" => "computer_and_information_sciences",
+            "name" => "Computer and information sciences",
+          },
+        ],
+      )
+    end
+  end
+
   describe "query with citations", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
