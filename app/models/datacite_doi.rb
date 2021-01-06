@@ -119,7 +119,7 @@ class DataciteDoi < Doi
                           dois.length
                          } DataCite DOIs."
     elsif dois.length > 0
-      Rails.logger.info "[Elasticsearch] Imported #{
+      Rails.logger.debug "[Elasticsearch] Imported #{
                          dois.length
                         } DataCite DOIs."
     end
