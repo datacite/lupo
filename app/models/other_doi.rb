@@ -95,7 +95,7 @@ class OtherDoi < Doi
 
     # TODO remove query for type once STI is enabled
     DataciteDoi.where(type: "OtherDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 100) do |dois|
+      find_in_batches(batch_size: 50) do |dois|
       ids = dois.pluck(:id)
       OtherDoiImportInBulkJob.perform_later(ids, index: index)
       count += ids.length
