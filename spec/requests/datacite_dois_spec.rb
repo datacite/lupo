@@ -2195,7 +2195,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "No matching global declaration available for the validation root. at line 2, column 0", "uid" => "10.14454/10703" }])
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: No matching global declaration available for the validation root. at line 2, column 0", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -2641,7 +2641,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/4k3m-nyvg" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI 10.14454/4k3m-nyvg: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 

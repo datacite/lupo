@@ -107,11 +107,13 @@ class DataciteDoi < Doi
                                                   }
 
     # report errors
-    errors_in_response =
-      response["items"].select { |k, _v| k.values.first["error"].present? }
-    errors += errors_in_response.length
-    errors_in_response.each do |item|
-      Rails.logger.error "[Elasticsearch] " + item.inspect
+    if response["errors"]
+      errors_in_response =
+        response["items"].select { |k, _v| k.values.first["error"].present? }
+      errors += errors_in_response.length
+      errors_in_response.each do |item|
+        Rails.logger.error "[Elasticsearch] " + item.inspect
+      end
     end
 
     if errors > 1

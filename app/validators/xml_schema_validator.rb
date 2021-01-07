@@ -45,7 +45,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
           http://datacite.org/schema/kernel-2.2
         ].include?(record.schema_version)
       record.errors[:xml] <<
-        "Schema #{record.schema_version} is no longer supported"
+        "DOI #{record.uid}: Schema #{record.schema_version} is no longer supported"
       return false
     end
 
@@ -59,8 +59,9 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     ) do |_sum, error|
       location, _level, source, text = error.message.split(": ", 4)
       line, column = location.split(":", 2)
+      title = "DOI " + record.uid
       if line.present?
-        title = text.to_s.strip + " at line #{line}, column #{column}"
+        title += ": " + text.to_s.strip + " at line #{line}, column #{column}"
       end
       source = source.split("}").last[0..-2] if line.present?
       source = schema_attributes(source) if source.present?
