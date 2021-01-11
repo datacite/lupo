@@ -7,6 +7,9 @@ class Prefix < ApplicationRecord
   # include helper module for Elasticsearch
   include Indexable
 
+  # include helper module for Prefix registration
+  include Identifiable
+
   include Elasticsearch::Model
 
   validates_presence_of :uid
@@ -100,6 +103,31 @@ class Prefix < ApplicationRecord
     __elasticsearch__.search(
       query: { term: { uid: id } }, aggregations: query_aggregations,
     )
+  end
+
+  def self.get_registration_agency
+    headers = [
+      "Prefix",
+      "RA",
+    ]
+
+    rows = Prefix.all.pluck(:uid).reduce([]) do |sum, prefix|
+      ra = get_doi_ra(prefix).to_s.downcase
+
+      if ra != "datacite"
+        row = {
+          prefix: prefix,
+          ra: ra,
+        }.values
+
+        sum << CSV.generate_line(row)
+      end
+
+      sum
+    end
+
+    csv = [CSV.generate_line(headers)] + rows
+    csv.join("")
   end
 
   def client_ids

@@ -71,6 +71,11 @@ namespace :prefix do
     puts Prefix.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
   end
 
+  desc "Get registration agency for each prefix"
+  task registration_agency: :environment do
+    puts Prefix.get_registration_agency
+  end
+
   desc "Delete prefix and associated DOIs"
   task delete: :environment do
     # These prefixes are used by multiple prefixes and can't be deleted
