@@ -125,9 +125,7 @@ class ProviderPrefixesController < ApplicationController
     @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 
-    if @provider_prefix.save && @provider_prefix.__elasticsearch__.index_document.dig("result") == "created"
-      @provider_prefix.prefix.__elasticsearch__.index_document
-
+    if @provider_prefix.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
