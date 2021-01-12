@@ -150,53 +150,53 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
     end
   end
 
-  # describe "POST /provider-prefixes" do
-  #   context "when the request is valid" do
-  #     let(:valid_attributes) do
-  #       {
-  #         "data" => {
-  #           "type" => "provider-prefixes",
-  #           "relationships": {
-  #             "provider": {
-  #               "data": { "type": "provider", "id": provider.uid },
-  #             },
-  #             "prefix": { "data": { "type": "prefix", "id": prefix.uid } },
-  #           },
-  #         },
-  #       }
-  #     end
+  describe "POST /provider-prefixes" do
+    context "when the request is valid" do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "provider-prefixes",
+            "relationships": {
+              "provider": {
+                "data": { "type": "provider", "id": provider.uid },
+              },
+              "prefix": { "data": { "type": "prefix", "id": prefix.uid } },
+            },
+          },
+        }
+      end
 
-  #     before do
-  #       Prefix.import
-  #       Provider.import
-  #       sleep 2
-  #     end
+      before do
+        Prefix.import
+        Provider.import
+        sleep 2
+      end
 
-  #     it "creates a provider-prefix" do
-  #       post "/provider-prefixes", valid_attributes, headers
+      it "creates a provider-prefix" do
+        post "/provider-prefixes", valid_attributes, headers
 
-  #       expect(last_response.status).to eq(201)
-  #       expect(json.dig("data", "id")).not_to be_nil
-  #     end
-  #   end
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "id")).not_to be_nil
+      end
+    end
 
-  #   context "when the request is invalid" do
-  #     let!(:provider) { create(:provider) }
-  #     let(:not_valid_attributes) do
-  #       { "data" => { "type" => "provider-prefixes" } }
-  #     end
+    context "when the request is invalid" do
+      let!(:provider) { create(:provider) }
+      let(:not_valid_attributes) do
+        { "data" => { "type" => "provider-prefixes" } }
+      end
 
-  #     it "returns status code 422" do
-  #       post "/provider-prefixes",
-  #            not_valid_attributes, headers
+      it "returns status code 422" do
+        post "/provider-prefixes",
+             not_valid_attributes, headers
 
-  #       expect(last_response.status).to eq(422)
-  #       expect(json["errors"].first).to eq(
-  #         "source" => "provider", "title" => "Must exist",
-  #       )
-  #     end
-  #   end
-  # end
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq(
+          "source" => "provider", "title" => "Must exist",
+        )
+      end
+    end
+  end
 
   describe "DELETE /provider-prefixes/:uid" do
     let!(:provider_prefix) { create(:provider_prefix) }
