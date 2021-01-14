@@ -102,7 +102,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Get git tag
         run: |
-          echo "::set-output name=GIT_TAG::$(git describe --tags $(git rev-list --tags --max-count=1))"
+          echo "::set-output name=GIT_TAG::$(git tag --points-at HEAD)"
         id: set_git_vars
       - name: Build and push 
         uses: docker/build-push-action@v2
