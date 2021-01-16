@@ -350,6 +350,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           "nameType" => "Personal",
           "name" => "John Doe",
           "affiliation" => [],
+          "nameIdentifiers" => [],
         })
       end
 
@@ -358,6 +359,28 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "creators")).to eq([doi.creators])
+      end
+    end
+
+    context "nameIdentifiers started as an object not array" do
+      let(:doi) do
+        create(:doi, client: client, creators:
+        [{
+          "nameType" => "Personal",
+          "name" => "John Doe",
+          "affiliation" => [],
+          "nameIdentifiers": {
+            "nameIdentifier": "http://viaf.org/viaf/4934600",
+            "nameIdentifierScheme": "VIAF"
+          },
+        }])
+      end
+
+      it "returns the nameIdentifiers as list" do
+        get "/dois/#{doi.doi}", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "creators", 0, "nameIdentifiers")).to eq([{ "nameIdentifier" => "http://viaf.org/viaf/4934600", "nameIdentifierScheme" => "VIAF"}])
       end
     end
   end
@@ -1357,7 +1380,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     context "when the creators change" do
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
-      let(:creators) { [{ "affiliation" => [], "name" => "Ollomi, Benjamin" }, { "affiliation" => [], "name" => "Duran, Patrick" }] }
+      let(:creators) { [{ "affiliation" => [], "nameIdentifiers" => [], "name" => "Ollomi, Benjamin" }, { "affiliation" => [], "nameIdentifiers" => [], "name" => "Duran, Patrick" }] }
       let(:valid_attributes) do
         {
           "data" => {
@@ -2472,7 +2495,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the creators change" do
-      let(:creators) { [{ "affiliation" => [], "name" => "Ollomi, Benjamin" }, { "affiliation" => [], "name" => "Duran, Patrick" }] }
+      let(:creators) { [{ "affiliation" => [], "nameIdentifiers" => [], "name" => "Ollomi, Benjamin" }, { "affiliation" => [], "nameIdentifiers" => [], "name" => "Duran, Patrick" }] }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
@@ -3188,7 +3211,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "update multiple affiliations" do
-      let(:creators) { [{ "name" => "Ollomi, Benjamin", "affiliation" => [{ "name" => "Cambridge University" }, { "name" => "EMBL-EBI" }] }] }
+      let(:creators) { [{ "name" => "Ollomi, Benjamin", "affiliation" => [{ "name" => "Cambridge University" }, { "name" => "EMBL-EBI" }], "nameIdentifiers" => [] }] }
       let(:update_attributes) do
         {
           "data" => {
