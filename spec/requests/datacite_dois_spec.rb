@@ -380,7 +380,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "creators", 0, "nameIdentifiers")).to eq([{ "nameIdentifier" => "http://viaf.org/viaf/4934600", "nameIdentifierScheme" => "VIAF"}])
+        expect(json.dig("data", "attributes", "creators", 0, "nameIdentifiers")).to eq([{ "nameIdentifier" => "http://viaf.org/viaf/4934600", "nameIdentifierScheme" => "VIAF" }])
       end
     end
   end
