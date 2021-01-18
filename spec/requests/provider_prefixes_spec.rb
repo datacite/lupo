@@ -177,6 +177,25 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "id")).not_to be_nil
+
+        sleep 2
+
+        get "/prefixes?state=unassigned", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("meta", "total")).to eq(0)
+
+
+        delete "/provider-prefixes/#{provider_prefix.uid}", nil, headers
+
+        expect(last_response.status).to eq(204)
+
+        sleep 2
+
+        get "/prefixes?state=unassigned", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("meta", "total")).to eq(1)
       end
     end
 
