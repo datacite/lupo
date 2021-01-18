@@ -12,6 +12,12 @@ module Indexable
         IndexJob.perform_later(self)
       else
         __elasticsearch__.index_document
+        # This is due to the order of indexing, we want to always ensure
+        # the prefix index is up to date with relations
+        # So we force it here to reindex prefix if we touch them.
+        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+          self.prefix.__elasticsearch__.index_document
+        end
       end
 
       if (

@@ -126,6 +126,7 @@ class DataciteDoiSerializer
         Array.wrap(c["affiliation"]).map do |a|
           params[:affiliation] ? a : a["name"]
         end.compact
+      c["nameIdentifiers"] = Array.wrap(c["nameIdentifiers"])
       c
     end.compact
   end
