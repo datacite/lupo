@@ -108,6 +108,49 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:destroy, doi) }
     end
 
+    context "when is a client admin inactive" do
+      let(:client) { create(:client, provider: provider, is_active: false) }
+      let(:token) do
+        User.generate_token(
+          role_id: "client_admin",
+          provider_id: provider.symbol.downcase,
+          client_id: client.symbol.downcase,
+        )
+      end
+
+      it { is_expected.to be_able_to(:read, user) }
+      it { is_expected.to be_able_to(:read, provider) }
+
+      it { is_expected.not_to be_able_to(:create, provider) }
+      it { is_expected.not_to be_able_to(:update, provider) }
+      it { is_expected.not_to be_able_to(:destroy, provider) }
+      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
+      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.to be_able_to(:read, client) }
+      it { is_expected.not_to be_able_to(:create, client) }
+      it { is_expected.not_to be_able_to(:update, client) }
+      it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
+      it { is_expected.to be_able_to(:read_contact_information, client) }
+
+      it { is_expected.not_to be_able_to(:read, prefix) }
+      it { is_expected.not_to be_able_to(:create, prefix) }
+      it { is_expected.not_to be_able_to(:update, prefix) }
+      it { is_expected.not_to be_able_to(:destroy, prefix) }
+
+      it { is_expected.to be_able_to(:read, client_prefix) }
+      it { is_expected.not_to be_able_to(:create, client_prefix) }
+      it { is_expected.not_to be_able_to(:update, client_prefix) }
+      it { is_expected.not_to be_able_to(:destroy, client_prefix) }
+
+      it { is_expected.to be_able_to(:read, doi) }
+      it { is_expected.not_to be_able_to(:transfer, doi) }
+      it { is_expected.not_to be_able_to(:create, doi) }
+      it { is_expected.not_to be_able_to(:update, doi) }
+      it { is_expected.not_to be_able_to(:destroy, doi) }
+    end
+
     context "when is a client user" do
       let(:token) do
         User.generate_token(
