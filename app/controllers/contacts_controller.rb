@@ -31,6 +31,7 @@ class ContactsController < ApplicationController
     else
       Contact.query(
         params[:query],
+        provider_id: params[:provider_id],
         page: page,
         sort: sort,
       )
