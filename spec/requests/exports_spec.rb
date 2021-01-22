@@ -28,6 +28,11 @@ describe ExportsController, type: :request do
       consortium: consortium,
     )
   end
+  let!(:contact) do
+    create(
+      :contact, provider: provider,
+    )
+  end
 
   describe "GET /export/organizations", elasticsearch: true do
     before do
@@ -121,6 +126,7 @@ describe ExportsController, type: :request do
   describe "GET /export/contacts", elasticsearch: true do
     before do
       Provider.import
+      Contact.import
       sleep 2
     end
 
@@ -129,103 +135,12 @@ describe ExportsController, type: :request do
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
-      expect(csv.length).to eq(9)
+      expect(csv.length).to eq(2)
       expect(csv[0]).to eq(
-        "fabricaAccountId,fabricaId,email,firstName,lastName,type\n",
+        "uid,fabricaAccountId,fabricaId,email,firstName,lastName,type,createdAt,modifiedAt,deletedAt,isActive\n",
       )
       expect(csv[1]).to start_with(
-        "VIVA,VIVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical",
-      )
-      expect(csv[2]).to start_with(
-        "VIVA,VIVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService",
-      )
-      expect(csv[3]).to start_with(
-        "VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-      expect(csv[4]).to start_with(
-        "VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
-      )
-      expect(csv[5]).to start_with(
-        "UVA,UVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical",
-      )
-      expect(csv[6]).to start_with(
-        "UVA,UVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService",
-      )
-      expect(csv[7]).to start_with(
-        "UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-      expect(csv[8]).to start_with(
-        "UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
-      )
-    end
-
-    it "returns all contacts from date", vcr: false do
-      get "/export/contacts?from-date=#{Date.today}",
-          nil, admin_headers
-
-      expect(last_response.status).to eq(200)
-      csv = last_response.body.lines
-      expect(csv.length).to eq(9)
-      expect(csv[0]).to eq(
-        "fabricaAccountId,fabricaId,email,firstName,lastName,type\n",
-      )
-      expect(csv[1]).to start_with(
-        "VIVA,VIVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical",
-      )
-      expect(csv[2]).to start_with(
-        "VIVA,VIVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService",
-      )
-      expect(csv[3]).to start_with(
-        "VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-      expect(csv[4]).to start_with(
-        "VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
-      )
-      expect(csv[5]).to start_with(
-        "UVA,UVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical",
-      )
-      expect(csv[6]).to start_with(
-        "UVA,UVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService",
-      )
-      expect(csv[7]).to start_with(
-        "UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-      expect(csv[8]).to start_with(
-        "UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
-      )
-    end
-
-    it "returns voting contacts", vcr: false do
-      get "/export/contacts?type=voting", nil, admin_headers
-
-      expect(last_response.status).to eq(200)
-      csv = last_response.body.lines
-      expect(csv.length).to eq(3)
-      expect(csv[0]).to eq(
-        "fabricaAccountId,fabricaId,email,firstName,lastName,type\n",
-      )
-      expect(csv[1]).to start_with(
-        "VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-      expect(csv[2]).to start_with(
-        "UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting",
-      )
-    end
-
-    it "returns billing contacts", vcr: false do
-      get "/export/contacts?type=billing", nil, admin_headers
-
-      expect(last_response.status).to eq(200)
-      csv = last_response.body.lines
-      expect(csv.length).to eq(3)
-      expect(csv[0]).to eq(
-        "fabricaAccountId,fabricaId,email,firstName,lastName,type\n",
-      )
-      expect(csv[1]).to start_with(
-        "VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
-      )
-      expect(csv[2]).to start_with(
-        "UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling",
+        "#{contact.uid},UVA,UVA-josiah@example.org,josiah@example.org,Josiah,Carberry,voting",
       )
     end
   end
@@ -251,10 +166,10 @@ describe ExportsController, type: :request do
       get "/export/check-indexed-dois",
           nil, admin_headers
       puts last_response.body
-      expect(last_response.status).to eq(200)
+      expect(last_response.status).to eq(202)
       csv = last_response.body.lines
       expect(csv.length).to eq(1)
-      expect(csv[0].strip).to be_blank
+      expect(csv[0].strip).to eq("OK")
     end
   end
 end
