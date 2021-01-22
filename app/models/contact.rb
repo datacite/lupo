@@ -119,6 +119,102 @@ class Contact < ApplicationRecord
     write_attribute(:provider_id, r.id)
   end
 
+  def self.import_from_providers
+    Provider.all.find_each do |provider|
+      if provider.voting_contact_email
+        contact = Contact.where(email: provider.voting_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.voting_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.voting_contact_given_name,
+          family_name: provider.voting_contact_family_name,
+          roles: [] << "voting_contact")
+          puts "Imported voting contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing voting contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.billing_contact_email
+        contact = Contact.where(email: provider.billing_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.billing_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.billing_contact_given_name,
+          family_name: provider.billing_contact_family_name,
+          roles: Array.wrap(contact.roles) << "billing_contact")
+          puts "Imported billing contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing billing contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.secondary_billing_contact_email
+        contact = Contact.where(email: provider.secondary_billing_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.secondary_billing_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.secondary_billing_contact_given_name,
+          family_name: provider.secondary_billing_contact_family_name,
+          roles: Array.wrap(contact.roles) << "secondary_billing_contact")
+          puts "Imported secondary billing contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.service_contact_email
+        contact = Contact.where(email: provider.service_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.service_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.service_contact_given_name,
+          family_name: provider.service_contact_family_name,
+          roles: Array.wrap(contact.roles) << "service_contact")
+          puts "Imported service contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.secondary_service_contact_email
+        contact = Contact.where(email: provider.secondary_service_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.secondary_service_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.secondary_service_contact_given_name,
+          family_name: provider.secondary_service_contact_family_name,
+          roles: Array.wrap(contact.roles) << "secondary_service_contact")
+          puts "Imported secondary service contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing secondary service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.technical_contact_email
+        contact = Contact.where(email: provider.technical_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.technical_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.technical_contact_given_name,
+          family_name: provider.technical_contact_family_name,
+          roles: Array.wrap(contact.roles) << "technical_contact")
+          puts "Imported technical contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+      if provider.secondary_technical_contact_email
+        contact = Contact.where(email: provider.secondary_technical_contact_email, provider_id: provider.id).first_or_create
+        if contact.update(
+          email: provider.secondary_technical_contact_email.downcase,
+          provider_id: provider.uid,
+          given_name: provider.secondary_technical_contact_given_name,
+          family_name: provider.secondary_technical_contact_family_name,
+          roles: Array.wrap(contact.roles) << "secondary_technical_contact")
+          puts "Imported secondary technical contact #{contact.email} for provider #{provider.symbol}."
+        else
+          puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
+        end
+      end
+    end
+  end
+
   private
     # uuid for public id
     def set_uid
