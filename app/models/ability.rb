@@ -36,6 +36,10 @@ class Ability
         provider_prefix.provider &&
           user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
+      can %i[manage], Contact do |contact|
+        contact.provider &&
+          user.provider_id.casecmp(contact.provider.consortium_id)
+      end
       can %i[manage transfer read_contact_information], Client do |client|
         client.provider &&
           user.provider_id.casecmp(client.provider.consortium_id)
@@ -63,6 +67,7 @@ class Ability
       can %i[update read read_billing_information read_contact_information],
           Provider,
           symbol: user.provider_id.upcase
+      can %i[manage], Contact, provider_id: user.provider_id
       can %i[manage], ProviderPrefix, provider_id: user.provider_id
       can %i[manage read_contact_information], Client, provider_id: user.provider_id
       cannot %i[transfer], Client
@@ -91,6 +96,7 @@ class Ability
       can %i[read], ProviderPrefix, provider_id: user.provider_id
       can %i[read read_contact_information], Client, provider_id: user.provider_id
       can %i[read], ClientPrefix # , :client_id => user.client_id
+      can %i[read], Contact, provider_id: user.provider_id
       can %i[read get_url read_landing_page_results],
           Doi,
           provider_id: user.provider_id
