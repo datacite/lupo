@@ -56,13 +56,9 @@ class Contact < ApplicationRecord
       indexes :id, type: :keyword
       indexes :uid, type: :keyword, normalizer: "keyword_lowercase"
       indexes :provider_id, type: :keyword
-      indexes :given_name, type: :keyword
-      indexes :family_name, type: :keyword, fields: {
-        raw: {
-          type: "text", analyzer: "string_lowercase", "fielddata": true
-        },
-      }
-      indexes :name, type: :keyword
+      indexes :given_name, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :family_name, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :email, type: :keyword
       indexes :roles, type: :keyword
       indexes :created_at, type: :date
