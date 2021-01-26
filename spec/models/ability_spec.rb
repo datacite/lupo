@@ -13,6 +13,7 @@ describe User, type: :model do
       consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION",
     )
   end
+  let(:contact) { create(:contact, provider: provider) }
   let(:client) { create(:client, provider: provider) }
   let(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) do
@@ -46,6 +47,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:destroy, provider) }
       it { is_expected.not_to be_able_to(:read_billing_information, provider) }
       it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.not_to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
 
       it { is_expected.not_to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
@@ -127,6 +133,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:read_billing_information, provider) }
       it { is_expected.not_to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.not_to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
@@ -169,6 +180,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:read_billing_information, provider) }
       it { is_expected.not_to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.not_to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
@@ -209,6 +225,11 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.to be_able_to(:read, contact) }
+      it { is_expected.to be_able_to(:create, contact) }
+      it { is_expected.to be_able_to(:update, contact) }
+      it { is_expected.to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.to be_able_to(:create, client) }
       it { is_expected.to be_able_to(:update, client) }
@@ -248,6 +269,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:destroy, consortium) }
       it { is_expected.to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.to be_able_to(:read, contact) }
+      it { is_expected.to be_able_to(:create, contact) }
+      it { is_expected.to be_able_to(:update, contact) }
+      it { is_expected.to be_able_to(:destroy, contact) }
 
       it { is_expected.to be_able_to(:read, provider) }
       it { is_expected.to be_able_to(:create, provider) }
@@ -294,6 +320,11 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
@@ -329,6 +360,11 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.to be_able_to(:read, contact) }
+      it { is_expected.to be_able_to(:create, contact) }
+      it { is_expected.to be_able_to(:update, contact) }
+      it { is_expected.to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.to be_able_to(:create, client) }
       it { is_expected.to be_able_to(:update, client) }
@@ -353,6 +389,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:destroy, provider) }
       it { is_expected.to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
 
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
@@ -380,6 +421,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:read_billing_information, provider) }
       it { is_expected.to be_able_to(:read_contact_information, provider) }
 
+      it { is_expected.not_to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
+
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.to be_able_to(:update, client) }
@@ -402,6 +448,11 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:destroy, provider) }
       it { is_expected.not_to be_able_to(:read_billing_information, provider) }
       it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+
+      it { is_expected.not_to be_able_to(:read, contact) }
+      it { is_expected.not_to be_able_to(:create, contact) }
+      it { is_expected.not_to be_able_to(:update, contact) }
+      it { is_expected.not_to be_able_to(:destroy, contact) }
 
       it { is_expected.not_to be_able_to(:read, client) }
       it { is_expected.not_to be_able_to(:create, client) }

@@ -12,6 +12,7 @@ SEARCHABLE_MODELS = [
   Prefix,
   ClientPrefix,
   ProviderPrefix,
+  Contact,
 ].freeze
 
 RSpec.configure do |config|

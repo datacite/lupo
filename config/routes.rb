@@ -195,6 +195,8 @@ Rails.application.routes.draw do
     resources :events
   end
 
+  resources :contacts
+
   constraints(->(req) { req.env["HTTP_ACCEPT"].to_s.include?("version=2") }) do
     resources :events
   end
@@ -212,6 +214,7 @@ Rails.application.routes.draw do
     resources :organizations, constraints: { id: /.+/ }, shallow: true
     resources :datacite_dois, path: "dois", constraints: { id: /.+/ }
     resources :prefixes, constraints: { id: /.+/ }
+    resources :contacts
     resources :activities
   end
   resources :providers, constraints: { id: /.+/ }

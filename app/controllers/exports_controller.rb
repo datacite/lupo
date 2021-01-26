@@ -21,178 +21,30 @@ class ExportsController < ApplicationController
   def contacts
     authorize! :export, :contacts
 
-    begin
-      # Loop through all providers
-      page = { size: 1_000, number: 1 }
-      response =
-        Provider.query(
-          nil,
-          page: page,
-          from_date: params[:from_date],
-          until_date: params[:until_date],
-          include_deleted: true,
-        )
-      providers = response.results.to_a
+    headers = %w[uid fabricaAccountId fabricaId email firstName lastName type createdAt modifiedAt deletedAt isActive]
 
-      total = response.results.total
-      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+    rows = Contact.all.reduce([]) do |sum, contact|
+      row = {
+        "uid" => contact.uid,
+        "fabricaAccountId" => contact.provider.symbol,
+        "fabricaId" => contact.provider.symbol + "-" + contact.email,
+        "email" => contact.email,
+        "firstName" => contact.given_name,
+        "lastName" => contact.family_name,
+        "type" => contact.roles.join(";"),
+        "createdAt" => contact.created_at.try(:iso8601),
+        "modifiedAt" => contact.updated_at.try(:iso8601),
+        "deletedAt" => contact.deleted_at.try(:iso8601),
+        "isActive" => contact.deleted_at.blank?,
+      }.values
 
-      # keep going for all pages
-      page_num = 2
-      while page_num <= total_pages
-        page = { size: 1_000, number: page_num }
-        response =
-          Provider.query(
-            nil,
-            page: page,
-            from_date: params[:from_date],
-            until_date: params[:until_date],
-            include_deleted: true,
-          )
-        providers = providers + response.results.to_a
-        page_num += 1
-      end
-
-      headers = %w[fabricaAccountId fabricaId email firstName lastName type]
-
-      csv = headers.to_csv
-
-      # Use a hashmap for the contacts to avoid duplicated
-      contacts = {}
-
-      add_contact =
-        Proc.new do |con, email, id, firstname, lastname, type|
-          if email
-            fabrica_id = id + "-" + email
-            unless con.has_key?(fabrica_id)
-              con[fabrica_id] = {
-                "fabricaAccountId" => id,
-                "fabricaId" => fabrica_id,
-                "email" => email,
-                "firstName" => firstname,
-                "lastName" => lastname.presence || email,
-              }
-            end
-
-            if con[fabrica_id].has_key?("type")
-              con[fabrica_id]["type"] += ";" + type
-            else
-              con[fabrica_id]["type"] = type
-            end
-          end
-        end
-
-      providers.each do |provider|
-        if params[:type].blank? || params[:type] == "technical"
-          if provider.technical_contact.present?
-            add_contact.call(
-              contacts,
-              provider.technical_contact.email,
-              provider.symbol,
-              provider.technical_contact.given_name,
-              provider.technical_contact.family_name,
-              "technical",
-            )
-          end
-          if provider.secondary_technical_contact.present?
-            add_contact.call(
-              contacts,
-              provider.secondary_technical_contact.email,
-              provider.symbol,
-              provider.secondary_technical_contact.given_name,
-              provider.secondary_technical_contact.family_name,
-              "secondaryTechnical",
-            )
-          end
-        end
-
-        if params[:type].blank? || params[:type] == "service"
-          if provider.service_contact.present?
-            add_contact.call(
-              contacts,
-              provider.service_contact.email,
-              provider.symbol,
-              provider.service_contact.given_name,
-              provider.service_contact.family_name,
-              "service",
-            )
-          end
-          if provider.secondary_service_contact.present?
-            add_contact.call(
-              contacts,
-              provider.secondary_service_contact.email,
-              provider.symbol,
-              provider.secondary_service_contact.given_name,
-              provider.secondary_service_contact.family_name,
-              "secondaryService",
-            )
-          end
-        end
-
-        if params[:type].blank? || params[:type] == "voting"
-          if provider.voting_contact.present?
-            add_contact.call(
-              contacts,
-              provider.voting_contact.email,
-              provider.symbol,
-              provider.voting_contact.given_name,
-              provider.voting_contact.family_name,
-              "voting",
-            )
-          end
-        end
-
-        if params[:type].blank? || params[:type] == "billing"
-          if provider.billing_contact.present?
-            add_contact.call(
-              contacts,
-              provider.billing_contact.email,
-              provider.symbol,
-              provider.billing_contact.given_name,
-              provider.billing_contact.family_name,
-              "billing",
-            )
-          end
-          if provider.secondary_billing_contact.present?
-            add_contact.call(
-              contacts,
-              provider.secondary_billing_contact.email,
-              provider.symbol,
-              provider.secondary_billing_contact.given_name,
-              provider.secondary_billing_contact.family_name,
-              "secondaryBilling",
-            )
-          end
-        end
-      end
-
-      contacts.each do |_, contact|
-        csv +=
-          CSV.generate_line [
-            contact["fabricaAccountId"],
-            contact["fabricaId"],
-            contact["email"],
-            contact["firstName"],
-            contact["lastName"],
-            contact["type"],
-          ]
-      end
-
-      filename =
-        if params[:until_date]
-          "contacts-#{params.fetch(:type, 'all')}-#{params[:until_date]}.csv"
-        else
-          "contacts-#{params.fetch(:type, 'all')}-#{Date.today}.csv"
-        end
-
-      send_data csv, filename: filename
-    rescue StandardError,
-           Elasticsearch::Transport::Transport::Errors::BadRequest => e
-      Raven.capture_exception(e)
-
-      render json: { "errors" => { "title" => e.message } }.to_json,
-             status: :bad_request
+      sum << CSV.generate_line(row)
+      sum
     end
+
+    csv = [CSV.generate_line(headers)] + rows
+    filename = "contacts-#{Date.today}.csv"
+    send_data csv, filename: filename
   end
 
   def organizations

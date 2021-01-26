@@ -69,6 +69,18 @@ FactoryBot.define do
     association :client, factory: :client, strategy: :create
   end
 
+  factory :contact do
+    provider
+
+    uid { SecureRandom.uuid }
+    email { "josiah@example.org" }
+    given_name { "Josiah" }
+    family_name { "Carberry" }
+    roles { ["voting"] }
+
+    initialize_with { Contact.where(uid: uid).first_or_initialize }
+  end
+
   factory :doi do
     client
 

@@ -597,6 +597,9 @@ module Indexable
         if options[:prefix_id].present?
           filter << { term: { prefix_id: options[:prefix_id] } }
         end
+
+
+
       elsif name == "Activity"
         must = if query.present?
           [
@@ -615,6 +618,23 @@ module Indexable
 
         if options[:uid].present?
           filter << { terms: { uid: options[:uid].to_s.split(",") } }
+        end
+      elsif name == "Contact"
+        must = if query.present?
+          [
+            {
+              query_string: {
+                query: query,
+                fields: query_fields
+              },
+            },
+          ]
+        else
+          [{ match_all: {} }]
+        end
+
+        if options[:provider_id].present?
+          filter << { term: { provider_id: options[:provider_id] } }
         end
       end
 
