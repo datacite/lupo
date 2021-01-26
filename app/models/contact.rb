@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Contact < ApplicationRecord
+  strip_attributes
+
   # include helper module for Elasticsearch
   include Indexable
 
