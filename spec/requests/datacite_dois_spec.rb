@@ -443,7 +443,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     it "filter for interactive resources no facets" do
-      get "/dois?resource-type-id=interactive-resource&facet-count=0", nil, headers
+      get "/dois?resource-type-id=interactive-resource&disable-facets=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)

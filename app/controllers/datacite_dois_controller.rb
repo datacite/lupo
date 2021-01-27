@@ -68,8 +68,8 @@ class DataciteDoisController < ApplicationController
       params[:state] = "findable"
     end
 
-    # default number of facets
-    facet_count = (params[:facet_count] || 10).to_i
+    # facets are enabled by default
+    disable_facets = params[:disable_facets]
 
     if params[:id].present?
       response = DataciteDoi.find_by_id(params[:id])
@@ -125,7 +125,7 @@ class DataciteDoisController < ApplicationController
           sample_size: params[:sample],
           source: params[:source],
           scroll_id: params[:scroll_id],
-          facet_count: facet_count,
+          disable_facets: disable_facets,
           page: page,
           sort: sort,
           random: params[:random],
@@ -210,7 +210,7 @@ class DataciteDoisController < ApplicationController
                  status: :ok
         end
       else
-        if total.positive? && facet_count.positive?
+        if total.positive? && !disable_facets
           states = facet_by_key(response.aggregations.states.buckets)
           resource_types = facet_by_combined_key(response.aggregations.resource_types.buckets)
           published = facet_by_range(response.aggregations.published.buckets)
@@ -328,7 +328,7 @@ class DataciteDoisController < ApplicationController
                       "has-person" => params[:has_person],
                       "has-affiliation" => params[:has_affiliation],
                       "has-funder" => params[:has_funder],
-                      facet_count: params[:facet_count],
+                      "disable-facets" => params[:disable_facets],
                       detail: params[:detail],
                       composite: params[:composite],
                       affiliation: params[:affiliation],
