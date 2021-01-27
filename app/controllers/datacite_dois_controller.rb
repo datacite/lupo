@@ -68,6 +68,9 @@ class DataciteDoisController < ApplicationController
       params[:state] = "findable"
     end
 
+    # facets are enabled by default
+    disable_facets = params[:disable_facets]
+
     if params[:id].present?
       response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
@@ -122,6 +125,7 @@ class DataciteDoisController < ApplicationController
           sample_size: params[:sample],
           source: params[:source],
           scroll_id: params[:scroll_id],
+          disable_facets: disable_facets,
           page: page,
           sort: sort,
           random: params[:random],
@@ -206,91 +210,56 @@ class DataciteDoisController < ApplicationController
                  status: :ok
         end
       else
-        states =
-          if total.positive?
-            facet_by_key(response.aggregations.states.buckets)
-          end
-        resource_types =
-          if total.positive?
-            facet_by_combined_key(response.aggregations.resource_types.buckets)
-          end
-        published =
-          if total.positive?
-            facet_by_range(response.aggregations.published.buckets)
-          end
-        created =
-          if total.positive?
-            facet_by_key_as_string(response.aggregations.created.buckets)
-          end
-        registered =
-          if total.positive?
-            facet_by_key_as_string(response.aggregations.registered.buckets)
-          end
-        providers =
-          if total.positive?
-            facet_by_combined_key(response.aggregations.providers.buckets)
-          end
-        clients =
-          if total.positive?
-            facet_by_combined_key(response.aggregations.clients.buckets)
-          end
-        prefixes =
-          if total.positive?
-            facet_by_key(response.aggregations.prefixes.buckets)
-          end
-        schema_versions =
-          if total.positive?
-            facet_by_schema(response.aggregations.schema_versions.buckets)
-          end
+        if total.positive? && !disable_facets
+          states = facet_by_key(response.aggregations.states.buckets)
+          resource_types = facet_by_combined_key(response.aggregations.resource_types.buckets)
+          published = facet_by_range(response.aggregations.published.buckets)
+          created = facet_by_key_as_string(response.aggregations.created.buckets)
+          registered = facet_by_key_as_string(response.aggregations.registered.buckets)
+          providers = facet_by_combined_key(response.aggregations.providers.buckets)
+          clients = facet_by_combined_key(response.aggregations.clients.buckets)
+          prefixes = facet_by_key(response.aggregations.prefixes.buckets)
+          schema_versions = facet_by_schema(response.aggregations.schema_versions.buckets)
+          affiliations = facet_by_combined_key(response.aggregations.affiliations.buckets)
+          # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+          subjects = facet_by_key(response.aggregations.subjects.buckets)
+          fields_of_science = facet_by_fos(
+            response.aggregations.fields_of_science.subject.buckets,
+              )
+          certificates = facet_by_key(response.aggregations.certificates.buckets)
+          licenses = facet_by_license(response.aggregations.licenses.buckets)
+          link_checks_status = facet_by_cumulative_year(
+            response.aggregations.link_checks_status.buckets,
+              )
+          # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+          # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+          # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+          # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+          # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
 
-        affiliations =
-          if total.positive?
-            facet_by_combined_key(response.aggregations.affiliations.buckets)
-          end
-        # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
-        subjects =
-          if total.positive?
-            facet_by_key(response.aggregations.subjects.buckets)
-          end
-        fields_of_science =
-          if total.positive?
-            facet_by_fos(
-              response.aggregations.fields_of_science.subject.buckets,
-            )
-          end
-        certificates =
-          if total.positive?
-            facet_by_key(response.aggregations.certificates.buckets)
-          end
-        licenses =
-          if total.positive?
-            facet_by_license(response.aggregations.licenses.buckets)
-          end
-
-        link_checks_status =
-          if total.positive?
-            facet_by_cumulative_year(
-              response.aggregations.link_checks_status.buckets,
-            )
-          end
-        # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-        # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-        # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-        # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-        # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
-
-        citations =
-          if total.positive?
-            metric_facet_by_year(response.aggregations.citations.buckets)
-          end
-        views =
-          if total.positive?
-            metric_facet_by_year(response.aggregations.views.buckets)
-          end
-        downloads =
-          if total.positive?
-            metric_facet_by_year(response.aggregations.downloads.buckets)
-          end
+          citations = metric_facet_by_year(response.aggregations.citations.buckets)
+          views = metric_facet_by_year(response.aggregations.views.buckets)
+          downloads = metric_facet_by_year(response.aggregations.downloads.buckets)
+        else
+          states = nil
+          resource_types = nil
+          published = nil
+          created = nil
+          registered = nil
+          providers = nil
+          clients = nil
+          prefixes = nil
+          schema_versions = nil
+          affiliations = nil
+          subjects = nil
+          fields_of_science = nil
+          certificates = nil
+          licenses = nil
+          link_checks_status = nil
+          citations = nil
+          views = nil
+          downloads = nil
+        end
 
         respond_to do |format|
           format.json do
@@ -359,6 +328,7 @@ class DataciteDoisController < ApplicationController
                       "has-person" => params[:has_person],
                       "has-affiliation" => params[:has_affiliation],
                       "has-funder" => params[:has_funder],
+                      "disable-facets" => params[:disable_facets],
                       detail: params[:detail],
                       composite: params[:composite],
                       affiliation: params[:affiliation],
