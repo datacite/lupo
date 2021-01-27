@@ -585,78 +585,80 @@ class Doi < ApplicationRecord
     end
   end
 
-  def self.query_aggregations
-    {
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 16, min_doc_count: 1 } },
-      states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
-      published: {
-        date_histogram: {
-          field: "publication_year",
-          interval: "year",
-          format: "year",
-          order: {
-            _key: "desc",
+  def self.query_aggregations(facet_count: 10)
+    if facet_count.to_i.positive?
+      {
+        resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1 } },
+        states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
+        published: {
+          date_histogram: {
+            field: "publication_year",
+            interval: "year",
+            format: "year",
+            order: {
+              _key: "desc",
+            },
+            min_doc_count: 1,
           },
-          min_doc_count: 1,
         },
-      },
-      registration_agencies: { terms: { field: "agency", size: 10, min_doc_count: 1 } },
-      created: { date_histogram: { field: "created", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-                 aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      registered: { date_histogram: { field: "registered", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-                    aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
-      affiliations: { terms: { field: "affiliation_id_and_name", size: 10, min_doc_count: 1 } },
-      prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
-      schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
-      link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
-      # link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
-      # link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
-      # link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
-      # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
-      # links_checked: { value_count: { field: "landing_page.checked" } },
-      # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
-      pid_entities: {
-        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
+        created: { date_histogram: { field: "created", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+                  aggs: { bucket_truncate: { bucket_sort: { size: facet_count } } } },
+        registered: { date_histogram: { field: "registered", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+                      aggs: { bucket_truncate: { bucket_sort: { size: facet_count } } } },
+        providers: { terms: { field: "provider_id_and_name", size: facet_count, min_doc_count: 1 } },
+        clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
+        affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1 } },
+        prefixes: { terms: { field: "prefix", size: facet_count, min_doc_count: 1 } },
+        schema_versions: { terms: { field: "schema_version", size: facet_count, min_doc_count: 1 } },
+        link_checks_status: { terms: { field: "landing_page.status", size: facet_count, min_doc_count: 1 } },
+        # link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
+        # link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
+        # link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
+        # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
+        # links_checked: { value_count: { field: "landing_page.checked" } },
+        # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
+        subjects: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1 } },
+        pid_entities: {
+          filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+          aggs: {
+            subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
+                                include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+          },
         },
-      },
-      fields_of_science: {
-        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: "FOS:.*" } },
+        fields_of_science: {
+          filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+          aggs: {
+            subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
+                                include: "FOS:.*" } },
+          },
         },
-      },
-      licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
-      languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
-      certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
-      views: {
-        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-        aggs: {
-          metric_count: { sum: { field: "view_count" } },
-          bucket_truncate: { bucket_sort: { size: 10 } },
+        licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
+        languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
+        certificates: { terms: { field: "client.certificate", size: facet_count, min_doc_count: 1 } },
+        views: {
+          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+          aggs: {
+            metric_count: { sum: { field: "view_count" } },
+            bucket_truncate: { bucket_sort: { size: facet_count } },
+          },
         },
-      },
-      downloads: {
-        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-        aggs: {
-          metric_count: { sum: { field: "download_count" } },
-          bucket_truncate: { bucket_sort: { size: 10 } },
+        downloads: {
+          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+          aggs: {
+            metric_count: { sum: { field: "download_count" } },
+            bucket_truncate: { bucket_sort: { size: facet_count } },
+          },
         },
-      },
-      citations: {
-        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-        aggs: {
-          metric_count: { sum: { field: "citation_count" } },
-          bucket_truncate: { bucket_sort: { size: 10 } },
+        citations: {
+          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+          aggs: {
+            metric_count: { sum: { field: "citation_count" } },
+            bucket_truncate: { bucket_sort: { size: facet_count } },
+          },
         },
-      },
-    }
+      }
+    end
   end
 
   def self.provider_aggregations
@@ -720,7 +722,7 @@ class Doi < ApplicationRecord
           must: must,
         },
       },
-      aggregations: query_aggregations,
+      aggregations: query_aggregations(facet_count: options[:facet_count]),
     )
   end
 
@@ -761,7 +763,7 @@ class Doi < ApplicationRecord
   # query for graphql, removing options that are not needed
   def self.gql_query(query, options = {})
     options[:page] ||= {}
-    options[:facet_count] ||= 10
+    options[:facet_count] = (options[:facet_count] || 10).to_i
     aggregations = gql_query_aggregations(facet_count: options[:facet_count])
 
     # cursor nav uses search_after, this should always be an array of values that match the sort.
@@ -952,7 +954,7 @@ class Doi < ApplicationRecord
     elsif options[:totals_agg] == "prefix"
       prefix_aggregations
     else
-      query_aggregations
+      query_aggregations(facet_count: options[:facet_count])
     end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
