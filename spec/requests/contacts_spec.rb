@@ -44,7 +44,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(4)
-      expect(json.dig("meta", "total")).to eq(4)
+      expect(json.dig("meta")).to eq("page" => 1, "roles" => [{ "count" => 3, "id" => "voting", "title" => "Voting" }, { "count" => 1, "id" => "billing", "title" => "Billing" }], "total" => 4, "totalPages" => 1)
     end
   end
 
