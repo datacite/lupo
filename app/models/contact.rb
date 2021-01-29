@@ -133,7 +133,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.voting_contact_given_name,
           family_name: provider.voting_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "voting").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "voting").uniq)
           puts "Imported voting contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing voting contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -146,7 +146,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.billing_contact_given_name,
           family_name: provider.billing_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "billing").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "billing").uniq)
           puts "Imported billing contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing billing contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -159,7 +159,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_billing_contact_given_name,
           family_name: provider.secondary_billing_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "secondaryBilling").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "secondaryBilling").uniq)
           puts "Imported secondary billing contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -172,7 +172,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.service_contact_given_name,
           family_name: provider.service_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "service").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "service").uniq)
           puts "Imported service contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -185,7 +185,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_service_contact_given_name,
           family_name: provider.secondary_service_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "secondaryService").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "secondaryService").uniq)
           puts "Imported secondary service contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -198,7 +198,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.technical_contact_given_name,
           family_name: provider.technical_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "technical").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "technical").uniq)
           puts "Imported technical contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -211,7 +211,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_technical_contact_given_name,
           family_name: provider.secondary_technical_contact_family_name,
-          role_name: (Array.wrap(contact.role_name) << "secondaryTechnical").uniq)
+          role_name: (Array.wrap(contact.role_name.underscore) << "secondaryTechnical").uniq)
           puts "Imported secondary technical contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
