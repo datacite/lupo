@@ -82,6 +82,23 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
+  describe "GET /contacts exclude deleted" do
+    let!(:contacts) { create_list(:contact, 3, deleted_at: Time.zone.now) }
+
+    before do
+      Contact.import
+      sleep 1
+    end
+
+    it "returns contacts" do
+      get "/contacts", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+      expect(json.dig("meta", "total")).to eq(1)
+    end
+  end
+
   describe "GET /contacts/:id" do
     context "when the record exists" do
       it "returns the contact" do

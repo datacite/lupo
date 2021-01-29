@@ -639,6 +639,9 @@ module Indexable
         if options[:role_name].present?
           filter << { term: { role_name: options[:role_name] } }
         end
+        unless options[:include_deleted]
+          must_not << { exists: { field: "deleted_at" } }
+        end
       end
 
       # ES query can be optionally defined in different ways
