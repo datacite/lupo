@@ -176,13 +176,14 @@ class ContactsController < ApplicationController
           :givenName,
           :familyName,
           :email,
-          :roles,
-          { roles: [] },
+          :roleName,
+          { roleName: [] },
           :provider
         ],
         keys: {
           "givenName" => :given_name,
           "familyName" => :family_name,
+          "roleName" => :role_name,
         },
       )
     end

@@ -15,11 +15,7 @@ class Contact < ApplicationRecord
 
   before_create :set_uid
 
-  ROLES = %w[voting_contact billing_contact secondary_billing_contact service_contact secondary_service_contact technical_contact secondary_technical_contact]
-
-  # validates_inclusion_of :role_name,
-  #                        in: ROLES,
-  #                        message: "Role %s is not included in the list of possible roles"
+  ROLES = %w[voting billing secondary_billing service secondary_service technical secondary_technical]
 
   validates_presence_of :provider
   validates_presence_of :email
@@ -27,6 +23,7 @@ class Contact < ApplicationRecord
                       with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i,
                       message: "email should be valid",
                       allow_blank: true
+  validate :check_role_name, if: :role_name?
 
   # use different index for testing
   if Rails.env.test?
@@ -57,12 +54,12 @@ class Contact < ApplicationRecord
     mapping dynamic: "false" do
       indexes :id, type: :keyword
       indexes :uid, type: :keyword, normalizer: "keyword_lowercase"
-      indexes :provider_id, type: :keyword
+      indexes :provider_id, type: :keyword, normalizer: "keyword_lowercase"
       indexes :given_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :family_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :name, type: :keyword, normalizer: "keyword_lowercase"
-      indexes :email, type: :keyword
-      indexes :roles, type: :keyword
+      indexes :email, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :role_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :created_at, type: :date
       indexes :updated_at, type: :date
       indexes :deleted_at, type: :date
@@ -77,7 +74,7 @@ class Contact < ApplicationRecord
       "family_name" => family_name,
       "name" => name,
       "email" => email,
-      "roles" => roles,
+      "role_name" => role_name,
       "provider_id" => provider_id,
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),
@@ -92,7 +89,7 @@ class Contact < ApplicationRecord
       family_name^10
       name^5
       email^10
-      roles^10
+      role_name^10
       _all
     ]
   end
@@ -100,9 +97,15 @@ class Contact < ApplicationRecord
   def self.query_aggregations
     {
       roles: {
-        terms: { field: "roles", size: 10, min_doc_count: 1 },
+        terms: { field: "role_name", size: 10, min_doc_count: 1 },
       },
     }
+  end
+
+  def check_role_name
+    Array.wrap(role_name).each do |r|
+      errors.add(:role_name, "Role name '#{r}' is not included in the list of possible role names.") unless ROLES.include?(r)
+    end
   end
 
   def name
@@ -130,7 +133,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.voting_contact_given_name,
           family_name: provider.voting_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "voting").uniq)
+          role_name: (Array.wrap(contact.role_name) << "voting").uniq)
           puts "Imported voting contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing voting contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -143,7 +146,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.billing_contact_given_name,
           family_name: provider.billing_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "billing").uniq)
+          role_name: (Array.wrap(contact.role_name) << "billing").uniq)
           puts "Imported billing contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing billing contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -156,7 +159,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_billing_contact_given_name,
           family_name: provider.secondary_billing_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "secondaryBilling").uniq)
+          role_name: (Array.wrap(contact.role_name) << "secondaryBilling").uniq)
           puts "Imported secondary billing contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -169,7 +172,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.service_contact_given_name,
           family_name: provider.service_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "service").uniq)
+          role_name: (Array.wrap(contact.role_name) << "service").uniq)
           puts "Imported service contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -182,7 +185,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_service_contact_given_name,
           family_name: provider.secondary_service_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "secondaryService").uniq)
+          role_name: (Array.wrap(contact.role_name) << "secondaryService").uniq)
           puts "Imported secondary service contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary service contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -195,7 +198,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.technical_contact_given_name,
           family_name: provider.technical_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "technical").uniq)
+          role_name: (Array.wrap(contact.role_name) << "technical").uniq)
           puts "Imported technical contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."
@@ -208,7 +211,7 @@ class Contact < ApplicationRecord
           provider_id: provider.uid,
           given_name: provider.secondary_technical_contact_given_name,
           family_name: provider.secondary_technical_contact_family_name,
-          roles: (Array.wrap(contact.roles) << "secondaryTechnical").uniq)
+          role_name: (Array.wrap(contact.role_name) << "secondaryTechnical").uniq)
           puts "Imported secondary technical contact #{contact.email} for provider #{provider.symbol}."
         else
           puts "Error importing secondary technical contact #{contact.email} for provider #{provider.symbol}: #{contact.errors.messages.inspect}."

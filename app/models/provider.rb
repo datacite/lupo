@@ -164,8 +164,7 @@ class Provider < ApplicationRecord
              inverse_of: :consortium_organizations,
              optional: true
   has_many :activities, as: :auditable, dependent: :destroy
-  has_many :roles, dependent: :destroy
-  has_many :contacts, through: :roles
+  has_many :contacts
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }

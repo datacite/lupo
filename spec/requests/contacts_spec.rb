@@ -14,7 +14,7 @@ describe ContactsController, type: :request, elasticsearch: true do
           "givenName" => "Josiah",
           "familyName" => "Carberry",
           "email" => "bob@example.com",
-          "roles" => ["voting_contact"]
+          "roleName" => ["voting"]
         },
         "relationships": {
           "provider": {
@@ -90,7 +90,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         attributes = json.dig("data", "attributes")
         expect(attributes["name"]).to eq("Josiah Carberry")
         expect(attributes["email"]).to eq("bob@example.com")
-        expect(attributes["roles"]).to eq(["voting_contact"])
+        expect(attributes["roleName"]).to eq(["voting"])
 
         relationships = json.dig("data", "relationships")
         expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
@@ -106,7 +106,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         attributes = json.dig("data", 0, "attributes")
         expect(attributes["name"]).to eq("Josiah Carberry")
         expect(attributes["email"]).to eq("josiah@example.org")
-        expect(attributes["roles"]).to eq(["voting_contact"])
+        expect(attributes["roleName"]).to eq(["voting"])
 
         relationships = json.dig("data", 0, "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
@@ -172,13 +172,13 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "updates roles" do
+    context "updates role_name" do
       let(:params) do
         {
           "data" => {
             "type" => "contacts",
             "attributes" => {
-              "roles" => ["technical_contact", "service_contact"],
+              "roleName" => ["technical", "service"],
             },
           },
         }
@@ -188,33 +188,31 @@ describe ContactsController, type: :request, elasticsearch: true do
         put "/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "roles")).to eq(
-          ["technical_contact", "service_contact"],
+        expect(json.dig("data", "attributes", "roleName")).to eq(
+          ["technical", "service"],
         )
       end
     end
 
-    # context "updates roles invalid" do
-    #   let(:params) do
-    #     {
-    #       "data" => {
-    #         "type" => "contacts",
-    #         "attributes" => {
-    #           "roles" => ["technical_contact", "service_contact"],
-    #         },
-    #       },
-    #     }
-    #   end
+    context "updates role_name invalid" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "contacts",
+            "attributes" => {
+              "roleName" => ["catering"],
+            },
+          },
+        }
+      end
 
-    #   it "updates the record" do
-    #     put "/contacts/#{contact.uid}", params, headers
+      it "updates the record" do
+        put "/contacts/#{contact.uid}", params, headers
 
-    #     expect(last_response.status).to eq(200)
-    #     expect(json.dig("data", "attributes", "roles")).to eq(
-    #       ["technical_contact", "service_contact"],
-    #     )
-    #   end
-    # end
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'catering' is not included in the list of possible role names.", "uid" => contact.uid }])
+      end
+    end
 
 
     context "removes given name and family name" do

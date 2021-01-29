@@ -76,7 +76,7 @@ FactoryBot.define do
     email { "josiah@example.org" }
     given_name { "Josiah" }
     family_name { "Carberry" }
-    roles { ["voting"] }
+    role_name { ["voting"] }
 
     initialize_with { Contact.where(uid: uid).first_or_initialize }
   end

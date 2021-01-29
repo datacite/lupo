@@ -10,7 +10,7 @@ class ContactSerializer
              :family_name,
              :name,
              :email,
-             :roles,
+             :role_name,
              :created,
              :updated,
              :deleted

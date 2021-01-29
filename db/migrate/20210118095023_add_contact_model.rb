@@ -8,7 +8,7 @@ class AddContactModel < ActiveRecord::Migration[5.2]
       t.string "given_name"
       t.string "family_name"
       t.string "email"
-      t.json "roles"
+      t.json "role_name"
       t.datetime "created_at"
       t.datetime "updated_at"
       t.datetime "deleted_at"
