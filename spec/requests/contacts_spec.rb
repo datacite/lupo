@@ -5,7 +5,7 @@ require "rails_helper"
 describe ContactsController, type: :request, elasticsearch: true do
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider) }
-  let!(:contact) { create(:contact, provider: provider) }
+  let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
   let(:params) do
     {
       "data" => {
@@ -49,12 +49,36 @@ describe ContactsController, type: :request, elasticsearch: true do
   end
 
   describe "GET /contacts query" do
-    before { get "/contacts?query=carberry", nil, headers }
+    let!(:contacts) { create_list(:contact, 3) }
+
+    before do
+      Contact.import
+      sleep 1
+    end
 
     it "returns contacts" do
+      get "/contacts?query=carberry", nil, headers
+
       expect(last_response.status).to eq(200)
-      expect(json).not_to be_empty
-      expect(json["data"].size).to eq(0)
+      expect(json["data"].size).to eq(4)
+      expect(json.dig("meta", "total")).to eq(4)
+    end
+  end
+
+  describe "GET /contacts query role_name" do
+    let!(:contacts) { create_list(:contact, 3) }
+
+    before do
+      Contact.import
+      sleep 1
+    end
+
+    it "returns contacts" do
+      get "/contacts?role-name=billing", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+      expect(json.dig("meta", "total")).to eq(1)
     end
   end
 
@@ -106,7 +130,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         attributes = json.dig("data", 0, "attributes")
         expect(attributes["name"]).to eq("Josiah Carberry")
         expect(attributes["email"]).to eq("josiah@example.org")
-        expect(attributes["roleName"]).to eq(["voting"])
+        expect(attributes["roleName"]).to eq(["billing"])
 
         relationships = json.dig("data", 0, "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
