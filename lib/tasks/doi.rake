@@ -282,7 +282,7 @@ namespace :doi do
   end
 
   desc "Delete doi by a doi"
-  task delete_by_prefix: :environment do
+  task delete_by_doi: :environment do
     if ENV["DOI"].nil?
       puts "ENV['DOI'] is required."
       exit
