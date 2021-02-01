@@ -1855,6 +1855,13 @@ class Doi < ApplicationRecord
     errors.add(:language, "Language #{language} not found.") if entry.blank?
   end
 
+  # To be used for isolated clean up of errored individual DOIs
+  # Should only be used when the DOI is not registered in the handle system.
+  def self.delete_by_doi(doi, options = {})
+      DeleteJob.perform_later(doi)
+      return "DOI #{doi} deleted"
+  end
+
   # to be used after DOIs were transferred to another DOI RA
   def self.delete_dois_by_prefix(prefix, options = {})
     if prefix.blank?
