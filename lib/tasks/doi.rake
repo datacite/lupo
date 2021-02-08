@@ -292,7 +292,6 @@ namespace :doi do
     puts "DOI #{ENV['DOI']} will be deleted."
   end
 
-
   desc "Add type information to dois based on id range"
   task add_index_type: :environment do
     options = {

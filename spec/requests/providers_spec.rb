@@ -157,6 +157,29 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
+  describe "GET /providers/:id with contacts" do
+    let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
+
+    before do
+      Provider.import
+      Contact.import
+      sleep 2
+    end
+
+    context "when the record exists" do
+      it "returns the provider" do
+        get "/providers/#{provider.symbol.downcase}?include=contacts",
+            nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json).not_to be_empty
+        expect(json["data"]["id"]).to eq(provider.symbol.downcase)
+        expect(json.dig("included", 0, "attributes", "name")).to eq("Josiah Carberry")
+        expect(json["meta"]).to eq("repositoryCount" => 0)
+      end
+    end
+  end
+
   describe "GET /providers/:id meta" do
     let(:provider) { create(:provider) }
     let(:client) { create(:client, provider: provider) }
