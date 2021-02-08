@@ -597,9 +597,6 @@ module Indexable
         if options[:prefix_id].present?
           filter << { term: { prefix_id: options[:prefix_id] } }
         end
-
-
-
       elsif name == "Activity"
         must = if query.present?
           [
