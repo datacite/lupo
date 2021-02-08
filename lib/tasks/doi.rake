@@ -281,6 +281,18 @@ namespace :doi do
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 
+  desc "Delete doi by a doi"
+  task delete_by_doi: :environment do
+    if ENV["DOI"].nil?
+      puts "ENV['DOI'] is required."
+      exit
+    end
+
+    count = Doi.delete_by_doi(ENV["DOI"])
+    puts "DOI #{ENV['DOI']} deleted."
+  end
+
+
   desc "Add type information to dois based on id range"
   task add_index_type: :environment do
     options = {
