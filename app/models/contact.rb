@@ -15,6 +15,8 @@ class Contact < ApplicationRecord
 
   before_create :set_uid
 
+  delegate :consortium_id, to: :provider, allow_nil: true
+
   ROLES = %w[voting billing secondary_billing service secondary_service technical secondary_technical]
 
   validates_presence_of :provider
@@ -55,6 +57,7 @@ class Contact < ApplicationRecord
       indexes :id, type: :keyword
       indexes :uid, type: :keyword
       indexes :provider_id, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :consortium_id, type: :keyword, normalizer: "keyword_lowercase"
       indexes :given_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :family_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :name, type: :keyword, normalizer: "keyword_lowercase"
@@ -76,6 +79,7 @@ class Contact < ApplicationRecord
       "email" => email,
       "role_name" => role_name,
       "provider_id" => provider_id,
+      "consortium_id" => consortium_id,
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),
       "deleted_at" => deleted_at.try(:iso8601),

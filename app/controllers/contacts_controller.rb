@@ -33,6 +33,7 @@ class ContactsController < ApplicationController
         params[:query],
         role_name: params[:role_name],
         provider_id: params[:provider_id],
+        consortium_id: params[:consortium_id],
         page: page,
         sort: sort,
       )

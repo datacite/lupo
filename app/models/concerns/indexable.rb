@@ -633,6 +633,9 @@ module Indexable
         if options[:provider_id].present?
           filter << { term: { provider_id: options[:provider_id] } }
         end
+        if options[:consortium_id].present?
+          filter << { term: { consortium_id: options[:consortium_id] } }
+        end
         if options[:role_name].present?
           filter << { term: { role_name: options[:role_name] } }
         end
