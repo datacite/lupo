@@ -288,8 +288,8 @@ namespace :doi do
       exit
     end
 
-    count = Doi.delete_by_doi(ENV["DOI"])
-    puts "DOI #{ENV['DOI']} deleted."
+    Doi.delete_by_doi(ENV["DOI"])
+    puts "DOI #{ENV['DOI']} will be deleted."
   end
 
 

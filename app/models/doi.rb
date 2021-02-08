@@ -1858,8 +1858,8 @@ class Doi < ApplicationRecord
   # To be used for isolated clean up of errored individual DOIs
   # Should only be used when the DOI is not registered in the handle system.
   def self.delete_by_doi(doi, options = {})
-      DeleteJob.perform_later(doi)
-      return "DOI #{doi} deleted"
+    DeleteJob.perform_later(doi)
+    "DOI #{doi} will be deleted"
   end
 
   # to be used after DOIs were transferred to another DOI RA
