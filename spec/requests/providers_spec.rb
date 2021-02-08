@@ -94,7 +94,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
             nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json).not_to be_empty
         expect(json["data"]["id"]).to eq(provider.symbol.downcase)
         expect(json["meta"]).to eq("repositoryCount" => 0)
       end
@@ -172,8 +171,8 @@ describe ProvidersController, type: :request, elasticsearch: true do
             nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json).not_to be_empty
         expect(json["data"]["id"]).to eq(provider.symbol.downcase)
+        expect(json.dig("data", "relationships", "contacts", "data", 0)).to be_present
         expect(json.dig("included", 0, "attributes", "name")).to eq("Josiah Carberry")
         expect(json["meta"]).to eq("repositoryCount" => 0)
       end

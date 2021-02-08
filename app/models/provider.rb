@@ -205,6 +205,7 @@ class Provider < ApplicationRecord
       indexes :globus_uuid, type: :keyword
       indexes :client_ids, type: :keyword
       indexes :prefix_ids, type: :keyword
+      indexes :contact_ids, type: :keyword
       indexes :name,
               type: :text,
               fields: {
@@ -338,6 +339,7 @@ class Provider < ApplicationRecord
       "display_name" => display_name,
       "client_ids" => options[:exclude_associations] ? nil : client_ids,
       "prefix_ids" => options[:exclude_associations] ? nil : prefix_ids,
+      "contact_ids" => options[:exclude_associations] ? nil : contact_ids,
       "symbol" => symbol,
       "year" => year,
       "system_email" => system_email,
@@ -726,6 +728,10 @@ class Provider < ApplicationRecord
 
   def prefix_ids
     prefixes.pluck(:uid)
+  end
+
+  def contact_ids
+    contacts.where(deleted_at: nil).pluck(:uid)
   end
 
   def can_be_in_consortium

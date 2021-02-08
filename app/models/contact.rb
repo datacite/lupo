@@ -53,7 +53,7 @@ class Contact < ApplicationRecord
   } do
     mapping dynamic: "false" do
       indexes :id, type: :keyword
-      indexes :uid, type: :keyword, normalizer: "keyword_lowercase"
+      indexes :uid, type: :keyword
       indexes :provider_id, type: :keyword, normalizer: "keyword_lowercase"
       indexes :given_name, type: :keyword, normalizer: "keyword_lowercase"
       indexes :family_name, type: :keyword, normalizer: "keyword_lowercase"
