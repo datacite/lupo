@@ -1011,6 +1011,28 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         expect(last_response.status).to eq(404)
       end
     end
+
+    context "query by source-id csv" do
+      let!(:event) { create(:event) }
+      let(:uri) { "/events" }
+      let(:headers) do
+        { "HTTP_ACCEPT" => "text/csv" }
+      end
+
+      before do
+        Event.import
+        sleep 2
+      end
+
+      it "text/csv" do
+        get uri, nil, headers
+
+        expect(last_response.status).to eq(200)
+        lines = last_response.body.split("\n")
+        expect(lines[0]).to eq("subj-id,obj-id,source-id,relation-type-id,occurred_at")
+        expect(lines[1]).to start_with("#{event.subj_id},#{event.obj_id}")
+      end
+    end
   end
 
   # context "destroy" do

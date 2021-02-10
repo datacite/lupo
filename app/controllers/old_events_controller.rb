@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OldEventsController < ApplicationController
+  include ActionController::MimeResponds
+
   include Identifiable
 
   include Facetable
@@ -189,55 +191,77 @@ class OldEventsController < ApplicationController
 
       results = response.results
 
-      options = {}
-      options[:meta] = {
-        total: total,
-        "total-pages" => total_pages,
         page:
-          page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
-        sources: sources,
-        prefixes: prefixes,
-        "citation-types" => citation_types,
-        "relation-types" => relation_types,
-        registrants: registrants,
-      }.compact
+      respond_to do |format|
+        format.json do
+          options = {}
+          options[:meta] = {
+            total: total,
+            "total-pages" => total_pages,
+            page:
+              page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
+            sources: sources,
+            prefixes: prefixes,
+            "citation-types" => citation_types,
+            "relation-types" => relation_types,
+            registrants: registrants,
+          }.compact
 
-      options[:links] = {
-        self: request.original_url,
-        next:
-          if results.size < page[:size]
-            nil
-          else
-            request.base_url + "/events?" +
-              {
-                "query" => params[:query],
-                "subj-id" => params[:subj_id],
-                "obj-id" => params[:obj_id],
-                "doi" => params[:doi],
-                "orcid" => params[:orcid],
-                "prefix" => params[:prefix],
-                "subtype" => params[:subtype],
-                "citation_type" => params[:citation_type],
-                "source-id" => params[:source_id],
-                "relation-type-id" => params[:relation_type_id],
-                "issn" => params[:issn],
-                "registrant-id" => params[:registrant_id],
-                "publication-year" => params[:publication_year],
-                "year-month" => params[:year_month],
-                "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
-                "page[number]" =>
-                  if page[:cursor].nil? && page[:number].present?
-                    page[:number] + 1
-                  end,
-                "page[size]" => page[:size],
-              }.compact.
-              to_query
-          end,
-      }.compact
-      options[:is_collection] = true
+          options[:links] = {
+            self: request.original_url,
+            next:
+              if results.size < page[:size]
+                nil
+              else
+                request.base_url + "/events?" +
+                  {
+                    "query" => params[:query],
+                    "subj-id" => params[:subj_id],
+                    "obj-id" => params[:obj_id],
+                    "doi" => params[:doi],
+                    "orcid" => params[:orcid],
+                    "prefix" => params[:prefix],
+                    "subtype" => params[:subtype],
+                    "citation_type" => params[:citation_type],
+                    "source-id" => params[:source_id],
+                    "relation-type-id" => params[:relation_type_id],
+                    "issn" => params[:issn],
+                    "registrant-id" => params[:registrant_id],
+                    "publication-year" => params[:publication_year],
+                    "year-month" => params[:year_month],
+                    "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
+                    "page[number]" =>
+                      if page[:cursor].nil? && page[:number].present?
+                        page[:number] + 1
+                      end,
+                    "page[size]" => page[:size],
+                  }.compact.
+                  to_query
+              end,
+          }.compact
+          options[:is_collection] = true
 
-      render json: OldEventSerializer.new(results, options).serialized_json,
-             status: :ok
+          render json: OldEventSerializer.new(results, options).serialized_json,
+                status: :ok
+        end
+        format.csv do
+          headers = %w[
+            subj-id
+            obj-id
+            source-id
+            relation-type-id
+            occurred_at
+          ]
+
+          rows = results.to_a.map do |event|
+            CSV.generate_line([event.subj_id, event.obj_id, event.source_id, event.relation_type_id, event.occurred_at])
+          end
+
+          csv = [CSV.generate_line(headers)] + rows
+          filename = "events-#{Date.today}.csv"
+          send_data csv, filename: filename
+        end
+      end
     end
   end
 
