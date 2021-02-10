@@ -198,7 +198,7 @@ Rails.application.routes.draw do
   resources :contacts
 
   # v3 REST API
-  namespace :v3 do
+  namespace :v3, path: "v3" do
     # manage DOIs
     post "dois/validate", to: "datacite_dois#validate"
     post "dois/undo", to: "datacite_dois#undo"
