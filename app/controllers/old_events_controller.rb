@@ -166,34 +166,32 @@ class OldEventsController < ApplicationController
       render json: OldEventSerializer.new(results, options).serialized_json,
              status: :ok
     else
-      sources =
-        total > 0 ? facet_by_source(response.aggregations.sources.buckets) : nil
-      prefixes =
-        if total > 0
-          facet_by_source(response.aggregations.prefixes.buckets)
-        end
-      citation_types =
-        if total > 0
-          facet_by_citation_type_v1(
-            response.aggregations.citation_types.buckets,
-          )
-        end
-      relation_types =
-        if total > 0
-          facet_by_relation_type_v1(
-            response.aggregations.relation_types.buckets,
-          )
-        end
-      registrants =
-        if total > 0
-          facet_by_registrants(response.aggregations.registrants.buckets)
-        end
-
       results = response.results
 
-        page:
       respond_to do |format|
         format.json do
+          sources =
+            total > 0 ? facet_by_source(response.aggregations.sources.buckets) : nil
+          prefixes =
+            if total > 0
+              facet_by_source(response.aggregations.prefixes.buckets)
+            end
+          citation_types =
+            if total > 0
+              facet_by_citation_type_v1(
+                response.aggregations.citation_types.buckets,
+              )
+            end
+          relation_types =
+            if total > 0
+              facet_by_relation_type_v1(
+                response.aggregations.relation_types.buckets,
+              )
+            end
+          registrants =
+            if total > 0
+              facet_by_registrants(response.aggregations.registrants.buckets)
+            end
           options = {}
           options[:meta] = {
             total: total,
