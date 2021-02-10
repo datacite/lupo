@@ -79,6 +79,12 @@ module Lupo
     config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
                      eager_load: true
 
+    # include versioned REST API
+    config.paths.add Rails.root.join("app", "controllers", "v3").to_s,
+    eager_load: true
+    config.paths.add Rails.root.join("app", "serializers", "v3").to_s,
+    eager_load: true
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

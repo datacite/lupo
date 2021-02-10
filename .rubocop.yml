@@ -22,6 +22,7 @@ AllCops:
 Performance:
   Exclude:
     - '**/test/**/*'
+SuggestExtensions: false
 
 # Prefer assert_not over assert !
 Rails/AssertNot:
