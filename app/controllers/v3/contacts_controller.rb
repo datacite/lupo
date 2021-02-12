@@ -17,9 +17,9 @@ class V3::ContactsController < ApplicationController
       when "-name"
         { "family_name" => { order: "desc" } }
       when "created"
-        { created: { order: "asc" } }
+        { created_at: { order: "asc" } }
       when "-created"
-        { created: { order: "desc" } }
+        { created_at: { order: "desc" } }
       else
         { "family_name" => { order: "asc" } }
       end
