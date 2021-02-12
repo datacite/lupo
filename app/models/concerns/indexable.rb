@@ -249,6 +249,8 @@ module Indexable
 
       must_not = []
       filter = []
+      should = []
+      minimum_should_match = 0
 
       # filters for some classes
 
@@ -633,9 +635,14 @@ module Indexable
         if options[:provider_id].present?
           filter << { term: { provider_id: options[:provider_id] } }
         end
+
+        # match either consortium_id or provider_id
         if options[:consortium_id].present?
-          filter << { term: { consortium_id: options[:consortium_id] } }
+          should << { term: { provider_id: options[:provider_id] } }
+          should << { term: { consortium_id: options[:consortium_id] } }
+          minimum_should_match = 1
         end
+
         if options[:role_name].present?
           filter << { term: { role_name: options[:role_name] } }
         end
@@ -650,7 +657,13 @@ module Indexable
       es_query = {}
 
       # The main bool query with filters
-      bool_query = { must: must, must_not: must_not, filter: filter }
+      bool_query = {
+        must: must,
+        must_not: must_not,
+        filter: filter,
+        should: should,
+        minimum_should_match: minimum_should_match
+      }
 
       # Function score is used to provide varying score to return different values
       # We use the bool query above as our principle query
