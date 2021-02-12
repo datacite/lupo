@@ -4,7 +4,13 @@ require "rails_helper"
 
 describe ContactsController, type: :request, elasticsearch: true do
   let(:bearer) { User.generate_token }
-  let(:provider) { create(:provider) }
+  let(:consortium) { create(:provider, name: "DC", role_name: "ROLE_CONSORTIUM") }
+  let(:provider) do
+    create(
+      :provider,
+      consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+    )
+  end
   let!(:service_contact) { create(:contact, provider: provider, role_name: ["service"]) }
   let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
   let(:params) do
@@ -80,6 +86,42 @@ describe ContactsController, type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
       expect(json.dig("meta", "total")).to eq(1)
+    end
+  end
+
+  describe "GET /contacts by provider" do
+    let!(:contacts) { create_list(:contact, 3, provider: provider) }
+
+    before do
+      Provider.import
+      Contact.import
+      sleep 1
+    end
+
+    it "returns contacts" do
+      get "/contacts?provider-id=#{provider.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
+      expect(json.dig("meta", "total")).to eq(5)
+    end
+  end
+
+  describe "GET /contacts by consortium" do
+    let!(:consortium_contact) { create(:contact, provider: consortium, role_name: ["billing"]) }
+
+    before do
+      Provider.import
+      Contact.import
+      sleep 1
+    end
+
+    it "returns contacts" do
+      get "/contacts?consortium-id=#{consortium.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(3)
+      expect(json.dig("meta", "total")).to eq(3)
     end
   end
 

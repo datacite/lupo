@@ -638,7 +638,7 @@ module Indexable
 
         # match either consortium_id or provider_id
         if options[:consortium_id].present?
-          should << { term: { provider_id: options[:provider_id] } }
+          should << { term: { provider_id: options[:consortium_id] } }
           should << { term: { consortium_id: options[:consortium_id] } }
           minimum_should_match = 1
         end
