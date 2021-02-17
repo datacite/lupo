@@ -231,6 +231,27 @@ class Contact < ApplicationRecord
     }
   end
 
+  # attributes to be sent to elasticsearch index
+  def to_jsonapi
+    attributes = {
+      "uid" => uid,
+      "given_name" => given_name,
+      "family_name" => family_name,
+      "name" => name,
+      "email" => email,
+      "role_name" => role_name,
+      "provider_id" => provider_id,
+      "consortium_id" => consortium_id,
+      "created_at" => created_at.try(:iso8601),
+      "updated_at" => updated_at.try(:iso8601),
+      "deleted_at" => deleted_at.try(:iso8601),
+    }
+
+    {
+      "id" => uid, "type" => "contacts", "attributes" => attributes
+    }
+  end
+
   def self.query_fields
     %w[
       uid^10

@@ -34,6 +34,12 @@ module Indexable
         end
       elsif instance_of?(Event)
         OtherDoiJob.perform_later(dois_to_import)
+      elsif instance_of?(Provider)
+        send_provider_export_message(to_jsonapi)
+      elsif instance_of?(Client)
+        send_client_export_message(to_jsonapi)
+      elsif instance_of?(Contact)
+        send_contact_export_message(to_jsonapi)
       end
     end
 
@@ -78,11 +84,23 @@ module Indexable
     end
 
     def send_delete_message(data)
-      send_message(data, shoryuken_class: "DoiDeleteWorker")
+      send_message(data, shoryuken_class: "DoiDeleteWorker", queue_name: "doi")
     end
 
     def send_import_message(data)
-      send_message(data, shoryuken_class: "DoiImportWorker")
+      send_message(data, shoryuken_class: "DoiImportWorker", queue_name: "doi")
+    end
+
+    def send_provider_export_message(data)
+      send_message(data, shoryuken_class: "ProviderExportWorker", queue_name: "salesforce")
+    end
+
+    def send_client_export_message(data)
+      send_message(data, shoryuken_class: "ClientExportWorker", queue_name: "salesforce")
+    end
+
+    def send_contact_export_message(data)
+      send_message(data, shoryuken_class: "ContactExportWorker", queue_name: "salesforce")
     end
 
     # shoryuken_class is needed for the consumer to process the message
@@ -96,7 +114,7 @@ module Indexable
           Rails.env
         end
       queue_url =
-        sqs.get_queue_url(queue_name: "#{queue_name_prefix}_doi").queue_url
+        sqs.get_queue_url(queue_name: "#{queue_name_prefix}_#{options[:queue_name]}").queue_url
       options[:shoryuken_class] ||= "DoiImportWorker"
 
       options = {
