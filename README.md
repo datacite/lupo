@@ -2,7 +2,7 @@
 
 [![Identifier](https://img.shields.io/badge/doi-10.5438%2F8gb0--v673-fca709.svg)](https://doi.org/10.5438/8gb0-v673)
 ![Release](https://github.com/datacite/lupo/workflows/Release/badge.svg)
-[![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage) [!
+[![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage)
 
 Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API usesthe [JSONAPI](http://jsonapi.org/) specification.
 
