@@ -32,9 +32,9 @@ class ExportsController < ApplicationController
         "firstName" => contact.given_name,
         "lastName" => contact.family_name,
         "type" => contact.role_name ? contact.role_name.join(";") : nil,
-        "createdAt" => contact.created_at.try(:iso8601),
-        "modifiedAt" => contact.updated_at.try(:iso8601),
-        "deletedAt" => contact.deleted_at.try(:iso8601),
+        "createdAt" => export_date(contact.created_at),
+        "modifiedAt" => export_date(contact.updated_at),
+        "deletedAt" => contact.deleted_at.present? ? export_date(contact.deleted_at) : nil,
         "isActive" => contact.deleted_at.blank?,
       }.values
 
