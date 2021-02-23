@@ -31,7 +31,7 @@ class ExportsController < ApplicationController
         "email" => contact.email,
         "firstName" => contact.given_name,
         "lastName" => contact.family_name,
-        "type" => contact.role_name.join(";"),
+        "type" => contact.role_name ? contact.role_name.join(";") : nil,
         "createdAt" => contact.created_at.try(:iso8601),
         "modifiedAt" => contact.updated_at.try(:iso8601),
         "deletedAt" => contact.deleted_at.try(:iso8601),
