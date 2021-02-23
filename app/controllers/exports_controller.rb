@@ -32,9 +32,9 @@ class ExportsController < ApplicationController
         "firstName" => contact.given_name,
         "lastName" => contact.family_name,
         "type" => contact.role_name ? contact.role_name.join(";") : nil,
-        "createdAt" => export_date(contact.created_at),
-        "modifiedAt" => export_date(contact.updated_at),
-        "deletedAt" => contact.deleted_at.present? ? export_date(contact.deleted_at) : nil,
+        "createdAt" => export_date_string(contact.created_at),
+        "modifiedAt" => export_date_string(contact.updated_at),
+        "deletedAt" => contact.deleted_at.present? ? export_date_string(contact.deleted_at) : nil,
         "isActive" => contact.deleted_at.blank?,
       }.values
 
@@ -349,6 +349,12 @@ class ExportsController < ApplicationController
 
   def export_date(date)
     DateTime.strptime(date, "%Y-%m-%dT%H:%M:%S").strftime(
+      "%d/%m/%YT%H:%M:%S.%3NUTC%:z",
+    )
+  end
+
+  def export_date_string(date)
+    date.strftime(
       "%d/%m/%YT%H:%M:%S.%3NUTC%:z",
     )
   end
