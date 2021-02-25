@@ -46,6 +46,10 @@ class Provider < ApplicationRecord
 
   include Elasticsearch::Model
 
+  REGIONS = {
+    "APAC" => "Asia Pacific", "EMEA" => "EMEA", "AMER" => "Americas"
+  }.freeze
+
   has_attached_file :logo,
                     styles: { medium: ["500x200", :png] },
                     default_style: :medium,
@@ -774,13 +778,13 @@ class Provider < ApplicationRecord
       "system_email" => system_email,
       "group_email" => group_email,
       "country_code" => country_code,
-      "role_name" => role_name,
+      "region" => REGIONS[region],
       "logo_url" => logo_url,
+      "non_profit_status" => non_profit_status,
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type_label,
       "is_active" => is_active == "\x01",
-      "version" => version,
       "billing_address" => billing_address,
       "billing_post_code" => billing_post_code,
       "billing_city" => billing_city,
