@@ -171,6 +171,11 @@ Rails.application.routes.draw do
   get "export/contacts", to: "exports#contacts", defaults: { format: :csv }
   get "export/check-indexed-dois", to: "exports#import_dois_not_indexed"
 
+  # Exporting
+  post "providers/export", to: "providers#export"
+  post "repositories/export", to: "repositories#export"
+  post "contacts/export", to: "contacts#export"
+
   resources :heartbeat, only: %i[index]
 
   resources :activities, only: %i[index show]
@@ -227,6 +232,11 @@ Rails.application.routes.draw do
         to: "exports#repositories", defaults: { format: :csv }
     get "export/contacts", to: "exports#contacts", defaults: { format: :csv }
     get "export/check-indexed-dois", to: "exports#import_dois_not_indexed"
+
+    # Exporting
+    post "providers/export", to: "providers#export"
+    post "repositories/export", to: "repositories#export"
+    post "contacts/export", to: "contacts#export"
 
     resources :activities, only: %i[index show]
     resources :contacts

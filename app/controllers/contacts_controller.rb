@@ -158,6 +158,10 @@ class ContactsController < ApplicationController
     end
   end
 
+  def export
+    Contact.export
+  end
+
   protected
     def set_contact
       @contact = Contact.where(uid: params[:id]).where(deleted_at: nil).first

@@ -802,6 +802,12 @@ class Provider < ApplicationRecord
     }
   end
 
+  def self.export
+    Provider.all.find_each do |provider|
+      provider.send_provider_export_message(to_jsonapi)
+    end
+  end
+
   private
     def set_region
       r = ISO3166::Country[country_code].world_region if country_code.present?

@@ -60,4 +60,10 @@ namespace :contact do
   task import_from_providers: :environment do
     Contact.import_from_providers
   end
+
+  desc "Export all contacts to Salesforce"
+  task export: :environment do
+    Contact.export
+    puts "Exported metadata for all contacts."
+  end
 end

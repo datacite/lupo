@@ -104,6 +104,12 @@ namespace :client do
     puts Client.export_doi_counts(query: ENV["QUERY"])
   end
 
+  desc "Export all clients to Salesforce"
+  task export: :environment do
+    Client.export
+    puts "Exported metadata for all clients."
+  end
+
   desc "Delete client transferred to other DOI registration agency"
   task delete: :environment do
     if ENV["CLIENT_ID"].nil?

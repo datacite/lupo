@@ -632,6 +632,12 @@ class Client < ApplicationRecord
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
+  def self.export
+    Client.all.find_each do |client|
+      client.send_client_export_message(to_jsonapi)
+    end
+  end
+
   def self.export_doi_counts(query: nil)
     # Loop through all clients
     page = { size: 1_000, number: 1 }

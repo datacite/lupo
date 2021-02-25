@@ -262,6 +262,10 @@ class ClientsController < ApplicationController
     render json: meta, status: :ok
   end
 
+  def export
+    Client.export
+  end
+
   protected
     def set_include
       if params[:include].present?

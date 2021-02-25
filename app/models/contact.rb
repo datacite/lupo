@@ -300,6 +300,12 @@ class Contact < ApplicationRecord
     write_attribute(:provider_id, r.id)
   end
 
+  def self.export
+    Contact.all.find_each do |contact|
+      contact.send_contact_export_message(to_jsonapi)
+    end
+  end
+
   def self.import_from_providers
     Provider.all.find_each do |provider|
       if provider.voting_contact_email

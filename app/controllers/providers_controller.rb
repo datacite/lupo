@@ -357,6 +357,10 @@ class ProvidersController < ApplicationController
     render json: meta, status: :ok
   end
 
+  def export
+    Provider.export
+  end
+
   protected
     def set_include
       if params[:include].present?

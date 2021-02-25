@@ -56,6 +56,12 @@ namespace :provider do
     Provider.import(index: Provider.inactive_index)
   end
 
+  desc "Export all providers to Salesforce"
+  task export: :environment do
+    Provider.export
+    puts "Exported metadata for all providers."
+  end
+
   desc "Delete from index by query"
   task delete_by_query: :environment do
     if ENV["QUERY"].nil?
