@@ -769,7 +769,7 @@ class Provider < ApplicationRecord
   def to_jsonapi
     attributes = {
       "symbol" => symbol,
-      "parent_organization" => consortium_id.present? ? provider.consortium_id.upcase : nil,
+      "parent_organization" => consortium_id.present? ? consortium_id.upcase : nil,
       "name" => name,
       "website" => website,
       "system_email" => system_email,
