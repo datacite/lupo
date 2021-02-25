@@ -777,6 +777,7 @@ class Provider < ApplicationRecord
       "website" => website,
       "system_email" => system_email,
       "group_email" => group_email,
+      "description" => description,
       "country_code" => country_code,
       "region" => REGIONS[region],
       "logo_url" => logo_url,
