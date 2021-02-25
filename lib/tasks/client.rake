@@ -110,6 +110,23 @@ namespace :client do
     puts "Exported metadata for all clients."
   end
 
+  desc "Export one client to Salesforce"
+  task export_one: :environment do
+    if ENV["CLIENT_ID"].nil?
+      puts "ENV['CLIENT_ID'] is required."
+      exit
+    end
+
+    client = Client.where(symbol: ENV["CLIENT_ID"]).first
+    if client.nil?
+      puts "Client #{ENV["CLIENT_ID"]} not found."
+      exit
+    end
+
+    client.send_client_export_message(client.to_jsonapi)
+    puts "Exported metadata for client #{client.symbol}."
+  end
+
   desc "Delete client transferred to other DOI registration agency"
   task delete: :environment do
     if ENV["CLIENT_ID"].nil?

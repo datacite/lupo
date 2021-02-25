@@ -62,6 +62,23 @@ namespace :provider do
     puts "Exported metadata for all providers."
   end
 
+  desc "Export one provider to Salesforce"
+  task export_one: :environment do
+    if ENV["PROVIDER_ID"].nil?
+      puts "ENV['PROVIDER_ID'] is required."
+      exit
+    end
+
+    provider = Provider.where(uid: ENV["PROVIDER_ID"]).first
+    if provider.nil?
+      puts "Provider #{ENV["PROVIDER_ID"]} not found."
+      exit
+    end
+
+    provider.send_provider_export_message(provider.to_jsonapi)
+    puts "Exported metadata for provider #{provider.symbol}."
+  end
+
   desc "Delete from index by query"
   task delete_by_query: :environment do
     if ENV["QUERY"].nil?

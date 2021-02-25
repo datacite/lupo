@@ -66,4 +66,21 @@ namespace :contact do
     Contact.export
     puts "Exported metadata for all contacts."
   end
+
+  desc "Export one contact to Salesforce"
+  task export_one: :environment do
+    if ENV["CONTACT_ID"].nil?
+      puts "ENV['CONTACT_ID'] is required."
+      exit
+    end
+
+    contact = Contact.where(uid: ENV["CONTACT_ID"]).first
+    if contact.nil?
+      puts "Contact #{ENV["CONTACT_ID"]} not found."
+      exit
+    end
+
+    contact.send_contact_export_message(contact.to_jsonapi)
+    puts "Exported metadata for contact #{contact.uid}."
+  end
 end
