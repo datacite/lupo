@@ -804,7 +804,7 @@ class Provider < ApplicationRecord
 
   def self.export
     Provider.all.find_each do |provider|
-      provider.send_provider_export_message(to_jsonapi)
+      provider.send_provider_export_message(provider.to_jsonapi)
     end
   end
 

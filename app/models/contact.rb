@@ -302,7 +302,7 @@ class Contact < ApplicationRecord
 
   def self.export
     Contact.all.find_each do |contact|
-      contact.send_contact_export_message(to_jsonapi)
+      contact.send_contact_export_message(contact.to_jsonapi)
     end
   end
 
