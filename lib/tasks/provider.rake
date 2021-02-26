@@ -69,7 +69,7 @@ namespace :provider do
       exit
     end
 
-    provider = Provider.where(uid: ENV["PROVIDER_ID"]).first
+    provider = Provider.where(symbol: ENV["PROVIDER_ID"]).first
     if provider.nil?
       puts "Provider #{ENV["PROVIDER_ID"]} not found."
       exit
