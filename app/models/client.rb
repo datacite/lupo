@@ -615,6 +615,7 @@ class Client < ApplicationRecord
     attributes = {
       "symbol" => symbol,
       "name" => name,
+      "description" => description,
       "system_email" => system_email,
       "url" => url,
       "re3data_id" => re3data_id,
