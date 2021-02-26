@@ -239,7 +239,7 @@ class Contact < ApplicationRecord
       "family_name" => family_name,
       "name" => name,
       "email" => email,
-      "role_name" => role_name,
+      "role_name" => Array.wrap(role_name).map(&:classify),
       "provider_id" => provider_id,
       "consortium_id" => consortium_id,
       "created_at" => created_at.try(:iso8601),
