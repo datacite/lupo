@@ -634,7 +634,7 @@ class Client < ApplicationRecord
   end
 
   def self.export
-    Client.all.find_each do |client|
+    ::Client.all.find_each do |client|
       client.send_client_export_message(client.to_jsonapi)
     end
   end
