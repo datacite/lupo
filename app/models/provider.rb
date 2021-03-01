@@ -782,16 +782,13 @@ class Provider < ApplicationRecord
       "organization_type" => organization_type,
       "member_type" => member_type_label,
       "is_active" => is_active == "\x01",
-      "billing_street" => billing_information.address,
-      "billing_postal_code" => provider.billing_information.post_code,
-      "billing_city" => provider.billing_information.city,
-      "billing_department" => billing_information.department,
-      "billing_organization" => billing_information.organization,
-      "billing_state_code" =>
-        if provider.billing_information.state.present?
-          provider.billing_information.state.split("-").last
-        end,
-      "billing_country_code" => billing_information.country,
+      "billing_street" => billing_address,
+      "billing_organization" => billing_organization,
+      "billing_department" => billing_department,
+      "billing_postal_code" => billing_post_code,
+      "billing_state_code" => state.present? ? state.split("-").last : nil,
+      "billing_country_code" => billing_country,
+      "billing_city" => billing_city,
       "joined" => joined&.iso8601,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
