@@ -786,7 +786,7 @@ class Provider < ApplicationRecord
       "billing_organization" => billing_organization,
       "billing_department" => billing_department,
       "billing_postal_code" => billing_post_code,
-      "billing_state_code" => state.present? ? state.split("-").last : nil,
+      "billing_state_code" => billing_state.present? ? billing_state.split("-").last : nil,
       "billing_country_code" => billing_country,
       "billing_city" => billing_city,
       "joined" => joined&.iso8601,
