@@ -628,7 +628,7 @@ class Client < ApplicationRecord
       "re3data_id" => re3data_id,
       "provider_id" => provider_id,
       "is_active" => is_active.getbyte(0) == 1,
-      "doi_count" => totals_buckets.
+      "doi_count" => totals_buckets,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
