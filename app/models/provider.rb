@@ -704,6 +704,10 @@ class Provider < ApplicationRecord
     ISO3166::Country[country_code].name if country_code.present?
   end
 
+  def billing_country_name
+    ISO3166::Country[billing_country].name if billing_country.present?
+  end
+
   def set_region
     r = ISO3166::Country[country_code].world_region if country_code.present?
     write_attribute(:region, r)
@@ -788,6 +792,7 @@ class Provider < ApplicationRecord
       "billing_postal_code" => billing_post_code,
       "billing_state_code" => billing_state.present? ? billing_state.split("-").last : nil,
       "billing_country_code" => billing_country,
+      "billing_country" => billing_country_name,
       "billing_city" => billing_city,
       "joined" => joined&.iso8601,
       "twitter_handle" => twitter_handle,
