@@ -705,7 +705,7 @@ class Provider < ApplicationRecord
   end
 
   def billing_country_name
-    ISO3166::Country[billing_country].name if billing_country.present?
+    ISO3166::Country[billing_country].try(:name) if billing_country.present?
   end
 
   def set_region
