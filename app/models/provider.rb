@@ -657,9 +657,9 @@ class Provider < ApplicationRecord
       "ROLE_CONSORTIUM" => "Consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
-      "ROLE_ADMIN" => "DataCite admin",
-      "ROLE_DEV" => "DataCite admin",
-      "ROLE_FOR_PROFIT_PROVIDER" => "For-profit Provider",
+      "ROLE_ADMIN" => "DataCite Admin",
+      "ROLE_DEV" => "DataCite Developer",
+      "ROLE_FOR_PROFIT_PROVIDER" => "Direct Member",
       "ROLE_REGISTRATION_AGENCY" => "DOI Registration Agency",
     }
   end
@@ -803,7 +803,8 @@ class Provider < ApplicationRecord
   end
 
   def self.export
-    Provider.all.find_each do |provider|
+    # don't export some roles
+    Provider.where.not(role_name: ["ROLE_ADMIN", "ROLE_DEV"]).find_each do |provider|
       provider.send_provider_export_message(provider.to_jsonapi)
     end
   end
