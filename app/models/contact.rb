@@ -25,6 +25,8 @@ class Contact < ApplicationRecord
                       with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i,
                       message: "email should be valid",
                       allow_blank: true
+  validates :email, uniqueness: { scope: :provider_id,
+            message: "should be unique per provider" }
   validate :check_role_name, if: :role_name?
 
   # use different index for testing
