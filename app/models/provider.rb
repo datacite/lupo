@@ -327,7 +327,20 @@ class Provider < ApplicationRecord
 
       indexes :consortium, type: :object
       indexes :consortium_organizations, type: :object
-      indexes :contacts, type: :object
+      indexes :contacts, type: :object, properties: {
+        id: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
+        provider_id: { type: :keyword, normalizer: "keyword_lowercase" },
+        consortium_id: { type: :keyword, normalizer: "keyword_lowercase" },
+        given_name: { type: :keyword, normalizer: "keyword_lowercase" },
+        family_name: { type: :keyword, normalizer: "keyword_lowercase" },
+        name: { type: :keyword, normalizer: "keyword_lowercase" },
+        email: { type: :keyword, normalizer: "keyword_lowercase" },
+        role_name: { type: :keyword, normalizer: "keyword_lowercase" },
+        created_at: { type: :date },
+        updated_at: { type: :date },
+        deleted_at: { type: :date }
+      }
     end
   end
 
