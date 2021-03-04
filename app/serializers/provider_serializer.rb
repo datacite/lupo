@@ -41,7 +41,7 @@ class ProviderSerializer
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
-  has_many :contacts, record_type: :contact
+  has_many :contacts, record_type: :contacts
   belongs_to :consortium,
              record_type: :providers,
              serializer: ProviderSerializer,
