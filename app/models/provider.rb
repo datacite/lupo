@@ -327,6 +327,7 @@ class Provider < ApplicationRecord
 
       indexes :consortium, type: :object
       indexes :consortium_organizations, type: :object
+      indexes :contacts, type: :object
     end
   end
 
