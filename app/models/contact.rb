@@ -230,6 +230,12 @@ class Contact < ApplicationRecord
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),
       "deleted_at" => deleted_at.try(:iso8601),
+      "provider" =>
+        if options[:exclude_associations]
+          nil
+        else
+          provider.as_indexed_json(exclude_associations: true)
+        end,
     }
   end
 

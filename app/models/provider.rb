@@ -400,6 +400,12 @@ class Provider < ApplicationRecord
       "deleted_at" => deleted_at.try(:iso8601),
       "cumulative_years" => cumulative_years,
       "consortium" => consortium.try(:as_indexed_json),
+      "contacts" =>
+        if options[:exclude_associations]
+          nil
+        else
+          contacts.map { |m| m.try(:as_indexed_json, exclude_associations: true) }
+        end
     }
   end
 
