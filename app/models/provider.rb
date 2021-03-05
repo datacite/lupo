@@ -274,51 +274,65 @@ class Provider < ApplicationRecord
       indexes :technical_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :secondary_technical_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :billing_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :secondary_billing_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :service_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :secondary_service_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :voting_contact,
               type: :object,
               properties: {
+                uid: { type: :keyword },
                 email: { type: :text },
                 given_name: { type: :text },
                 family_name: { type: :text },
+                name: { type: :text },
               }
       indexes :created, type: :date
       indexes :updated, type: :date

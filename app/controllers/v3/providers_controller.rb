@@ -362,7 +362,7 @@ class V3::ProvidersController < ApplicationController
       if params[:include].present?
         @include =
           params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-        @include = @include & %i[consortium consortium_organizations contacts]
+        @include = @include & %i[contacts]
       else
         @include = []
       end
@@ -423,19 +423,19 @@ class V3::ProvidersController < ApplicationController
           "nonProfitStatus",
           "salesforceId",
           "technicalContact",
-          { "technicalContact": [:email, "givenName", "familyName"] },
+          { "technicalContact": [:uid, :email, "givenName", "familyName", :name] },
           "secondaryTechnicalContact",
-          { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
+          { "secondaryTechnicalContact": [:uid, :email, "givenName", "familyName", :name] },
           "secondaryBillingContact",
-          { "secondaryBillingContact": [:email, "givenName", "familyName"] },
+          { "secondaryBillingContact": [:uid, :email, "givenName", "familyName", :name] },
           "billingContact",
-          { "billingContact": [:email, "givenName", "familyName"] },
+          { "billingContact": [:uid, :email, "givenName", "familyName", :name] },
           "serviceContact",
-          { "serviceContact": [:email, "givenName", "familyName"] },
+          { "serviceContact": [:uid, :email, "givenName", "familyName", :name] },
           "secondaryServiceContact",
-          { "secondaryServiceContact": [:email, "givenName", "familyName"] },
+          { "secondaryServiceContact": [:uid, :email, "givenName", "familyName", :name] },
           "votingContact",
-          { "votingContact": [:email, "givenName", "familyName"] },
+          { "votingContact": [:uid, :email, "givenName", "familyName", :name] },
         ],
         keys: {
           "displayName" => :display_name,
