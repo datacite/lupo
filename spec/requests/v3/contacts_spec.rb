@@ -38,7 +38,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     }
   end
 
-  describe "GET /contacts", elasticsearch: true do
+  describe "GET /v3/contacts", elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
@@ -47,7 +47,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts", nil, headers
+      get "/v3/contacts", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -55,7 +55,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts query" do
+  describe "GET /v3/contacts query" do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
@@ -64,7 +64,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts?query=carberry", nil, headers
+      get "/v3/contacts?query=carberry", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -72,7 +72,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts query role_name" do
+  describe "GET /v3/contacts query role_name" do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
@@ -81,7 +81,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts?role-name=billing", nil, headers
+      get "/v3/contacts?role-name=billing", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
@@ -89,7 +89,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts by provider" do
+  describe "GET /v3/contacts by provider" do
     let!(:contacts) { create_list(:contact, 3, provider: provider) }
 
     before do
@@ -99,7 +99,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts?provider-id=#{provider.uid}", nil, headers
+      get "/v3/contacts?provider-id=#{provider.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -107,7 +107,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts by consortium" do
+  describe "GET /v3/contacts by consortium" do
     let!(:consortium_contact) { create(:contact, provider: consortium, role_name: ["billing"]) }
 
     before do
@@ -117,7 +117,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts?consortium-id=#{consortium.uid}", nil, headers
+      get "/v3/contacts?consortium-id=#{consortium.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
@@ -125,7 +125,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts exclude deleted" do
+  describe "GET /v3/contacts exclude deleted" do
     let!(:contacts) { create_list(:contact, 3, deleted_at: Time.zone.now) }
 
     before do
@@ -134,7 +134,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     it "returns contacts" do
-      get "/contacts", nil, headers
+      get "/v3/contacts", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(2)
@@ -142,10 +142,10 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /contacts/:id" do
+  describe "GET /v3/contacts/:id" do
     context "when the record exists" do
       it "returns the contact" do
-        get "/contacts/#{contact.uid}", nil, headers
+        get "/v3/contacts/#{contact.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(contact.name)
@@ -154,7 +154,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/contacts/xxx", nil, headers
+        get "/v3/contacts/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq(
@@ -165,10 +165,10 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "POST /contacts" do
+  describe "POST /v3/contacts" do
     context "when the request is valid" do
       it "creates a contact" do
-        post "/contacts", params, headers
+        post "/v3/contacts", params, headers
 
         expect(last_response.status).to eq(201)
         attributes = json.dig("data", "attributes")
@@ -182,7 +182,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         Contact.import
         sleep 2
 
-        get "/contacts", nil, headers
+        get "/v3/contacts", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(3)
@@ -218,7 +218,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "returns a validation failure message" do
-        post "/contacts", params, headers
+        post "/v3/contacts", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq(
@@ -230,7 +230,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "PUT /contacts/:id" do
+  describe "PUT /v3/contacts/:id" do
     context "when the record exists" do
       let(:params) do
         {
@@ -244,7 +244,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "familyName")).to eq(
@@ -269,7 +269,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "roleName")).to eq(
@@ -291,7 +291,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'catering' is not included in the list of possible role names.", "uid" => contact.uid }])
@@ -311,7 +311,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'service' is already taken.", "uid" => contact.uid }])
@@ -328,7 +328,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
         puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "givenName")).to be_nil
@@ -347,7 +347,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
 
       it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+        put "/v3/contacts/#{contact.uid}", params, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq(
@@ -358,22 +358,22 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "DELETE /contacts/:id" do
+  describe "DELETE /v3/contacts/:id" do
     it "returns status code 204" do
-      delete "/contacts/#{contact.uid}", nil, headers
+      delete "/v3/contacts/#{contact.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
     end
 
     context "when the resource doesnt exist" do
       it "returns status code 404" do
-        delete "/contacts/xxx", nil, headers
+        delete "/v3/contacts/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it "returns a validation failure message" do
-        delete "/contacts/xxx", nil, headers
+        delete "/v3/contacts/xxx", nil, headers
 
         expect(json["errors"].first).to eq(
           "status" => "404",

@@ -246,6 +246,7 @@ Rails.application.routes.draw do
       resources :activities
       resources :events
     end
+    resources :events
     resources :prefixes, constraints: { id: /.+/ }
     resources :provider_prefixes, path: "provider-prefixes"
     resources :random, only: %i[index]
