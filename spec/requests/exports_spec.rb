@@ -140,7 +140,7 @@ describe ExportsController, type: :request do
         "uid,fabricaAccountId,fabricaId,email,firstName,lastName,type,createdAt,modifiedAt,deletedAt,isActive\n",
       )
       expect(csv[1]).to start_with(
-        "#{contact.uid},UVA,UVA-josiah@example.org,josiah@example.org,Josiah,Carberry,voting",
+        "#{contact.uid},UVA,UVA-#{contact.email},#{contact.email},Josiah,Carberry,voting",
       )
     end
   end
