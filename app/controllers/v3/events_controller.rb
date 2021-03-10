@@ -132,10 +132,10 @@ class V3::EventsController < ApplicationController
         publication_year: params[:publication_year],
         occurred_at: params[:occurred_at],
         year_month: params[:year_month],
-        aggregations: params[:aggregations],
         unique: params[:unique],
         state_event: params[:state],
         scroll_id: params[:scroll_id],
+        facet: params[:facet],
         page: page,
         sort: sort,
       )
@@ -177,28 +177,32 @@ class V3::EventsController < ApplicationController
       render json: V3::EventSerializer.new(results, options).serialized_json,
              status: :ok
     else
+      # parse "facet" query parameter to decide which facets should be shown
+      # by default no facets are shown
+      facets = Array.wrap(params[:facet].to_s.split(","))
+
       sources =
-        if total.positive?
+        if total.positive? && facets.include?("sources")
           facet_by_source(response.response.aggregations.sources.buckets)
         end
       prefixes =
-        if total.positive?
+        if total.positive? && facets.include?("prefixes")
           facet_by_source(response.response.aggregations.prefixes.buckets)
         end
       citation_types =
-        if total.positive?
+        if total.positive? && facets.include?("citation_types")
           facet_by_citation_type(
             response.response.aggregations.citation_types.buckets,
           )
         end
       relation_types =
-        if total.positive?
+        if total.positive? && facets.include?("relation_types")
           facet_by_relation_type(
             response.response.aggregations.relation_types.buckets,
           )
         end
       registrants =
-        if total.positive?
+        if total.positive? && facets.include?("registrants")
           facet_by_registrants(
             response.response.aggregations.registrants.buckets,
           )

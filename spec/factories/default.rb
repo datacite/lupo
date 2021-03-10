@@ -73,7 +73,7 @@ FactoryBot.define do
     provider
 
     uid { SecureRandom.uuid }
-    email { "josiah@example.org" }
+    sequence(:email) { |n| "josiah#{n}@example.org" }
     given_name { "Josiah" }
     family_name { "Carberry" }
     role_name { ["voting"] }

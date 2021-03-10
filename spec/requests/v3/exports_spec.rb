@@ -34,14 +34,14 @@ describe ExportsController, type: :request do
     )
   end
 
-  describe "GET /export/organizations", elasticsearch: true do
+  describe "GET /v3/export/organizations", elasticsearch: true do
     before do
       Provider.import
       sleep 2
     end
 
     it "returns organizations", vcr: false do
-      get "/export/organizations", nil, admin_headers
+      get "/v3/export/organizations", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -54,7 +54,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns organizations from date", vcr: false do
-      get "/export/organizations?from-date=#{Date.today}",
+      get "/v3/export/organizations?from-date=#{Date.today}",
           nil, admin_headers
 
       expect(last_response.status).to eq(200)
@@ -68,7 +68,7 @@ describe ExportsController, type: :request do
     end
   end
 
-  describe "GET /export/repositories", elasticsearch: true do
+  describe "GET /v3/export/repositories", elasticsearch: true do
     let(:client) do
       create(
         :client,
@@ -86,7 +86,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns repositories", vcr: false do
-      get "/export/repositories", nil, admin_headers
+      get "/v3/export/repositories", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -104,7 +104,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns repositories from date", vcr: false do
-      get "/export/repositories?from-date=#{Date.today}",
+      get "/v3/export/repositories?from-date=#{Date.today}",
           nil, admin_headers
 
       expect(last_response.status).to eq(200)
@@ -123,7 +123,7 @@ describe ExportsController, type: :request do
     end
   end
 
-  describe "GET /export/contacts", elasticsearch: true do
+  describe "GET /v3/export/contacts", elasticsearch: true do
     before do
       Provider.import
       Contact.import
@@ -131,7 +131,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns all contacts", vcr: false do
-      get "/export/contacts", nil, admin_headers
+      get "/v3/export/contacts", nil, admin_headers
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
@@ -145,7 +145,7 @@ describe ExportsController, type: :request do
     end
   end
 
-  describe "GET /export/check-indexed-dois", elasticsearch: true do
+  describe "GET /v3/export/check-indexed-dois", elasticsearch: true do
     let(:client) do
       create(
         :client,
@@ -163,7 +163,7 @@ describe ExportsController, type: :request do
     end
 
     it "returns repositories with dois not indexed", vcr: false do
-      get "/export/check-indexed-dois",
+      get "/v3/export/check-indexed-dois",
           nil, admin_headers
       puts last_response.body
       expect(last_response.status).to eq(202)
