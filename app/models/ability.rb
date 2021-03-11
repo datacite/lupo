@@ -106,7 +106,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
-    elsif user.role_id == "client_admin" && user.client_id.present? && user.client.is_active == "\x01"
+    elsif user.role_id == "client_admin" && user.client.present? && user.client.is_active == "\x01"
       can %i[read], Provider
       can %i[read update read_contact_information], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
@@ -140,7 +140,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
-    elsif user.role_id == "client_admin" && user.client_id.present?
+    elsif user.role_id == "client_admin" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
@@ -151,7 +151,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
-    elsif user.role_id == "client_user" && user.client_id.present?
+    elsif user.role_id == "client_user" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
