@@ -308,10 +308,29 @@ class Contact < ApplicationRecord
     write_attribute(:provider_id, r.id)
   end
 
-  def self.export
-    Contact.all.find_each do |contact|
+  def self.export(query: nil)
+    # Loop through all contacts
+    page = { size: 1_000, number: 1 }
+    response = self.query(query, page: page)
+    response.records.find_each do |contact|
       contact.send_contact_export_message(contact.to_jsonapi)
     end
+
+    total = response.results.total
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+    # keep going for all pages
+    page_num = 2
+    while page_num <= total_pages
+      page = { size: 1_000, number: page_num }
+      response = self.query(query, page: page)
+      response.records.find_each do |contact|
+        contact.send_contact_export_message(contact.to_jsonapi)
+      end
+      page_num += 1
+    end
+
+    { "message" => "#{total} records exported." }
   end
 
   def self.import_from_providers

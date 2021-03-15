@@ -307,6 +307,11 @@ class RepositoriesController < ApplicationController
     render json: meta, status: :ok
   end
 
+  def export
+    response = Client.export(query: params[:query])
+    render json: response, status: :ok
+  end
+
   protected
     def set_include
       if params[:include].present?

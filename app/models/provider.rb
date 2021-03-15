@@ -841,11 +841,31 @@ class Provider < ApplicationRecord
     }
   end
 
-  def self.export
-    # don't export some roles
-    Provider.where.not(role_name: ["ROLE_ADMIN", "ROLE_DEV"]).find_each do |provider|
+  def self.export(query: nil)
+    query = query.present? ? query + " !role_name:ROLE_ADMIN" : "!role_name:ROLE_ADMIN"
+
+    # Loop through all providers
+    page = { size: 1_000, number: 1 }
+    response = self.query(query, page: page)
+    response.records.find_each do |provider|
       provider.send_provider_export_message(provider.to_jsonapi)
     end
+
+    total = response.results.total
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+    # keep going for all pages
+    page_num = 2
+    while page_num <= total_pages
+      page = { size: 1_000, number: page_num }
+      response = self.query(query, page: page)
+      response.records.find_each do |provider|
+        provider.send_provider_export_message(provider.to_jsonapi)
+      end
+      page_num += 1
+    end
+
+    { "message" => "#{total} records exported." }
   end
 
   private

@@ -159,7 +159,8 @@ class ContactsController < ApplicationController
   end
 
   def export
-    Contact.export
+    response = Contact.export(query: params[:query])
+    render json: response, status: :ok
   end
 
   protected

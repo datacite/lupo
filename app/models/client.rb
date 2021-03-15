@@ -637,10 +637,29 @@ class Client < ApplicationRecord
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
-  def self.export
-    ::Client.all.find_each do |client|
+  def self.export(query: nil)
+    # Loop through all clients
+    page = { size: 1_000, number: 1 }
+    response = self.query(query, page: page)
+    response.records.find_each do |client|
       client.send_client_export_message(client.to_jsonapi)
     end
+
+    total = response.results.total
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+    # keep going for all pages
+    page_num = 2
+    while page_num <= total_pages
+      page = { size: 1_000, number: page_num }
+      response = self.query(query, page: page)
+      response.records.find_each do |client|
+        client.send_client_export_message(client.to_jsonapi)
+      end
+      page_num += 1
+    end
+
+    { "message" => "#{total} records exported." }
   end
 
   def self.export_doi_counts(query: nil)
