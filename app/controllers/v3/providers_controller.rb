@@ -7,7 +7,7 @@ class V3::ProvidersController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: %i[show update destroy stats]
   before_action :set_include
-  load_and_authorize_resource only: %i[update destroy]
+  load_and_authorize_resource except: %i[index show create totals random stats]
 
   def index
     sort =
