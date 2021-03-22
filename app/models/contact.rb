@@ -243,6 +243,7 @@ class Contact < ApplicationRecord
   def to_jsonapi
     attributes = {
       "uid" => uid,
+      "fabrica_id" => provider_id + "-" + email,
       "given_name" => given_name,
       "family_name" => family_name,
       "name" => name,
