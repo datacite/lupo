@@ -12,12 +12,12 @@ class ContactValidator < ActiveModel::EachValidator
     end
 
     # Name validation
-    if value["given_name"].blank?
-      record.errors[attribute] << "has no givenName specified"
-    end
+    # if value["given_name"].blank?
+    #   record.errors[attribute] << "has no givenName specified"
+    # end
 
-    if value["family_name"].blank?
-      record.errors[attribute] << "has no familyName specified"
-    end
+    # if value["family_name"].blank?
+    #   record.errors[attribute] << "has no familyName specified"
+    # end
   end
 end

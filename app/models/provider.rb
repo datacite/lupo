@@ -166,6 +166,11 @@ class Provider < ApplicationRecord
   has_many :activities, as: :auditable, dependent: :destroy
   has_many :contacts
 
+  # TODO get information from contact model instead storing in provider model
+  # has_one :voting_contact, ->(contact) { where("'voting' in ?", Array.wrap(contact.role_name)) }
+  # has_one :service_contact, ->(contact) { where("'service' in ?", Array.wrap(contact.role_name)) }
+  # has_one :billing_contact, ->(contact) { where("'billing' in ?", Array.wrap(contact.role_name)) }
+
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }

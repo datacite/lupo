@@ -289,7 +289,8 @@ class Contact < ApplicationRecord
 
     Array.wrap(role_name).each do |r|
       errors.add(:role_name, "Role name '#{r}' is not included in the list of possible role names.") unless ROLES.include?(r)
-      errors.add(:role_name, "Role name '#{r}' is already taken.") if taken_roles.include?(r)
+      # TODO make sure roles are taken only once. Currently not enforcable as contacts are updated serially.
+      # errors.add(:role_name, "Role name '#{r}' is already taken.") if taken_roles.include?(r)
     end
   end
 
