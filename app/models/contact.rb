@@ -282,10 +282,10 @@ class Contact < ApplicationRecord
   end
 
   def check_role_name
-    taken_roles = provider.contacts.reduce([]) do |sum, contact|
-      sum += contact.role_name if contact.role_name.present?
-      sum
-    end - Array.wrap(attribute_was(:role_name)).compact
+    # taken_roles = provider.contacts.reduce([]) do |sum, contact|
+    #   sum += contact.role_name if contact.role_name.present?
+    #   sum
+    # end - Array.wrap(attribute_was(:role_name)).compact
 
     Array.wrap(role_name).each do |r|
       errors.add(:role_name, "Role name '#{r}' is not included in the list of possible role names.") unless ROLES.include?(r)
