@@ -4,7 +4,7 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
+  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
   self.inheritance_column = :_type_disabled
@@ -121,6 +121,7 @@ class Doi < ApplicationRecord
   validate :check_landing_page, if: :landing_page?
   validate :check_identifiers, if: :identifiers?
   validate :check_related_identifiers, if: :related_identifiers?
+  validate :check_related_items, if: :related_items?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
@@ -248,6 +249,42 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
         resourceTypeGeneral: { type: :keyword },
+      }
+      indexes :related_items,                       type: :object, properties: {
+        relatedItemType: { type: :keyword },
+        relationType: { type: :keyword },
+        relatedItemIdentifier: { type: :object, properties: {
+          relatedItemIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+          relatedItemIdentifierType: { type: :keyword },
+          relatedMetadataScheme: { type: :keyword },
+          schemeURI: { type: :keyword },
+          schemeType: { type: :keyword },
+        } },
+        creators: { type: :object, properties: {
+          nameType: { type: :text},
+          name: { type: :text },
+          givenName: { type: :text },
+          familyName: { type: :text },
+        } },
+        titles: { type: :object, properties: {
+          title: { type: :text, fields: { keyword: { type: "keyword" } } },
+          titleType: { type: :keyword },
+        } },
+        volume: { type: :keyword },
+        issue: { type: :keyword },
+        number: { type: :keyword },
+        numberType: { type: :keyword },
+        firstPage: { type: :keyword },
+        lastPage: { type: :keyword },
+        publisher: { type: :keyword },
+        publicationYear: { type: :keyword },
+        edition: { type: :keyword },
+        contributors: { type: :object, properties: {
+          contributorType: { type: :text},
+          name: { type: :text },
+          givenName: { type: :text },
+          familyName: { type: :text },
+        } },
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -506,6 +543,7 @@ class Doi < ApplicationRecord
       "types" => types,
       "identifiers" => identifiers,
       "related_identifiers" => Array.wrap(related_identifiers),
+      "related_items" => Array.wrap(related_items),
       "funding_references" => Array.wrap(funding_references),
       "publication_year" => publication_year,
       "dates" => dates,
@@ -1233,7 +1271,7 @@ class Doi < ApplicationRecord
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url version_info).map do |a|
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info).map do |a|
       [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
 
@@ -1823,6 +1861,12 @@ class Doi < ApplicationRecord
   def check_related_identifiers
     Array.wrap(related_identifiers).each do |r|
       errors.add(:related_identifiers, "Related identifier '#{r}' should be an object instead of a string.") unless r.is_a?(Hash)
+    end
+  end
+
+  def check_related_items
+    Array.wrap(related_items).each do |r|
+      errors.add(:related_items, "Related item '#{r}' should be an object instead of a string.") unless r.is_a?(Hash)
     end
   end
 
