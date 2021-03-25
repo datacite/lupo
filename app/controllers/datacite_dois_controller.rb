@@ -993,6 +993,7 @@ class DataciteDoisController < ApplicationController
           contentUrl: [],
           identifiers: [],
           relatedIdentifiers: [],
+          relatedItems: [],
           fundingReferences: [],
           geoLocations: [],
         },
@@ -1068,6 +1069,7 @@ class DataciteDoisController < ApplicationController
         p[:dates],
         p[:identifiers],
         p[:relatedIdentifiers],
+        p[:relatedItems],
         p[:fundingReferences],
         p[:geoLocations],
         p[:rightsList],
@@ -1110,6 +1112,7 @@ class DataciteDoisController < ApplicationController
         dates
         identifiers
         relatedIdentifiers
+        relatedItems
         fundingReferences
         geoLocations
         rightsList
