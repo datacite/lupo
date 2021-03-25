@@ -3,7 +3,6 @@
 require "rails_helper"
 
 describe ContactsController, type: :request, elasticsearch: true do
-  let(:bearer) { User.generate_token }
   let(:consortium) { create(:provider, name: "DC", role_name: "ROLE_CONSORTIUM") }
   let(:provider) do
     create(
@@ -11,6 +10,13 @@ describe ContactsController, type: :request, elasticsearch: true do
       consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION",
     )
   end
+  let(:bearer) { User.generate_token }
+  let(:provider_bearer) { User.generate_token(
+    role_id: "provider_admin", provider_id: provider.uid,
+  ) }
+  let(:consortium_bearer) { User.generate_token(
+    role_id: "consortium_admin", provider_id: consortium.uid,
+  ) }
   let!(:service_contact) { create(:contact, provider: provider, role_name: ["service"]) }
   let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
   let(:params) do
@@ -35,6 +41,18 @@ describe ContactsController, type: :request, elasticsearch: true do
     {
       "HTTP_ACCEPT" => "application/vnd.api+json",
       "HTTP_AUTHORIZATION" => "Bearer " + bearer,
+    }
+  end
+  let(:consortium_headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + consortium_bearer,
+    }
+  end
+  let(:provider_headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + provider_bearer,
     }
   end
 
@@ -95,7 +113,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     before do
       Provider.import
       Contact.import
-      sleep 1
+      sleep 2
     end
 
     it "returns contacts" do
@@ -199,6 +217,124 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
+    context "when the request is valid provider_admin" do
+      it "creates a contact" do
+        post "/contacts", params, provider_headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Josiah Carberry")
+        expect(attributes["email"]).to eq("bob@example.com")
+        expect(attributes["roleName"]).to eq(["voting"])
+
+        relationships = json.dig("data", "relationships")
+        expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
+
+        Contact.import
+        sleep 2
+
+        get "/contacts", nil, provider_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(3)
+
+        attributes = json.dig("data", 1, "attributes")
+        expect(attributes["name"]).to eq("Josiah Carberry")
+        expect(attributes["email"]).to start_with("josiah")
+        expect(attributes["roleName"]).to eq(["billing"])
+
+        relationships = json.dig("data", 1, "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+      end
+    end
+
+    # context "when the request is valid consortium_admin" do
+    #   let(:params) do
+    #     {
+    #       "data" => {
+    #         "type" => "contacts",
+    #         "attributes" => {
+    #           "givenName" => "Josiah",
+    #           "familyName" => "Carberry",
+    #           "email" => "bob@example.com",
+    #           "roleName" => ["voting"]
+    #         },
+    #         "relationships": {
+    #           "provider": {
+    #             "data": { "type": "providers", "id": consortium.uid },
+    #           }
+    #         },
+    #       },
+    #     }
+    #   end
+
+    #   it "creates a contact" do
+    #     post "/contacts", params, consortium_headers
+
+    #     expect(last_response.status).to eq(201)
+    #     attributes = json.dig("data", "attributes")
+    #     expect(attributes["name"]).to eq("Josiah Carberry")
+    #     expect(attributes["email"]).to eq("bob@example.com")
+    #     expect(attributes["roleName"]).to eq(["voting"])
+
+    #     relationships = json.dig("data", "relationships")
+    #     expect(relationships).to eq("provider" => { "data" => { "id" => consortium.uid, "type" => "providers" } })
+
+    #     Contact.import
+    #     sleep 2
+
+    #     get "/contacts", nil, consortium_headers
+
+    #     expect(last_response.status).to eq(200)
+    #     expect(json.dig("data").length).to eq(3)
+
+    #     attributes = json.dig("data", 1, "attributes")
+    #     expect(attributes["name"]).to eq("Josiah Carberry")
+    #     expect(attributes["email"]).to start_with("josiah")
+    #     expect(attributes["roleName"]).to eq(["billing"])
+
+    #     relationships = json.dig("data", 1, "relationships")
+    #     expect(relationships.dig("provider", "data", "id")).to eq(
+    #       consortium.uid,
+    #     )
+    #   end
+    # end
+
+    # context "when the request is valid consortium_admin for provider" do
+    #   it "creates a contact" do
+    #     post "/contacts", params, consortium_headers
+
+    #     expect(last_response.status).to eq(201)
+    #     attributes = json.dig("data", "attributes")
+    #     expect(attributes["name"]).to eq("Josiah Carberry")
+    #     expect(attributes["email"]).to eq("bob@example.com")
+    #     expect(attributes["roleName"]).to eq(["voting"])
+
+    #     relationships = json.dig("data", "relationships")
+    #     expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
+
+    #     Contact.import
+    #     sleep 2
+
+    #     get "/contacts", nil, consortium_headers
+
+    #     expect(last_response.status).to eq(200)
+    #     expect(json.dig("data").length).to eq(3)
+
+    #     attributes = json.dig("data", 1, "attributes")
+    #     expect(attributes["name"]).to eq("Josiah Carberry")
+    #     expect(attributes["email"]).to start_with("josiah")
+    #     expect(attributes["roleName"]).to eq(["billing"])
+
+    #     relationships = json.dig("data", 1, "relationships")
+    #     expect(relationships.dig("provider", "data", "id")).to eq(
+    #       consortium.uid,
+    #     )
+    #   end
+    # end
+
     context "when the request is invalid" do
       let(:params) do
         {
@@ -298,25 +434,26 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "updates role_name already taken" do
-      let(:params) do
-        {
-          "data" => {
-            "type" => "contacts",
-            "attributes" => {
-              "roleName" => ["service"],
-            },
-          },
-        }
-      end
+    # validation has been disabled
+    # context "updates role_name already taken" do
+    #   let(:params) do
+    #     {
+    #       "data" => {
+    #         "type" => "contacts",
+    #         "attributes" => {
+    #           "roleName" => ["service"],
+    #         },
+    #       },
+    #     }
+    #   end
 
-      it "updates the record" do
-        put "/contacts/#{contact.uid}", params, headers
+    #   it "updates the record" do
+    #     put "/contacts/#{contact.uid}", params, headers
 
-        expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'service' is already taken.", "uid" => contact.uid }])
-      end
-    end
+    #     expect(last_response.status).to eq(422)
+    #     expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'service' is already taken.", "uid" => contact.uid }])
+    #   end
+    # end
 
     context "removes given name and family name" do
       let(:params) do

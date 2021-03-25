@@ -169,6 +169,16 @@ class ContactsController < ApplicationController
       fail ActiveRecord::RecordNotFound if @contact.blank?
     end
 
+    def set_include
+      if params[:include].present?
+        @include =
+          params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
+        @include = @include & %i[provider]
+      else
+        @include = []
+      end
+    end
+
   private
     def safe_params
       if params[:data].blank?
