@@ -190,6 +190,10 @@ class V3::DataciteDoiSerializer
     Array.wrap(object.related_identifiers)
   end
 
+  attribute :related_items do |object|
+    Array.wrap(object.related_items)
+  end
+
   attribute :geo_locations,
             if:
               Proc.new { |_object, params|
