@@ -2104,6 +2104,39 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    context "with subject classificationcode" do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite.xml"))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml,
+            },
+          },
+        }
+      end
+
+      it "validates a Doi" do
+        post "/dois", params, headers
+
+        expect(last_response.status).to eq(201)
+        xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+
+        expect(xml.dig("subjects", "subject")).to eq(
+          [
+            "datacite",
+            "doi",
+            {
+              "__content__" => "metadata",
+              "classificationCode" => "000"
+            },
+          ]
+        )
+      end
+    end
+
     context "schema_org" do
       let(:xml) { Base64.strict_encode64(file_fixture("schema_org_topmed.json").read) }
       let(:valid_attributes) do
