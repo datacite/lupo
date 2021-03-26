@@ -1526,7 +1526,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
-        expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "misc", "citeproc" => "article", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "DataPaper", "ris" => "GEN", "schemaOrg" => "CreativeWork")
+        expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "DataPaper", "ris" => "GEN", "schemaOrg" => "Article")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
       end
     end
