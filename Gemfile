@@ -12,7 +12,7 @@ gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
 gem "bergamasco", "~> 0.3.10"
-gem "bolognese", "~> 1.8"
+gem "bolognese", "~> 1.9"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 2.0"
 gem "commonmarker", "~> 0.17.9"

@@ -21,7 +21,7 @@
   <subjects>
     <subject>datacite</subject>
     <subject>doi</subject>
-    <subject>metadata</subject>
+    <subject classificationCode="000">metadata</subject>
   </subjects>
   <dates>
     <date dateType="Created">2016-12-20</date>

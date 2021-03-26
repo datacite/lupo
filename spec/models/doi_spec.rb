@@ -508,6 +508,53 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "related_items" do
+
+    it "is complete" do
+      related_item = {
+        "relatedItemType"=>"Journal",
+        "relationType"=>"IsPublishedIn",
+        "relatedItemIdentifier"=>
+        {
+          "relatedItemIdentifier"=>"10.5072/john-smiths-1234",
+          "relatedItemIdentifierType"=>"DOI",
+          "relatedMetadataScheme"=>"citeproc+json",
+          "schemeURI"=>"https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+          "schemeType"=>"URL"
+        },
+        "creators" =>
+        [
+          {"nameType"=>"Personal", "name"=>"Smith, John", "givenName"=>"John", "familyName"=>"Smith"}
+        ],
+        "titles"=>
+        [
+          {"title"=>"Understanding the fictional John Smith"},
+          {"title"=>"A detailed look", "titleType"=>"Subtitle"}
+        ],
+        "volume"=>"776",
+        "issue"=>"1",
+        "number"=>"1",
+        "numberType"=>"Chapter",
+        "firstPage"=>"50",
+        "lastPage"=>"60",
+        "publisher"=>"Example Inc",
+        "publicationYear"=>"1776",
+        "edition"=>"1",
+        "contributors"=>
+        [
+          {"name"=>"Hallett, Richard", "givenName"=>"Richard", "familyName"=>"Hallett", "contributorType"=>"ProjectLeader"}
+        ]
+      }
+
+      doi = build(:doi, related_items: [related_item])
+      expect(doi.save).to be true
+      expect(doi).to be_valid
+      expect(doi.errors.details).to be_empty
+      expect(doi.related_items).to eq([related_item])
+    end
+
+  end
+
   # describe "related_identifiers" do
   #   it "has part" do
   #     subject = build(:doi, related_identifiers: [      {

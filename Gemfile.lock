@@ -627,7 +627,7 @@ DEPENDENCIES
   bergamasco (~> 0.3.10)
   better_errors
   binding_of_caller
-  bolognese (~> 1.8)
+  bolognese (~> 1.9)
   bootsnap (~> 1.4, >= 1.4.4)
   bullet (~> 6.1)
   byebug
@@ -718,4 +718,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.1.4
+   2.2.14

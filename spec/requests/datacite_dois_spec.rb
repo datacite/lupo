@@ -1526,7 +1526,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
-        expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "misc", "citeproc" => "article", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "DataPaper", "ris" => "GEN", "schemaOrg" => "CreativeWork")
+        expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "DataPaper", "ris" => "GEN", "schemaOrg" => "Article")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
       end
     end
@@ -2023,6 +2023,117 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                         "familyName" => "Miller",
                                                         "givenName" => "Elizabeth",
                                                         "nameIdentifier" => { "__content__" => "0000-0001-5000-0007", "nameIdentifierScheme" => "ORCID", "schemeURI" => "http://orcid.org/" })
+      end
+    end
+
+    context "with related_items" do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-relateditems.xml"))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml,
+            },
+          },
+        }
+      end
+
+      it "validates a Doi" do
+        post "/dois", params, headers
+
+        expect(last_response.status).to eq(201)
+        xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+
+        expect(xml.dig("relatedItems", "relatedItem")).to eq(
+          [{
+            "relationType"=>"IsPublishedIn",
+            "relatedItemType"=>"Journal",
+            "relatedItemIdentifier"=>{
+              "relatedItemIdentifierType"=>"DOI",
+              "relatedMetadataScheme"=>"citeproc+json",
+              "schemeURI"=>"https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+              "schemeType"=>"URL",
+              "__content__"=>"10.5072/john-smiths-1234"
+              },
+            "creators"=>{
+              "creator"=>{
+                "creatorName"=>{"nameType"=>"Personal", "__content__"=>"Smith, John"},
+                "givenName"=>"John",
+                "familyName"=>"Smith"
+              }
+            },
+            "titles"=>{
+              "title"=>[
+                "Understanding the fictional John Smith",
+                {"titleType"=>"Subtitle", "__content__"=>"A detailed look"}
+              ]
+            },
+            "publicationYear"=>"1776",
+            "volume"=>"776",
+            "issue"=>"1",
+            "number"=>{"numberType"=>"Chapter", "__content__"=>"1"},
+            "firstPage"=>"50",
+            "lastPage"=>"60",
+            "publisher"=>"Example Inc",
+            "edition"=>"1",
+            "contributors"=>{
+              "contributor"=>{
+                "contributorType"=>"ProjectLeader",
+                "contributorName"=>"Richard, Hallett",
+                "givenName"=>"Richard",
+                "familyName"=>"Hallett"
+              }
+            }
+          },
+          {
+            "firstPage"=>"249",
+            "lastPage"=>"264",
+            "publicationYear"=>"2018",
+            "relatedItemIdentifier"=>
+              {"__content__"=>"10.1016/j.physletb.2017.11.044",
+              "relatedItemIdentifierType"=>"DOI"},
+            "relatedItemType"=>"Journal",
+            "relationType"=>"IsPublishedIn",
+            "titles"=>{"title"=>"Physics letters / B"},
+            "volume"=>"776"
+          }
+          ]
+        )
+      end
+    end
+
+    context "with subject classificationcode" do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite.xml"))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml,
+            },
+          },
+        }
+      end
+
+      it "validates a Doi" do
+        post "/dois", params, headers
+
+        expect(last_response.status).to eq(201)
+        xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+
+        expect(xml.dig("subjects", "subject")).to eq(
+          [
+            "datacite",
+            "doi",
+            {
+              "__content__" => "metadata",
+              "classificationCode" => "000"
+            },
+          ]
+        )
       end
     end
 
