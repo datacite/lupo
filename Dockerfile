@@ -17,7 +17,7 @@ RUN bash -lc 'rvm --default use ruby-2.6.5'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
-    apt-get install ntp wget nano tmux tzdata percona-toolkit imagemagick -y && \
+    apt-get install ntp wget nano tmux tzdata percona-toolkit imagemagick shared-mime-info -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Enable Passenger and Nginx and remove the default site
