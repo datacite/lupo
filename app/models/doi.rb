@@ -261,7 +261,7 @@ class Doi < ApplicationRecord
           schemeType: { type: :keyword },
         } },
         creators: { type: :object, properties: {
-          nameType: { type: :text},
+          nameType: { type: :text },
           name: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },
@@ -280,7 +280,7 @@ class Doi < ApplicationRecord
         publicationYear: { type: :keyword },
         edition: { type: :keyword },
         contributors: { type: :object, properties: {
-          contributorType: { type: :text},
+          contributorType: { type: :text },
           contributorName: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },

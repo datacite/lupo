@@ -2048,56 +2048,56 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(xml.dig("relatedItems", "relatedItem")).to eq(
           [{
-            "relationType"=>"IsPublishedIn",
-            "relatedItemType"=>"Journal",
-            "relatedItemIdentifier"=>{
-              "relatedItemIdentifierType"=>"DOI",
-              "relatedMetadataScheme"=>"citeproc+json",
-              "schemeURI"=>"https://github.com/citation-style-language/schema/raw/master/csl-data.json",
-              "schemeType"=>"URL",
-              "__content__"=>"10.5072/john-smiths-1234"
+            "relationType" => "IsPublishedIn",
+            "relatedItemType" => "Journal",
+            "relatedItemIdentifier" => {
+              "relatedItemIdentifierType" => "DOI",
+              "relatedMetadataScheme" => "citeproc+json",
+              "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+              "schemeType" => "URL",
+              "__content__" => "10.5072/john-smiths-1234"
               },
-            "creators"=>{
-              "creator"=>{
-                "creatorName"=>{"nameType"=>"Personal", "__content__"=>"Smith, John"},
-                "givenName"=>"John",
-                "familyName"=>"Smith"
+            "creators" => {
+              "creator" => {
+                "creatorName" => { "nameType" => "Personal", "__content__" => "Smith, John" },
+                "givenName" => "John",
+                "familyName" => "Smith"
               }
             },
-            "titles"=>{
-              "title"=>[
+            "titles" => {
+              "title" => [
                 "Understanding the fictional John Smith",
-                {"titleType"=>"Subtitle", "__content__"=>"A detailed look"}
+                { "titleType" => "Subtitle", "__content__" => "A detailed look" }
               ]
             },
-            "publicationYear"=>"1776",
-            "volume"=>"776",
-            "issue"=>"1",
-            "number"=>{"numberType"=>"Chapter", "__content__"=>"1"},
-            "firstPage"=>"50",
-            "lastPage"=>"60",
-            "publisher"=>"Example Inc",
-            "edition"=>"1",
-            "contributors"=>{
-              "contributor"=>{
-                "contributorType"=>"ProjectLeader",
-                "contributorName"=>"Richard, Hallett",
-                "givenName"=>"Richard",
-                "familyName"=>"Hallett"
+            "publicationYear" => "1776",
+            "volume" => "776",
+            "issue" => "1",
+            "number" => { "numberType" => "Chapter", "__content__" => "1" },
+            "firstPage" => "50",
+            "lastPage" => "60",
+            "publisher" => "Example Inc",
+            "edition" => "1",
+            "contributors" => {
+              "contributor" => {
+                "contributorType" => "ProjectLeader",
+                "contributorName" => "Richard, Hallett",
+                "givenName" => "Richard",
+                "familyName" => "Hallett"
               }
             }
           },
           {
-            "firstPage"=>"249",
-            "lastPage"=>"264",
-            "publicationYear"=>"2018",
-            "relatedItemIdentifier"=>
-              {"__content__"=>"10.1016/j.physletb.2017.11.044",
-              "relatedItemIdentifierType"=>"DOI"},
-            "relatedItemType"=>"Journal",
-            "relationType"=>"IsPublishedIn",
-            "titles"=>{"title"=>"Physics letters / B"},
-            "volume"=>"776"
+            "firstPage" => "249",
+            "lastPage" => "264",
+            "publicationYear" => "2018",
+            "relatedItemIdentifier" =>
+              { "__content__" => "10.1016/j.physletb.2017.11.044",
+              "relatedItemIdentifierType" => "DOI" },
+            "relatedItemType" => "Journal",
+            "relationType" => "IsPublishedIn",
+            "titles" => { "title" => "Physics letters / B" },
+            "volume" => "776"
           }
           ]
         )
