@@ -2137,6 +2137,34 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    context "when the resource_type_general is preprint" do
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
+      let(:types) { { "resourceTypeGeneral" => "Preprint", "resourceType" => "BlogPosting" } }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "types" => types,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "updates the record" do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
+        expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "misc", "citeproc" => "article", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Preprint", "ris" => "GEN", "schemaOrg" => "CreativeWork")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+      end
+    end
+
     context "schema_org" do
       let(:xml) { Base64.strict_encode64(file_fixture("schema_org_topmed.json").read) }
       let(:valid_attributes) do
