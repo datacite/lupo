@@ -641,7 +641,7 @@ class Client < ApplicationRecord
     # Loop through all clients
     page = { size: 1_000, number: 1 }
     response = self.query(query, page: page)
-    response.records.find_each do |client|
+    response.records.each do |client|
       client.send_client_export_message(client.to_jsonapi)
     end
 
@@ -653,7 +653,7 @@ class Client < ApplicationRecord
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
       response = self.query(query, page: page)
-      response.records.find_each do |client|
+      response.records.each do |client|
         client.send_client_export_message(client.to_jsonapi)
       end
       page_num += 1

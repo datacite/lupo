@@ -314,7 +314,7 @@ class Contact < ApplicationRecord
     # Loop through all contacts
     page = { size: 1_000, number: 1 }
     response = self.query(query, page: page)
-    response.records.find_each do |contact|
+    response.records.each do |contact|
       contact.send_contact_export_message(contact.to_jsonapi)
     end
 
@@ -326,7 +326,7 @@ class Contact < ApplicationRecord
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
       response = self.query(query, page: page)
-      response.records.find_each do |contact|
+      response.records.each do |contact|
         contact.send_contact_export_message(contact.to_jsonapi)
       end
       page_num += 1
