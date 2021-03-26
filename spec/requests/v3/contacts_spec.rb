@@ -298,25 +298,25 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "updates role_name already taken" do
-      let(:params) do
-        {
-          "data" => {
-            "type" => "contacts",
-            "attributes" => {
-              "roleName" => ["service"],
-            },
-          },
-        }
-      end
+    # context "updates role_name already taken" do
+    #   let(:params) do
+    #     {
+    #       "data" => {
+    #         "type" => "contacts",
+    #         "attributes" => {
+    #           "roleName" => ["service"],
+    #         },
+    #       },
+    #     }
+    #   end
 
-      it "updates the record" do
-        put "/v3/contacts/#{contact.uid}", params, headers
+    #   it "updates the record" do
+    #     put "/v3/contacts/#{contact.uid}", params, headers
 
-        expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'service' is already taken.", "uid" => contact.uid }])
-      end
-    end
+    #     expect(last_response.status).to eq(422)
+    #     expect(json["errors"]).to eq([{ "source" => "role_name", "title" => "Role name 'service' is already taken.", "uid" => contact.uid }])
+    #   end
+    # end
 
     context "removes given name and family name" do
       let(:params) do

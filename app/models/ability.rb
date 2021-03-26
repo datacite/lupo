@@ -38,7 +38,8 @@ class Ability
       end
       can %i[manage], Contact do |contact|
         contact.provider &&
-          user.provider_id.casecmp(contact.provider.consortium_id)
+          (user.provider_id.casecmp(contact.provider.consortium_id) ||
+          user.provider_id.casecmp(contact.provider_id))
       end
       can %i[manage transfer read_contact_information], Client do |client|
         client.provider &&
