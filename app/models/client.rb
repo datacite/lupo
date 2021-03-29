@@ -618,9 +618,9 @@ class Client < ApplicationRecord
         client_id: uid, page: { size: 0, number: 1 }, totals_agg: "client_export",
       )
     doi_counts = response.aggregations.clients_totals.buckets.first
-    dois_total = doi_counts.doc_count
-    dois_current_year = doi_counts.this_year.buckets.dig(0, "doc_count")
-    dois_last_year = doi_counts.last_year.buckets.dig(0, "doc_count")
+    dois_total = doi_counts ? doi_counts.doc_count : 0
+    dois_current_year = doi_counts ? doi_counts.this_year.buckets.dig(0, "doc_count") : 0
+    dois_last_year = doi_counts ? doi_counts.last_year.buckets.dig(0, "doc_count") : 0
 
     attributes = {
       "symbol" => symbol,
