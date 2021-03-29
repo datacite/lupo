@@ -618,6 +618,7 @@ class Client < ApplicationRecord
         client_id: uid, page: { size: 0, number: 1 }, totals_agg: "client_export",
       )
     doi_counts = response.aggregations.clients_totals.buckets.first
+    dois_total = doi_counts.doc_count
     dois_current_year = doi_counts.this_year.buckets.dig(0, "doc_count")
     dois_last_year = doi_counts.last_year.buckets.dig(0, "doc_count")
 
@@ -630,6 +631,7 @@ class Client < ApplicationRecord
       "re3data_id" => re3data_id,
       "provider_id" => provider_id,
       "is_active" => is_active.getbyte(0) == 1,
+      "dois_total" => dois_total,
       "dois_current_year" => dois_current_year,
       "dois_last_year" => dois_last_year,
       "created" => created.iso8601,
