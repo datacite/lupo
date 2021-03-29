@@ -1654,6 +1654,14 @@ class Doi < ApplicationRecord
     normalize_doi(doi, sandbox: !Rails.env.production?)
   end
 
+  def related_items=(value)
+    write_attribute(:related_items, [])
+  end
+
+  def related_items
+    []
+  end
+
   def client_id
     client.symbol.downcase if client.present?
   end
