@@ -325,6 +325,7 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
         lang: { type: :keyword },
+        classificationCode: { type: :keyword },
       }
       indexes :container, type: :object, properties: {
         type: { type: :keyword },
