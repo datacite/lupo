@@ -801,7 +801,7 @@ class DataciteDoisController < ApplicationController
         :dates,
         { dates: %i[date dateType dateInformation] },
         :subjects,
-        { subjects: %i[subject subjectScheme schemeUri valueUri lang] },
+        { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
         :landingPage,
         {
           landingPage: [
