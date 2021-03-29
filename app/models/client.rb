@@ -615,7 +615,7 @@ class Client < ApplicationRecord
     response =
       DataciteDoi.query(
         nil,
-        client_id: uid, page: { size: 0, number: 1 }, totals_agg: "client_export",
+        client_id: uid, state: "findable,registered", page: { size: 0, number: 1 }, totals_agg: "client_export",
       )
     doi_counts = response.aggregations.clients_totals.buckets.first
     dois_total = doi_counts ? doi_counts.doc_count : 0
