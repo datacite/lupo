@@ -617,7 +617,9 @@ class Client < ApplicationRecord
         nil,
         client_id: uid, page: { size: 0, number: 1 }, totals_agg: "client_export",
       )
-    totals_buckets = response.aggregations.clients_totals.buckets
+    doi_counts = response.aggregations.clients_totals.buckets.first
+    dois_current_year = doi_counts.this_year.buckets.dig(0, "doc_count")
+    dois_last_year = doi_counts.last_year.buckets.dig(0, "doc_count")
 
     attributes = {
       "symbol" => symbol,
@@ -628,7 +630,8 @@ class Client < ApplicationRecord
       "re3data_id" => re3data_id,
       "provider_id" => provider_id,
       "is_active" => is_active.getbyte(0) == 1,
-      "doi_count" => totals_buckets,
+      "dois_current_year" => dois_current_year,
+      "dois_last_year" => dois_last_year,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
@@ -655,6 +658,7 @@ class Client < ApplicationRecord
       response = self.query(query, page: page)
       response.records.each do |client|
         client.send_client_export_message(client.to_jsonapi)
+        Rails.logger.info client.to_jsonapi.inspect
       end
       page_num += 1
     end
