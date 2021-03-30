@@ -36,11 +36,12 @@ class Ability
         provider_prefix.provider &&
           user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
-      can %i[manage], Contact do |contact|
-        contact.provider &&
-          (user.provider_id.casecmp(contact.provider.consortium_id) ||
-          user.provider_id.casecmp(contact.provider_id))
-      end
+      can %i[manage], Contact
+      # TODO limit contact management to consortium
+      #   contact.provider &&
+      #     (user.provider_id.casecmp(contact.provider.consortium_id) ||
+      #     user.provider_id.casecmp(contact.provider_id))
+      # end
       can %i[manage transfer read_contact_information], Client do |client|
         client.provider &&
           user.provider_id.casecmp(client.provider.consortium_id)
