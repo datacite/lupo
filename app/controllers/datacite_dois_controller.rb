@@ -1112,7 +1112,6 @@ class DataciteDoisController < ApplicationController
         dates
         identifiers
         relatedIdentifiers
-        relatedItems
         fundingReferences
         geoLocations
         rightsList
