@@ -34,6 +34,7 @@ class ContactsController < ApplicationController
         role_name: params[:role_name],
         provider_id: params[:provider_id],
         consortium_id: params[:consortium_id],
+        include_deleted: params[:include_deleted],
         page: page,
         sort: sort,
       )

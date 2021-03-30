@@ -49,6 +49,7 @@ class RepositoriesController < ApplicationController
         certificate: params[:certificate],
         repository_type: params[:repository_type],
         client_type: params[:client_type],
+        include_deleted: params[:include_deleted],
         page: page,
         sort: sort,
       )

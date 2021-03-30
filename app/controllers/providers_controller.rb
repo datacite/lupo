@@ -44,6 +44,7 @@ class ProvidersController < ApplicationController
         organization_type: params[:organization_type],
         focus_area: params[:focus_area],
         non_profit_status: params[:non_profit_status],
+        include_deleted: params[:include_deleted],
         page: page,
         sort: sort,
       )

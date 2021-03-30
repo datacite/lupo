@@ -332,7 +332,7 @@ class Contact < ApplicationRecord
       page_num += 1
     end
 
-    { "message" => "#{total} records exported." }
+    { "message" => "#{total} contacts exported." }
   end
 
   def self.import_from_providers
