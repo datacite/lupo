@@ -627,7 +627,8 @@ class Doi < ApplicationRecord
   def self.query_aggregations(disable_facets: false)
     if !disable_facets
       {
-        resource_types: { terms: { field: "resource_type_id_and_name", size: 16, min_doc_count: 1 } },
+        # number of resourceTypeGeneral increased from 16 to 28 in schema 4.4
+        resource_types: { terms: { field: "resource_type_id_and_name", size: 30, min_doc_count: 1 } },
         states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
         published: {
           date_histogram: {
