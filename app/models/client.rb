@@ -665,7 +665,7 @@ class Client < ApplicationRecord
       page_num += 1
     end
 
-    { "message" => "#{total} clients exported." }
+    "#{total} clients exported."
   end
 
   def self.export_doi_counts(query: nil)

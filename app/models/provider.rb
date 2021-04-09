@@ -870,7 +870,7 @@ class Provider < ApplicationRecord
       page_num += 1
     end
 
-    { "message" => "#{total} providers exported." }
+    "#{total} providers exported."
   end
 
   private

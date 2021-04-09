@@ -63,8 +63,7 @@ namespace :contact do
 
   desc "Export all contacts to Salesforce"
   task export: :environment do
-    Contact.export
-    puts "Exported metadata for all contacts."
+    puts Contact.export
   end
 
   desc "Export one contact to Salesforce"

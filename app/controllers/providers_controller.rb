@@ -360,7 +360,7 @@ class ProvidersController < ApplicationController
 
   def export
     response = Provider.export(query: params[:query])
-    render json: response, status: :ok
+    render json: { "message" => response }, status: :ok
   end
 
   protected

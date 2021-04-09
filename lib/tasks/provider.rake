@@ -58,8 +58,7 @@ namespace :provider do
 
   desc "Export all providers to Salesforce"
   task export: :environment do
-    Provider.export
-    puts "Exported metadata for all providers."
+    puts Provider.export
   end
 
   desc "Export one provider to Salesforce"

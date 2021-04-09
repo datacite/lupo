@@ -310,7 +310,7 @@ class RepositoriesController < ApplicationController
 
   def export
     response = Client.export(query: params[:query])
-    render json: response, status: :ok
+    render json: { "message" => response }, status: :ok
   end
 
   protected

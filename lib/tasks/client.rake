@@ -106,8 +106,7 @@ namespace :client do
 
   desc "Export all clients to Salesforce"
   task export: :environment do
-    Client.export
-    puts "Exported metadata for all clients."
+    puts Client.export
   end
 
   desc "Export one client to Salesforce"
