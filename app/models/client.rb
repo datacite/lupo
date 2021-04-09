@@ -660,7 +660,6 @@ class Client < ApplicationRecord
       response = self.query(query, include_deleted: true, page: page)
       response.records.each do |client|
         client.send_client_export_message(client.to_jsonapi)
-        Rails.logger.info client.to_jsonapi.inspect
       end
       page_num += 1
     end
