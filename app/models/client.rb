@@ -645,7 +645,7 @@ class Client < ApplicationRecord
   def self.export(query: nil)
     # Loop through all clients
     page = { size: 1_000, number: 1 }
-    response = self.query(query, page: page)
+    response = self.query(query, include_deleted: true, page: page)
     response.records.each do |client|
       client.send_client_export_message(client.to_jsonapi)
     end
@@ -657,7 +657,7 @@ class Client < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, page: page)
+      response = self.query(query, include_deleted: true, page: page)
       response.records.each do |client|
         client.send_client_export_message(client.to_jsonapi)
         Rails.logger.info client.to_jsonapi.inspect

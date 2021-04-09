@@ -851,7 +851,7 @@ class Provider < ApplicationRecord
 
     # Loop through all providers
     page = { size: 1_000, number: 1 }
-    response = self.query(query, page: page)
+    response = self.query(query, include_deleted: true, page: page)
     response.records.each do |provider|
       provider.send_provider_export_message(provider.to_jsonapi)
     end
@@ -863,7 +863,7 @@ class Provider < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, page: page)
+      response = self.query(query, include_deleted: true, page: page)
       response.records.each do |provider|
         provider.send_provider_export_message(provider.to_jsonapi)
       end
