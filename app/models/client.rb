@@ -644,10 +644,12 @@ class Client < ApplicationRecord
 
   def self.export(query: nil)
     # Loop through all clients
+    i = 0
     page = { size: 1_000, number: 1 }
     response = self.query(query, include_deleted: true, page: page)
     response.records.each do |client|
       client.send_client_export_message(client.to_jsonapi)
+      i += 1
     end
 
     total = response.results.total
@@ -660,11 +662,12 @@ class Client < ApplicationRecord
       response = self.query(query, include_deleted: true, page: page)
       response.records.each do |client|
         client.send_client_export_message(client.to_jsonapi)
+        i += 1
       end
       page_num += 1
     end
 
-    "#{total} clients exported."
+    "#{i} clients exported."
   end
 
   def self.export_doi_counts(query: nil)

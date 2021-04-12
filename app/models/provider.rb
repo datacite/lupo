@@ -850,10 +850,12 @@ class Provider < ApplicationRecord
     query = query.present? ? query + " !role_name:ROLE_ADMIN" : "!role_name:ROLE_ADMIN"
 
     # Loop through all providers
+    i = 0
     page = { size: 1_000, number: 1 }
     response = self.query(query, include_deleted: true, page: page)
     response.records.each do |provider|
       provider.send_provider_export_message(provider.to_jsonapi)
+      i += 1
     end
 
     total = response.results.total
@@ -866,11 +868,12 @@ class Provider < ApplicationRecord
       response = self.query(query, include_deleted: true, page: page)
       response.records.each do |provider|
         provider.send_provider_export_message(provider.to_jsonapi)
+        i += 1
       end
       page_num += 1
     end
 
-    "#{total} providers exported."
+    "#{i.to_s} providers exported."
   end
 
   private

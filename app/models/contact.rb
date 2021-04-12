@@ -312,10 +312,12 @@ class Contact < ApplicationRecord
 
   def self.export(query: nil)
     # Loop through all contacts
+    i = 0
     page = { size: 1_000, number: 1 }
     response = self.query(query, include_deleted: true, page: page)
     response.records.each do |contact|
       contact.send_contact_export_message(contact.to_jsonapi)
+      i += 1
     end
 
     total = response.results.total
@@ -328,11 +330,12 @@ class Contact < ApplicationRecord
       response = self.query(query, include_deleted: true, page: page)
       response.records.each do |contact|
         contact.send_contact_export_message(contact.to_jsonapi)
+        i += 1
       end
       page_num += 1
     end
 
-    "#{total} contacts exported."
+    "#{i.to_s} contacts exported."
   end
 
   def self.import_from_providers
