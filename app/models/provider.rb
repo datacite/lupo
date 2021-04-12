@@ -873,7 +873,7 @@ class Provider < ApplicationRecord
       page_num += 1
     end
 
-    "#{i.to_s} providers exported."
+    "#{i} providers exported."
   end
 
   private

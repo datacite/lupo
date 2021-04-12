@@ -335,7 +335,7 @@ class Contact < ApplicationRecord
       page_num += 1
     end
 
-    "#{i.to_s} contacts exported."
+    "#{i} contacts exported."
   end
 
   def self.import_from_providers
