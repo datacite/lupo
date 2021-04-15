@@ -103,6 +103,7 @@ class ProvidersController < ApplicationController
             "organizationTypes" => organization_types,
             "focusAreas" => focus_areas,
             "nonProfitStatuses" => non_profit_statuses,
+            "hasRequiredContacts" => has_required_contacts,
           }.compact
 
           options[:links] = {
