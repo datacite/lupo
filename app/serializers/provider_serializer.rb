@@ -282,8 +282,7 @@ class ProviderSerializer
                   ) ==
                     true
               } do |object|
-                  object.has_required_contacts
-                end
+    object.has_required_contacts
   end
 
   attribute :salesforce_id,
