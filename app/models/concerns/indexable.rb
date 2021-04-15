@@ -328,6 +328,9 @@ module Indexable
         if options[:non_profit_status].present?
           filter << { term: { non_profit_status: options[:non_profit_status] } }
         end
+        if options[:has_required_contacts].present?
+          filter << { term: { has_required_contacts: options[:has_required_contacts] } }
+        end
         if options[:focus_area].present?
           filter << { terms: { focus_area: options[:focus_area].split(",") } }
         end

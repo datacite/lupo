@@ -44,6 +44,7 @@ class V3::ProvidersController < ApplicationController
         organization_type: params[:organization_type],
         focus_area: params[:focus_area],
         non_profit_status: params[:non_profit_status],
+        has_required_contacts: params[:has_required_contacts],
         page: page,
         sort: sort,
       )
