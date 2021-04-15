@@ -36,6 +36,7 @@ class ProviderSerializer
              :service_contact,
              :secondary_service_contact,
              :voting_contact,
+             :has_required_contacts,
              :created,
              :updated
 
@@ -272,18 +273,18 @@ class ProviderSerializer
   end
 
   attribute :has_required_contacts,
-  if:
-    Proc.new { |object, params|
-      params[:current_ability] &&
-        params[:current_ability].can?(
-          :read_contact_information,
-          object,
-        ) ==
-          true
-    } do |object|
-        object.has_required_contacts
-      end
-end
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_contact_information,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+                  object.has_required_contacts
+                end
+  end
 
   attribute :salesforce_id,
             if:
