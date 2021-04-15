@@ -84,7 +84,7 @@ class ProvidersController < ApplicationController
         end
       has_required_contacts =
         if total > 0
-          facet_by_key(
+          facet_by_bool(
             response.response.aggregations.has_required_contacts.buckets,
           )
         end

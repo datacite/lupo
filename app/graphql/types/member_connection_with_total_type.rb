@@ -42,6 +42,6 @@ class MemberConnectionWithTotalType < BaseConnection
   end
 
   def has_required_contacts
-    facet_by_key(object.aggregations.has_required_contacts.buckets)
+    facet_by_bool(object.aggregations.has_required_contacts.buckets)
   end
 end
