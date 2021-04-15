@@ -11,6 +11,7 @@ class MemberConnectionWithTotalType < BaseConnection
   field :organization_types, [FacetType], null: true, cache: true
   field :focus_areas, [FacetType], null: true, cache: true
   field :non_profit_statuses, [FacetType], null: true, cache: true
+  field :has_required_contacts, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count
@@ -38,5 +39,9 @@ class MemberConnectionWithTotalType < BaseConnection
 
   def non_profit_statuses
     facet_by_key(object.aggregations.non_profit_statuses.buckets)
+  end
+
+  def has_required_contacts
+    facet_by_key(object.aggregations.has_required_contacts.buckets)
   end
 end

@@ -339,6 +339,7 @@ class Provider < ApplicationRecord
                 family_name: { type: :text },
                 name: { type: :text },
               }
+      indexes :has_required_contacts, type: :boolean
       indexes :created, type: :date
       indexes :updated, type: :date
       indexes :deleted_at, type: :date
@@ -414,6 +415,7 @@ class Provider < ApplicationRecord
       "service_contact" => service_contact,
       "secondary_service_contact" => secondary_service_contact,
       "voting_contact" => voting_contact,
+      "has_required_contacts" => has_required_contacts,
       "created" => created.try(:iso8601),
       "updated" => updated.try(:iso8601),
       "deleted_at" => deleted_at.try(:iso8601),
@@ -464,6 +466,9 @@ class Provider < ApplicationRecord
       },
       non_profit_statuses: {
         terms: { field: "non_profit_status", size: 10, min_doc_count: 1 },
+      },
+      has_required_contacts: {
+        terms: { field: "has_required_contacts", size: 2, min_doc_count: 1 },
       },
     }
   end
@@ -623,6 +628,14 @@ class Provider < ApplicationRecord
 
   def voting_contact_family_name
     voting_contact.fetch("family_name", nil) if voting_contact.present?
+  end
+
+  def has_required_contacts
+    if member_type == "consortium_organization"
+      service_contact_email.present?
+    else
+      voting_contact_email.present? && service_contact_email.present? && billing_contact_email.present?
+    end
   end
 
   def billing_department

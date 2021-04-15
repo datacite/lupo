@@ -82,6 +82,12 @@ class ProvidersController < ApplicationController
             response.response.aggregations.non_profit_statuses.buckets,
           )
         end
+      has_required_contacts =
+        if total > 0
+          facet_by_key(
+            response.response.aggregations.has_required_contacts.buckets,
+          )
+        end
 
       @providers = response.results
       respond_to do |format|

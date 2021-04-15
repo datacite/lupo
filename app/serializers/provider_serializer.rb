@@ -271,6 +271,20 @@ class ProviderSerializer
     end
   end
 
+  attribute :has_required_contacts,
+  if:
+    Proc.new { |object, params|
+      params[:current_ability] &&
+        params[:current_ability].can?(
+          :read_contact_information,
+          object,
+        ) ==
+          true
+    } do |object|
+        object.has_required_contacts
+      end
+end
+
   attribute :salesforce_id,
             if:
               Proc.new { |object, params|
