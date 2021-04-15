@@ -122,7 +122,7 @@ namespace :client do
       exit
     end
 
-    client.send_client_export_message(client.to_jsonapi)
+    client.send_client_export_message(client.to_jsonapi.merge(slack_output: true))
     puts "Exported metadata for client #{client.symbol}."
   end
 

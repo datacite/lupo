@@ -74,7 +74,7 @@ namespace :provider do
       exit
     end
 
-    provider.send_provider_export_message(provider.to_jsonapi)
+    provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
     puts "Exported metadata for provider #{provider.symbol}."
   end
 

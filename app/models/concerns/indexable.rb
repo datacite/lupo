@@ -35,11 +35,11 @@ module Indexable
       elsif instance_of?(Event)
         OtherDoiJob.perform_later(dois_to_import)
       elsif instance_of?(Provider) && !Rails.env.test?
-        send_provider_export_message(to_jsonapi)
+        send_provider_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Client) && !Rails.env.test?
-        send_client_export_message(to_jsonapi)
+        send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !Rails.env.test?
-        send_contact_export_message(to_jsonapi)
+        send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
 
