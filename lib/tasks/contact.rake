@@ -79,7 +79,7 @@ namespace :contact do
       exit
     end
 
-    contact.send_contact_export_message(contact.to_jsonapi)
+    contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true))
     puts "Exported metadata for contact #{contact.uid}."
   end
 end
