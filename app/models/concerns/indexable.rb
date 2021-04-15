@@ -326,7 +326,7 @@ module Indexable
             }
         end
         if options[:non_profit_status].present?
-          filter << { term: { non_profit_status: options[:non_profit_status] } }
+          filter << { term: { non_profit_status: options[:non_profit_status] == 1 } }
         end
         if options[:has_required_contacts].present?
           filter << { term: { has_required_contacts: options[:has_required_contacts] } }
