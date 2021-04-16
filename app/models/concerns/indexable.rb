@@ -335,7 +335,7 @@ module Indexable
           filter << { terms: { focus_area: options[:focus_area].split(",") } }
         end
 
-        unless options[:include_deleted]
+        unless options[:include_deleted].present?
           must_not << { exists: { field: "deleted_at" } }
         end
         must_not << { term: { role_name: "ROLE_ADMIN" } }
@@ -404,7 +404,7 @@ module Indexable
         if options[:client_type].present?
           filter << { term: { client_type: options[:client_type] } }
         end
-        unless options[:include_deleted]
+        unless options[:include_deleted].present?
           must_not << { exists: { field: "deleted_at" } }
         end
       elsif name == "Event"
@@ -667,7 +667,7 @@ module Indexable
         if options[:role_name].present?
           filter << { term: { role_name: options[:role_name] } }
         end
-        unless options[:include_deleted]
+        unless options[:include_deleted].present?
           must_not << { exists: { field: "deleted_at" } }
         end
       end
