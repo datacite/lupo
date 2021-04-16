@@ -154,8 +154,9 @@ module Facetable
     end
 
     def facet_by_bool(arr)
-      id = hsh["key"] == 1 ? "true" : "false"
       arr.map do |hsh|
+        id = hsh["key"] == 1 ? "true" : "false"
+
         {
           "id" => id,
           "title" => id.capitalize,
