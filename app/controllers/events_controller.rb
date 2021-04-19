@@ -183,11 +183,11 @@ class EventsController < ApplicationController
         end
       occurred =
         if total.positive?
-          facet_by_source(response.response.aggregations.occurred.buckets)
+          facet_by_year(response.response.aggregations.occurred.buckets)
         end
       prefixes =
         if total.positive?
-          facet_by_source(response.response.aggregations.prefixes.buckets)
+          facet_by_key(response.response.aggregations.prefixes.buckets)
         end
       citation_types =
         if total.positive?
