@@ -253,6 +253,16 @@ class Event < ApplicationRecord
     {
       sources: { terms: { field: "source_id", size: 10, min_doc_count: 1 } },
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
+      occurred: {
+          date_histogram: {
+            field: "occurred_at",
+            interval: "year",
+            format: "year",
+            order: { _key: "desc" },
+            min_doc_count: 1,
+          },
+          aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
+      },
       registrants: {
         terms: { field: "registrant_id", size: 10, min_doc_count: 1 },
         aggs: {
