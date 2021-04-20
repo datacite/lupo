@@ -263,7 +263,6 @@ class Event < ApplicationRecord
           },
           min_doc_count: 1,
         },
-        aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
       },
       registrants: {
         terms: { field: "registrant_id", size: 10, min_doc_count: 1 },

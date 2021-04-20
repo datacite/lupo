@@ -178,7 +178,7 @@ class OldEventsController < ApplicationController
             end
           citation_years =
             if total > 0
-              facet_by_year(response.aggregations.citation_years.buckets)
+              facet_annual(response.aggregations.citation_years.buckets)
             end
           citation_types =
             if total > 0
