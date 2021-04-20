@@ -181,9 +181,9 @@ class EventsController < ApplicationController
         if total.positive?
           facet_by_source(response.response.aggregations.sources.buckets)
         end
-      citation_years =
-        if total.positive?
-          facet_by_cumulative_year(response.response.aggregations.citation_years.buckets)
+      occurred =
+        if total > 0
+          facet_by_year(response.aggregations.occurred.buckets)
         end
       prefixes =
         if total.positive?
@@ -218,7 +218,7 @@ class EventsController < ApplicationController
         page:
           page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
         sources: sources,
-        citation_years: citation_years,
+        occurred: occurred,
         prefixes: prefixes,
         "citationTypes" => citation_types,
         "relationTypes" => relation_types,

@@ -253,16 +253,15 @@ class Event < ApplicationRecord
     {
       sources: { terms: { field: "source_id", size: 10, min_doc_count: 1 } },
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
-      citation_years: {
-        date_histogram: {
-          field: "citation_year",
-          interval: "year",
-          format: "year",
-          order: {
-            _key: "desc",
+      occurred: {
+          date_histogram: {
+            field: "occurred_at",
+            interval: "year",
+            format: "year",
+            order: { _key: "desc" },
+            min_doc_count: 1,
           },
-          min_doc_count: 1,
-        },
+          aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
       },
       registrants: {
         terms: { field: "registrant_id", size: 10, min_doc_count: 1 },
@@ -958,10 +957,17 @@ class Event < ApplicationRecord
   end
 
   def citation_year
+    unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(
+      relation_type_id,
+    )
+      ""
+    end
     subj_publication =
-      subj["datePublished"] || subj["date_published"]
+      subj["datePublished"] || subj["date_published"] ||
+      (date_published(subj_id) || year_month)
     obj_publication =
-      obj["datePublished"] || obj["date_published"]
+      obj["datePublished"] || obj["date_published"] ||
+      (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 
