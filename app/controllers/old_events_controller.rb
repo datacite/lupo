@@ -176,9 +176,9 @@ class OldEventsController < ApplicationController
             if total > 0
               facet_by_source(response.aggregations.prefixes.buckets)
             end
-          occurred =
+          citation_years =
             if total > 0
-              facet_by_year(response.aggregations.occurred.buckets)
+              facet_by_year(response.aggregations.citation_years.buckets)
             end
           citation_types =
             if total > 0
@@ -203,7 +203,7 @@ class OldEventsController < ApplicationController
             page:
               page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
             sources: sources,
-            occurred: occurred,
+            citation_years: citation_years,
             prefixes: prefixes,
             "citation-types" => citation_types,
             "relation-types" => relation_types,
