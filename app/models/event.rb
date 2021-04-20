@@ -958,17 +958,10 @@ class Event < ApplicationRecord
   end
 
   def citation_year
-    unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(
-      relation_type_id,
-    )
-      ""
-    end
     subj_publication =
-      subj["datePublished"] || subj["date_published"] ||
-      (date_published(subj_id) || year_month)
+      subj["datePublished"] || subj["date_published"]
     obj_publication =
-      obj["datePublished"] || obj["date_published"] ||
-      (date_published(obj_id) || year_month)
+      obj["datePublished"] || obj["date_published"]
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 

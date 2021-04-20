@@ -183,7 +183,7 @@ class EventsController < ApplicationController
         end
       citation_years =
         if total.positive?
-          facet_annual(response.response.aggregations.citation_years.buckets)
+          facet_by_cumulative_year(response.response.aggregations.citation_years.buckets)
         end
       prefixes =
         if total.positive?
