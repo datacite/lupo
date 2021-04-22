@@ -34,11 +34,11 @@ module Indexable
         end
       elsif instance_of?(Event)
         OtherDoiJob.perform_later(dois_to_import)
-      elsif instance_of?(Provider) && !Rails.env.test?
+      elsif instance_of?(Provider) && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Client) && !Rails.env.test?
+      elsif instance_of?(Client) && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
         send_client_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Contact) && !Rails.env.test?
+      elsif instance_of?(Contact) && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
