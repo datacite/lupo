@@ -121,7 +121,7 @@ class Doi < ApplicationRecord
   validate :check_landing_page, if: :landing_page?
   validate :check_identifiers, if: :identifiers?
   validate :check_related_identifiers, if: :related_identifiers?
-  # validate :check_related_items, if: :related_items?
+  validate :check_related_items, if: :related_items?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
@@ -1654,15 +1654,6 @@ class Doi < ApplicationRecord
 
   def identifier
     normalize_doi(doi, sandbox: !Rails.env.production?)
-  end
-
-  # disable virtual attributes when database has been migrated
-  def related_items=(value)
-    write_attribute(:related_items, value) if has_attribute?(:related_items)
-  end
-
-  def related_items
-    read_attribute(:related_items) if has_attribute?(:related_items)
   end
 
   def client_id

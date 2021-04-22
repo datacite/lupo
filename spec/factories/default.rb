@@ -232,6 +232,22 @@ FactoryBot.define do
         },
       ]
     end
+    related_items do
+      [
+        {
+          "firstPage" => "249",
+          "lastPage" => "264",
+          "publicationYear" => "2018",
+          "relatedItemIdentifier" =>
+            { "__content__" => "10.1016/j.physletb.2017.11.044",
+            "relatedItemIdentifierType" => "DOI" },
+          "relatedItemType" => "Journal",
+          "relationType" => "IsPublishedIn",
+          "titles" => { "title" => "Physics letters / B" },
+          "volume" => "776"
+        }
+      ]
+    end
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
     type { "DataciteDoi" }
