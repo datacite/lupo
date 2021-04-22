@@ -225,8 +225,8 @@ class Contact < ApplicationRecord
       "name" => name,
       "email" => email,
       "role_name" => role_name,
-      "provider_id" => provider_id,
-      "consortium_id" => consortium_id,
+      "provider_id" => provider_id.upcase,
+      "consortium_id" => consortium_id.present? ? consortium_id.upcase : nil,
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),
       "deleted_at" => deleted_at.try(:iso8601),
@@ -239,18 +239,18 @@ class Contact < ApplicationRecord
     }
   end
 
-  # attributes to be sent to elasticsearch index
+  # attributes to be sent to message bus
   def to_jsonapi
     attributes = {
       "uid" => uid,
-      "fabrica_id" => provider_id + "-" + email,
+      "fabrica_id" => provider_id.upcase + "-" + email,
       "given_name" => given_name,
       "family_name" => family_name,
       "name" => name,
       "email" => email,
       "role_name" => Array.wrap(role_name).map(&:classify),
-      "provider_id" => provider_id,
-      "consortium_id" => consortium_id,
+      "provider_id" => provider_id.upcase,
+      "consortium_id" => consortium_id.present? ? consortium_id.upcase : nil,
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),
       "deleted_at" => deleted_at.try(:iso8601),
