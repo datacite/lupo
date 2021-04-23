@@ -858,7 +858,7 @@ class Provider < ApplicationRecord
   end
 
   def self.export(query: nil)
-    query = query.present? ? query + " !role_name:ROLE_ADMIN" : "!role_name:ROLE_ADMIN"
+    query = query.present? ? query + " !role_name:ROLE_ADMIN !role_name:ROLE_DEV" : "!role_name:ROLE_ADMIN !role_name:ROLE_DEV"
 
     # Loop through all providers
     i = 0
