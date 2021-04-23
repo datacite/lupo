@@ -93,7 +93,6 @@ class Provider < ApplicationRecord
                            ROLE_CONSORTIUM_ORGANIZATION
                            ROLE_ALLOCATOR
                            ROLE_MEMBER
-                           ROLE_REGISTRATION_AGENCY
                            ROLE_ADMIN
                            ROLE_DEV
                          ],
@@ -710,9 +709,8 @@ class Provider < ApplicationRecord
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
       "ROLE_ADMIN" => "DataCite Admin",
-      "ROLE_DEV" => "DataCite Developer",
+      "ROLE_DEV" => "Developer",
       "ROLE_FOR_PROFIT_PROVIDER" => "Direct Member",
-      "ROLE_REGISTRATION_AGENCY" => "DOI Registration Agency",
     }
   end
 
@@ -733,7 +731,7 @@ class Provider < ApplicationRecord
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
       "ROLE_FOR_PROFIT_PROVIDER" => "for-profit_provider",
-      "ROLE_REGISTRATION_AGENCY" => "registration_agency",
+      "ROLE_DEV" => "developer",
     }
   end
 

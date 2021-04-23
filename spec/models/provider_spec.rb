@@ -45,20 +45,20 @@ describe Provider, type: :model do
     end
   end
 
-  describe "provider with ROLE_REGISTRATION_AGENCY" do
+  describe "provider with ROLE_DEV" do
     subject do
       create(
         :provider,
-        role_name: "ROLE_REGISTRATION_AGENCY",
-        name: "Crossref",
-        symbol: "CROSSREF",
+        role_name: "ROLE_DEV",
+        name: "Super Developer",
+        symbol: "SUPERDEV",
       )
     end
 
     it "works" do
-      expect(subject.role_name).to eq("ROLE_REGISTRATION_AGENCY")
-      expect(subject.member_type).to eq("registration_agency")
-      expect(subject.member_type_label).to eq("DOI Registration Agency")
+      expect(subject.role_name).to eq("ROLE_DEV")
+      expect(subject.member_type).to eq("developer")
+      expect(subject.member_type_label).to eq("Developer")
     end
   end
 

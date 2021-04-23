@@ -175,13 +175,13 @@ module Authenticable
     def get_payload(uid: nil, user: nil, password: nil)
       roles = {
         "ROLE_ADMIN" => "staff_admin",
+        "ROLE_DEV" => "staff_admin",
         "ROLE_DATACENTRE" => "client_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
         "ROLE_CONSORTIUM" => "consortium_admin",
         "ROLE_CONSORTIUM_ORGANIZATION" => "provider_admin",
         "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
         "ROLE_FOR_PROFIT_PROVIDER" => "provider_admin",
-        "ROLE_REGISTRATION_AGENCY" => "provider_admin",
       }
       payload = {
         "uid" => uid,
