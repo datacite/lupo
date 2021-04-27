@@ -16,6 +16,7 @@ class Contact < ApplicationRecord
   before_create :set_uid
 
   delegate :consortium_id, to: :provider, allow_nil: true
+  delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   ROLES = %w[voting billing secondary_billing service secondary_service technical secondary_technical]
 
@@ -250,6 +251,7 @@ class Contact < ApplicationRecord
       "email" => email,
       "role_name" => Array.wrap(role_name).map(&:classify),
       "provider_id" => provider_id.upcase,
+      "provider_salesforce_id" => provider_salesforce_id,
       "consortium_id" => consortium_id.present? ? consortium_id.upcase : nil,
       "created_at" => created_at.try(:iso8601),
       "updated_at" => updated_at.try(:iso8601),

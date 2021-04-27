@@ -46,6 +46,7 @@ class Client < ApplicationRecord
   attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
   delegate :consortium_id, to: :provider, allow_nil: true
+  delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
 
@@ -630,6 +631,7 @@ class Client < ApplicationRecord
       "url" => url,
       "re3data_id" => re3data_id,
       "provider_id" => provider_id,
+      "provider_salesforce_id" => provider_salesforce_id,
       "is_active" => is_active.getbyte(0) == 1,
       "dois_total" => dois_total,
       "dois_current_year" => dois_current_year,
