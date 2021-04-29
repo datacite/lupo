@@ -64,6 +64,8 @@ class Provider < ApplicationRecord
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
 
+  delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
+
   validates_presence_of :symbol, :name, :display_name, :system_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :symbol,
@@ -824,6 +826,7 @@ class Provider < ApplicationRecord
     attributes = {
       "symbol" => symbol,
       "salesforce_id" => salesforce_id,
+      "consortium_salesforce_id"=> consortium_salesforce_id,
       "parent_organization" => consortium_id.present? ? consortium_id.upcase : nil,
       "name" => name,
       "website" => website,
