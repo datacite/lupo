@@ -399,7 +399,6 @@ class ProvidersController < ApplicationController
             where(symbol: params[:id]).
             first
       end
-      
       fail ActiveRecord::RecordNotFound if @provider.blank?
     end
 
