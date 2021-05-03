@@ -158,9 +158,9 @@ class User
     subject = "#{title}: Password Reset Request"
     account_type =
       if user.instance_of?(Provider)
-        user.member_type.humanize
+        user.member_type.to_s.humanize
       else
-        user.client_type.humanize
+        user.client_type.to_s.humanize
       end
     text =
       User.format_message_text(
