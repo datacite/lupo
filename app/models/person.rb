@@ -67,6 +67,7 @@ class Person
   def self.query(query, options = {})
     options[:limit] ||= 25
     options[:offset] ||= 0
+    api_url = Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
 
     params = {
       q: query || "*",
@@ -75,7 +76,7 @@ class Person
     }.compact
 
     url =
-      "https://pub.orcid.org/v3.0/expanded-search/?" +
+      "#{api_url}/v3.0/expanded-search/?" +
       URI.encode_www_form(params)
 
     response = Maremma.get(url, accept: "json")
@@ -99,7 +100,8 @@ class Person
   end
 
   def self.get_orcid(orcid: nil, endpoint: nil)
-    url = "https://pub.orcid.org/v3.0/#{orcid}/#{endpoint}"
+    api_url = Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
+    url = "#{api_url}/v3.0/#{orcid}/#{endpoint}"
     response = Maremma.get(url, accept: "json")
 
     if response.status >= 405
