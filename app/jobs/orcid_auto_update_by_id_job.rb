@@ -20,12 +20,11 @@ class OrcidAutoUpdateByIdJob < ApplicationJob
     end
 
     # otherwise fetch basic ORCID metadata and store with DataCite
-    url = "https://pub.orcid.org/v2.1/#{orcid}/person"
-    # if Rails.env.production?
-    #   url = "https://pub.orcid.org/v2.1/#{orcid}/person"
-    # else
-    #   url = "https://pub.sandbox.orcid.org/v2.1/#{orcid}/person"
-    # end
+    if Rails.env.production?
+      url = "https://pub.orcid.org/v2.1/#{orcid}/person"
+    else
+      url = "https://pub.sandbox.orcid.org/v2.1/#{orcid}/person"
+    end
 
     response = Maremma.get(url, accept: "application/vnd.orcid+json")
     return {} if response.status != 200
