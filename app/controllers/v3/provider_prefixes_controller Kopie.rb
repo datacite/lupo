@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::ProviderPrefixesController < ApplicationController
+module V3
+class ProviderPrefixesController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider_prefix, only: %i[show update destroy]
   before_action :set_include
@@ -184,4 +184,5 @@ class V3::ProviderPrefixesController < ApplicationController
         only: %i[id provider prefix],
       )
     end
+end
 end

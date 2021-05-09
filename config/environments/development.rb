@@ -47,6 +47,16 @@ Rails.application.configure do
   #   Bullet.rails_logger = true
   #   Bullet.counter_cache_enable = false
   # end
+  
+  config.after_initialize do
+    Dir[Rails.root + 'app/controllers/v3/*.rb'].each do |file|
+      require file
+    end
+
+    Dir[Rails.root + 'app/serializers/v3/*.rb'].each do |file|
+      require file
+    end
+  end
 end
 
 BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::MetadataController < ApplicationController
+module V3
+class MetadataController < ApplicationController
   before_action :set_doi
   before_action :set_metadata, only: %i[show destroy]
   before_action :set_include
@@ -144,4 +144,5 @@ class V3::MetadataController < ApplicationController
         only: %i[xml],
       )
     end
+end
 end

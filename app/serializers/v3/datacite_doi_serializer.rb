@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::DataciteDoiSerializer
+module V3
+class DataciteDoiSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
@@ -257,4 +257,5 @@ class V3::DataciteDoiSerializer
                     true
               },
             &:landing_page
+end
 end

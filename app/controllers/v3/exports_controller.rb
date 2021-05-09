@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::ExportsController < ApplicationController
+module V3
+class ExportsController < ApplicationController
   include ActionController::MimeResponds
 
   before_action :authenticate_user_with_basic_auth!
@@ -366,4 +366,5 @@ class V3::ExportsController < ApplicationController
   def export_region(region)
     REGIONS[region]
   end
+end
 end

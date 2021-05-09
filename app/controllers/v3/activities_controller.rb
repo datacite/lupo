@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::ActivitiesController < ApplicationController
+module V3
+class ActivitiesController < ApplicationController
   include Countable
 
   before_action :set_activity, only: %i[show]
@@ -140,4 +140,5 @@ class V3::ActivitiesController < ApplicationController
       @activity = response.results.first
       fail ActiveRecord::RecordNotFound if @activity.blank?
     end
+end
 end

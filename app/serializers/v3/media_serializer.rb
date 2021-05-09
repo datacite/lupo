@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::MediaSerializer
+module V3
+class MediaSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :media
@@ -10,4 +10,5 @@ class V3::MediaSerializer
   attributes :version, :url, :media_type, :created, :updated
 
   belongs_to :datacite_doi, record_type: :datacite_dois
+end
 end

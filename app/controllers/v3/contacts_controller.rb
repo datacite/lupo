@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::ContactsController < ApplicationController
+module V3
+class ContactsController < ApplicationController
   include ActionController::MimeResponds
 
   before_action :set_contact, only: %i[show update destroy]
@@ -189,4 +189,5 @@ class V3::ContactsController < ApplicationController
         },
       )
     end
+end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::PrefixSerializer
+module V3
+class PrefixSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :prefixes
@@ -14,4 +14,5 @@ class V3::PrefixSerializer
   has_many :providers, record_type: :providers
   has_many :client_prefixes, record_type: "client-prefixes"
   has_many :provider_prefixes, record_type: "provider-prefixes"
+end
 end

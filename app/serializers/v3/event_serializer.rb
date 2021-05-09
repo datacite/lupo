@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::EventSerializer
+module V3
+class EventSerializer
   include FastJsonapi::ObjectSerializer
   # include BatchLoaderHelper
 
@@ -34,4 +34,5 @@ class V3::EventSerializer
 
   belongs_to :subj, serializer: ObjectSerializer, record_type: :objects
   belongs_to :obj, serializer: ObjectSerializer, record_type: :objects
+end
 end

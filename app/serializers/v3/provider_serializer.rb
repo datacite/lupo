@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class V3::ProviderSerializer
+module V3
+class ProviderSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :providers
@@ -292,4 +293,5 @@ class V3::ProviderSerializer
                     true
               },
             &:salesforce_id
+end
 end

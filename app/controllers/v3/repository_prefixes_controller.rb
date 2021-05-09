@@ -2,7 +2,8 @@
 
 require "uri"
 
-class V3::RepositoryPrefixesController < ApplicationController
+module V3
+class RepositoryPrefixesController < ApplicationController
   before_action :set_client_prefix, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
@@ -188,4 +189,5 @@ class V3::RepositoryPrefixesController < ApplicationController
         keys: { repository: :client, "provider-prefix" => :provider_prefix },
       )
     end
+end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::IndexController < ApplicationController
+module V3
+class IndexController < ApplicationController
   include ActionController::MimeResponds
 
   def index
@@ -70,4 +70,5 @@ class V3::IndexController < ApplicationController
     }.to_json,
            status: :method_not_allowed
   end
+end
 end

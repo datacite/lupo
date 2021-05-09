@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::EventsController < ApplicationController
+module V3
+class EventsController < ApplicationController
   include Identifiable
 
   include Facetable
@@ -342,4 +342,5 @@ class V3::EventsController < ApplicationController
         keys: { id: :uuid },
       )
     end
+end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::RepositoryPrefixSerializer
+module V3
+class RepositoryPrefixSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type "repository-prefixes"
@@ -13,4 +13,5 @@ class V3::RepositoryPrefixSerializer
   belongs_to :provider
   belongs_to :provider_prefix
   belongs_to :prefix
+end
 end

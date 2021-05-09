@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::RepositoriesController < ApplicationController
+module V3
+class RepositoriesController < ApplicationController
   include ActionController::MimeResponds
   include Countable
 
@@ -375,4 +375,5 @@ class V3::RepositoriesController < ApplicationController
         },
       )
     end
+end
 end

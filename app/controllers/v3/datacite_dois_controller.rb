@@ -3,8 +3,8 @@
 require "uri"
 require "base64"
 require "pp"
-
-class V3::DataciteDoisController < ApplicationController
+module V3
+class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
 
@@ -1186,4 +1186,5 @@ class V3::DataciteDoisController < ApplicationController
       Raven.extra_context metadata:
                             Base64.decode64(params.dig(:data, :attributes, :xml))
     end
+end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::MediaController < ApplicationController
+module V3
+class MediaController < ApplicationController
   before_action :set_doi
   before_action :set_media, only: %i[show update destroy]
   before_action :set_include
@@ -147,4 +147,5 @@ class V3::MediaController < ApplicationController
         only: ["mediaType", :url], keys: { "mediaType" => :media_type },
       )
     end
+end
 end

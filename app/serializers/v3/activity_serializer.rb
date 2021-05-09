@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::ActivitySerializer
+module V3
+class ActivitySerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
   set_type :activities
@@ -21,4 +21,5 @@ class V3::ActivitySerializer
   attribute "prov:wasGeneratedBy", &:was_generated_by
 
   attribute "prov:generatedAtTime", &:created
+end
 end

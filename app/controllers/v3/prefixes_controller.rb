@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-
-class V3::PrefixesController < ApplicationController
+module V3
+class PrefixesController < ApplicationController
   before_action :set_prefix, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
@@ -212,4 +212,5 @@ class V3::PrefixesController < ApplicationController
         only: %i[id created_at], keys: { id: :uid },
       )
     end
+end
 end
