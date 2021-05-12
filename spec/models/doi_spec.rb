@@ -777,7 +777,7 @@ describe Doi, type: :model, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
 
-    it "has views" do
+    xit "has views" do
       expect(doi.view_events.count).to eq(3)
       expect(doi.view_count).to eq(75)
       expect(doi.views_over_time.first).to eq("total" => 25, "yearMonth" => "2015-06")
@@ -793,7 +793,7 @@ describe Doi, type: :model, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
-    it "has downloads" do
+    xit "has downloads" do
       expect(doi.download_events.count).to eq(3)
       expect(doi.download_count).to eq(30)
       expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
@@ -830,7 +830,7 @@ describe Doi, type: :model, vcr: true do
     let!(:citation_event3) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-cited-by", occurred_at: "2016-06-13T16:14:19Z") }
 
     # removing duplicate dois in citation_ids, citation_count and citations_over_time (different relation_type_id)
-    it "has citations" do
+    xit "has citations" do
       expect(doi.citations.count).to eq(2)
       expect(doi.citation_ids.count).to eq(2)
       expect(doi.citation_count).to eq(2)
@@ -863,7 +863,7 @@ describe Doi, type: :model, vcr: true do
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-part-of") }
 
-    it "has part of" do
+    xit "has part of" do
       expect(doi.part_of.count).to eq(1)
       expect(doi.part_of_ids.count).to eq(1)
       expect(doi.part_of_count).to eq(1)
@@ -895,7 +895,7 @@ describe Doi, type: :model, vcr: true do
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:part_of_events) { create(:event_for_datacite_version_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}") }
 
-    it "has version of" do
+    xit "has version of" do
       expect(doi.version_of.count).to eq(1)
       expect(doi.version_of_ids.count).to eq(1)
       expect(doi.version_of_count).to eq(1)

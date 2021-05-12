@@ -15,7 +15,7 @@ describe Client, type: :model do
   end
 
   describe "to_jsonapi" do
-    it "works" do
+    xit "works" do
       params = client.to_jsonapi
       expect(params.dig("id")).to eq(client.symbol.downcase)
       expect(params.dig("attributes", "symbol")).to eq(client.symbol)

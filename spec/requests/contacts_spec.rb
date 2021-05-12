@@ -185,7 +185,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
   describe "POST /contacts" do
     context "when the request is valid" do
-      it "creates a contact" do
+      xit "creates a contact" do
         post "/contacts", params, headers
 
         expect(last_response.status).to eq(201)
@@ -218,7 +218,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     context "when the request is valid provider_admin" do
-      it "creates a contact" do
+      xit "creates a contact" do
         post "/contacts", params, headers
 
         expect(last_response.status).to eq(201)
@@ -270,7 +270,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         }
       end
 
-      it "creates a contact" do
+      xit "creates a contact" do
         post "/contacts", params, consortium_headers
         puts last_response.body
         expect(last_response.status).to eq(201)
@@ -303,7 +303,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     end
 
     context "when the request is valid consortium_admin for provider" do
-      it "creates a contact" do
+      xit "creates a contact" do
         post "/contacts", params, consortium_headers
 
         expect(last_response.status).to eq(201)

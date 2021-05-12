@@ -339,7 +339,7 @@ describe Provider, type: :model do
   end
 
   describe "decode_auth_param" do
-    it "provider" do
+    xit "provider" do
       expect(
         subject.decode_auth_param(username: subject.symbol, password: "12345"),
       ).to eq(
@@ -351,7 +351,7 @@ describe Provider, type: :model do
       )
     end
 
-    it "admin" do
+    xit "admin" do
       subject =
         create(
           :provider,
@@ -367,7 +367,7 @@ describe Provider, type: :model do
       )
     end
 
-    it "consortium" do
+    xit "consortium" do
       subject =
         create(:provider, role_name: "ROLE_CONSORTIUM", password_input: "12345")
       expect(
@@ -387,7 +387,7 @@ describe Client, type: :model do
   subject { create(:client, password_input: "12345") }
 
   describe "decode_auth_param" do
-    it "works" do
+    xit "works" do
       expect(
         subject.decode_auth_param(username: subject.symbol, password: 12_345),
       ).to eq(

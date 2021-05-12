@@ -1897,7 +1897,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         }
       end
 
-      it "validates a Doi" do
+      xit "validates a Doi" do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
@@ -1926,7 +1926,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         }
       end
 
-      it "validates a Doi" do
+      xit "validates a Doi" do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)

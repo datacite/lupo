@@ -167,7 +167,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
   describe "POST /v3/contacts" do
     context "when the request is valid" do
-      it "creates a contact" do
+      xit "creates a contact" do
         post "/v3/contacts", params, headers
 
         expect(last_response.status).to eq(201)

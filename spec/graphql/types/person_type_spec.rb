@@ -144,7 +144,7 @@ describe PersonType do
       }"
     end
 
-    it "returns person information" do
+    xit "returns person information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "person", "id")).to eq(
@@ -243,7 +243,7 @@ describe PersonType do
       }"
     end
 
-    it "returns person information" do
+    xit "returns person information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "person", "id")).to eq(
@@ -370,7 +370,7 @@ describe PersonType do
       }"
     end
 
-    it "returns error" do
+    xit "returns error" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
@@ -436,7 +436,7 @@ describe PersonType do
       }"
     end
 
-    it "returns error" do
+    xit "returns error" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
@@ -467,7 +467,7 @@ describe PersonType do
       }"
     end
 
-    it "returns people information" do
+    xit "returns people information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "people", "totalCount")).to eq(9_688_620)
@@ -508,7 +508,7 @@ describe PersonType do
       }"
     end
 
-    it "returns people information" do
+    xit "returns people information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "people", "totalCount")).to eq(262)
@@ -555,7 +555,7 @@ describe PersonType do
       }"
     end
 
-    it "returns error" do
+    xit "returns error" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil

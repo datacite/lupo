@@ -28,7 +28,6 @@ services:
     command: --max_allowed_packet=50000000
     environment:
       MYSQL_DATABASE: datacite
-      MYSQL_USER: root
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     image: mysql:5.7
     ports:

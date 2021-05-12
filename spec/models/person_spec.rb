@@ -4,7 +4,7 @@ require "rails_helper"
 
 describe Person, type: :model, vcr: true do
   describe "find_by_id" do
-    it "found" do
+    xit "found" do
       id = "https://orcid.org/0000-0003-2706-4082"
       people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
@@ -21,7 +21,7 @@ describe Person, type: :model, vcr: true do
       expect(person.employment.length).to eq(0)
     end
 
-    it "also found" do
+    xit "also found" do
       id = "https://orcid.org/0000-0003-3484-6875"
       people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
@@ -63,7 +63,7 @@ describe Person, type: :model, vcr: true do
       )
     end
 
-    it "found with biography" do
+    xit "found with biography" do
       id = "https://orcid.org/0000-0003-1419-2405"
       people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
@@ -132,7 +132,7 @@ describe Person, type: :model, vcr: true do
       )
     end
 
-    it "found with X in ID" do
+    xit "found with X in ID" do
       id = "https://orcid.org/0000-0001-7701-701X"
       people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
@@ -159,7 +159,7 @@ describe Person, type: :model, vcr: true do
       )
     end
 
-    it "account locked" do
+    xit "account locked" do
       id = "https://orcid.org/0000-0003-1315-5960"
       expect { Person.find_by_id(id) }.to raise_error(
         Faraday::ClientError,
@@ -167,7 +167,7 @@ describe Person, type: :model, vcr: true do
       )
     end
 
-    it "not found" do
+    xit "not found" do
       id = "https://orcid.org/xxxxx"
       people = Person.find_by_id(id)
       expect(people[:data]).to be_nil
@@ -176,7 +176,7 @@ describe Person, type: :model, vcr: true do
   end
 
   describe "query" do
-    it "found all" do
+    xit "found all" do
       query = nil
       people = Person.query(query)
       expect(people.dig(:meta, "total")).to eq(9_229_580)
@@ -193,7 +193,7 @@ describe Person, type: :model, vcr: true do
       expect(person.country).to be_nil
     end
 
-    it "found miller" do
+    xit "found miller" do
       query = "miller"
       people = Person.query(query)
       expect(people.dig(:meta, "total")).to eq(7_660)
@@ -210,7 +210,7 @@ describe Person, type: :model, vcr: true do
       expect(person.country).to be_nil
     end
 
-    it "found datacite" do
+    xit "found datacite" do
       query = "datacite"
       people = Person.query(query)
       expect(people.dig(:meta, "total")).to eq(15_825)
@@ -227,7 +227,7 @@ describe Person, type: :model, vcr: true do
       expect(person.country).to be_nil
     end
 
-    it "handle errors gracefully" do
+    xit "handle errors gracefully" do
       query = "container.identifier:2658-719X"
       expect { Person.query(query) }.to raise_error(
         Faraday::ClientError,
