@@ -56,11 +56,11 @@ Rails.application.configure do
   # end
 
   config.after_initialize do
-    Dir[Rails.root + 'app/controllers/v3/*.rb'].each do |file|
+    Dir[Rails.root + "app/controllers/v3/*.rb"].each do |file|
       require file
     end
 
-    Dir[Rails.root + 'app/serializers/v3/*.rb'].each do |file|
+    Dir[Rails.root + "app/serializers/v3/*.rb"].each do |file|
       require file
     end
   end

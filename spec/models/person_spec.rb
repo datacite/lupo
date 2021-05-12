@@ -193,7 +193,7 @@ describe Person, type: :model, vcr: true do
       expect(person.country).to be_nil
     end
 
-  xit "found miller" do
+    xit "found miller" do
       query = "miller"
       people = Person.query(query)
       expect(people.dig(:meta, "total")).to eq(7_660)
