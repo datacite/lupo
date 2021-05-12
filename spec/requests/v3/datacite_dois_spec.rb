@@ -512,7 +512,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 2
     end
 
-    it "has views" do
+    xit "has views" do
       get "/v3/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -523,7 +523,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "viewsOverTime")).to eq([{ "total" => 25, "yearMonth" => "2015-06" }, { "total" => 25, "yearMonth" => "2015-06" }, { "total" => 25, "yearMonth" => "2015-06" }])
     end
 
-    it "has views meta" do
+    xit "has views meta" do
       get "/v3/dois", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -541,7 +541,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 2
     end
 
-    it "has downloads" do
+    xit "has downloads" do
       get "/v3/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
