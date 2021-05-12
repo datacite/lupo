@@ -68,7 +68,7 @@ describe "Person", vcr: true do
   subject { Person }
 
   context "wikidata_query" do
-    it "employment" do
+    xit "employment" do
       orcid = "0000-0003-1419-2405"
       employments = subject.get_orcid(orcid: orcid, endpoint: "employments")
       employment = subject.get_employments(employments)

@@ -345,7 +345,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         }
       end
 
-      it "has registrant aggregation" do
+      xit "has registrant aggregation" do
         post uri, params, headers
 
         expect(last_response.status).to eq(201)

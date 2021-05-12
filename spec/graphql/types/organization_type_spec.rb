@@ -581,7 +581,7 @@ describe OrganizationType do
       }"
     end
 
-    it "returns organization information" do
+    xit "returns organization information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organization", "id")).to eq(
@@ -666,7 +666,7 @@ describe OrganizationType do
       }"
     end
 
-    it "returns organization information" do
+    xit "returns organization information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organization", "id")).to eq(

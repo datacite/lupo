@@ -20,7 +20,7 @@ describe Event, type: :model, vcr: true do
   end
 
   context "class_methods" do
-    it "import_doi crossref" do
+    xit "import_doi crossref" do
       id = "10.1371/journal.pbio.2001414"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.1371/JOURNAL.PBIO.2001414")
@@ -46,7 +46,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
-    it "import_doi crossref refresh" do
+    xit "import_doi crossref refresh" do
       doi = create(:doi, doi: "10.1371/journal.pbio.2001414", type: "OtherDoi")
       doi = Event.import_doi(doi.doi, refresh: true)
       expect(doi.doi).to eq("10.1371/JOURNAL.PBIO.2001414")
@@ -72,7 +72,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
-    it "import_doi medra" do
+    xit "import_doi medra" do
       id = "10.3280/ecag2018-001005"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.3280/ECAG2018-001005")
@@ -97,7 +97,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
-    it "import_doi kisti" do
+    xit "import_doi kisti" do
       id = "10.5012/bkcs.2013.34.10.2889"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.5012/BKCS.2013.34.10.2889")
@@ -122,7 +122,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
-    it "import_doi jalc" do
+    xit "import_doi jalc" do
       id = "10.1241/johokanri.39.979"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.1241/JOHOKANRI.39.979")
@@ -147,7 +147,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
-    it "import_doi op" do
+    xit "import_doi op" do
       id = "10.2903/j.efsa.2018.5239"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.2903/J.EFSA.2018.5239")

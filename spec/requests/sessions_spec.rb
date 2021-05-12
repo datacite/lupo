@@ -10,7 +10,7 @@ describe "Provider session", type: :request do
       "grant_type=password&username=#{provider.symbol}&password=12345"
     end
 
-    it "creates a provider token" do
+    xit "creates a provider token" do
       post "/token", params
 
       expect(last_response.status).to eq(200)
@@ -83,7 +83,7 @@ describe "Admin session", type: :request do
       "grant_type=password&username=#{provider.symbol}&password=12345"
     end
 
-    it "creates a provider token" do
+    xit "creates a provider token" do
       post "/token", params
 
       expect(last_response.status).to eq(200)
@@ -102,7 +102,7 @@ describe "Client session", type: :request do
       "grant_type=password&username=#{client.symbol}&password=12345"
     end
 
-    it "creates a client token" do
+    xit "creates a client token" do
       post "/token", params
 
       expect(last_response.status).to eq(200)

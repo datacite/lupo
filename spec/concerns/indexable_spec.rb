@@ -5,7 +5,7 @@ require "rails_helper"
 describe "Indexable", vcr: true do
   subject { create(:doi) }
 
-  it "send_message" do
+  xit "send_message" do
     response = subject.send_message(subject.to_jsonapi)
     expect(response.message_id).to be_present
   end

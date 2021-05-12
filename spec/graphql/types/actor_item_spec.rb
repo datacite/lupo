@@ -73,7 +73,7 @@ describe ActorItem do
       }"
     end
 
-    it "returns actor information" do
+    xit "returns actor information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "actor", "id")).to eq(
@@ -100,7 +100,7 @@ describe ActorItem do
       }"
     end
 
-    it "returns actor information" do
+    xit "returns actor information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "actors", "totalCount")).to eq(1_956_171)

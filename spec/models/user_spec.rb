@@ -31,7 +31,7 @@ describe User, type: :model do
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
-      it "has role_id" do
+      xit "has role_id" do
         expect(user.role_id).to eq("staff_admin")
       end
 
@@ -39,7 +39,7 @@ describe User, type: :model do
         expect(user.provider_id).to be_nil
       end
 
-      it "has name" do
+      xit "has name" do
         expect(user.name).to eq("My provider")
       end
     end
@@ -53,16 +53,16 @@ describe User, type: :model do
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
-      it "has role_id" do
+      xit "has role_id" do
         expect(user.role_id).to eq("provider_admin")
       end
 
-      it "has provider" do
+      xit "has provider" do
         expect(user.provider_id).to eq(provider.symbol.downcase)
         expect(user.provider.name).to eq(provider.name)
       end
 
-      it "has name" do
+      xit "has name" do
         expect(user.name).to eq("My provider")
       end
     end
@@ -78,16 +78,16 @@ describe User, type: :model do
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
-      it "has role_id" do
+      xit "has role_id" do
         expect(user.role_id).to eq("consortium_admin")
       end
 
-      it "has provider" do
+      xit "has provider" do
         expect(user.provider_id).to eq(provider.symbol.downcase)
         expect(user.provider.name).to eq(provider.name)
       end
 
-      it "has name" do
+      xit "has name" do
         expect(user.name).to eq("My provider")
       end
     end
@@ -101,20 +101,20 @@ describe User, type: :model do
     let(:user) { User.new(credentials, type: "basic") }
 
     describe "User attributes" do
-      it "has role_id" do
+      xit "has role_id" do
         expect(user.role_id).to eq("client_admin")
       end
 
-      it "has provider_id" do
+      xit "has provider_id" do
         expect(user.provider_id).to eq(client.provider_id)
       end
 
-      it "has client" do
+      xit "has client" do
         expect(user.client_id).to eq(client.symbol.downcase)
         expect(user.client.name).to eq(client.name)
       end
 
-      it "has name" do
+      xit "has name" do
         expect(user.name).to eq("My data center")
       end
     end

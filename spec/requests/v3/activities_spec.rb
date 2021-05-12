@@ -79,7 +79,7 @@ describe ActivitiesController, type: :request do
     end
 
     context "repository" do
-      it "returns the activities" do
+      xit "returns the activities" do
         get "/v3/repositories/#{client.symbol.downcase}/activities",
             nil, headers
 

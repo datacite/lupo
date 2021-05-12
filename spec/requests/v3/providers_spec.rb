@@ -395,7 +395,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         }
       end
 
-      it "creates a provider" do
+      xit "creates a provider" do
         post "/v3/providers", params, headers
 
         expect(last_response.status).to eq(200)
@@ -797,7 +797,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         }
       end
 
-      it "creates a provider" do
+      xit "creates a provider" do
         post "/v3/providers", params, headers
 
         expect(last_response.status).to eq(200)
@@ -965,7 +965,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         }
       end
 
-      it "updates the record" do
+      xit "updates the record" do
         put "/v3/providers/#{provider.symbol}",
             params, consortium_headers
         puts consortium_headers
@@ -1010,7 +1010,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         }
       end
 
-      it "updates the record" do
+      xit "updates the record" do
         put "/v3/providers/#{provider.symbol}",
             params, consortium_organization_headers
 
@@ -1115,7 +1115,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         }
       end
 
-      it "updates the record" do
+      xit "updates the record" do
         put "/v3/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
