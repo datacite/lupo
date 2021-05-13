@@ -110,7 +110,7 @@ describe FunderType do
       }"
     end
 
-    it "returns funder information" do
+    xit "returns funder information" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "funder", "id")).to eq(
