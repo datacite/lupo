@@ -76,17 +76,17 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           bundle exec rubocop
-          # Run a subset of the tests in parts.
+          # Run the tests in subsets instead of all at once.
           # bundle exec rspec
-          # bundle exec rspec spec/concerns
-          # bundle exec rspec spec/controllers
+          bundle exec rspec spec/concerns
+          bundle exec rspec spec/controllers
           bundle exec rspec spec/graphql
-          # bundle exec rspec spec/jobs
-          # bundle exec rspec spec/lib
-          # bundle exec rspec spec/models
+          bundle exec rspec spec/jobs
+          bundle exec rspec spec/lib
+          bundle exec rspec spec/models
           bundle exec rspec spec/requests/*.rb
-          bundle exec rspec spec/requests/v3/*.rb
-          # bundle exec rspec spec/routing
+          # bundle exec rspec spec/requests/v3/*.rb
+          bundle exec rspec spec/routing
           echo $?
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v2.7.5
