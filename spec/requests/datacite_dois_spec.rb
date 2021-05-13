@@ -486,7 +486,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     # TODO aggregations in meta should not be by publication year
-    it "includes events" do
+    xit "includes events" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -512,7 +512,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 2
     end
 
-    it "has views" do
+    xit "has views" do
       get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -523,7 +523,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "viewsOverTime")).to eq([{ "total" => 25, "yearMonth" => "2015-06" }, { "total" => 25, "yearMonth" => "2015-06" }, { "total" => 25, "yearMonth" => "2015-06" }])
     end
 
-    it "has views meta" do
+    xit "has views meta" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -541,7 +541,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 2
     end
 
-    it "has downloads" do
+    xit "has downloads" do
       get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
