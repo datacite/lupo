@@ -15,7 +15,6 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_DATABASE: datacite
-          MYSQL_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
         ports:
           - 3306
@@ -65,7 +64,7 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           sudo /etc/init.d/mysql start
-          # bundle exec rails db:setup RAILS_ENV=test
+          bundle exec rails db:setup RAILS_ENV=test
       - name: Lint and Test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
@@ -78,20 +77,20 @@ jobs:
           bundle exec rubocop
           # Run the tests in subsets instead of all at once.
           # bundle exec rspec
-          #bundle exec rspec spec/concerns
-          #bundle exec rspec spec/controllers
-          #bundle exec rspec spec/graphql
-          #bundle exec rspec spec/jobs
-          #bundle exec rspec spec/lib
-          #bundle exec rspec spec/models
-          #bundle exec rspec spec/requests/*.rb
+          bundle exec rspec spec/concerns
+          bundle exec rspec spec/controllers
+          bundle exec rspec spec/graphql
+          bundle exec rspec spec/jobs
+          bundle exec rspec spec/lib
+          bundle exec rspec spec/models
+          bundle exec rspec spec/requests/*.rb
           # bundle exec rspec spec/requests/v3/*.rb
-          #bundle exec rspec spec/routing
+          bundle exec rspec spec/routing
           echo $?
-      #- name: Publish code coverage
-      #  uses: paambaati/codeclimate-action@v2.7.5
-      #  env:
-      #    CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 
   build:
     needs: test
