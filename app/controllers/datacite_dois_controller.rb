@@ -765,7 +765,8 @@ class DataciteDoisController < ApplicationController
       # alternateIdentifiers as alias for identifiers
       # easier before strong_parameters are checked
       if params.dig(:data, :attributes).present? &&
-          params.dig(:data, :attributes, :identifiers).blank?
+          params.dig(:data, :attributes, :identifiers).blank? &&
+          !params.dig(:data, :attributes, :alternateIdentifiers).blank?
         params[:data][:attributes][:identifiers] =
           Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).
             map do |a|
@@ -1095,6 +1096,7 @@ class DataciteDoisController < ApplicationController
       end
 
       p[:xml] = xml if xml.present?
+
 
       read_attrs_keys = %i[
         url
