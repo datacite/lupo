@@ -1882,6 +1882,34 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    context "with xml containing alternateIdentifiers" do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-affiliation.xml"))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml
+            },
+          },
+        }
+      end
+
+      it "validates a Doi" do
+        post "/dois", params, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en-US", "title" => "Full DataCite XML Example" }, { "lang" => "en-US", "title" => "Demonstration of DataCite Properties.", "titleType" => "Subtitle" }])
+        expect(json.dig("data", "attributes", "identifiers")).to eq([{ "identifier" => "https://schema.datacite.org/meta/kernel-4.2/example/datacite-example-full-v4.2.xml", "identifierType" => "URL" }])
+        expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([{ "alternateIdentifier" => "https://schema.datacite.org/meta/kernel-4.2/example/datacite-example-full-v4.2.xml", "alternateIdentifierType" => "URL" }])
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("alternateIdentifiers").content).to eq("https://schema.datacite.org/meta/kernel-4.2/example/datacite-example-full-v4.2.xml")
+      end
+    end
+
     context "with identifiers" do
       let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-affiliation.xml"))) }
       let(:params) do
