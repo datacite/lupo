@@ -1785,12 +1785,12 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
+                                                                    "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                                                     "subjectScheme" => "FOR" },
                                                                   { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
                                                                     "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" },
-                                                                  { "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }])
+                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }
+                                                                  ])
         expect(json.dig("data", "attributes", "contributors")).to eq([{ "affiliation" => [],
                                                                         "contributorType" => "DataManager",
                                                                         "familyName" => "Fenner",
@@ -2211,7 +2211,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "updates the record" do
         patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
-
+        p json
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/8na3-9s47")
