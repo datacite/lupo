@@ -3360,6 +3360,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
+                                                                    "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "subjectScheme" => "FOR",
                                                                     "classificationCode" => "001"
