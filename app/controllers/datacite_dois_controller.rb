@@ -561,14 +561,15 @@ class DataciteDoisController < ApplicationController
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
-        if safe_params[:schema_version].blank?
+        params = safe_params
+        if params[:schema_version].blank?
           @doi.assign_attributes(
-            safe_params.except(:doi, :client_id).merge(
+            params.except(:doi, :client_id).merge(
               schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION,
             ),
           )
         else
-          @doi.assign_attributes(safe_params.except(:doi, :client_id))
+          @doi.assign_attributes(params.except(:doi, :client_id))
         end
       end
     else
