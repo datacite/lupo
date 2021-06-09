@@ -433,6 +433,5 @@ module Facetable
         }
       end
     end
-
   end
 end

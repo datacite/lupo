@@ -1,16 +1,16 @@
 # frozen_string_literal: true
-require 'rails_helper'
+
+require "rails_helper"
 
 describe "Facetable", type: :controller do
     let(:author_aggs) { JSON.parse(file_fixture("authors_aggs.json").read) }
     let(:model) { DataciteDoisController.new }
     it "facet by author" do
-        authors = model.facet_by_authors(author_aggs)
+      authors = model.facet_by_authors(author_aggs)
 
-        expected_result = [{"id"=>"https://orcid.org/0000-0003-1419-2405", "title"=>"Fenner, Martin", "count"=>244}, {"id"=>"https://orcid.org/0000-0001-9570-8121", "title"=>"Lambert, Simon", "count"=>23}]
-        expect(authors).to eq (expected_result)
+      expected_result = [{ "id" => "https://orcid.org/0000-0003-1419-2405", "title" => "Fenner, Martin", "count" => 244 }, { "id" => "https://orcid.org/0000-0001-9570-8121", "title" => "Lambert, Simon", "count" => 23 }]
+      expect(authors).to eq (expected_result)
     end
-
   end
 
 

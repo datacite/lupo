@@ -605,13 +605,13 @@ class Doi < ApplicationRecord
           terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 2 },
           aggs: {
             authors: {
-		          top_hits: {
-		            _source: {
-		              includes: [ "creators.name", "creators.nameIdentifiers.nameIdentifier"]
-		            },
-		            size: 1
-		          }
-		        }
+              top_hits: {
+                _source: {
+                  includes: [ "creators.name", "creators.nameIdentifiers.nameIdentifier"]
+                },
+                size: 1
+              }
+            }
           }
         },
         pid_entities: {
