@@ -1,0 +1,314 @@
+[
+    {
+        "key": "https://orcid.org/0000-0003-1419-2405",
+        "doc_count": 244,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 244,
+                    "relation": "eq"
+                },
+                "max_score": 1,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "5747215",
+                        "_score": 1,
+                        "_ignored": [
+                            "landing_page.checked"
+                        ],
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Arning, Ursula"
+                                },
+                                {
+                                    "name": "Bargheer, Margo",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-8246-8210"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Blümel, Ina",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-3075-7640"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Dietze, Stefan"
+                                },
+                                {
+                                    "name": "Fenner, Martin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Friesike, Sascha",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9314-5633"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Hauschke, Christian",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-2499-7741"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Heise, Christian"
+                                },
+                                {
+                                    "name": "Heller, Lambert",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-8071-860X"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Hohmann, Tina",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9638-5712"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Jäschke, Robert",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-3271-9653"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Kleinwechter, Ulrich",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9813-9208"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Leiß, Caroline",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-2792-2625"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Lemke, Dorothea"
+                                },
+                                {
+                                    "name": "König, Mareike",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-8189-8574"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Mehlberg, Martin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-7177-9045"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Neumann, Janna",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-0161-1888"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Pampel, Heinz",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-3334-2771"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Peters, Isabella",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-5840-0806"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Schmidt, Birgit",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-8036-5859"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Schmitz, Jasmin"
+                                },
+                                {
+                                    "name": "Teichert, Astrid"
+                                },
+                                {
+                                    "name": "Tullney, Marco",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-5111-2788"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0001-9570-8121",
+        "doc_count": 23,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 23,
+                    "relation": "eq"
+                },
+                "max_score": 1,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "15744424",
+                        "_score": 1,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Ferguson, Christine",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9317-6819"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "McEntrye, Jo"
+                                },
+                                {
+                                    "name": "Bunakov, Vasily",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-3467-5690"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Lambert, Simon",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-9570-8121"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Sandt, Stephanie van der",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9576-1974"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Kotarski, Rachael",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-6843-7960"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Stewart, Sarah",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9465-4042"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "MacEwan, Andrew"
+                                },
+                                {
+                                    "name": "Fenner, Martin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Cruse, Patricia",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-9300-5278"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Horik, René van",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-6899-760X"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Dohna, Tina",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-5948-0980"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Koop-Jacobsen, Ketil",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-1540-6594"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Schindler, Uwe",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-1900-4162"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "McCafferty, Siobhan"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]
