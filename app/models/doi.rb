@@ -601,6 +601,19 @@ class Doi < ApplicationRecord
         },
         registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
         affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1 } },
+        authors: {
+          terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 2 },
+          aggs: {
+            authors: {
+		          top_hits: {
+		            _source: {
+		              includes: [ "creators.name", "creators.nameIdentifiers.nameIdentifier"]
+		            },
+		            size: 1
+		          }
+		        }
+          }
+        },
         pid_entities: {
           filter: { term: { "subjects.subjectScheme": "PidEntity" } },
           aggs: {
