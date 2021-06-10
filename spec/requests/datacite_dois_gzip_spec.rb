@@ -36,10 +36,10 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       let(:headers) do
         {
-          'CONTENT_TYPE' => 'application/gzip',
-          'HTTP_ACCEPT'=>'gzip',
-          'HTTP_AUTHORIZATION' => 'Bearer ' + bearer,
-          'HTTP_CONTENT_ENCODING' => 'gzip',
+          "CONTENT_TYPE" => "application/gzip",
+          "HTTP_ACCEPT" => "gzip",
+          "HTTP_AUTHORIZATION" => "Bearer " + bearer,
+          "HTTP_CONTENT_ENCODING" => "gzip",
         }
       end
 
