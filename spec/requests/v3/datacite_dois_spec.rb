@@ -1744,10 +1744,22 @@ describe DataciteDoisController, type: :request, vcr: true do
               "publisher" => "DataCite",
               "publicationYear" => 2016,
               "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+              "subjects" => [
+                { "lang" => "en",
+                  "subject" => "80505 Web Technologies (excl. Web Search)",
+                  "subjectScheme" => "FOR" },
+                { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
+                  "subject" => "FOS: Computer and information sciences",
+                  "subjectScheme" => "Fields of Science and Technology (FOS)" },
+                { "subject" => "FOS: Computer and information sciences",
+                  "subjectScheme" => "Fields of Science and Technology (FOS)" }
+              ],
+=begin
               "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
                                "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                "subjectScheme" => "FOR",
                                "lang" => "en" }],
+=end
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
               "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }],
@@ -3191,12 +3203,14 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "updates the Doi" do
         patch "/v3/dois/#{doi.doi}", update_attributes, headers
 
-        expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
-                                                                    "subject" => "80505 Web Technologies (excl. Web Search)",
-                                                                    "subjectScheme" => "FOR" },
-                                                                  { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
-                                                                    "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }])
+        expect(json.dig("data", "attributes", "subjects")).to eq(
+          [
+            { "subject" => "80505 Web Technologies (excl. Web Search)",
+            "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+            "subjectScheme" => "FOR",
+            "lang" => "en" }
+          ]
+        )
       end
     end
 
