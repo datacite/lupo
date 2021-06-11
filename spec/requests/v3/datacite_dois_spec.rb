@@ -1796,6 +1796,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
         expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
+                                                                    "schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "subjectScheme" => "FOR" },
                                                                   { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
@@ -1823,7 +1824,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
-        expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
+        expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)FOS: Computer and information sciencesFOS: Computer and information sciences")
         expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
@@ -3205,10 +3206,13 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(json.dig("data", "attributes", "subjects")).to eq(
           [
-            { "subject" => "80505 Web Technologies (excl. Web Search)",
-            "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
-            "subjectScheme" => "FOR",
-            "lang" => "en" }
+            {"lang"=>"en",
+             "schemeUri"=>"http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+              "subject"=>"80505 Web Technologies (excl. Web Search)",
+              "subjectScheme"=>"FOR"},
+            {"schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
+              "subject"=>"FOS: Computer and information sciences",
+              "subjectScheme"=>"Fields of Science and Technology (FOS)"}
           ]
         )
       end
