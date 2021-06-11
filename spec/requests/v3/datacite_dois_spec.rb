@@ -1796,7 +1796,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
         expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
-                                                                    "schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
+                                                                    "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "subjectScheme" => "FOR" },
                                                                   { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
@@ -3206,13 +3206,13 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(json.dig("data", "attributes", "subjects")).to eq(
           [
-            {"lang"=>"en",
-             "schemeUri"=>"http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
-              "subject"=>"80505 Web Technologies (excl. Web Search)",
-              "subjectScheme"=>"FOR"},
-            {"schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
-              "subject"=>"FOS: Computer and information sciences",
-              "subjectScheme"=>"Fields of Science and Technology (FOS)"}
+            { "lang" => "en",
+             "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+              "subject" => "80505 Web Technologies (excl. Web Search)",
+              "subjectScheme" => "FOR" },
+            { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
+              "subject" => "FOS: Computer and information sciences",
+              "subjectScheme" => "Fields of Science and Technology (FOS)" }
           ]
         )
       end
