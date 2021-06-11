@@ -602,7 +602,7 @@ class Doi < ApplicationRecord
         registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
         affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1 } },
         authors: {
-          terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 2 },
+          terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1 },
           aggs: {
             authors: {
               top_hits: {
