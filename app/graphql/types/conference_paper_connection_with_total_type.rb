@@ -10,6 +10,7 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :authors, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 
@@ -30,6 +31,14 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
       facet_by_registration_agency(
         object.aggregations.registration_agencies.buckets
       )
+    else
+      []
+    end
+  end
+
+  def authors
+    if object.aggregations.authors
+      facet_by_authors(object.aggregations.authors.buckets)
     else
       []
     end

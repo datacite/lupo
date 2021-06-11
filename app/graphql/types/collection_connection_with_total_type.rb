@@ -9,6 +9,7 @@ class CollectionConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :authors, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 
@@ -45,6 +46,14 @@ class CollectionConnectionWithTotalType < BaseConnection
   def affiliations
     if object.aggregations.affiliations
       facet_by_combined_key(object.aggregations.affiliations.buckets)
+    else
+      []
+    end
+  end
+
+  def authors
+    if object.aggregations.authors
+      facet_by_authors(object.aggregations.authors.buckets)
     else
       []
     end

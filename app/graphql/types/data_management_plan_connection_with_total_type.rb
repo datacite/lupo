@@ -10,6 +10,7 @@ class DataManagementPlanConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :authors, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 
@@ -38,6 +39,14 @@ class DataManagementPlanConnectionWithTotalType < BaseConnection
   def repositories
     if object.aggregations.clients
       facet_by_combined_key(object.aggregations.clients.buckets)
+    else
+      []
+    end
+  end
+
+  def authors
+    if object.aggregations.authors
+      facet_by_authors(object.aggregations.authors.buckets)
     else
       []
     end

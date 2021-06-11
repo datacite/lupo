@@ -10,6 +10,7 @@ class BookConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :authors, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 
@@ -62,6 +63,14 @@ class BookConnectionWithTotalType < BaseConnection
   def fields_of_science
     if object.aggregations.fields_of_science
       facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
+    else
+      []
+    end
+  end
+
+  def authors
+    if object.aggregations.authors
+      facet_by_authors(object.aggregations.authors.buckets)
     else
       []
     end
