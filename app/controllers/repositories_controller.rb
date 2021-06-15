@@ -205,7 +205,7 @@ class RepositoriesController < ApplicationController
       @client.send_welcome_email(responsible_id: current_user.uid)
       options = {}
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { current_ability: current_ability, detail: true }
 
       render json: RepositorySerializer.new(@client, options).serialized_json,
              status: :created
@@ -219,7 +219,7 @@ class RepositoriesController < ApplicationController
   def update
     options = {}
     options[:is_collection] = false
-    options[:params] = { current_ability: current_ability }
+    options[:params] = { current_ability: current_ability, detail: true }
 
     if params.dig(:data, :attributes, :mode) == "transfer"
       # only update provider_id
