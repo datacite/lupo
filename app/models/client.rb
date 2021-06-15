@@ -49,6 +49,7 @@ class Client < ApplicationRecord
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
+  attr_reader :from_salesforce
 
   validates_presence_of :symbol, :name, :system_email
   validates_uniqueness_of :symbol,
@@ -451,6 +452,10 @@ class Client < ApplicationRecord
 
   def uid
     symbol.downcase
+  end
+
+  def from_salesforce=(value)
+    @from_salesforce = (value.to_s == "true")
   end
 
   # workaround for non-standard database column names and association

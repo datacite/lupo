@@ -5,7 +5,7 @@ services:
     env_file: .env
     environment:
       - ELASTIC_PASSWORD=changeme
-    image: datacite/lupo
+    image: ghcr.io/datacite/lupo
     ports:
       - "8065:80"
       - "2265:22"

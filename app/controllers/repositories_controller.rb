@@ -366,10 +366,12 @@ class RepositoriesController < ApplicationController
           "serviceContact",
           { "serviceContact": [:email, "givenName", "familyName"] },
           "salesforceId",
+          "fromSalesforce",
         ],
         keys: {
           "systemEmail" => :system_email,
           "salesforceId" => :salesforce_id,
+          "fromSalesforce" => :from_salesforce,
           "globusUuid" => :globus_uuid,
           "targetId" => :target_id,
           "isActive" => :is_active,

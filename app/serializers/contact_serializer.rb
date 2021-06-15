@@ -11,6 +11,7 @@ class ContactSerializer
              :name,
              :email,
              :role_name,
+             :from_salesforce,
              :created,
              :updated,
              :deleted
@@ -24,4 +25,13 @@ class ContactSerializer
   attribute :created, &:created_at
   attribute :updated, &:updated_at
   attribute :deleted, &:deleted_at
+
+  attribute :from_salesforce,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(:read_salesforce_id, object) ==
+                    true
+              },
+            &:from_salesforce
 end

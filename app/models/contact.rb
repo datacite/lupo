@@ -20,6 +20,8 @@ class Contact < ApplicationRecord
 
   ROLES = %w[voting billing secondary_billing service secondary_service technical secondary_technical]
 
+  attr_reader :from_salesforce
+
   validates_presence_of :provider
   validates_presence_of :email
   validates_format_of :email,
@@ -294,6 +296,10 @@ class Contact < ApplicationRecord
       # TODO make sure roles are taken only once. Currently not enforcable as contacts are updated serially.
       # errors.add(:role_name, "Role name '#{r}' is already taken.") if taken_roles.include?(r)
     end
+  end
+
+  def from_salesforce=(value)
+    @from_salesforce = (value.to_s == "true")
   end
 
   def name

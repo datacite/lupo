@@ -24,6 +24,7 @@ class RepositorySerializer
              :issn,
              :url,
              :salesforce_id,
+             :from_salesforce,
              :created,
              :updated
 
@@ -109,4 +110,13 @@ class RepositorySerializer
                     true
               },
             &:salesforce_id
+
+  attribute :from_salesforce,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(:read_salesforce_id, object) ==
+                    true
+              },
+            &:from_salesforce
 end
