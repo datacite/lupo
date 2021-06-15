@@ -256,7 +256,7 @@ class ProvidersController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { current_ability: current_ability, detail: true }
 
       render json: ProviderSerializer.new(@provider, options).serialized_json,
              status: :ok
@@ -272,7 +272,7 @@ class ProvidersController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { current_ability: current_ability, detail: true }
 
       render json: ProviderSerializer.new(@provider, options).serialized_json,
              status: :ok

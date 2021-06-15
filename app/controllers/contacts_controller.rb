@@ -121,7 +121,7 @@ class ContactsController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { current_ability: current_ability, detail: true }
 
       render json: ContactSerializer.new(@contact, options).serialized_json,
              status: :created
@@ -137,7 +137,7 @@ class ContactsController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { current_ability: current_ability, detail: true }
 
       render json: ContactSerializer.new(@contact, options).serialized_json,
              status: :ok

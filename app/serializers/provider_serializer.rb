@@ -297,7 +297,7 @@ class ProviderSerializer
   attribute :from_salesforce,
             if:
               Proc.new { |object, params|
-                params[:current_ability] &&
+                params[:detail] && params[:current_ability] &&
                   params[:current_ability].can?(:read_salesforce_id, object) ==
                     true
               },
