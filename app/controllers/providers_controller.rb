@@ -445,6 +445,7 @@ class ProvidersController < ApplicationController
           "memberType",
           "nonProfitStatus",
           "salesforceId",
+          "fromSalesforce",
           "technicalContact",
           { "technicalContact": [:uid, :email, "givenName", "familyName", :name] },
           "secondaryTechnicalContact",
@@ -483,6 +484,7 @@ class ProvidersController < ApplicationController
           "systemEmail" => :system_email,
           "nonProfitStatus" => :non_profit_status,
           "salesforceId" => :salesforce_id,
+          "fromSalesforce" => :from_salesforce,
           "globusUuid" => :globus_uuid,
         },
       )

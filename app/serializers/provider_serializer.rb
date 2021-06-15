@@ -29,6 +29,7 @@ class ProviderSerializer
              :billing_information,
              :ror_id,
              :salesforce_id,
+             :from_salesforce,
              :technical_contact,
              :secondary_technical_contact,
              :billing_contact,
@@ -293,4 +294,12 @@ class ProviderSerializer
                     true
               },
             &:salesforce_id
+  attribute :from_salesforce,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(:read_salesforce_id, object) ==
+                    true
+              },
+            &:from_salesforce
 end

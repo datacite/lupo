@@ -149,6 +149,24 @@ describe Provider, type: :model do
     end
   end
 
+  describe "from_salesforce" do
+    subject { build(:provider) }
+
+    it "true" do
+      subject.from_salesforce = true
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.from_salesforce).to be true
+    end
+
+    it "false" do
+      subject.from_salesforce = false
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.from_salesforce).to be false
+    end
+  end
+
   describe "provider with ROLE_CONSORTIUM" do
     subject do
       create(

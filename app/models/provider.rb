@@ -63,6 +63,7 @@ class Provider < ApplicationRecord
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
+  attr_reader :from_salesforce
 
   delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
 
@@ -543,6 +544,10 @@ class Provider < ApplicationRecord
 
   def uid
     symbol.downcase
+  end
+
+  def from_salesforce=(value)
+    @from_salesforce = (value.to_s == "true")
   end
 
   def consortium_organization_ids

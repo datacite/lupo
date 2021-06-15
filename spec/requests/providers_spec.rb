@@ -305,6 +305,45 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
     end
 
+    context "from salesforce" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "symbol" => "BL",
+              "name" => "British Library",
+              "displayName" => "British Library",
+              "memberType" => "consortium_organization",
+              "website" => "https://www.bl.uk",
+              "salesforceId" => "abc012345678901234",
+              "fromSalesforce" => true,
+              "region" => "EMEA",
+              "systemEmail" => "doe@joe.joe",
+              "country" => "GB",
+            },
+            "relationships": {
+              "consortium": {
+                "data": {
+                  "type": "providers", "id": consortium.symbol.downcase
+                },
+              },
+            },
+          },
+        }
+      end
+
+      it "creates a provider" do
+        post "/providers", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "name")).to eq("British Library")
+        expect(json.dig("data", "attributes", "fromSalesforce")).to eq(
+          true
+        )
+      end
+    end
+
     context "request ability check" do
       let!(:providers) { create_list(:provider, 2) }
       let(:last_provider_token) do

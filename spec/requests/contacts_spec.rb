@@ -33,7 +33,8 @@ describe ContactsController, type: :request, elasticsearch: true do
           "givenName" => "Josiah",
           "familyName" => "Carberry",
           "email" => "bob@example.com",
-          "roleName" => ["voting"]
+          "roleName" => ["voting"],
+          "fromSalesforce" => true
         },
         "relationships": {
           "provider": {
@@ -185,7 +186,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
   describe "POST /contacts" do
     context "when the request is valid" do
-      xit "creates a contact" do
+      it "creates a contact" do
         post "/contacts", params, headers
 
         expect(last_response.status).to eq(201)
@@ -193,6 +194,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         expect(attributes["name"]).to eq("Josiah Carberry")
         expect(attributes["email"]).to eq("bob@example.com")
         expect(attributes["roleName"]).to eq(["voting"])
+        expect(attributes["fromSalesforce"]).to eq(true)
 
         relationships = json.dig("data", "relationships")
         expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
@@ -212,7 +214,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
         relationships = json.dig("data", 1, "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.uid,
+          provider.symbol,
         )
       end
     end

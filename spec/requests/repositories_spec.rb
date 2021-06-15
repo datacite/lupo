@@ -36,6 +36,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
           "name" => "Imperial College",
           "systemEmail" => "bob@example.com",
           "salesforceId" => "abc012345678901234",
+          "fromSalesforce" => true,
           "clientType" => "repository",
           "certificate" => %w[CoreTrustSeal],
         },
@@ -240,6 +241,20 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(attributes["systemEmail"]).to eq("bob@example.com")
         expect(attributes["certificate"]).to eq(%w[CoreTrustSeal])
         expect(attributes["salesforceId"]).to eq("abc012345678901234")
+
+        relationships = json.dig("data", "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+      end
+
+      it "from salesforce" do
+        post "/repositories", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["fromSalesforce"]).to eq(true)
 
         relationships = json.dig("data", "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(

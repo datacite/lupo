@@ -196,12 +196,14 @@ class ContactsController < ApplicationController
           :email,
           :roleName,
           { roleName: [] },
-          :provider
+          :provider,
+          "fromSalesforce",
         ],
         keys: {
           "givenName" => :given_name,
           "familyName" => :family_name,
           "roleName" => :role_name,
+          "fromSalesforce" => :from_salesforce,
         },
       )
     end
