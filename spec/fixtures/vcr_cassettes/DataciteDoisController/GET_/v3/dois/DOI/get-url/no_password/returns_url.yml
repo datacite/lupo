@@ -1,0 +1,32 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://handle.test.datacite.org/api/handles/10.14454/05MB-Q396?index=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.4; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 10 Jun 2021 19:19:57 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"responseCode":1,"handle":"10.14454/05MB-Q396","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://example.org"},"ttl":86400,"timestamp":"2021-05-26T13:21:38Z"}]}'
+    http_version: null
+  recorded_at: Thu, 10 Jun 2021 19:19:57 GMT
+recorded_with: VCR 5.1.0
