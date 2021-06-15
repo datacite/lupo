@@ -12,7 +12,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 ActiveRecord::Schema.define(version: 2021_03_24_115728) do
-
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
