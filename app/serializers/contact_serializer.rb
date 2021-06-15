@@ -34,5 +34,4 @@ class ContactSerializer
                     true
               },
             &:from_salesforce
-
 end

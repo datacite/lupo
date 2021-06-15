@@ -119,5 +119,4 @@ class RepositorySerializer
                     true
               },
             &:from_salesforce
-
 end
