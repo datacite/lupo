@@ -200,7 +200,8 @@ class PersonType < BaseObject
   end
 
   def response(**args)
-    user_id = args[:user_id].present? ? args[:user_id] << object[:id] : object[:id]
+    # Combine the person user id with args user_id(s)
+    user_id = args[:user_id].nil? ? object[:id] : object[:id] + "," + args[:user_id]
 
     Doi.gql_query(
       args[:query],
