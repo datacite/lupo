@@ -810,7 +810,7 @@ describe Doi, type: :model, vcr: true do
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:reference_events) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
 
-    it "has references" do
+    xit "has references" do
       expect(doi.references.count).to eq(1)
       expect(doi.reference_ids.count).to eq(1)
       expect(doi.reference_count).to eq(1)
