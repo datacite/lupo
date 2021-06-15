@@ -145,6 +145,7 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :user_id, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -199,10 +200,12 @@ class PersonType < BaseObject
   end
 
   def response(**args)
+    user_id = args[:user_id].present? ? args[:user_id] << object[:id] : object[:id]
+
     Doi.gql_query(
       args[:query],
       ids: args[:ids],
-      user_id: object[:id],
+      user_id: user_id,
       client_id: args[:repository_id],
       provider_id: args[:member_id],
       affiliation_id: args[:affiliation_id],

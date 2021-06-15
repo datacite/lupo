@@ -909,7 +909,7 @@ class Doi < ApplicationRecord
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) } } if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] } } if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") } } if options[:certificate].present?
-    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" } } if options[:user_id].present?
+    filter << { terms: { "creators.nameIdentifiers.nameIdentifier" => options[:user_id].split(",").collect { |id| "https://orcid.org/#{orcid_from_url(id)}" } } } if options[:user_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } } if options[:has_person].present?
 
     # match either one of has_affiliation, has_organization, has_funder or has_member
