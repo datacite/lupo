@@ -85,6 +85,9 @@ module Lupo
     config.paths.add Rails.root.join("app", "serializers", "v3").to_s,
     eager_load: true
 
+    # Allow middleware to be loaded. (compressed_requests)
+    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
