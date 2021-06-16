@@ -202,6 +202,7 @@ class PersonType < BaseObject
     Doi.gql_query(
       args[:query],
       ids: args[:ids],
+      user_id: object[:id],
       client_id: args[:repository_id],
       provider_id: args[:member_id],
       affiliation_id: args[:affiliation_id],
