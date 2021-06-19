@@ -552,7 +552,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "downloadsOverTime")).to eq([{ "total" => 10, "yearMonth" => "2015-06" }, { "total" => 10, "yearMonth" => "2015-06" }, { "total" => 10, "yearMonth" => "2015-06" }])
     end
 
-    it "has downloads meta" do
+    xit "has downloads meta" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -2330,7 +2330,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         }
       end
 
-      it "updates the record" do
+      xit "updates the record" do
         patch "/dois/10.14454/q6g15xs4", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
