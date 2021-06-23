@@ -633,6 +633,7 @@ class Doi < ApplicationRecord
         view_count: { sum: { field: "view_count" } },
         download_count: { sum: { field: "download_count" } },
         citation_count: { sum: { field: "citation_count" } },
+        content_url_count: { value_count: { field: "content_url" } },
       }
     end
   end
