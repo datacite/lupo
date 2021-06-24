@@ -10,6 +10,7 @@ namespace :user do
       provider_id: ENV["PROVIDER_ID"],
       client_id: ENV["CLIENT_ID"],
       beta_tester: ENV["BETA_TESTER"],
+      has_orcid_token: ENV["HAS_ORCID_TOKEN"] == "true",
       email: ENV["EMAIL"],
       exp: (ENV["DAYS"] || "365").to_i.days,
       aud: ENV["AUD"] || Rails.env,
