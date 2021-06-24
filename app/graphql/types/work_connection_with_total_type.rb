@@ -7,6 +7,7 @@ class WorkConnectionWithTotalType < BaseConnection
   field :total_count, Integer, null: false, cache: true
   field :totalCountFromCrossref,
         resolver: TotalCountFromCrossref, null: true, cache: true
+  field :total_content_url, Integer, null: true, cache: true
   field :published, [FacetType], null: true, cache: true
   field :resource_types, [FacetType], null: true, cache: true
   field :registration_agencies, [FacetType], null: true, cache: true
@@ -19,6 +20,10 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def total_count
     object.total_count
+  end
+
+  def total_content_url
+    object.aggregations.content_url_count.value.to_i
   end
 
   def published
