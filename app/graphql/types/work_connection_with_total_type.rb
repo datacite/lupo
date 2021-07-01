@@ -42,7 +42,7 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def resource_types
     if object.aggregations.authors
-      facet_by_combined_key(object.aggregations.authors.buckets)
+      facet_by_combined_key(object.aggregations.resource_types.buckets)
     else
       []
     end
