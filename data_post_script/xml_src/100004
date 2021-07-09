@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+	<identifier identifierType="DOI">10.5524/100004</identifier>
+	<creators>
+		<creator>
+			<creatorName>Li, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fan, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Tian, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhu, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>He, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cai, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Huang, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cai, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Bai, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wei, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Jian, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Nielsen, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Gu, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xuan, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ryder, OA</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Leung, FC</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhou, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cao, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Sun, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fu, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Guo, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Hou, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Shen, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Mu, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ni, P</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lin, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Qian, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yu, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Nie, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wu, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Min, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wu, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cheng, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ruan, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Shi, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wen, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ren, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zheng, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Dong, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cook, K</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Shan, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Kosiol, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xie, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lu, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zheng, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Steiner, CC</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lam, TT</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lin, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Tian, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Gong, T</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fang, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ye, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Hu, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xu, A</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ren, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Bruford, MW</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ma, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Guo, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>An, N</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Hu, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zheng, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Shi, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhao, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Qu, N</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhao, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Tian, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xu, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Vinar, T</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lam, TW</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yiu, SM</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Huang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Jiang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Qin, N</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Bolund, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Kristiansen, K</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wong, GK</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Olson, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>Genomic data from the giant panda (Ailuropoda melanoleuca) </title>
+	</titles>
+	<publisher>GigaScience</publisher>
+	<publicationYear>2011</publicationYear>
+	<subjects>
+		<subject>Genomic</subject>
+	</subjects>
+	<dates>
+	<date dateType="Available">2011-07-06</date>
+	</dates>
+	<language>eng</language>
+	<resourceType resourceTypeGeneral="Dataset">GigaDB Dataset</resourceType>
+	<relatedIdentifiers>
+		<relatedIdentifier relatedIdentifierType="DOI" relationType="IsReferencedBy">10.1038/nature08696</relatedIdentifier>
+	</relatedIdentifiers>
+	<sizes>
+		<size>154 GB</size>
+	</sizes>
+	<rights>http://creativecommons.org/publicdomain/zero/1.0/</rights>
+	<descriptions>
+		<description descriptionType="Abstract">The giant panda (Ailuropoda melanoleuca) is considered a symbol of China and is a much loved animal all around the world.  It is also one of the world’s most endangered species, making it a flagship species for conservation efforts.  As the first fully sequenced Ursidae and the second fully sequenced carnivore after the dog, the whole genome sequence and annotation data provide an unparalleled amount of information to aid in understanding the genetic and biological underpinnings of this unique species, and will help contribute to disease control and conservation efforts.
+
+In 2008, BGI completed a first draft of the genome sequence of a three-year old female giant panda named Jingjing, who was used as a model for the 2008 Olympics in Beijing, China (doi: 10.1038/nature08696). Using second-generation Illumina GA sequencing data, the first de novo genome assembly was created using short-read sequencing technology.  Here you will find the giant panda genome sequence assembly as well as annotation information, such as gene structure and function, non-coding RNAs, and repeat elements.  Also presented are polymorphism information detected in the diploid genome, including SNPs, indels, and structural variations (SVs).  The assembly was done using SOAPdenovo software and the panda genome data is visualized via MapView, which is powered by the Google Web Toolkit.</description>
+	</descriptions>
+</resource>
+

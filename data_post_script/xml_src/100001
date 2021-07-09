@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+	<identifier identifierType="DOI">10.5524/100001</identifier>
+	<creators>
+		<creator>
+			<creatorName>Li, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xi, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhao, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cao, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Xu, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cui, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chang, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cui, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Luo, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Qin, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, S</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Peng, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Pu, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Sun, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zong, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ma, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cen, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Song, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhao, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yin, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Rohde, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>the Escherichia coli O104:H4 TY-2482 isolate genome sequencing consortium</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>Genomic data from Escherichia coli O104:H4 isolate TY-2482</title>
+	</titles>
+	<publisher>BGI Shenzhen</publisher>
+	<publicationYear>2011</publicationYear>
+	<subjects>
+		<subject>Genomic</subject>
+	</subjects>
+	<dates>
+	<date dateType="Available">2011-06-03</date>
+	</dates>
+	<language>eng</language>
+	<resourceType resourceTypeGeneral="Dataset">GigaDB Dataset</resourceType>
+	<relatedIdentifiers>
+		<relatedIdentifier relatedIdentifierType="DOI" relationType="IsReferencedBy">10.1056/NEJMoa1107643</relatedIdentifier>
+	</relatedIdentifiers>
+	<sizes>
+		<size>2 GB</size>
+	</sizes>
+	<rights>http://creativecommons.org/publicdomain/zero/1.0/</rights>
+	<descriptions>
+		<description descriptionType="Abstract">The May 2011 outbreak of an E. coli infection in Europe resulted in serious concerns about the potential appearance of a new deadly strain of bacteria, Escherichia coli O104:H4 TY-2482.  In response to this situation, and immediately after the reports of deaths, the University Medical Centre Hamburg-Eppendorf and BGI-Shenzhen worked together to sequence the bacterium and assess its human health risk.
+
+The bacterium’s genome was first sequenced using Life Technologies; Ion Torrent sequencing platform. According to the results of the draft assembly, the estimated genome size of this new E. coli strain is about 5.2 Mb.  Sequence analysis indicated this bacterium is an EHEC serotype O104 E. coli strain.  Comparative analysis showed that this bacterium has 93% sequence similarity with the EAEC 55989 E. coli strain, which was isolated in the Central African Republic and known to cause serious diarrhea.  This strain of E. coli, however, has also acquired specific sequences that appear to be similar to those involved in the pathogenicity of hemorrhagic colitis and hemolytic-uremic syndrome.  The acquisition of these genes may have occurred through horizontal gene transfer.
+
+To maximize its utility to the research community and aid those fighting the epidemic, this genomic data was released into the public domain under a CC0 license.
+
+To the extent possible under law, BGI Shenzhen  has waived all copyright and related or neighboring rights to genomic data from the 2011 E. coli outbreak. This work is published from: China.</description>
+	</descriptions>
+</resource>
+

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+	<identifier identifierType="DOI">10.5524/100003</identifier>
+	<creators>
+		<creator>
+			<creatorName>Yan, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, C</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ling, F</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Cooper, DN</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, O</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>van Gool, AJ</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Du, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Chen, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, P</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Huang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Thompson, JR</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Meng, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Bai, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhuo, M</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, T</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Huang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wei, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, Z</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Hu, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Le, L</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Stenson, PD</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Liu, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Ball, EV</creatorName>
+		</creator>
+		<creator>
+			<creatorName>An, N</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Huang, Q</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Fan, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Li, Y</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, W</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Katze, MG</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Su, B</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Nielsen, R</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Yang, H</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, X</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>Genomic data from the crab-eating macaque/cynomolgus monkey (Macaca fascicularis)</title>
+	</titles>
+	<publisher>GigaScience</publisher>
+	<publicationYear>2011</publicationYear>
+	<subjects>
+		<subject>Genomic</subject>
+		<subject>Transcriptomic</subject>
+	</subjects>
+	<dates>
+	<date dateType="Available">2011-07-06</date>
+	<date dateType="Updated">2012-04-27</date>
+	</dates>
+	<language>eng</language>
+	<resourceType resourceTypeGeneral="Dataset">GigaDB Dataset</resourceType>
+	<relatedIdentifiers>
+		<relatedIdentifier relatedIdentifierType="DOI" relationType="IsReferencedBy">10.1038/nbt.1992</relatedIdentifier>
+	</relatedIdentifiers>
+	<sizes>
+		<size>2 GB</size>
+	</sizes>
+	<rights>http://creativecommons.org/publicdomain/zero/1.0/</rights>
+	<descriptions>
+		<description descriptionType="Abstract">The crab-eating macaque (Macaca fascicularis), also known as the Java macaque or long-tailed macaque, is a species of primate located throughout Southeast Asia.  Due to the frequent usage of the genus Macaca in scientific research, the sequence the crab-eating macaque furthers our understanding on how it differs from other macaque species, like the Chinese rhesus macaque and the Indian rhesus macaque.  This is especially relevant considering the recent trend of using crab-eating macaque (CE) and Chinese rhesus macaques rather than the Indian rhesus macaque as laboratory models.
+
+The DNA sample for genome sequencing and analyses was from a female CE that was a captive-bred descendent of a CE from Vietnam.  The genome was sequenced on the IlluminaGAIIx platform, and we obtained 162-Gb of high-quality sequence, representing 54-fold coverage.  The sequencing data were processed with Illumina custom computational pipelines. The genome was de novo assembled using SOAPdenovo program based on the de Bruijn graph algorithm methods.  The total size of the assembled genome was about 2.85 Gb, providing 54-fold coverage on average.  The scaffolds were assigned to the chromosomes according to the synteny displayed with the Indian rhesus macaque and human genome sequences.  About 92% of the CE scaffolds could be placed onto chromosomes.</description>
+	</descriptions>
+</resource>
+

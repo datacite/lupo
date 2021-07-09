@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-2.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-2.2 http://schema.datacite.org/meta/kernel-2.2/metadata.xsd">
+	<identifier identifierType="DOI">10.5524/100005</identifier>
+	<creators>
+		<creator>
+			<creatorName>Li, J</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Zhang, G</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Lambert, D</creatorName>
+		</creator>
+		<creator>
+			<creatorName>Wang, J</creatorName>
+		</creator>
+	</creators>
+	<titles>
+		<title>Genomic data from the Emperor penguin (Aptenodytes forsteri)</title>
+	</titles>
+	<publisher>GigaScience</publisher>
+	<publicationYear>2011</publicationYear>
+	<subjects>
+		<subject>Genomic</subject>
+	</subjects>
+	<dates>
+	<date dateType="Available">2011-07-06</date>
+	</dates>
+	<language>eng</language>
+	<resourceType resourceTypeGeneral="Dataset">GigaDB Dataset</resourceType>
+	<sizes>
+		<size>352 MB</size>
+	</sizes>
+	<rights>http://creativecommons.org/publicdomain/zero/1.0/</rights>
+	<descriptions>
+		<description descriptionType="Abstract">The Emperor penguin (Aptenodytes forsteri) is a large penguin, standing over 1 meter tall, with distinctive black, yellow and white markings.  Like most penguins, the emperor penguins are indigenous to Antarctica and exist between the 66th and 78th parallels.
+
+Famous for its unique social and reproductive behavior, the emperor penguin also possesses a number of other notable evolutionary qualities: its stature, its feathers, its incubation process, and its swimming capabilities.  The Aptenodytes forsteri genome offers new insights into this remarkable bird.</description>
+	</descriptions>
+</resource>
+

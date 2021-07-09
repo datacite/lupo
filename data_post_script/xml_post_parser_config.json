@@ -1,0 +1,12 @@
+{
+    "server_port": "http://localhost:5000",
+    "bearer_auth_key": "eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiJhZG1pbiIsIm5hbWUiOiJBZG1pbiIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImhhc19vcmNpZF90b2tlbiI6ZmFsc2UsImF1ZCI6ImRldmVsb3BtZW50IiwiaWF0IjoxNjI1NTc4MDQ2LCJleHAiOiIxNjU3MTE0MDQ2In0.UZBCFIumcqKGvjBHrhohchGWZsSoQl1bHdmSKtRlhKrmdO7tOn5GW2CvhvyNT83w7U1hQYKQFvRaCfBOEA84sAV_0azmyiIQuM6N6nwfhF4F5JXaxXJCsFM-dYuHLVXdZ1O88Iq_4yduacGDyng75HJmpWvrdUa6FILQ_fXIEVE",
+    "prefix": "10.14454",
+    "schema_url": "https://schema.datacite.org",
+
+    "xml_folder": "xml_src",
+    "json_folder": "json_envelopes",
+    "processed_xml_folder": "processed_xml",
+    "posted_json_folder": "posted_json",
+    "post_failed_folder": "failed_json"
+}
