@@ -446,7 +446,7 @@ class Contact < ApplicationRecord
     ROLES
   end
 
-  def has_role?(role = '')
+  def has_role?(role = "")
     role_name.include?(role)
   end
 
@@ -485,19 +485,19 @@ class Contact < ApplicationRecord
   def set_provider_role(role, contact)
     case role
     when "voting"
-      provider.update_attribute('voting_contact', contact)
+      provider.update_attribute("voting_contact", contact)
     when "billing"
-      provider.update_attribute('billing_contact', contact)
+      provider.update_attribute("billing_contact", contact)
     when "secondary_billing"
-      provider.update_attribute('secondary_billing_contact', contact)
+      provider.update_attribute("secondary_billing_contact", contact)
     when "service"
-      provider.update_attribute('service_contact', contact)
+      provider.update_attribute("service_contact", contact)
     when "secondary_service"
-      provider.update_attribute('secondary_service_contact', contact)
+      provider.update_attribute("secondary_service_contact", contact)
     when "technical"
-      provider.update_attribute('technical_contact', contact)
+      provider.update_attribute("technical_contact", contact)
     when "secondary_technical"
-      provider.update_attribute('secondary_technical_contact', contact)
+      provider.update_attribute("secondary_technical_contact", contact)
     end
   end
 

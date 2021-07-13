@@ -183,12 +183,11 @@ class ContactsController < ApplicationController
     end
 
   private
-
     def set_provider_contacts
       if @contact.valid?
         Contact.roles.each do | role |
           if @contact.has_role?(role)
-            @contact.set_provider_role(role, {'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name})
+            @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
           elsif @contact.has_provider_role?(role)
             @contact.set_provider_role(role, nil)
           end
@@ -198,7 +197,7 @@ class ContactsController < ApplicationController
         @contact.provider.contacts.each do | contact |
           if !@contact.is_me?(contact)
             if contact.remove_roles!(@contact.role_name)
-              contact.update_attribute('role_name', contact.role_name)
+              contact.update_attribute("role_name", contact.role_name)
             end
           end
         end
@@ -212,7 +211,7 @@ class ContactsController < ApplicationController
           @contact.set_provider_role(role, nil)
         end
       end
-      @contact.update_attribute('role_name', [])
+      @contact.update_attribute("role_name", [])
     end
 
     def safe_params
