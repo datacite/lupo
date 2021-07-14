@@ -69,6 +69,9 @@ end
 VCR.configure do |c|
   /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
 
+  record_mode = ENV["VCR"] ? ENV["VCR"].to_sym : :once
+  c.default_cassette_options = { :record => record_mode }
+
   mds_token =
     Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
   admin_token =
@@ -92,6 +95,7 @@ VCR.configure do |c|
   c.filter_sensitive_data("<SLACK_WEBHOOK_URL>") { ENV["SLACK_WEBHOOK_URL"] }
   c.configure_rspec_metadata!
   c.default_cassette_options = { match_requests_on: %i[method uri] }
+  # c.debug_logger = $stderr
 end
 
 def capture_stdout

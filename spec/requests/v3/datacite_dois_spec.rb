@@ -531,7 +531,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "downloads", elasticsearch: true, vcr: true do
+  describe "downloads", elasticsearch: true, vcr: false do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
