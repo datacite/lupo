@@ -7,9 +7,11 @@ class WorkConnectionWithTotalType < BaseConnection
   field :total_count, Integer, null: false, cache: true
   field :totalCountFromCrossref,
         resolver: TotalCountFromCrossref, null: true, cache: true
+  field :total_open_licenses, Integer, null: true, cache: true
   field :total_content_url, Integer, null: true, cache: true
   field :published, [FacetType], null: true, cache: true
   field :resource_types, [FacetType], null: true, cache: true
+  field :open_license_resource_types, [FacetType], null: true, cache: true
   field :registration_agencies, [FacetType], null: true, cache: true
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
@@ -26,6 +28,10 @@ class WorkConnectionWithTotalType < BaseConnection
     object.aggregations.content_url_count.value.to_i
   end
 
+  def total_open_licenses
+    object.aggregations.open_licenses.doc_count.to_i
+  end
+
   def published
     if object.aggregations.published
       facet_by_range(object.aggregations.published.buckets)
@@ -35,8 +41,16 @@ class WorkConnectionWithTotalType < BaseConnection
   end
 
   def resource_types
-    if object.aggregations.resource_types
+    if object.aggregations.authors
       facet_by_combined_key(object.aggregations.resource_types.buckets)
+    else
+      []
+    end
+  end
+
+  def open_license_resource_types
+    if object.aggregations.open_licenses
+      facet_by_combined_key(object.aggregations.open_licenses.resource_types.buckets)
     else
       []
     end
