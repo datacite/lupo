@@ -70,7 +70,7 @@ VCR.configure do |c|
   /rec/i.match?(ENV["VCR_MODE"]) ? :all : :once
 
   record_mode = ENV["VCR"] ? ENV["VCR"].to_sym : :once
-  c.default_cassette_options = { :record => record_mode }
+  c.default_cassette_options = { record: record_mode }
 
   mds_token =
     Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
