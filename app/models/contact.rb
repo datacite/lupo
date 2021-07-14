@@ -308,7 +308,7 @@ class Contact < ApplicationRecord
 
   # workaround for non-standard database column names and association
   def provider_id
-    provider.uid
+    provider.present? ? provider.uid : nil
   end
 
   def provider_id=(value)
