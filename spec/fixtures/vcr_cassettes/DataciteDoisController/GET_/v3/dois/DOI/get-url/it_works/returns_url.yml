@@ -1,0 +1,37 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://handle.test.datacite.org/api/handles/10.5438/FJ3W-0SHD?index=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.4; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Jul 2021 03:34:26 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAADWNQYvCMBSE/8s7myaxWjTXFRHxpC6Cyx7i5lkDaRKSZ1FK//umC3ubGb6ZGSBhjsFn/AgGQckZPLQ3rkiQolou6hXf7usLE6fdBmbQa/fEDOprAOsNvv4a9I4T/3k8FMJo0qAGuIfUaSpxpmR9+98twYMoZsX5zYW2mvAfS1iF1PLJMJNsj54Z7NGF2KEnDmM5IQdq1SyEKNp2mEl3sazNhWyYnDO5PsulEo2qmyuM3+Mv8jiCG9oAAAA=
+    http_version: null
+  recorded_at: Wed, 14 Jul 2021 03:34:26 GMT
+recorded_with: VCR 5.1.0

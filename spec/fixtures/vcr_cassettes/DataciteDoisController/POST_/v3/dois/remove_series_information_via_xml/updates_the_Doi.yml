@@ -1,0 +1,75 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://handle.test.datacite.org/api/handles/10.14454/05MB-Q396
+    body:
+      encoding: UTF-8
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.4; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Wed, 14 Jul 2021 03:37:47 GMT
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="14871ih0e1qdp1f7gx2pl7j4h0", nonce="/7fFlzIEOLQ/cyaQeiSVIw==",
+        error="Identity not verified"
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: null
+  recorded_at: Wed, 14 Jul 2021 03:37:47 GMT
+- request:
+    method: put
+    uri: https://handle.test.datacite.org/api/handles/10.14454/05MB-Q396
+    body:
+      encoding: UTF-8
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.4; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Wed, 14 Jul 2021 03:37:49 GMT
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="ziz74poq5vi1nj54z9gnos2l", nonce="5thlShRpAVK7r+uDDFD+mw==",
+        error="Identity not verified"
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: null
+  recorded_at: Wed, 14 Jul 2021 03:37:49 GMT
+recorded_with: VCR 5.1.0

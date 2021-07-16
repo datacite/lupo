@@ -442,6 +442,65 @@ class Contact < ApplicationRecord
     end
   end
 
+  def self.roles
+    ROLES
+  end
+
+  def has_role?(role = "")
+    role_name.include?(role)
+  end
+
+  def remove_roles!(roles = [])
+    roles.each do | role |
+      role_name.delete(role)
+    end
+    self.changed?
+  end
+
+  def is_me?(contact = nil)
+    uid == contact.uid
+  end
+
+  def has_provider_role?(role)
+    case role
+    when "voting"
+      provider.voting_contact_email == email ? true : nil
+    when "billing"
+      provider.billing_contact_email == email ? true : nil
+    when "secondary_billing"
+      provider.secondary_billing_contact_email == email ? true : nil
+    when "service"
+      provider.service_contact_email == email ? true : nil
+    when "secondary_service"
+      provider.secondary_service_contact_email == email ? true : nil
+    when "technical"
+      provider.technical_contact_email == email ? true : nil
+    when "secondary_technical"
+      provider.secondary_technical_contact_email == email ? true : nil
+    else
+      nil
+    end
+  end
+
+  def set_provider_role(role, contact)
+    case role
+    when "voting"
+      provider.update_attribute("voting_contact", contact)
+    when "billing"
+      provider.update_attribute("billing_contact", contact)
+    when "secondary_billing"
+      provider.update_attribute("secondary_billing_contact", contact)
+    when "service"
+      provider.update_attribute("service_contact", contact)
+    when "secondary_service"
+      provider.update_attribute("secondary_service_contact", contact)
+    when "technical"
+      provider.update_attribute("technical_contact", contact)
+    when "secondary_technical"
+      provider.update_attribute("secondary_technical_contact", contact)
+    end
+  end
+
   private
     # uuid for public id
     def set_uid
