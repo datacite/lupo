@@ -196,17 +196,16 @@ class ContactsController < ApplicationController
         # Make sure no other contact with this provider claims these roles.
         @contact.provider.contacts.each do | contact |
           if !@contact.is_me?(contact)
-            if contact.remove_roles!(@contact.role_name)
+            if contact.remove_roles!(Array.wrap(@contact.role_name))
               contact.update_attribute("role_name", contact.role_name)
             end
           end
         end
-
       end
     end
 
     def remove_provider_contacts
-      @contact.role_name.each do | role |
+      Array.wrap(@contact.role_name).each do | role |
         if @contact.has_provider_role?(role)
           @contact.set_provider_role(role, nil)
         end
