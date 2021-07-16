@@ -447,12 +447,12 @@ class Contact < ApplicationRecord
   end
 
   def has_role?(role = "")
-    role_name.include?(role)
+    Array.wrap(role_name).include?(role)
   end
 
   def remove_roles!(roles = [])
     roles.each do | role |
-      role_name.delete(role)
+      Array.wrap(role_name).delete(role)
     end
     self.changed?
   end
