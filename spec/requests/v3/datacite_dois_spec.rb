@@ -531,7 +531,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "downloads", elasticsearch: true, vcr: true do
+  describe "downloads", elasticsearch: true, vcr: false do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
@@ -552,7 +552,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "downloadsOverTime")).to eq([{ "total" => 10, "yearMonth" => "2015-06" }, { "total" => 10, "yearMonth" => "2015-06" }, { "total" => 10, "yearMonth" => "2015-06" }])
     end
 
-    it "has downloads meta" do
+    xit "has downloads meta" do
       get "/v3/dois", nil, headers
 
       expect(last_response.status).to eq(200)
