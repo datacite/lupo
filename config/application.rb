@@ -203,5 +203,7 @@ module Lupo
     config.paperclip_defaults = {
       storage: :filesystem, url: "/images/members/:filename"
     }
+
+    config.allowed_cors_origins = []
   end
 end
