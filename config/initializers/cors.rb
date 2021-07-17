@@ -13,7 +13,8 @@ Rails.application.config.middleware.insert_before 0,
                                                   logger:
                                                     (-> { Rails.logger }) do
   allow do
-    origins Rails.application.config.allowed_cors_origins
+    origins Rails.application.config.allowed_cors_origins.deep_dup
+    # origins "*"
     resource "*",
              headers: :any,
              expose: %w[X-Credential-Username X-Anonymous-Consumer],
