@@ -14,10 +14,10 @@ Rails.application.config.middleware.insert_before 0,
                                                     (-> { Rails.logger }) do
   allow do
     origins "*"
-
     resource "*",
              headers: :any,
              expose: %w[X-Credential-Username X-Anonymous-Consumer],
-             methods: %i[get post put patch delete options head]
+             methods: %i[get post put patch delete options head],
+             credentials: true
   end
 end
