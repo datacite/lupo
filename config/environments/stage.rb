@@ -79,7 +79,4 @@ Rails.application.configure do
 
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
-
-  # enable specific origins for post actions
-  config.allowed_cors_origins = ["http://localhost:3000", "http://localhost:4200", "https://commons.stage.datacite.org", "https://doi.stage.datacite.org"]
 end
