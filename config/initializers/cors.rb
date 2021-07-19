@@ -7,18 +7,18 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-Rails.application.config.middleware.insert_before 0,
-                                                  Rack::Cors,
-                                                  debug: true,
-                                                  logger:
-                                                    (-> { Rails.logger }) do
-  allow do
-    origins Rails.application.config.allowed_cors_origins.deep_dup
-    # origins "*"
-    resource "*",
-             headers: :any,
-             expose: %w[X-Credential-Username X-Anonymous-Consumer],
-             methods: %i[get post put patch delete options head],
-             credentials: true
-  end
-end
+# Rails.application.config.middleware.insert_before 0,
+#                                                   Rack::Cors,
+#                                                   debug: true,
+#                                                   logger:
+#                                                     (-> { Rails.logger }) do
+#   allow do
+#     origins Rails.application.config.allowed_cors_origins.deep_dup
+#     # origins "*"
+#     resource "*",
+#              headers: :any,
+#              expose: %w[X-Credential-Username X-Anonymous-Consumer],
+#              methods: %i[get post put patch delete options head],
+#              credentials: true
+#   end
+# end
