@@ -564,4 +564,39 @@ describe PersonType do
       )
     end
   end
+
+  # describe "update user profile", elasticsearch: true, vcr: true do
+  #   let(:query) do
+  #     "mutation {
+  #       updateUserProfile(uid: \"0000-0001-6528-2027\", name: \"Martin H. Fenner\") {
+  #         user {
+  #           uid
+  #           name
+  #         }
+  #       }
+  #     }"
+  #   end
+
+  #   it "returns user" do
+  #     current_user =
+  #       User.new(
+  #         User.generate_token(
+  #           uid: "0000-0001-6528-2027",
+  #           name: "Martin Fenner",
+  #           has_orcid_token: true,
+  #         ),
+  #       )
+  #     response =
+  #       LupoSchema.execute(query, context: { current_user: current_user }).
+  #         as_json
+  #     puts response
+
+  #     expect(response.dig("data", "updateUserProfile", "user", "uid")).to eq(
+  #       "d140d44e-af70-43ec-a90b-49878a954487",
+  #     )
+  #     expect(response.dig("data", "updateUserProfile", "user", "name")).to eq(
+  #       "orcid_update",
+  #     )
+  #   end
+  # end
 end
