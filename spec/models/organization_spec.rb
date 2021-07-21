@@ -394,7 +394,7 @@ describe Organization, type: :model, vcr: true do
       expect(organization.id).to eq("https://ror.org/01856cw59")
       expect(organization.name).to eq("University Hospital M??nster")
       expect(organization.labels).to eq(
-        [{ "code" => "DE", "name" => "Universitätsklinikum M??nster" }],
+        [{ "code" => "DE", "name" => "Universit??tsklinikum M??nster" }],
       )
       expect(organization.links).to eq(%w[http://klinikum.uni-muenster.de/])
     end
