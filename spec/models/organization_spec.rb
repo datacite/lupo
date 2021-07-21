@@ -392,9 +392,9 @@ describe Organization, type: :model, vcr: true do
       expect(organizations[:data].size).to eq(10)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/01856cw59")
-      expect(organization.name).to eq("University Hospital M??nster")
+      expect(organization.name).to eq("University Hospital Münster")
       expect(organization.labels).to eq(
-        [{ "code" => "DE", "name" => "Universit??tsklinikum M??nster" }],
+        [{ "code" => "DE", "name" => "Universitätsklinikum Münster" }],
       )
       expect(organization.links).to eq(%w[http://klinikum.uni-muenster.de/])
     end

@@ -691,7 +691,7 @@ describe DataManagementPlanType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dataManagementPlan", "id")).to eq(
-        "https://handle.stage.datacite.org/#{doi.doi.downcase}",
+        "https://handle.test.datacite.org/#{doi.doi.downcase}",
       )
       expect(
         response.dig("data", "dataManagementPlan", "citations", "totalCount"),
