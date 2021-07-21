@@ -39,7 +39,7 @@ describe SoftwareType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "software", "id")).to eq(
-        "https://handle.test.datacite.org/" + software.uid,
+        "https://handle.stage.datacite.org/" + software.uid,
       )
       expect(response.dig("data", "software", "formattedCitation")).to eq(
         "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> (Version 1.0.1) [Computer software]. Dryad Digital Repository. <a href='https://doi.org/10.14454/12345'>https://doi.org/10.14454/12345</a>",

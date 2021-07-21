@@ -65,7 +65,7 @@ describe WorkType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "work", "id")).to eq(
-        "https://handle.test.datacite.org/#{work.doi.downcase}",
+        "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
       expect(response.dig("data", "work", "container")).to eq(
         "identifier" => "0020-1693",
@@ -158,7 +158,7 @@ describe WorkType do
           as_json
 
       expect(response.dig("data", "work", "id")).to eq(
-        "https://handle.test.datacite.org/#{work.doi.downcase}",
+        "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
       expect(response.dig("data", "work", "claims")).to eq(
         [
@@ -210,7 +210,7 @@ describe WorkType do
           as_json
 
       expect(response.dig("data", "work", "id")).to eq(
-        "https://handle.test.datacite.org/#{work.doi.downcase}",
+        "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
       expect(response.dig("data", "work", "claims")).to eq(
         [
@@ -260,7 +260,7 @@ describe WorkType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "work", "id")).to eq(
-        "https://handle.test.datacite.org/#{work.doi.downcase}",
+        "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
       expect(response.dig("data", "work", "titles")).to eq(
         [{ "title" => "Nanometre-scale thermometry in a living cell" }],

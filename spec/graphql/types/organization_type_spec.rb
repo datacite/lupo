@@ -977,7 +977,7 @@ describe OrganizationType do
       organization = response.dig("data", "organizations", "nodes", 0)
 
       expect(organization.fetch("id")).to eq("https://ror.org/01856cw59")
-      expect(organization.fetch("name")).to eq("University Hospital Münster")
+      expect(organization.fetch("name")).to eq("University Hospital M??nster")
       expect(organization.fetch("types")).to eq(%w[Healthcare])
       expect(organization.fetch("country")).to eq(
         "id" => "DE", "name" => "Germany",
@@ -1063,7 +1063,7 @@ describe OrganizationType do
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/04bqwzd17")
       expect(organization.fetch("name")).to eq(
-        "Bayerisches Landesamt für Gesundheit und Lebensmittelsicherheit",
+        "Bayerisches Landesamt f??r Gesundheit und Lebensmittelsicherheit",
       )
       expect(organization.fetch("types")).to eq(%w[Government])
       expect(organization.fetch("country")).to eq(
