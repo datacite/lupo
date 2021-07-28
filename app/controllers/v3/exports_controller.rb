@@ -32,7 +32,7 @@ module V3
           "email" => contact.email,
           "firstName" => contact.given_name,
           "lastName" => contact.family_name,
-          "type" => contact.role_name ? contact.role_name.join(";") : nil,
+          "type" => contact.role_name ? Array.wrap(contact.role_name).join(";") : nil,
           "createdAt" => export_date_string(contact.created_at),
           "modifiedAt" => export_date_string(contact.updated_at),
           "deletedAt" => contact.deleted_at.present? ? export_date_string(contact.deleted_at) : nil,
