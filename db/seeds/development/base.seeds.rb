@@ -21,7 +21,7 @@ client =
     :client,
     provider: provider,
     symbol: ENV["MDS_USERNAME"],
-    password: ENV["MDS_PASSWORD"],
+    password_input: ENV["MDS_PASSWORD"],
   )
 if Prefix.where(uid: "10.14454").blank?
   prefix = FactoryBot.create(:prefix, uid: "10.14454")
