@@ -1222,6 +1222,6 @@ class QueryType < BaseObject
     # doi
     record = DataciteDoi.find_by_id(doi)
     fail ActiveRecord::RecordNotFound if record.nil?
-    OpenStruct.new(record.as_json.first['_source'] )
+    OpenStruct.new(record.as_json.first['_source'])
   end
 end
