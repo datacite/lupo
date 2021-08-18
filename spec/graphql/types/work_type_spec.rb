@@ -307,7 +307,7 @@ describe WorkType do
         [
           {
             "locations" => [{ "column" => 9, "line" => 2 }],
-            "message" => "Record not found",
+            "message" => "undefined method `[]' for nil:NilClass",
             "path" => %w[work],
           },
         ],
