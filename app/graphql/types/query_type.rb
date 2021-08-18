@@ -1219,9 +1219,9 @@ class QueryType < BaseObject
 
     # doi = DataciteDoi.where(doi: doi, aasm_state: "findable").first
     # fail ActiveRecord::RecordNotFound if doi.nil?
-
+    # doi
     record = DataciteDoi.find_by_id(doi)
-    fail ActiveRecord::RecordNotFound if doi.nil?
+    fail ActiveRecord::RecordNotFound if record.nil?
     OpenStruct.new(record.as_json.first['_source'] )
   end
 end
