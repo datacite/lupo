@@ -218,20 +218,20 @@ class FunderType < BaseObject
 
   def view_count
     args = { first: 0 }
-    r = response(args)
-    r.response.aggregations.view_count.value.to_i
+    @r = response(args) if @r.nil?
+    @r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
-    r = response(args)
-    r.response.aggregations.download_count.value.to_i
+    @r = response(args) if @r.nil?
+    @r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
-    r = response(args)
-    r.response.aggregations.citation_count.value.to_i
+    @r = response(args) if @r.nil?
+    @r.response.aggregations.citation_count.value.to_i
   end
 
   def response(**args)
