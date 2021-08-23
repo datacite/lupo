@@ -107,6 +107,7 @@ module Indexable
     # shoryuken_class is needed for the consumer to process the message
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options = {})
+      return nil if Rails.env.development?
       sqs = Aws::SQS::Client.new
       queue_name_prefix =
         if Rails.env.stage?
