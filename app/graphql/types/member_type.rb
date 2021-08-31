@@ -305,9 +305,9 @@ class MemberType < BaseObject
 
   def view_count
     args = { first: 0 }
-    r = response(args)
-    if r.results.total.positive?
-      aggregate_count(r.response.aggregations.views.buckets)
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.views.buckets)
     else
       0
     end
@@ -315,9 +315,9 @@ class MemberType < BaseObject
 
   def download_count
     args = { first: 0 }
-    r = response(args)
-    if r.results.total.positive?
-      aggregate_count(r.response.aggregations.downloads.buckets)
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.downloads.buckets)
     else
       0
     end
@@ -325,9 +325,9 @@ class MemberType < BaseObject
 
   def citation_count
     args = { first: 0 }
-    r = response(args)
-    if r.results.total.positive?
-      aggregate_count(r.response.aggregations.citations.buckets)
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.citations.buckets)
     else
       0
     end

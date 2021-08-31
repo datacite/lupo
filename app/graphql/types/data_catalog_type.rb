@@ -145,24 +145,30 @@ class DataCatalogType < BaseObject
   end
 
   def view_count
-    if response.results.total.positive?
-      aggregate_count(response.response.aggregations.views.buckets)
+    args = { first: 0 }
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.views.buckets)
     else
       0
     end
   end
 
   def download_count
-    if response.results.total.positive?
-      aggregate_count(response.response.aggregations.downloads.buckets)
+    args = { first: 0 }
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.downloads.buckets)
     else
       0
     end
   end
 
   def citation_count
-    if response.results.total.positive?
-      aggregate_count(response.response.aggregations.citations.buckets)
+    args = { first: 0 }
+    @r = response(args) if @r.nil?
+    if @r.results.total.positive?
+      aggregate_count(@r.response.aggregations.citations.buckets)
     else
       0
     end
