@@ -66,7 +66,7 @@ module Cacheable
     end
 
     def cached_graphql_response(query, variables, context, operation_name)
-      hash = Base64.encode64(query.to_json+variables.to_json+context.to_json+operation_name.to_json)
+      hash = Base64.encode64(query.to_json + variables.to_json + context.to_json + operation_name.to_json)
       if Rails.application.config.action_controller.perform_caching && !variables[:id].nil?
         Rails.cache.fetch("akita_response/#{hash}", expires_in: 24.hours) do
           LupoSchema.execute(
