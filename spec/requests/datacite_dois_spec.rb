@@ -2582,7 +2582,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-        expect(json.dig("data", "attributes", "titles")).to eq("title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+        expect(json.dig("data", "attributes", "titles")).to eq([{"title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]"}])
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
