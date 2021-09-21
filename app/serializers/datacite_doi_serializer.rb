@@ -214,6 +214,10 @@ class DataciteDoiSerializer
     Array.wrap(object.sizes)
   end
 
+  attribute :titles do |object|
+    Array.wrap(object.titles)
+  end
+
   attribute :descriptions do |object|
     Array.wrap(object.descriptions)
   end
