@@ -588,6 +588,7 @@ class Doi < ApplicationRecord
     if facet_count.positive?
       {
         resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1 } },
+        clients: { terms: { field: "client_id_and_name", size: facet_count, min_doc_count: 1 } },
         open_licenses: {
           filter: { terms: { "rights_list.rightsIdentifier": ["cc-by-1.0", "cc-by-2.0", "cc-by-2.5", "cc-by-3.0", "cc-by-3.0-at", "cc-by-3.0-us", "cc-by-4.0", "cc-pddc", "cc0-1.0", "cc-pdm-1.0"] } },
           aggs: {
