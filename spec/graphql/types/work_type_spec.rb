@@ -651,8 +651,8 @@ describe WorkType do
       expect(response.dig("data", "works", "registrationAgencies")).to eq(
         [{ "count" => 10, "id" => "datacite", "title" => "DataCite" }],
       )
-      expect(response.dig("data", "works", "repositories").first).to eq(
-        { "count" => 1, "id" => "testa.test1", "title" => "My data center" },
+      expect(response.dig("data", "works", "repositories").first["title"]).to eq(
+        "My data center"
       )
       expect(response.dig("data", "works", "languages")).to eq(
         [{ "count" => 10, "id" => "nl", "title" => "Dutch" }],
