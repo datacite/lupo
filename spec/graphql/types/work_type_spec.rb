@@ -592,6 +592,11 @@ describe WorkType do
             title
             count
           }
+          repositories {
+            id
+            title
+            count
+          }
           languages {
             id
             title
@@ -645,6 +650,9 @@ describe WorkType do
       )
       expect(response.dig("data", "works", "registrationAgencies")).to eq(
         [{ "count" => 10, "id" => "datacite", "title" => "DataCite" }],
+      )
+      expect(response.dig("data", "works", "repositories").first["title"]).to eq(
+        "My data center"
       )
       expect(response.dig("data", "works", "languages")).to eq(
         [{ "count" => 10, "id" => "nl", "title" => "Dutch" }],
