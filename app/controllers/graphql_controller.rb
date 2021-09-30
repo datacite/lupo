@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class GraphqlController < ApplicationController
-  include Cacheable
   before_action :authenticate_user!
 
   def execute
@@ -12,8 +11,12 @@ class GraphqlController < ApplicationController
       tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers),
       current_user: current_user,
     }
-    result = cached_graphql_response(query, variables, context, operation_name)
-    render json: result
+    result =
+      LupoSchema.execute(
+        query,
+        variables: variables, context: context, operation_name: operation_name,
+      )
+    render json: ApolloFederation::Tracing.attach_trace_to_result(result)
   rescue StandardError => e
     raise e unless Rails.env.development?
 
