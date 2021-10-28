@@ -159,6 +159,16 @@ describe Person, type: :model, vcr: true do
       )
     end
 
+    it "found with utf8" do
+      id = "https://sandbox.orcid.org/0000-0002-5721-4355"
+      people = Person.find_by_id(id)
+      expect(people[:data].size).to eq(1)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0002-5721-4355")
+      expect(person.given_name).to eq("DataCíté")
+      expect(person.family_name).to eq("UTF8 Tést")
+    end
+
     xit "account locked" do
       id = "https://orcid.org/0000-0003-1315-5960"
       expect { Person.find_by_id(id) }.to raise_error(

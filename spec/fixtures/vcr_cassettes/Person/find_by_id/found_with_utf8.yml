@@ -1,0 +1,115 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pub.sandbox.orcid.org/v3.0/0000-0002-5721-4355/person
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Thu, 28 Oct 2021 19:38:34 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Vary:
+      - accept-encoding
+      Content-Encoding:
+      - gzip
+      Cf-Cache-Status:
+      - DYNAMIC
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 6a56a00c7f3018c4-EWR
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAIySS07DMBCGr1J5BVJCm0cf6RYKFygrxGIau+2Aa0e2U6iqHqiLLjhDLsYE+oSCGymR7Xz+ZvzLSybBunCmOY5R8JCDE6yvSikDpmBG4yXLjaDV3b8lm4MsaRB1krSbZr1W0oo6q+Cs6ATOkjhJ0rgTEzzBuVBhXcEeUewOHNxWG1etGUFjmKFchLs+dtDj8L7XGFZr62qIuuPottB341aXJt/P5mhxhBLdgvYW5UhizgJWgJvSvEVPSG8ctrtxFKZJu11LtZsKc2jv74wOIOs/Pe+1zTPe5rGUaoxQTwwU08UFGffok16SMXFZpxvHWZ2MVk4oR+0MbG7QaRM0XkqD1kHQQDUX1uEEuDaNqwdQvNrQ8sAWUH3QIMp60fUN88R39pyHg1ETRlgBJq9PXhrpSfMU9if6U071xAzQV+aL8du/MXIC51TJ+u7CFvOLdyCpX8XiTRvuMW8pv3mvq5N4d8IokCFyugW11Phy+b3jgpTOlVn9v6cgRiu2+gQAAP//AwAfG0YXfgQAAA==
+    http_version: null
+  recorded_at: Thu, 28 Oct 2021 19:38:32 GMT
+- request:
+    method: get
+    uri: https://pub.sandbox.orcid.org/v3.0/0000-0002-5721-4355/employments
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Thu, 28 Oct 2021 19:38:34 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Frame-Options:
+      - DENY
+      X-Content-Type-Options:
+      - nosniff
+      Vary:
+      - accept-encoding
+      Content-Encoding:
+      - gzip
+      Cf-Cache-Status:
+      - DYNAMIC
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 6a56a00f5c6b178c-EWR
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAAzDSQqAMAwAwL/kbHAtQr8iHgJtNZAu2HgQ8e92YF4QqooxOw7sHTpSDzbdIh1QCCxMyjnhceW7gN32DgrpCRb6ocF2QrNOIy6zMb2PRfITfdIK3w8AAP//AwA//VPzXAAAAA==
+    http_version: null
+  recorded_at: Thu, 28 Oct 2021 19:38:33 GMT
+recorded_with: VCR 5.1.0
