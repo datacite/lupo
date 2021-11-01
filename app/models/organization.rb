@@ -66,7 +66,7 @@ class Organization
       "https://api.ror.org/organizations?query=\"#{
         crossref_funder_id.split('/', 2).last
       }\""
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     message = response.body.dig("data", "items", 0) || {}
     return {} if message.empty?
