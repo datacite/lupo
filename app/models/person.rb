@@ -65,7 +65,7 @@ class Person
   end
 
   def self.api_url
-    return Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
+    Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
   end
 
   def self.query(query, options = {})

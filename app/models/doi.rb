@@ -857,7 +857,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
-      query = query.gsub("/", '\/')
+      query = query.gsub("/", "\/")
     end
 
     # turn ids into an array if provided as comma-separated string
@@ -1055,7 +1055,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
-      query = query.gsub("/", '\/')
+      query = query.gsub("/", "\/")
     end
 
     # turn ids into an array if provided as comma-separated string
