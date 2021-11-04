@@ -17,7 +17,7 @@ class Organization
     return {} if ror_id.blank?
 
     url = "https://api.ror.org/organizations/#{ror_id}"
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     return {} if response.status != 200
 
@@ -40,7 +40,7 @@ class Organization
     return {} if grid_id.blank?
 
     url = "https://api.ror.org/organizations?query=\"#{grid_id}\""
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     message = response.body.dig("data", "items", 0) || {}
     return {} if message.empty?
@@ -66,7 +66,7 @@ class Organization
       "https://api.ror.org/organizations?query=\"#{
         crossref_funder_id.split('/', 2).last
       }\""
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     message = response.body.dig("data", "items", 0) || {}
     return {} if message.empty?
@@ -103,7 +103,7 @@ class Organization
       url += "&filter=country.country_code:#{country.upcase}"
     end
 
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     return {} if response.status != 200
 

@@ -343,7 +343,7 @@ GEM
     mailgun-ruby (1.2.5)
       rest-client (>= 2.0.2)
     marcel (1.0.1)
-    maremma (4.9.5)
+    maremma (4.9.6)
       activesupport (>= 4.2.5)
       addressable (>= 2.3.6)
       builder (~> 3.2, >= 3.2.2)
@@ -378,7 +378,7 @@ GEM
     nokogiri (1.11.7)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
-    oj (3.13.2)
+    oj (3.13.9)
     oj_mimic_json (1.0.1)
     optimist (3.0.1)
     pandoc-ruby (2.1.4)
@@ -399,7 +399,7 @@ GEM
       docopt (~> 0.5)
       sysrandom
     qonfig (0.26.0)
-    racc (1.5.2)
+    racc (1.6.0)
     rack (2.2.3)
     rack-accept (0.4.5)
       rack (>= 0.4)
@@ -680,7 +680,7 @@ DEPENDENCIES
   logstash-event (~> 1.2, >= 1.2.02)
   logstash-logger (~> 0.26.1)
   mailgun-ruby (~> 1.1, >= 1.1.8)
-  maremma (~> 4.9)
+  maremma (~> 4.9.6)
   mimemagic (= 0.3.7)
   mini_magick (~> 4.8)
   mysql2 (~> 0.5.3)
@@ -722,4 +722,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.2.19
+   2.2.30
