@@ -185,6 +185,10 @@ class EventsController < ApplicationController
         if total > 0
           facet_by_year(response.aggregations.occurred.buckets)
         end
+      created =
+        if total > 0
+          facet_by_year(response.aggregations.created.buckets)
+        end
       prefixes =
         if total.positive?
           facet_by_key(response.response.aggregations.prefixes.buckets)
@@ -219,6 +223,7 @@ class EventsController < ApplicationController
           page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
         sources: sources,
         occurred: occurred,
+        createdAt: created,
         prefixes: prefixes,
         "citationTypes" => citation_types,
         "relationTypes" => relation_types,
