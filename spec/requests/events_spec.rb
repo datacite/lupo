@@ -364,6 +364,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
           "datacite.crossref.citations",
         )
       end
+
+      it "has created aggregation" do
+        get uri, nil, headers
+        expect(json.dig("meta", "created", 0, "count")).to eq(1)
+        expect(json.dig("meta", "occurred", 0, "count")).to eq(1)
+      end
     end
 
     context "with nested attributes" do
