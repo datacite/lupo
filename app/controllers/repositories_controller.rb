@@ -367,6 +367,7 @@ class RepositoriesController < ApplicationController
           { "serviceContact": [:email, "givenName", "familyName"] },
           "salesforceId",
           "fromSalesforce",
+          "analyticsSlug",
         ],
         keys: {
           "systemEmail" => :system_email,
@@ -380,6 +381,7 @@ class RepositoriesController < ApplicationController
           "alternateName" => :alternate_name,
           "repositoryType" => :repository_type,
           "serviceContact" => :service_contact,
+          "analyticsSlug" => :analytics_slug,
         },
       )
     end

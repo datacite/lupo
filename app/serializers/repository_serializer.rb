@@ -26,10 +26,15 @@ class RepositorySerializer
              :salesforce_id,
              :from_salesforce,
              :created,
-             :updated
+             :updated,
+             :analytics_slug
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
+
+  attribute :analytics_slug do |object|
+    object["analytics_slug"]
+  end
 
   attribute :re3data do |object|
     "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?
