@@ -19,7 +19,7 @@ module Modelable
     end
 
     def orcid_from_url(url)
-      if %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(url)
+      if %r{\A(?:(http|https)://(orcid.org|sandbox.orcid.org)/)(.+)\z}.match?(url)
         uri = Addressable::URI.parse(url)
         uri.path.gsub(%r{^/}, "").upcase
       end

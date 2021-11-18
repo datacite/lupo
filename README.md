@@ -20,6 +20,12 @@ or
 docker-compose up
 ```
 
+If you want to build the docker image locally (instead of pulling it from docker hub)
+ and use docker compose for development you can use
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.local.yml
+```
+
 You can now point your browser to `http://localhost:8065` and use the application. Some API endpoints require authentication.
 
 ## Development

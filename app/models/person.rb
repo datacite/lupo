@@ -64,10 +64,13 @@ class Person
     { data: data, errors: errors }
   end
 
+  def self.api_url
+    Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
+  end
+
   def self.query(query, options = {})
     options[:limit] ||= 25
     options[:offset] ||= 0
-    api_url = Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
 
     params = {
       q: query || "*",
@@ -76,10 +79,10 @@ class Person
     }.compact
 
     url =
-      "#{api_url}/v3.0/expanded-search/?" +
+      "#{self.api_url}/v3.0/expanded-search/?" +
       URI.encode_www_form(params)
 
-    response = Maremma.get(url, accept: "json")
+    response = Maremma.get(url, accept: "json", skip_encoding: true)
     if response.status >= 400
       message =
         response.body.dig("errors", 0, "title", "developer-message") ||
@@ -100,9 +103,8 @@ class Person
   end
 
   def self.get_orcid(orcid: nil, endpoint: nil)
-    api_url = Rails.env.production? ? "https://pub.orcid.org" : "https://pub.sandbox.orcid.org"
-    url = "#{api_url}/v3.0/#{orcid}/#{endpoint}"
-    response = Maremma.get(url, accept: "json")
+    url = "#{self.api_url}/v3.0/#{orcid}/#{endpoint}"
+    response = Maremma.get(url, accept: "json", skip_encoding: true)
 
     if response.status >= 405
       message =
