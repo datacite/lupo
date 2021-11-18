@@ -798,8 +798,8 @@ describe WorkType do
       current_user =
         User.new(
           User.generate_token(
-            uid: "0000-0001-6528-2027",
-            name: "Martin Fenner",
+            uid: "0000-0002-7352-517X",
+            name: "Richard Hallett",
             has_orcid_token: true,
           ),
         )
@@ -826,10 +826,18 @@ describe WorkType do
   describe "delete claim", elasticsearch: true, vcr: true do
     let(:query) do
       "mutation {
-        deleteClaim(id: \"d140d44e-af70-43ec-a90b-49878a954487\") {
-          message
+        deleteClaim(id: \"79b54ea5-7a38-4fd1-bc75-57708492d910\") {
+          claim {
+            id
+            state
+            sourceId
+            errorMessages {
+              title
+            }
+          }
           errors {
             status
+            source
             title
           }
         }
@@ -840,16 +848,17 @@ describe WorkType do
       current_user =
         User.new(
           User.generate_token(
-            uid: "0000-0001-6528-2027", aud: "stage", has_orcid_token: true,
+            uid: "0000-0002-7352-517X", aud: "stage", has_orcid_token: true,
           ),
         )
       response =
         LupoSchema.execute(query, context: { current_user: current_user }).
           as_json
 
-      expect(response.dig("data", "deleteClaim", "message")).to eq(
-        "Claim d140d44e-af70-43ec-a90b-49878a954487 deleted.",
+      expect(response.dig("data", "deleteClaim", "claim", "id")).to eq(
+        "79b54ea5-7a38-4fd1-bc75-57708492d910",
       )
+
       expect(response.dig("data", "deleteClaim", "errors")).to be_blank
     end
   end
@@ -858,7 +867,6 @@ describe WorkType do
     let(:query) do
       "mutation {
         deleteClaim(id: \"6dcaeca5-7e5a-449a-86b8-f2ae80db3fef\") {
-          message
           errors {
             status
             title
@@ -878,9 +886,6 @@ describe WorkType do
         LupoSchema.execute(query, context: { current_user: current_user }).
           as_json
 
-      expect(response.dig("data", "deleteClaim", "message")).to eq(
-        "Error deleting claim 6dcaeca5-7e5a-449a-86b8-f2ae80db3fef.",
-      )
       expect(response.dig("data", "deleteClaim", "errors")).to eq(
         [{ "status" => 404, "title" => "Not found" }],
       )

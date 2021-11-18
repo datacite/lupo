@@ -8,18 +8,20 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.4; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Authorization:
-      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImF1ZCI6InN0YWdlIiwiaWF0IjoxNjAzNjg4ODk1LCJleHAiOjE2MDM2ODg5MjV9.pOQ33JlfKzNkJZPdAykGWXT4kRgmH8adw7-rCby_h1x-Rl63cYpf3vmjduT1svpIA0JcawBAgtExFD1ks5NXCT01Rj9LKZJFiOF2pGCYnuvi-Ez8yZWPkUmW47jt0cSX2pplupdNU6ljLAZxPbgBO06DBf9l-K447pRlvMKm0ZSmAiIKabyxQFM0qJ5lT7W8au6MtNfcN1vWjWLEudez7MvM5isEdUFtYCs-r98Q_yKAi5s35MX3Dug7VXMa43MpMz8548TiH945S2PdUOyd0RsJ7CYLZODX3tft7c7RGSUtZpWqEa35YZTPrAPoXc1RthuFGHDD9GnJFeffmWA715CR2DeHJ8a3Q5m_n3F2dIKy6U0Z9UqIN1Ve_1u4k8mHIzek7_0_14p0TqtG5b3l-ayCwrHNyAXWGk3gSlPIJMLuZplbnS4rRumOOAGpOKdy4nuvXd1ayzatxECrXpUKqLPHG-ZzQvN-pW2sqMVNzeJU5J4mdy87TVT63rWY7zupiNHocUXKrxGi2oFBpu0rq4FezE1e-ADwtJrNysn2T8sOYwxTkCdvQ-kG4AyB8K7zHH_JbWylHMqvKr42UzZpQvHNDKDD2oXCaCTwBjvt-JtZMWqAf6gfiWCIuqvb4WDdj6wQcnb7DsS7ux8FH3gR_NImS9YQWqrefmJPhNDoj1M
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDEtNjUyOC0yMDI3IiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImhhc19vcmNpZF90b2tlbiI6dHJ1ZSwiYXVkIjoic3RhZ2UiLCJpYXQiOjE2MzcyNzEyNDUsImV4cCI6MTYzNzI3MTI3NX0.p3U6IGD4LFcOQEcBjUweJkghpm0TN0PBksU6R6wjpmQ2AxmaQ8eXxjOqcpx6fV8IOjtEZJU3TmkU9LK4wk3gTNqV0GcCbo3pJXJqTQ6p1IzdPA2f1Z7l7qXtKHCIRJu1ChSxhzXQlvq4uNSsor27t9xeuEEFttF766t5793PeZpkDToVr39MU-8_670yiBw_FMXdjBL8fjZWJSX4rrL--WI2buSm5KVB053hDEyXI2le0PsnQz0pjYHQ5b5kL8cyyE2VaPR53ralia8W_s9PrEpOa2KKtrE4Gg2YD4l2oAPtSDc7ksi6ZwnEZ1K6-topXrvIuArvqlKAW3Vj-3A7H9Ese3uBpodB_sqeiaDCvtTF6UvKIy2b54ilH8uGzt8OnIn68tM6RnKhGjJLSBmUE87OYLICE5ZQbueI_rPLRiMNHXzJnIqATtgkFtp7VgeZhJI1y6w-3uehwAgeFQZUKaYFJ4vAcw7PB8E5cVZg4tl7zkulHIpiaE7nI8LsUM-IDPQlB3Ew0Sza_d8BYgGOcxaL8IGxtX0K4QjhsnthuFNKZq2lVniXV2XCfVV_PBxWXRdF_QaO3MIWBwE1TpEk0V3LXV1HXesc69jwiS0oyYXEZ1VuAx2giOYLIEFjlK-z8S_EjaSicVhR81w9prtfkYhDYse_Y6pBLWiX_SsXrK0
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 404
       message: Not Found
     headers:
       Date:
-      - Mon, 26 Oct 2020 05:08:21 GMT
+      - Thu, 18 Nov 2021 21:34:07 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -30,6 +32,8 @@ http_interactions:
       - no-cache
       Vary:
       - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
       Referrer-Policy:
       - strict-origin-when-cross-origin
       X-Permitted-Cross-Domain-Policies:
@@ -37,23 +41,23 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - 70e58ae1-314f-4753-a1e2-850cd1ff9d23
+      - 8b96d9b6-e1ad-45e7-9cb3-9b135b9de0c2
       X-Download-Options:
       - noopen
       X-Runtime:
-      - '0.153424'
+      - '0.181076'
       X-Frame-Options:
       - SAMEORIGIN
       X-Content-Type-Options:
       - nosniff
       X-Powered-By:
-      - Phusion Passenger 6.0.6
+      - Phusion Passenger(R) 6.0.11
       Server:
-      - nginx/1.14.0 + Phusion Passenger 6.0.6
+      - nginx/1.18.0 + Phusion Passenger(R) 6.0.11
     body:
       encoding: ASCII-8BIT
-      string: '{"errors":[{"status":"404","title":"The resource you are looking for
-        doesn''t exist."}]}'
+      string: !binary |-
+        H4sIAM/GlmEAAwzHMQqAMAwF0KuELC4iDp08h5s4FP1qsTSQpKCId9ftvYehKmo8TA+bR68/OfSBW/bkGf/GA6QwqbqAbqkUFZRFzlR22kRpFVhpnHAl847f+f0AAAD//wMArpOW4VcAAAA=
     http_version: null
-  recorded_at: Mon, 26 Oct 2020 05:08:21 GMT
+  recorded_at: Thu, 18 Nov 2021 21:34:07 GMT
 recorded_with: VCR 5.1.0

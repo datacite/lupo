@@ -2,34 +2,38 @@
 http_interactions:
 - request:
     method: delete
-    uri: https://api.stage.datacite.org/claims/d140d44e-af70-43ec-a90b-49878a954487
+    uri: https://api.stage.datacite.org/claims/79b54ea5-7a38-4fd1-bc75-57708492d910
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.4; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Authorization:
-      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImF1ZCI6InN0YWdlIiwiaWF0IjoxNjAzNjg4NjYyLCJleHAiOjE2MDM2ODg2OTJ9.sYxCcTI7jRrmvqOTWAFOocu-IwXkm6fsrtNI5JgZisl5VqkjtTTUYf75jjhrZRrYC8RqSV7FUqxwiN3ysVQDJIP05WHzAKhxPclkDyJ7dgeCi4FI1ADR8m3HLP9t5iYPc7YcfxqjA-mtUGM77PfLWOTn4-KaSwyT25un9N4mc2acMxOzCfR7BF2hQaG4vyCO0m4G7x5NxYQxbSoqyon3Lk01IyYsX9PIDJDqXHb-kaCA4imISTyhK-beXed7bTvXhEH_na4ck756yJIugK0l6fC44Jp769_9dKNAIuiGGLa-L--UEG4Pcm6qjDjhICk9tHw1qbXdy2d5A3_cN97laB1q5kRcXTzgogMSZZdMJLNiXLK6WTOLb93QGat0_IxNbZ7_ZSYQGXhoAVDf9JCGOQzoA_ysFs8Im-RNzvok_J9IInibqFBVYndAcLc2-t8m3kK_Ecz0oD0t1-1LakREJ0-Ey777QCT7C32V7ul_6As-wJkY-AaHcLYe-2rB4HRb2LwjcSMbp7iDxeVaUE3cJKd0-Cs1e66DFKtoRgn0oJEi3LQGyzJ8FI_13ppPwI5zYjxyGNsp0HrVRGlFOE1TERYv05oZ_GWBOzZuysyWKn5oEo0z4C8AOVrVFVeqcmGkQEE9W_sYGnCwbDTR_q_Z5mLFqMPJGIYvPfDafDyxKa0
+      - Bearer eyJhbGciOiJSUzI1NiJ9.eyJ1aWQiOiIwMDAwLTAwMDItNzM1Mi01MTdYIiwibmFtZSI6Ikpvc2lhaCBDYXJiZXJyeSIsInJvbGVfaWQiOiJzdGFmZl9hZG1pbiIsImhhc19vcmNpZF90b2tlbiI6dHJ1ZSwiYXVkIjoic3RhZ2UiLCJpYXQiOjE2MzcyNzEwNTEsImV4cCI6MTYzNzI3MTA4MX0.XOQKMFbKrc-Aoutin7BZffDcMjoXr4tVj64iTCXmPh3J9Dm-QaDwjtFLOnJx7UD_FRbLZIVJ8NMsDZ7MXX_LfQAHLBG7742ProW33p2Y6oV04RldAof4vu-pZEdpZ7s9LeUogTubNLGRvwX_JELBam8dVhX6MuBXcFd7VD-VF_tB3LRXN1h4P7zo4FpjypuRRXRl6Lm0gJ2KHEkbVDM3mUjCwx-9a7nD0MC5XbiDq4gmIzKr5F3iMRRPZf-EcE2r-rCgnnR24UuaUa322hsbYfn2CYFMQq_hpCJ0_NeCQB0VaRcf25b7ksIL6ffIICaeTVW40gLI0ne41IJPs6vyC42u9f1ZYgsJwqQAMpUUfnnmHcWlUmYsumJRzoMLROysyUXHGC0caX1PX7-Y-agEcWwJtGbz6WswvzXjS5mn64tbFTeiX01Nujr1MXSFNcVyQd8V9Ssfc4jnigeNn02PWKU1laQEfP1KGWWRiOqHoniotpPpOebekkeJDVRFnktS906ai2GfQaMZn7hFlMbqFTMpPQVkSOOzQHHUPlcRRhhdI9WXacwRcHyAGBJ7j1G3MUs8UTHkKFvvcIWh1R5Eotqr5y_zBCM2awBK2dDjJ9-ja0LrzXxWOu1jXoJTU3Q60VoJiych8u73QtQ9s2n3aYz_3cOukFK9OyS2xfHlzAg
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
-      code: 200
-      message: OK
+      code: 202
+      message: Accepted
     headers:
       Date:
-      - Mon, 26 Oct 2020 05:04:29 GMT
+      - Thu, 18 Nov 2021 21:30:53 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
       - keep-alive
       Status:
-      - 200 OK
+      - 202 Accepted
       Cache-Control:
-      - max-age=0, private, must-revalidate
+      - no-cache
       Vary:
       - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
       Referrer-Policy:
       - strict-origin-when-cross-origin
       X-Permitted-Cross-Domain-Policies:
@@ -37,26 +41,25 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Credential-Username:
-      - 0000-0003-1419-2405
+      - 0000-0002-7352-517X
       X-Request-Id:
-      - 8081e93b-5de0-4485-bed4-e0475021dd65
+      - 895738d0-0376-4d74-a43a-abff6886ee48
       X-Download-Options:
       - noopen
-      Etag:
-      - W/"7fb9d166d1a15bce0b9f085f3818946f"
+      X-Runtime:
+      - '0.219034'
       X-Frame-Options:
       - SAMEORIGIN
-      X-Runtime:
-      - '0.212703'
       X-Content-Type-Options:
       - nosniff
       X-Powered-By:
-      - Phusion Passenger 6.0.6
+      - Phusion Passenger(R) 6.0.11
       Server:
-      - nginx/1.14.0 + Phusion Passenger 6.0.6
+      - nginx/1.18.0 + Phusion Passenger(R) 6.0.11
     body:
       encoding: ASCII-8BIT
-      string: '{"data":{}}'
+      string: !binary |-
+        H4sIAA3GlmEAA2yRTW/DIAyG/wvn0EAAmXKrdtphtxymTdNEA23RuhAB2Yeq/veZrJPWaRYIGZ7XNvaJOFssMScSHDEE1lslvVUUrNBU7hyn2wEUVQBMy3Xn1pyRhpTPySM9HG14zejbUlLYzsXnGimmYQl2KGXKpm0XfxXTvmVoFHdHQaiOKg73qHYx/KLRW1jOVsCY1K19exnp7kMAojnOafC3NfoS9Tl7m4ZDfSm21JrebShh3OPNUt1mKCGOeO/80SPQEJ9STHc+Z7uv5T4+NWSay010qOZCgGRw0fqapmMdpxyX7jkYpo1QK/zBQ02QPOa8gqDn0nBtpPyB5sn9hXTfcSOYUeIbOjck+aOtheZDmJYeztmnel5N5//2XYZRFZmcq30BAAD//wMARHL0ANUBAAA=
     http_version: null
-  recorded_at: Mon, 26 Oct 2020 05:04:29 GMT
+  recorded_at: Thu, 18 Nov 2021 21:30:53 GMT
 recorded_with: VCR 5.1.0
