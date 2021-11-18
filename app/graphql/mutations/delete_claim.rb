@@ -21,8 +21,21 @@ class DeleteClaim < BaseMutation
     url = "#{api_url}/claims/#{id}"
     response = Maremma.delete(url, bearer: context[:current_user].jwt)
 
-    if [200, 204].include?(response.status)
-      { message: "Claim #{id} deleted.", errors: [] }
+    if [200, 202, 204].include?(response.status)
+      claim =
+        OpenStruct.new(
+          id: response.body.dig("data", "id"),
+          type: "claim",
+          orcid: response.body.dig("data", "attributes", "orcid"),
+          source_id: response.body.dig("data", "attributes", "sourceId"),
+          state: response.body.dig("data", "attributes", "state"),
+          claim_action: response.body.dig("data", "attributes", "claimAction"),
+          claimed: response.body.dig("data", "attributes", "claimed"),
+          error_messages:
+            response.body.dig("data", "attributes", "errorMessages"),
+        )
+
+      { claim: claim, errors: [] }
     else
       errors =
         if response.body["errors"].present?
@@ -32,11 +45,8 @@ class DeleteClaim < BaseMutation
         end
       Rails.logger.error "Error deleting claim id #{id} for user #{
                            context[:current_user].uid
-                         }" +
-        errors
-      {
-        message: "Error deleting claim #{id}.", errors: response.body["errors"]
-      }
+                         }" + errors
+      { claim: nil, errors: response.body["errors"] }
     end
   end
 end
