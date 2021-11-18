@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2021_11_12_201512) do
+
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -160,7 +159,7 @@ ActiveRecord::Schema.define(version: 2021_11_12_201512) do
     t.string "salesforce_id", limit: 191
     t.json "service_contact"
     t.string "globus_uuid", limit: 191
-    # t.text "analytics_dashboard_url"
+    t.text "analytics_dashboard_url"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["globus_uuid"], name: "index_datacentre_on_globus_uuid"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
@@ -299,4 +298,5 @@ ActiveRecord::Schema.define(version: 2021_11_12_201512) do
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
+
 end
