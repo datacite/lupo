@@ -3,7 +3,7 @@
 class DeleteClaim < BaseMutation
   argument :id, ID, required: true
 
-  field :message, String, null: false
+  field :claim, ClaimType, null: true
   field :errors, [ErrorType], null: false
 
   def resolve(id: nil)
