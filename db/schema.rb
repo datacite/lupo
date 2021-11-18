@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 2021_11_12_201512) do
     t.string "salesforce_id", limit: 191
     t.json "service_contact"
     t.string "globus_uuid", limit: 191
-    t.string "analytics_slug"
+    # t.text "analytics_dashboard_url"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["globus_uuid"], name: "index_datacentre_on_globus_uuid"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"

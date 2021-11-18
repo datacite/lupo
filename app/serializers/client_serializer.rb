@@ -23,7 +23,7 @@ class ClientSerializer
              :salesforce_id,
              :created,
              :updated,
-             :analytics_slug
+             :analytics_dashboard_url
 
   belongs_to :provider, record_type: :providers
   belongs_to :consortium,
@@ -32,8 +32,8 @@ class ClientSerializer
              if: Proc.new { |provider| provider.consortium_id }
   has_many :prefixes, record_type: :prefixes
 
-  attribute :analytics_slug do |object|
-    object["analytics_slug"]
+  attribute :analytics_dashboard_url do |object|
+    object["analytics_dashboard_url"]
   end
 
   attribute :is_active do |object|

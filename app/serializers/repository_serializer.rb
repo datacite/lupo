@@ -27,13 +27,13 @@ class RepositorySerializer
              :from_salesforce,
              :created,
              :updated,
-             :analytics_slug
+             :analytics_dashboard_url
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
 
-  attribute :analytics_slug do |object|
-    object["analytics_slug"]
+  attribute :analytics_dashboard_url do |object|
+    object["analytics_dashboard_url"]
   end
 
   attribute :re3data do |object|
