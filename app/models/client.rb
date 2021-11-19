@@ -49,7 +49,6 @@ class Client < ApplicationRecord
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
-  attr_accessor :analytics_dashboard_url
   attr_reader :from_salesforce
 
   validates_presence_of :symbol, :name, :system_email
