@@ -49,6 +49,7 @@ class Client < ApplicationRecord
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
+  attr_accessor :analytics_dashboard_url
   attr_reader :from_salesforce
 
   validates_presence_of :symbol, :name, :system_email
@@ -183,6 +184,7 @@ class Client < ApplicationRecord
       indexes :created, type: :date
       indexes :updated, type: :date
       indexes :deleted_at, type: :date
+      indexes :analytics_dashboard_url, type: :text
       indexes :cumulative_years, type: :integer, index: "false"
 
       # include parent objects
@@ -372,6 +374,7 @@ class Client < ApplicationRecord
         else
           provider.as_indexed_json(exclude_associations: true)
         end,
+      "analytics_dashboard_url" => analytics_dashboard_url,
     }
   end
 
