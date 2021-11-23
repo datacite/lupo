@@ -112,6 +112,16 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
     end
+
+    it "returns correct paging links" do
+      get "/provider-prefixes", nil, headers
+      self_link_absolute = Addressable::URI.parse(json.dig("links", "self"))
+      expect(self_link_absolute.path).to eq("/provider-prefixes")
+
+      next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/provider-prefixes?page%5Bnumber%5D=2&page%5Bsize%5D=25")
+    end
   end
 
   describe "GET /provider-prefixes/:uid" do

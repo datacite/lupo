@@ -75,7 +75,7 @@ class ProviderPrefixesController < ApplicationController
           if provider_prefixes.blank?
             nil
           else
-            request.base_url + "/provider_prefixes?" +
+            request.base_url + "/provider-prefixes?" +
               {
                 query: params[:query],
                 prefix: params[:prefix],
