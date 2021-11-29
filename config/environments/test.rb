@@ -54,5 +54,4 @@ Rails.application.configure do
   #   Bullet.raise = true
   #   Bullet.counter_cache_enable = false
   # end
-
 end
