@@ -661,14 +661,14 @@ class Client < ApplicationRecord
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
-  def self.export(query: nil)
-    Rails.logger.info "SKV - EXPORTING CLIENTS - BEGIN"
-
+  def self.export(query: nil, include_deleted: true)
     # Loop through all clients
     i = 0
     page = { size: 1_000, number: 1 }
-    response = self.query(query, include_deleted: true, page: page)
+    response = self.query(query, include_deleted: include_deleted, page: page)
     response.records.each do |client|
+      next if !include_deleted && client.deleted_at.present?
+
       client.send_client_export_message(client.to_jsonapi)
       i += 1
     end
@@ -680,16 +680,15 @@ class Client < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, include_deleted: true, page: page)
+      response = self.query(query, include_deleted: include_deleted, page: page)
       response.records.each do |client|
+        next if !include_deleted && client.deleted_at.present?
+
         client.send_client_export_message(client.to_jsonapi)
         i += 1
       end
       page_num += 1
     end
-
-    Rails.logger.info query
-    Rails.logger.info "SKV - EXPORTING CLIENTS - END"
 
     "#{i} clients exported."
   end

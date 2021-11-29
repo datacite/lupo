@@ -309,7 +309,10 @@ class RepositoriesController < ApplicationController
   end
 
   def export
-    response = Client.export(query: params[:query])
+    response = Client.export(
+      query: params[:query],
+      include_deleted: (!params[:include_deleted].present? || (params[:include_deleted] == "true") ? true : false)
+    )
     render json: { "message" => response }, status: :ok
   end
 
