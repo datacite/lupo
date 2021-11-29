@@ -79,12 +79,6 @@ module Lupo
     config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
                      eager_load: true
 
-    # include versioned REST API
-    config.paths.add Rails.root.join("app", "controllers", "v3").to_s,
-    eager_load: true
-    config.paths.add Rails.root.join("app", "serializers", "v3").to_s,
-    eager_load: true
-
     # Allow middleware to be loaded. (compressed_requests)
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
 
