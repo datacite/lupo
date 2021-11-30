@@ -106,7 +106,12 @@ namespace :client do
 
   desc "Export all clients to Salesforce"
   task export: :environment do
-    puts Client.export
+    if !ENV["INCLUDE_DELETED"].present? || (ENV["INCLUDE_DELETED"] == "true")
+      include_deleted = true
+    else
+      include_deleted = false
+    end
+    puts Client.export(include_deleted: include_deleted)
   end
 
   desc "Export one client to Salesforce"
