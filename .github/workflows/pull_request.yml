@@ -83,6 +83,5 @@ jobs:
           bundle exec rspec spec/lib
           bundle exec rspec spec/models
           bundle exec rspec spec/requests/*.rb
-          bundle exec rspec spec/requests/v3/*.rb
           bundle exec rspec spec/routing
           echo $?
