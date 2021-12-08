@@ -33,13 +33,28 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
+    argument :certificate, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
 
   def repositories(**args)
-    response = Client.query(args[:query], year: args[:year], software: args[:software], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
-    ElasticsearchModelResponseConnection.new(response, context: context, first: args[:first], after: args[:after])
+    response = Client.query(
+      args[:query],
+      year: args[:year],
+      software: args[:software],
+      certificate: args[:certificate],
+      page: {
+        cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
+        size: args[:first]
+      }
+    )
+    ElasticsearchModelResponseConnection.new(
+      response,
+      context: context,
+      first: args[:first],
+      after: args[:after]
+    )
   end
 
   field :repository, RepositoryType, null: false do
