@@ -1747,7 +1747,8 @@ describe DataciteDoisController, type: :request, vcr: true do
               "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
                                "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                "subjectScheme" => "FOR",
-                               "lang" => "en" }],
+                               "lang" => "en",
+                               "classificationCode" => "080505" }],
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
               "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }],
@@ -1786,7 +1787,8 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
-                                                                    "subjectScheme" => "FOR" },
+                                                                    "subjectScheme" => "FOR",
+                                                                    "classificationCode" => "080505" },
                                                                   { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
                                                                     "subject" => "FOS: Computer and information sciences",
                                                                     "subjectScheme" => "Fields of Science and Technology (FOS)" }
@@ -2150,6 +2152,9 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "subjects")[2]).to eq("subject" => "metadata",
+                                                                   "classificationCode" => "000")
+
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("subjects", "subject")).to eq(
