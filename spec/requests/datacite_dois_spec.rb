@@ -1844,6 +1844,8 @@ describe DataciteDoisController, type: :request, vcr: true do
               "fundingReferences" => [{ "funderIdentifier" => "https://doi.org/10.13039/501100009053", "funderIdentifierType" => "Crossref Funder ID", "funderName" => "The Wellcome Trust DBT India Alliance" }],
               "source" => "test",
               "event" => "publish",
+              "relatedItems" => ["relationType" => "IsPublishedIn", "relatedItemType" => "Journal", "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234", "relatedItemIdentifierType" => "DOI", "relatedMetadataScheme" => "citeproc+json", "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json", "schemeType" => "URL"}
+              ]
             },
           },
         }
@@ -1871,6 +1873,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn", "relatedItemType" => "Journal", "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234", "relatedItemIdentifierType" => "DOI", "relatedMetadataScheme" => "citeproc+json", "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json", "schemeType" => "URL"}])
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
@@ -2074,6 +2077,15 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
+
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+                                                                        "relatedItemType" => "Journal",
+                                                                        "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234",
+                                                                                                    "relatedItemIdentifierType" => "DOI",
+                                                                                                    "relatedMetadataScheme" => "citeproc+json",
+                                                                                                    "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                                                                                    "schemeType" => "URL"}
+                                                                      ])
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("relatedItems", "relatedItem")).to eq(
