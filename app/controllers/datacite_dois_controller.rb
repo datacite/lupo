@@ -959,6 +959,34 @@ class DataciteDoisController < ApplicationController
             lastPage
           ],
         },
+        :relatedItems,
+        {
+          relatedItems: [
+            :relationType,
+            :relatedItemType,
+            {
+              relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
+            },
+            {
+              creators: %i[nameType name givenName familyName],
+            },
+            {
+              titles: %i[title titleType],
+            },
+            :publicationYear,
+            :volume,
+            :issue,
+            :number,
+            :numberType,
+            :firstPage,
+            :lastPage,
+            :publisher,
+            :edition,
+            {
+              contributors: %i[contributorType name givenName familyName],
+            },
+          ],
+        },
         :published,
         :downloadsOverTime,
         { downloadsOverTime: %i[yearMonth total] },
@@ -1152,6 +1180,7 @@ class DataciteDoisController < ApplicationController
         :alternateIdentifiers,
         :rightsList,
         :relatedIdentifiers,
+        :relatedItems,
         :fundingReferences,
         :geoLocations,
         :metadataVersion,
