@@ -24,6 +24,7 @@ class DataciteDoiSerializer
              :language,
              :types,
              :related_identifiers,
+             :related_items,
              :sizes,
              :formats,
              :version,
@@ -188,6 +189,10 @@ class DataciteDoiSerializer
                 params && params[:composite].blank?
               } do |object|
     Array.wrap(object.related_identifiers)
+  end
+
+  attribute :related_items do |object|
+    Array.wrap(object.related_items)
   end
 
   attribute :geo_locations,
