@@ -1844,8 +1844,31 @@ describe DataciteDoisController, type: :request, vcr: true do
               "fundingReferences" => [{ "funderIdentifier" => "https://doi.org/10.13039/501100009053", "funderIdentifierType" => "Crossref Funder ID", "funderName" => "The Wellcome Trust DBT India Alliance" }],
               "source" => "test",
               "event" => "publish",
-              "relatedItems" => ["relationType" => "IsPublishedIn", "relatedItemType" => "Journal", "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234", "relatedItemIdentifierType" => "DOI", "relatedMetadataScheme" => "citeproc+json", "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json", "schemeType" => "URL"}
-              ]
+              "relatedItems" => [{
+                "contributors" => [{ "name" => "Smithson, James",
+                                     "contributorType" => "ProjectLeader",
+                                     "givenName" => "James",
+                                     "familyName" => "Smithson",
+                                    }],
+                "creators" => [{ "name" => "Smith, John",
+                                 "nameType" => "Personal",
+                                 "givenName" => "John",
+                                 "familyName" => "Smith",
+                                }],
+                "firstPage" => "249",
+                "lastPage" => "264",
+                "publicationYear" => "2018",
+                "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                             "relatedItemIdentifierType" => "DOI",
+                                             "relatedMetadataScheme" => "citeproc+json",
+                                             "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                             "schemeType" => "URL"
+                                            },
+                "relatedItemType" => "Journal",
+                "relationType" => "IsPublishedIn",
+                "titles" => [{ "title" => "Physics letters / B" }],
+                "volume" => "776"
+              }],
             },
           },
         }
@@ -1873,7 +1896,31 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
-        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn", "relatedItemType" => "Journal", "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234", "relatedItemIdentifierType" => "DOI", "relatedMetadataScheme" => "citeproc+json", "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json", "schemeType" => "URL"}])
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+                                                                      "relatedItemType" => "Journal",
+                                                                      "publicationYear" => "2018",
+                                                                      "relatedItemIdentifier" => {
+                                                                                                   "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                                                                                   "relatedItemIdentifierType" => "DOI",
+                                                                                                   "relatedMetadataScheme" => "citeproc+json",
+                                                                                                   "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                                                                                   "schemeType" => "URL"
+                                                                                                  },
+                                                                      "contributors" => [{ "name" => "Smithson, James",
+                                                                                           "contributorType" => "ProjectLeader",
+                                                                                           "givenName" => "James",
+                                                                                           "familyName" => "Smithson",
+                                                                                          }],
+                                                                      "creators" => [{ "name" => "Smith, John",
+                                                                                       "nameType" => "Personal",
+                                                                                       "givenName" => "John",
+                                                                                       "familyName" => "Smith",
+                                                                                      }],
+                                                                      "firstPage" => "249",
+                                                                      "lastPage" => "264",
+                                                                      "titles" => [{ "title" => "Physics letters / B" }],
+                                                                      "volume" => "776"
+                                                                      ])
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
@@ -2078,13 +2125,54 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(201)
 
-        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{ "relationType" => "IsPublishedIn",
                                                                         "relatedItemType" => "Journal",
-                                                                        "relatedItemIdentifier" => {"relatedItemIdentifier" => "10.5072/john-smiths-1234",
+                                                                        "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.5072/john-smiths-1234",
                                                                                                     "relatedItemIdentifierType" => "DOI",
                                                                                                     "relatedMetadataScheme" => "citeproc+json",
                                                                                                     "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
-                                                                                                    "schemeType" => "URL"}
+                                                                                                    "schemeType" => "URL" },
+                                                                        "creators" => [
+                                                                          {
+                                                                            "nameType" => "Personal",
+                                                                            "name" => "Smith, John",
+                                                                            "givenName" => "John",
+                                                                            "familyName" => "Smith"
+                                                                          }
+                                                                        ],
+                                                                        "titles" => [
+                                                                            { "title" => "Understanding the fictional John Smith" },
+                                                                            { "titleType" => "Subtitle", "title" => "A detailed look" }
+                                                                        ],
+                                                                        "publicationYear" => "1776",
+                                                                        "volume" => "776",
+                                                                        "issue" => "1",
+                                                                        "number" => "1",
+                                                                        "numberType" => "Chapter",
+                                                                        "firstPage" => "50",
+                                                                        "lastPage" => "60",
+                                                                        "publisher" => "Example Inc",
+                                                                        "edition" => "1",
+                                                                        "contributors" => [
+                                                                            "contributorType" => "ProjectLeader",
+                                                                            "name" => "Hallett, Richard",
+                                                                            "givenName" => "Richard",
+                                                                            "familyName" => "Hallett"
+                                                                        ]
+                                                                      },
+                                                                      {
+                                                                        "contributors" => [],
+                                                                        "creators" => [],
+                                                                        "firstPage" => "249",
+                                                                        "lastPage" => "264",
+                                                                        "publicationYear" => "2018",
+                                                                        "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                                                                                     "relatedItemIdentifierType" => "DOI" },
+                                                                        "relatedItemType" => "Journal",
+                                                                        "relationType" => "IsPublishedIn",
+                                                                        "titles" => [{ "title" => "Physics letters / B" } ],
+                                                                        "volume" => "776"
+                                                                      }
                                                                       ])
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
