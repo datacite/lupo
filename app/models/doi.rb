@@ -1651,6 +1651,11 @@ class Doi < ApplicationRecord
     write_attribute(:related_identifiers, Array.wrap(value))
   end
 
+  def related_items=(value)
+    write_attribute(:related_items, Array.wrap(value))
+  end
+
+
   def funding_references=(value)
     write_attribute(:funding_references, Array.wrap(value))
   end
