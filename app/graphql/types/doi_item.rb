@@ -85,6 +85,11 @@ module DoiItem
         null: true,
         description:
           "Identifiers of related resources. These must be globally unique identifiers"
+  field :related_items,
+        [RelatedItemType],
+        null: true,
+        description:
+          "Information about a resource related to the one being registered e.g. a journal or book of which the article or chapter is part."
   field :types, ResourceTypeType, null: false, description: "The resource type"
   field :formats,
         [String],
