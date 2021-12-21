@@ -366,7 +366,12 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       it "has created aggregation" do
+        post uri, params, headers
+
+        Event.import
+        sleep 2
         get uri, nil, headers
+
         expect(json.dig("meta", "created", 0, "count")).to eq(1)
         expect(json.dig("meta", "occurred", 0, "count")).to eq(1)
       end

@@ -223,7 +223,7 @@ class EventsController < ApplicationController
           page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
         sources: sources,
         occurred: occurred,
-        createdAt: created,
+        created: created,
         prefixes: prefixes,
         "citationTypes" => citation_types,
         "relationTypes" => relation_types,
