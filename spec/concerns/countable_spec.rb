@@ -23,6 +23,7 @@ describe "Providers", type: :controller, elasticsearch: true do
           { "count" => 3, "id" => "2019", "title" => "2019" },
           { "count" => 3, "id" => "2020", "title" => "2020" },
           { "count" => 3, "id" => "2021", "title" => "2021" },
+          { "count" => 3, "id" => "2022", "title" => "2022" },
         ],
       )
     end
@@ -38,6 +39,7 @@ describe "Providers", type: :controller, elasticsearch: true do
           { "count" => 1, "id" => "2019", "title" => "2019" },
           { "count" => 1, "id" => "2020", "title" => "2020" },
           { "count" => 1, "id" => "2021", "title" => "2021" },
+          { "count" => 1, "id" => "2022", "title" => "2022" },
           { "count" => 2, "id" => "2015", "title" => "2015" },
           { "count" => 2, "id" => "2016", "title" => "2016" },
           { "count" => 2, "id" => "2017", "title" => "2017" },
@@ -64,6 +66,7 @@ describe "Providers", type: :controller, elasticsearch: true do
           { "count" => 3, "id" => "2019", "title" => "2019" },
           { "count" => 3, "id" => "2020", "title" => "2020" },
           { "count" => 3, "id" => "2021", "title" => "2021" },
+          { "count" => 3, "id" => "2022", "title" => "2022" },
         ],
       )
     end
@@ -79,6 +82,7 @@ describe "Providers", type: :controller, elasticsearch: true do
           { "count" => 1, "id" => "2019", "title" => "2019" },
           { "count" => 1, "id" => "2020", "title" => "2020" },
           { "count" => 1, "id" => "2021", "title" => "2021" },
+          { "count" => 1, "id" => "2022", "title" => "2022" },
           { "count" => 2, "id" => "2015", "title" => "2015" },
           { "count" => 2, "id" => "2016", "title" => "2016" },
           { "count" => 2, "id" => "2017", "title" => "2017" },
