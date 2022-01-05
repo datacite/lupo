@@ -195,21 +195,13 @@ describe DataCatalogType do
           ]
       )
       expect(data_catalog.fetch("contacts")).to eq(
-          [
-              "datascience@ucla.edu",
-              "datascience@ucla.edu",
-          ],
+          [ "datascience@ucla.edu", "datascience@ucla.edu" ],
       )
       expect(data_catalog.fetch("pidSystems")).to eq(
-          [
-              "hdl",
-              "DOI",
-          ]
+          [ "hdl", "DOI" ]
       )
       expect(data_catalog.fetch("inLanguage")).to eq(
-          [
-              "eng",
-          ]
+          [ "eng" ]
       )
 
       expect(data_catalog.fetch("softwareApplication")).to eq(
