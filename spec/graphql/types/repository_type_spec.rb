@@ -98,7 +98,7 @@ describe RepositoryType do
 
       expect(response.dig("data", "repositories", "totalCount")).to eq(4)
       expect(response.dig("data", "repositories", "years")).to eq(
-        [{ "count" => 4, "id" => "2021", "title" => "2021" }],
+        [{ "count" => 4, "id" => "2022", "title" => "2022" }],
       )
       expect(response.dig("data", "repositories", "members")).to eq(
         [
@@ -183,7 +183,7 @@ describe RepositoryType do
         response.dig("data", "repository", "prefixes", "totalCount"),
       ).to eq(3)
       expect(response.dig("data", "repository", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2021" }],
+        [{ "count" => 3, "id" => "2022" }],
       )
       expect(
         response.dig("data", "repository", "prefixes", "nodes").length,

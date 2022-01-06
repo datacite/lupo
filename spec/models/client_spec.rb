@@ -372,7 +372,7 @@ describe Client, type: :model do
     it "should show all cumulative years" do
       client = create(:client, provider: provider)
       expect(client.cumulative_years).to eq(
-        [2_015, 2_016, 2_017, 2_018, 2_019, 2_020, 2_021],
+        [2_015, 2_016, 2_017, 2_018, 2_019, 2_020, 2_021, 2_022],
       )
     end
 

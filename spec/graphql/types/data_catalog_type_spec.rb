@@ -10,6 +10,9 @@ describe DataCatalogType do
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
+    it { is_expected.to have_field(:contacts).of_type("[String!]") }
+    it { is_expected.to have_field(:providerTypes).of_type("[String!]") }
+    it { is_expected.to have_field(:pidSystems).of_type("[String!]") }
     it { is_expected.to have_field(:description).of_type("String") }
     it { is_expected.to have_field(:certificates).of_type("[DefinedTerm!]") }
     it { is_expected.to have_field(:subjects).of_type("[DefinedTerm!]") }
@@ -153,6 +156,10 @@ describe DataCatalogType do
               url
               softwareVersion
             }
+            contacts
+            providerTypes
+            pidSystems
+            inLanguage
           }
         }
       }"
@@ -182,6 +189,29 @@ describe DataCatalogType do
         "The Social Science Data Archive is still active and maintained as part of the UCLA Library",
       )
       expect(data_catalog.fetch("certificates")).to be_empty
+      expect(data_catalog.fetch("providerTypes")).to eq(
+        [
+          "dataProvider",
+        ]
+      )
+      expect(data_catalog.fetch("contacts")).to eq(
+        [
+          "datascience@ucla.edu",
+          "datascience@ucla.edu"
+        ],
+      )
+      expect(data_catalog.fetch("pidSystems")).to eq(
+        [
+          "hdl",
+          "DOI"
+        ]
+      )
+      expect(data_catalog.fetch("inLanguage")).to eq(
+        [
+          "eng"
+        ]
+      )
+
       expect(data_catalog.fetch("softwareApplication")).to eq(
         [{ "name" => "DataVerse", "softwareVersion" => nil, "url" => nil }],
       )

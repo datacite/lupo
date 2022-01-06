@@ -97,6 +97,18 @@ class DataCatalogType < BaseObject
     Array.wrap(object.keywords).map { |k| k["text"] }.join(", ")
   end
 
+  def contacts
+    Array.wrap(object.contacts).map { |k| k["text"] }
+  end
+
+  def provider_types
+    Array.wrap(object.provider_types).map { |k| k["text"] }
+  end
+
+  def pid_systems
+    Array.wrap(object.pid_systems).map { |k| k["text"] }
+  end
+
   def in_language
     Array.wrap(object.repository_languages).map { |k| k["text"] }
   end

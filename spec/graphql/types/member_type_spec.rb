@@ -116,7 +116,7 @@ describe MemberType do
       ).to be true
 
       expect(response.dig("data", "members", "years")).to eq(
-        [{ "count" => 6, "id" => "2021", "title" => "2021" }],
+        [{ "count" => 6, "id" => "2022", "title" => "2022" }],
       )
       expect(response.dig("data", "members", "regions")).to eq(
         [
@@ -226,7 +226,7 @@ describe MemberType do
         response.dig("data", "member", "repositories", "totalCount"),
       ).to eq(1)
       expect(response.dig("data", "member", "repositories", "years")).to eq(
-        [{ "count" => 1, "id" => "2021" }],
+        [{ "count" => 1, "id" => "2022" }],
       )
       expect(response.dig("data", "member", "repositories", "software")).to eq(
         [{ "count" => 1, "id" => "dataverse" }],
@@ -242,7 +242,7 @@ describe MemberType do
 
       expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2021" }],
+        [{ "count" => 3, "id" => "2022" }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
         3,
