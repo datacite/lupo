@@ -242,7 +242,7 @@ describe MemberType do
 
       expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2021" }],
+        [{ "count" => 3, "id" => "2022" }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
         3,
