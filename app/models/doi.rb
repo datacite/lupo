@@ -850,6 +850,7 @@ class Doi < ApplicationRecord
     if query.present?
       query = query.gsub(/publicationYear/, "publication_year")
       query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/relatedItems/, "related_items")
       query = query.gsub(/rightsList/, "rights_list")
       query = query.gsub(/fundingReferences/, "funding_references")
       query = query.gsub(/geoLocations/, "geo_locations")
@@ -1047,6 +1048,7 @@ class Doi < ApplicationRecord
     if query.present?
       query = query.gsub(/publicationYear/, "publication_year")
       query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/relatedItems/, "related_items")
       query = query.gsub(/rightsList/, "rights_list")
       query = query.gsub(/fundingReferences/, "funding_references")
       query = query.gsub(/geoLocations/, "geo_locations")
