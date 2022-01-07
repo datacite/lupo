@@ -282,6 +282,7 @@ class Doi < ApplicationRecord
         contributors: { type: :object, properties: {
           contributorType: { type: :text },
           contributorName: { type: :text },
+          nameType: { type: :text},
           givenName: { type: :text },
           familyName: { type: :text },
         } },

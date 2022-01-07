@@ -983,7 +983,7 @@ class DataciteDoisController < ApplicationController
             :publisher,
             :edition,
             {
-              contributors: %i[contributorType name givenName familyName],
+              contributors: %i[contributorType name givenName familyName nameType],
             },
           ],
         },

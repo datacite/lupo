@@ -1849,6 +1849,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                      "contributorType" => "ProjectLeader",
                                      "givenName" => "James",
                                      "familyName" => "Smithson",
+                                     "nameType" => "Personal"
                                     }],
                 "creators" => [{ "name" => "Smith, John",
                                  "nameType" => "Personal",
@@ -1910,6 +1911,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                                            "contributorType" => "ProjectLeader",
                                                                                            "givenName" => "James",
                                                                                            "familyName" => "Smithson",
+                                                                                           "nameType" => "Personal"
                                                                                           }],
                                                                       "creators" => [{ "name" => "Smith, John",
                                                                                        "nameType" => "Personal",
@@ -2157,7 +2159,8 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                             "contributorType" => "ProjectLeader",
                                                                             "name" => "Hallett, Richard",
                                                                             "givenName" => "Richard",
-                                                                            "familyName" => "Hallett"
+                                                                            "familyName" => "Hallett",
+                                                                            "nameType" => "Personal"
                                                                         ]
                                                                       },
                                                                       {
@@ -2211,7 +2214,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "contributors" => {
               "contributor" => {
                 "contributorType" => "ProjectLeader",
-                "contributorName" => "Richard, Hallett",
+                "contributorName" => { "nameType" => "Personal", "__content__" => "Richard, Hallett" },
                 "givenName" => "Richard",
                 "familyName" => "Hallett"
               }
