@@ -11,7 +11,7 @@ class RelatedItemContributorType < BaseObject
   field :name,
         String,
         null: false,
-        hash_key: "contributorName"
+        hash_key: "contributorName",
         description: "The name of the contributor."
   field :given_name,
         String,

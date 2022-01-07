@@ -11,7 +11,7 @@ class RelatedItemCreatorType < BaseObject
   field :name,
         String,
         null: false,
-        hash_key: "creatorName"
+        hash_key: "creatorName",
         description: "The name of the creator."
   field :given_name,
         String,
