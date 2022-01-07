@@ -23,7 +23,7 @@ class RelatedItemCreatorType < BaseObject
         null: true,
         hash_key: "familyName",
         description: "Family name. In the U.S., the last name of an Person."
-  
+
   def type
     case object.name_type
     when "Organizational"

@@ -25,7 +25,7 @@ class RelatedItemType < BaseObject
   field :contributors,
         [RelatedItemContributorType],
         null: true,
-        description: 
+        description:
           "The institutions or persons responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource."
   field :titles,
         [TitleType],

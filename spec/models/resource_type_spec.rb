@@ -4,7 +4,7 @@ require "rails_helper"
 
 RSpec.describe ResourceType, type: :model do
   describe "from new object" do
-    let(:rt) { ResourceType.new({ 'id' => "BookChapter", 'title' => "BookChapter" }) }
+    let(:rt) { ResourceType.new({ "id" => "BookChapter", "title" => "BookChapter" }) }
 
     describe "attributes" do
       it "formats the id attribute correctly" do
@@ -54,19 +54,19 @@ RSpec.describe ResourceType, type: :model do
     describe "#parse_data" do
       # let(:rt) { ResourceType.parse_data(ResourceType.get_data(), options={ :id => "dissertation" }) }
       it "finds an item by id" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :id => "dissertation" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { id: "dissertation" })
         expect(rt[:data]).to be_instance_of ResourceType
         expect(rt[:data].id).to eq("dissertation")
         expect(rt[:data].title).to eq("Dissertation")
       end
 
       it "returns nil for a non-existent resource type" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :id => "fake-resource" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { id: "fake-resource" })
         expect(rt).to be_nil
       end
-      
+
       it "finds a single item by id query" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "softw" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "softw" })
         expect(rt[:data][0]).to be_instance_of ResourceType
         expect(rt[:data][0].id).to eq("software")
         expect(rt[:data][0].title).to eq("Software")
@@ -74,7 +74,7 @@ RSpec.describe ResourceType, type: :model do
       end
 
       it "finds a single item by description query" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "managementplan" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "managementplan" })
         expect(rt[:data][0]).to be_instance_of ResourceType
         expect(rt[:data][0].id).to eq("output-management-plan")
         expect(rt[:data][0].title).to eq("OutputManagementPlan")
@@ -82,7 +82,7 @@ RSpec.describe ResourceType, type: :model do
       end
 
       it "finds all items matching a query" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "conference" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "conference" })
         expect(rt[:data][0]).to be_instance_of ResourceType
         expect(rt[:data][0].id).to eq("conference-paper")
         expect(rt[:data][0].title).to eq("ConferencePaper")
@@ -93,20 +93,19 @@ RSpec.describe ResourceType, type: :model do
       end
 
       it "returns empty results for a non-matching query" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "fake-resource" })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "fake-resource" })
         expect(rt[:meta]).to eq({ :total => 0, "total-pages" => 0, :page => 1 })
       end
 
       it "returns multiple pages when necessary" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "a", :page => { :size => 5 } })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "a", page: { size: 5 } })
         expect(rt[:meta]).to include("total-pages" => (a_value > 1), :page => 1)
       end
 
       it "pages past the first page of results" do
-        rt = ResourceType.parse_data(ResourceType.get_data(), options={ :query => "a", :page => { :size => 5, :number => 2 } })
+        rt = ResourceType.parse_data(ResourceType.get_data(), { query: "a", page: { size: 5, number: 2 } })
         expect(rt[:meta]).to include("total-pages" => (a_value > 1), :page => 2)
       end
     end
   end
 end
-
