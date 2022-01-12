@@ -23,6 +23,7 @@ class WorkSerializer
              :schema_version,
              :results,
              :related_identifiers,
+             :related_items,
              :citation_count,
              :citations_over_time,
              :view_count,
@@ -96,6 +97,10 @@ class WorkSerializer
   end
 
   attribute :related_identifiers do |_object|
+    []
+  end
+
+  attribute :related_items do |_object|
     []
   end
 

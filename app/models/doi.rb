@@ -282,6 +282,7 @@ class Doi < ApplicationRecord
         contributors: { type: :object, properties: {
           contributorType: { type: :text },
           contributorName: { type: :text },
+          nameType: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },
         } },
@@ -849,6 +850,7 @@ class Doi < ApplicationRecord
     if query.present?
       query = query.gsub(/publicationYear/, "publication_year")
       query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/relatedItems/, "related_items")
       query = query.gsub(/rightsList/, "rights_list")
       query = query.gsub(/fundingReferences/, "funding_references")
       query = query.gsub(/geoLocations/, "geo_locations")
@@ -1046,6 +1048,7 @@ class Doi < ApplicationRecord
     if query.present?
       query = query.gsub(/publicationYear/, "publication_year")
       query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/relatedItems/, "related_items")
       query = query.gsub(/rightsList/, "rights_list")
       query = query.gsub(/fundingReferences/, "funding_references")
       query = query.gsub(/geoLocations/, "geo_locations")
@@ -1650,6 +1653,11 @@ class Doi < ApplicationRecord
   def related_identifiers=(value)
     write_attribute(:related_identifiers, Array.wrap(value))
   end
+
+  def related_items=(value)
+    write_attribute(:related_items, Array.wrap(value))
+  end
+
 
   def funding_references=(value)
     write_attribute(:funding_references, Array.wrap(value))

@@ -282,6 +282,12 @@ type Audiovisual implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -585,6 +591,12 @@ type Book implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -841,6 +853,12 @@ type BookChapter implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -1231,6 +1249,12 @@ type Collection implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -1531,6 +1555,12 @@ type ConferencePaper implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -2128,6 +2158,12 @@ type DataManagementPlan implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -2431,6 +2467,12 @@ type DataPaper implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -2731,6 +2773,12 @@ type Dataset implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -3154,6 +3202,12 @@ type Dissertation implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -3458,6 +3512,12 @@ interface DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -3768,6 +3828,12 @@ type Event implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -4053,6 +4119,12 @@ type EventData implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -4638,6 +4710,12 @@ type Image implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -4939,6 +5017,12 @@ type Instrument implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -5238,6 +5322,12 @@ type InteractiveResource implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -5565,6 +5655,12 @@ type JournalArticle implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -6165,6 +6261,12 @@ type Model implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -6639,6 +6741,12 @@ type Other implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -6964,6 +7072,12 @@ type PeerReview implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -7405,6 +7519,12 @@ type PhysicalObject implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -7760,6 +7880,12 @@ type Preprint implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -8062,6 +8188,12 @@ type Publication implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -8329,6 +8461,167 @@ type RelatedIdentifier {
   Resource type general
   """
   resourceTypeGeneral: String
+
+  """
+  Scheme type
+  """
+  schemeType: String
+
+  """
+  Scheme URI
+  """
+  schemeUri: String
+}
+
+"""
+Information about related items
+"""
+type RelatedItem {
+  """
+  The institutions or persons responsible for collecting, managing,
+  distributing, or otherwise contributing to the development of the resource.
+  """
+  contributors: [RelatedItemContributor!]
+
+  """
+  The institutions or persons responsible for creating the related resource
+  """
+  creators: [RelatedItemCreator!]
+
+  """
+  Edition or version of the related item
+  """
+  edition: String
+
+  """
+  First page of the related item
+  """
+  firstPage: String
+
+  """
+  Issue number or name of the related item
+  """
+  issue: String
+
+  """
+  Last page of the related item
+  """
+  lastPage: String
+
+  """
+  Number of the related item, e.g., report number of article number
+  """
+  number: String
+
+  """
+  Type of the related item's number
+  """
+  numberType: String
+
+  """
+  Publication year of the related item
+  """
+  publicationYear: String
+
+  """
+  Publisher of the related item
+  """
+  publisher: String
+
+  """
+  Related item identifier
+  """
+  relatedItemIdentifier: RelatedItemIdentifier
+
+  """
+  Related item type
+  """
+  relatedItemType: String!
+
+  """
+  Relation type
+  """
+  relationType: String!
+
+  """
+  Titles of the related item
+  """
+  titles: [Title!]!
+
+  """
+  Volume of the related item
+  """
+  volume: String
+}
+
+"""
+A contributor to a related item
+"""
+type RelatedItemContributor {
+  """
+  The type of contributor.
+  """
+  contributorType: String
+
+  """
+  Family name. In the U.S., the last name of a Person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a Person.
+  """
+  givenName: String
+
+  """
+  The name of the contributor.
+  """
+  name: String!
+}
+
+"""
+A creator of a related item
+"""
+type RelatedItemCreator {
+  """
+  Family name. In the U.S., the last name of an Person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a Person.
+  """
+  givenName: String
+
+  """
+  The name of the creator.
+  """
+  name: String!
+
+  """
+  The type of name.
+  """
+  nameType: String
+}
+
+"""
+Information about the related item identifier
+"""
+type RelatedItemIdentifier {
+  """
+  Related item identifier
+  """
+  relatedItemIdentifier: String!
+
+  """
+  Related item identifier type
+  """
+  relatedItemIdentifierType: String
+
+  """
+  Related metadata scheme
+  """
+  relatedMetadataScheme: String
 
   """
   Scheme type
@@ -8814,6 +9107,12 @@ type Service implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -9115,6 +9414,12 @@ type Software implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource
@@ -9450,6 +9755,12 @@ type Sound implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -9583,6 +9894,11 @@ type SoundEdge {
 Subject information
 """
 type Subject {
+  """
+  The classification code used for the subject term in the subject scheme
+  """
+  classificationCode: String
+
   """
   Language
   """
@@ -9958,6 +10274,12 @@ type Work implements DoiItem {
   relatedIdentifiers: [RelatedIdentifier!]
 
   """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
+
+  """
   The repository account managing this resource
   """
   repository: Repository
@@ -10264,6 +10586,12 @@ type Workflow implements DoiItem {
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  Information about a resource related to the one being registered e.g. a
+  journal or book of which the article or chapter is part.
+  """
+  relatedItems: [RelatedItem!]
 
   """
   The repository account managing this resource

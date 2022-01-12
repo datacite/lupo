@@ -24,5 +24,10 @@ class SubjectType < BaseObject
         null: true,
         hash_key: "valueUri",
         description: "The URI of the subject term"
+  field :classification_code,
+        String,
+        null: true,
+        hash_key: "classificationCode",
+        description: "The classification code used for the subject term in the subject scheme"
   field :lang, ID, null: true, description: "Language"
 end

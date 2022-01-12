@@ -8,6 +8,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       "publicationYear" => "publication_year",
       "alternateIdentifiers" => "identifiers",
       "relatedIdentifiers" => "related_identifiers",
+      "relatedItems" => "related_items",
       "geoLocations" => "geo_locations",
       "rightsList" => "rights_list",
       "fundingReferences" => "funding_references",

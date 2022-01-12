@@ -648,6 +648,7 @@ class Event < ApplicationRecord
         dates
         identifiers
         related_identifiers
+        related_items
         funding_references
         geo_locations
         rights_list

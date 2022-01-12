@@ -1747,7 +1747,8 @@ describe DataciteDoisController, type: :request, vcr: true do
               "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
                                "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                "subjectScheme" => "FOR",
-                               "lang" => "en" }],
+                               "lang" => "en",
+                               "classificationCode" => "080505" }],
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
               "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }],
@@ -1786,7 +1787,8 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
-                                                                    "subjectScheme" => "FOR" },
+                                                                    "subjectScheme" => "FOR",
+                                                                    "classificationCode" => "080505" },
                                                                   { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
                                                                     "subject" => "FOS: Computer and information sciences",
                                                                     "subjectScheme" => "Fields of Science and Technology (FOS)" }
@@ -1842,6 +1844,32 @@ describe DataciteDoisController, type: :request, vcr: true do
               "fundingReferences" => [{ "funderIdentifier" => "https://doi.org/10.13039/501100009053", "funderIdentifierType" => "Crossref Funder ID", "funderName" => "The Wellcome Trust DBT India Alliance" }],
               "source" => "test",
               "event" => "publish",
+              "relatedItems" => [{
+                "contributors" => [{ "name" => "Smithson, James",
+                                     "contributorType" => "ProjectLeader",
+                                     "givenName" => "James",
+                                     "familyName" => "Smithson",
+                                     "nameType" => "Personal"
+                                    }],
+                "creators" => [{ "name" => "Smith, John",
+                                 "nameType" => "Personal",
+                                 "givenName" => "John",
+                                 "familyName" => "Smith",
+                                }],
+                "firstPage" => "249",
+                "lastPage" => "264",
+                "publicationYear" => "2018",
+                "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                             "relatedItemIdentifierType" => "DOI",
+                                             "relatedMetadataScheme" => "citeproc+json",
+                                             "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                             "schemeType" => "URL"
+                                            },
+                "relatedItemType" => "Journal",
+                "relationType" => "IsPublishedIn",
+                "titles" => [{ "title" => "Physics letters / B" }],
+                "volume" => "776"
+              }],
             },
           },
         }
@@ -1869,6 +1897,32 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+                                                                      "relatedItemType" => "Journal",
+                                                                      "publicationYear" => "2018",
+                                                                      "relatedItemIdentifier" => {
+                                                                                                   "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                                                                                   "relatedItemIdentifierType" => "DOI",
+                                                                                                   "relatedMetadataScheme" => "citeproc+json",
+                                                                                                   "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                                                                                   "schemeType" => "URL"
+                                                                                                  },
+                                                                      "contributors" => [{ "name" => "Smithson, James",
+                                                                                           "contributorType" => "ProjectLeader",
+                                                                                           "givenName" => "James",
+                                                                                           "familyName" => "Smithson",
+                                                                                           "nameType" => "Personal"
+                                                                                          }],
+                                                                      "creators" => [{ "name" => "Smith, John",
+                                                                                       "nameType" => "Personal",
+                                                                                       "givenName" => "John",
+                                                                                       "familyName" => "Smith",
+                                                                                      }],
+                                                                      "firstPage" => "249",
+                                                                      "lastPage" => "264",
+                                                                      "titles" => [{ "title" => "Physics letters / B" }],
+                                                                      "volume" => "776"
+                                                                      ])
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
@@ -2072,6 +2126,57 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
+
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{ "relationType" => "IsPublishedIn",
+                                                                        "relatedItemType" => "Journal",
+                                                                        "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.5072/john-smiths-1234",
+                                                                                                    "relatedItemIdentifierType" => "DOI",
+                                                                                                    "relatedMetadataScheme" => "citeproc+json",
+                                                                                                    "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                                                                                    "schemeType" => "URL" },
+                                                                        "creators" => [
+                                                                          {
+                                                                            "nameType" => "Personal",
+                                                                            "name" => "Smith, John",
+                                                                            "givenName" => "John",
+                                                                            "familyName" => "Smith"
+                                                                          }
+                                                                        ],
+                                                                        "titles" => [
+                                                                            { "title" => "Understanding the fictional John Smith" },
+                                                                            { "titleType" => "Subtitle", "title" => "A detailed look" }
+                                                                        ],
+                                                                        "publicationYear" => "1776",
+                                                                        "volume" => "776",
+                                                                        "issue" => "1",
+                                                                        "number" => "1",
+                                                                        "numberType" => "Chapter",
+                                                                        "firstPage" => "50",
+                                                                        "lastPage" => "60",
+                                                                        "publisher" => "Example Inc",
+                                                                        "edition" => "1",
+                                                                        "contributors" => [
+                                                                            "contributorType" => "ProjectLeader",
+                                                                            "name" => "Hallett, Richard",
+                                                                            "givenName" => "Richard",
+                                                                            "familyName" => "Hallett",
+                                                                            "nameType" => "Personal"
+                                                                        ]
+                                                                      },
+                                                                      {
+                                                                        "contributors" => [],
+                                                                        "creators" => [],
+                                                                        "firstPage" => "249",
+                                                                        "lastPage" => "264",
+                                                                        "publicationYear" => "2018",
+                                                                        "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                                                                                     "relatedItemIdentifierType" => "DOI" },
+                                                                        "relatedItemType" => "Journal",
+                                                                        "relationType" => "IsPublishedIn",
+                                                                        "titles" => [{ "title" => "Physics letters / B" } ],
+                                                                        "volume" => "776"
+                                                                      }
+                                                                      ])
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("relatedItems", "relatedItem")).to eq(
@@ -2109,7 +2214,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "contributors" => {
               "contributor" => {
                 "contributorType" => "ProjectLeader",
-                "contributorName" => "Richard, Hallett",
+                "contributorName" => { "nameType" => "Personal", "__content__" => "Richard, Hallett" },
                 "givenName" => "Richard",
                 "familyName" => "Hallett"
               }
@@ -2150,6 +2255,9 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", params, headers
 
         expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "subjects")[2]).to eq("subject" => "metadata",
+                                                                   "classificationCode" => "000")
+
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("subjects", "subject")).to eq(
