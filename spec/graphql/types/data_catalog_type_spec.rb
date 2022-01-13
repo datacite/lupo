@@ -19,6 +19,7 @@ describe DataCatalogType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:dataAccesses).of_type("[TextRestriction!]") }
     it do
       is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal")
     end
@@ -160,6 +161,12 @@ describe DataCatalogType do
             providerTypes
             pidSystems
             inLanguage
+            dataAccesses {
+                type
+                restriction {
+                    text
+                }
+            }
           }
         }
       }"
@@ -209,6 +216,12 @@ describe DataCatalogType do
       expect(data_catalog.fetch("inLanguage")).to eq(
         [
           "eng"
+        ]
+      )
+      expect(data_catalog.fetch("dataAccesses")).to eq(
+        [
+            {"restriction"=>nil, "type"=>"restricted"},
+            {"restriction"=>nil, "type"=>"open"}
         ]
       )
 
