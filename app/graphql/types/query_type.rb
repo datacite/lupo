@@ -874,8 +874,7 @@ class QueryType < BaseObject
   end
 
   def data_management_plans(**args)
-    args[:resource_type_id] = "Text"
-    args[:resource_type] = "Data Management Plan"
+    args[:resource_type_id] = "OutputManagementPlan"
     ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
   end
 
