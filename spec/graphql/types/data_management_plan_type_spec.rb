@@ -16,8 +16,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         language: "de",
         aasm_state: "findable",
@@ -92,8 +91,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         language: "de",
         aasm_state: "findable",
@@ -200,8 +198,7 @@ describe DataManagementPlanType do
           "types",
         ),
       ).to eq(
-        "resourceType" => "Data Management Plan",
-        "resourceTypeGeneral" => "Text",
+        "resourceTypeGeneral" => "OutputManagementPlan",
         "schemaOrg" => "ScholarlyArticle",
       )
     end
@@ -214,8 +211,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         language: "de",
         aasm_state: "findable",
@@ -334,8 +330,7 @@ describe DataManagementPlanType do
           "types",
         ),
       ).to eq(
-        "resourceType" => "Data Management Plan",
-        "resourceTypeGeneral" => "Text",
+        "resourceTypeGeneral" => "OutputManagementPlan",
         "schemaOrg" => "ScholarlyArticle",
       )
       expect(
@@ -365,8 +360,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         language: "de",
         aasm_state: "findable",
@@ -461,8 +455,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         language: "de",
         aasm_state: "findable",
@@ -545,8 +538,7 @@ describe DataManagementPlanType do
         :doi,
         3,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         aasm_state: "findable",
       )
@@ -555,8 +547,7 @@ describe DataManagementPlanType do
       create(
         :doi,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         aasm_state: "findable",
         creators: [
@@ -619,8 +610,7 @@ describe DataManagementPlanType do
         :doi,
         client: client,
         types: {
-          "resourceTypeGeneral" => "Text",
-          "resourceType" => "Data Management Plan",
+          "resourceTypeGeneral" => "OutputManagementPlan",
         },
         aasm_state: "findable",
       )
