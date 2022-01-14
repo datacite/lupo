@@ -91,7 +91,7 @@ describe DataManagementPlanType do
         :doi,
         2,
         types: {
-          "resourceTypeGeneral" => "OutputManagementPlan",
+          "resourceTypeGeneral" => "OutputManagementPlan"
         },
         language: "de",
         aasm_state: "findable",
@@ -199,7 +199,7 @@ describe DataManagementPlanType do
         ),
       ).to eq(
         "resourceTypeGeneral" => "OutputManagementPlan",
-        "schemaOrg" => "ScholarlyArticle",
+        "schemaOrg" => "CreativeWork",
       )
     end
   end
@@ -331,7 +331,7 @@ describe DataManagementPlanType do
         ),
       ).to eq(
         "resourceTypeGeneral" => "OutputManagementPlan",
-        "schemaOrg" => "ScholarlyArticle",
+        "schemaOrg" => "CreativeWork",
       )
       expect(
         response.dig(
