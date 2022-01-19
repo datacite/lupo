@@ -1985,7 +1985,8 @@ class Doi < ApplicationRecord
     end
 
     # query = options[:query] || "*"
-    size = (options[:size] || 1000).to_i
+    # size = (options[:size] || 1000).to_i
+    size = (options[:size] || 2).to_i
 
     response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: [] })
     Rails.logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
@@ -1998,7 +1999,7 @@ class Doi < ApplicationRecord
         response = Doi.query(nil, prefix: prefix, page: { size: size, cursor: cursor })
         break if response.results.results.empty?
 
-        Rails.logger.info "Hiding#{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "Hiding #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|

@@ -111,8 +111,8 @@ namespace :prefix do
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 
-  desc "Delete prefix and hide associated DOIs"
-  task delete_and_hide_dois: :environment do
+  desc "Delete prefix and hide associated DOIs (by changing state from 'findable' to 'registered'"
+  task delete: :environment do
     # These prefixes are used by multiple prefixes and can't be deleted
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
