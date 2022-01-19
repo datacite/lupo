@@ -1939,7 +1939,11 @@ class Doi < ApplicationRecord
     "DOI #{doi} will be deleted"
   end
 
-  # to be used after DOIs were transferred to another DOI RA
+  def self.hide_by_doi(doi, options = {})
+    HideJob.perform_later(doi)
+    "DOI #{doi} will be hidden (change state from findable => registered)."
+  end
+
   def self.delete_dois_by_prefix(prefix, options = {})
     if prefix.blank?
       Rails.logger.error "[Error] No prefix provided."
@@ -1965,6 +1969,41 @@ class Doi < ApplicationRecord
 
         response.results.results.each do |d|
           DeleteJob.perform_later(d.doi)
+        end
+      end
+    end
+
+    response.results.total
+  end
+
+  # To be used after DOIs were transferred to another DOI RA
+  # 'Hide' dois by moving state from findable to registered.
+  def self.hide_dois_by_prefix(prefix, options = {})
+    if prefix.blank?
+      Rails.logger.error "[Error] No prefix provided."
+      return nil
+    end
+
+    # query = options[:query] || "*"
+    # size = (options[:size] || 1000).to_i
+    size = (options[:size] || 1000).to_i
+
+    response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: [] })
+    Rails.logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
+
+    if prefix && response.results.total > 0
+      # walk through results using cursor
+      cursor = []
+
+      while !response.results.results.empty?
+        response = Doi.query(nil, prefix: prefix, page: { size: size, cursor: cursor })
+        break if response.results.results.empty?
+
+        Rails.logger.info "Hiding #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+
+        response.results.results.each do |d|
+          HideJob.perform_later(d.doi)
         end
       end
     end

@@ -281,6 +281,19 @@ namespace :doi do
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 
+  desc "HIDE dois by a prefix"
+  task hide_by_prefix: :environment do
+    if ENV["PREFIX"].nil?
+      puts "ENV['PREFIX'] is required."
+      exit
+    end
+
+    puts "Note: This does not delete any associated prefix."
+
+    count = Doi.hide_dois_by_prefix(ENV["PREFIX"])
+    puts "#{count} DOIs with prefix #{ENV['PREFIX']} hidden."
+  end
+
   desc "Delete doi by a doi"
   task delete_by_doi: :environment do
     if ENV["DOI"].nil?
@@ -290,6 +303,17 @@ namespace :doi do
 
     Doi.delete_by_doi(ENV["DOI"])
     puts "DOI #{ENV['DOI']} will be deleted."
+  end
+
+  desc "HIDE doi by a doi"
+  task hide_by_doi: :environment do
+    if ENV["DOI"].nil?
+      puts "ENV['DOI'] is required."
+      exit
+    end
+
+    Doi.hide_by_doi(ENV["DOI"])
+    puts "DOI #{ENV['DOI']} will be hidden (state changed from findable=>registered)."
   end
 
   desc "Add type information to dois based on id range"

@@ -76,7 +76,7 @@ namespace :prefix do
     puts Prefix.get_registration_agency
   end
 
-  desc "Delete prefix and associated DOIs"
+  desc "Delete prefix and hide associated DOIs (by changing state from 'findable' to 'registered')"
   task delete: :environment do
     # These prefixes are used by multiple prefixes and can't be deleted
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
@@ -97,6 +97,10 @@ namespace :prefix do
       exit
     end
 
+    # hide DOIs
+    count = Doi.hide_dois_by_prefix(ENV["PREFIX"])
+    puts "#{count} DOIs with prefix #{ENV['PREFIX']} hidden."
+
     ClientPrefix.where("prefix_id = ?", prefix.id).destroy_all
     puts "Client prefix deleted."
 
@@ -105,9 +109,5 @@ namespace :prefix do
 
     prefix.destroy
     puts "Prefix #{ENV['PREFIX']} deleted."
-
-    # delete DOIs
-    count = Doi.delete_dois_by_prefix(ENV["PREFIX"])
-    puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 end
