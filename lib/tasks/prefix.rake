@@ -110,4 +110,39 @@ namespace :prefix do
     count = Doi.delete_dois_by_prefix(ENV["PREFIX"])
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
+
+  desc "Delete prefix and hide associated DOIs"
+  task delete_and_hide_dois: :environment do
+    # These prefixes are used by multiple prefixes and can't be deleted
+    prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
+
+    if ENV["PREFIX"].nil?
+      puts "ENV['PREFIX'] is required."
+      exit
+    end
+
+    if prefixes_to_keep.include?(ENV["PREFIX"])
+      puts "Prefix #{ENV['PREFIX']} can't be deleted."
+      exit
+    end
+
+    prefix = Prefix.where(uid: ENV["PREFIX"]).first
+    if prefix.nil?
+      puts "Prefix #{ENV['PREFIX']} not found."
+      exit
+    end
+
+    ClientPrefix.where("prefix_id = ?", prefix.id).destroy_all
+    puts "Client prefix deleted."
+
+    ProviderPrefix.where("prefix_id = ?", prefix.id).destroy_all
+    puts "Provider prefix deleted."
+
+    prefix.destroy
+    puts "Prefix #{ENV['PREFIX']} deleted."
+
+    # hide DOIs
+    count = Doi.hide_dois_by_prefix(ENV["PREFIX"])
+    puts "#{count} DOIs with prefix #{ENV['PREFIX']} hidden."
+  end
 end
