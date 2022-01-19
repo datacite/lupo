@@ -1986,7 +1986,7 @@ class Doi < ApplicationRecord
 
     # query = options[:query] || "*"
     # size = (options[:size] || 1000).to_i
-    size = (options[:size] || 2).to_i
+    size = (options[:size] || 1000).to_i
 
     response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: [] })
     Rails.logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
