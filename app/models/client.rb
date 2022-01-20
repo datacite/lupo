@@ -648,28 +648,16 @@ class Client < ApplicationRecord
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
     }
 
-    Rails.logger.info "SKV - TO_JSONAPI BEGIN: uid, doi_counts, dois_total, dois_current_year, dois_last_year"
-    Rails.logger.info uid
-    Rails.logger.info doi_counts
-    Rails.logger.info dois_total
-    Rails.logger.info dois_current_year
-    Rails.logger.info dois_last_year
-    Rails.logger.info "SKV - TO_JSONAPI MIDDLE: attributes"
-    Rails.logger.info attributes
-    Rails.logger.info "SKV - TO_JSONAPI END"
-
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
-  def self.export(query: nil)
-    Rails.logger.info "SKV - EXPORTING CLIENTS - BEGIN"
-
+  def self.export(query: nil, include_deleted: false)
     # Loop through all clients
     i = 0
     page = { size: 1_000, number: 1 }
-    response = self.query(query, include_deleted: true, page: page)
+    response = self.query(query, include_deleted: include_deleted, page: page)
     response.records.each do |client|
-      client.send_client_export_message(client.to_jsonapi)
+      # client.send_client_export_message(client.to_jsonapi)
       i += 1
     end
 
@@ -680,16 +668,13 @@ class Client < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, include_deleted: true, page: page)
+      response = self.query(query, include_deleted: include_deleted, page: page)
       response.records.each do |client|
-        client.send_client_export_message(client.to_jsonapi)
+        # client.send_client_export_message(client.to_jsonapi)
         i += 1
       end
       page_num += 1
     end
-
-    Rails.logger.info query
-    Rails.logger.info "SKV - EXPORTING CLIENTS - END"
 
     "#{i} clients exported."
   end

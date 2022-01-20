@@ -318,11 +318,11 @@ class Contact < ApplicationRecord
     write_attribute(:provider_id, r.id)
   end
 
-  def self.export(query: nil)
+  def self.export(query: nil, include_deleted: false)
     # Loop through all contacts
     i = 0
     page = { size: 1_000, number: 1 }
-    response = self.query(query, include_deleted: true, page: page)
+    response = self.query(query, include_deleted: include_deleted, page: page)
     response.records.each do |contact|
       contact.send_contact_export_message(contact.to_jsonapi)
       i += 1
@@ -335,7 +335,7 @@ class Contact < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, include_deleted: true, page: page)
+      response = self.query(query, include_deleted: include_deleted, page: page)
       response.records.each do |contact|
         contact.send_contact_export_message(contact.to_jsonapi)
         i += 1

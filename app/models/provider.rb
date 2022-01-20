@@ -866,13 +866,13 @@ class Provider < ApplicationRecord
     }
   end
 
-  def self.export(query: nil)
+  def self.export(query: nil, include_deleted: false)
     query = query.present? ? query + " !role_name:ROLE_ADMIN !role_name:ROLE_DEV" : "!role_name:ROLE_ADMIN !role_name:ROLE_DEV"
 
     # Loop through all providers
     i = 0
     page = { size: 1_000, number: 1 }
-    response = self.query(query, include_deleted: true, page: page)
+    response = self.query(query, include_deleted: include_deleted, page: page)
     response.records.each do |provider|
       provider.send_provider_export_message(provider.to_jsonapi)
       i += 1
@@ -885,7 +885,7 @@ class Provider < ApplicationRecord
     page_num = 2
     while page_num <= total_pages
       page = { size: 1_000, number: page_num }
-      response = self.query(query, include_deleted: true, page: page)
+      response = self.query(query, include_deleted: include_deleted, page: page)
       response.records.each do |provider|
         provider.send_provider_export_message(provider.to_jsonapi)
         i += 1

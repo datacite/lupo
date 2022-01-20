@@ -367,7 +367,7 @@ class ProvidersController < ApplicationController
   end
 
   def export
-    response = Provider.export(query: params[:query])
+    response = Provider.export(query: params[:query], include_deleted: params[:include_deleted])
     render json: { "message" => response }, status: :ok
   end
 

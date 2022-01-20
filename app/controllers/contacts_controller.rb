@@ -162,7 +162,7 @@ class ContactsController < ApplicationController
   end
 
   def export
-    response = Contact.export(query: params[:query])
+    response = Contact.export(query: params[:query], include_deleted: params[:include_deleted])
     render json: { "message" => response }, status: :ok
   end
 
