@@ -119,12 +119,28 @@ class QueryType < BaseObject
 
   field :data_catalogs, DataCatalogConnectionWithTotalType, null: false do
     argument :query, String, required: false
+    argument :subject, String, required: false
+    argument :open, String, required: false
+    argument :certified, String, required: false
+    argument :pid, String, required: false
+    argument :software, String, required: false
+    argument :disciplinary, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
 
   def data_catalogs(**args)
-    response = DataCatalog.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    response = DataCatalog.query(
+        args[:query],
+        subject: args[:subject],
+        open: args[:open],
+        certified: args[:certified],
+        pid: args[:pid],
+        software: args[:software],
+        disciplinary: args[:disciplinary],
+        limit: args[:first],
+        offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil
+    )
     HashConnection.new(response, context: context, first: args[:first], after: args[:after])
   end
 
