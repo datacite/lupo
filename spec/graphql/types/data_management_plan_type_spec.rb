@@ -198,6 +198,7 @@ describe DataManagementPlanType do
           "types",
         ),
       ).to eq(
+        "resourceType"=>nil,
         "resourceTypeGeneral" => "OutputManagementPlan",
         "schemaOrg" => "CreativeWork",
       )
@@ -330,6 +331,7 @@ describe DataManagementPlanType do
           "types",
         ),
       ).to eq(
+        "resourceType"=>nil,
         "resourceTypeGeneral" => "OutputManagementPlan",
         "schemaOrg" => "CreativeWork",
       )
