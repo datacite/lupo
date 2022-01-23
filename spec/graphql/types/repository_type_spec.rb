@@ -313,7 +313,7 @@ describe RepositoryType do
     end
 
     let(:query) do
-        "query {
+      "query {
             repository(id: \"testr.testr3\") {
                 id
                 name
@@ -359,7 +359,7 @@ describe RepositoryType do
     end
 
     let(:query) do
-        "query {
+      "query {
             repository(id: \"testr.testr4\") {
                 id
                 name

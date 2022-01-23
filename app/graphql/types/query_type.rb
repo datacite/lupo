@@ -131,7 +131,7 @@ class QueryType < BaseObject
 
   def data_catalogs(**args)
     response = DataCatalog.query(
-        args[:query],
+      args[:query],
         subject: args[:subject],
         open: args[:open],
         certified: args[:certified],
