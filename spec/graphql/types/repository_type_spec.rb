@@ -302,9 +302,9 @@ describe RepositoryType do
   end
 
   describe "query repository with re3data", elasticsearch: true, vcr: true do
-    let(:provider) { create(:provider, symbol: "TESTR") }
+    let(:provider) { create(:provider, symbol: "TESTX") }
     let!(:client) do
-      create(:client, symbol: "TESTR.TESTR3", software: "Dataverse", re3data_id: "10.17616/r3bw5r", provider: provider)
+      create(:client, symbol: "TESTX.TESTR3", software: "Dataverse", re3data_id: "10.17616/r3bw5r", provider: provider)
     end
     before do
       Provider.import
@@ -314,7 +314,7 @@ describe RepositoryType do
 
     let(:query) do
       "query {
-            repository(id: \"testr.testr3\") {
+            repository(id: \"testx.testr3\") {
                 id
                 name
                 alternateName
@@ -348,9 +348,9 @@ describe RepositoryType do
   end
 
   describe "query repository without re3data", elasticsearch: true, vcr: true do
-    let(:provider) { create(:provider, symbol: "TESTR") }
+    let(:provider) { create(:provider, symbol: "TESTY") }
     let!(:client) do
-      create(:client, symbol: "TESTR.TESTR4", software: "Dataverse", provider: provider)
+      create(:client, symbol: "TESTY.TESTR4", software: "Dataverse", provider: provider)
     end
     before do
       Provider.import
@@ -360,7 +360,7 @@ describe RepositoryType do
 
     let(:query) do
       "query {
-            repository(id: \"testr.testr4\") {
+            repository(id: \"testy.testr4\") {
                 id
                 name
                 alternateName
