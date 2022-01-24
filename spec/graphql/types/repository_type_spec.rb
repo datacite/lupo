@@ -34,6 +34,7 @@ describe RepositoryType do
       )
     end
     it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:re3data).of_type("DataCatalog") }
   end
 
   describe "query repositories", elasticsearch: true do
@@ -297,6 +298,86 @@ describe RepositoryType do
       # work = response.dig("data", "repository", "works", "nodes", 0)
       # expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
       # expect(work.dig("citationCount")).to eq(2)
+    end
+  end
+
+  describe "query repository with re3data", elasticsearch: true, vcr: true do
+    let(:provider) { create(:provider, symbol: "TESTX") }
+    let!(:client) do
+      create(:client, symbol: "TESTX.TESTR3", software: "Dataverse", re3data_id: "10.17616/r3bw5r", provider: provider)
+    end
+    before do
+      Provider.import
+      Client.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query {
+            repository(id: \"testx.testr3\") {
+                id
+                name
+                alternateName
+                re3data {
+                    id
+                    name
+                    contacts
+                    description
+                }
+            }
+        }"
+    end
+
+    it "returns repository with re3data" do
+      response = LupoSchema.execute(query).as_json
+      re3data = response.dig("data", "repository", "re3data")
+      expect(re3data.fetch("id")).to eq("10.17616/r3bw5r")
+      expect(re3data.fetch("name")).to eq(
+        "UCLA Social Science Data Archive Dataverse",
+      )
+      expect(re3data.fetch("description")).to start_with(
+        "The Social Science Data Archive is still active and maintained as part of the UCLA Library",
+      )
+      expect(re3data.fetch("contacts")).to eq(
+        [
+          "datascience@ucla.edu",
+          "datascience@ucla.edu"
+        ],
+      )
+    end
+  end
+
+  describe "query repository without re3data", elasticsearch: true, vcr: true do
+    let(:provider) { create(:provider, symbol: "TESTY") }
+    let!(:client) do
+      create(:client, symbol: "TESTY.TESTR4", software: "Dataverse", provider: provider)
+    end
+    before do
+      Provider.import
+      Client.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query {
+            repository(id: \"testy.testr4\") {
+                id
+                name
+                alternateName
+                re3data {
+                    id
+                    name
+                    contacts
+                    description
+                }
+            }
+        }"
+    end
+
+    it "returns repository with re3data as nil" do
+      response = LupoSchema.execute(query).as_json
+      re3data = response.dig("data", "repository", "re3data")
+      expect(re3data).to be_nil
     end
   end
 end

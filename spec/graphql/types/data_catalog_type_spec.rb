@@ -19,6 +19,7 @@ describe DataCatalogType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:dataAccesses).of_type("[TextRestriction!]") }
     it do
       is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal")
     end
@@ -160,6 +161,12 @@ describe DataCatalogType do
             providerTypes
             pidSystems
             inLanguage
+            dataAccesses {
+                type
+                restriction {
+                    text
+                }
+            }
           }
         }
       }"
@@ -211,10 +218,66 @@ describe DataCatalogType do
           "eng"
         ]
       )
+      expect(data_catalog.fetch("dataAccesses")).to eq(
+        [
+            { "restriction" => nil, "type" => "restricted" },
+            { "restriction" => nil, "type" => "open" }
+        ]
+      )
 
       expect(data_catalog.fetch("softwareApplication")).to eq(
         [{ "name" => "DataVerse", "softwareVersion" => nil, "url" => nil }],
       )
+    end
+  end
+
+  describe "more data_catalogs queries", elasticsearch: true, vcr: true do
+    let(:filtered_query) do
+      "query($query: String, $subject: String, $open: String, $certified: String, $pid: String, $software: String, $disciplinary: String){
+            dataCatalogs( query: $query, subject: $subject, open: $open, certified: $certified, pid: $pid, software: $software, disciplinary: $disciplinary){
+              totalCount
+        }
+    }"
+    end
+    it "has no filters" do
+      response = LupoSchema.execute(filtered_query, variables: { query: "" }).as_json
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(1938)
+    end
+
+    it "filters based on query" do
+      response = LupoSchema.execute(filtered_query, variables: { query: "Dataverse" }).as_json
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(112)
+    end
+
+    it "filters based on subject" do
+      response = LupoSchema.execute(filtered_query, variables: { subject: "23" }).as_json
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(159)
+    end
+
+    it "filters for FAIRS FAIR" do
+      response = LupoSchema.execute(
+        filtered_query,
+          variables: {
+              subject: "",
+              open: "true",
+              pid: "true",
+              certified: "true"
+          }
+      ).as_json
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(131)
+    end
+
+    it "filters for Enabling FAIR Data Project" do
+      response = LupoSchema.execute(
+        filtered_query,
+          variables: {
+              subject: "34",
+              open: "true",
+              pid: "true",
+              certified: ""
+          }
+      ).as_json
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(255)
     end
   end
 end

@@ -12,6 +12,9 @@ class RepositoryType < BaseObject
   field :re3data_id,
         ID,
         null: true, description: "The re3data identifier for the repository"
+  field :re3data,
+        DataCatalogType,
+        null: true, description: "The re3data DataCatalog"
   field :name, String, null: false, description: "Repository name"
   field :alternate_name,
         String,
@@ -216,6 +219,10 @@ class RepositoryType < BaseObject
 
   def type
     "Repository"
+  end
+
+  def re3data(**args)
+    DataCatalog.find_by_id(object.re3data_id).fetch(:data, []).first
   end
 
   def datasets(**args)
