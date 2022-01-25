@@ -24,7 +24,7 @@ class DataciteDoiSerializer
              :language,
              :types,
              :related_identifiers,
-            #  :related_items,
+             #  :related_items,
              :sizes,
              :formats,
              :version,
