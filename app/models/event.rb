@@ -263,6 +263,16 @@ class Event < ApplicationRecord
           },
           aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
       },
+      created: {
+        date_histogram: {
+          field: "created_at",
+          interval: "year",
+          format: "year",
+          order: { _key: "desc" },
+          min_doc_count: 1,
+        },
+        aggs: { bucket_truncate: { bucket_sort: { size: 10 } } },
+    },
       registrants: {
         terms: { field: "registrant_id", size: 10, min_doc_count: 1 },
         aggs: {
