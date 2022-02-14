@@ -90,7 +90,7 @@ class ProvidersController < ApplicationController
           )
         end
 
-      @providers = response.results
+      @providers = response.records
       respond_to do |format|
         format.json do
           options = {}
