@@ -57,14 +57,14 @@ jobs:
             ${{ runner.os }}-gems-
       - name: Install
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }} 
+          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
           cp .env.build .env
           gem install bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           sudo /etc/init.d/mysql start
-          # bundle exec rails db:setup RAILS_ENV=test      
+          bundle exec rails db:setup RAILS_ENV=test
       - name: Lint and Test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
@@ -73,7 +73,7 @@ jobs:
           MEMCACHE_SERVERS: "localhost:11211"
         run: |
           bundle exec rubocop
-          # bundle exec rspec
+          bundle exec rspec
           echo $?
       # - name: Publish code coverage
       #   uses: paambaati/codeclimate-action@v2.7.5
@@ -96,12 +96,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -128,7 +128,7 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ steps.set_git_vars.outputs.GIT_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-  
+
   deploy:
     needs: [test, build]
     runs-on: ubuntu-latest
@@ -144,7 +144,7 @@ jobs:
           echo "::set-output name=BRANCH::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
           echo "::set-output name=TAG::$(git tag --points-at HEAD)"
           echo "::set-output name=GIT_SHA::$(git rev-parse HEAD)"
-          echo "::set-output name=GIT_SHA_SHORT::$(git rev-parse --short HEAD)"  
+          echo "::set-output name=GIT_SHA_SHORT::$(git rev-parse --short HEAD)"
         id: extract_variables
 
       - name: Checkout terraform config repo
