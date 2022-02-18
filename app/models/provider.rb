@@ -24,6 +24,7 @@ class Provider < ApplicationRecord
     version
     doi_quota_allowed
     doi_quota_used
+    doi_estimate_year_one
   ]
 
   # include helper module for caching infrequently changing resources
@@ -63,6 +64,7 @@ class Provider < ApplicationRecord
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
+  attr_readonly :doi_estimate_year_one
   attr_reader :from_salesforce
 
   delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
@@ -148,6 +150,10 @@ class Provider < ApplicationRecord
   # validates :service_contact, contact: true
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
+
+  validates :doi_estimate_year_one, numericality: { only_integer: true }, on: :create
+  validate :validate_doi_estimate, on: :create
+  validate :freeze_doi_estimate, on: :update
 
   strip_attributes
 
@@ -363,6 +369,7 @@ class Provider < ApplicationRecord
         updated_at: { type: :date },
         deleted_at: { type: :date }
       }
+      indexes :doi_estimate_year_one, type: :integer
     end
   end
 
@@ -428,7 +435,8 @@ class Provider < ApplicationRecord
           nil
         else
           contacts.map { |m| m.try(:as_indexed_json, exclude_associations: true) }
-        end
+        end,
+      "doi_estimate_year_one" => doi_estimate_year_one
     }
   end
 
@@ -537,6 +545,7 @@ class Provider < ApplicationRecord
       created: created,
       updated: updated,
       deleted_at: deleted_at,
+      doi_estimate_year_one: doi_estimate_year_one,
     }.values
 
     CSV.generate { |csv| csv << provider }
@@ -826,6 +835,34 @@ class Provider < ApplicationRecord
     ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
+  def activity_id_not_changed
+    if activity_id_changed? && self.persisted?
+      errors.add(:activity_id, "Change of activity_id not allowed!")
+    end
+  end
+
+  def validate_doi_estimate
+    if consortium_id && (member_type == "consortium_organization")
+      if !(doi_estimate_year_one > 0)
+        errors.add(
+         :doi_estimate_year_one,
+         "A nonzero doi estimate must be specified for consortium organizations.",
+        )
+      end
+    else
+      if (doi_estimate_year_one > 0)
+        errors.add(
+          :doi_estimate_year_one,
+          "A nonzero doi estimate can only be specified for consortium organizations.",
+        )
+      end
+    end
+  end
+
+  def freeze_doi_estimate
+    errors.add(:doi_estimate_year_one, "cannot be changed") if doi_estimate_year_one_changed?
+  end
+
   # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
@@ -859,6 +896,7 @@ class Provider < ApplicationRecord
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
+      "doi_estimate_year_one" => doi_estimate_year_one,
     }
 
     {
@@ -912,6 +950,7 @@ class Provider < ApplicationRecord
       self.billing_information = {} if billing_information.blank?
       self.consortium_id = nil unless member_type == "consortium_organization"
       self.non_profit_status = "non-profit" if non_profit_status.blank?
+      self.doi_estimate_year_one = 0 unless doi_estimate_year_one.present?
 
       # custom filename for attachment as data URLs don't support filenames
       if logo_content_type.present?
