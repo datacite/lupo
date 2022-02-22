@@ -64,7 +64,7 @@ class Provider < ApplicationRecord
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
-  attr_readonly :doi_estimate_year_one
+  # attr_readonly :doi_estimate_year_one
   attr_reader :from_salesforce
 
   delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
@@ -151,9 +151,11 @@ class Provider < ApplicationRecord
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
 
-  validates :doi_estimate_year_one, numericality: { only_integer: true }, on: :create
-  validate :validate_doi_estimate, on: :create
-  validate :freeze_doi_estimate, on: :update
+  # validates :doi_estimate_year_one, numericality: { only_integer: true }, on: :create
+  # validate :validate_doi_estimate, on: :create
+  # validate :freeze_doi_estimate, on: :update
+  validates :doi_estimate_year_one, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
 
   strip_attributes
 
