@@ -195,7 +195,6 @@ module Authenticable
         payload.merge!(
           "provider_id" => user.provider_id,
           "client_id" => uid,
-          "password" => password,
         )
       elsif uid != "admin"
         payload["provider_id"] = uid
