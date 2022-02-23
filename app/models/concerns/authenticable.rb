@@ -192,10 +192,8 @@ module Authenticable
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!(
-          "provider_id" => user.provider_id,
-          "client_id" => uid,
-        )
+        payload["provider_id"] = user.provider_id
+        payload["client_id"] = uid
       elsif uid != "admin"
         payload["provider_id"] = uid
       end
