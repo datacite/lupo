@@ -402,12 +402,11 @@ describe Client, type: :model do
   end
 
   describe "get_payload" do
+    let (:payload) { subject.get_payload(
+      uid: subject.symbol.downcase, user: subject, password: 12_345,
+    ) }
     it "works" do
-      expect(
-        subject.get_payload(
-          uid: subject.symbol.downcase, user: subject, password: 12_345,
-        ),
-      ).to eq(
+      expect(payload).to eq(
         "uid" => subject.symbol.downcase,
         "name" => subject.name,
         "email" => subject.system_email,
@@ -415,6 +414,10 @@ describe Client, type: :model do
         "provider_id" => subject.provider_id,
         "client_id" => subject.symbol.downcase,
       )
+    end
+
+    it "does not contain password" do
+      expect(payload).to include("role_id")
     end
   end
 end
