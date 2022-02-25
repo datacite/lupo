@@ -192,11 +192,8 @@ module Authenticable
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!(
-          "provider_id" => user.provider_id,
-          "client_id" => uid,
-          "password" => password,
-        )
+        payload["provider_id"] = user.provider_id
+        payload["client_id"] = uid
       elsif uid != "admin"
         payload["provider_id"] = uid
       end
@@ -311,7 +308,6 @@ module Authenticable
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
-        password: attributes.fetch(:password, nil),
         beta_tester: attributes.fetch(:beta_tester, nil),
         has_orcid_token: attributes.fetch(:has_orcid_token, nil),
         aud: attributes.fetch(:aud, Rails.env),
@@ -334,7 +330,6 @@ module Authenticable
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "user"),
-        password: attributes.fetch(:password, nil),
         aud: Rails.env,
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30),
@@ -361,11 +356,8 @@ module Authenticable
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!(
-          "provider_id" => user.provider_id,
-          "client_id" => uid,
-          "password" => password,
-        )
+        payload["provider_id"] = user.provider_id
+        payload["client_id"] = uid
       elsif uid != "admin"
         payload["provider_id"] = uid
       end
