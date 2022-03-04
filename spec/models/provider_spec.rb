@@ -149,6 +149,51 @@ describe Provider, type: :model do
     end
   end
 
+  describe "doi estimate" do
+    subject { build(:provider) }
+
+    it "valid" do
+      subject.member_type = "consortium_organization"
+      subject.doi_estimate_year_one = "0"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "valid" do
+      subject.member_type = "consortium_organization"
+      subject.doi_estimate_year_one = "9999"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "invalid" do
+      subject.member_type = "consortium_organization"
+      subject.doi_estimate_year_one = ""
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(
+        doi_estimate_year_one: [{ error: :not_a_number, value: "" }],
+      )
+    end
+
+    it "invalid" do
+      subject.member_type = "consortium_organization"
+      subject.doi_estimate_year_one = "abc"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(
+        doi_estimate_year_one: [{ error: :not_a_number, value: "abc" }],
+      )
+    end
+
+    it "invalid" do
+      subject.member_type = "consortium_organization"
+      subject.doi_estimate_year_one = "-1"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(
+        doi_estimate_year_one: [{ count: 0, error: :greater_than_or_equal_to, value: -1 }],
+      )
+    end
+  end
+
   describe "from_salesforce" do
     subject { build(:provider) }
 
