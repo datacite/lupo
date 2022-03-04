@@ -150,7 +150,7 @@ class Provider < ApplicationRecord
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
 
-  validates :doi_estimate_year_one, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :doi_estimate_year_one, numericality: { only_integer: true, greater_than_or_equal_to: 0 } if :member_type === "consortium_organization"
 
   strip_attributes
 
