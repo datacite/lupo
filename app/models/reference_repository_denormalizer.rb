@@ -5,6 +5,12 @@ class ReferenceRepositoryDenormalizer
         @repository = repository
     end
 
+    def doi_as_url
+        doi = @repository.re3doi
+        return nil if doi.blank?
+        "https://doi.org/#{doi.downcase}"
+    end
+
     def to_hash
         %w[
             id
@@ -17,6 +23,16 @@ class ReferenceRepositoryDenormalizer
             description
             pid_system
             url
+            keyword
+            contact
+            software
+            language
+            certificate
+            data_access
+            data_upload
+            provider_type
+            repository_type
+            subject
         ].map { |method_name| [ method_name, send(method_name)] }.to_h
     end
 
@@ -62,11 +78,50 @@ class ReferenceRepositoryDenormalizer
         ret.uniq
     end
 
-    def doi_as_url
-        doi = @repository.re3doi
-        return nil if doi.blank?
-        "https://doi.org/#{doi.downcase}"
+    def keyword
+        ret = Array.wrap(@repository.re3_repo&.keywords).map { |k| k.text }
+        ret.uniq
     end
 
+    def contact
+        ret = Array.wrap(@repository.re3_repo&.contacts).map { |k| k.text}
+        ret.uniq
+    end
 
+    def language
+        ret = Array.wrap(@repository.re3_repo&.repository_languages).map { |k| k.text }
+        ret += Array.wrap(@repository.client_repo&.language)
+        ret.uniq
+    end
+
+    def certificate
+        ret = Array.wrap(@repository.re3_repo&.certificates).map { |k| k.text }
+        ret += Array.wrap(@repository.client_repo&.certificate)
+        ret.uniq
+    end
+
+    def software
+        ret = Array.wrap(@repository.re3_repo&.software).map { |k| k.name }
+        ret.uniq
+    end
+
+    def data_access
+        Array.wrap(@repository.re3_repo&.data_accesses).map { |k| k.type }
+    end
+
+    def data_upload
+        Array.wrap(@repository.re3_repo&.data_uploads).map { |k| k.type }
+    end
+
+    def provider_type
+        Array.wrap(@repository.re3_repo&.provider_type).map { |k| k.text }
+    end
+
+    def repository_type
+        Array.wrap(@repository.re3_repo&.types).map { |k| k.text }
+    end
+
+    def subject
+        Array.wrap(@repository.re3_repo&.subjects).map { |k| k.text }
+    end
 end

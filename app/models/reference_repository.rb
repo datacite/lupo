@@ -35,6 +35,17 @@ class ReferenceRepository < ApplicationRecord
             indexes :description
             indexes :pid_system, type: :keyword
             indexes :url
+            indexes :keyword, type: :keyword
+            indexes :subject
+            indexes :contact
+            indexes :language, type: :keyword
+            indexes :certificate, type: :keyword
+            indexes :data_access, type: :keyword
+            indexes :data_upload, type: :keyword
+            indexes :provider_type, type: :keyword
+            indexes :repository_type, type: :keyword
+            indexes :data_upload_licenses, type: :keyword
+            indexes :software, type: :keyword
         end
     end
 
