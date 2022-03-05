@@ -156,20 +156,20 @@ describe Provider, type: :model do
     it "valid" do
       [0, 98765, "0", "98765"].each do |value|
         subject.member_type = "consortium_organization"
-        subject.doi_estimate_year_one = value
+        subject.doi_estimate = value
         expect(subject.save).to be true
-        expect(subject.doi_estimate_year_one).to be_a_kind_of(Integer)
-        expect(subject.doi_estimate_year_one).to eq(value.to_i)
+        expect(subject.doi_estimate).to be_a_kind_of(Integer)
+        expect(subject.doi_estimate).to eq(value.to_i)
       end
     end
 
     it "invalid" do
       ["-123", -123].each do |value|
         subject.member_type = "consortium_organization"
-        subject.doi_estimate_year_one = value
+        subject.doi_estimate = value
         expect(subject.save).to be false
         expect(subject.errors.details).to eq(
-          doi_estimate_year_one: [{ error: :doi_estimate_invalid, value: "The doi_estimate must be a nonnegative integer." }]
+          doi_estimate: [{ error: :doi_estimate_invalid, value: "The doi_estimate must be a nonnegative integer." }]
         )
       end
     end

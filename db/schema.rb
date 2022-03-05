@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 2022_02_17_020855) do
     t.string "logo_content_type"
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
-    t.integer "doi_estimate_year_one", default: 0, null: false
+    t.integer "doi_estimate", default: 0, null: false
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true

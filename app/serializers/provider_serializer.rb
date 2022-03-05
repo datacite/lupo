@@ -40,7 +40,7 @@ class ProviderSerializer
              :has_required_contacts,
              :created,
              :updated,
-             :doi_estimate_year_one
+             :doi_estimate
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
