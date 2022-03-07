@@ -840,7 +840,7 @@ class Provider < ApplicationRecord
   end
 
   def doi_estimate_field
-    if member_type === "consortium_organization"
+    if member_type == "consortium_organization"
       begin
         num = Integer(doi_estimate)
         if num < 0
@@ -947,7 +947,7 @@ class Provider < ApplicationRecord
       self.billing_information = {} if billing_information.blank?
       self.consortium_id = nil unless member_type == "consortium_organization"
       self.non_profit_status = "non-profit" if non_profit_status.blank?
-      if member_type === "consortium_organization"
+      if member_type == "consortium_organization"
         self.doi_estimate = doi_estimate.to_i
       else
         self.doi_estimate = 0
