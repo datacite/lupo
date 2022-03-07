@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDoiEstimateToAllocator < ActiveRecord::Migration[5.2]
   def change
     add_column :allocator, :doi_estimate, :integer, default: 0, null: false
