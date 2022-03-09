@@ -7,16 +7,24 @@ class ReferenceRepository < ApplicationRecord
 
     validates_uniqueness_of :re3doi, :allow_nil => true
 
+    def self.find_client(client_id)
+        ::Client.where(symbol: client_id).where(deleted_at: nil).first
+    end
+
+    def self.find_re3(doi)
+        DataCatalog.find_by_id(doi).fetch(:data, []).first
+    end
+
     def client_repo
         if @dsclient&.symbol == self[:client_id]
             @dsclient
         else
-            @dsclient = ::Client.where(symbol: self[:client_id]).where(deleted_at: nil).first
+            @dsclient = ReferenceRepository.find_client(self[:client_id])
         end
     end
 
     def re3_repo
-        @re3repo ||= DataCatalog.find_by_id(self[:re3doi]).fetch(:data, []).first
+        @re3repo ||= ReferenceRepository.find_re3(self[:re3doi])
     end
 
     def as_indexed_json(_options = {})
