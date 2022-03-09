@@ -57,7 +57,7 @@ class ReferenceRepositoryDenormalizer
     end
 
     def name
-        @repository.client_repo&.name || @repository.re3_repo.name
+        @repository.client_repo&.name || @repository.re3_repo&.name
     end
 
     def description
