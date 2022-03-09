@@ -24,6 +24,7 @@ class Provider < ApplicationRecord
     version
     doi_quota_allowed
     doi_quota_used
+    doi_estimate
   ]
 
   # include helper module for caching infrequently changing resources
@@ -148,6 +149,9 @@ class Provider < ApplicationRecord
   # validates :service_contact, contact: true
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
+
+  # validates :doi_estimate, numericality: { only_integer: true, greater_than_or_equal_to: 0 } if :member_type === "consortium_organization"
+  validate :doi_estimate_field
 
   strip_attributes
 
@@ -363,6 +367,7 @@ class Provider < ApplicationRecord
         updated_at: { type: :date },
         deleted_at: { type: :date }
       }
+      indexes :doi_estimate, type: :integer
     end
   end
 
@@ -428,7 +433,8 @@ class Provider < ApplicationRecord
           nil
         else
           contacts.map { |m| m.try(:as_indexed_json, exclude_associations: true) }
-        end
+        end,
+      "doi_estimate" => doi_estimate
     }
   end
 
@@ -537,6 +543,7 @@ class Provider < ApplicationRecord
       created: created,
       updated: updated,
       deleted_at: deleted_at,
+      doi_estimate: doi_estimate,
     }.values
 
     CSV.generate { |csv| csv << provider }
@@ -826,6 +833,33 @@ class Provider < ApplicationRecord
     ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
+  def activity_id_not_changed
+    if activity_id_changed? && self.persisted?
+      errors.add(:activity_id, "Change of activity_id not allowed!")
+    end
+  end
+
+  def doi_estimate_field
+    if member_type == "consortium_organization"
+      begin
+        num = Integer(doi_estimate)
+        if num < 0
+          errors.add(
+            :doi_estimate,
+            :doi_estimate_invalid,
+            value: "The doi_estimate must be a nonnegative integer.",
+          )
+        end
+      rescue
+        errors.add(
+          :doi_estimate,
+          :doi_estimate_invalid,
+          value: "The doi_estimate must be a nonnegative integer.",
+        )
+      end
+    end
+  end
+
   # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
@@ -859,6 +893,7 @@ class Provider < ApplicationRecord
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
+      "doi_estimate" => doi_estimate,
     }
 
     {
@@ -912,6 +947,11 @@ class Provider < ApplicationRecord
       self.billing_information = {} if billing_information.blank?
       self.consortium_id = nil unless member_type == "consortium_organization"
       self.non_profit_status = "non-profit" if non_profit_status.blank?
+      if member_type == "consortium_organization"
+        self.doi_estimate = doi_estimate.to_i
+      else
+        self.doi_estimate = 0
+      end
 
       # custom filename for attachment as data URLs don't support filenames
       if logo_content_type.present?

@@ -460,6 +460,7 @@ class ProvidersController < ApplicationController
           { "secondaryServiceContact": [:uid, :email, "givenName", "familyName", :name] },
           "votingContact",
           { "votingContact": [:uid, :email, "givenName", "familyName", :name] },
+          "doiEstimate",
         ],
         keys: {
           "displayName" => :display_name,
@@ -486,6 +487,7 @@ class ProvidersController < ApplicationController
           "salesforceId" => :salesforce_id,
           "fromSalesforce" => :from_salesforce,
           "globusUuid" => :globus_uuid,
+          "doiEstimate" => :doi_estimate,
         },
       )
     end

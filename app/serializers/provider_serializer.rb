@@ -39,7 +39,8 @@ class ProviderSerializer
              :voting_contact,
              :has_required_contacts,
              :created,
-             :updated
+             :updated,
+             :doi_estimate
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
