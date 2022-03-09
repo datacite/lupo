@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :repository do
   desc "Load all Clients into Reference Repostories"
   task load_client_repos: :environment do
@@ -22,7 +24,7 @@ namespace :repository do
     re3repos = []
     (1..pages).each do |page|
       puts "Fetching Re3Data Repositories: Fetch Group #{page}"
-      re3repos += DataCatalog.query("", limit: 1000, offset:page).fetch(:data, [])
+      re3repos += DataCatalog.query("", limit: 1000, offset: page).fetch(:data, [])
     end
     re3repos.uniq!
     puts "Processing Re3Data Repositories"
@@ -33,7 +35,7 @@ namespace :repository do
     )
     re3repos.each  do |repo|
       progressbar.increment
-      doi = repo.id&.gsub('https://doi.org/','')
+      doi = repo.id&.gsub("https://doi.org/", "")
       if not doi.blank?
         ReferenceRepository.find_or_create_by(
           re3doi: doi
