@@ -168,7 +168,7 @@ describe Provider, type: :model do
         subject.doi_estimate = value
         expect(subject.save).to be false
         expect(subject.errors.details).to eq(
-          doi_estimate: [{ error: :doi_estimate_invalid, value: "The doi_estimate must be a nonnegative integer." }]
+          doi_estimate: [{ count: 0, error: :greater_than_or_equal_to, value: value.to_i }]
         )
       end
     end
