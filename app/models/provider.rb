@@ -150,8 +150,7 @@ class Provider < ApplicationRecord
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
 
-  # validates :doi_estimate, numericality: { only_integer: true, greater_than_or_equal_to: 0 } if :member_type === "consortium_organization"
-  validate :doi_estimate_field
+  validates :doi_estimate, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   strip_attributes
 
@@ -839,27 +838,6 @@ class Provider < ApplicationRecord
     end
   end
 
-  def doi_estimate_field
-    if member_type == "consortium_organization"
-      begin
-        num = Integer(doi_estimate)
-        if num < 0
-          errors.add(
-            :doi_estimate,
-            :doi_estimate_invalid,
-            value: "The doi_estimate must be a nonnegative integer.",
-          )
-        end
-      rescue
-        errors.add(
-          :doi_estimate,
-          :doi_estimate_invalid,
-          value: "The doi_estimate must be a nonnegative integer.",
-        )
-      end
-    end
-  end
-
   # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
@@ -947,11 +925,7 @@ class Provider < ApplicationRecord
       self.billing_information = {} if billing_information.blank?
       self.consortium_id = nil unless member_type == "consortium_organization"
       self.non_profit_status = "non-profit" if non_profit_status.blank?
-      if member_type == "consortium_organization"
-        self.doi_estimate = doi_estimate.to_i
-      else
-        self.doi_estimate = 0
-      end
+      self.doi_estimate = doi_estimate.to_i
 
       # custom filename for attachment as data URLs don't support filenames
       if logo_content_type.present?
