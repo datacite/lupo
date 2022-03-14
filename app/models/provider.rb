@@ -150,8 +150,7 @@ class Provider < ApplicationRecord
   # validates :voting_contact, contact: true
   # validates :billing_information, billing_information: true
 
-  # validates :doi_estimate, numericality: { only_integer: true, greater_than_or_equal_to: 0 } if :member_type === "consortium_organization"
-  validate :doi_estimate_field
+  validates :doi_estimate, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   strip_attributes
 
@@ -837,23 +836,6 @@ class Provider < ApplicationRecord
     if activity_id_changed? && self.persisted?
       errors.add(:activity_id, "Change of activity_id not allowed!")
     end
-  end
-
-  def doi_estimate_field
-    num = Integer(doi_estimate)
-    if num < 0
-      errors.add(
-        :doi_estimate,
-        :doi_estimate_invalid,
-        value: "The doi_estimate must be a nonnegative integer.",
-      )
-    end
-  rescue
-    errors.add(
-      :doi_estimate,
-      :doi_estimate_invalid,
-      value: "The doi_estimate must be a nonnegative integer.",
-    )
   end
 
   # attributes to be sent to elasticsearch index
