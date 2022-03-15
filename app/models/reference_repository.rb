@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ReferenceRepository < ApplicationRecord
+  include Indexable
   include Elasticsearch::Model
   include Elasticsearch::Model::Callbacks
   include Hashid::Rails
