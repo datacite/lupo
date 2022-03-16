@@ -13,7 +13,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_17_020855) do
+ActiveRecord::Schema.define(version: 2022_02_18_154500) do
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -300,5 +300,12 @@ ActiveRecord::Schema.define(version: 2022_02_17_020855) do
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
+  end
+
+  create_table "reference_repositories", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "client_id"
+    t.string "re3doi"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 end
