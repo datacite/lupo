@@ -4,13 +4,7 @@ namespace :repository do
   desc "Load all Clients into Reference Repostories"
   task load_client_repos: :environment do
     puts "Processing Client Repositories"
-    progressbar = ProgressBar.create(
-      format: "%a %e %P% Processed: %c from %C %t",
-      title: "Client Repositories",
-      total: Client.all.count
-    )
     Client.all.each do |c|
-      progressbar.increment
       ReferenceRepository.find_or_create_by(
         client_id: c.symbol,
         re3doi: c.re3data_id
@@ -28,13 +22,7 @@ namespace :repository do
     end
     re3repos.uniq!
     puts "Processing Re3Data Repositories"
-    progressbar = ProgressBar.create(
-      format: "%a %e %P% Processed: %c from %C %t",
-      title: "Re3data Repositories",
-      total: re3repos.length
-    )
     re3repos.each  do |repo|
-      progressbar.increment
       doi = repo.id&.gsub("https://doi.org/", "")
       if not doi.blank?
         ReferenceRepository.find_or_create_by(
