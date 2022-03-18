@@ -9,7 +9,7 @@ class DataCatalog
     return {} if doi.blank?
 
     url = "https://api.datacite.org/re3data/#{doi}"
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     if response.status != 200 || response.body.dig("data", "id") != doi.upcase
       return {}
