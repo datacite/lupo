@@ -70,6 +70,8 @@ class ReferenceRepository < ApplicationRecord
               id: {type: :keyword },
               scheme: {type: :keyword }
           }
+      indexes :re3_created, type: :date
+      indexes :re3_updated, type: :date
     end
   end
 

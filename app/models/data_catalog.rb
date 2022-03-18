@@ -79,6 +79,8 @@ class DataCatalog
       pid_systems: message["pidSystems"],
       apis: message["apis"],
       software: message["software"],
+      updated: message["updated"],
+      created: message["created"],
     )
   end
 

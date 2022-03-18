@@ -35,6 +35,8 @@ class ReferenceRepositoryDenormalizer
         provider_type
         repository_type
         subject
+        re3_created
+        re3_updated
     ].map { |method_name| [ method_name, send(method_name)] }.to_h
   end
 
@@ -142,5 +144,13 @@ class ReferenceRepositoryDenormalizer
             scheme: k.scheme
         }
     }
+  end
+
+  def re3_created
+      @repository.re3_repo&.created
+  end
+
+  def re3_updated
+      @repository.re3_repo&.updated
   end
 end
