@@ -78,4 +78,123 @@ class ReferenceRepository < ApplicationRecord
   def force_index
     __elasticsearch__.instance_variable_set(:@__changed_model_attributes, nil)
   end
+
+  def self.query_aggregations
+    {}
+  end
+
+  def self.id_fields
+    %w[
+      id^10
+      client_id
+      re3doi
+    ]
+  end
+
+
+  def self.query_fields
+    %w[
+      id^10
+      name^5
+      description^5
+      software
+      subject.text
+      _all
+    ]
+  end
+
+  def self.find_by_id(ids, options = {})
+    ids = ids.split(",") if ids.is_a?(String)
+    ids = ids.map{ |id| id.gsub("10.17616\/", "")}
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 2_000
+
+    options[:sort] ||= { _score: { order: "asc" } }
+
+    __elasticsearch__.search(
+      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+      size: options.dig(:page, :size),
+      sort: [options[:sort]],
+      track_total_hits: true,
+      query: {
+        query_string: {
+          fields: id_fields,
+          query: ids.join(" OR ")
+        }
+      },
+      aggregations: query_aggregations,
+    )
+  end
+
+  def self.query(query, options = {})
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 25
+    options[:sort] ||= { _score: { order: "asc" } }
+    es_query = {}
+
+    must = if query.present?
+             [
+               {
+                 query_string: {
+                   query: query,
+                   fields: query_fields,
+                   default_operator: "AND",
+                   phrase_slop: 1,
+                 },
+               },
+             ]
+           else
+             [{ match_all: {} }]
+           end
+
+    bool_query = {
+      must: must,
+      #must_not: must_not,
+      #filter: filter,
+      #should: should,
+      #minimum_should_match: minimum_should_match
+    }
+    es_query["bool"] = bool_query
+
+    if options.fetch(:page, {}).key?(:cursor)
+      cursor = [0, ""]
+      if options.dig(:page, :cursor).is_a?(Array)
+        timestamp, uid = options.dig(:page, :cursor)
+        cursor = [timestamp.to_i, uid.to_s]
+      elsif options.dig(:page, :cursor).is_a?(String)
+        timestamp, uid = options.dig(:page, :cursor).split(",")
+        cursor = [timestamp.to_i, uid.to_s]
+      end
+
+      search_after = cursor
+      __elasticsearch__.search(
+        {
+          size: options.dig(:page, :size),
+          search_after: search_after,
+          sort: [options[:sort]],
+          query: es_query,
+          aggregations: aggregations,
+          track_total_hits: true,
+        }.compact,
+      )
+    else
+      from =
+        ((options.dig(:page, :number) || 1) - 1) *
+        (options.dig(:page, :size) || 25)
+      __elasticsearch__.search(
+        {
+          size: options.dig(:page, :size),
+          from: from,
+          sort: [options[:sort]],
+          query: es_query,
+          aggregations: query_aggregations,
+          track_total_hits: true,
+        }.compact,
+      )
+    end
+
+  end
+
 end
