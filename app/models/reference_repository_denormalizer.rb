@@ -22,6 +22,7 @@ class ReferenceRepositoryDenormalizer
         created_at
         updated_at
         name
+        alternate_name
         description
         pid_system
         url
@@ -62,6 +63,14 @@ class ReferenceRepositoryDenormalizer
 
   def name
     @repository.client_repo&.name || @repository.re3_repo&.name
+  end
+
+  def alternate_name
+    ret = Array.wrap(@repository.re3_repo&.additional_names).map { |name|
+      name.text
+    }
+    ret += Array.wrap(@repository.client_repo&.alternate_name)
+    ret.uniq
   end
 
   def description

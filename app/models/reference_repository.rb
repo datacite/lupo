@@ -43,6 +43,7 @@ class ReferenceRepository < ApplicationRecord
       indexes :created_at, type: :date, format: :date_optional_time
       indexes :updated_at, type: :date, format: :date_optional_time
       indexes :name
+      indexes :alternate_name
       indexes :description
       indexes :pid_system, type: :keyword
       indexes :url
