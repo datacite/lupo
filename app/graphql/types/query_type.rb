@@ -57,6 +57,13 @@ class QueryType < BaseObject
     )
   end
 
+  field :reference_repository, ReferenceRepositoryType, null: false do
+    argument :id, ID, required: true
+  end
+  def reference_repository(id:)
+    ReferenceRepository.find_by_id(id).first
+  end
+
   field :repository, RepositoryType, null: false do
     argument :id, ID, required: true
   end
