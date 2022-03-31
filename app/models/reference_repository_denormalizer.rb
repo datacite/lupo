@@ -15,7 +15,7 @@ class ReferenceRepositoryDenormalizer
 
   def to_hash
     %w[
-        id
+        uid
         client_id
         re3doi
         re3data_url
@@ -41,7 +41,7 @@ class ReferenceRepositoryDenormalizer
     ].map { |method_name| [ method_name, send(method_name)] }.to_h
   end
 
-  def id
+  def uid
     @repository.hashid
   end
 

@@ -3,7 +3,7 @@
 
 class ReferenceRepositoryType < BaseObject
   description "Information about repositories"
-  field :id,
+  field :uid,
         ID,
         null: false,
         description: "Unique identifier for each repository"

@@ -37,6 +37,7 @@ class ReferenceRepository < ApplicationRecord
   settings index: { number_of_shards: 1 } do
     mapping dynamic: "false" do
       indexes :id
+      indexes :uid
       indexes :client_id
       indexes :re3doi
       indexes :re3data_url
@@ -86,7 +87,7 @@ class ReferenceRepository < ApplicationRecord
 
   def self.id_fields
     %w[
-      id^10
+      uid^10
       client_id
       re3doi
     ]
@@ -95,7 +96,7 @@ class ReferenceRepository < ApplicationRecord
 
   def self.query_fields
     %w[
-      id^10
+      uid^10
       name^5
       description^5
       software
