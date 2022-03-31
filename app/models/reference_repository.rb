@@ -69,8 +69,8 @@ class ReferenceRepository < ApplicationRecord
       indexes :subject, type: :object,
           properties: {
               text: { type: :keyword },
-              id: {type: :keyword },
-              scheme: {type: :keyword }
+              id: { type: :keyword },
+              scheme: { type: :keyword }
           }
       indexes :re3_created, type: :date
       indexes :re3_updated, type: :date
@@ -107,7 +107,7 @@ class ReferenceRepository < ApplicationRecord
 
   def self.find_by_id(ids, options = {})
     ids = ids.split(",") if ids.is_a?(String)
-    ids = ids.map{ |id| id.gsub("10.17616\/", "")}
+    ids = ids.map { |id| id.gsub("10.17616\/", "") }
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 2_000
@@ -137,26 +137,26 @@ class ReferenceRepository < ApplicationRecord
     es_query = {}
 
     must = if query.present?
-             [
-               {
-                 query_string: {
-                   query: query,
-                   fields: query_fields,
-                   default_operator: "AND",
-                   phrase_slop: 1,
-                 },
-               },
-             ]
-           else
-             [{ match_all: {} }]
-           end
+      [
+        {
+          query_string: {
+            query: query,
+            fields: query_fields,
+            default_operator: "AND",
+            phrase_slop: 1,
+          },
+        },
+      ]
+    else
+      [{ match_all: {} }]
+    end
 
     bool_query = {
       must: must,
-      #must_not: must_not,
-      #filter: filter,
-      #should: should,
-      #minimum_should_match: minimum_should_match
+      # must_not: must_not,
+      # filter: filter,
+      # should: should,
+      # minimum_should_match: minimum_should_match
     }
     es_query["bool"] = bool_query
 
@@ -196,7 +196,5 @@ class ReferenceRepository < ApplicationRecord
         }.compact,
       )
     end
-
   end
-
 end

@@ -120,19 +120,19 @@ class ReferenceRepositoryDenormalizer
 
   def data_access
     Array.wrap(@repository.re3_repo&.data_accesses).map { |k|
-        {
-            type: k.type,
-            restrictions: Array.wrap(k.restrictions).map{ |r| r.text}
-        }
+      {
+          type: k.type,
+          restrictions: Array.wrap(k.restrictions).map { |r| r.text }
+      }
     }
   end
 
   def data_upload
     Array.wrap(@repository.re3_repo&.data_uploads).map { |k|
-        {
-            type: k.type,
-            restrictions: Array.wrap(k.restrictions).map{ |r| r.text}
-        }
+      {
+          type: k.type,
+          restrictions: Array.wrap(k.restrictions).map { |r| r.text }
+      }
     }
   end
 
@@ -146,20 +146,20 @@ class ReferenceRepositoryDenormalizer
 
   def subject
     Array.wrap(@repository.re3_repo&.subjects).map { |k|
-        id, text = k.text.split(' ', 2)
-        {
-            id: id,
-            text: text,
-            scheme: k.scheme
-        }
+      id, text = k.text.split(" ", 2)
+      {
+          id: id,
+          text: text,
+          scheme: k.scheme
+      }
     }
   end
 
   def re3_created
-      @repository.re3_repo&.created
+    @repository.re3_repo&.created
   end
 
   def re3_updated
-      @repository.re3_repo&.updated
+    @repository.re3_repo&.updated
   end
 end

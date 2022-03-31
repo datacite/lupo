@@ -26,13 +26,12 @@ describe ReferenceRepositoryType do
     it { is_expected.to have_field(:dataUpload).of_type("[TextRestriction!]") }
     it { is_expected.to have_field(:contact).of_type("[String!]") }
     it { is_expected.to have_field(:subject).of_type("[DefinedTerm!]") }
-
   end
 
 
   describe "find referenceRepository", elastic: true, vcr: true do
     let!(:client) { create(:client) }
-    let!(:ref_repo) { create(:reference_repository, client_id: client.symbol,re3doi:  "10.17616/R3XS37") }
+    let!(:ref_repo) { create(:reference_repository, client_id: client.symbol, re3doi:  "10.17616/R3XS37") }
 
     let(:id_query) do
       "query($id: ID!){
@@ -58,23 +57,22 @@ describe ReferenceRepositoryType do
     end
 
     it "by re3doi" do
-      response = LupoSchema.execute(id_query, variables: { id: ref_repo.re3doi}).as_json
+      response = LupoSchema.execute(id_query, variables: { id: ref_repo.re3doi }).as_json
       expect(response.dig("data", "referenceRepository", "re3dataDoi")).to eq(ref_repo.re3doi)
       expect(response.dig("data", "referenceRepository", "name")).to eq(client.name)
     end
 
     it "by uid" do
-      response = LupoSchema.execute(id_query, variables: { id: ref_repo.hashid}).as_json
+      response = LupoSchema.execute(id_query, variables: { id: ref_repo.hashid }).as_json
       expect(response.dig("data", "referenceRepository", "uid")).to eq(ref_repo.hashid)
       expect(response.dig("data", "referenceRepository", "name")).to eq(client.name)
     end
 
     it "error if none found" do
-      response = LupoSchema.execute(id_query, variables: { id: "XXX"}).as_json
+      response = LupoSchema.execute(id_query, variables: { id: "XXX" }).as_json
       expect(response.dig("errors", 0, "message")).to eq(
         "Cannot return null for non-nullable field Query.referenceRepository"
       )
-
     end
   end
 end
