@@ -137,7 +137,7 @@ class ReferenceRepositoryDenormalizer
   end
 
   def provider_type
-    Array.wrap(@repository.re3_repo&.provider_type).map { |k| k.text }
+    Array.wrap(@repository.re3_repo&.provider_types).map { |k| k.text }
   end
 
   def repository_type
