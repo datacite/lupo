@@ -1219,6 +1219,8 @@ module Indexable
               break
             end
           end
+          # If it gets here, just return the first.
+          ret = h.keys.first
         end
       end
 
