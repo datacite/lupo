@@ -29,6 +29,120 @@ describe ReferenceRepositoryType do
   end
 
 
+  describe "query single referenceRepository", elastic: true, vcr: true do
+    let!(:client) { create(:client) }
+    let!(:ref_repo2) { create(:reference_repository, re3doi:  "10.17616/R3BW5R") }
+
+    let(:id_query) do
+      "query($id: ID!){
+        referenceRepository(id: $id) {
+          uid
+          name
+          alternateName
+          re3dataDoi
+          clientId
+          description
+          certificate
+          providerType
+          contact
+          pidSystem
+          dataAccess {
+           restriction { text }
+           type
+          }
+          dataUpload {
+           restriction { text }
+           type
+          }
+          language
+          software
+        }
+
+      }"
+    end
+
+    let!(:repo) do
+      ReferenceRepository.import
+      sleep 2
+      response = LupoSchema.execute(id_query, variables: { id: ref_repo2.re3doi }).as_json
+      $repo = response.dig("data", "referenceRepository")
+    end
+
+    it "returns list of alternativeNames" do
+      expect(repo.fetch("alternateName")).to eq(
+        ["SSDA Dataverse\r\nUCLA Library Data Science Center"],
+      )
+    end
+
+    it "returns description" do
+      expect(repo.fetch("description")).to start_with(
+        "The Social Science Data Archive is still active and maintained as part of the UCLA Library",
+      )
+    end
+
+    it "returns list of certificates" do
+      expect(repo.fetch("certificate")).to be_empty
+    end
+
+    it "returns list of providerTypes" do
+      expect(repo.fetch("providerType")).to eq(
+        [
+          "dataProvider",
+        ]
+      )
+    end
+
+    it "returns list of contacts" do
+      expect(repo.fetch("contact")).to eq(
+        [
+          "datascience@ucla.edu",
+        ],
+      )
+    end
+
+    it "returns list of pidSystems" do
+      expect(repo.fetch("pidSystem")).to match_array(
+        [
+          "hdl",
+          "DOI"
+        ]
+      )
+    end
+
+    it "returns list of dataAccess policies" do
+      expect(repo.fetch("dataAccess")).to match_array(
+        [
+            { "restriction" => nil, "type" => "restricted" },
+            { "restriction" => nil, "type" => "open" }
+        ]
+      )
+    end
+
+    it "returns list of dataUpload policies" do
+      expect(repo.fetch("dataUpload")).to match_array(
+        [
+            { "restriction" => nil, "type" => "restricted" },
+        ]
+      )
+    end
+
+    it "returns list of languages" do
+      expect(repo.fetch("language")).to eq(
+        [
+          "eng"
+        ]
+      )
+    end
+
+    it "returns list of software" do
+      expect(repo.fetch("software")).to eq(
+        [
+          "DataVerse"
+        ]
+      )
+    end
+  end
+
   describe "find referenceRepository", elastic: true, vcr: true do
     let!(:client) { create(:client) }
     let!(:ref_repo) { create(:reference_repository, client_id: client.symbol, re3doi:  "10.17616/R3XS37") }
@@ -38,7 +152,6 @@ describe ReferenceRepositoryType do
         referenceRepository(id: $id) {
           uid
           name
-          alternateName
           re3dataDoi
           clientId
         }
