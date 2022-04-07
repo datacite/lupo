@@ -1203,24 +1203,29 @@ module Indexable
     # Return the active index, i.e. the index that is aliased
     # Don't rely on the first index being the correct one.
     def active_index
+      ret = nil
+
       alias_name = index_name
       client = Elasticsearch::Model.client
 
-      ret = nil
       h = client.indices.get_alias(name: alias_name)
 
-      if h && !h.key?(:error)
+      if h && (!h.key?(:error) && !h.key?("error"))
+
         if h.size == 1
           ret = h.keys.first
         else
+          # Looping through indices that have alias_name.
           h.each do |key, value|
-            if value.dig(:aliases, :dois, :is_write_index)
+            if value.dig("aliases", alias_name, "is_write_index") == true
               ret = key
               break
             end
           end
-          # If it gets here, just return the first.
-          ret = h.keys.first
+          # If it gets here with no value, just return the first key.
+          if ret.nil?
+            ret = h.keys.first
+          end
         end
       end
 
