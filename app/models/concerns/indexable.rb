@@ -1208,9 +1208,8 @@ module Indexable
       alias_name = index_name
       client = Elasticsearch::Model.client
 
-      h = client.indices.get_alias(name: alias_name)
-
-      if h && (!h.key?(:error) && !h.key?("error"))
+      begin
+        h = client.indices.get_alias(name: alias_name)
 
         if h.size == 1
           ret = h.keys.first
@@ -1227,6 +1226,8 @@ module Indexable
             ret = h.keys.first
           end
         end
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        Rails.logger.error e.message
       end
 
       ret
@@ -1234,11 +1235,18 @@ module Indexable
 
     # Return the inactive index, i.e. the index that is not aliased
     def inactive_index
-      active_index = self.active_index
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+      ret = nil
 
-      active_index.end_with?("v1") ? alternate_index_name : index_name
+      active_index = self.active_index
+
+      if !active_index.nil?
+        index_name = self.index_name + "_v1"
+        alternate_index_name = self.index_name + "_v2"
+
+        ret = active_index.end_with?("v1") ? alternate_index_name : index_name
+      end
+
+      ret
     end
 
     # create index template
