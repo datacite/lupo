@@ -9,6 +9,15 @@ class ReferenceRepository < ApplicationRecord
   before_save :force_index
 
   validates_uniqueness_of :re3doi, allow_nil: true
+  #
+  # use different index for testing
+  if Rails.env.test?
+    index_name "refernce_repositories-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name "refernce_repositories-#{ENV['ES_PREFIX']}"
+  else
+    index_name "refernce_repositories"
+  end
 
   def self.find_client(client_id)
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
@@ -16,6 +25,10 @@ class ReferenceRepository < ApplicationRecord
 
   def self.find_re3(doi)
     DataCatalog.find_by_id(doi).fetch(:data, []).first
+  end
+
+  def uid
+    hashid
   end
 
   def client_repo

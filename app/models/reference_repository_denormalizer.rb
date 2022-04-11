@@ -42,7 +42,7 @@ class ReferenceRepositoryDenormalizer
   end
 
   def uid
-    @repository.hashid
+    @repository.uid
   end
 
   def client_id
