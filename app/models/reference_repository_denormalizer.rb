@@ -86,8 +86,8 @@ class ReferenceRepositoryDenormalizer
   end
 
   def pid_system
-    ret = Array.wrap(@repository.re3_repo&.pid_systems).map { |k| k.text }
-    ret += Array.wrap(@repository.client_id.nil? ? nil : "DOI")
+    ret = Array.wrap(@repository.re3_repo&.pid_systems).map { |k| k.text.downcase }
+    ret += Array.wrap(@repository.client_id.nil? ? nil : "doi")
     ret.uniq
   end
 

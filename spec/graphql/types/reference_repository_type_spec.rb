@@ -138,7 +138,7 @@ describe ReferenceRepositoryType do
       expect(@repo.fetch("pidSystem")).to match_array(
         [
           "hdl",
-          "DOI"
+          "doi"
         ]
       )
     end
