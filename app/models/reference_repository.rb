@@ -174,7 +174,7 @@ class ReferenceRepository < ApplicationRecord
     es_query["bool"] = bool_query
 
     if options.fetch(:page, {}).key?(:cursor)
-      cursor = [0, ""]
+      cursor = [0]
       if options.dig(:page, :cursor).is_a?(Array)
         timestamp, uid = options.dig(:page, :cursor)
         cursor = [timestamp.to_i, uid.to_s]
@@ -190,7 +190,7 @@ class ReferenceRepository < ApplicationRecord
           search_after: search_after,
           sort: [options[:sort]],
           query: es_query,
-          aggregations: aggregations,
+          aggregations: query_aggregations,
           track_total_hits: true,
         }.compact,
       )

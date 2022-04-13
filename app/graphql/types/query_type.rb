@@ -57,6 +57,27 @@ class QueryType < BaseObject
     )
   end
 
+  field :reference_repositories, ReferenceRepositoryConnectionWithTotalType, null: false do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+  def reference_repositories(**args)
+    response = ReferenceRepository.query(
+      args[:query],
+      page: {
+        cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
+        size: args[:first]
+      }
+    )
+    ElasticsearchModelResponseConnection.new(
+      response,
+      context: context,
+      first: args[:first],
+      after: args[:after]
+    )
+  end
+
   field :reference_repository, ReferenceRepositoryType, null: false do
     argument :id, ID, required: true
   end
