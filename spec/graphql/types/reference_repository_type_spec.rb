@@ -36,12 +36,20 @@ describe ReferenceRepositoryType do
           $certificate: String,
           $software: String
           $repositoryType: String
+          $isOpen: String
+          $isDisciplinary: String
+          $isCertified: String
+          $hasPid: String
         ){
         referenceRepositories(
             first: 10,
             query: $query,
             certificate: $certificate,
             software: $software,
+            isOpen: $isOpen,
+            isDisciplinary: $isDisciplinary,
+            isCertified: $isCertified,
+            hasPid: $hasPid,
             repositoryType: $repositoryType
           ) {
           totalCount
@@ -62,6 +70,8 @@ describe ReferenceRepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R3NC74")
         create(:reference_repository, re3doi:  "10.17616/R3106C")
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
+        create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
+        create(:reference_repository, re3doi:  "10.17616/R31NJMJX")
         sleep 2
       end
     end
@@ -73,7 +83,7 @@ describe ReferenceRepositoryType do
 
     it "returns several repositories" do
       response = LupoSchema.execute(search_query).as_json
-      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(8)
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(10)
     end
 
     it "specifies a general query" do
@@ -81,7 +91,7 @@ describe ReferenceRepositoryType do
         search_query,
         variables: { query: "data" }
       ).as_json
-      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(7)
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(9)
     end
 
     it "filters based on certificate" do
@@ -105,7 +115,39 @@ describe ReferenceRepositoryType do
         search_query,
         variables: { repositoryType: "institutional" }
       ).as_json
-      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(4)
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(5)
+    end
+
+    it "filter based on isOpen" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { isOpen: "true" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(9)
+    end
+
+    it "filter based on isDisciplinary" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { isDisciplinary: "true" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(9)
+    end
+
+    it "filter based on isCertified" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { isCertified: "true" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(5)
+    end
+
+    it "filter based on hasPid" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { hasPid: "true" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(7)
     end
 
   end

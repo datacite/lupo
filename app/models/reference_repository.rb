@@ -229,17 +229,54 @@ class ReferenceRepository < ApplicationRecord
     def filter(options)
       retval=[]
       if options[:software].present?
-        retval << { terms: { "software.keyword": options[:software].split(",") } }
+        retval << { terms: {
+          "software.keyword": options[:software].split(",")
+        } }
       end
       if options[:certificate].present?
-        retval << { terms: { "certificate.keyword": options[:certificate].split(",") } }
+        retval << { terms: {
+          "certificate.keyword": options[:certificate].split(",")
+        } }
       end
       if options[:repository_type].present?
-        retval << { terms: { "repository_type.keyword": options[:repository_type].split(",") } }
+        retval << { terms: {
+          "repository_type.keyword": options[:repository_type].split(",")
+        } }
+      end
+      if options[:is_open] == "true"
+        retval << { term: {
+          "data_access.type": "open"
+        } }
+      end
+      if options[:is_disciplinary] == "true"
+        retval << { term: {
+          "repository_type.keyword": "disciplinary"
+        } }
+      end
+      if options[:is_certified] == "true"
+        retval << { regexp: {
+          "certificate": ".+"
+        } }
+      end
+      if options[:has_pid] == "true"
+        retval << { regexp: {
+          pid_system: "doi|hdl|urn|ark"
+        } }
+      end
+      if options[:subject].present?
+        retval << { term: {
+          "subjects.text": options[:subject]
+        } }
+      end
+      if options[:subject_id].present?
+        retval << { term: {
+          "subjects.id": options[:subject_id]
+        } }
       end
       retval
     end
-    def es_query (query, options)
+
+    def es_query(query, options)
       {
         bool: {
           must: must(query),
