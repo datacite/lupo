@@ -40,12 +40,16 @@ describe ReferenceRepositoryType do
           $isDisciplinary: String
           $isCertified: String
           $hasPid: String
+          $subject: String
+          $subjectId: String
         ){
         referenceRepositories(
             first: 10,
             query: $query,
             certificate: $certificate,
             software: $software,
+            subject: $subject,
+            subjectId: $subjectId,
             isOpen: $isOpen,
             isDisciplinary: $isDisciplinary,
             isCertified: $isCertified,
@@ -148,6 +152,14 @@ describe ReferenceRepositoryType do
         variables: { hasPid: "true" }
       ).as_json
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(7)
+    end
+
+    it "filter based on subjectId" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { subjectId: "3.+" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(5)
     end
 
   end

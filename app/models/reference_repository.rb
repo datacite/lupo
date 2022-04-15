@@ -265,12 +265,12 @@ class ReferenceRepository < ApplicationRecord
       end
       if options[:subject].present?
         retval << { term: {
-          "subjects.text": options[:subject]
+          "subject.text": options[:subject]
         } }
       end
       if options[:subject_id].present?
-        retval << { term: {
-          "subjects.id": options[:subject_id]
+        retval << { regexp: {
+          "subject.id": options[:subject_id]
         } }
       end
       retval
