@@ -94,120 +94,162 @@ class ReferenceRepository < ApplicationRecord
     __elasticsearch__.instance_variable_set(:@__changed_model_attributes, nil)
   end
 
-  def self.query_aggregations
-    {}
-  end
-
-  def self.id_fields
-    %w[
-      uid^10
-      client_id
-      re3doi
-    ]
-  end
-
-
-  def self.query_fields
-    %w[
-      uid^10
-      name^5
-      description^5
-      software
-      subject.text
-      _all
-    ]
-  end
-
-  def self.find_by_id(ids, options = {})
-    ids = ids.split(",") if ids.is_a?(String)
-    ids = ids.map { |id| id.gsub("10.17616\/", "") }
-    options[:page] ||= {}
-    options[:page][:number] ||= 1
-    options[:page][:size] ||= 2_000
-
-    options[:sort] ||= { _score: { order: "asc" } }
-
-    __elasticsearch__.search(
-      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
-      size: options.dig(:page, :size),
-      sort: [options[:sort]],
-      track_total_hits: true,
-      query: {
-        query_string: {
-          fields: id_fields,
-          query: ids.join(" OR ")
-        }
-      },
-      aggregations: query_aggregations,
-    )
-  end
-
-  def self.query(query, options = {})
-    options[:page] ||= {}
-    options[:page][:number] ||= 1
-    options[:page][:size] ||= 25
-    options[:sort] ||= { _score: { order: "asc" } }
-    es_query = {}
-
-    must = if query.present?
-      [
+  class << self
+    def query_aggregations(facet_count: 10)
+      if facet_count.positive?
         {
+          software: {
+            terms: {
+              field: "software.keyword",
+              size: facet_count,
+              min_doc_count: 1
+            },
+          },
+          repository_type: {
+            terms: {
+              field: "repository_type.keyword",
+              size: facet_count,
+              min_doc_count: 1
+            },
+          },
+          certificate: {
+            terms: {
+              field: "certificate.keyword",
+              size: facet_count,
+              min_doc_count: 1
+            },
+          },
+        }
+      end
+    end
+
+    def id_fields
+      %w[
+        uid^10
+        client_id
+        re3doi
+      ]
+    end
+
+    def find_by_id(ids, options = {})
+      ids = ids.split(",") if ids.is_a?(String)
+      ids = ids.map { |id| id.gsub("10.17616\/", "") }
+      options[:page] ||= {}
+      options[:page][:number] ||= 1
+      options[:page][:size] ||= 2_000
+
+      options[:sort] ||= { _score: { order: "asc" } }
+
+      __elasticsearch__.search(
+        from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+        size: options.dig(:page, :size),
+        sort: [options[:sort]],
+        track_total_hits: true,
+        query: {
+          query_string: {
+            fields: id_fields,
+            query: ids.join(" OR ")
+          }
+        },
+      )
+    end
+
+    def query_fields
+      %w[
+        uid^10
+        name^5
+        description^5
+        software
+        subject.text
+        _all
+      ]
+    end
+
+    def query(query, options = {})
+      options[:page] ||= {}
+      options[:page][:number] ||= 1
+      options[:page][:size] ||= 25
+      options[:sort] ||= { _score: { order: "asc" } }
+
+      if options.fetch(:page, {}).key?(:cursor)
+        cursor = [0]
+        if options.dig(:page, :cursor).is_a?(Array)
+          timestamp, uid = options.dig(:page, :cursor)
+          cursor = [timestamp.to_i, uid.to_s]
+        elsif options.dig(:page, :cursor).is_a?(String)
+          timestamp, uid = options.dig(:page, :cursor).split(",")
+          cursor = [timestamp.to_i, uid.to_s]
+        end
+
+        search_after = cursor
+        __elasticsearch__.search(
+          {
+            size: options.dig(:page, :size),
+            search_after: search_after,
+            sort: [options[:sort]],
+            query: es_query(query, options),
+            aggregations: query_aggregations,
+            track_total_hits: true,
+          }.compact,
+        )
+      else
+        from =
+          ((options.dig(:page, :number) || 1) - 1) *
+          (options.dig(:page, :size) || 25)
+        __elasticsearch__.search(
+          {
+            size: options.dig(:page, :size),
+            from: from,
+            sort: [options[:sort]],
+            query: es_query(query, options),
+            aggregations: query_aggregations,
+            track_total_hits: true,
+          }.compact,
+        )
+      end
+    end
+
+    private
+    def must(query)
+      if query.present?
+        [{
           query_string: {
             query: query,
             fields: query_fields,
             default_operator: "AND",
             phrase_slop: 1,
           },
-        },
-      ]
-    else
-      [{ match_all: {} }]
-    end
+        }]
+      else
+        [{ match_all: {} }]
 
-    bool_query = {
-      must: must,
-      # must_not: must_not,
-      # filter: filter,
-      # should: should,
-      # minimum_should_match: minimum_should_match
-    }
-    es_query["bool"] = bool_query
-
-    if options.fetch(:page, {}).key?(:cursor)
-      cursor = [0]
-      if options.dig(:page, :cursor).is_a?(Array)
-        timestamp, uid = options.dig(:page, :cursor)
-        cursor = [timestamp.to_i, uid.to_s]
-      elsif options.dig(:page, :cursor).is_a?(String)
-        timestamp, uid = options.dig(:page, :cursor).split(",")
-        cursor = [timestamp.to_i, uid.to_s]
       end
-
-      search_after = cursor
-      __elasticsearch__.search(
-        {
-          size: options.dig(:page, :size),
-          search_after: search_after,
-          sort: [options[:sort]],
-          query: es_query,
-          aggregations: query_aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
-    else
-      from =
-        ((options.dig(:page, :number) || 1) - 1) *
-        (options.dig(:page, :size) || 25)
-      __elasticsearch__.search(
-        {
-          size: options.dig(:page, :size),
-          from: from,
-          sort: [options[:sort]],
-          query: es_query,
-          aggregations: query_aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
     end
+
+    def filter(options)
+      retval=[]
+      if options[:software].present?
+        retval << { terms: { "software.keyword": options[:software].split(",") } }
+      end
+      if options[:certificate].present?
+        retval << { terms: { "certificate.keyword": options[:certificate].split(",") } }
+      end
+      if options[:repository_type].present?
+        retval << { terms: { "repository_type.keyword": options[:repository_type].split(",") } }
+      end
+      retval
+    end
+    def es_query (query, options)
+      {
+        bool: {
+          must: must(query),
+          # must_not: must_not,
+          filter: filter(options),
+          # should: should,
+          # minimum_should_match: minimum_should_match
+        }
+      }
+    end
+
   end
 end

@@ -31,8 +31,19 @@ describe ReferenceRepositoryType do
 
   describe "query referenceRepositories", elastic: true, vcr: true do
     let(:search_query) do
-      "query {
-        referenceRepositories(first: 10) {
+      "query (
+          $query: String,
+          $certificate: String,
+          $software: String
+          $repositoryType: String
+        ){
+        referenceRepositories(
+            first: 10,
+            query: $query,
+            certificate: $certificate,
+            software: $software,
+            repositoryType: $repositoryType
+          ) {
           totalCount
           pageInfo {
             endCursor
@@ -46,6 +57,11 @@ describe ReferenceRepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
         create(:reference_repository, re3doi:  "10.17616/r3vg6n")
         create(:reference_repository, re3doi:  "10.17616/r37m1j")
+        create(:reference_repository, re3doi:  "10.17616/R3003X")
+        create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
+        create(:reference_repository, re3doi:  "10.17616/R3NC74")
+        create(:reference_repository, re3doi:  "10.17616/R3106C")
+        create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         sleep 2
       end
     end
@@ -57,9 +73,40 @@ describe ReferenceRepositoryType do
 
     it "returns several repositories" do
       response = LupoSchema.execute(search_query).as_json
-      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(3)
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(8)
     end
 
+    it "specifies a general query" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { query: "data" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(7)
+    end
+
+    it "filters based on certificate" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { certificate: "CoreTrustSeal" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(4)
+    end
+
+    it "filters based on software" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { software: "DataVerse" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(2)
+    end
+
+    it "filters based on repository type" do
+      response = LupoSchema.execute(
+        search_query,
+        variables: { repositoryType: "institutional" }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(4)
+    end
 
   end
   describe "query single referenceRepository", elastic: true, vcr: true do

@@ -59,12 +59,18 @@ class QueryType < BaseObject
 
   field :reference_repositories, ReferenceRepositoryConnectionWithTotalType, null: false do
     argument :query, String, required: false
+    argument :software, String, required: false
+    argument :certificate, String, required: false
+    argument :repositoryType, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
   def reference_repositories(**args)
     response = ReferenceRepository.query(
       args[:query],
+      software: args[:software],
+      certificate: args[:certificate],
+      repository_type: args[:repository_type],
       page: {
         cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
         size: args[:first]
