@@ -162,6 +162,32 @@ describe ReferenceRepositoryType do
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(5)
     end
 
+    it "filters for FAIRS FAIR" do
+      response = LupoSchema.execute(
+        search_query,
+          variables: {
+              subject: "",
+              isOpen: "true",
+              hasPid: "true",
+              isCertified: "true"
+          }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(5)
+    end
+
+    it "filters for Enabling FAIR Data Project" do
+      response = LupoSchema.execute(
+        search_query,
+          variables: {
+            subjectId: "34",
+            isOpen: "true",
+            hasPid: "true",
+            isCertified: ""
+          }
+      ).as_json
+      expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(4)
+    end
+
   end
   describe "query single referenceRepository", elastic: true, vcr: true do
     before :all do
