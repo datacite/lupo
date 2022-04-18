@@ -31,7 +31,13 @@ describe ReferenceRepositoryType do
 
   describe "query referenceRepositories", elastic: true, vcr: true do
     let(:search_query) do
-      "query (
+      "
+      fragment facetFields on Facet {
+        id
+        title
+        count
+      }
+      query (
           $query: String,
           $certificate: String,
           $software: String
@@ -61,8 +67,13 @@ describe ReferenceRepositoryType do
             endCursor
             hasNextPage
           }
+          software { ...facetFields }
+          repositoryTypes { ...facetFields }
+          certificates { ...facetFields }
+
         }
-      }"
+      }
+      "
     end
     before :all do
       VCR.use_cassette("ReferenceRepositoryType/re3Data/several") do
@@ -88,6 +99,38 @@ describe ReferenceRepositoryType do
     it "returns several repositories" do
       response = LupoSchema.execute(search_query).as_json
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(10)
+    end
+
+    it "returns software facets" do
+      response = LupoSchema.execute(search_query).as_json
+      expect(
+        response.dig("data", "referenceRepositories", "software"),
+      ).to eq([
+        {"count"=>4, "id"=>"other", "title"=>"other"},
+        {"count"=>3, "id"=>"unknown", "title"=>"unknown"},
+        {"count"=>2, "id"=>"dataverse", "title"=>"DataVerse"}
+      ])
+    end
+
+    it "returns certificate facets" do
+      response = LupoSchema.execute(search_query).as_json
+      expect(
+        response.dig("data", "referenceRepositories", "certificates"),
+      ).to eq( [
+        {"count"=>4, "id"=>"CoreTrustSeal", "title"=>"Core Trust Seal"},
+        {"count"=>1, "id"=>"DINI Certificate", "title"=>"Dini Certificate"},
+        {"count"=>1, "id"=>"DSA", "title"=>"Dsa"}
+      ])
+    end
+
+    it "returns repositoryType facets" do
+      response = LupoSchema.execute(search_query).as_json
+      expect(
+        response.dig("data", "referenceRepositories", "repositoryTypes"),
+      ).to eq([
+        {"count"=>9, "id"=>"disciplinary", "title"=>"Disciplinary"},
+        {"count"=>5, "id"=>"institutional", "title"=>"Institutional"}
+      ])
     end
 
     it "specifies a general query" do

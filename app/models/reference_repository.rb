@@ -105,14 +105,14 @@ class ReferenceRepository < ApplicationRecord
               min_doc_count: 1
             },
           },
-          repository_type: {
+          repository_types: {
             terms: {
               field: "repository_type.keyword",
               size: facet_count,
               min_doc_count: 1
             },
           },
-          certificate: {
+          certificates: {
             terms: {
               field: "certificate.keyword",
               size: facet_count,
