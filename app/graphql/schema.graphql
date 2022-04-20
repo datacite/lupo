@@ -8386,6 +8386,7 @@ type Query {
   preprints(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
   publications(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
+  referenceRepositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String): ReferenceRepositoryConnectionWithTotal!
   referenceRepository(id: ID!): ReferenceRepository!
   repositories(after: String, certificate: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
@@ -8434,6 +8435,11 @@ type ReferenceRepository {
   certificate: [String!]
 
   """
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
   The unique identifier for the client repository
   """
   clientId: ID
@@ -8446,12 +8452,12 @@ type ReferenceRepository {
   """
   Data accesses
   """
-  dataAccesses: [TextRestriction!]
+  dataAccess: [TextRestriction!]
 
   """
   Data uploads
   """
-  dataUploads: [TextRestriction!]
+  dataUpload: [TextRestriction!]
 
   """
   Description of the repository
@@ -8459,9 +8465,9 @@ type ReferenceRepository {
   description: String
 
   """
-  Unique identifier for each repository
+  The number of downloads according to the Counter Code of Practice.
   """
-  id: ID!
+  downloadCount: Int
 
   """
   The langauge of the repository
@@ -8506,7 +8512,7 @@ type ReferenceRepository {
   """
   Subject areas covered by the data catalog.
   """
-  subjects: [DefinedTerm!]
+  subject: [DefinedTerm!]
 
   """
   The type of the item.
@@ -8514,9 +8520,64 @@ type ReferenceRepository {
   type: String!
 
   """
+  Unique identifier for each repository
+  """
+  uid: ID!
+
+  """
   The homepage of the repository
   """
   url: Url
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
+
+  """
+  Works managed by the repository
+  """
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+}
+
+"""
+The connection type for ReferenceRepository.
+"""
+type ReferenceRepositoryConnectionWithTotal {
+  certificates: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [ReferenceRepositoryEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [ReferenceRepository]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  repositoryTypes: [Facet!]
+  software: [Facet!]
+  totalCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type ReferenceRepositoryEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ReferenceRepository
 }
 
 """

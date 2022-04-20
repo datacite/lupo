@@ -80,6 +80,21 @@ class ReferenceRepositoryType < BaseObject
         null: true,
         description: "Repository contact information"
 
+  field :view_count,
+        Integer,
+        null: true,
+        description:
+          "The number of views according to the Counter Code of Practice."
+  field :download_count,
+        Integer,
+        null: true,
+        description:
+          "The number of downloads according to the Counter Code of Practice."
+  field :citation_count,
+        Integer,
+        null: true,
+        description: "The number of citations."
+
   field :works,
         WorkConnectionWithTotalType,
         null: true,
@@ -121,6 +136,24 @@ class ReferenceRepositoryType < BaseObject
       dois(args),
       context: context, first: args[:first], after: args[:after],
     )
+  end
+
+  def view_count
+    args = { first: 0 }
+    @r = dois(args) if @r.nil?
+    @r.response.aggregations.view_count.value.to_i
+  end
+
+  def download_count
+    args = { first: 0 }
+    @r = dois(args) if @r.nil?
+    @r.response.aggregations.download_count.value.to_i
+  end
+
+  def citation_count
+    args = { first: 0 }
+    @r = dois(args) if @r.nil?
+    @r.response.aggregations.citation_count.value.to_i
   end
 
   def dois(**args)

@@ -434,6 +434,7 @@ describe ReferenceRepositoryType do
           name
           re3dataDoi
           clientId
+          citationCount
           works {
             totalCount
           }
@@ -503,6 +504,12 @@ describe ReferenceRepositoryType do
     it "returns referenceRepository with works total count" do
       response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
       expect(response.dig("data", "referenceRepository", "works", "totalCount")).to eq(3)
+    end
+
+    it "returns referenceRepository with works citation count" do
+      response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
+      pp(response)
+      expect(response.dig("data", "referenceRepository", "citationCount")).to eq(2)
     end
   end
 end
