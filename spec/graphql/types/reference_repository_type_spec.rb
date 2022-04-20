@@ -29,54 +29,62 @@ describe ReferenceRepositoryType do
   end
 
 
-  describe "query referenceRepositories", elastic: true, vcr: true do
-    let(:search_query) do
-      "
-      fragment facetFields on Facet {
-        id
-        title
-        count
-      }
-      query (
-          $query: String,
-          $certificate: String,
-          $software: String
-          $repositoryType: String
-          $isOpen: String
-          $isDisciplinary: String
-          $isCertified: String
-          $hasPid: String
-          $subject: String
-          $subjectId: String
-        ){
-        referenceRepositories(
-            first: 10,
-            query: $query,
-            certificate: $certificate,
-            software: $software,
-            subject: $subject,
-            subjectId: $subjectId,
-            isOpen: $isOpen,
-            isDisciplinary: $isDisciplinary,
-            isCertified: $isCertified,
-            hasPid: $hasPid,
-            repositoryType: $repositoryType
-          ) {
-          totalCount
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-          software { ...facetFields }
-          repositoryTypes { ...facetFields }
-          certificates { ...facetFields }
-
-        }
-      }
-      "
-    end
+  describe "query referenceRepositories" do
     before :all do
-      VCR.use_cassette("ReferenceRepositoryType/re3Data/several") do
+      @search_query =
+        "
+        fragment facetFields on Facet {
+          id
+          title
+          count
+        }
+        query (
+            $query: String,
+            $certificate: String,
+            $software: String
+            $repositoryType: String
+            $isOpen: String
+            $isDisciplinary: String
+            $isCertified: String
+            $hasPid: String
+            $subject: String
+            $subjectId: String
+          ){
+          referenceRepositories(
+              first: 10,
+              query: $query,
+              certificate: $certificate,
+              software: $software,
+              subject: $subject,
+              subjectId: $subjectId,
+              isOpen: $isOpen,
+              isDisciplinary: $isDisciplinary,
+              isCertified: $isCertified,
+              hasPid: $hasPid,
+              repositoryType: $repositoryType
+            ) {
+            nodes {
+              uid
+              name
+              re3dataDoi
+              software
+              repositoryType
+              certificate
+            }
+            totalCount
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+            software { ...facetFields }
+            repositoryTypes { ...facetFields }
+            certificates { ...facetFields }
+
+          }
+        }
+        "
+
+      VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
         create(:reference_repository, re3doi:  "10.17616/r3vg6n")
         create(:reference_repository, re3doi:  "10.17616/r37m1j")
@@ -88,6 +96,8 @@ describe ReferenceRepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
         create(:reference_repository, re3doi:  "10.17616/R31NJMJX")
         sleep 2
+        @facet_response = LupoSchema.execute(@search_query).as_json
+
       end
     end
 
@@ -96,13 +106,17 @@ describe ReferenceRepositoryType do
       ReferenceRepository.destroy_all
     end
 
+    let(:search_query) { @search_query }
+
     it "returns several repositories" do
-      response = LupoSchema.execute(search_query).as_json
+      response = @facet_response
+      #response = LupoSchema.execute(search_query).as_json
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(10)
     end
 
     it "returns software facets" do
-      response = LupoSchema.execute(search_query).as_json
+      #response = LupoSchema.execute(search_query).as_json
+      response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "software"),
       ).to eq([
@@ -113,7 +127,8 @@ describe ReferenceRepositoryType do
     end
 
     it "returns certificate facets" do
-      response = LupoSchema.execute(search_query).as_json
+      #response = LupoSchema.execute(search_query).as_json
+      response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "certificates"),
       ).to eq( [
@@ -124,7 +139,8 @@ describe ReferenceRepositoryType do
     end
 
     it "returns repositoryType facets" do
-      response = LupoSchema.execute(search_query).as_json
+      #response = LupoSchema.execute(search_query).as_json
+      response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "repositoryTypes"),
       ).to eq([
@@ -232,7 +248,8 @@ describe ReferenceRepositoryType do
     end
 
   end
-  describe "query single referenceRepository", elastic: true, vcr: true do
+
+  describe "query single referenceRepository" do
     before :all do
       id_query = "query($id: ID!){
           referenceRepository(id: $id) {
@@ -256,6 +273,9 @@ describe ReferenceRepositoryType do
             }
             language
             software
+            works {
+              totalCount
+            }
           }
 
       }"
@@ -269,6 +289,7 @@ describe ReferenceRepositoryType do
     end
 
     after :all do
+      Rails.logger.level = :fatal
       ReferenceRepository.destroy_all
     end
 
@@ -347,7 +368,7 @@ describe ReferenceRepositoryType do
     end
   end
 
-  describe "find referenceRepository", elastic: true, vcr: true do
+  describe "find referenceRepository" do
 
     let(:id_query) do
       "query($id: ID!){
@@ -364,13 +385,18 @@ describe ReferenceRepositoryType do
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
         @client = create(:client)
         @ref_repo = create(:reference_repository, client_id: @client.symbol, re3doi:  "10.17616/R3XS37")
+        ReferenceRepository.import
         sleep 2
       end
     end
 
     after :all do
+      Rails.logger.level = :fatal
       @client.delete
       ReferenceRepository.destroy_all
+    end
+
+    before :each do
     end
 
     it "by client_id" do
@@ -386,8 +412,8 @@ describe ReferenceRepositoryType do
     end
 
     it "by uid" do
-      response = LupoSchema.execute(id_query, variables: { id: @ref_repo.hashid }).as_json
-      expect(response.dig("data", "referenceRepository", "uid")).to eq(@ref_repo.hashid)
+      response = LupoSchema.execute(id_query, variables: { id: @ref_repo.uid }).as_json
+      expect(response.dig("data", "referenceRepository", "uid")).to eq(@ref_repo.uid)
       expect(response.dig("data", "referenceRepository", "name")).to eq(@client.name)
     end
 
@@ -396,6 +422,87 @@ describe ReferenceRepositoryType do
       expect(response.dig("errors", 0, "message")).to eq(
         "Cannot return null for non-nullable field Query.referenceRepository"
       )
+    end
+  end
+
+  describe "find referenceRepository and related works/dois" do
+
+    let(:works_query) do
+      "query($id: ID!){
+        referenceRepository(id: $id) {
+          uid
+          name
+          re3dataDoi
+          clientId
+          works {
+            totalCount
+          }
+        }
+      }"
+    end
+
+    before :all do
+      VCR.use_cassette("ReferenceRepositoryType/related_works_citations") do
+        @provider = create(:provider, symbol: "TESTR")
+        @client = create(:client, symbol: "TESTR.TESTR", provider: @provider)
+        @client2 = create(:client, symbol: "TESTR.TESTZ", provider: @provider)
+        @ref_repo = create(:reference_repository, client_id: @client.symbol, re3doi:  "10.17616/R3XS37")
+        @doi = create(
+          :doi,
+          client: @client,
+          aasm_state: "findable",
+          creators: [
+            {
+              "familyName" => "Garza",
+              "givenName" => "Kristian",
+              "name" => "Garza, Kristian",
+              "nameIdentifiers" => [
+                {
+                  "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                  "nameIdentifierScheme" => "ORCID",
+                  "schemeUri" => "https://orcid.org",
+                },
+              ],
+              "nameType" => "Personal",
+            },
+          ],
+        )
+        @source_doi = create(:doi, client: @client, aasm_state: "findable")
+        @source_doi2 = create(:doi, client: @client, aasm_state: "findable")
+        create(
+          :event_for_datacite_crossref,
+          subj_id: "https://doi.org/#{@doi.doi}",
+          obj_id: "https://doi.org/#{@source_doi.doi}",
+          relation_type_id: "is-referenced-by",
+          occurred_at: "2015-06-13T16:14:19Z",
+        )
+        create(
+          :event_for_datacite_crossref,
+          subj_id: "https://doi.org/#{@doi.doi}",
+          obj_id: "https://doi.org/#{@source_doi2.doi}",
+          relation_type_id: "is-referenced-by",
+          occurred_at: "2016-06-13T16:14:19Z",
+        )
+        Provider.import(force: true)
+        Client.import(force: true)
+        Doi.import(force: true)
+        ReferenceRepository.import(force: true)
+
+        sleep 2
+      end
+    end
+
+    after :all do
+      Rails.logger.level = :fatal
+      ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
+      Doi.destroy_all
+    end
+
+    it "returns referenceRepository with works total count" do
+      response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
+      expect(response.dig("data", "referenceRepository", "works", "totalCount")).to eq(3)
     end
   end
 end

@@ -100,21 +100,21 @@ class ReferenceRepository < ApplicationRecord
         {
           software: {
             terms: {
-              field: "software.keyword",
+              field: "software",
               size: facet_count,
               min_doc_count: 1
             },
           },
           repository_types: {
             terms: {
-              field: "repository_type.keyword",
+              field: "repository_type",
               size: facet_count,
               min_doc_count: 1
             },
           },
           certificates: {
             terms: {
-              field: "certificate.keyword",
+              field: "certificate",
               size: facet_count,
               min_doc_count: 1
             },
@@ -230,17 +230,17 @@ class ReferenceRepository < ApplicationRecord
       retval=[]
       if options[:software].present?
         retval << { terms: {
-          "software.keyword": options[:software].split(",")
+          "software": options[:software].split(",")
         } }
       end
       if options[:certificate].present?
         retval << { terms: {
-          "certificate.keyword": options[:certificate].split(",")
+          "certificate": options[:certificate].split(",")
         } }
       end
       if options[:repository_type].present?
         retval << { terms: {
-          "repository_type.keyword": options[:repository_type].split(",")
+          "repository_type": options[:repository_type].split(",")
         } }
       end
       if options[:is_open] == "true"
@@ -250,7 +250,7 @@ class ReferenceRepository < ApplicationRecord
       end
       if options[:is_disciplinary] == "true"
         retval << { term: {
-          "repository_type.keyword": "disciplinary"
+          "repository_type": "disciplinary"
         } }
       end
       if options[:is_certified] == "true"
