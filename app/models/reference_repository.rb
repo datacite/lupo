@@ -210,83 +210,82 @@ class ReferenceRepository < ApplicationRecord
     end
 
     private
-    def must(query)
-      if query.present?
-        [{
-          query_string: {
-            query: query,
-            fields: query_fields,
-            default_operator: "AND",
-            phrase_slop: 1,
-          },
-        }]
-      else
-        [{ match_all: {} }]
+      def must(query)
+        if query.present?
+          [{
+            query_string: {
+              query: query,
+              fields: query_fields,
+              default_operator: "AND",
+              phrase_slop: 1,
+            },
+          }]
+        else
+          [{ match_all: {} }]
 
+        end
       end
-    end
 
-    def filter(options)
-      retval=[]
-      if options[:software].present?
-        retval << { terms: {
-          "software": options[:software].split(",")
-        } }
+      def filter(options)
+        retval = []
+        if options[:software].present?
+          retval << { terms: {
+            "software": options[:software].split(",")
+          } }
+        end
+        if options[:certificate].present?
+          retval << { terms: {
+            "certificate": options[:certificate].split(",")
+          } }
+        end
+        if options[:repository_type].present?
+          retval << { terms: {
+            "repository_type": options[:repository_type].split(",")
+          } }
+        end
+        if options[:is_open] == "true"
+          retval << { term: {
+            "data_access.type": "open"
+          } }
+        end
+        if options[:is_disciplinary] == "true"
+          retval << { term: {
+            "repository_type": "disciplinary"
+          } }
+        end
+        if options[:is_certified] == "true"
+          retval << { regexp: {
+            "certificate": ".+"
+          } }
+        end
+        if options[:has_pid] == "true"
+          retval << { regexp: {
+            pid_system: "doi|hdl|urn|ark"
+          } }
+        end
+        if options[:subject].present?
+          retval << { term: {
+            "subject.text": options[:subject]
+          } }
+        end
+        if options[:subject_id].present?
+          retval << { regexp: {
+            "subject.id": options[:subject_id]
+          } }
+        end
+        retval
       end
-      if options[:certificate].present?
-        retval << { terms: {
-          "certificate": options[:certificate].split(",")
-        } }
-      end
-      if options[:repository_type].present?
-        retval << { terms: {
-          "repository_type": options[:repository_type].split(",")
-        } }
-      end
-      if options[:is_open] == "true"
-        retval << { term: {
-          "data_access.type": "open"
-        } }
-      end
-      if options[:is_disciplinary] == "true"
-        retval << { term: {
-          "repository_type": "disciplinary"
-        } }
-      end
-      if options[:is_certified] == "true"
-        retval << { regexp: {
-          "certificate": ".+"
-        } }
-      end
-      if options[:has_pid] == "true"
-        retval << { regexp: {
-          pid_system: "doi|hdl|urn|ark"
-        } }
-      end
-      if options[:subject].present?
-        retval << { term: {
-          "subject.text": options[:subject]
-        } }
-      end
-      if options[:subject_id].present?
-        retval << { regexp: {
-          "subject.id": options[:subject_id]
-        } }
-      end
-      retval
-    end
 
-    def es_query(query, options)
-      {
-        bool: {
-          must: must(query),
-          # must_not: must_not,
-          filter: filter(options),
-          # should: should,
-          # minimum_should_match: minimum_should_match
+      def es_query(query, options)
+        {
+          bool: {
+            must: must(query),
+            # must_not: must_not,
+            filter: filter(options),
+            # should: should,
+            # minimum_should_match: minimum_should_match
+          }
         }
-      }
-    end
-
+      end
   end
 end

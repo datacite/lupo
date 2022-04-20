@@ -97,7 +97,6 @@ describe ReferenceRepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R31NJMJX")
         sleep 2
         @facet_response = LupoSchema.execute(@search_query).as_json
-
       end
     end
 
@@ -110,42 +109,38 @@ describe ReferenceRepositoryType do
 
     it "returns several repositories" do
       response = @facet_response
-      #response = LupoSchema.execute(search_query).as_json
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(10)
     end
 
     it "returns software facets" do
-      #response = LupoSchema.execute(search_query).as_json
       response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "software"),
       ).to eq([
-        {"count"=>4, "id"=>"other", "title"=>"other"},
-        {"count"=>3, "id"=>"unknown", "title"=>"unknown"},
-        {"count"=>2, "id"=>"dataverse", "title"=>"DataVerse"}
+        { "count" => 4, "id" => "other", "title" => "other" },
+        { "count" => 3, "id" => "unknown", "title" => "unknown" },
+        { "count" => 2, "id" => "dataverse", "title" => "DataVerse" }
       ])
     end
 
     it "returns certificate facets" do
-      #response = LupoSchema.execute(search_query).as_json
       response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "certificates"),
-      ).to eq( [
-        {"count"=>4, "id"=>"CoreTrustSeal", "title"=>"Core Trust Seal"},
-        {"count"=>1, "id"=>"DINI Certificate", "title"=>"Dini Certificate"},
-        {"count"=>1, "id"=>"DSA", "title"=>"Dsa"}
+      ).to eq([
+        { "count" => 4, "id" => "CoreTrustSeal", "title" => "Core Trust Seal" },
+        { "count" => 1, "id" => "DINI Certificate", "title" => "Dini Certificate" },
+        { "count" => 1, "id" => "DSA", "title" => "Dsa" }
       ])
     end
 
     it "returns repositoryType facets" do
-      #response = LupoSchema.execute(search_query).as_json
       response = @facet_response
       expect(
         response.dig("data", "referenceRepositories", "repositoryTypes"),
       ).to eq([
-        {"count"=>9, "id"=>"disciplinary", "title"=>"Disciplinary"},
-        {"count"=>5, "id"=>"institutional", "title"=>"Institutional"}
+        { "count" => 9, "id" => "disciplinary", "title" => "Disciplinary" },
+        { "count" => 5, "id" => "institutional", "title" => "Institutional" }
       ])
     end
 
@@ -246,7 +241,6 @@ describe ReferenceRepositoryType do
       ).as_json
       expect(response.dig("data", "referenceRepositories", "totalCount")).to eq(4)
     end
-
   end
 
   describe "query single referenceRepository" do
@@ -369,7 +363,6 @@ describe ReferenceRepositoryType do
   end
 
   describe "find referenceRepository" do
-
     let(:id_query) do
       "query($id: ID!){
         referenceRepository(id: $id) {
@@ -426,7 +419,6 @@ describe ReferenceRepositoryType do
   end
 
   describe "find referenceRepository and related works/dois" do
-
     let(:works_query) do
       "query($id: ID!){
         referenceRepository(id: $id) {

@@ -24,5 +24,4 @@ class ReferenceRepositoryConnectionWithTotalType < BaseConnection
   def certificates
     facet_by_key(object.aggregations.certificates.buckets)
   end
-
 end

@@ -157,7 +157,7 @@ class ReferenceRepositoryType < BaseObject
   end
 
   def dois(**args)
-    rr_query_parts =[]
+    rr_query_parts = []
     if object.client_id
       rr_query_parts << "client.symbol:#{object.client_id}"
     end
@@ -203,5 +203,4 @@ class ReferenceRepositoryType < BaseObject
       },
     )
   end
-
 end
