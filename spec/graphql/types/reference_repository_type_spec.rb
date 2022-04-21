@@ -84,6 +84,7 @@ describe ReferenceRepositoryType do
         }
         "
 
+      ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
         create(:reference_repository, re3doi:  "10.17616/r3vg6n")
@@ -500,7 +501,6 @@ describe ReferenceRepositoryType do
 
     it "returns referenceRepository with works citation count" do
       response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
-      pp(response)
       expect(response.dig("data", "referenceRepository", "citationCount")).to eq(2)
     end
   end
