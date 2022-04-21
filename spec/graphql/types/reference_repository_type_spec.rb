@@ -436,7 +436,7 @@ describe ReferenceRepositoryType do
     end
 
     before :all do
-      VCR.use_cassette("ReferenceRepositoryType/related_works_citations") do
+      VCR.use_cassette("ReferenceRepositoryType/related_works_citations", allow_playback_repeats: true) do
         @provider = create(:provider, symbol: "TESTR")
         @client = create(:client, symbol: "TESTR.TESTR", provider: @provider)
         @client2 = create(:client, symbol: "TESTR.TESTZ", provider: @provider)
