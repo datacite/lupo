@@ -50,7 +50,9 @@ RUN mkdir -p vendor/bundle && \
     chown -R app:app . && \
     chmod -R 755 . && \
     gem update --system && \
-    /sbin/setuser app bundle install --path vendor/bundle
+    gem install bundler:2.3.10 && \
+    /sbin/setuser app bundle config set --local path 'vendor/bundle' && \
+    /sbin/setuser app bundle install
 
 # Copy webapp folder
 COPY . /home/app/webapp/
