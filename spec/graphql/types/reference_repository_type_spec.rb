@@ -386,7 +386,8 @@ describe ReferenceRepositoryType do
 
     after :all do
       Rails.logger.level = :fatal
-      @client.delete
+      Client.destroy_all
+      Provider.destroy_all
       ReferenceRepository.destroy_all
     end
 
@@ -492,6 +493,7 @@ describe ReferenceRepositoryType do
       Client.destroy_all
       Provider.destroy_all
       Doi.destroy_all
+      Event.destroy_all
     end
 
     it "returns referenceRepository with works total count" do
