@@ -12,11 +12,11 @@ class ReferenceRepository < ApplicationRecord
   #
   # use different index for testing
   if Rails.env.test?
-    index_name "refernce_repositories-test"
+    index_name "reference_repositories-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name "refernce_repositories-#{ENV['ES_PREFIX']}"
+    index_name "reference_repositories-#{ENV['ES_PREFIX']}"
   else
-    index_name "refernce_repositories"
+    index_name "reference_repositories"
   end
 
   def self.find_client(client_id)

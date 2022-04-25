@@ -8470,7 +8470,7 @@ type ReferenceRepository {
   downloadCount: Int
 
   """
-  The langauge of the repository
+  The language of the repository
   """
   language: [String!]
 

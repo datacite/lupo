@@ -54,7 +54,7 @@ class ReferenceRepositoryType < BaseObject
   field :language,
         [String],
         null: true,
-        description: "The langauge of the repository"
+        description: "The language of the repository"
   field :provider_type,
         [String],
         null: true,
