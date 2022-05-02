@@ -5460,26 +5460,6 @@ type InteractiveResourceEdge {
 }
 
 """
-Information about ISSN
-"""
-type Issn {
-  """
-  The electronic ISSN
-  """
-  electronic: String
-
-  """
-  The ISSNL
-  """
-  issnl: String
-
-  """
-  The print ISSN
-  """
-  print: String
-}
-
-"""
 Represents untyped JSON
 """
 scalar JSON
@@ -5939,7 +5919,7 @@ type Member {
   """
   Repositories associated with the member
   """
-  repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal
+  repositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String, year: String): RepositoryConnectionWithTotal
 
   """
   Research Organization Registry (ROR) identifier
@@ -8386,9 +8366,7 @@ type Query {
   preprints(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
   publications(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
-  referenceRepositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String): ReferenceRepositoryConnectionWithTotal!
-  referenceRepository(id: ID!): ReferenceRepository!
-  repositories(after: String, certificate: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
+  repositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
   services(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
@@ -8418,166 +8396,6 @@ type Query {
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
   works(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
-}
-
-"""
-Information about repositories
-"""
-type ReferenceRepository {
-  """
-  Repository alternate names
-  """
-  alternateName: [String!]
-
-  """
-  The certificate(s) for the repository
-  """
-  certificate: [String!]
-
-  """
-  The number of citations.
-  """
-  citationCount: Int
-
-  """
-  The unique identifier for the client repository
-  """
-  clientId: ID
-
-  """
-  Repository contact information
-  """
-  contact: [String!]
-
-  """
-  Data accesses
-  """
-  dataAccess: [TextRestriction!]
-
-  """
-  Data uploads
-  """
-  dataUpload: [TextRestriction!]
-
-  """
-  Description of the repository
-  """
-  description: String
-
-  """
-  The number of downloads according to the Counter Code of Practice.
-  """
-  downloadCount: Int
-
-  """
-  The language of the repository
-  """
-  language: [String!]
-
-  """
-  Repository name
-  """
-  name: String!
-
-  """
-  PID Systems
-  """
-  pidSystem: [String!]
-
-  """
-  The type(s) of Provider
-  """
-  providerType: [String!]
-
-  """
-  The re3data doi for the repository
-  """
-  re3dataDoi: ID
-
-  """
-  URL of the data catalog.
-  """
-  re3dataUrl: Url
-
-  """
-  The repository type(s)
-  """
-  repositoryType: [String!]
-
-  """
-  The name of the software that is used to run the repository
-  """
-  software: [String!]
-
-  """
-  Subject areas covered by the data catalog.
-  """
-  subject: [DefinedTerm!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  Unique identifier for each repository
-  """
-  uid: ID!
-
-  """
-  The homepage of the repository
-  """
-  url: Url
-
-  """
-  The number of views according to the Counter Code of Practice.
-  """
-  viewCount: Int
-
-  """
-  Works managed by the repository
-  """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
-}
-
-"""
-The connection type for ReferenceRepository.
-"""
-type ReferenceRepositoryConnectionWithTotal {
-  certificates: [Facet!]
-
-  """
-  A list of edges.
-  """
-  edges: [ReferenceRepositoryEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [ReferenceRepository]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  repositoryTypes: [Facet!]
-  software: [Facet!]
-  totalCount: Int
-}
-
-"""
-An edge in a connection.
-"""
-type ReferenceRepositoryEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: ReferenceRepository
 }
 
 """
@@ -8816,9 +8634,9 @@ Information about repositories
 """
 type Repository {
   """
-  Repository alternate name
+  Repository alternate names
   """
-  alternateName: String
+  alternateName: [String!]
 
   """
   The certificate(s) for the repository
@@ -8831,19 +8649,24 @@ type Repository {
   citationCount: Int
 
   """
-  The client type (repository or periodical)
+  The unique identifier for the client repository
   """
-  clientType: String
+  clientId: ID
 
   """
-  Data management plans from this organization
+  Repository contact information
   """
-  dataManagementPlans(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): DataManagementPlanConnectionWithTotal
+  contact: [String!]
 
   """
-  Datasets managed by the repository
+  Data accesses
   """
-  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): DatasetConnectionWithTotal
+  dataAccess: [TextRestriction!]
+
+  """
+  Data uploads
+  """
+  dataUpload: [TextRestriction!]
 
   """
   Description of the repository
@@ -8856,17 +8679,7 @@ type Repository {
   downloadCount: Int
 
   """
-  Unique identifier for each repository
-  """
-  id: ID!
-
-  """
-  The ISSN
-  """
-  issn: Issn
-
-  """
-  The langauge of the repository
+  The language of the repository
   """
   language: [String!]
 
@@ -8876,24 +8689,24 @@ type Repository {
   name: String!
 
   """
-  Prefixes managed by the repository
+  PID Systems
   """
-  prefixes(after: String, first: Int = 25, query: String, state: String, year: String): RepositoryPrefixConnectionWithTotal
+  pidSystem: [String!]
 
   """
-  Publications managed by the repository
+  The type(s) of Provider
   """
-  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): PublicationConnectionWithTotal
+  providerType: [String!]
 
   """
-  The re3data DataCatalog
+  The re3data doi for the repository
   """
-  re3data: DataCatalog
+  re3dataDoi: ID
 
   """
-  The re3data identifier for the repository
+  URL of the data catalog.
   """
-  re3dataId: ID
+  re3dataUrl: Url
 
   """
   The repository type(s)
@@ -8903,17 +8716,22 @@ type Repository {
   """
   The name of the software that is used to run the repository
   """
-  software: String
+  software: [String!]
 
   """
-  Software managed by the repository
+  Subject areas covered by the data catalog.
   """
-  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): SoftwareConnectionWithTotal
+  subject: [DefinedTerm!]
 
   """
   The type of the item.
   """
   type: String!
+
+  """
+  Unique identifier for each repository
+  """
+  uid: ID!
 
   """
   The homepage of the repository
@@ -8936,13 +8754,11 @@ The connection type for Repository.
 """
 type RepositoryConnectionWithTotal {
   certificates: [Facet!]
-  clientTypes: [Facet!]
 
   """
   A list of edges.
   """
   edges: [RepositoryEdge]
-  members: [Facet!]
 
   """
   A list of nodes.
@@ -8972,63 +8788,6 @@ type RepositoryEdge {
   The item at the end of the edge.
   """
   node: Repository
-}
-
-"""
-Information about repository prefixes
-"""
-type RepositoryPrefix {
-  """
-  Unique identifier for each repository prefix
-  """
-  id: ID!
-
-  """
-  Repository prefix name
-  """
-  name: String!
-
-  """
-  The type of the item.
-  """
-  type: String!
-}
-
-"""
-The connection type for RepositoryPrefix.
-"""
-type RepositoryPrefixConnectionWithTotal {
-  """
-  A list of edges.
-  """
-  edges: [RepositoryPrefixEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [RepositoryPrefix]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-  years: [Facet!]!
-}
-
-"""
-An edge in a connection.
-"""
-type RepositoryPrefixEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: RepositoryPrefix
 }
 
 """

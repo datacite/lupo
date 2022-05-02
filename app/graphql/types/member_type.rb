@@ -202,9 +202,17 @@ class MemberType < BaseObject
   field :repositories,
         RepositoryConnectionWithTotalType,
         null: true, description: "Repositories associated with the member" do
-    argument :query, String, required: false
     argument :year, String, required: false
+    argument :query, String, required: false
     argument :software, String, required: false
+    argument :certificate, String, required: false
+    argument :repositoryType, String, required: false
+    argument :subject, String, required: false
+    argument :subjectId, String, required: false
+    argument :isOpen, String, required: false
+    argument :isDisciplinary, String, required: false
+    argument :isCertified, String, required: false
+    argument :hasPid, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -286,14 +294,14 @@ class MemberType < BaseObject
 
   def repositories(**args)
     response =
-      Client.query(
+      ReferenceRepository.query(
         args[:query],
         provider_id: object.uid,
         year: args[:year],
         software: args[:software],
         page: {
           cursor:
-            args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [],
+            args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
           size: args[:first],
         },
       )

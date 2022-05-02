@@ -85,8 +85,13 @@ class ReferenceRepository < ApplicationRecord
               id: { type: :keyword },
               scheme: { type: :keyword }
           }
-      indexes :re3_created, type: :date
-      indexes :re3_updated, type: :date
+      indexes :re3_created_at, type: :date, format: :date_optional_time
+      indexes :re3_updated_at, type: :date, format: :date_optional_time
+      indexes :client_created_at, type: :date, format: :date_optional_time
+      indexes :client_updated_at, type: :date, format: :date_optional_time
+      indexes :provider_id, type: :keyword
+      indexes :provider_id_and_name, type: :keyword
+      indexes :year, type: :integer
     end
   end
 
@@ -98,6 +103,16 @@ class ReferenceRepository < ApplicationRecord
     def query_aggregations(facet_count: 10)
       if facet_count.positive?
         {
+          years: {
+            date_histogram: {
+              field: "created_at",
+              interval: "year",
+              format: "year",
+              order: { _key: "desc" },
+              min_doc_count: 1,
+            },
+            aggs: { bucket_truncate: { bucket_sort: { size: facet_count } } },
+          },
           software: {
             terms: {
               field: "software",
@@ -228,6 +243,11 @@ class ReferenceRepository < ApplicationRecord
 
       def filter(options)
         retval = []
+        if options[:year].present?
+          retval << { terms: {
+            "year": options[:year].split(",")
+          } }
+        end
         if options[:software].present?
           retval << { terms: {
             "software": options[:software].split(",")

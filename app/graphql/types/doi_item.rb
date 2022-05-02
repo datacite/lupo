@@ -140,7 +140,6 @@ module DoiItem
   field :repository,
         RepositoryType,
         null: true,
-        hash_key: "client",
         description: "The repository account managing this resource"
   field :member,
         MemberType,
@@ -389,6 +388,10 @@ module DoiItem
 
   def type
     object.types["resourceTypeGeneral"] || "Work"
+  end
+
+  def repository
+    ReferenceRepository.find_by_id(object.client.symbol).first
   end
 
   def rights

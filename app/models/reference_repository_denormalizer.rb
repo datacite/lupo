@@ -36,8 +36,13 @@ class ReferenceRepositoryDenormalizer
         provider_type
         repository_type
         subject
-        re3_created
-        re3_updated
+        re3_created_at
+        re3_updated_at
+        client_created_at
+        client_updated_at
+        provider_id
+        provider_id_and_name
+        year
     ].map { |method_name| [ method_name, send(method_name)] }.to_h
   end
 
@@ -115,6 +120,7 @@ class ReferenceRepositoryDenormalizer
 
   def software
     ret = Array.wrap(@repository.re3_repo&.software).map { |k| k.name }
+    ret += Array.wrap(@repository.client_repo&.software)
     ret.uniq
   end
 
@@ -155,11 +161,39 @@ class ReferenceRepositoryDenormalizer
     }
   end
 
-  def re3_created
-    @repository.re3_repo&.created
+  def year
+    created_at&.year
   end
 
-  def re3_updated
-    @repository.re3_repo&.updated
+  def updated_at
+    [client_updated_at, re3_updated_at].compact.min
+  end
+
+  def created_at
+    [client_created_at, re3_created_at].compact.min
+  end
+
+  def re3_created_at
+    @repository.re3_repo&.created&.to_time(:utc)
+  end
+
+  def re3_updated_at
+    @repository.re3_repo&.updated&.to_time(:utc)
+  end
+
+  def client_created_at
+    @repository.client_repo&.created_at
+  end
+
+  def client_updated_at
+    @repository.client_repo&.updated_at
+  end
+
+  def provider_id
+    @repository.client_repo&.provider_id
+  end
+
+  def provider_id_and_name
+    @repository.client_repo&.provider_id_and_name
   end
 end

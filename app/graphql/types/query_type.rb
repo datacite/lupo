@@ -31,34 +31,6 @@ class QueryType < BaseObject
 
   field :repositories, RepositoryConnectionWithTotalType, null: false do
     argument :query, String, required: false
-    argument :year, String, required: false
-    argument :software, String, required: false
-    argument :certificate, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
-  end
-
-  def repositories(**args)
-    response = Client.query(
-      args[:query],
-      year: args[:year],
-      software: args[:software],
-      certificate: args[:certificate],
-      page: {
-        cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
-        size: args[:first]
-      }
-    )
-    ElasticsearchModelResponseConnection.new(
-      response,
-      context: context,
-      first: args[:first],
-      after: args[:after]
-    )
-  end
-
-  field :reference_repositories, ReferenceRepositoryConnectionWithTotalType, null: false do
-    argument :query, String, required: false
     argument :software, String, required: false
     argument :certificate, String, required: false
     argument :repositoryType, String, required: false
@@ -71,7 +43,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
-  def reference_repositories(**args)
+
+  def repositories(**args)
     response = ReferenceRepository.query(
       args[:query],
       software: args[:software],
@@ -96,20 +69,13 @@ class QueryType < BaseObject
     )
   end
 
-  field :reference_repository, ReferenceRepositoryType, null: false do
-    argument :id, ID, required: true
-  end
-  def reference_repository(id:)
-    ReferenceRepository.find_by_id(id).first
-  end
-
   field :repository, RepositoryType, null: false do
     argument :id, ID, required: true
   end
-
   def repository(id:)
-    Client.where(symbol: id).where(deleted_at: nil).first
+    ReferenceRepository.find_by_id(id).first
   end
+
 
   field :prefixes, PrefixConnectionWithTotalType, null: false do
     argument :query, String, required: false
