@@ -148,7 +148,6 @@ describe MemberType do
   describe "find member", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "TESTC") }
     let!(:client) { create(:client, provider: provider, software: "dataverse") }
-    let!(:repository) { create(:reference_repository, client_id: client.symbol) }
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:prefix) { create(:prefix) }
     let!(:provider_prefixes) do

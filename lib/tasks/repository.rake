@@ -5,10 +5,7 @@ namespace :repository do
   task load_client_repos: :environment do
     puts "Processing Client Repositories"
     Client.all.each do |c|
-      ReferenceRepository.find_or_create_by(
-        client_id: c.symbol,
-        re3doi: c.re3data_id
-      )
+      ReferenceRepository.create_from_client(c)
     end
   end
 
@@ -23,12 +20,7 @@ namespace :repository do
     re3repos.uniq!
     puts "Processing Re3Data Repositories"
     re3repos.each  do |repo|
-      doi = repo.id&.gsub("https://doi.org/", "")
-      if not doi.blank?
-        ReferenceRepository.find_or_create_by(
-          re3doi: doi
-        )
-      end
+      ReferenceRepository.create_from_re3repo(repo)
     end
   end
 

@@ -19,6 +19,41 @@ class ReferenceRepository < ApplicationRecord
     index_name "reference_repositories"
   end
 
+  def self.create_from_client(client)
+    if client.re3data_id
+      ReferenceRepository.find_or_create_by(
+        re3doi: client.re3data_id.downcase
+      ) do |rr|
+        rr.client_id = client.symbol
+      end
+    else
+      ReferenceRepository.find_or_create_by(client_id: client.symbol)
+    end
+  end
+
+  def self.create_from_re3repo(repo)
+      doi = repo.id&.gsub("https://doi.org/", "")
+      if not doi.blank?
+        ReferenceRepository.find_or_create_by(
+          re3doi: doi
+        )
+      end
+  end
+
+  def self.update_from_client(client)
+      rr = ReferenceRepository.find_or_create_by(client_id: client.symbol)
+      if (client.re3data_id and not rr.re3doi)
+        rr.re3doi = client.re3data_id
+        rr.save
+      else
+        rr.touch
+      end
+  end
+
+  def self.destroy_from_client(client)
+    ReferenceRepository.where(client_id: client.symbol).destroy_all
+  end
+
   def self.find_client(client_id)
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
   end
