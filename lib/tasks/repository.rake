@@ -9,15 +9,19 @@ namespace :repository do
     end
   end
 
-  desc "Load all Re3data Repositories into Reference Repostories"
-  task :load_re3data_repos, [:pages] => :environment do |t, args|
-    pages = (args[:pages] || 3).to_i
+  def fetch_all_re3data_repos(pages)
     re3repos = []
     (1..pages).each do |page|
       puts "Fetching Re3Data Repositories: Fetch Group #{page}"
       re3repos += DataCatalog.query("", limit: 1000, offset: page).fetch(:data, [])
     end
     re3repos.uniq!
+    re3repos
+  end
+  desc "Load all Re3data Repositories into Reference Repostories"
+  task :load_re3data_repos, [:pages] => :environment do |t, args|
+    pages = (args[:pages] || 3).to_i
+    re3repos = fetch_all_re3data_repos(pages)
     puts "Warming the re3Cache"
     ReferenceRepository.warm_re3_cache(re3repos)
     puts "Processing Re3Data Repositories"
@@ -77,7 +81,11 @@ namespace :repository do
   end
 
   desc "Import all reference_repositories"
-  task import: :environment do
+  task :import, [:pages] => :environment do |t, args|
+    pages = (args[:pages] || 3).to_i
+    re3repos = fetch_all_re3data_repos(pages)
+    puts "Warming the re3Cache"
+    ReferenceRepository.warm_re3_cache(re3repos)
     ReferenceRepository.import(index: ReferenceRepository.inactive_index)
   end
 
