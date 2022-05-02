@@ -59,7 +59,19 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def self.find_re3(doi)
-    DataCatalog.find_by_id(doi).fetch(:data, []).first
+    Rails.cache.fetch("re3repo/#{doi}", expired_in: 5.minutes) do
+      DataCatalog.find_by_id(doi).fetch(:data, []).first
+    end
+  end
+
+  def self.warm_re3_cache(re3repos)
+    re3repos.each do | repo |
+      doi = repo.id&.gsub("https://doi.org/", "")
+      if not doi.blank?
+        Rails.cache.write("re3repo/#{doi}", repo, expires_in: 5.minutes)
+      end
+    end
+
   end
 
   def uid

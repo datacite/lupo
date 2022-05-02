@@ -18,6 +18,8 @@ namespace :repository do
       re3repos += DataCatalog.query("", limit: 1000, offset: page).fetch(:data, [])
     end
     re3repos.uniq!
+    puts "Warming the re3Cache"
+    ReferenceRepository.warm_re3_cache(re3repos)
     puts "Processing Re3Data Repositories"
     re3repos.each  do |repo|
       ReferenceRepository.create_from_re3repo(repo)
