@@ -226,7 +226,7 @@ describe Client, type: :model do
     end
   end
 
-  describe "re3data_id" do
+  describe "re3data_id", vcr: true do
     subject { build(:client, re3data_id: "10.17616/R3989R") }
 
     it "change" do
