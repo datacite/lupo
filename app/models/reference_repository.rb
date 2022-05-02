@@ -32,22 +32,22 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def self.create_from_re3repo(repo)
-      doi = repo.id&.gsub("https://doi.org/", "")
-      if not doi.blank?
-        ReferenceRepository.find_or_create_by(
-          re3doi: doi
-        )
-      end
+    doi = repo.id&.gsub("https://doi.org/", "")
+    if not doi.blank?
+      ReferenceRepository.find_or_create_by(
+        re3doi: doi
+      )
+    end
   end
 
   def self.update_from_client(client)
-      rr = ReferenceRepository.find_or_create_by(client_id: client.symbol)
-      if (client.re3data_id and not rr.re3doi)
-        rr.re3doi = client.re3data_id
-        rr.save
-      else
-        rr.touch
-      end
+    rr = ReferenceRepository.find_or_create_by(client_id: client.symbol)
+    if client.re3data_id && (not rr.re3doi)
+      rr.re3doi = client.re3data_id
+      rr.save
+    else
+      rr.touch
+    end
   end
 
   def self.destroy_from_client(client)
@@ -71,7 +71,6 @@ class ReferenceRepository < ApplicationRecord
         Rails.cache.write("re3repo/#{doi}", repo, expires_in: 5.minutes)
       end
     end
-
   end
 
   def uid
