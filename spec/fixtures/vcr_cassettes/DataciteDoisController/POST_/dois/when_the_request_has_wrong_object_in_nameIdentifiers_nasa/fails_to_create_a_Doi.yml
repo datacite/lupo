@@ -5,65 +5,35 @@ http_interactions:
     uri: https://handle.test.datacite.org/api/handles/10.14454/RDNT.1X18SN
     body:
       encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://registry.mlhub.earth/10.34911/rdnt.1x18sn"}}]'
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://registry.mlhub.earth/10.34911/rdnt.1x18sn"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Content-Type:
       - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
     headers:
       Date:
-      - Sat, 02 Jan 2021 09:04:02 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
+      - Wed, 04 May 2022 14:15:26 GMT
+      Content-Length:
+      - '0'
       Connection:
       - keep-alive
-      Vary:
-      - Accept-Encoding
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="1x8sulko49v8b1hp99lkngo5kj", nonce="/leptGiGrKL0qn5ZWwbiSg==",
+        error="Identity not verified"
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/RDNT.1X18SN"}'
+      string: ''
     http_version: null
-  recorded_at: Sat, 02 Jan 2021 09:04:02 GMT
-- request:
-    method: put
-    uri: https://handle.test.datacite.org/api/handles/10.14454/RDNT.1X18SN
-    body:
-      encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://registry.mlhub.earth/10.34911/rdnt.1x18sn"}}]'
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Content-Type:
-      - application/json;charset=UTF-8
-      Authorization:
-      - Basic <HANDLE_TOKEN>
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 02 Jan 2021 09:04:02 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Vary:
-      - Accept-Encoding
-    body:
-      encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/RDNT.1X18SN"}'
-    http_version: null
-  recorded_at: Sat, 02 Jan 2021 09:04:02 GMT
+  recorded_at: Wed, 04 May 2022 14:15:23 GMT
 recorded_with: VCR 5.1.0

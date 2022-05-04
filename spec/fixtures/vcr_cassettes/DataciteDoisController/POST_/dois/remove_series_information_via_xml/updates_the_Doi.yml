@@ -5,65 +5,71 @@ http_interactions:
     uri: https://handle.test.datacite.org/api/handles/10.14454/05MB-Q396
     body:
       encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Content-Type:
       - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
     headers:
       Date:
-      - Fri, 23 Oct 2020 21:12:39 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
+      - Wed, 04 May 2022 14:14:57 GMT
+      Content-Length:
+      - '0'
       Connection:
       - keep-alive
-      Vary:
-      - Accept-Encoding
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="1lnp2ej94r5p51se3albynvquw", nonce="S+r/6ukMxP4Zt3Cahxsr3Q==",
+        error="Identity not verified"
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/05MB-Q396"}'
+      string: ''
     http_version: null
-  recorded_at: Fri, 23 Oct 2020 21:12:39 GMT
+  recorded_at: Wed, 04 May 2022 14:14:54 GMT
 - request:
     method: put
     uri: https://handle.test.datacite.org/api/handles/10.14454/05MB-Q396
     body:
       encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://datacite.org"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Content-Type:
       - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
     headers:
       Date:
-      - Fri, 23 Oct 2020 21:12:39 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
+      - Wed, 04 May 2022 14:14:57 GMT
+      Content-Length:
+      - '0'
       Connection:
       - keep-alive
-      Vary:
-      - Accept-Encoding
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="1khjyzi9derm11tgn06063w787", nonce="7yPFHXxmujLhAEHqlQ8IOA==",
+        error="Identity not verified"
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.14454/05MB-Q396"}'
+      string: ''
     http_version: null
-  recorded_at: Fri, 23 Oct 2020 21:12:39 GMT
+  recorded_at: Wed, 04 May 2022 14:14:54 GMT
 recorded_with: VCR 5.1.0
