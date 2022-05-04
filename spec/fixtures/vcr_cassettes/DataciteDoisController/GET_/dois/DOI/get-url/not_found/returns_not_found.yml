@@ -8,16 +8,18 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 404
       message: Not Found
     headers:
       Date:
-      - Fri, 23 Oct 2020 21:11:17 GMT
+      - Wed, 04 May 2022 14:36:16 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Content-Length:
@@ -28,5 +30,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":100,"handle":"10.14454/61Y1-E521"}'
     http_version: null
-  recorded_at: Fri, 23 Oct 2020 21:11:17 GMT
+  recorded_at: Wed, 04 May 2022 14:36:13 GMT
 recorded_with: VCR 5.1.0
