@@ -59,7 +59,7 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def self.find_re3(doi)
-    Rails.cache.fetch("re3repo/#{doi}", expired_in: 5.minutes) do
+    Rails.cache.fetch("re3repo/#{doi}", expires_in: 5.minutes) do
       DataCatalog.find_by_id(doi).fetch(:data, []).first
     end
   end
