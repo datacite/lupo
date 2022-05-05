@@ -10,7 +10,7 @@ jobs:
       memcached:
         image: memcached:1.4.31
         ports:
-          - 11211/udp
+          - 11211
       mysql:
         image: mysql:5.7
         env:
@@ -70,7 +70,7 @@ jobs:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: "changeme"
-          MEMCACHE_SERVERS: "localhost:11211"
+          MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
