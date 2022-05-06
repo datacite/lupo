@@ -9,6 +9,7 @@ class RepositoryConnectionWithTotalType < BaseConnection
   field :certificates, [FacetType], null: true, cache: true
   field :repository_types, [FacetType], null: true, cache: true
   field :years, [FacetType], null: true, cache: true
+  field :members, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count
@@ -28,5 +29,9 @@ class RepositoryConnectionWithTotalType < BaseConnection
 
   def certificates
     facet_by_key(object.aggregations.certificates.buckets)
+  end
+
+  def members
+    facet_by_combined_key(object.aggregations.providers.buckets)
   end
 end

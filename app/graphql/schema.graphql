@@ -8759,6 +8759,7 @@ type RepositoryConnectionWithTotal {
   A list of edges.
   """
   edges: [RepositoryEdge]
+  members: [Facet!]
 
   """
   A list of nodes.

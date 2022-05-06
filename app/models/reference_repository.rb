@@ -171,6 +171,13 @@ class ReferenceRepository < ApplicationRecord
               min_doc_count: 1
             },
           },
+          providers: {
+            terms: {
+              field: "provider_id_and_name",
+              size: facet_count,
+              min_doc_count: 1
+            },
+      },
         }
       end
     end

@@ -79,6 +79,7 @@ describe RepositoryType do
             software { ...facetFields }
             repositoryTypes { ...facetFields }
             certificates { ...facetFields }
+            members { ...facetFields }
 
           }
         }
@@ -95,7 +96,7 @@ describe RepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R3106C")
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-        create(:reference_repository, re3doi:  "10.17616/R31NJMJX")
+        create(:client, re3data_id:  "10.17616/R31NJMJX")
         sleep 2
         @facet_response = LupoSchema.execute(@search_query).as_json
       end
@@ -142,6 +143,16 @@ describe RepositoryType do
       ).to eq([
         { "count" => 9, "id" => "disciplinary", "title" => "Disciplinary" },
         { "count" => 5, "id" => "institutional", "title" => "Institutional" }
+      ])
+    end
+
+    it "returns members facets" do
+      response = @facet_response
+      pp(response)
+      expect(
+        response.dig("data", "repositories", "members"),
+      ).to eq([
+        { "count" => 1, "id" => "testa", "title" => "My provider" },
       ])
     end
 
@@ -206,7 +217,7 @@ describe RepositoryType do
         search_query,
         variables: { hasPid: "true" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(7)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(8)
     end
 
     it "filter based on subjectId" do
