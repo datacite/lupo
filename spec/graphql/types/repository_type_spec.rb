@@ -96,7 +96,7 @@ describe RepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R3106C")
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-        @client=create(:client, re3data_id:  "10.17616/R31NJMJX")
+        @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
         sleep 2
         @facet_response = LupoSchema.execute(@search_query).as_json
       end
