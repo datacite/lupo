@@ -89,4 +89,28 @@ class DataCatalog
 
     "https://doi.org/#{doi.downcase}"
   end
+
+  def self.all(pages = 3)
+    re3repos = []
+    (1..pages).each do |page|
+      re3repos += DataCatalog.query("", limit: 1000, offset: page).fetch(:data, [])
+    end
+    re3repos.uniq!
+    re3repos
+  end
+
+  def self.warm_re3_cache(re3repos, duration = 5.minutes)
+    re3repos.each do | repo |
+      doi = repo.id&.gsub("https://doi.org/", "")
+      if not doi.blank?
+        Rails.cache.write("re3repo/#{doi}", repo, expires_in: duration)
+      end
+    end
+  end
+
+  def self.fetch_and_cache_all(pages = 3, duration = 5.minutes)
+    repos = DataCatalog.all(pages)
+    DataCatalog.warm_re3_cache(repos, duration)
+    repos
+  end
 end

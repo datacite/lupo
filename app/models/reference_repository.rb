@@ -64,15 +64,6 @@ class ReferenceRepository < ApplicationRecord
     end
   end
 
-  def self.warm_re3_cache(re3repos)
-    re3repos.each do | repo |
-      doi = repo.id&.gsub("https://doi.org/", "")
-      if not doi.blank?
-        Rails.cache.write("re3repo/#{doi}", repo, expires_in: 5.minutes)
-      end
-    end
-  end
-
   def uid
     hashid
   end
