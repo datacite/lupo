@@ -90,7 +90,7 @@ class DataCatalog
     "https://doi.org/#{doi.downcase}"
   end
 
-  def self.all(pages = 3)
+  def self.all(pages: 3)
     re3repos = []
     (1..pages).each do |page|
       re3repos += DataCatalog.query("", limit: 1000, offset: page).fetch(:data, [])
@@ -99,7 +99,7 @@ class DataCatalog
     re3repos
   end
 
-  def self.warm_re3_cache(re3repos, duration = 5.minutes)
+  def self.warm_re3_cache(re3repos, duration: 5.minutes)
     re3repos.each do | repo |
       doi = repo.id&.gsub("https://doi.org/", "")
       if not doi.blank?
@@ -108,9 +108,9 @@ class DataCatalog
     end
   end
 
-  def self.fetch_and_cache_all(pages = 3, duration = 5.minutes)
-    repos = DataCatalog.all(pages)
-    DataCatalog.warm_re3_cache(repos, duration)
+  def self.fetch_and_cache_all(pages: 3, duration: 5.minutes)
+    repos = DataCatalog.all(pages: pages)
+    DataCatalog.warm_re3_cache(repos, duration: duration)
     repos
   end
 end
