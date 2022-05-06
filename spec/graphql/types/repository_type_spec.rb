@@ -96,7 +96,7 @@ describe RepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R3106C")
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-        create(:client, re3data_id:  "10.17616/R31NJMJX")
+        @client=create(:client, re3data_id:  "10.17616/R31NJMJX")
         sleep 2
         @facet_response = LupoSchema.execute(@search_query).as_json
       end
@@ -148,11 +148,10 @@ describe RepositoryType do
 
     it "returns members facets" do
       response = @facet_response
-      pp(response)
       expect(
         response.dig("data", "repositories", "members"),
       ).to eq([
-        { "count" => 1, "id" => "testa", "title" => "My provider" },
+        { "count" => 1, "id" => @client.provider.symbol.downcase, "title" => "My provider" },
       ])
     end
 
