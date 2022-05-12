@@ -891,4 +891,165 @@ describe WorkType do
       )
     end
   end
+
+  describe "find work with a creator or contributor with an affiliation property that's a hash", elasticsearch: true do
+    let!(:work) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "name" => "Kristian Garza",
+            "nameType" => "Personal",
+            "affiliation" => {
+              "name" => "Ruhr-University Bochum, Germany"
+            }
+          },
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation": [
+              {
+                "name": "University of Cambridge",
+                "affiliationIdentifier": "https://ror.org/013meh722",
+                "affiliationIdentifierScheme": "ROR",
+              },
+            ],
+          },
+          {
+            "name" => "Cody Ross",
+            "nameType" => "Personal",
+          },
+        ],
+        contributors: [
+          {
+            "givenName" => "Cody",
+            "familyName" => "Ross",
+            "contributorType" => "Editor",
+            "affiliation" => {
+              "name" => "Ruhr-University Bochum, Germany"
+            }
+          },
+          {
+            "givenName" => "Kristian",
+            "familyName" => "Garza",
+            "contributorType" => "Editor",
+            "affiliation" => [ 
+              {
+              "name" => "University of Cambridge",
+              "affiliationIdentifier": "https://ror.org/013meh722",
+              "affiliationIdentifierScheme": "ROR",
+            } 
+          ]
+          },
+        ],
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_work) do
+      "query {
+        work(id: \"https://doi.org/#{
+        work.doi
+      }\") {
+          creators {
+            id
+            name
+            givenName
+            familyName
+            affiliation {
+              id
+              name
+            }
+          }
+          contributors {
+            id
+            name
+            givenName
+            familyName
+            affiliation {
+              id
+              name
+            }
+          }
+        }
+      }"
+    end
+
+    let(:query_works) do
+      "query {
+        works(ids: [\"#{
+        work.doi
+      }\"]) {
+          nodes {
+            creators {
+              id
+              name
+              givenName
+              familyName
+              affiliation {
+                id
+                name
+              }
+            }
+            contributors {
+              id
+              name
+              givenName
+              familyName
+              affiliation {
+                id
+                name
+              }
+            }
+          }
+        }
+      }"
+    end
+
+    it "returns work with an affiliation property that's a hash" do
+      response = LupoSchema.execute(query_work).as_json
+
+      expect(response.dig("data", "work", "creators", 0, "affiliation", 0, "name")).to eq(
+        "Ruhr-University Bochum, Germany",
+      )
+      expect(response.dig("data", "work", "creators", 1, "affiliation", 0, "name")).to eq(
+        "University of Cambridge",
+      )
+      expect(response.dig("data", "work", "contributors", 0, "affiliation", 0, "name")).to eq(
+        "Ruhr-University Bochum, Germany",
+      )
+
+    end
+
+    it "returns works with an affiliation properties that are hashes" do
+      response = LupoSchema.execute(query_works).as_json
+
+      expect(response.dig("data", "works", "nodes", 0, "creators", 0, "affiliation", 0, "name")).to eq(
+        "Ruhr-University Bochum, Germany",
+      )
+      expect(response.dig("data", "works", "nodes", 0, "creators", 1, "affiliation", 0, "name")).to eq(
+        "University of Cambridge",
+      )
+      expect(response.dig("data", "works", "nodes", 0, "contributors", 0, "affiliation", 0, "name")).to eq(
+        "Ruhr-University Bochum, Germany",
+      )
+
+    end
+
+  end
+
 end
