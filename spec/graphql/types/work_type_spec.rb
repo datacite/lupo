@@ -943,12 +943,12 @@ describe WorkType do
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor",
-            "affiliation" => [ 
+            "affiliation" => [
               {
               "name" => "University of Cambridge",
               "affiliationIdentifier": "https://ror.org/013meh722",
               "affiliationIdentifierScheme": "ROR",
-            } 
+            }
           ]
           },
         ],
@@ -1020,7 +1020,7 @@ describe WorkType do
       }"
     end
 
-    it "returns work with an affiliation property that's a hash" do
+    it "returns work with a non-nil creators type" do
       response = LupoSchema.execute(query_work).as_json
 
       expect(response.dig("data", "work", "creators", 0, "affiliation", 0, "name")).to eq(
@@ -1032,10 +1032,9 @@ describe WorkType do
       expect(response.dig("data", "work", "contributors", 0, "affiliation", 0, "name")).to eq(
         "Ruhr-University Bochum, Germany",
       )
-
     end
 
-    it "returns works with an affiliation properties that are hashes" do
+    it "returns works with non-nil creators types" do
       response = LupoSchema.execute(query_works).as_json
 
       expect(response.dig("data", "works", "nodes", 0, "creators", 0, "affiliation", 0, "name")).to eq(
@@ -1047,9 +1046,6 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "contributors", 0, "affiliation", 0, "name")).to eq(
         "Ruhr-University Bochum, Germany",
       )
-
     end
-
   end
-
 end
