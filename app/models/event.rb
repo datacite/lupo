@@ -1029,23 +1029,6 @@ class Event < ApplicationRecord
       self.source_relation_type_id = "parts"
       self.target_relation_type_id = "part_of"
     end
-
-    ## If the two DOI's involved are Cody and Mike's intro blog posts
-    ## _AND_ is a cites/is-cited-by, then switch for testing
-    if (subj_id == "https://doi.org/10.5438/sjx9-hb16" && obj_id == "https://doi.org/10.5438/cq8g-b226") || (obj_id == "https://doi.org/10.5438/sjx9-hb16" && subj_id == "https://doi.org/10.5438/cq8g-b226")
-      if relation_type_id == "is-cited-by"
-        self.source_doi = uppercase_doi_from_url(obj_id)
-        self.target_doi = uppercase_doi_from_url(subj_id)
-        self.source_relation_type_id = "references"
-        self.target_relation_type_id = "citations"
-      elsif relation_type_id == "cites"
-        self.source_doi = uppercase_doi_from_url(subj_id)
-        self.target_doi = uppercase_doi_from_url(obj_id)
-        self.source_relation_type_id = "references"
-        self.target_relation_type_id = "citations"
-      end
-    end
-    ## END TEST ##
   end
 
   def set_defaults
