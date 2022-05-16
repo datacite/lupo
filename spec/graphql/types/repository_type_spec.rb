@@ -26,6 +26,30 @@ describe RepositoryType do
     it { is_expected.to have_field(:dataUpload).of_type("[TextRestriction!]") }
     it { is_expected.to have_field(:contact).of_type("[String!]") }
     it { is_expected.to have_field(:subject).of_type("[DefinedTerm!]") }
+
+    it { is_expected.to have_field(:viewCount).of_type("Int") }
+    it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:citationCount).of_type("Int") }
+
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
+    it do
+      is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal")
+    end
+    it do
+      is_expected.to have_field(:publications).of_type(
+        "PublicationConnectionWithTotal",
+      )
+    end
+    it do
+      is_expected.to have_field(:softwares).of_type(
+        "SoftwareConnectionWithTotal",
+      )
+    end
+    it do
+      is_expected.to have_field(:dataManagementPlans).of_type(
+        "DataManagementPlanConnectionWithTotal",
+      )
+    end
   end
 
 
@@ -388,7 +412,7 @@ describe RepositoryType do
     before :all do
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
         @client = create(:client)
-        @ref_repo = create(:reference_repository, client_id: @client.symbol, re3doi:  "10.17616/R3XS37")
+        @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
         ReferenceRepository.import
         sleep 2
       end
@@ -405,8 +429,8 @@ describe RepositoryType do
     end
 
     it "by client_id" do
-      response = LupoSchema.execute(id_query, variables: { id: @client.symbol }).as_json
-      expect(response.dig("data", "repository", "clientId")).to eq(@client.symbol)
+      response = LupoSchema.execute(id_query, variables: { id: @client.uid }).as_json
+      expect(response.dig("data", "repository", "clientId")).to eq(@client.uid)
       expect(response.dig("data", "repository", "name")).to eq(@client.name)
     end
 
@@ -442,16 +466,22 @@ describe RepositoryType do
           works {
             totalCount
           }
+          datasets {
+            totalCount
+          }
+          softwares {
+            totalCount
+          }
         }
       }"
     end
 
     before :all do
       VCR.use_cassette("ReferenceRepositoryType/related_works_citations", allow_playback_repeats: true) do
-        @provider = create(:provider, symbol: "TESTR")
-        @client = create(:client, symbol: "TESTR.TESTR", provider: @provider)
-        @client2 = create(:client, symbol: "TESTR.TESTZ", provider: @provider)
-        @ref_repo = create(:reference_repository, client_id: @client.symbol, re3doi:  "10.17616/R3XS37")
+        @provider = create(:provider)
+        @client = create(:client, provider: @provider)
+        @client2 = create(:client,  provider: @provider)
+        @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
         @doi = create(
           :doi,
           client: @client,
@@ -492,7 +522,6 @@ describe RepositoryType do
         Client.import(force: true)
         Doi.import(force: true)
         ReferenceRepository.import(force: true)
-
         sleep 2
       end
     end
@@ -508,12 +537,94 @@ describe RepositoryType do
 
     it "returns repository with works total count" do
       response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
+      pp(response)
       expect(response.dig("data", "repository", "works", "totalCount")).to eq(3)
+    end
+
+    it "returns repository with datasets total count" do
+      response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
+      expect(response.dig("data", "repository", "datasets", "totalCount")).to eq(3)
+    end
+
+    it "returns repository with softwares total count" do
+      response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
+      expect(response.dig("data", "repository", "softwares", "totalCount")).to eq(0)
     end
 
     it "returns repository with works citation count" do
       response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
       expect(response.dig("data", "repository", "citationCount")).to eq(2)
+    end
+  end
+
+  describe "find repository with prefixes" do
+    let(:provider) { create(:provider, symbol: "TESTC") }
+    let(:client) do
+      create(
+        :client,
+        symbol: "TESTC.TESTC", alternate_name: "ABC", provider: provider,
+      )
+    end
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:prefix) { create(:prefix) }
+    let!(:client_prefixes) { create_list(:client_prefix, 3, client: client) }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      Prefix.import
+      ClientPrefix.import
+      sleep 3
+    end
+
+    after do
+      Rails.logger.level = :fatal
+      ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
+      Prefix.destroy_all
+      ClientPrefix.destroy_all
+      Doi.destroy_all
+      Event.destroy_all
+    end
+
+    let(:query) do
+      "query {
+        repository(id: \"testc.testc\") {
+          clientId
+          name
+          prefixes {
+            totalCount
+            years {
+              id
+              count
+            }
+            nodes {
+              name
+            }
+          }
+        }
+      }"
+    end
+
+    it "returns repository" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "repository", "clientId")).to eq(client.uid)
+      expect(response.dig("data", "repository", "name")).to eq("My data center")
+
+      expect(
+        response.dig("data", "repository", "prefixes", "totalCount"),
+      ).to eq(3)
+      expect(response.dig("data", "repository", "prefixes", "years")).to eq(
+        [{ "count" => 3, "id" => "2022" }],
+      )
+      expect(
+        response.dig("data", "repository", "prefixes", "nodes").length,
+      ).to eq(3)
+      prefix1 = response.dig("data", "repository", "prefixes", "nodes", 0)
+      expect(prefix1.fetch("name")).to eq(client_prefixes.first.prefix_id)
     end
   end
 end

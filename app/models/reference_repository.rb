@@ -6,9 +6,10 @@ class ReferenceRepository < ApplicationRecord
   include Elasticsearch::Model::Callbacks
   include Hashid::Rails
 
+  before_save :downcase_fields
   before_save :force_index
 
-  validates_uniqueness_of :re3doi, allow_nil: true
+  validates_uniqueness_of :re3doi, allow_nil: true, case_sensitive: false
   #
   # use different index for testing
   if Rails.env.test?
@@ -19,15 +20,20 @@ class ReferenceRepository < ApplicationRecord
     index_name "reference_repositories"
   end
 
+  def downcase_fields
+    self.re3doi.try(:downcase!)
+    self.client_id.try(:downcase!)
+  end
+
   def self.create_from_client(client)
     if client.re3data_id
       ReferenceRepository.find_or_create_by(
-        re3doi: client.re3data_id.downcase
+        re3doi: client.re3data_id
       ) do |rr|
-        rr.client_id = client.symbol
+        rr.client_id = client.uid
       end
     else
-      ReferenceRepository.find_or_create_by(client_id: client.symbol)
+      ReferenceRepository.find_or_create_by(client_id: client.uid)
     end
   end
 
@@ -41,7 +47,7 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def self.update_from_client(client)
-    rr = ReferenceRepository.find_or_create_by(client_id: client.symbol)
+    rr = ReferenceRepository.find_or_create_by(client_id: client.uid)
     if client.re3data_id && (not rr.re3doi)
       rr.re3doi = client.re3data_id
       rr.save
@@ -51,7 +57,7 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def self.destroy_from_client(client)
-    ReferenceRepository.where(client_id: client.symbol).destroy_all
+    ReferenceRepository.where(client_id: client.uid).destroy_all
   end
 
   def self.find_client(client_id)
@@ -69,7 +75,7 @@ class ReferenceRepository < ApplicationRecord
   end
 
   def client_repo
-    if @dsclient&.symbol == self[:client_id]
+    if @dsclient&.uid == self[:client_id]
       @dsclient
     else
       @dsclient = ReferenceRepository.find_client(self[:client_id])

@@ -127,6 +127,136 @@ class RepositoryType < BaseObject
     argument :after, String, required: false
   end
 
+  field :datasets,
+        DatasetConnectionWithTotalType,
+        null: true, description: "Datasets managed by the repository" do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :license, String, required: false
+    argument :resource_type, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  field :publications,
+        PublicationConnectionWithTotalType,
+        null: true, description: "Publications managed by the repository" do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :license, String, required: false
+    argument :resource_type, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  field :softwares,
+        SoftwareConnectionWithTotalType,
+        null: true, description: "Software managed by the repository" do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :license, String, required: false
+    argument :resource_type, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  field :data_management_plans,
+        DataManagementPlanConnectionWithTotalType,
+        null: true,
+        description: "Data management plans from this organization" do
+    argument :query, String, required: false
+    argument :ids, [String], required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  field :prefixes,
+        RepositoryPrefixConnectionWithTotalType,
+        null: true, description: "Prefixes managed by the repository" do
+    argument :query, String, required: false
+    argument :state, String, required: false
+    argument :year, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
   def type
     "Repository"
   end
@@ -134,6 +264,54 @@ class RepositoryType < BaseObject
   def works(**args)
     ElasticsearchModelResponseConnection.new(
       dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def datasets(**args)
+    args[:resource_type_id] = "Dataset"
+    ElasticsearchModelResponseConnection.new(
+      dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def publications(**args)
+    args[:resource_type_id] = "Text"
+    ElasticsearchModelResponseConnection.new(
+      dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def softwares(**args)
+    args[:resource_type_id] = "Software"
+    ElasticsearchModelResponseConnection.new(
+      dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def data_management_plans(**args)
+    args[:resource_type_id] = "Text"
+    args[:resource_type] = "Data Management Plan"
+    ElasticsearchModelResponseConnection.new(
+      dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def prefixes(**args)
+    response =
+      ClientPrefix.query(
+        args[:query],
+        client_id: object.client_id,
+        state: args[:state],
+        year: args[:year],
+        page: { number: 1, size: args[:first] },
+      )
+    ElasticsearchModelResponseConnection.new(
+      response,
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -159,7 +337,7 @@ class RepositoryType < BaseObject
   def dois(**args)
     rr_query_parts = []
     if object.client_id
-      rr_query_parts << "client.symbol:#{object.client_id}"
+      rr_query_parts << "client_id:#{object.client_id}"
     end
     if object.re3doi
       rr_query_parts << "re3data_id:#{object.re3doi}"
