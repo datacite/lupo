@@ -434,9 +434,9 @@ module DoiItem
         "given_name" => c.fetch("givenName", nil),
         "family_name" => c.fetch("familyName", nil),
         "affiliation" =>
-          c.fetch("affiliation", []).map do |a|
+          Array.wrap(c.fetch("affiliation", [])).map do |a|
             { "id" => a["affiliationIdentifier"], "name" => a["name"] }.compact
-          end,
+          end.compact,
       )
     end
   end
@@ -460,9 +460,9 @@ module DoiItem
         "given_name" => c.fetch("givenName", nil),
         "family_name" => c.fetch("familyName", nil),
         "affiliation" =>
-          c.fetch("affiliation", []).map do |a|
+          Array.wrap(c.fetch("affiliation", [])).map do |a|
             { "id" => a["affiliationIdentifier"], "name" => a["name"] }.compact
-          end,
+          end.compact,
       )
     end
   end
