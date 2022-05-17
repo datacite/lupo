@@ -129,6 +129,8 @@ describe RepositoryType do
     after :all do
       Rails.logger.level = :fatal
       ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
     end
 
     let(:search_query) { @search_query }
