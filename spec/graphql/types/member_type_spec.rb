@@ -233,7 +233,7 @@ describe MemberType do
         response.dig("data", "member", "repositories", "nodes").length,
       ).to eq(1)
       repository1 = response.dig("data", "member", "repositories", "nodes", 0)
-      expect(repository1.fetch("clientId")).to eq(client.symbol)
+      expect(repository1.fetch("clientId")).to eq(client.uid)
       expect(repository1.fetch("name")).to eq(client.name)
       expect(repository1.fetch("software")).to eq(["dataverse"])
 

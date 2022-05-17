@@ -76,7 +76,7 @@ describe WorkType do
         "title" => "Inorganica Chimica Acta",
       )
       expect(response.dig("data", "work", "repository", "clientId")).to eq(
-        work.client.symbol,
+        work.client.uid,
       )
       expect(response.dig("data", "work", "repository", "name")).to eq(
         work.client.name,
