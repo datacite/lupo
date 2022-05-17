@@ -537,7 +537,6 @@ describe RepositoryType do
 
     it "returns repository with works total count" do
       response = LupoSchema.execute(works_query, variables: { id: @ref_repo.uid }).as_json
-      pp(response)
       expect(response.dig("data", "repository", "works", "totalCount")).to eq(3)
     end
 
@@ -562,7 +561,7 @@ describe RepositoryType do
     let(:client) do
       create(
         :client,
-        symbol: "TESTC.TESTC", alternate_name: "ABC", provider: provider,
+        symbol: "TESTC.TESTC", alternate_name: "ABC", provider: provider
       )
     end
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -570,11 +569,11 @@ describe RepositoryType do
     let!(:client_prefixes) { create_list(:client_prefix, 3, client: client) }
 
     before do
-      Provider.import
-      Client.import
-      Doi.import
-      Prefix.import
-      ClientPrefix.import
+      Provider.import(force: true)
+      Client.import(force: true)
+      Doi.import(force: true)
+      Prefix.import(force: true)
+      ClientPrefix.import(force: true)
       sleep 3
     end
 
