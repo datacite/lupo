@@ -8,30 +8,32 @@ http_interactions:
       string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://www.bl.uk/pdf/patspec.pdf"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.4; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Content-Type:
       - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 401
       message: Unauthorized
     headers:
       Date:
-      - Thu, 10 Jun 2021 02:07:17 GMT
+      - Fri, 06 May 2022 03:57:28 GMT
       Content-Length:
       - '0'
       Connection:
       - keep-alive
       Www-Authenticate:
-      - Basic realm="handle", Handle sessionId="1dq36nxrjggdp1dieh6b1zriy1", nonce="KyZoQZM053e21vFe7AhV1Q==",
+      - Basic realm="handle", Handle sessionId="131a7xtp1k2t21i35v0w2jfmme", nonce="BEVYiuKryUsyLnIiNKRtUw==",
         error="Identity not verified"
     body:
       encoding: ASCII-8BIT
       string: ''
     http_version: null
-  recorded_at: Thu, 10 Jun 2021 02:07:17 GMT
+  recorded_at: Fri, 06 May 2022 03:57:22 GMT
 recorded_with: VCR 5.1.0

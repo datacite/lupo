@@ -5460,26 +5460,6 @@ type InteractiveResourceEdge {
 }
 
 """
-Information about ISSN
-"""
-type Issn {
-  """
-  The electronic ISSN
-  """
-  electronic: String
-
-  """
-  The ISSNL
-  """
-  issnl: String
-
-  """
-  The print ISSN
-  """
-  print: String
-}
-
-"""
 Represents untyped JSON
 """
 scalar JSON
@@ -5939,7 +5919,7 @@ type Member {
   """
   Repositories associated with the member
   """
-  repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal
+  repositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String, year: String): RepositoryConnectionWithTotal
 
   """
   Research Organization Registry (ROR) identifier
@@ -8386,7 +8366,7 @@ type Query {
   preprints(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
   publications(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
-  repositories(after: String, certificate: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
+  repositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
   services(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
@@ -8654,9 +8634,9 @@ Information about repositories
 """
 type Repository {
   """
-  Repository alternate name
+  Repository alternate names
   """
-  alternateName: String
+  alternateName: [String!]
 
   """
   The certificate(s) for the repository
@@ -8669,14 +8649,29 @@ type Repository {
   citationCount: Int
 
   """
-  The client type (repository or periodical)
+  The unique identifier for the client repository
   """
-  clientType: String
+  clientId: ID
+
+  """
+  Repository contact information
+  """
+  contact: [String!]
+
+  """
+  Data accesses
+  """
+  dataAccess: [TextRestriction!]
 
   """
   Data management plans from this organization
   """
   dataManagementPlans(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): DataManagementPlanConnectionWithTotal
+
+  """
+  Data uploads
+  """
+  dataUpload: [TextRestriction!]
 
   """
   Datasets managed by the repository
@@ -8694,17 +8689,7 @@ type Repository {
   downloadCount: Int
 
   """
-  Unique identifier for each repository
-  """
-  id: ID!
-
-  """
-  The ISSN
-  """
-  issn: Issn
-
-  """
-  The langauge of the repository
+  The language of the repository
   """
   language: [String!]
 
@@ -8714,9 +8699,19 @@ type Repository {
   name: String!
 
   """
+  PID Systems
+  """
+  pidSystem: [String!]
+
+  """
   Prefixes managed by the repository
   """
   prefixes(after: String, first: Int = 25, query: String, state: String, year: String): RepositoryPrefixConnectionWithTotal
+
+  """
+  The type(s) of Provider
+  """
+  providerType: [String!]
 
   """
   Publications managed by the repository
@@ -8724,14 +8719,14 @@ type Repository {
   publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): PublicationConnectionWithTotal
 
   """
-  The re3data DataCatalog
+  The re3data doi for the repository
   """
-  re3data: DataCatalog
+  re3dataDoi: ID
 
   """
-  The re3data identifier for the repository
+  URL of the data catalog.
   """
-  re3dataId: ID
+  re3dataUrl: Url
 
   """
   The repository type(s)
@@ -8741,7 +8736,7 @@ type Repository {
   """
   The name of the software that is used to run the repository
   """
-  software: String
+  software: [String!]
 
   """
   Software managed by the repository
@@ -8749,9 +8744,19 @@ type Repository {
   softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, resourceType: String, userId: String): SoftwareConnectionWithTotal
 
   """
+  Subject areas covered by the data catalog.
+  """
+  subject: [DefinedTerm!]
+
+  """
   The type of the item.
   """
   type: String!
+
+  """
+  Unique identifier for each repository
+  """
+  uid: ID!
 
   """
   The homepage of the repository
@@ -8774,7 +8779,6 @@ The connection type for Repository.
 """
 type RepositoryConnectionWithTotal {
   certificates: [Facet!]
-  clientTypes: [Facet!]
 
   """
   A list of edges.

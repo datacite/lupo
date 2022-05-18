@@ -15,13 +15,14 @@ class ReferenceRepositoryDenormalizer
 
   def to_hash
     %w[
-        id
+        uid
         client_id
         re3doi
         re3data_url
         created_at
         updated_at
         name
+        alternate_name
         description
         pid_system
         url
@@ -35,11 +36,18 @@ class ReferenceRepositoryDenormalizer
         provider_type
         repository_type
         subject
+        re3_created_at
+        re3_updated_at
+        client_created_at
+        client_updated_at
+        provider_id
+        provider_id_and_name
+        year
     ].map { |method_name| [ method_name, send(method_name)] }.to_h
   end
 
-  def id
-    @repository.hashid
+  def uid
+    @repository.uid
   end
 
   def client_id
@@ -62,6 +70,14 @@ class ReferenceRepositoryDenormalizer
     @repository.client_repo&.name || @repository.re3_repo&.name
   end
 
+  def alternate_name
+    ret = Array.wrap(@repository.re3_repo&.additional_names).map { |name|
+      name.text
+    }
+    ret += Array.wrap(@repository.client_repo&.alternate_name)
+    ret.uniq
+  end
+
   def description
     @repository.client_repo&.description || @repository.re3_repo&.description
   end
@@ -75,8 +91,8 @@ class ReferenceRepositoryDenormalizer
   end
 
   def pid_system
-    ret = Array.wrap(@repository.re3_repo&.pid_systems).map { |k| k.text }
-    ret += Array.wrap(@repository.client_id.nil? ? nil : "DOI")
+    ret = Array.wrap(@repository.re3_repo&.pid_systems).map { |k| k.text.downcase }
+    ret += Array.wrap(@repository.client_id.nil? ? nil : "doi")
     ret.uniq
   end
 
@@ -104,19 +120,30 @@ class ReferenceRepositoryDenormalizer
 
   def software
     ret = Array.wrap(@repository.re3_repo&.software).map { |k| k.name }
+    ret += Array.wrap(@repository.client_repo&.software)
     ret.uniq
   end
 
   def data_access
-    Array.wrap(@repository.re3_repo&.data_accesses).map { |k| k.type }
+    Array.wrap(@repository.re3_repo&.data_accesses).map { |k|
+      {
+          type: k.type,
+          restrictions: Array.wrap(k.restrictions).map { |r| r.text }
+      }
+    }
   end
 
   def data_upload
-    Array.wrap(@repository.re3_repo&.data_uploads).map { |k| k.type }
+    Array.wrap(@repository.re3_repo&.data_uploads).map { |k|
+      {
+          type: k.type,
+          restrictions: Array.wrap(k.restrictions).map { |r| r.text }
+      }
+    }
   end
 
   def provider_type
-    Array.wrap(@repository.re3_repo&.provider_type).map { |k| k.text }
+    Array.wrap(@repository.re3_repo&.provider_types).map { |k| k.text }
   end
 
   def repository_type
@@ -124,6 +151,49 @@ class ReferenceRepositoryDenormalizer
   end
 
   def subject
-    Array.wrap(@repository.re3_repo&.subjects).map { |k| k.text }
+    Array.wrap(@repository.re3_repo&.subjects).map { |k|
+      id, text = k.text.split(" ", 2)
+      {
+          id: id,
+          text: text,
+          scheme: k.scheme
+      }
+    }
+  end
+
+  def year
+    created_at&.year
+  end
+
+  def updated_at
+    [client_updated_at, re3_updated_at].compact.min
+  end
+
+  def created_at
+    [client_created_at, re3_created_at].compact.min
+  end
+
+  def re3_created_at
+    @repository.re3_repo&.created&.to_time(:utc)
+  end
+
+  def re3_updated_at
+    @repository.re3_repo&.updated&.to_time(:utc)
+  end
+
+  def client_created_at
+    @repository.client_repo&.created_at
+  end
+
+  def client_updated_at
+    @repository.client_repo&.updated_at
+  end
+
+  def provider_id
+    @repository.client_repo&.provider_id
+  end
+
+  def provider_id_and_name
+    @repository.client_repo&.provider_id_and_name
   end
 end

@@ -147,7 +147,7 @@ describe MemberType do
 
   describe "find member", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "TESTC") }
-    let(:client) { create(:client, provider: provider, software: "dataverse") }
+    let!(:client) { create(:client, provider: provider, software: "dataverse") }
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:prefix) { create(:prefix) }
     let!(:provider_prefixes) do
@@ -158,6 +158,7 @@ describe MemberType do
       Provider.import
       Client.import
       Doi.import
+      ReferenceRepository.import
       Prefix.import
       ProviderPrefix.import
       sleep 3
@@ -188,12 +189,9 @@ describe MemberType do
               count
             }
             nodes {
-              id
+              clientId
               name
               software
-              datasets {
-                totalCount
-              }
             }
           }
           prefixes {
@@ -235,10 +233,9 @@ describe MemberType do
         response.dig("data", "member", "repositories", "nodes").length,
       ).to eq(1)
       repository1 = response.dig("data", "member", "repositories", "nodes", 0)
-      expect(repository1.fetch("id")).to eq(client.uid)
+      expect(repository1.fetch("clientId")).to eq(client.uid)
       expect(repository1.fetch("name")).to eq(client.name)
-      expect(repository1.fetch("software")).to eq("dataverse")
-      expect(repository1.dig("datasets", "totalCount")).to eq(1)
+      expect(repository1.fetch("software")).to eq(["dataverse"])
 
       expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
       expect(response.dig("data", "member", "prefixes", "years")).to eq(

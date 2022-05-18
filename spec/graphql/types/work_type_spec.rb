@@ -27,9 +27,13 @@ describe WorkType do
         },
       )
     end
+    let!(:repository) do
+      create(:reference_repository, client_id: work.client.symbol)
+    end
 
     before do
       Doi.import
+      ReferenceRepository.import
       sleep 2
     end
 
@@ -40,7 +44,7 @@ describe WorkType do
       }\") {
           id
           repository {
-            id
+            clientId
             type
             name
           }
@@ -63,7 +67,6 @@ describe WorkType do
 
     it "returns work" do
       response = LupoSchema.execute(query).as_json
-
       expect(response.dig("data", "work", "id")).to eq(
         "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
@@ -72,8 +75,8 @@ describe WorkType do
         "identifierType" => "ISSN",
         "title" => "Inorganica Chimica Acta",
       )
-      expect(response.dig("data", "work", "repository", "id")).to eq(
-        work.client_id,
+      expect(response.dig("data", "work", "repository", "clientId")).to eq(
+        work.client.uid,
       )
       expect(response.dig("data", "work", "repository", "name")).to eq(
         work.client.name,
@@ -278,7 +281,7 @@ describe WorkType do
         work(id: \"https://doi.org/10.14454/xxx\") {
           id
           repository {
-            id
+            clientId
             type
             name
           }

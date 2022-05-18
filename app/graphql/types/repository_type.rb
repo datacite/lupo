@@ -1,46 +1,84 @@
+
 # frozen_string_literal: true
 
 class RepositoryType < BaseObject
   description "Information about repositories"
-
-  field :id,
+  field :uid,
         ID,
         null: false,
-        hash_key: "uid",
         description: "Unique identifier for each repository"
-  field :type, String, null: false, description: "The type of the item."
-  field :re3data_id,
-        ID,
-        null: true, description: "The re3data identifier for the repository"
-  field :re3data,
-        DataCatalogType,
-        null: true, description: "The re3data DataCatalog"
-  field :name, String, null: false, description: "Repository name"
-  field :alternate_name,
+  field :type,
         String,
-        null: true, description: "Repository alternate name"
+        null: false,
+        description: "The type of the item."
+  field :client_id,
+        ID,
+        null: true,
+        description: "The unique identifier for the client repository"
+  field :re3data_doi,
+        ID,
+        hash_key: "re3doi",
+        null: true, description: "The re3data doi for the repository"
+  field :name,
+        String,
+        null: false,
+        description: "Repository name"
+  field :alternate_name,
+        [String],
+        null: true,
+        description: "Repository alternate names"
   field :description,
         String,
-        null: true, description: "Description of the repository"
-  field :url, Url, null: true, description: "The homepage of the repository"
-  field :software,
-        String,
         null: true,
-        description:
-          "The name of the software that is used to run the repository"
-  field :client_type,
-        String,
-        null: true, description: "The client type (repository or periodical)"
+        description: "Description of the repository"
+  field :url,
+        Url,
+        null: true,
+        description: "The homepage of the repository"
+  field :re3data_url,
+        Url,
+        null: true,
+        description: "URL of the data catalog."
+  field :software,
+        [String],
+        null: true,
+        description: "The name of the software that is used to run the repository"
   field :repository_type,
         [String],
-        null: true, description: "The repository type(s)"
+        null: true,
+        description: "The repository type(s)"
   field :certificate,
         [String],
-        null: true, description: "The certificate(s) for the repository"
+        null: true,
+        description: "The certificate(s) for the repository"
   field :language,
         [String],
-        null: true, description: "The langauge of the repository"
-  field :issn, IssnType, null: true, description: "The ISSN"
+        null: true,
+        description: "The language of the repository"
+  field :provider_type,
+        [String],
+        null: true,
+        description: "The type(s) of Provider"
+  field :pid_system,
+        [String],
+        null: true,
+        description: "PID Systems"
+  field :data_access,
+        [TextRestrictionType],
+        null: true,
+        description: "Data accesses"
+  field :data_upload,
+        [TextRestrictionType],
+        null: true,
+        description: "Data uploads"
+  field :subject,
+        [DefinedTermType],
+        null: true,
+        description: "Subject areas covered by the data catalog."
+  field :contact,
+        [String],
+        null: true,
+        description: "Repository contact information"
 
   field :view_count,
         Integer,
@@ -54,7 +92,40 @@ class RepositoryType < BaseObject
           "The number of downloads according to the Counter Code of Practice."
   field :citation_count,
         Integer,
-        null: true, description: "The number of citations."
+        null: true,
+        description: "The number of citations."
+
+  field :works,
+        WorkConnectionWithTotalType,
+        null: true,
+        description: "Works managed by the repository" do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :resource_type, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_member, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
 
   field :datasets,
         DatasetConnectionWithTotalType,
@@ -176,37 +247,6 @@ class RepositoryType < BaseObject
     argument :after, String, required: false
   end
 
-  field :works,
-        WorkConnectionWithTotalType,
-        null: true, description: "Works managed by the repository" do
-    argument :query, String, required: false
-    argument :ids, String, required: false
-    argument :published, String, required: false
-    argument :user_id, String, required: false
-    argument :member_id, String, required: false
-    argument :registration_agency, String, required: false
-    argument :funder_id, String, required: false
-    argument :affiliation_id, String, required: false
-    argument :organization_id, String, required: false
-    argument :resource_type_id, String, required: false
-    argument :resource_type, String, required: false
-    argument :license, String, required: false
-    argument :language, String, required: false
-    argument :has_person, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
-    argument :has_funder, Boolean, required: false
-    argument :has_citations, Int, required: false
-    argument :has_parts, Int, required: false
-    argument :has_versions, Int, required: false
-    argument :has_views, Int, required: false
-    argument :has_downloads, Int, required: false
-    argument :field_of_science, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
-  end
-
   field :prefixes,
         RepositoryPrefixConnectionWithTotalType,
         null: true, description: "Prefixes managed by the repository" do
@@ -221,14 +261,17 @@ class RepositoryType < BaseObject
     "Repository"
   end
 
-  def re3data(**args)
-    DataCatalog.find_by_id(object.re3data_id).fetch(:data, []).first
+  def works(**args)
+    ElasticsearchModelResponseConnection.new(
+      dois(args),
+      context: context, first: args[:first], after: args[:after],
+    )
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      dois(args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -236,7 +279,7 @@ class RepositoryType < BaseObject
   def publications(**args)
     args[:resource_type_id] = "Text"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      dois(args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -244,7 +287,7 @@ class RepositoryType < BaseObject
   def softwares(**args)
     args[:resource_type_id] = "Software"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      dois(args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -253,14 +296,7 @@ class RepositoryType < BaseObject
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
     ElasticsearchModelResponseConnection.new(
-      response(args),
-      context: context, first: args[:first], after: args[:after],
-    )
-  end
-
-  def works(**args)
-    ElasticsearchModelResponseConnection.new(
-      response(args),
+      dois(args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -269,7 +305,7 @@ class RepositoryType < BaseObject
     response =
       ClientPrefix.query(
         args[:query],
-        client_id: object.uid,
+        client_id: object.client_id,
         state: args[:state],
         year: args[:year],
         page: { number: 1, size: args[:first] },
@@ -282,28 +318,41 @@ class RepositoryType < BaseObject
 
   def view_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = dois(args) if @r.nil?
     @r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = dois(args) if @r.nil?
     @r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = dois(args) if @r.nil?
     @r.response.aggregations.citation_count.value.to_i
   end
 
-  def response(**args)
+  def dois(**args)
+    rr_query_parts = []
+    if object.client_id
+      rr_query_parts << "client_id:#{object.client_id}"
+    end
+    if object.re3doi
+      rr_query_parts << "re3data_id:#{object.re3doi}"
+    end
+    rr_query_scope = rr_query_parts.join(" OR ")
+    if args[:query].present?
+      query = args.fetch(:query, "") + " AND (#{rr_query_scope})"
+    else
+      query = rr_query_scope
+    end
+
     Doi.gql_query(
-      args[:query],
+      query,
       funder_id: args[:funder_id],
       user_id: args[:user_id],
-      client_id: object.uid,
       provider_id: args[:member_id],
       affiliation_id: args[:affiliation_id],
       organization_id: args[:organization_id],

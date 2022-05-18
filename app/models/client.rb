@@ -90,6 +90,9 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_create_commit :create_reference_repository
+  after_update_commit :update_reference_repository
+  after_destroy_commit :destroy_reference_repository
 
   # use different index for testing
   if Rails.env.test?
@@ -911,5 +914,17 @@ class Client < ApplicationRecord
       self.role_name = "ROLE_DATACENTRE" if role_name.blank?
       self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
       self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+    end
+
+    def create_reference_repository
+      ReferenceRepository.create_from_client(self)
+    end
+
+    def update_reference_repository
+      ReferenceRepository.update_from_client(self)
+    end
+
+    def destroy_reference_repository
+      ReferenceRepository.destroy_from_client(self)
     end
 end

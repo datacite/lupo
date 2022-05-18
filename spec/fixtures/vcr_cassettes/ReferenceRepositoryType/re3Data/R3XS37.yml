@@ -1,0 +1,99 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/re3data/10.17616/r3xs37
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 Apr 2022 02:29:21 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"4779b1c8cb81d39142cef21ab1d60307"
+      X-Runtime:
+      - '0.256979'
+      X-Request-Id:
+      - c4a4582b-0085-489d-8908-5cba76bd788a
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Content-Encoding:
+      - gzip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: null
+  recorded_at: Thu, 07 Apr 2022 02:28:41 GMT
+- request:
+    method: get
+    uri: https://api.datacite.org/re3data/10.17616/r3xs37
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 07 Apr 2022 02:29:21 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"4779b1c8cb81d39142cef21ab1d60307"
+      X-Runtime:
+      - '0.202030'
+      X-Request-Id:
+      - 3ce445cd-18db-4579-8d57-dd4ed9e384b8
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Content-Encoding:
+      - gzip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: null
+  recorded_at: Thu, 07 Apr 2022 02:28:41 GMT
+recorded_with: VCR 5.1.0
