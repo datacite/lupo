@@ -51,6 +51,10 @@ class RepositoryType < BaseObject
         [String],
         null: true,
         description: "The certificate(s) for the repository"
+  field :keyword,
+        [String],
+        null: true,
+        description: "The language of the repository"
   field :language,
         [String],
         null: true,
@@ -259,6 +263,16 @@ class RepositoryType < BaseObject
 
   def type
     "Repository"
+  end
+
+  def subject
+    Array.wrap(object.subject).map { |sub|
+      {
+        term_code: sub.id,
+        name: sub.text,
+        in_defined_term_set: sub.scheme
+      }
+    }
   end
 
   def works(**args)

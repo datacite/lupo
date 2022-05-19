@@ -25,6 +25,7 @@ describe RepositoryType do
     it { is_expected.to have_field(:dataAccess).of_type("[TextRestriction!]") }
     it { is_expected.to have_field(:dataUpload).of_type("[TextRestriction!]") }
     it { is_expected.to have_field(:contact).of_type("[String!]") }
+    it { is_expected.to have_field(:keyword).of_type("[String!]") }
     it { is_expected.to have_field(:subject).of_type("[DefinedTerm!]") }
 
     it { is_expected.to have_field(:viewCount).of_type("Int") }
@@ -294,6 +295,10 @@ describe RepositoryType do
             providerType
             contact
             pidSystem
+            subject {
+              termCode
+              name
+            }
             dataAccess {
              restriction { text }
              type
@@ -394,6 +399,30 @@ describe RepositoryType do
       expect(@repo.fetch("software")).to eq(
         [
           "DataVerse"
+        ]
+      )
+    end
+
+    it "returns list of subjects" do
+      expect(@repo.fetch("subject")).to match_array(
+        [
+          {"termCode"=>"1", "name"=>"Humanities and Social Sciences"},
+          {"termCode"=>"111", "name"=>"Social Sciences"},
+          {"termCode"=>"11104", "name"=>"Political Science"},
+          {"termCode"=>"112", "name"=>"Economics"},
+          {"termCode"=>"11205", "name"=>"Statistics and Econometrics"},
+          {"termCode"=>"12", "name"=>"Social and Behavioural Sciences"},
+          {"termCode"=>"2", "name"=>"Life Sciences"},
+          {"termCode"=>"205", "name"=>"Medicine"},
+          {
+            "termCode"=>"20502",
+            "name"=>"Public Health, Health Services Research, Social Medicine"
+          },
+          {"termCode"=>"22", "name"=>"Medicine"},
+          {"termCode"=>"3", "name"=>"Natural Sciences"},
+          {"termCode"=>"314", "name"=>"Geology and Palaeontology"},
+          {"termCode"=>"31401", "name"=>"Geology and Palaeontology"},
+          {"termCode"=>"34", "name"=>"Geosciences (including Geography)"}
         ]
       )
     end
