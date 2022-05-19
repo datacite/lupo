@@ -406,23 +406,23 @@ describe RepositoryType do
     it "returns list of subjects" do
       expect(@repo.fetch("subject")).to match_array(
         [
-          {"termCode"=>"1", "name"=>"Humanities and Social Sciences"},
-          {"termCode"=>"111", "name"=>"Social Sciences"},
-          {"termCode"=>"11104", "name"=>"Political Science"},
-          {"termCode"=>"112", "name"=>"Economics"},
-          {"termCode"=>"11205", "name"=>"Statistics and Econometrics"},
-          {"termCode"=>"12", "name"=>"Social and Behavioural Sciences"},
-          {"termCode"=>"2", "name"=>"Life Sciences"},
-          {"termCode"=>"205", "name"=>"Medicine"},
+          { "termCode" => "1", "name" => "Humanities and Social Sciences" },
+          { "termCode" => "111", "name" => "Social Sciences" },
+          { "termCode" => "11104", "name" => "Political Science" },
+          { "termCode" => "112", "name" => "Economics" },
+          { "termCode" => "11205", "name" => "Statistics and Econometrics" },
+          { "termCode" => "12", "name" => "Social and Behavioural Sciences" },
+          { "termCode" => "2", "name" => "Life Sciences" },
+          { "termCode" => "205", "name" => "Medicine" },
           {
-            "termCode"=>"20502",
-            "name"=>"Public Health, Health Services Research, Social Medicine"
+            "termCode" => "20502",
+            "name" => "Public Health, Health Services Research, Social Medicine"
           },
-          {"termCode"=>"22", "name"=>"Medicine"},
-          {"termCode"=>"3", "name"=>"Natural Sciences"},
-          {"termCode"=>"314", "name"=>"Geology and Palaeontology"},
-          {"termCode"=>"31401", "name"=>"Geology and Palaeontology"},
-          {"termCode"=>"34", "name"=>"Geosciences (including Geography)"}
+          { "termCode" => "22", "name" => "Medicine" },
+          { "termCode" => "3", "name" => "Natural Sciences" },
+          { "termCode" => "314", "name" => "Geology and Palaeontology" },
+          { "termCode" => "31401", "name" => "Geology and Palaeontology" },
+          { "termCode" => "34", "name" => "Geosciences (including Geography)" }
         ]
       )
     end
