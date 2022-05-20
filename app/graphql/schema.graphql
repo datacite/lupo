@@ -8691,6 +8691,11 @@ type Repository {
   """
   The language of the repository
   """
+  keyword: [String!]
+
+  """
+  The language of the repository
+  """
   language: [String!]
 
   """
