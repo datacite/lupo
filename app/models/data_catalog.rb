@@ -41,7 +41,7 @@ class DataCatalog
 
     url = "https://api.datacite.org/re3data?" + URI.encode_www_form(params)
 
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, host: true, skip_encoding: true)
 
     return [] if response.status != 200
 
