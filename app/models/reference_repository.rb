@@ -5,6 +5,8 @@ class ReferenceRepository < ApplicationRecord
   include Elasticsearch::Model
   include Elasticsearch::Model::Callbacks
   include Hashid::Rails
+  hashid_config alphabet: "abcdefghijklmnopqrstuvwxyz" \
+    "1234567890"
 
   before_save :downcase_fields
   before_save :force_index
