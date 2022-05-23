@@ -391,6 +391,9 @@ module DoiItem
   end
 
   def repository
+    if object.client.blank?
+      return nil
+    end
     ReferenceRepository.find_by_id(object.client.uid).first
   end
 
