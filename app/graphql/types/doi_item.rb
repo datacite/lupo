@@ -391,7 +391,10 @@ module DoiItem
   end
 
   def repository
-    ReferenceRepository.find_by_id(object.client.symbol).first
+    if object.client.blank?
+      return nil
+    end
+    ReferenceRepository.find_by_id(object.client.uid).first
   end
 
   def rights
