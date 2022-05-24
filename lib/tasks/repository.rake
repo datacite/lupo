@@ -4,7 +4,7 @@ namespace :repository do
   desc "Load all Clients into Reference Repostories"
   task load_client_repos: :environment do
     puts "Processing Client Repositories"
-    Client.all.each do |c|
+    Client.where(deleted_at: nil).each do |c|
       ReferenceRepository.create_from_client(c)
     end
   end
