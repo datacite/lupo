@@ -74,7 +74,7 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
-gem "mimemagic", "0.3.7"
+gem "mimemagic", "0.3.10"
 
 group :development, :test do
   gem "better_errors"
