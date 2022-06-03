@@ -102,8 +102,14 @@ class ReferenceRepository < ApplicationRecord
       indexes :client_id
       indexes :re3doi
       indexes :re3data_url
-      indexes :created_at, type: :date, format: :date_optional_time
-      indexes :updated_at, type: :date, format: :date_optional_time
+      indexes :created_at, type: :date, format: :date_optional_time,
+        fields: {
+          created_sort: { type: :date }
+        }
+      indexes :updated_at, type: :date, format: :date_optional_time,
+        fields: {
+          updated_sort: { type: :date }
+        }
       indexes :name
       indexes :alternate_name
       indexes :description
@@ -273,7 +279,7 @@ class ReferenceRepository < ApplicationRecord
       def sort_fields
         [
           { _score: { order: "desc" } },
-          { created_at: { order: "asc" } },
+          { "created_at.created_sort": { order: "asc" } },
           { "uid.raw": { order: "asc" } },
         ]
       end
