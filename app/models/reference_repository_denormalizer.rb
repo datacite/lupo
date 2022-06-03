@@ -58,14 +58,6 @@ class ReferenceRepositoryDenormalizer
     @repository.re3doi
   end
 
-  def created_at
-    @repository.created_at
-  end
-
-  def updated_at
-    @repository.updated_at
-  end
-
   def name
     @repository.client_repo&.name || @repository.re3_repo&.name
   end

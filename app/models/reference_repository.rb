@@ -95,7 +95,10 @@ class ReferenceRepository < ApplicationRecord
   settings index: { number_of_shards: 1 } do
     mapping dynamic: "false" do
       indexes :id
-      indexes :uid
+      indexes :uid, type: :text,
+          fields: {
+            raw: { type: :keyword }
+          }
       indexes :client_id
       indexes :re3doi
       indexes :re3data_url
@@ -198,6 +201,7 @@ class ReferenceRepository < ApplicationRecord
       ]
     end
 
+
     def find_by_id(ids, options = {})
       ids = ids.split(",") if ids.is_a?(String)
       ids = ids.map { |id| id.gsub("10.17616\/", "") }
@@ -205,12 +209,12 @@ class ReferenceRepository < ApplicationRecord
       options[:page][:number] ||= 1
       options[:page][:size] ||= 2_000
 
-      options[:sort] ||= { _score: { order: "asc" } }
+      options[:sort] ||= sort_fields
 
       __elasticsearch__.search(
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
         size: options.dig(:page, :size),
-        sort: [options[:sort]],
+        sort: options[:sort],
         track_total_hits: true,
         query: {
           query_string: {
@@ -236,24 +240,13 @@ class ReferenceRepository < ApplicationRecord
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25
-      options[:sort] ||= { _score: { order: "asc" } }
-
-      if options.fetch(:page, {}).key?(:cursor)
-        cursor = [0]
-        if options.dig(:page, :cursor).is_a?(Array)
-          timestamp, uid = options.dig(:page, :cursor)
-          cursor = [timestamp.to_i, uid.to_s]
-        elsif options.dig(:page, :cursor).is_a?(String)
-          timestamp, uid = options.dig(:page, :cursor).split(",")
-          cursor = [timestamp.to_i, uid.to_s]
-        end
-
-        search_after = cursor
+      options[:sort] ||= sort_fields
+      if !options.dig(:page, :cursor).blank?
         __elasticsearch__.search(
           {
             size: options.dig(:page, :size),
-            search_after: search_after,
-            sort: [options[:sort]],
+            search_after: search_after(options),
+            sort: options[:sort],
             query: es_query(query, options),
             aggregations: query_aggregations,
             track_total_hits: true,
@@ -267,7 +260,7 @@ class ReferenceRepository < ApplicationRecord
           {
             size: options.dig(:page, :size),
             from: from,
-            sort: [options[:sort]],
+            sort: options[:sort],
             query: es_query(query, options),
             aggregations: query_aggregations,
             track_total_hits: true,
@@ -277,6 +270,20 @@ class ReferenceRepository < ApplicationRecord
     end
 
     private
+      def sort_fields
+        [
+          { _score: { order: "desc" } },
+          { created_at: { order: "asc" } },
+          { "uid.raw": { order: "asc" } },
+        ]
+      end
+
+      def search_after(options)
+        if options.dig(:page, :cursor).is_a?(String)
+          options.dig(:page, :cursor).split(",")
+        end
+      end
+
       def must(query)
         if query.present?
           [{

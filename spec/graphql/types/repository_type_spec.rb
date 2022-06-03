@@ -74,9 +74,10 @@ describe RepositoryType do
             $hasPid: String
             $subject: String
             $subjectId: String
+            $cursor: String
           ){
           repositories(
-              first: 10,
+              first: 4,
               query: $query,
               certificate: $certificate,
               software: $software,
@@ -86,7 +87,8 @@ describe RepositoryType do
               isDisciplinary: $isDisciplinary,
               isCertified: $isCertified,
               hasPid: $hasPid,
-              repositoryType: $repositoryType
+              repositoryType: $repositoryType,
+              after: $cursor
             ) {
             nodes {
               uid
@@ -278,6 +280,33 @@ describe RepositoryType do
           }
       ).as_json
       expect(response.dig("data", "repositories", "totalCount")).to eq(4)
+    end
+
+    it "uses the cursor to continue searching" do
+      response = LupoSchema.execute(
+        search_query,
+          variables: {
+          }
+      ).as_json
+      expect(response.dig("data",
+                           "repositories",
+                           "pageInfo",
+                           "hasNextPage")).to eq(true)
+      end_cursor = response.dig("data",
+                                "repositories",
+                                "pageInfo",
+                                "endCursor")
+      second_response = LupoSchema.execute(
+        search_query,
+          variables: {
+            cursor: end_cursor
+          }
+      ).as_json
+      expect(second_response.dig("data",
+                                 "repositories",
+                                 "nodes",
+                                 0,
+                                 "re3dataDoi")).to eq("10.17616/r3bw5r")
     end
   end
 
