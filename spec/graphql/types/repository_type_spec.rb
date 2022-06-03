@@ -344,6 +344,7 @@ describe RepositoryType do
           }
 
       }"
+      ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3BW5R") do
         @ref_repo2 = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       end
