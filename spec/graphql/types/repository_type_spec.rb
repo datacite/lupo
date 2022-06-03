@@ -471,10 +471,10 @@ describe RepositoryType do
     end
 
     before :all do
+      ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
         @client = create(:client)
         @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
-        ReferenceRepository.import
         sleep 2
       end
     end
