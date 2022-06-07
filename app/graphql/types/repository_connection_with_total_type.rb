@@ -28,7 +28,7 @@ class RepositoryConnectionWithTotalType < BaseConnection
   end
 
   def certificates
-    facet_by_key(object.aggregations.certificates.buckets)
+    facet_by_key_raw(object.aggregations.certificates.buckets)
   end
 
   def members

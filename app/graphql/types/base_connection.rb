@@ -89,6 +89,16 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     end
   end
 
+  def facet_by_key_raw(arr)
+    arr.map do |hsh|
+      {
+        "id" => hsh["key"],
+        "title" => hsh["key"],
+        "count" => hsh["doc_count"],
+      }
+    end
+  end
+
   def facet_by_bool(arr)
     arr.map do |hsh|
       id = hsh["key"] == 1 ? "true" : "false"
