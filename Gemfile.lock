@@ -284,7 +284,7 @@ GEM
     i18n_data (0.8.0)
     iso-639 (0.3.5)
     iso8601 (0.9.1)
-    jmespath (1.4.0)
+    jmespath (1.6.1)
     json (2.5.1)
     json-canonicalization (0.3.0)
     json-ld (3.2.1)
