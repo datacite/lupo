@@ -79,11 +79,12 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     end
   end
 
-  def facet_by_key(arr)
+  def facet_by_key(arr, title_case: true)
     arr.map do |hsh|
+      title = title_case ? hsh["key"].titleize : hsh["key"]
       {
         "id" => hsh["key"],
-        "title" => hsh["key"].titleize,
+        "title" => title,
         "count" => hsh["doc_count"],
       }
     end

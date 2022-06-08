@@ -92,7 +92,24 @@ class ReferenceRepository < ApplicationRecord
     ReferenceRepositoryDenormalizer.new(self).to_hash
   end
 
-  settings index: { number_of_shards: 1 } do
+  settings index: {
+    number_of_shards: 1,
+    analysis: {
+      analyzer: {
+        string_lowercase: {
+          tokenizer: "keyword", filter: %w[lowercase ascii_folding]
+        },
+      },
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w[lowercase] },
+      },
+      filter: {
+        ascii_folding: {
+          type: "asciifolding", preserve_original: true
+        },
+      },
+    },
+  } do
     mapping dynamic: "false" do
       indexes :id
       indexes :uid, type: :text,
@@ -132,7 +149,14 @@ class ReferenceRepository < ApplicationRecord
       indexes :provider_type, type: :keyword
       indexes :repository_type, type: :keyword
       indexes :data_upload_licenses, type: :keyword
-      indexes :software, type: :keyword
+      indexes :software,
+              type: :text,
+              fields: {
+                keyword: { type: "keyword" },
+                raw: {
+                  type: "text", analyzer: "string_lowercase", "fielddata": true
+                },
+              }
       indexes :subject, type: :object,
           properties: {
               text: { type: :keyword },
@@ -169,7 +193,7 @@ class ReferenceRepository < ApplicationRecord
           },
           software: {
             terms: {
-              field: "software",
+              field: "software.keyword",
               size: facet_count,
               min_doc_count: 1
             },
@@ -315,7 +339,7 @@ class ReferenceRepository < ApplicationRecord
         end
         if options[:software].present?
           retval << { terms: {
-            "software": options[:software].split(",")
+            "software.raw": options[:software].split(",")
           } }
         end
         if options[:certificate].present?

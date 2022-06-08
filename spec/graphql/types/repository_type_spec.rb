@@ -159,9 +159,9 @@ describe RepositoryType do
       expect(
         response.dig("data", "repositories", "certificates"),
       ).to eq([
-        { "count" => 4, "id" => "CoreTrustSeal", "title" => "Core Trust Seal" },
-        { "count" => 1, "id" => "DINI Certificate", "title" => "Dini Certificate" },
-        { "count" => 1, "id" => "DSA", "title" => "Dsa" }
+        { "count" => 4, "id" => "CoreTrustSeal", "title" => "CoreTrustSeal" },
+        { "count" => 1, "id" => "DINI Certificate", "title" => "DINI Certificate" },
+        { "count" => 1, "id" => "DSA", "title" => "DSA" }
       ])
     end
 
@@ -203,7 +203,7 @@ describe RepositoryType do
     it "filters based on software" do
       response = LupoSchema.execute(
         search_query,
-        variables: { software: "DataVerse" }
+        variables: { software: "dataverse" }
       ).as_json
       expect(response.dig("data", "repositories", "totalCount")).to eq(2)
     end
