@@ -52,6 +52,9 @@ class ReferenceRepository < ApplicationRecord
     rr = ReferenceRepository.find_or_create_by(client_id: client.uid)
     if client.re3data_id && (not rr.re3doi)
       rr.re3doi = client.re3data_id
+      if !rr.validate
+        ReferenceRepository.find_by(re3doi: client.re3data_id, client_id: nil).try(:destroy)
+      end
       rr.save
     else
       rr.touch
