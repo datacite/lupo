@@ -409,8 +409,8 @@ module Facetable
 
     def facet_by_authors(arr)
       arr.map { |hsh|
-        orcid_id = hsh["key"]
-        
+        orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
+
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
         creators = hsh.dig("authors", "hits", "hits")[0].dig("_source", "creators")

@@ -48,11 +48,6 @@ describe "Facetable", type: :controller do
             "count" => 4,
         },
         {
-            "id" => "https://osf.io/8kzbu/",
-            "title" => "Gomeseria, Ronald",
-            "count" => 4,
-        },
-        {
             "id" => "https://orcid.org/0000-0002-2149-9897",
             "title" => "A, Subaveerapandiyan",
             "count" => 3,
@@ -62,11 +57,6 @@ describe "Facetable", type: :controller do
             "title" => "Puntiroli, Michael",
             "count" => 3,
         },
-        {
-            "id" => "https://osf.io/cjhmz/",
-            "title" => "Puntiroli, Michael",
-            "count" => 3,
-        }
         ]
       expect(authors).to eq (expected_result)
     end
