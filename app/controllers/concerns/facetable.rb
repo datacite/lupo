@@ -408,9 +408,9 @@ module Facetable
     end
 
     def facet_by_authors(arr)
-      arr.map do |hsh|
+      arr.map { |hsh|
         orcid_id = hsh["key"]
-
+        
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
         creators = hsh.dig("authors", "hits", "hits")[0].dig("_source", "creators")
@@ -418,20 +418,20 @@ module Facetable
         # Filter through creators to find creator that matches the key
         matched_creator = creators.select do |creator|
           if creator.key?("nameIdentifiers")
-            creator["nameIdentifiers"].each do |ni|
-              break ni["nameIdentifier"] == orcid_id
-            end
+            creator["nameIdentifiers"].any? { |ni| ni["nameIdentifier"] == orcid_id }
           end
         end
 
-        title = matched_creator[0]["name"]
+        if matched_creator.any?
+          title = matched_creator[0]["name"]
 
-        {
-          "id" => orcid_id,
-          "title" => title,
-          "count" => hsh["doc_count"],
-        }
-      end
+          {
+            "id" => orcid_id,
+            "title" => title,
+            "count" => hsh["doc_count"],
+          }
+        end
+      }.compact
     end
   end
 end
