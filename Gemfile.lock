@@ -192,7 +192,7 @@ GEM
       mysql2 (>= 0.4.0, <= 0.5.3)
       railties (>= 5.2.0, <= 6.1)
     diff-lcs (1.4.4)
-    diffy (3.4.0)
+    diffy (3.4.1)
     docile (1.4.0)
     docopt (0.6.1)
     domain_name (0.5.20190701)
@@ -646,7 +646,7 @@ DEPENDENCIES
   database_cleaner
   ddtrace (~> 0.32.0)
   departure (~> 6.2)
-  diffy (~> 3.2, >= 3.2.1)
+  diffy (~> 3.4)
   dotenv
   elasticsearch (= 7.5)
   elasticsearch-extensions (~> 0.0.29)
