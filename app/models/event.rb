@@ -86,10 +86,10 @@ class Event < ApplicationRecord
   ].freeze
 
   # renamed to make it clearer that these relation types are grouped together as references
-  REFERENCE_RELATION_TYPES = %w[cites is-supplement-to references].freeze
+  REFERENCE_RELATION_TYPES = %w[cites is-supplemented-by references].freeze
 
   # renamed to make it clearer that these relation types are grouped together as citations
-  CITATION_RELATION_TYPES = %w[is-cited-by is-supplemented-by is-referenced-by].freeze
+  CITATION_RELATION_TYPES = %w[is-cited-by is-supplement-to is-referenced-by].freeze
 
   RELATIONS_RELATION_TYPES = %w[
     compiles
