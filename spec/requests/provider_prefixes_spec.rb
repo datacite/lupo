@@ -117,10 +117,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       get "/provider-prefixes", nil, headers
       self_link_absolute = Addressable::URI.parse(json.dig("links", "self"))
       expect(self_link_absolute.path).to eq("/provider-prefixes")
-
-      next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
-      next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/provider-prefixes?page%5Bnumber%5D=2&page%5Bsize%5D=25")
+      expect(json.dig("links", "next")).to be_nil
     end
   end
 
