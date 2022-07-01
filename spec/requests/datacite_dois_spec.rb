@@ -88,6 +88,34 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("links", "next")).to be_nil
     end
 
+    it "returns correct page links when results is exactly divisible by page size" do
+      get "/dois?page[number]=1&page[size]=5", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
+      expect(json.dig("meta", "total")).to eq(10)
+      next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=5")
+
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
+      expect(json.dig("meta", "total")).to eq(10)
+      expect(json.dig("links", "next")).to be_nil
+    end
+
+    it "returns a blank resultset when page is above max page" do
+      get "/dois?page[number]=3&page[size]=5", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(0)
+      expect(json.dig("meta", "totalPages")).to eq(2)
+      expect(json.dig("meta", "page")).to eq(3)
+      expect(json.dig("links", "next")).to be_nil
+    end
+
     it "returns dois with cursor" do
       get "/dois?page[cursor]&page[size]=4", nil, headers
 
