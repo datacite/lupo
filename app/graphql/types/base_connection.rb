@@ -204,7 +204,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
       if orcid_id.nil?
         next
       end
-      
+
       # The aggregation query should only return 1 hit, so hence the index
       # into first element
       creators = hsh.dig("authors", "hits", "hits")[0].dig("_source", "creators")
