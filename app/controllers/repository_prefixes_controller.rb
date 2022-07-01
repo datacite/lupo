@@ -72,7 +72,7 @@ class RepositoryPrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next:
-          if repository_prefixes.blank?
+          if repository_prefixes.blank? || page[:number] == total_pages
             nil
           else
             request.base_url + "/repository-prefixes?" +

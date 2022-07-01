@@ -74,7 +74,7 @@ class ClientPrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next:
-          if client_prefixes.blank?
+          if client_prefixes.blank? || page[:number] == total_pages
             nil
           else
             request.base_url + "/client-prefixes?" +

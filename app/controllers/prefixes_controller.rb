@@ -79,7 +79,7 @@ class PrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next:
-          if prefixes.blank?
+          if prefixes.blank? || page[:number] == total_pages
             nil
           else
             request.base_url + "/prefixes?" +

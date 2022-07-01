@@ -99,7 +99,7 @@ class RepositoriesController < ApplicationController
           options[:links] = {
             self: request.original_url,
             next:
-              if response.results.blank?
+              if response.results.blank? || page[:number] == total_pages
                 nil
               else
                 request.base_url + "/repositories?" +
