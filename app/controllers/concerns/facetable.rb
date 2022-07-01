@@ -411,6 +411,10 @@ module Facetable
       arr.map { |hsh|
         orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
 
+        if orcid_id.nil?
+          next
+        end
+
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
         creators = hsh.dig("authors", "hits", "hits")[0].dig("_source", "creators")
