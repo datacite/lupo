@@ -65,7 +65,7 @@ class ContactsController < ApplicationController
           options[:links] = {
             self: request.original_url,
             next:
-              if @contacts.blank?
+              if @contacts.blank? || page[:number] == total_pages
                 nil
               else
                 request.base_url + "/contacts?" +

@@ -300,7 +300,7 @@ class DataciteDoisController < ApplicationController
             options[:links] = {
               self: request.original_url,
               next:
-                if results.size < page[:size] || page[:size] == 0
+                if results.size < page[:size] || page[:size] == 0 || page[:number] == total_pages
                   nil
                 else
                   request.base_url + "/dois?" +

@@ -72,7 +72,7 @@ class ProviderPrefixesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next:
-          if provider_prefixes.blank?
+          if provider_prefixes.blank? || page[:number] == total_pages
             nil
           else
             request.base_url + "/provider-prefixes?" +
