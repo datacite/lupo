@@ -176,6 +176,53 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doi.dig("relationships", "provider", "data", "id")).to eq(provider.symbol.downcase)
       end
     end
+
+    it "applies field filters for a single filter" do
+      get "/dois?fields[dois]=id", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      json["data"].each do |doi|
+        expect(doi).to include("id")
+        expect(doi).to include("attributes")
+        expect(doi).to include("relationships")
+        expect(doi.dig("attributes")).to eq({})
+        expect(doi.dig("relationships")).to eq({})
+      end
+    end
+
+    it "applies field filters for multiple filters" do
+      get "/dois?fields[dois]=id,subjects", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      json["data"].each do |doi|
+        expect(doi).to include("id")
+        expect(doi).to include("attributes")
+        expect(doi).to include("relationships")
+        expect(doi.dig("attributes")).to have_key("subjects")
+        expect(doi.dig("attributes")).to_not have_key("creators")
+        expect(doi.dig("relationships")).to eq({})
+      end
+    end
+
+    it "preserves field filters in pagination links" do
+      get "/dois?fields[dois]=id&page[size]=2&page[number]=1", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/dois?fields%5Bdois%5D=id&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+
+      get "/dois?fields[dois]=id,subjects&page[size]=2&page[number]=1", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+    end
   end
 
   describe "GET /dois with query", elasticsearch: true do
