@@ -111,6 +111,7 @@ class ClientsController < ApplicationController
                 "page[number]" => page[:number] + 1,
                 "page[size]" => page[:size],
                 sort: params[:sort],
+                fields: fields_hash_from_params(params)
               }.compact.
               to_query
           end,
