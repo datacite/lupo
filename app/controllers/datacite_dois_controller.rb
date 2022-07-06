@@ -340,6 +340,7 @@ class DataciteDoisController < ApplicationController
                           page[:number] + 1
                         end,
                       "page[size]" => page[:size],
+                      fields: fields_hash_from_params(params)
                     }.compact.
                     to_query
                 end,
