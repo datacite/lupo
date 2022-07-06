@@ -1051,4 +1051,154 @@ describe WorkType do
       )
     end
   end
+
+  describe "get author aggregations when creators have multiple nameIdentifiers", elasticsearch: true do
+    let!(:work_one) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "name" => "Garza, Kristian",
+            "nameType" => "Personal",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+              {
+                "nameIdentifier" => "http://id.loc.gov/authorities/names/n90722093",
+                "nameIdentifierScheme" => "LCNAF",
+                "schemeUri" => "http://id.loc.gov/authorities/names",
+              },
+            ],
+          },
+          {
+            "familyName" => "Ross",
+            "givenName" => "Cody",
+            "name" => "Ross, Cody",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "http://id.loc.gov/authorities/names/no90016802",
+                "nameIdentifierScheme" => "LCNAF",
+                "schemeUri" => "http://id.loc.gov/authorities/names",
+              },
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0002-4684-9769",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          },
+          {
+            "name" => "Cody Ross",
+            "nameType" => "Personal",
+          },
+        ],
+      )
+    end
+
+    let!(:work_two) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "name" => "Garza, Kristian",
+            "nameType" => "Personal",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "http://id.loc.gov/authorities/names/n90722093",
+                "nameIdentifierScheme" => "LCNAF",
+                "schemeUri" => "http://id.loc.gov/authorities/names",
+              },
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          },
+          {
+            "familyName" => "Ross",
+            "givenName" => "Cody",
+            "name" => "Ross, Cody",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0002-4684-9769",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          },
+          {
+            "name" => "Cody Ross",
+            "nameType" => "Personal",
+          },
+          {
+            "name" => "Department of Psychoceramics, University of Cambridge",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh722",
+                "nameIdentifierScheme" => "ROR",
+                "schemeUri" => "https://ror.org",
+              },
+            ],
+            "nameType" => "Organizational",
+          },
+        ],
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_works) do
+      'query {
+        works(query:"") {
+          authors {
+            count
+            id
+            title
+          }
+          nodes {
+            creators {
+              id
+              name
+              givenName
+              familyName
+              affiliation {
+                id
+                name
+              }
+            }
+          }
+        }
+      }'
+    end
+
+    it "returns author aggregation that is an array of authors with ORCID nameIdentifiers" do
+      response = LupoSchema.execute(query_works).as_json
+
+      expect(response.dig("data", "works", "authors").count).to eq(2)
+
+      expect(response.dig("data", "works", "authors")).to eq(
+        [
+          {
+            "count" => 2,
+            "id" => "https://orcid.org/0000-0002-4684-9769",
+            "title" => "Ross, Cody"
+          },
+          {
+            "count" => 2,
+            "id" => "https://orcid.org/0000-0003-3484-6875",
+            "title" => "Garza, Kristian"
+          },
+        ]
+      )
+    end
+  end
 end

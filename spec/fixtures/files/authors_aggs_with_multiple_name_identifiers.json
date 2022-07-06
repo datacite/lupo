@@ -1,0 +1,393 @@
+[
+    {
+        "key": "https://orcid.org/0000-0002-0429-5446",
+        "doc_count": 28,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 28,
+                    "relation": "eq"
+                },
+                "max_score": 13.617611,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "42248746",
+                        "_score": 13.617611,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Nam, Hyung-song",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-0429-5446"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Capecchi, Mario"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0003-4973-3128",
+        "doc_count": 12,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 12,
+                    "relation": "eq"
+                },
+                "max_score": 27.93923,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "10910532",
+                        "_score": 27.93923,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Casares, Ramón",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-4973-3128"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0002-3776-4755",
+        "doc_count": 4,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 4,
+                    "relation": "eq"
+                },
+                "max_score": 35.18596,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "24003460",
+                        "_score": 35.18596,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Gomeseria, Ronald",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://osf.io/8kzbu/"
+                                        },
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-3776-4755"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0002-6014-2161",
+        "doc_count": 4,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 4,
+                    "relation": "eq"
+                },
+                "max_score": 21.385294,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "42716009",
+                        "_score": 21.385294,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Kartha, Sivan",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-6014-2161"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Holz, Christian",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-0722-1044"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Athanasiou, Tom"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0003-1026-5865",
+        "doc_count": 4,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 4,
+                    "relation": "eq"
+                },
+                "max_score": 23.381191,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "65907285",
+                        "_score": 23.381191,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Schwarz, Nina",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-4624-488X"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Martinez, Javier",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-9634-3849"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Willemen, Louise",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1026-5865"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0003-4624-488X",
+        "doc_count": 4,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 4,
+                    "relation": "eq"
+                },
+                "max_score": 23.381191,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "65907285",
+                        "_score": 23.381191,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Schwarz, Nina",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-4624-488X"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Martinez, Javier",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-9634-3849"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Willemen, Louise",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1026-5865"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://osf.io/8kzbu/",
+        "doc_count": 4,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 4,
+                    "relation": "eq"
+                },
+                "max_score": 35.18596,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "24003460",
+                        "_score": 35.18596,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Gomeseria, Ronald",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://osf.io/8kzbu/"
+                                        },
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-3776-4755"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0002-2149-9897",
+        "doc_count": 3,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 3,
+                    "relation": "eq"
+                },
+                "max_score": 27.425684,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "42238927",
+                        "_score": 27.425684,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "A, Subaveerapandiyan",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-2149-9897"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Sinha, Priyanka"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0002-4541-7294",
+        "doc_count": 3,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 3,
+                    "relation": "eq"
+                },
+                "max_score": 23.62671,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "41304522",
+                        "_score": 23.62671,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Puntiroli, Michael",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://osf.io/cjhmz/"
+                                        },
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-4541-7294"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://osf.io/cjhmz/",
+        "doc_count": 3,
+        "authors": {
+            "hits": {
+                "total": {
+                    "value": 3,
+                    "relation": "eq"
+                },
+                "max_score": 23.62671,
+                "hits": [
+                    {
+                        "_index": "dois_v1",
+                        "_type": "_doc",
+                        "_id": "41304522",
+                        "_score": 23.62671,
+                        "_source": {
+                            "creators": [
+                                {
+                                    "name": "Puntiroli, Michael",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://osf.io/cjhmz/"
+                                        },
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-4541-7294"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]
