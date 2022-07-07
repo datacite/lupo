@@ -78,7 +78,7 @@ GEM
     audited (4.10.0)
       activerecord (>= 4.2, < 6.2)
     aws-eventstream (1.2.0)
-    aws-partitions (1.602.0)
+    aws-partitions (1.603.0)
     aws-sdk-core (3.131.2)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.525.0)
@@ -219,11 +219,11 @@ GEM
     elasticsearch-extensions (0.0.33)
       ansi
       elasticsearch
-    elasticsearch-model (7.2.1)
+    elasticsearch-model (7.1.1)
       activesupport (> 3)
-      elasticsearch (~> 7)
+      elasticsearch (> 1)
       hashie
-    elasticsearch-rails (7.2.1)
+    elasticsearch-rails (7.1.1)
     elasticsearch-transport (7.5.0)
       faraday (>= 0.14, < 1)
       multi_json
@@ -386,7 +386,7 @@ GEM
     nokogiri (1.13.6)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    oj (3.13.15)
+    oj (3.13.16)
     oj_mimic_json (1.0.1)
     optimist (3.0.1)
     parallel (1.22.1)
@@ -509,7 +509,7 @@ GEM
       rspec-mocks (~> 3.9.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.4)
-    rubocop (1.31.1)
+    rubocop (1.31.2)
       json (~> 2.3)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
@@ -526,7 +526,7 @@ GEM
     rubocop-performance (1.14.2)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rails (2.15.1)
+    rubocop-rails (2.15.2)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.7.0, < 2.0)
@@ -655,8 +655,8 @@ DEPENDENCIES
   dotenv
   elasticsearch (= 7.5)
   elasticsearch-extensions (~> 0.0.29)
-  elasticsearch-model (~> 7.1, >= 7.1.1)
-  elasticsearch-rails (~> 7.1, >= 7.1.1)
+  elasticsearch-model (~> 7.1.1, >= 7.1.1)
+  elasticsearch-rails (~> 7.1.1, >= 7.1.1)
   elasticsearch-transport (= 7.5)
   equivalent-xml (~> 0.6.0)
   facets
@@ -729,4 +729,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.3.12
+   2.3.10
