@@ -1,20 +1,18 @@
-# frozen_string_literal: true
-
-#
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_18_154500) do
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+ActiveRecord::Schema.define(version: 2022_07_07_142354) do
+
+  create_table "active_storage_attachments", charset: "latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -24,7 +22,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "latin1", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -32,10 +30,17 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.bigint "byte_size", null: false
     t.string "checksum", limit: 191, null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "allocator", charset: "utf8", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
@@ -47,7 +52,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.string "symbol", null: false
     t.datetime "updated"
     t.integer "version"
-    t.text "comments", limit: 4294967295
+    t.text "comments", size: :long
     t.string "experiments"
     t.text "description"
     t.string "region"
@@ -84,7 +89,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "audits", charset: "latin1", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -106,7 +111,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "client_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "client_prefixes", charset: "utf8", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
@@ -119,7 +124,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["uid"], name: "index_client_prefixes_on_uid", length: 128
   end
 
-  create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "contacts", charset: "utf8", force: :cascade do |t|
     t.string "uid", limit: 36
     t.bigint "provider_id", null: false
     t.string "given_name"
@@ -131,8 +136,8 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.datetime "deleted_at"
   end
 
-  create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.text "comments", limit: 4294967295
+  create_table "datacentre", charset: "utf8", force: :cascade do |t|
+    t.text "comments", size: :long
     t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
@@ -170,7 +175,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
-  create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dataset", charset: "utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
@@ -211,7 +216,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.json "subjects"
     t.string "schema_version", limit: 191
     t.json "content_url"
-    t.binary "xml", limit: 16777215
+    t.binary "xml", size: :medium
     t.json "landing_page"
     t.string "agency", limit: 191, default: "datacite"
     t.string "type", limit: 16, default: "DataCiteDoi"
@@ -228,7 +233,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "events", charset: "utf8mb4", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -244,8 +249,8 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.datetime "occurred_at"
     t.string "message_action", limit: 191, default: "create", null: false
     t.string "relation_type_id", limit: 191
-    t.text "subj", limit: 16777215
-    t.text "obj", limit: 16777215
+    t.text "subj", size: :medium
+    t.text "obj", size: :medium
     t.integer "total", default: 1
     t.string "license", limit: 191
     t.text "source_doi"
@@ -261,7 +266,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "media", charset: "utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
     t.datetime "updated"
@@ -273,11 +278,11 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["url"], name: "index_media_on_url", length: 100
   end
 
-  create_table "metadata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "metadata", charset: "utf8", force: :cascade do |t|
     t.datetime "created"
     t.integer "metadata_version"
     t.integer "version"
-    t.binary "xml", limit: 16777215
+    t.binary "xml", size: :medium
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
@@ -285,13 +290,13 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
-  create_table "prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "prefixes", charset: "utf8", force: :cascade do |t|
     t.datetime "created_at"
     t.string "uid", limit: 80, null: false
     t.index ["uid"], name: "prefix", unique: true
   end
 
-  create_table "provider_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "provider_prefixes", charset: "utf8", force: :cascade do |t|
     t.bigint "provider_id", null: false
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
@@ -302,10 +307,12 @@ ActiveRecord::Schema.define(version: 2022_02_18_154500) do
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
 
-  create_table "reference_repositories", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "reference_repositories", charset: "latin1", force: :cascade do |t|
     t.string "client_id"
     t.string "re3doi"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
 end
