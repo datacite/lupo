@@ -43,7 +43,7 @@ class ReferenceRepositoryDenormalizer
         provider_id
         provider_id_and_name
         year
-    ].map { |method_name| [ method_name, send(method_name)] }.to_h
+    ].index_with { |method_name| send(method_name) }
   end
 
   def uid
