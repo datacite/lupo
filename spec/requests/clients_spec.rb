@@ -191,8 +191,11 @@ describe ClientsController, type: :request, elasticsearch: true do
 
         expect(json["errors"]).to eq(
           [
-            { "source" => "system_email", "title" => "Can't be blank", "uid" => provider.uid + ".imperial" },
-            { "source" => "system_email", "title" => "Is invalid", "uid" => provider.uid + ".imperial" },
+            {
+              "source" => "system_email",
+              "title" => "Can't be blank",
+              "uid" => provider.uid + ".imperial"
+            },
           ],
         )
       end

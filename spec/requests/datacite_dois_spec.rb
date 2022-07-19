@@ -2930,7 +2930,9 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig("errors")).to eq([{ "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }, { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }])
+        expect(json.dig("errors")).to eq([
+          { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }
+        ])
       end
     end
 
