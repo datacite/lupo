@@ -301,7 +301,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(
           json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
+        ).to eq(consortium.symbol)
       end
     end
 
@@ -447,7 +447,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(
           json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
+        ).to eq(consortium.symbol)
 
         sleep 1
 
@@ -965,7 +965,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(
           json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
+        ).to eq(consortium.symbol)
       end
     end
 
@@ -1017,7 +1017,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(
           json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
+        ).to eq(consortium.symbol)
       end
     end
 
