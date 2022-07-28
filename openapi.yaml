@@ -598,7 +598,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Delete a doi.
+      summary: Delete a doi (for DOIs in draft state only).
       responses:
         '204':
           description: No content
@@ -1305,6 +1305,7 @@ components:
               type: string
             type:
               type: string
+              enum: [dois]
             attributes:
               type: object
               properties:
@@ -1338,6 +1339,9 @@ components:
                     properties:
                       nameType:
                         type: string
+                        enum:
+                          - Personal
+                          - Organizational
                       nameIdentifiers:
                         type: array
                         items:
@@ -1379,6 +1383,11 @@ components:
                         type: string
                       titleType:
                         type: string
+                        enum:
+                          - AlternativeTitle
+                          - Subtitle
+                          - TranslatedTitle
+                          - Other
                       lang:
                         type: string
                     required:
@@ -1429,6 +1438,9 @@ components:
                     properties:
                       nameType:
                         type: string
+                        enum:
+                          - Personal
+                          - Organizational
                       nameIdentifiers:
                         type: array
                         items:
@@ -1447,9 +1459,42 @@ components:
                       familyName:
                         type: string
                       affiliation:
-                        type: string
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            affiliationIdentifier:
+                              type: string
+                            affiliationIdentifierScheme:
+                              type: string
+                            name:
+                              type: string
+                            schemeUri:
+                              type: string
                       contributorType:
                         type: string
+                        enum:
+                          - ContactPerson
+                          - DataCollector
+                          - DataCurator
+                          - DataManager
+                          - Distributor
+                          - Editor
+                          - HostingInstitution
+                          - Producer
+                          - ProjectLeader
+                          - ProjectManager
+                          - ProjectMember
+                          - RegistrationAgency
+                          - RegistrationAuthority
+                          - RelatedPerson
+                          - Researcher
+                          - ResearchGroup
+                          - RightsHolder
+                          - Sponsor
+                          - Supervisor
+                          - WorkPackageLeader
+                          - Other
                 dates:
                   type: array
                   items:
@@ -1459,6 +1504,18 @@ components:
                         type: string
                       dateType:
                         type: string
+                        enum:
+                          - Accepted
+                        - Available
+                        - Copyrighted
+                        - Collected
+                        - Created
+                        - Issued
+                        - Submitted
+                        - Updated
+                        - Valid
+                        - Withdrawn
+                        - Other
                 language:
                   type: string
                 types:
@@ -1466,6 +1523,34 @@ components:
                   properties:
                     resourceTypeGeneral:
                       type: string
+                      enum:
+                        - Audiovisual
+                        - Book
+                        - BookChapter
+                        - Collection
+                        - ComputationalNotebook
+                        - ConferencePaper
+                        - ConferenceProceeding
+                        - DataPaper
+                        - Dataset
+                        - Dissertation
+                        - Event
+                        - Image
+                        - InteractiveResource
+                        - JournalArticle
+                        - Model
+                        - OutputManagementPlan
+                        - PeerReview
+                        - PhysicalObject
+                        - Preprint
+                        - Report
+                        - Service
+                        - Software
+                        - Sound
+                        - Standard
+                        - Text
+                        - Workflow
+                        - Other
                     resourceType:
                       type: string
                     schemaOrg:
@@ -1487,8 +1572,63 @@ components:
                         type: string
                       relatedIdentifierType:
                         type: string
+                        enum:
+                          - ARK
+                          - arXiv
+                          - bibcode
+                          - DOI
+                          - EAN13
+                          - EISSN
+                          - Handle
+                          - IGSN
+                          - ISBN
+                          - ISSN
+                          - ISTC
+                          - LISSN
+                          - LSID
+                          - PMID
+                          - PURL
+                          - UPC
+                          - URL
+                          - URN
+                          - w3id
                       relationType:
                         type: string
+                        enum:
+                          - IsCitedBy
+                          - Cites
+                          - IsSupplementTo
+                          - IsSupplementedBy
+                          - IsContinuedBy
+                          - Continues
+                          - IsDescribedBy
+                          - Describes
+                          - HasMetadata
+                          - IsMetadataFor
+                          - HasVersion
+                          - IsVersionOf
+                          - IsNewVersionOf
+                          - IsPreviousVersionOf
+                          - IsPartOf
+                          - HasPart
+                          - IsPublishedIn
+                          - IsReferencedBy
+                          - References
+                          - IsDocumentedBy
+                          - Documents
+                          - IsCompiledBy
+                          - Compiles
+                          - IsVariantFormOf
+                          - IsOriginalFormOf
+                          - IsIdenticalTo
+                          - IsReviewedBy
+                          - Reviews
+                          - IsDerivedFrom
+                          - IsSourceOf
+                          - IsRequiredBy
+                          - Requires
+                          - IsObsoletedBy
+                          - Obsoletes
                       resourceTypeGeneral:
                         type: string
                 sizes:
@@ -1521,6 +1661,13 @@ components:
                         type: string
                       descriptionType:
                         type: string
+                        enum:
+                          - Abstract
+                          - Methods
+                          - SeriesInformation
+                          - TableOfContents
+                          - TechnicalInfo
+                          - Other
                       lang:
                         type: string
                 geoLocations:
@@ -1545,6 +1692,12 @@ components:
                         type: string
                       funderIdentifierType:
                         type: string
+                        enum:
+                          - Crossref Funder ID
+                          - GRID
+                          - ISNI
+                          - ROR
+                          - Other
                       awardNumber:
                         type: string
                       awardUri:
@@ -1615,23 +1768,26 @@ components:
           required:
             - type
       example:
-        id: 10.5438/0014
-        type: dois
-        attributes:
-          doi: 10.5438/0014
-          prefix: 10.5438
-          suffix: 12
-          identifiers:
-            - identifier: 'https://doi.org/10.5438/0014'
-              identifierType: DOI
-          creators:
-            - name: DataCite Metadata Working Group
-          titles:
-            - title: >-
-                DataCite Metadata Schema Documentation for the Publication and
-                Citation of Research Data v4.1
-          publisher: DataCite
-          publicationYear: 2017
+        data:
+          type: dois
+          attributes:
+            doi: 10.5438/0014
+            prefix: 10.5438
+            suffix: 0014
+            identifiers:
+              - identifier: 'https://doi.org/10.5438/0014'
+                identifierType: DOI
+            creators:
+              - name: DataCite Metadata Working Group
+            titles:
+              - title: >-
+                  DataCite Metadata Schema Documentation for the Publication and
+                  Citation of Research Data v4.1
+            publisher: DataCite
+            publicationYear: 2017
+            types:
+              - resourceTypeGeneral: Text
+            url: https://schema.datacite.org/meta/kernel-4.1/
     Event:
       type: object
       properties:
