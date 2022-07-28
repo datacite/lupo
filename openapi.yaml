@@ -115,6 +115,10 @@ paths:
       tags:
         - client-prefixes
       summary: Returns a list of client-prefixes.
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       parameters:
         - in: query
           name: query
@@ -156,7 +160,7 @@ paths:
     get:
       tags:
         - clients
-      summary: Returns a list of clients.
+      summary: Returns a list of clients (repositories).
       security: []
       parameters:
         - in: query
@@ -165,6 +169,7 @@ paths:
             type: string
         - in: query
           name: year
+          description: The year the client was created.
           schema:
             type: number
         - in: query
@@ -271,7 +276,10 @@ paths:
       tags:
         - clients
       summary: Returns Clients DOI production statistics.
-      security: []
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       parameters:
         - in: query
           name: provider-id
@@ -300,7 +308,10 @@ paths:
       tags:
         - clients
       summary: Returns a client.
-      security: []
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       responses:
         '200':
           description: A JSON object.
@@ -486,7 +497,7 @@ paths:
           schema:
             type: number
             minimum: 1
-            maximum: 100
+            maximum: 1000
         - in: query
           name: sample-group
           schema:
@@ -843,7 +854,10 @@ paths:
       tags:
         - prefixes
       summary: Returns prefixes DOI production statistics.
-      security: []
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       parameters:
         - in: query
           name: client-id
@@ -885,6 +899,10 @@ paths:
       tags:
         - provider-prefixes
       summary: A JSON array of provider-prefixes.
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       responses:
         '200':
           description: A JSON array of provider-prefixes.
@@ -896,7 +914,7 @@ paths:
     get:
       tags:
         - providers
-      summary: A JSON array of providers.
+      summary: Returns a list of providers (including members and consortium organizations).
       security: []
       parameters:
         - in: query
@@ -905,6 +923,7 @@ paths:
             type: string
         - in: query
           name: year
+          description: The year the provider was created.
           schema:
             type: number
         - in: query
@@ -1007,7 +1026,10 @@ paths:
       tags:
         - providers
       summary: Returns Providers DOI production statistics.
-      security: []
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       parameters:
         - in: query
           name: state
@@ -1032,6 +1054,10 @@ paths:
       tags:
         - providers
       summary: A provider.
+      security:
+        - {}
+        - BasicAuth
+        - bearerAuth
       responses:
         '200':
           description: A JSON object.
