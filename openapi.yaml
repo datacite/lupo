@@ -344,6 +344,9 @@ paths:
       tags:
         - clients
       summary: Delete a client.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -610,6 +613,9 @@ paths:
       tags:
         - dois
       summary: Delete a doi (for DOIs in draft state only).
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -805,6 +811,9 @@ paths:
       tags:
         - events
       summary: Delete an event.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -1108,6 +1117,9 @@ paths:
       tags:
         - providers
       summary: Delete a provider.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -1241,6 +1253,9 @@ paths:
       tags:
         - reports
       summary: Delete a report.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
