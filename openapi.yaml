@@ -722,7 +722,7 @@ paths:
           schema:
             type: number
         - in: query
-          name: states
+          name: state
           schema:
             type: string
             enum:
