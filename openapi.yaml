@@ -362,6 +362,10 @@ paths:
           schema:
             type: number
         - in: query
+          name: published
+          schema:
+            type: number
+        - in: query
           name: provider-id
           schema:
             type: string
@@ -370,15 +374,72 @@ paths:
           schema:
             type: string
         - in: query
+          name: prefix
+          schema:
+            type: string
+        - in: query
+          name: certificate
+          schema:
+            type: string
+            enum:
+              - CLARIN
+              - CoreTrustSEal
+              - DIN 31644
+              - DINI
+              - DSA
+              - RatSWD
+              - WDS
+        - in: query
           name: person-id
+          schema:
+            type: string
+        - in: query
+          name: affiliation-id
           schema:
             type: string
         - in: query
           name: resource-type-id
           schema:
             type: string
+            enum:
+              - audiovisual
+              - book
+              - book-chapter
+              - collection
+              - computational-notebook
+              - conference-paper
+              - conference-proceeding
+              - data-paper
+              - dataset
+              - dissertation
+              - event
+              - image
+              - interactive-resource
+              - journal
+              - journal-article
+              - model
+              - output-management-plan
+              - peer-review
+              - physical-object
+              - preprint
+              - report
+              - service
+              - software
+              - sound
+              - standard
+              - text
+              - workflow
+              - other
         - in: query
           name: subject
+          schema:
+            type: string
+        - in: query
+          name: field-of-science
+          schema:
+            type: string
+        - in: query
+          name: license
           schema:
             type: string
         - in: query
@@ -386,13 +447,46 @@ paths:
           schema:
             type: string
         - in: query
+          name: state
+          schema:
+            type: string
+            enum:
+              - findable
+              - registered
+              - draft
+        - in: query
+          name: affiliation
+          description: Set affiliation=true to see additional affiliation information such as the affiliation identifier that was added in Schema 4.3.
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: link-check-status
+          schema:
+            type: string
+            enum:
+              - 200
+              - 400
+              - 401
+              - 403
+              - 404
+              - 410
+              - 429
+              - 500
+              - 502
+              - 503
+      responses:
+        - in: query
           name: random
+          description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
           schema:
             type: boolean
         - in: query
           name: sample-size
           schema:
             type: number
+            minimum: 1
+            maximum: 100
         - in: query
           name: sample-group
           schema:
