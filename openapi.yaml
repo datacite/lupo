@@ -806,6 +806,10 @@ paths:
           schema:
             type: number
         - in: query
+          name: consortium-id
+          schema:
+            type: string
+        - in: query
           name: region
           schema:
             type: string
@@ -813,6 +817,17 @@ paths:
               - amer
               - apac
               - emea
+        - in: query
+          name: member-type
+          schema:
+            type: string
+            enum:
+              - consortium_organization
+              - direct_member
+              - governmentAgency
+              - consortium
+              - member_only
+              - developer
         - in: query
           name: organization-type
           schema:
@@ -828,14 +843,26 @@ paths:
               - researchInstitution
               - serviceProvider
               - vendor
+              - other
         - in: query
           name: focus-area
           schema:
             type: string
             enum:
-              - amer
-              - apac
-              - emea
+              - naturalSciences
+              - engineeringAndTechnology
+              - medicalAndHealthSciences
+              - agriculturalSciences
+              - socialSciences
+              - humanities
+              - general
+        - in: query
+          name: has-required-contacts
+          schema:
+            type: string
+            enum:
+              - true
+              - false
         - in: query
           name: 'page[number]'
           schema:
@@ -885,6 +912,10 @@ paths:
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of providers stats.
@@ -893,7 +924,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
@@ -911,7 +942,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
@@ -931,7 +962,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
