@@ -716,6 +716,19 @@ paths:
         - prefixes
       summary: Returns a list of prefixes.
       security: []
+      parameters:
+        - in: query
+          name: year
+          schema:
+            type: number
+        - in: query
+          name: states
+          schema:
+            type: string
+            enum:
+              - with-repository
+              - without-repository
+              - unassigned
       responses:
         '200':
           description: A JSON array of prefixes.
@@ -738,6 +751,10 @@ paths:
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of prefixes stats.
@@ -750,7 +767,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: DOI
+          description: Prefix
           required: true
           schema:
             type: string
