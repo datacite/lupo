@@ -1368,6 +1368,8 @@ components:
                               type: string
                             schemeUri:
                               type: string
+                    required:
+                      - name
                 titles:
                   type: array
                   items:
@@ -1379,6 +1381,8 @@ components:
                         type: string
                       lang:
                         type: string
+                    required:
+                      - title
                 publisher:
                   type: string
                 container:
@@ -1472,6 +1476,8 @@ components:
                       type: string
                     ris:
                       type: string
+                  required:
+                    - resourceTypeGeneral
                 relatedIdentifiers:
                   type: array
                   items:
@@ -1603,9 +1609,11 @@ components:
                 updated:
                   type: string
                   readOnly: true
-      required:
-        - id
-        - attributes - doi - creators - titles - publisher - publicationYear
+              required:
+                - publisher
+                - publicationYear
+          required:
+            - type
       example:
         id: 10.5438/0014
         type: dois
