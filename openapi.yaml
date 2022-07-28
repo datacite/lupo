@@ -46,7 +46,7 @@ paths:
       parameters:
         - in: query
           name: id
-          description: Find activity by an id
+          description: Find activity by an id.
           required: false
           schema:
             type: string
