@@ -859,10 +859,7 @@ paths:
         - in: query
           name: has-required-contacts
           schema:
-            type: string
-            enum:
-              - true
-              - false
+            type: boolean
         - in: query
           name: 'page[number]'
           schema:
