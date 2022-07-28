@@ -178,14 +178,45 @@ paths:
               - dataverse
               - dspace
               - eprints
-              - escidoc
               - fedora
-              - hal
               - invenio
               - islandora
-              - mysql
               - nesstar
+              - open_journal_systems_ojs
               - opus
+              - samvera
+              - other
+              - unknown
+        - in: query
+          name: client-type
+          schema:
+            type: string
+            enum:
+              - repository
+              - periodical
+        - in: query
+          name: repository-type
+          schema:
+            type: string
+            enum:
+              - disciplinary
+              - governmental
+              - institutional
+              - multidisciplinary
+              - project-related
+              - other
+        - in: query
+          name: certificate
+          schema:
+            type: string
+            enum:
+              - CLARIN
+              - CoreTrustSEal
+              - DIN 31644
+              - DINI
+              - DSA
+              - RatSWD
+              - WDS
         - in: query
           name: 'page[number]'
           schema:
@@ -246,6 +277,10 @@ paths:
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of clients stats.
