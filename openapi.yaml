@@ -483,7 +483,6 @@ paths:
               - 500
               - 502
               - 503
-      responses:
         - in: query
           name: random
           description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
@@ -871,8 +870,8 @@ paths:
       summary: Returns prefixes DOI production statistics.
       security:
         - {}
-        - BasicAuth
-        - bearerAuth
+        - BasicAuth: []
+        - bearerAuth: []
       parameters:
         - in: query
           name: client-id
@@ -916,8 +915,8 @@ paths:
       summary: A JSON array of provider-prefixes.
       security:
         - {}
-        - BasicAuth
-        - bearerAuth
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '200':
           description: A JSON array of provider-prefixes.
@@ -1046,8 +1045,8 @@ paths:
       summary: Returns Providers DOI production statistics.
       security:
         - {}
-        - BasicAuth
-        - bearerAuth
+        - BasicAuth: []
+        - bearerAuth: []
       parameters:
         - in: query
           name: state
@@ -1074,8 +1073,8 @@ paths:
       summary: A provider.
       security:
         - {}
-        - BasicAuth
-        - bearerAuth
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '200':
           description: A JSON object.
@@ -1565,16 +1564,16 @@ components:
                         type: string
                         enum:
                           - Accepted
-                        - Available
-                        - Copyrighted
-                        - Collected
-                        - Created
-                        - Issued
-                        - Submitted
-                        - Updated
-                        - Valid
-                        - Withdrawn
-                        - Other
+                          - Available
+                          - Copyrighted
+                          - Collected
+                          - Created
+                          - Issued
+                          - Submitted
+                          - Updated
+                          - Valid
+                          - Withdrawn
+                          - Other
                 language:
                   type: string
                 types:
