@@ -69,13 +69,13 @@ paths:
           description: Pagination - page number
           required: false
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           required: false
           description: Pagination - page size
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
@@ -83,7 +83,7 @@ paths:
           required: false
           description: 'Pagination - page cursor (used instead of page[number])'
           schema:
-            type: number
+            type: string
       responses:
         '200':
           description: A JSON API result of activities.
@@ -123,7 +123,7 @@ paths:
         - in: query
           name: year
           schema:
-            type: number
+            type: integer
         - in: query
           name: client-id
           schema:
@@ -133,9 +133,9 @@ paths:
           schema:
             type: string
         - in: query
-          name: page
+          name: page[number]
           schema:
-            type: number
+            type: integer
         - in: query
           name: sort
           schema:
@@ -167,7 +167,7 @@ paths:
           name: year
           description: The year the client was created.
           schema:
-            type: number
+            type: integer
         - in: query
           name: provider-id
           schema:
@@ -223,11 +223,11 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
@@ -364,15 +364,15 @@ paths:
         - in: query
           name: created
           schema:
-            type: number
+            type: integer
         - in: query
           name: registered
           schema:
-            type: number
+            type: integer
         - in: query
           name: published
           schema:
-            type: number
+            type: integer
         - in: query
           name: provider-id
           schema:
@@ -491,7 +491,7 @@ paths:
         - in: query
           name: sample-size
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
@@ -505,17 +505,17 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
           name: 'page[cursor]'
           schema:
-            type: number
+            type: string
         - in: query
           name: include
           schema:
@@ -703,17 +703,17 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
           name: 'page[cursor]'
           schema:
-            type: number
+            type: string
         - in: query
           name: include
           schema:
@@ -847,7 +847,7 @@ paths:
         - in: query
           name: year
           schema:
-            type: number
+            type: integer
         - in: query
           name: state
           schema:
@@ -931,7 +931,7 @@ paths:
           name: year
           description: The year the provider was created.
           schema:
-            type: number
+            type: integer
         - in: query
           name: consortium-id
           schema:
@@ -990,11 +990,11 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
         - in: query
@@ -1153,11 +1153,11 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
             minimum: 1
             maximum: 1000
       responses:
@@ -1457,7 +1457,7 @@ components:
                     lastPage:
                       type: string
                 publicationYear:
-                  type: number
+                  type: integer
                 subjects:
                   type: array
                   items:
