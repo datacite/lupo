@@ -382,6 +382,10 @@ paths:
           schema:
             type: string
         - in: query
+          name: consortium-id
+          schema:
+            type: string
+        - in: query
           name: prefix
           schema:
             type: string
