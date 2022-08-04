@@ -46,7 +46,7 @@ paths:
       parameters:
         - in: query
           name: id
-          description: Find activity by an id
+          description: Find activity by an id.
           required: false
           schema:
             type: string
@@ -69,19 +69,21 @@ paths:
           description: Pagination - page number
           required: false
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           required: false
           description: Pagination - page size
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: 'page[cursor]'
           required: false
           description: 'Pagination - page cursor (used instead of page[number])'
           schema:
-            type: number
+            type: string
       responses:
         '200':
           description: A JSON API result of activities.
@@ -121,7 +123,7 @@ paths:
         - in: query
           name: year
           schema:
-            type: number
+            type: integer
         - in: query
           name: client-id
           schema:
@@ -131,9 +133,9 @@ paths:
           schema:
             type: string
         - in: query
-          name: page
+          name: page[number]
           schema:
-            type: number
+            type: integer
         - in: query
           name: sort
           schema:
@@ -154,7 +156,7 @@ paths:
     get:
       tags:
         - clients
-      summary: Returns a list of clients.
+      summary: Returns a list of clients (repositories).
       security: []
       parameters:
         - in: query
@@ -163,8 +165,9 @@ paths:
             type: string
         - in: query
           name: year
+          description: The year the client was created.
           schema:
-            type: number
+            type: integer
         - in: query
           name: provider-id
           schema:
@@ -178,22 +181,55 @@ paths:
               - dataverse
               - dspace
               - eprints
-              - escidoc
               - fedora
-              - hal
               - invenio
               - islandora
-              - mysql
               - nesstar
+              - open_journal_systems_ojs
               - opus
+              - samvera
+              - other
+              - unknown
+        - in: query
+          name: client-type
+          schema:
+            type: string
+            enum:
+              - repository
+              - periodical
+        - in: query
+          name: repository-type
+          schema:
+            type: string
+            enum:
+              - disciplinary
+              - governmental
+              - institutional
+              - multidisciplinary
+              - project-related
+              - other
+        - in: query
+          name: certificate
+          schema:
+            type: string
+            enum:
+              - CLARIN
+              - CoreTrustSEal
+              - DIN 31644
+              - DINI
+              - DSA
+              - RatSWD
+              - WDS
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: include
           schema:
@@ -222,6 +258,9 @@ paths:
       tags:
         - clients
       summary: Add a new client.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -236,7 +275,6 @@ paths:
       tags:
         - clients
       summary: Returns Clients DOI production statistics.
-      security: []
       parameters:
         - in: query
           name: provider-id
@@ -246,6 +284,10 @@ paths:
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of clients stats.
@@ -261,7 +303,6 @@ paths:
       tags:
         - clients
       summary: Returns a client.
-      security: []
       responses:
         '200':
           description: A JSON object.
@@ -280,6 +321,9 @@ paths:
       tags:
         - clients
       summary: Update a client.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -300,6 +344,9 @@ paths:
       tags:
         - clients
       summary: Delete a client.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -317,11 +364,15 @@ paths:
         - in: query
           name: created
           schema:
-            type: number
+            type: integer
         - in: query
           name: registered
           schema:
-            type: number
+            type: integer
+        - in: query
+          name: published
+          schema:
+            type: integer
         - in: query
           name: provider-id
           schema:
@@ -331,15 +382,76 @@ paths:
           schema:
             type: string
         - in: query
+          name: consortium-id
+          schema:
+            type: string
+        - in: query
+          name: prefix
+          schema:
+            type: string
+        - in: query
+          name: certificate
+          schema:
+            type: string
+            enum:
+              - CLARIN
+              - CoreTrustSEal
+              - DIN 31644
+              - DINI
+              - DSA
+              - RatSWD
+              - WDS
+        - in: query
           name: person-id
+          schema:
+            type: string
+        - in: query
+          name: affiliation-id
           schema:
             type: string
         - in: query
           name: resource-type-id
           schema:
             type: string
+            enum:
+              - audiovisual
+              - book
+              - book-chapter
+              - collection
+              - computational-notebook
+              - conference-paper
+              - conference-proceeding
+              - data-paper
+              - dataset
+              - dissertation
+              - event
+              - image
+              - interactive-resource
+              - journal
+              - journal-article
+              - model
+              - output-management-plan
+              - peer-review
+              - physical-object
+              - preprint
+              - report
+              - service
+              - software
+              - sound
+              - standard
+              - text
+              - workflow
+              - other
         - in: query
           name: subject
+          schema:
+            type: string
+        - in: query
+          name: field-of-science
+          schema:
+            type: string
+        - in: query
+          name: license
           schema:
             type: string
         - in: query
@@ -347,13 +459,45 @@ paths:
           schema:
             type: string
         - in: query
+          name: state
+          schema:
+            type: string
+            enum:
+              - findable
+              - registered
+              - draft
+        - in: query
+          name: affiliation
+          description: Set affiliation=true to see additional affiliation information such as the affiliation identifier that was added in Schema 4.3.
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: link-check-status
+          schema:
+            type: string
+            enum:
+              - 200
+              - 400
+              - 401
+              - 403
+              - 404
+              - 410
+              - 429
+              - 500
+              - 502
+              - 503
+        - in: query
           name: random
+          description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
           schema:
             type: boolean
         - in: query
           name: sample-size
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: sample-group
           schema:
@@ -365,15 +509,17 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: 'page[cursor]'
           schema:
-            type: number
+            type: string
         - in: query
           name: include
           schema:
@@ -404,6 +550,9 @@ paths:
       tags:
         - dois
       summary: Add a new doi.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -444,6 +593,9 @@ paths:
       tags:
         - dois
       summary: Update a doi.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -463,7 +615,10 @@ paths:
           type: string
       tags:
         - dois
-      summary: Delete a doi.
+      summary: Delete a doi (for DOIs in draft state only).
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -552,15 +707,17 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: 'page[cursor]'
           schema:
-            type: number
+            type: string
         - in: query
           name: include
           schema:
@@ -591,6 +748,9 @@ paths:
       tags:
         - events
       summary: Add a new event.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -631,6 +791,9 @@ paths:
       tags:
         - events
       summary: Update an event.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -651,6 +814,9 @@ paths:
       tags:
         - events
       summary: Delete an event.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -681,6 +847,19 @@ paths:
         - prefixes
       summary: Returns a list of prefixes.
       security: []
+      parameters:
+        - in: query
+          name: year
+          schema:
+            type: integer
+        - in: query
+          name: state
+          schema:
+            type: string
+            enum:
+              - with-repository
+              - without-repository
+              - unassigned
       responses:
         '200':
           description: A JSON array of prefixes.
@@ -693,7 +872,6 @@ paths:
       tags:
         - prefixes
       summary: Returns prefixes DOI production statistics.
-      security: []
       parameters:
         - in: query
           name: client-id
@@ -703,6 +881,10 @@ paths:
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of prefixes stats.
@@ -715,7 +897,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: DOI
+          description: Prefix
           required: true
           schema:
             type: string
@@ -742,7 +924,7 @@ paths:
     get:
       tags:
         - providers
-      summary: A JSON array of providers.
+      summary: Returns a list of providers (including members and consortium organizations).
       security: []
       parameters:
         - in: query
@@ -751,8 +933,13 @@ paths:
             type: string
         - in: query
           name: year
+          description: The year the provider was created.
           schema:
-            type: number
+            type: integer
+        - in: query
+          name: consortium-id
+          schema:
+            type: string
         - in: query
           name: region
           schema:
@@ -761,6 +948,17 @@ paths:
               - amer
               - apac
               - emea
+        - in: query
+          name: member-type
+          schema:
+            type: string
+            enum:
+              - consortium_organization
+              - direct_member
+              - governmentAgency
+              - consortium
+              - member_only
+              - developer
         - in: query
           name: organization-type
           schema:
@@ -776,22 +974,33 @@ paths:
               - researchInstitution
               - serviceProvider
               - vendor
+              - other
         - in: query
           name: focus-area
           schema:
             type: string
             enum:
-              - amer
-              - apac
-              - emea
+              - naturalSciences
+              - engineeringAndTechnology
+              - medicalAndHealthSciences
+              - agriculturalSciences
+              - socialSciences
+              - humanities
+              - general
+        - in: query
+          name: has-required-contacts
+          schema:
+            type: boolean
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
         - in: query
           name: sort
           schema:
@@ -813,6 +1022,9 @@ paths:
       tags:
         - providers
       summary: Add a new provider.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -827,12 +1039,15 @@ paths:
       tags:
         - providers
       summary: Returns Providers DOI production statistics.
-      security: []
       parameters:
         - in: query
           name: state
           schema:
             type: string
+            enum:
+              - findable
+              - registered
+              - draft
       responses:
         '200':
           description: A JSON array of providers stats.
@@ -841,7 +1056,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
@@ -859,13 +1074,16 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
       tags:
         - providers
       summary: Update a provider.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -879,13 +1097,16 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: Provider ID
         required: true
         schema:
           type: string
       tags:
         - providers
       summary: Delete a provider.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -936,11 +1157,13 @@ paths:
         - in: query
           name: 'page[number]'
           schema:
-            type: number
+            type: integer
         - in: query
           name: 'page[size]'
           schema:
-            type: number
+            type: integer
+            minimum: 1
+            maximum: 1000
       responses:
         '200':
           description: A JSON array of reports.
@@ -952,6 +1175,9 @@ paths:
       tags:
         - reports
       summary: Add a new report.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -991,6 +1217,9 @@ paths:
       tags:
         - reports
       summary: Update a report.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -1011,6 +1240,9 @@ paths:
       tags:
         - reports
       summary: Delete a report.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
       responses:
         '204':
           description: No content
@@ -1119,6 +1351,7 @@ components:
               type: string
             type:
               type: string
+              enum: [dois]
             attributes:
               type: object
               properties:
@@ -1152,6 +1385,9 @@ components:
                     properties:
                       nameType:
                         type: string
+                        enum:
+                          - Personal
+                          - Organizational
                       nameIdentifiers:
                         type: array
                         items:
@@ -1182,6 +1418,8 @@ components:
                               type: string
                             schemeUri:
                               type: string
+                    required:
+                      - name
                 titles:
                   type: array
                   items:
@@ -1191,8 +1429,15 @@ components:
                         type: string
                       titleType:
                         type: string
+                        enum:
+                          - AlternativeTitle
+                          - Subtitle
+                          - TranslatedTitle
+                          - Other
                       lang:
                         type: string
+                    required:
+                      - title
                 publisher:
                   type: string
                 container:
@@ -1216,7 +1461,7 @@ components:
                     lastPage:
                       type: string
                 publicationYear:
-                  type: number
+                  type: integer
                 subjects:
                   type: array
                   items:
@@ -1239,6 +1484,9 @@ components:
                     properties:
                       nameType:
                         type: string
+                        enum:
+                          - Personal
+                          - Organizational
                       nameIdentifiers:
                         type: array
                         items:
@@ -1257,9 +1505,42 @@ components:
                       familyName:
                         type: string
                       affiliation:
-                        type: string
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            affiliationIdentifier:
+                              type: string
+                            affiliationIdentifierScheme:
+                              type: string
+                            name:
+                              type: string
+                            schemeUri:
+                              type: string
                       contributorType:
                         type: string
+                        enum:
+                          - ContactPerson
+                          - DataCollector
+                          - DataCurator
+                          - DataManager
+                          - Distributor
+                          - Editor
+                          - HostingInstitution
+                          - Producer
+                          - ProjectLeader
+                          - ProjectManager
+                          - ProjectMember
+                          - RegistrationAgency
+                          - RegistrationAuthority
+                          - RelatedPerson
+                          - Researcher
+                          - ResearchGroup
+                          - RightsHolder
+                          - Sponsor
+                          - Supervisor
+                          - WorkPackageLeader
+                          - Other
                 dates:
                   type: array
                   items:
@@ -1269,6 +1550,18 @@ components:
                         type: string
                       dateType:
                         type: string
+                        enum:
+                          - Accepted
+                          - Available
+                          - Copyrighted
+                          - Collected
+                          - Created
+                          - Issued
+                          - Submitted
+                          - Updated
+                          - Valid
+                          - Withdrawn
+                          - Other
                 language:
                   type: string
                 types:
@@ -1276,6 +1569,34 @@ components:
                   properties:
                     resourceTypeGeneral:
                       type: string
+                      enum:
+                        - Audiovisual
+                        - Book
+                        - BookChapter
+                        - Collection
+                        - ComputationalNotebook
+                        - ConferencePaper
+                        - ConferenceProceeding
+                        - DataPaper
+                        - Dataset
+                        - Dissertation
+                        - Event
+                        - Image
+                        - InteractiveResource
+                        - JournalArticle
+                        - Model
+                        - OutputManagementPlan
+                        - PeerReview
+                        - PhysicalObject
+                        - Preprint
+                        - Report
+                        - Service
+                        - Software
+                        - Sound
+                        - Standard
+                        - Text
+                        - Workflow
+                        - Other
                     resourceType:
                       type: string
                     schemaOrg:
@@ -1286,6 +1607,8 @@ components:
                       type: string
                     ris:
                       type: string
+                  required:
+                    - resourceTypeGeneral
                 relatedIdentifiers:
                   type: array
                   items:
@@ -1295,8 +1618,63 @@ components:
                         type: string
                       relatedIdentifierType:
                         type: string
+                        enum:
+                          - ARK
+                          - arXiv
+                          - bibcode
+                          - DOI
+                          - EAN13
+                          - EISSN
+                          - Handle
+                          - IGSN
+                          - ISBN
+                          - ISSN
+                          - ISTC
+                          - LISSN
+                          - LSID
+                          - PMID
+                          - PURL
+                          - UPC
+                          - URL
+                          - URN
+                          - w3id
                       relationType:
                         type: string
+                        enum:
+                          - IsCitedBy
+                          - Cites
+                          - IsSupplementTo
+                          - IsSupplementedBy
+                          - IsContinuedBy
+                          - Continues
+                          - IsDescribedBy
+                          - Describes
+                          - HasMetadata
+                          - IsMetadataFor
+                          - HasVersion
+                          - IsVersionOf
+                          - IsNewVersionOf
+                          - IsPreviousVersionOf
+                          - IsPartOf
+                          - HasPart
+                          - IsPublishedIn
+                          - IsReferencedBy
+                          - References
+                          - IsDocumentedBy
+                          - Documents
+                          - IsCompiledBy
+                          - Compiles
+                          - IsVariantFormOf
+                          - IsOriginalFormOf
+                          - IsIdenticalTo
+                          - IsReviewedBy
+                          - Reviews
+                          - IsDerivedFrom
+                          - IsSourceOf
+                          - IsRequiredBy
+                          - Requires
+                          - IsObsoletedBy
+                          - Obsoletes
                       resourceTypeGeneral:
                         type: string
                 sizes:
@@ -1329,6 +1707,13 @@ components:
                         type: string
                       descriptionType:
                         type: string
+                        enum:
+                          - Abstract
+                          - Methods
+                          - SeriesInformation
+                          - TableOfContents
+                          - TechnicalInfo
+                          - Other
                       lang:
                         type: string
                 geoLocations:
@@ -1353,6 +1738,12 @@ components:
                         type: string
                       funderIdentifierType:
                         type: string
+                        enum:
+                          - Crossref Funder ID
+                          - GRID
+                          - ISNI
+                          - ROR
+                          - Other
                       awardNumber:
                         type: string
                       awardUri:
@@ -1417,27 +1808,32 @@ components:
                 updated:
                   type: string
                   readOnly: true
-      required:
-        - id
-        - attributes - doi - creators - titles - publisher - publicationYear
+              required:
+                - publisher
+                - publicationYear
+          required:
+            - type
       example:
-        id: 10.5438/0014
-        type: dois
-        attributes:
-          doi: 10.5438/0014
-          prefix: 10.5438
-          suffix: 12
-          identifiers:
-            - identifier: 'https://doi.org/10.5438/0014'
-              identifierType: DOI
-          creators:
-            - name: DataCite Metadata Working Group
-          titles:
-            - title: >-
-                DataCite Metadata Schema Documentation for the Publication and
-                Citation of Research Data v4.1
-          publisher: DataCite
-          publicationYear: 2017
+        data:
+          type: dois
+          attributes:
+            doi: 10.5438/0014
+            prefix: 10.5438
+            suffix: 0014
+            identifiers:
+              - identifier: 'https://doi.org/10.5438/0014'
+                identifierType: DOI
+            creators:
+              - name: DataCite Metadata Working Group
+            titles:
+              - title: >-
+                  DataCite Metadata Schema Documentation for the Publication and
+                  Citation of Research Data v4.1
+            publisher: DataCite
+            publicationYear: 2017
+            types:
+              - resourceTypeGeneral: Text
+            url: https://schema.datacite.org/meta/kernel-4.1/
     Event:
       type: object
       properties:
@@ -1602,5 +1998,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
 security:
+  - {}
   - BasicAuth: []
   - bearerAuth: []
