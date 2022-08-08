@@ -1815,8 +1815,8 @@ components:
           type: dois
           attributes:
             doi: 10.5438/0014
-            prefix: 10.5438
-            suffix: 0014
+            prefix: "10.5438"
+            suffix: "0014"
             identifiers:
               - identifier: 'https://doi.org/10.5438/0014'
                 identifierType: DOI
@@ -1829,7 +1829,7 @@ components:
             publisher: DataCite
             publicationYear: 2017
             types:
-              - resourceTypeGeneral: Text
+              resourceTypeGeneral: Text
             url: https://schema.datacite.org/meta/kernel-4.1/
     Event:
       type: object
