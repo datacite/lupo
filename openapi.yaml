@@ -293,46 +293,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Client'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Client ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - clients
-      summary: Update a client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Client'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Client ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - clients
-      summary: Delete a client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /dois:
     get:
       tags:
@@ -1068,46 +1028,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Provider'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Provider ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - providers
-      summary: Update a provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Provider'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Provider ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - providers
-      summary: Delete a provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /reports:
     get:
       tags:
