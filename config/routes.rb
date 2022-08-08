@@ -241,7 +241,8 @@ Rails.application.routes.draw do
   resources :index,
             path: "/",
             only: %i[show index],
-            constraints: { id: /.+/, format: false }
+            constraints: { id: /.+/ },
+            format: false
 
   root to: "index#index"
 

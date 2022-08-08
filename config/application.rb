@@ -67,7 +67,7 @@ ENV["REALM"] ||= ENV["API_URL"]
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.2
+    config.load_defaults 6.1
 
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
@@ -81,6 +81,7 @@ module Lupo
 
     # Allow middleware to be loaded. (compressed_requests)
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
+    config.eager_load_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
