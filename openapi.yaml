@@ -254,22 +254,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Client'
-    post:
-      tags:
-        - clients
-      summary: Add a new client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Client'
-      responses:
-        '201':
-          description: Created
   /clients/totals:
     get:
       tags:
@@ -1052,22 +1036,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Provider'
-    post:
-      tags:
-        - providers
-      summary: Add a new provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Provider'
-      responses:
-        '201':
-          description: Created
   /providers/totals:
     get:
       tags:
