@@ -684,22 +684,6 @@ paths:
                 $ref: '#/components/schemas/Event'
       tags:
         - events
-    post:
-      tags:
-        - events
-      summary: Add a new event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Event'
-      responses:
-        '201':
-          description: Created
   '/events/{id}':
     get:
       parameters:
@@ -720,46 +704,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Event'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Event
-        required: true
-        schema:
-          type: string
-      tags:
-        - events
-      summary: Update an event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Event'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Event
-        required: true
-        schema:
-          type: string
-      tags:
-        - events
-      summary: Delete an event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /heartbeat:
     get:
       tags:
