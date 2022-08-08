@@ -157,7 +157,6 @@ paths:
       tags:
         - clients
       summary: Returns a list of clients (repositories).
-      security: []
       parameters:
         - in: query
           name: query
@@ -339,7 +338,6 @@ paths:
       tags:
         - dois
       summary: Return a list of dois.
-      security: []
       parameters:
         - in: query
           name: query
@@ -558,7 +556,6 @@ paths:
       tags:
         - dois
       summary: Returns a doi.
-      security: []
       responses:
         '200':
           description: A JSON object.
@@ -619,7 +616,6 @@ paths:
         - dois
         - activities
       summary: Returns activity for a specific DOI
-      security: []
       responses:
         '200':
           description: A JSON object.
@@ -943,7 +939,6 @@ paths:
       tags:
         - providers
       summary: Returns a list of providers (including members and consortium organizations).
-      security: []
       parameters:
         - in: query
           name: query
