@@ -213,7 +213,7 @@ paths:
             type: string
             enum:
               - CLARIN
-              - CoreTrustSEal
+              - CoreTrustSeal
               - DIN 31644
               - DINI
               - DSA
@@ -377,7 +377,7 @@ paths:
             type: string
             enum:
               - CLARIN
-              - CoreTrustSEal
+              - CoreTrustSeal
               - DIN 31644
               - DINI
               - DSA
@@ -859,6 +859,7 @@ paths:
             type: string
         - in: query
           name: state
+          description: Must be authenticated to view registered and draft DOIs.
           schema:
             type: string
             enum:
