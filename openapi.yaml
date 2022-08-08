@@ -102,7 +102,7 @@ paths:
             type: string
       tags:
         - activities
-      summary: Get a JSON API result of a specific activity
+      summary: Get a JSON API result of a specific activity.
       responses:
         '200':
           description: A JSON object.
@@ -114,7 +114,7 @@ paths:
     get:
       tags:
         - client-prefixes
-      summary: Returns a list of client-prefixes.
+      summary: Return a list of client-prefixes.
       parameters:
         - in: query
           name: query
@@ -156,7 +156,7 @@ paths:
     get:
       tags:
         - clients
-      summary: Returns a list of clients (repositories).
+      summary: Return a list of clients (repositories).
       parameters:
         - in: query
           name: query
@@ -257,7 +257,7 @@ paths:
     get:
       tags:
         - clients
-      summary: Returns Clients DOI production statistics.
+      summary: Return clients DOI production statistics.
       parameters:
         - in: query
           name: provider-id
@@ -285,7 +285,7 @@ paths:
           type: string
       tags:
         - clients
-      summary: Returns a client.
+      summary: Return a client.
       responses:
         '200':
           description: A JSON object.
@@ -555,7 +555,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Returns a doi.
+      summary: Return a doi.
       responses:
         '200':
           description: A JSON object.
@@ -615,7 +615,7 @@ paths:
       tags:
         - dois
         - activities
-      summary: Returns activity for a specific DOI
+      summary: Return activity for a specific DOI.
       responses:
         '200':
           description: A JSON object.
@@ -625,7 +625,7 @@ paths:
                 $ref: '#/components/schemas/Activity'
   /events:
     get:
-      summary: Returns a list of events.
+      summary: Return a list of events.
       security: []
       parameters:
         - in: query
@@ -751,7 +751,7 @@ paths:
           type: string
       tags:
         - events
-      summary: Returns an event.
+      summary: Return an event.
       security: []
       responses:
         '200':
@@ -804,7 +804,7 @@ paths:
     get:
       tags:
         - heartbeat
-      summary: This resource returns the current status of the REST API.
+      summary: Return the current status of the REST API.
       security: []
       responses:
         '200':
@@ -825,7 +825,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: Returns a list of prefixes.
+      summary: Return a list of prefixes.
       security: []
       parameters:
         - in: query
@@ -851,7 +851,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: Returns prefixes DOI production statistics.
+      summary: Return prefixes DOI production statistics.
       parameters:
         - in: query
           name: client-id
@@ -872,7 +872,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: A prefix.
+      summary: Return a prefix.
       security: []
       parameters:
         - name: id
@@ -883,7 +883,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Returns a prefix.
+          description: Return a prefix.
           content:
             application/vnd.api+json:
               schema:
@@ -892,7 +892,7 @@ paths:
     get:
       tags:
         - provider-prefixes
-      summary: A JSON array of provider-prefixes.
+      summary: Return a list of provider-prefixes.
       parameters:
         - in: query
           name: query
@@ -938,7 +938,7 @@ paths:
     get:
       tags:
         - providers
-      summary: Returns a list of providers (including members and consortium organizations).
+      summary: Return a list of providers (including members and consortium organizations).
       parameters:
         - in: query
           name: query
@@ -1035,7 +1035,7 @@ paths:
     get:
       tags:
         - providers
-      summary: Returns Providers DOI production statistics.
+      summary: Return providers DOI production statistics.
       parameters:
         - in: query
           name: state
@@ -1059,7 +1059,7 @@ paths:
           type: string
       tags:
         - providers
-      summary: A provider.
+      summary: Return a provider.
       responses:
         '200':
           description: A JSON object.
@@ -1195,7 +1195,7 @@ paths:
           type: string
       tags:
         - reports
-      summary: A report.
+      summary: Return a report.
       responses:
         '200':
           description: A JSON object.
