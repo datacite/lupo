@@ -102,7 +102,7 @@ paths:
             type: string
       tags:
         - activities
-      summary: Get a JSON API result of a specific activity
+      summary: Get a JSON API result of a specific activity.
       responses:
         '200':
           description: A JSON object.
@@ -114,7 +114,7 @@ paths:
     get:
       tags:
         - client-prefixes
-      summary: Returns a list of client-prefixes.
+      summary: Return a list of client-prefixes.
       parameters:
         - in: query
           name: query
@@ -156,8 +156,7 @@ paths:
     get:
       tags:
         - clients
-      summary: Returns a list of clients (repositories).
-      security: []
+      summary: Return a list of clients (repositories).
       parameters:
         - in: query
           name: query
@@ -214,7 +213,7 @@ paths:
             type: string
             enum:
               - CLARIN
-              - CoreTrustSEal
+              - CoreTrustSeal
               - DIN 31644
               - DINI
               - DSA
@@ -254,27 +253,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Client'
-    post:
-      tags:
-        - clients
-      summary: Add a new client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Client'
-      responses:
-        '201':
-          description: Created
   /clients/totals:
     get:
       tags:
         - clients
-      summary: Returns Clients DOI production statistics.
+      summary: Return clients DOI production statistics.
       parameters:
         - in: query
           name: provider-id
@@ -302,7 +285,7 @@ paths:
           type: string
       tags:
         - clients
-      summary: Returns a client.
+      summary: Return a client.
       responses:
         '200':
           description: A JSON object.
@@ -310,52 +293,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Client'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Client ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - clients
-      summary: Update a client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Client'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Client ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - clients
-      summary: Delete a client.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /dois:
     get:
       tags:
         - dois
       summary: Return a list of dois.
-      security: []
       parameters:
         - in: query
           name: query
@@ -395,7 +337,7 @@ paths:
             type: string
             enum:
               - CLARIN
-              - CoreTrustSEal
+              - CoreTrustSeal
               - DIN 31644
               - DINI
               - DSA
@@ -573,8 +515,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Returns a doi.
-      security: []
+      summary: Return a doi.
       responses:
         '200':
           description: A JSON object.
@@ -634,8 +575,7 @@ paths:
       tags:
         - dois
         - activities
-      summary: Returns activity for a specific DOI
-      security: []
+      summary: Return activity for a specific DOI.
       responses:
         '200':
           description: A JSON object.
@@ -645,7 +585,7 @@ paths:
                 $ref: '#/components/schemas/Activity'
   /events:
     get:
-      summary: Returns a list of events.
+      summary: Return a list of events.
       security: []
       parameters:
         - in: query
@@ -744,22 +684,6 @@ paths:
                 $ref: '#/components/schemas/Event'
       tags:
         - events
-    post:
-      tags:
-        - events
-      summary: Add a new event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Event'
-      responses:
-        '201':
-          description: Created
   '/events/{id}':
     get:
       parameters:
@@ -771,7 +695,7 @@ paths:
           type: string
       tags:
         - events
-      summary: Returns an event.
+      summary: Return an event.
       security: []
       responses:
         '200':
@@ -780,51 +704,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Event'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Event
-        required: true
-        schema:
-          type: string
-      tags:
-        - events
-      summary: Update an event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Event'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Event
-        required: true
-        schema:
-          type: string
-      tags:
-        - events
-      summary: Delete an event.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /heartbeat:
     get:
       tags:
         - heartbeat
-      summary: This resource returns the current status of the REST API.
+      summary: Return the current status of the REST API.
       security: []
       responses:
         '200':
@@ -845,7 +729,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: Returns a list of prefixes.
+      summary: Return a list of prefixes.
       security: []
       parameters:
         - in: query
@@ -871,7 +755,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: Returns prefixes DOI production statistics.
+      summary: Return prefixes DOI production statistics.
       parameters:
         - in: query
           name: client-id
@@ -879,6 +763,7 @@ paths:
             type: string
         - in: query
           name: state
+          description: Must be authenticated to view registered and draft DOIs.
           schema:
             type: string
             enum:
@@ -892,7 +777,7 @@ paths:
     get:
       tags:
         - prefixes
-      summary: A prefix.
+      summary: Return a prefix.
       security: []
       parameters:
         - name: id
@@ -903,7 +788,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Returns a prefix.
+          description: Return a prefix.
           content:
             application/vnd.api+json:
               schema:
@@ -912,7 +797,41 @@ paths:
     get:
       tags:
         - provider-prefixes
-      summary: A JSON array of provider-prefixes.
+      summary: Return a list of provider-prefixes.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: year
+          schema:
+            type: integer
+        - in: query
+          name: consortium-id
+          schema:
+            type: string
+        - in: query
+          name: provider-id
+          schema:
+            type: string
+        - in: query
+          name: prefix-id
+          schema:
+            type: string
+        - in: query
+          name: page[number]
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - name
+              - '-name'
+              - created
+              - '-created'
       responses:
         '200':
           description: A JSON array of provider-prefixes.
@@ -924,8 +843,7 @@ paths:
     get:
       tags:
         - providers
-      summary: Returns a list of providers (including members and consortium organizations).
-      security: []
+      summary: Return a list of providers (including members and consortium organizations).
       parameters:
         - in: query
           name: query
@@ -1018,27 +936,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Provider'
-    post:
-      tags:
-        - providers
-      summary: Add a new provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Provider'
-      responses:
-        '201':
-          description: Created
   /providers/totals:
     get:
       tags:
         - providers
-      summary: Returns Providers DOI production statistics.
+      summary: Return providers DOI production statistics.
       parameters:
         - in: query
           name: state
@@ -1062,7 +964,7 @@ paths:
           type: string
       tags:
         - providers
-      summary: A provider.
+      summary: Return a provider.
       responses:
         '200':
           description: A JSON object.
@@ -1070,46 +972,6 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Provider'
-    put:
-      parameters:
-      - name: id
-        in: path
-        description: Provider ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - providers
-      summary: Update a provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/vnd.api+json:
-            schema:
-              $ref: '#/components/schemas/Provider'
-      responses:
-        '200':
-          description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Provider ID
-        required: true
-        schema:
-          type: string
-      tags:
-        - providers
-      summary: Delete a provider.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
   /reports:
     get:
       tags:
@@ -1198,7 +1060,7 @@ paths:
           type: string
       tags:
         - reports
-      summary: A report.
+      summary: Return a report.
       responses:
         '200':
           description: A JSON object.
@@ -1818,8 +1680,8 @@ components:
           type: dois
           attributes:
             doi: 10.5438/0014
-            prefix: 10.5438
-            suffix: 0014
+            prefix: "10.5438"
+            suffix: "0014"
             identifiers:
               - identifier: 'https://doi.org/10.5438/0014'
                 identifierType: DOI
@@ -1832,7 +1694,7 @@ components:
             publisher: DataCite
             publicationYear: 2017
             types:
-              - resourceTypeGeneral: Text
+              resourceTypeGeneral: Text
             url: https://schema.datacite.org/meta/kernel-4.1/
     Event:
       type: object
