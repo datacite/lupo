@@ -552,6 +552,10 @@ class Provider < ApplicationRecord
     symbol.downcase
   end
 
+  def consortium_uid
+    consortium_id.downcase
+  end
+
   def from_salesforce=(value)
     @from_salesforce = (value.to_s == "true")
   end

@@ -47,6 +47,7 @@ class ProviderSerializer
   has_many :contacts, record_type: :contacts
   belongs_to :consortium,
              record_type: :providers,
+             id_method_name: :consortium_uid,
              serializer: ProviderSerializer,
              if: Proc.new { |provider| provider.consortium_id }
   has_many :consortium_organizations,
