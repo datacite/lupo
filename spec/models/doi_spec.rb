@@ -1263,7 +1263,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "formats" do
-    let(:doi) { create(:doi, 
+    let(:doi) { create(:doi,
       formats: [
         "text/csv",
         "ndjson",
