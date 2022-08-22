@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "faker"
-
 FactoryBot.define do
   factory :client_prefix do
     association :prefix, factory: :prefix, strategy: :create

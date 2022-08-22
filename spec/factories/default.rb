@@ -19,7 +19,6 @@ FactoryBot.define do
     sequence(:uid) { |n| "10.508#{n}" }
   end
 
-
   factory :provider_prefix do
     association :prefix, factory: :prefix, strategy: :create
     association :provider, factory: :provider, strategy: :create

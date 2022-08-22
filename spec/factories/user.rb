@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require "faker"
-
 FactoryBot.define do
   factory :user do
     sequence(:name) { |_n| "Josiah Carberry{n}" }
