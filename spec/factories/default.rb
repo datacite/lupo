@@ -3,7 +3,6 @@
 require "faker"
 
 FactoryBot.define do
-
   factory :metadata do
     doi
   end
@@ -27,5 +26,4 @@ FactoryBot.define do
   factory :activity do
     association :auditable, factory: :doi, strategy: :create
   end
-
 end

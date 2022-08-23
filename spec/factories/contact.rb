@@ -13,4 +13,3 @@ FactoryBot.define do
     initialize_with { Contact.where(uid: uid).first_or_initialize }
   end
 end
-
