@@ -149,39 +149,6 @@ describe MediaController,
         expect(json.dig("data", "attributes", "url")).to eq(url)
       end
     end
-
-    context "when the media_type is not valid" do
-      let(:media_type) { "text" }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "media",
-            "attributes" => { "mediaType" => media_type, "url" => url },
-            "relationships" => {
-              "doi" => {
-                "data" => { "type" => "dois", "id" => datacite_doi.doi },
-              },
-            },
-          },
-        }
-      end
-
-      it "returns status code 422" do
-        post "/dois/#{datacite_doi.doi}/media",
-             valid_attributes, headers
-
-        expect(last_response.status).to eq(422)
-      end
-
-      it "returns a validation failure message" do
-        post "/dois/#{datacite_doi.doi}/media",
-             valid_attributes, headers
-
-        expect(json["errors"]).to eq(
-          [{ "source" => "media_type", "title" => "Is invalid" }],
-        )
-      end
-    end
   end
 
   describe "PATCH /dois/DOI/media/:id" do

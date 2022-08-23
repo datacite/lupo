@@ -47,15 +47,15 @@ context "validations" do
     expect(subject.url).to eq("mailto:info@example.org")
   end
 
-  it "Media type valid" do
+  it "MIME type media type valid" do
     subject = build(:media, media_type: "text/plain")
     expect(subject).to be_valid
     expect(subject.media_type).to eq("text/plain")
   end
 
-  it "Media type invalid" do
+  it "Free text media type valid" do
     subject = build(:media, media_type: "text")
-    expect(subject).to_not be_valid
+    expect(subject).to be_valid
     expect(subject.media_type).to eq("text")
   end
 
