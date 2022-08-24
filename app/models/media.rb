@@ -14,7 +14,6 @@ class Media < ApplicationRecord
   validates_format_of :url,
                       with: %r{\A(ftp|http|https|gs|s3|dos)://\S+},
                       if: :url?
-  validates_format_of :media_type, with: %r{\S+/\S+}, if: :media_type?
   validates_associated :doi
 
   belongs_to :doi, foreign_key: :dataset, inverse_of: :media
