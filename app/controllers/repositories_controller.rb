@@ -198,20 +198,20 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    prefix, provider_prefix, client_prefix = nil;
+    prefix = nil
 
     @client = Client.new(safe_params)
     authorize! :create, @client
 
-    provider_prefix = @client.provider.provider_prefixes.select {| provider_prefix | provider_prefix.state == 'without-repository'}.first
+    provider_prefix = @client.provider.provider_prefixes.select { |_provider_prefix| _provider_prefix.state == "without-repository" }.first
 
     if !provider_prefix.present?
-      prefix = Prefix.all.select { |prefix| (prefix.state == 'unassigned') }.first
+      prefix = Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first
     end
 
     if (provider_prefix.present? || prefix.present?) && @client.save
       if !provider_prefix.present?
-        provider_prefix = ProviderPrefix.new({"provider_id":@client.provider.symbol,"prefix_id":prefix.uid})
+        provider_prefix = ProviderPrefix.new({ "provider_id": @client.provider.symbol, "prefix_id": prefix.uid })
         provider_prefix.save
       end
 
@@ -232,7 +232,7 @@ class RepositoriesController < ApplicationController
              status: :created
     else
       # Rails.logger.error @client.errors.inspect
-      @client.errors[:base] << "Unable to create, save, or assign a prefix to this repository."
+      @client.errors[:base] << "Unable to create or save this repository, or assign a prefix to it."
       render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
