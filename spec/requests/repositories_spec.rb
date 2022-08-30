@@ -234,6 +234,9 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
   describe "POST /repositories" do
     context "when the request is valid" do
+      # There must be an available prefix for repository creation.
+      let!(:prefix) { create(:prefix) }
+
       it "creates a repository" do
         post "/repositories", params, headers
 
@@ -267,6 +270,9 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     context "consortium" do
+      # There must be an available prefix for repository creation.
+      let!(:prefix) { create(:prefix) }
+
       it "creates a repository" do
         post "/repositories", params, consortium_headers
 
@@ -285,6 +291,9 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     context "when the request is invalid" do
+      # There must be an available prefix for repository creation.
+      let!(:prefix) { create(:prefix) }
+
       let(:params) do
         {
           "data" => {
