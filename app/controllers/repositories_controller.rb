@@ -209,7 +209,9 @@ class RepositoriesController < ApplicationController
       prefix = Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first
     end
 
-    if (provider_prefix.present? || prefix.present?) && @client.save
+    prefix_available = (provider_prefix.present? || prefix.present?)
+
+    if prefix_available && @client.save
       if !provider_prefix.present?
         provider_prefix = ProviderPrefix.new({ "provider_id": @client.provider.symbol, "prefix_id": prefix.uid })
         provider_prefix.save
@@ -232,7 +234,11 @@ class RepositoriesController < ApplicationController
              status: :created
     else
       # Rails.logger.error @client.errors.inspect
-      @client.errors[:base] << "Unable to create or save this repository, or assign a prefix to it."
+      if (!prefix_available)
+        @client.errors[:base] << "Unable to assign a prefix to repository. Repository not created."
+      else
+        @client.errors[:base] << "Unable to create repository."
+      end
       render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
