@@ -234,7 +234,7 @@ class RepositoriesController < ApplicationController
              status: :created
     else
       # Rails.logger.error @client.errors.inspect
-      if (!prefix_available)
+      if !prefix_available
         @client.errors[:base] << "Unable to assign a prefix to repository. Repository not created."
       else
         @client.errors[:base] << "Unable to create repository."
