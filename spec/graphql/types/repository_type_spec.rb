@@ -617,6 +617,8 @@ describe RepositoryType do
   end
 
   describe "find repository with prefixes" do
+    let!(:prefix) { create(:prefix) }
+
     let(:provider) { create(:provider, symbol: "TESTC") }
     let(:client) do
       create(
@@ -625,7 +627,6 @@ describe RepositoryType do
       )
     end
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:prefix) { create(:prefix) }
     let!(:client_prefixes) { create_list(:client_prefix, 3, client: client) }
 
     before do
