@@ -617,7 +617,7 @@ describe RepositoryType do
   end
 
   describe "find repository with prefixes" do
-    let!(:prefix) { create(:prefix) }
+    let!(:prefix) { create(:prefix, uid: "10.6000") }
 
     let(:provider) { create(:provider, symbol: "TESTC") }
     let(:client) do
