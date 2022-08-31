@@ -235,9 +235,9 @@ class RepositoriesController < ApplicationController
     else
       # Rails.logger.error @client.errors.inspect
       if !prefix_available
-        @client.errors[:base] << "Unable to assign a prefix to repository. Repository not created."
+        @client.errors.add(:base, message: "No prefixes available for repository. Repository not created.")
       else
-        @client.errors[:base] << "Unable to create repository."
+        @client.errors.add(:base, message: "Unable to create repository.")
       end
       render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
