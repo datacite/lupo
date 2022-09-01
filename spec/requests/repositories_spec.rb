@@ -234,9 +234,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
   describe "POST /repositories" do
     context "when the request is valid" do
-      # There must be an available prefix for repository creation.
-      let!(:prefix) { create(:prefix, uid: "10.5000") }
-
       it "creates a repository" do
         post "/repositories", params, headers
 
@@ -252,15 +249,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(relationships.dig("provider", "data", "id")).to eq(
           provider.uid,
         )
-        expect(relationships.dig("prefixes", "data", 0, "id")).to eq(
-          "10.5000",
-        )
       end
-    end
-
-    context "when the request is valid" do
-      # There must be an available prefix for repository creation.
-      let!(:prefix) { create(:prefix, uid: "10.5001") }
 
       it "from salesforce" do
         post "/repositories", params, headers
@@ -274,16 +263,10 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(relationships.dig("provider", "data", "id")).to eq(
           provider.uid,
         )
-        expect(relationships.dig("prefixes", "data", 0, "id")).to eq(
-          "10.5001",
-        )
       end
     end
 
     context "consortium" do
-      # There must be an available prefix for repository creation.
-      let!(:prefix) { create(:prefix) }
-
       it "creates a repository" do
         post "/repositories", params, consortium_headers
 
@@ -302,9 +285,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     context "when the request is invalid" do
-      # There must be an available prefix for repository creation.
-      let!(:prefix) { create(:prefix) }
-
       let(:params) do
         {
           "data" => {
@@ -329,22 +309,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(json["errors"]).to eq(
           [
             { "source" => "system_email", "title" => "Can't be blank", "uid" => "#{provider.uid}.imperial" },
-          ],
-        )
-      end
-    end
-
-    context "when the request is valid, but no prefix is available" do
-      # There must be an available prefix for repository creation.
-      # let!(:prefix) { create(:prefix) }
-
-      it "creates a repository" do
-        post "/repositories", params, headers
-
-        expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq(
-          [
-            { "source" => "base", "title" => "No prefixes available for repository. Repository not created.", "uid" => "#{provider.uid}.imperial" },
           ],
         )
       end
