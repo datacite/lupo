@@ -76,7 +76,7 @@ RSpec.configure do |config|
 
   # Need a supply of available prefixes for repository creation.
   config.before(:each) {
-    create_list(:prefix, 50);
+    create_list(:prefix, 50)
   }
 end
 
