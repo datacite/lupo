@@ -73,6 +73,11 @@ RSpec.configure do |config|
       DataCatalog.fetch_and_cache_all(pages: 3, duration: 30.minutes)
     end
   end
+
+  # Need a supply of available prefixes for repository creation.
+  config.before(:each) {
+    create_list(:prefix, 50);
+  }
 end
 
 VCR.configure do |c|
