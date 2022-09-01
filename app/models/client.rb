@@ -49,6 +49,7 @@ class Client < ApplicationRecord
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
+  attr_accessor :provider_prefix, :prefix
   attr_reader :from_salesforce
 
   validates_presence_of :symbol, :name, :system_email
@@ -73,6 +74,7 @@ class Client < ApplicationRecord
                          message: "Client type %s is not included in the list"
   validates_associated :provider
   validate :check_id, on: :create
+  validate :check_prefix, on: :create
   validate :freeze_symbol, on: :update
   validate :check_issn, if: :issn?
   validate :check_certificate, if: :certificate?
@@ -90,6 +92,7 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_save :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
@@ -894,6 +897,32 @@ class Client < ApplicationRecord
           ", Your Client ID must include the name of your provider. Separated by a dot '.' ",
         )
       end
+    end
+
+    def check_prefix
+      @provider_prefix = provider.provider_prefixes.select { |_prefix| (_prefix.state == "without-repository") }.first
+      @prefix = Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first
+
+      if !provider_prefix.present? && !prefix.present?
+        errors.add(
+          :base,
+          "No prefixes available.  Unable to create repository.",
+        )
+      end
+    end
+
+    def assign_prefix
+      if !@provider_prefix.present?
+        @provider_prefix = ProviderPrefix.create(
+          provider_id: provider.symbol, prefix_id: @prefix.uid
+        )
+      end
+
+      ClientPrefix.create(
+        client_id: symbol,
+        provider_prefix_id: @provider_prefix.uid,
+        prefix_id: @provider_prefix.prefix.uid,
+      )
     end
 
     def user_url

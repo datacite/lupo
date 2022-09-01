@@ -198,34 +198,12 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    prefix = nil
-
     @client = Client.new(safe_params)
+
     authorize! :create, @client
 
-    provider_prefix = @client.provider.provider_prefixes.select { |_provider_prefix| _provider_prefix.state == "without-repository" }.first
-
-    if !provider_prefix.present?
-      prefix = Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first
-    end
-
-    prefix_available = (provider_prefix.present? || prefix.present?)
-
-    if prefix_available && @client.save
-      if !provider_prefix.present?
-        provider_prefix = ProviderPrefix.new({ "provider_id": @client.provider.symbol, "prefix_id": prefix.uid })
-        provider_prefix.save
-      end
-
-      client_prefix = ClientPrefix.new(
-        client_id: @client.symbol,
-        provider_prefix_id: provider_prefix.uid,
-        prefix_id: provider_prefix.prefix.uid,
-      )
-      client_prefix.save
-
+    if @client.save
       @client.send_welcome_email(responsible_id: current_user.uid)
-
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
@@ -234,11 +212,6 @@ class RepositoriesController < ApplicationController
              status: :created
     else
       # Rails.logger.error @client.errors.inspect
-      if !prefix_available
-        @client.errors.add(:base, message: "No prefixes available for repository. Repository not created.")
-      else
-        @client.errors.add(:base, message: "Unable to create repository.")
-      end
       render json: serialize_errors(@client.errors, uid: @client.uid),
              status: :unprocessable_entity
     end
