@@ -900,8 +900,8 @@ class Client < ApplicationRecord
     end
 
     def check_prefix
-      @provider_prefix = provider.provider_prefixes.select { |_prefix| (_prefix.state == "without-repository") }.first
-      @prefix = Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first
+      @provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_prefix| (_prefix.state == "without-repository") }.first : nil
+      @prefix = Prefix.all.count > 0 ? Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first : nil
 
       if !provider_prefix.present? && !prefix.present?
         errors.add(
