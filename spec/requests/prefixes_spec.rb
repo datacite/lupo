@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe PrefixesController, type: :request, elasticsearch: true do
-  let!(:prefixes) { create_list(:prefix, 10) }
+  let!(:prefixes) { create_list(:prefix, 3) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }
   let(:headers) do
@@ -23,7 +23,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       get "/prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(10)
+      expect(json["data"].size).to eq(3 + ENV["PREFIX_POOL_SIZE"].to_i)
     end
 
     it "returns prefixes by id" do
@@ -37,7 +37,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(10)
+      expect(json["data"].size).to eq(3 + ENV["PREFIX_POOL_SIZE"].to_i)
     end
   end
 

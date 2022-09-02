@@ -2,6 +2,7 @@
 
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
+ENV["PREFIX_POOL_SIZE"] = "20"
 
 # set up Code Climate
 require "simplecov"
@@ -75,9 +76,9 @@ RSpec.configure do |config|
   end
 
   # Need a supply of available prefixes for repository creation.
-  config.before(:each) {
-    create_list(:prefix, 50)
-  }
+  config.before(:each) do |example|
+    @prefix_pool = create_list(:prefix, ENV["PREFIX_POOL_SIZE"].to_i) unless example.metadata[:skip_prefix_pool]
+  end
 end
 
 VCR.configure do |c|
