@@ -670,8 +670,7 @@ describe RepositoryType do
       }"
     end
 
-    # Temporary xit
-    xit "returns repository" do
+    xit "returns repository", :skip_prefix_pool do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "repository", "clientId")).to eq(client.uid)

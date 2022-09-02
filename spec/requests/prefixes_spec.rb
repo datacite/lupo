@@ -19,11 +19,11 @@ describe PrefixesController, type: :request, elasticsearch: true do
       sleep 2
     end
 
-    it "returns prefixes" do
+    it "returns prefixes", :skip_prefix_pool do
       get "/prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(3 + ENV["PREFIX_POOL_SIZE"].to_i)
+      expect(json["data"].size).to eq(3)
     end
 
     it "returns prefixes by id" do
@@ -33,11 +33,11 @@ describe PrefixesController, type: :request, elasticsearch: true do
       expect(json["data"].size).to eq(1)
     end
 
-    it "returns prefixes by query" do
+    it "returns prefixes by query", :skip_prefix_pool do
       get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(3 + ENV["PREFIX_POOL_SIZE"].to_i)
+      expect(json["data"].size).to eq(3)
     end
   end
 

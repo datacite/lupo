@@ -11,7 +11,7 @@ RSpec.describe Prefix, type: :model do
   end
 
   describe "methods" do
-    it "prefixes all" do
+    it "prefixes all", :skip_prefix_pool do
       collection = Prefix.all
       expect(collection.length).to eq(prefixes.length)
       single = collection.first
@@ -22,7 +22,7 @@ RSpec.describe Prefix, type: :model do
       # expect(meta).not_to be_empty
     end
 
-    it "prefixes with where year" do
+    it "prefixes with where year", :skip_prefix_pool do
       collection =
         Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
       single = collection.first

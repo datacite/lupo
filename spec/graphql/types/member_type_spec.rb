@@ -208,7 +208,7 @@ describe MemberType do
       }"
     end
 
-    Xit "returns member" do
+    xit "returns member" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "member", "id")).to eq(provider.uid)
