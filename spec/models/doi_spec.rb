@@ -1262,41 +1262,48 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  context "formats" do
+  describe "formats" do
+    content_url = [
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/1dgp-0rkbx6ahe?v=1.2",
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/7a4a-2zxc46nwb?v=1.2",
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/jjaq-bj4qtkmhj?v=1.2",
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/xgx0-b76w60psz?v=1.2",
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/9sje-1mp1m3yzp?v=1.2",
+      "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/mz8t-6z7c5r3cd?v=1.2",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/hj03-9cga8qjzc?v=1.0",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/94zc-f6chvvj42?v=1.0",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/9m71-5fagnse7v?v=1.0",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/vw9p-a214kdxja?v=1.0",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/n4bw-8ska90rm7?v=1.0",
+      "https://redivis.com/datasets/q6wy-ap6qgbpq2/tables/rn5n-abygq4jsj?v=1.0",
+    ]
+
+    formats = [
+      "text/csv",
+      "ndjson",
+      "avro",
+      "parquet",
+      "sas7bdat",
+      "dat",
+      "sav"
+    ]
+
     let(:doi) { create(:doi,
-      formats: [
-        "text/csv",
-        "ndjson",
-        "avro",
-        "parquet",
-        "sas7bdat",
-        "dat",
-        "sav"
-      ]
+      formats: formats
       ) }
 
     it "add content_url and update media" do
-      doi.content_url = [
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/1dgp-0rkbx6ahe?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/7a4a-2zxc46nwb?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/jjaq-bj4qtkmhj?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/xgx0-b76w60psz?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/9sje-1mp1m3yzp?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/mz8t-6z7c5r3cd?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/1dgp-0rkbx6ahe?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/7a4a-2zxc46nwb?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/jjaq-bj4qtkmhj?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/xgx0-b76w60psz?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/9sje-1mp1m3yzp?v=1.2",
-        "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/mz8t-6z7c5r3cd?v=1.2"
-      ]
+      doi.content_url = content_url
 
       doi.update_media
 
       expect(doi.media.count).to eq(12)
-      expect(doi.media[-1].uid).to eq("0000-0000-0000-000c")
+      expect(doi.media[-1].url).to eq(content_url[-1])
+      expect(doi.media[-1].uid).to be_truthy
+      expect(doi.media[5].media_type).to eq(formats[5])
+      expect(doi.media[-1].media_type).to eq("text/plain")
       expect(doi.media_ids.count).to eq(12)
-      expect(doi.media_ids[-1]).to eq("0000-0000-0000-000c")
+      expect(doi.media_ids[-1]).to be_truthy
       expect(doi.as_indexed_json["media_ids"].count).to eq(12)
     end
   end
