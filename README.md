@@ -65,3 +65,5 @@ Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
 ## License
 
 **Lupo** is released under the [MIT License](https://github.com/datacite/lupo/blob/master/LICENSE).
+
+Just testing the base build and test suites.
