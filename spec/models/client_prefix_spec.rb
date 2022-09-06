@@ -17,11 +17,11 @@ describe ClientPrefix, type: :model do
       )
     end
 
-  describe "Validations" do
-    it { should validate_presence_of(:client) }
-    it { should validate_presence_of(:prefix) }
-    it { should validate_presence_of(:provider_prefix) }
-  end
+    describe "Validations" do
+      it { should validate_presence_of(:client) }
+      it { should validate_presence_of(:prefix) }
+      it { should validate_presence_of(:provider_prefix) }
+    end
 
     describe "methods" do
       it "is valid" do
