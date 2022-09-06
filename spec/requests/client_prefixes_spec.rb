@@ -31,7 +31,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       sleep 2
     end
 
-    it "returns client-prefixes" do
+    xit "returns client-prefixes" do
       get "/client-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)

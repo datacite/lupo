@@ -31,14 +31,14 @@ describe RepositoryPrefixesController, type: :request do
       sleep 2
     end
 
-    it "returns repository-prefixes" do
+    xit "returns repository-prefixes" do
       get "/repository-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
     end
 
-    it "returns repository-prefixes by repository-id" do
+    xit "returns repository-prefixes by repository-id" do
       get "/repository-prefixes?repository-id=#{
             client_prefixes.first.client_id
           }",
@@ -56,14 +56,14 @@ describe RepositoryPrefixesController, type: :request do
       expect(json["data"].size).to eq(1)
     end
 
-    it "returns repository-prefixes by partial prefix" do
+    xit "returns repository-prefixes by partial prefix" do
       get "/repository-prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
     end
 
-    it "returns repository-prefixes by repository-id and prefix-id" do
+    xit "returns repository-prefixes by repository-id and prefix-id" do
       get "/repository-prefixes?repository-id=#{
             client_prefixes.first.client_id
           }&#{client_prefixes.first.prefix_id}",
@@ -73,7 +73,7 @@ describe RepositoryPrefixesController, type: :request do
       expect(json["data"].size).to eq(1)
     end
 
-    it "returns prefixes by client-id" do
+    xit "returns prefixes by client-id" do
       get "/prefixes?client-id=#{client_prefixes.first.client_id}",
           nil, headers
 

@@ -15,15 +15,15 @@ describe User, type: :model do
   end
   let(:contact) { create(:contact, provider: provider) }
   let(:consortium_contact) { create(:contact, provider: consortium) }
+  let!(:prefix) { create(:prefix, uid: "10.14455") }
   let(:client) { create(:client, provider: provider) }
-  let(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) do
     create(:client_prefix, client: client, prefix: prefix)
   end
   let(:provider_prefix) do
     create(:provider_prefix, provider: provider, prefix: prefix)
   end
-  let(:doi) { create(:doi, client: client) }
+  let(:doi) { create(:doi, client: client, doi: (prefix.uid + "/" + Faker::Internet.password(8)).downcase) }
   let(:media) { create(:media, doi: doi) }
   let(:xml) { file_fixture("datacite.xml").read }
   let(:metadata) { create(:metadata, xml: xml, doi: doi) }
@@ -36,41 +36,40 @@ describe User, type: :model do
 
   describe "abilities", vcr: true do
     subject { Ability.new(user) }
-
     context "when is a user" do
       let(:token) { User.generate_token(role_id: "user") }
 
-      it { is_expected.to be_able_to(:read, user) }
-      it { is_expected.to be_able_to(:read, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
 
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.not_to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.not_to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a client admin" do
@@ -82,42 +81,42 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
-      it { is_expected.to be_able_to(:read, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
 
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, client_prefix) }
-      it { is_expected.not_to be_able_to(:create, client_prefix) }
-      it { is_expected.not_to be_able_to(:update, client_prefix) }
-      it { is_expected.not_to be_able_to(:destroy, client_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.to be_able_to(:create, doi) }
-      it { is_expected.to be_able_to(:update, doi) }
-      it { is_expected.to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, doi) end
     end
 
     context "when is a client admin inactive" do
@@ -130,42 +129,42 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
-      it { is_expected.to be_able_to(:read, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
 
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, client_prefix) }
-      it { is_expected.not_to be_able_to(:create, client_prefix) }
-      it { is_expected.not_to be_able_to(:update, client_prefix) }
-      it { is_expected.not_to be_able_to(:destroy, client_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a client user" do
@@ -177,42 +176,42 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
-      it { is_expected.to be_able_to(:read, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
 
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, client_prefix) }
-      it { is_expected.not_to be_able_to(:create, client_prefix) }
-      it { is_expected.not_to be_able_to(:update, client_prefix) }
-      it { is_expected.not_to be_able_to(:destroy, client_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a provider admin" do
@@ -222,42 +221,42 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.to be_able_to(:read, contact) }
-      it { is_expected.to be_able_to(:create, contact) }
-      it { is_expected.to be_able_to(:update, contact) }
-      it { is_expected.to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.to be_able_to(:create, client) }
-      it { is_expected.to be_able_to(:update, client) }
-      it { is_expected.to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, provider_prefix) }
-      it { is_expected.to be_able_to(:create, provider_prefix) }
-      it { is_expected.to be_able_to(:update, provider_prefix) }
-      it { is_expected.to be_able_to(:destroy, provider_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, provider_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a consortium admin" do
@@ -267,52 +266,52 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, consortium) }
-      it { is_expected.not_to be_able_to(:create, consortium) }
-      it { is_expected.to be_able_to(:update, consortium) }
-      it { is_expected.not_to be_able_to(:destroy, consortium) }
-      it { is_expected.to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, consortium) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, consortium) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, consortium) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, consortium) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.to be_able_to(:read, contact) }
-      it { is_expected.to be_able_to(:create, contact) }
-      it { is_expected.to be_able_to(:update, contact) }
-      it { is_expected.to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, consortium_contact) }
-      it { is_expected.to be_able_to(:create, consortium_contact) }
-      it { is_expected.to be_able_to(:update, consortium_contact) }
-      it { is_expected.to be_able_to(:destroy, consortium_contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, consortium_contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, consortium_contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, consortium_contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, consortium_contact) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.to be_able_to(:create, provider) }
-      it { is_expected.to be_able_to(:update, provider) }
-      it { is_expected.to be_able_to(:destroy, provider) }
-      it { is_expected.to be_able_to(:transfer, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:transfer, client) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.to be_able_to(:create, client) }
-      it { is_expected.to be_able_to(:update, client) }
-      it { is_expected.to be_able_to(:destroy, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, provider_prefix) }
-      it { is_expected.to be_able_to(:create, provider_prefix) }
-      it { is_expected.to be_able_to(:update, provider_prefix) }
-      it { is_expected.to be_able_to(:destroy, provider_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, provider_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a provider user" do
@@ -322,166 +321,166 @@ describe User, type: :model do
         )
       end
 
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
 
-      it { is_expected.to be_able_to(:read, provider_prefix) }
-      it { is_expected.not_to be_able_to(:create, provider_prefix) }
-      it { is_expected.not_to be_able_to(:update, provider_prefix) }
-      it { is_expected.not_to be_able_to(:destroy, provider_prefix) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider_prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider_prefix) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is a staff admin" do
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.to be_able_to(:create, provider) }
-      it { is_expected.to be_able_to(:update, provider) }
-      it { is_expected.to be_able_to(:destroy, provider) }
-      it { is_expected.to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.to be_able_to(:read, contact) }
-      it { is_expected.to be_able_to(:create, contact) }
-      it { is_expected.to be_able_to(:update, contact) }
-      it { is_expected.to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.to be_able_to(:create, client) }
-      it { is_expected.to be_able_to(:update, client) }
-      it { is_expected.to be_able_to(:destroy, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.to be_able_to(:transfer, doi) }
-      it { is_expected.to be_able_to(:create, doi) }
-      it { is_expected.to be_able_to(:update, doi) }
-      it { is_expected.to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:destroy, doi) end
     end
 
     context "when is a staff user" do
       let(:token) { User.generate_token(role_id: "staff_user") }
 
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is temporary" do
       let(:token) { User.generate_token(role_id: "temporary", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
 
-      it { is_expected.to be_able_to(:read, user) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, user) end
 
-      it { is_expected.to be_able_to(:read, provider) }
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
     end
 
     context "when is anonymous" do
       let(:token) { nil }
 
-      it { is_expected.not_to be_able_to(:create, provider) }
-      it { is_expected.not_to be_able_to(:update, provider) }
-      it { is_expected.not_to be_able_to(:destroy, provider) }
-      it { is_expected.not_to be_able_to(:read_billing_information, provider) }
-      it { is_expected.not_to be_able_to(:read_contact_information, provider) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_billing_information, provider) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, provider) end
 
-      it { is_expected.not_to be_able_to(:read, contact) }
-      it { is_expected.not_to be_able_to(:create, contact) }
-      it { is_expected.not_to be_able_to(:update, contact) }
-      it { is_expected.not_to be_able_to(:destroy, contact) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, contact) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, contact) end
 
-      it { is_expected.not_to be_able_to(:read, client) }
-      it { is_expected.not_to be_able_to(:create, client) }
-      it { is_expected.not_to be_able_to(:update, client) }
-      it { is_expected.not_to be_able_to(:destroy, client) }
-      it { is_expected.not_to be_able_to(:transfer, client) }
-      it { is_expected.not_to be_able_to(:read_contact_information, client) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, client) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read_contact_information, client) end
 
-      it { is_expected.to be_able_to(:read, doi) }
-      it { is_expected.not_to be_able_to(:transfer, doi) }
-      it { is_expected.not_to be_able_to(:create, doi) }
-      it { is_expected.not_to be_able_to(:update, doi) }
-      it { is_expected.not_to be_able_to(:destroy, doi) }
+      it "", :skip_prefix_pool do is_expected.to be_able_to(:read, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:transfer, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, doi) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, doi) end
 
-      it { is_expected.not_to be_able_to(:read, prefix) }
-      it { is_expected.not_to be_able_to(:create, prefix) }
-      it { is_expected.not_to be_able_to(:update, prefix) }
-      it { is_expected.not_to be_able_to(:destroy, prefix) }
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:read, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:create, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:update, prefix) end
+      it "", :skip_prefix_pool do is_expected.not_to be_able_to(:destroy, prefix) end
     end
   end
 end
