@@ -3,19 +3,10 @@
 require "rails_helper"
 
 describe "Client Prefixes", type: :request, elasticsearch: true do
-  let(:prefix) { create(:prefix) }
-  let(:provider) { create(:provider) }
-  let(:client) { create(:client, provider: provider) }
-  let(:provider_prefix) do
-    create(:provider_prefix, provider: provider, prefix: prefix)
-  end
-  let!(:client_prefixes) { create_list(:client_prefix, 5) }
-  let(:client_prefix) do
-    create(
-      :client_prefix,
-      client: client, prefix: prefix, provider_prefix: provider_prefix,
-    )
-  end
+  let!(:provider) { create(:provider) }
+  let!(:client) { create(:client, provider: provider) }
+  let!(:client_prefix) { client.client_prefixes.first }
+  let!(:provider_prefix) { client.provider_prefixes.first }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) do
     {
@@ -31,11 +22,11 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       sleep 2
     end
 
-    xit "returns client-prefixes" do
+    it "returns client-prefixes" do
       get "/client-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(5)
+      expect(json["data"].size).to eq(1)
     end
   end
 
@@ -83,6 +74,13 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
 
   describe "POST /client-prefixes" do
     context "when the request is valid" do
+      # A valid request depends on having a valid, unassigned provider_prefix.
+      # A valid provider prefix: created from an available prefix, that has not yet been assigned to a repository.
+      let!(:prefix) { create(:prefix, uid: "10.7000") }
+      let!(:provider_prefix) do
+        create(:provider_prefix, provider: provider, prefix: prefix)
+      end
+
       let(:valid_attributes) do
         {
           "data" => {
@@ -126,13 +124,6 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
   end
 
   describe "DELETE /client-prefixes/:uid" do
-    let!(:client_prefix) { create(:client_prefix) }
-
-    before do
-      ClientPrefix.import
-      sleep 2
-    end
-
     it "deletes the prefix" do
       delete "/client-prefixes/#{client_prefix.uid}",
              nil, headers
