@@ -3,8 +3,8 @@
 require "rails_helper"
 
 describe Client, type: :model do
-  let(:provider) { create(:provider) }
-  let(:client) { create(:client, provider: provider) }
+  let!(:provider) { create(:provider) }
+  let!(:client) { create(:client, provider: provider) }
 
   describe "Validations" do
     it { should validate_presence_of(:symbol) }
@@ -15,44 +15,39 @@ describe Client, type: :model do
   end
 
   describe "to_jsonapi" do
-    xit "works" do
+    it "works" do
       params = client.to_jsonapi
       expect(params.dig("id")).to eq(client.symbol.downcase)
       expect(params.dig("attributes", "symbol")).to eq(client.symbol)
-      expect(params.dig("attributes", "system-email")).to eq(
+      expect(params.dig("attributes", "system_email")).to eq(
         client.system_email,
       )
-      expect(params.dig("attributes", "provider-id")).to eq(client.provider_id)
-      expect(params.dig("attributes", "is-active")).to be true
+      expect(params.dig("attributes", "provider_id")).to eq(client.provider_id)
+      expect(params.dig("attributes", "is_active")).to be true
     end
   end
 
   describe "Client transfer" do
-    let!(:prefixes) { create_list(:prefix, 3) }
-    let!(:prefix) { prefixes.first }
-
-    ### Order is important in creating prefixes relations
-    let!(:provider_prefix) do
-      create(:provider_prefix, provider: provider, prefix: prefix)
+    let!(:prefixes) do
+      create_list(:prefix, 10).each_with_index do |prefix, i|
+       prefix.uid = "10." + (7000 + i).to_s
+       prefix.save
+      end
     end
+    let!(:prefix) { client.prefixes.first }
+
     let!(:provider_prefix_more) do
       create(:provider_prefix, provider: provider, prefix: prefixes.last)
     end
-    let!(:client_prefix) do
-      create(
-        :client_prefix,
-        client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid,
-      )
-    end
 
-    let(:new_provider) do
+    let!(:new_provider) do
       create(:provider, symbol: "QUECHUA", member_type: "direct_member")
     end
-    let(:provider_target_id) { new_provider.symbol }
-    let(:bad_provider_target_id) { "SALS" }
+    let!(:provider_target_id) { new_provider.symbol }
+    let!(:bad_provider_target_id) { "SALS" }
 
     context "to direct_member" do
-      xit "works" do
+      it "works" do
         client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(new_provider.symbol.downcase)
@@ -98,7 +93,7 @@ describe Client, type: :model do
       end
       let(:provider_target_id) { new_provider.symbol }
 
-      xit "works" do
+      it "works" do
         client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(new_provider.symbol.downcase)
@@ -127,24 +122,21 @@ describe Client, type: :model do
   end
 
   describe "Client prefixes transfer" do
-    let!(:prefixes) { create_list(:prefix, 3) }
-    let!(:prefix) { prefixes.first }
-    ### Order is important in creating prefixes relations
-    let!(:provider_prefix) do
-      create(:provider_prefix, provider: provider, prefix: prefix)
+    let!(:prefixes) do
+      create_list(:prefix, 10).each_with_index do |prefix, i|
+       prefix.uid = "10." + (7000 + i).to_s
+       prefix.save
+      end
     end
+    let!(:prefix) { client.prefixes.first }
+
     let!(:provider_prefix_more) do
       create(:provider_prefix, provider: provider, prefix: prefixes.last)
     end
-    let!(:client_prefix) do
-      create(
-        :client_prefix,
-        client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid,
-      )
-    end
-    let(:new_provider) { create(:provider, symbol: "QUECHUA") }
 
-    xit "works" do
+    let!(:new_provider) { create(:provider, symbol: "QUECHUA") }
+
+    it "works" do
       client.transfer_prefixes(provider_target_id: new_provider.symbol)
 
       expect(new_provider.prefixes.length).to eq(1)
