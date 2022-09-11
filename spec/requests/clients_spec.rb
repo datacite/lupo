@@ -38,6 +38,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
     before do
       Client.import
+      Provider.import
       sleep 1
     end
 
@@ -107,7 +108,7 @@ describe ClientsController, type: :request, elasticsearch: true do
   end
 
   describe "GET /clients/totals" do
-    let(:client) { create(:client) }
+    let!(:client) { create(:client, provider: provider) }
     let!(:datacite_dois) do
       create_list(
         :doi,
@@ -216,7 +217,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -240,7 +241,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -257,7 +258,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -267,7 +268,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
 
     context "transfer repository" do
-      let(:new_provider) do
+      let!(:new_provider) do
         create(:provider, symbol: "QUECHUA", password_input: "12345")
       end
       let!(:prefixes) { create_list(:prefix, 3) }
@@ -303,7 +304,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         sleep 3
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -313,7 +314,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         ).to eq("quechua")
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(client.prefixes.first.uid)
 
         get "/providers/#{provider.symbol}"
 
@@ -324,15 +325,21 @@ describe ClientsController, type: :request, elasticsearch: true do
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
         ).to eq(prefixes.last.uid)
 
+        Provider.import
+        Client.import
+        sleep 2
+
         get "/providers/#{new_provider.symbol}"
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(new_provider.prefixes.first.uid)
 
         get "/prefixes/#{prefix.uid}"
         expect(
           json.dig("data", "relationships", "clients", "data").first.dig("id"),
         ).to eq(client.uid)
+
+        ProviderPrefix.import
 
         get "provider-prefixes?query=#{prefix.uid}"
         expect(
@@ -385,7 +392,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -423,7 +430,7 @@ describe ClientsController, type: :request, elasticsearch: true do
   end
 
   describe "DELETE /clients/:id" do
-    xit "returns status code 204" do
+    it "returns status code 204" do
       delete "/clients/#{client.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
@@ -470,7 +477,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       sleep 2
     end
 
-    xit "returns status code 200" do
+    it "returns status code 200" do
       put "/clients/#{client.symbol}", params, headers
       sleep 1
 
