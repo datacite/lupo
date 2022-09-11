@@ -30,8 +30,8 @@ describe Client, type: :model do
   describe "Client transfer" do
     let!(:prefixes) do
       create_list(:prefix, 10).each_with_index do |prefix, i|
-       prefix.uid = "10." + (7000 + i).to_s
-       prefix.save
+        prefix.uid = "10." + (7000 + i).to_s
+        prefix.save
       end
     end
     let!(:prefix) { client.prefixes.first }
@@ -124,8 +124,8 @@ describe Client, type: :model do
   describe "Client prefixes transfer" do
     let!(:prefixes) do
       create_list(:prefix, 10).each_with_index do |prefix, i|
-       prefix.uid = "10." + (7000 + i).to_s
-       prefix.save
+        prefix.uid = "10." + (7000 + i).to_s
+        prefix.save
       end
     end
     let!(:prefix) { client.prefixes.first }

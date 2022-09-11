@@ -540,7 +540,7 @@ describe RepositoryType do
 
     before :all do
       VCR.use_cassette("ReferenceRepositoryType/related_works_citations", allow_playback_repeats: true) do
-        create(:prefix)
+        create_list(:prefix, 2)
         @provider = create(:provider)
         @client = create(:client, provider: @provider)
         @client2 = create(:client,  provider: @provider)
@@ -620,7 +620,7 @@ describe RepositoryType do
   end
 
   describe "find repository with prefixes" do
-    let!(:prefix) { create(:prefix, uid: "10.5081") }
+    let!(:prefix) { create(:prefix) }
     let(:provider) { create(:provider, symbol: "TESTC") }
     let(:client) do
       create(
@@ -629,7 +629,6 @@ describe RepositoryType do
       )
     end
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:client_prefixes) { create_list(:client_prefix, 3, client: client) }
 
     before do
       Provider.import(force: true)
@@ -670,7 +669,7 @@ describe RepositoryType do
       }"
     end
 
-    xit "returns repository", :skip_prefix_pool do
+    it "returns repository" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "repository", "clientId")).to eq(client.uid)
@@ -678,15 +677,15 @@ describe RepositoryType do
 
       expect(
         response.dig("data", "repository", "prefixes", "totalCount"),
-      ).to eq(3)
+      ).to eq(1)
       expect(response.dig("data", "repository", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2022" }],
+        [{ "count" => 1, "id" => "2022" }],
       )
       expect(
         response.dig("data", "repository", "prefixes", "nodes").length,
-      ).to eq(3)
+      ).to eq(1)
       prefix1 = response.dig("data", "repository", "prefixes", "nodes", 0)
-      expect(prefix1.fetch("name")).to eq(client_prefixes.first.prefix_id)
+      expect(prefix1.fetch("name")).to eq(client.prefix_ids.first)
     end
   end
 end
