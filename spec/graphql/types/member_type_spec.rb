@@ -149,7 +149,6 @@ describe MemberType do
     let(:provider) { create(:provider, symbol: "TESTC") }
     let!(:client) { create(:client, provider: provider, software: "dataverse") }
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:prefix) { create(:prefix) }
     let!(:provider_prefixes) do
       create_list(:provider_prefix, 3, provider: provider)
     end
@@ -208,7 +207,7 @@ describe MemberType do
       }"
     end
 
-    xit "returns member" do
+    it "returns member" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "member", "id")).to eq(provider.uid)
@@ -237,12 +236,12 @@ describe MemberType do
       expect(repository1.fetch("name")).to eq(client.name)
       expect(repository1.fetch("software")).to eq(["dataverse"])
 
-      expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
+      expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(4)
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2022" }],
+        [{ "count" => 4, "id" => "2022" }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
-        3,
+        4,
       )
       prefix1 = response.dig("data", "member", "prefixes", "nodes", 0)
       expect(prefix1.fetch("name")).to eq(@provider_prefixes.first.prefix_id)
