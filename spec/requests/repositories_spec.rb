@@ -6,7 +6,7 @@ require "pp"
 describe RepositoriesController, type: :request, elasticsearch: true do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
-  let(:provider) do
+  let!(:provider) do
     create(
       :provider,
       consortium: consortium,
@@ -334,7 +334,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -366,7 +366,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}",
             params, consortium_headers
 
@@ -391,7 +391,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -412,18 +412,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       let(:new_provider) do
         create(:provider, symbol: "QUECHUA", password_input: "12345")
       end
-      let!(:prefix) { create(:prefix) }
-      let!(:provider_prefix) do
-        create(:provider_prefix, provider: provider, prefix: prefix)
-      end
-      let!(:client_prefix) do
-        create(
-          :client_prefix,
-          client: client,
-          prefix: prefix,
-          provider_prefix_id: provider_prefix.uid,
-        )
-      end
+      let(:prefix) { client.prefixes.first }
       let(:doi) { create_list(:doi, 10, client: client) }
 
       let(:params) do
@@ -437,7 +426,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}",
             params, staff_headers
 
@@ -460,7 +449,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(new_provider.prefixes.first.uid)
 
         get "/prefixes/#{prefix.uid}"
         expect(
@@ -510,7 +499,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -535,7 +524,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
-      xit "updates the record" do
+      it "updates the record" do
         put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
@@ -577,13 +566,13 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   end
 
   describe "DELETE /repositories/:id" do
-    xit "returns status code 204" do
+    it "returns status code 204" do
       delete "/repositories/#{client.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
     end
 
-    xit "returns status code 204 with consortium" do
+    it "returns status code 204 with consortium" do
       delete "/repositories/#{client.uid}",
              nil, consortium_headers
 
@@ -632,7 +621,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       sleep 2
     end
 
-    xit "transfered all DOIs" do
+    it "transfered all DOIs" do
       put "/repositories/#{client.symbol}", params, headers
       sleep 1
 
@@ -641,7 +630,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
 
-    xit "transfered all DOIs consortium" do
+    it "transfered all DOIs consortium" do
       put "/repositories/#{client.symbol}",
           params, consortium_headers
       sleep 1
