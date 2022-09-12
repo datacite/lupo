@@ -179,7 +179,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
         sleep 2
       end
 
-      xit "creates a provider-prefix" do
+      it "creates a provider-prefix", :skip_prefix_pool do
         post "/provider-prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
