@@ -26,36 +26,31 @@ class ClientPrefix < ApplicationRecord
     index_name "client-prefixes"
   end
 
+  mapping dynamic: "false" do
+    indexes :id, type: :keyword
+    indexes :uid, type: :keyword
+    indexes :provider_id, type: :keyword
+    indexes :client_id, type: :keyword
+    indexes :prefix_id, type: :keyword
+    indexes :provider_prefix_id, type: :keyword
+    indexes :created_at, type: :date
+    indexes :updated_at, type: :date
 
-  settings index: {
-    "mapping.total_fields.limit": 2000
-  } do
-    mapping dynamic: "false" do
-      indexes :id, type: :keyword
-      indexes :uid, type: :keyword
-      indexes :provider_id, type: :keyword
-      indexes :client_id, type: :keyword
-      indexes :prefix_id, type: :keyword
-      indexes :provider_prefix_id, type: :keyword
-      indexes :created_at, type: :date
-      indexes :updated_at, type: :date
-
-      # index associations
-      indexes :client, type: :object
-      indexes :provider, type: :object
-      indexes :prefix,
-              type: :object,
-              properties: {
-                id: { type: :keyword },
-                uid: { type: :keyword },
-                provider_ids: { type: :keyword },
-                client_ids: { type: :keyword },
-                state: { type: :keyword },
-                prefix: { type: :text },
-                created_at: { type: :date },
-              }
-      indexes :provider_prefix, type: :object
-    end
+    # index associations
+    indexes :client, type: :object
+    indexes :provider, type: :object
+    indexes :prefix,
+            type: :object,
+            properties: {
+              id: { type: :keyword },
+              uid: { type: :keyword },
+              provider_ids: { type: :keyword },
+              client_ids: { type: :keyword },
+              state: { type: :keyword },
+              prefix: { type: :text },
+              created_at: { type: :date },
+            }
+    indexes :provider_prefix, type: :object
   end
 
   def as_indexed_json(options = {})
