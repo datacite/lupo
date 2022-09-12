@@ -286,8 +286,7 @@ describe Doi, vcr: true do
       create(
         :client,
         provider: provider,
-        symbol: ENV["MDS_USERNAME"],
-        password: ENV["MDS_PASSWORD"],
+        password_input: ENV["MDS_PASSWORD"]
       )
     end
 
