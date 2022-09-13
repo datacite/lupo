@@ -7,6 +7,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
   let!(:client) { create(:client, provider: provider) }
   let!(:client_prefix) { client.client_prefixes.first }
   let!(:provider_prefix) { client.provider_prefixes.first }
+  let!(:client_prefixes) { create_list(:client_prefix, 5, client: client) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) do
     {
@@ -26,7 +27,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
       get "/client-prefixes", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(1)
+      expect(json["data"].size).to eq(6)
     end
   end
 
@@ -124,6 +125,14 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
   end
 
   describe "DELETE /client-prefixes/:uid" do
+    let!(:provider_prefix) { create(:provider_prefix, provider: provider) }
+    let!(:client_prefix) { create(:client_prefix, client: client, provider_prefix: provider_prefix) }
+
+    before do
+      ClientPrefix.import
+      sleep 2
+    end
+
     it "deletes the prefix" do
       delete "/client-prefixes/#{client_prefix.uid}",
              nil, headers

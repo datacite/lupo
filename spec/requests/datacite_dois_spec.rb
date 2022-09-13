@@ -4146,11 +4146,12 @@ describe DataciteDoisController, type: :request, vcr: true do
     # end
   end
 
-  describe "GET /dois/get-dois", vcr: true do
-    let(:prefix) { create(:prefix, uid: "10.5438") }
-    let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
+  describe "GET /dois/get-dois", :skip_prefix_pool, vcr: true do
+    let!(:prefix) { create(:prefix, uid: "10.5438") }
+    let(:provider) { create(:provider, symbol: "DATACITE") }
+    let(:client) { create(:client, provider: provider, symbol: ENV["MDS_USERNAME"], password: ENV["MDS_PASSWORD"], re3data_id: "10.17616/r3xs37") }
 
-    xit "returns all dois" do
+    it "returns all dois" do
       get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)
