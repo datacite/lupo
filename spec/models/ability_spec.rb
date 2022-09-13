@@ -15,7 +15,7 @@ describe User, type: :model do
   end
   let(:contact) { create(:contact, provider: provider) }
   let(:consortium_contact) { create(:contact, provider: consortium) }
-  let!(:prefix) { create(:prefix, uid: "10.14455") }
+  let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client) { create(:client, provider: provider) }
   let!(:provider_prefix) do
     create(:provider_prefix, provider: provider, prefix: prefix)
