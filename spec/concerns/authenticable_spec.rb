@@ -180,7 +180,7 @@ describe User, type: :model, elasticsearch: true do
       let(:consortium) do
         create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM")
       end
-      
+
       let(:provider) do
         create(
           :provider,
