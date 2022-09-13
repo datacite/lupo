@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pp"
-
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
 ENV["PREFIX_POOL_SIZE"] = "50"
