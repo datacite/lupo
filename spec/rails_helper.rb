@@ -2,7 +2,7 @@
 
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
-ENV["PREFIX_POOL_SIZE"] = "50"
+ENV["PREFIX_POOL_SIZE"] = "5"
 
 # set up Code Climate
 require "simplecov"

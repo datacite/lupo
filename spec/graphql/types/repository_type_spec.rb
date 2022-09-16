@@ -636,6 +636,8 @@ describe RepositoryType do
       Doi.import(force: true)
       Prefix.import(force: true)
       ClientPrefix.import(force: true)
+      ReferenceRepository.import(force: true)
+      Event.import(force: true)
       sleep 3
     end
 

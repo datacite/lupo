@@ -3,7 +3,7 @@
 require "rails_helper"
 require "cancan/matchers"
 
-describe User, type: :model do
+describe User, type: :model, elasticsearch: true do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
   let!(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
