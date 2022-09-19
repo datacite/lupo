@@ -923,7 +923,7 @@ class Client < ApplicationRecord
         )
       else
         prefix, provider_prefix = nil
-        available_prefix.class.name == 'Prefix' ? prefix = available_prefix : provider_prefix = available_prefix
+        available_prefix.class.name == "Prefix" ? prefix = available_prefix : provider_prefix = available_prefix
 
         if !provider_prefix.present?
           provider_prefix = ProviderPrefix.create(
