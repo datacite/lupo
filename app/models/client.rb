@@ -919,7 +919,7 @@ class Client < ApplicationRecord
       if !available_prefix
         errors.add(
           :base,
-          "No prefixes available.  Created repository, but a prefix was not assigned.  Contact a support to get a prefix.",
+          "No prefixes available.  Created repository, but a prefix was not assigned.  Contact support to get a prefix.",
         )
       else
         prefix, provider_prefix = nil

@@ -203,6 +203,69 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
+  describe "POST /clients" do
+    context "when there are available prefixes" do
+      it "creates a client with a prefix from the pool" do
+        post "/clients", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["contactEmail"]).to eq("bob@example.com")
+        expect(attributes["clientType"]).to eq("repository")
+        relationships = json.dig("data", "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+
+        prefixes = json.dig("data", "relationships", "prefixes", "data")
+        expect(prefixes.count).to eq(1)
+        expect(prefixes.first["id"]).to eq(@prefix_pool[1].uid)
+      end
+    end
+
+    context "when there are available provider prefixes" do
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) do
+        create(:provider_prefix, provider: provider, prefix: prefix)
+      end
+
+      it "creates a client with a provider prefix" do
+        post "/clients", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["contactEmail"]).to eq("bob@example.com")
+        expect(attributes["clientType"]).to eq("repository")
+        relationships = json.dig("data", "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+
+        prefixes = json.dig("data", "relationships", "prefixes", "data")
+        expect(prefixes.count).to eq(1)
+        expect(prefixes.first["id"]).to eq("10.14454")
+      end
+    end
+
+    context "when there are no available prefixes" do
+      it "returns error message", prefix_pool_size: 1 do
+        post "/clients", params, headers
+
+        expect(json["errors"]).to eq(
+          [
+            {
+              "source" => "base",
+              "title" => "No prefixes available.  Unable to create repository.",
+              "uid" => params["data"]["attributes"]["symbol"].downcase
+            },
+          ],
+        )
+      end
+    end
+  end
+
   describe "PUT /clients/:id" do
     context "when the record exists" do
       let(:params) do
