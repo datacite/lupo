@@ -49,7 +49,6 @@ class Client < ApplicationRecord
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true
 
   attr_accessor :password_input, :target_id
-  attr_accessor :provider_prefix, :prefix
   attr_reader :from_salesforce
 
   validates_presence_of :symbol, :name, :system_email
@@ -899,11 +898,15 @@ class Client < ApplicationRecord
       end
     end
 
-    def check_prefix
-      @provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_prefix| (_prefix.state == "without-repository") }.first : nil
-      @prefix = Prefix.all.count > 0 ? Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first : nil
+    def get_prefix
+      provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_provider_prefix| (_provider_prefix.state == "without-repository") }.first : nil
+      prefix = Prefix.all.count > 0 ? Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first : nil
 
-      if !@provider_prefix.present? && !@prefix.present?
+      provider_prefix || prefix || nil
+    end
+
+    def check_prefix
+      if !get_prefix
         errors.add(
           :base,
           "No prefixes available.  Unable to create repository.",
@@ -912,17 +915,28 @@ class Client < ApplicationRecord
     end
 
     def assign_prefix
-      if !@provider_prefix.present?
-        @provider_prefix = ProviderPrefix.create(
-          provider_id: provider.symbol, prefix_id: @prefix.uid
+      available_prefix = get_prefix
+      if !available_prefix
+        errors.add(
+          :base,
+          "No prefixes available.  Created repository, but a prefix was not assigned.  Contact a support to get a prefix.",
+        )
+      else
+        prefix, provider_prefix = nil
+        available_prefix.class.name == 'Prefix' ? prefix = available_prefix : provider_prefix = available_prefix
+
+        if !provider_prefix.present?
+          provider_prefix = ProviderPrefix.create(
+            provider_id: provider.symbol, prefix_id: prefix.uid
+          )
+        end
+
+        ClientPrefix.create(
+          client_id: symbol,
+          provider_prefix_id: provider_prefix.uid,
+          prefix_id: provider_prefix.prefix.uid,
         )
       end
-
-      ClientPrefix.create(
-        client_id: symbol,
-        provider_prefix_id: @provider_prefix.uid,
-        prefix_id: @provider_prefix.prefix.uid,
-      )
     end
 
     def user_url
