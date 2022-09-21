@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-## https://github.com/elastic/elasticsearch-ruby/issues/462
 SEARCHABLE_MODELS = [
   Client,
   Provider,
@@ -17,32 +16,32 @@ SEARCHABLE_MODELS = [
 ].freeze
 
 RSpec.configure do |config|
-  config.around :example, elasticsearch: true do |example|
-    SEARCHABLE_MODELS.each do |model|
-      if model.name == "DataciteDoi" || model.name == "OtherDoi"
-        model.create_template
+  config.before :all do
+    SEARCHABLE_MODELS.each do |esc|
+      if esc.name == "DataciteDoi" || esc.name == "OtherDoi"
+        esc.create_template
       end
 
-      if Elasticsearch::Model.client.indices.exists? index:
-                                                     "#{model.index_name}_v1"
-        Elasticsearch::Model.client.indices.delete index:
-                                                     "#{model.index_name}_v1"
-      end
-      if Elasticsearch::Model.client.indices.exists? index:
-                                                     "#{model.index_name}_v2"
-        Elasticsearch::Model.client.indices.delete index:
-                                                     "#{model.index_name}_v2"
+      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
+        esc.__elasticsearch__.client.indices.delete index: esc.index_name
       end
 
-      model.__elasticsearch__.create_index! force: true
+      esc.__elasticsearch__.client.indices.create(
+        index: esc.index_name,
+        body: { settings: esc.settings.to_hash, mappings: esc.mappings.to_hash }
+      )
     end
+  end
 
-    example.run
-
-    SEARCHABLE_MODELS.each do |model|
-      if Elasticsearch::Model.client.indices.exists? index: model.index_name
-        Elasticsearch::Model.client.indices.delete index: model.index_name
+  config.after :all do
+    SEARCHABLE_MODELS.each do |esc|
+      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
+        esc.__elasticsearch__.client.indices.delete index: esc.index_name
       end
     end
+  end
+
+  config.before(:each, elasticsearch: true) do
+    SEARCHABLE_MODELS.each { |esc| esc.import(refresh: true, force: true) }
   end
 end

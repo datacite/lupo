@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe User, type: :model do
+describe User, type: :model, elasticsearch: true do
   let(:token) { User.generate_token }
   subject { User.new(token) }
 

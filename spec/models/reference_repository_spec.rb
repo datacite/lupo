@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ReferenceRepository, type: :model do
+RSpec.describe ReferenceRepository, type: :model, elasticsearch: true do
   describe "Validations" do
     it { should validate_uniqueness_of(:re3doi).case_insensitive }
   end
@@ -73,16 +73,6 @@ RSpec.describe ReferenceRepository, type: :model do
   end
 
   describe "Deletes" do
-    before :all do
-      Client.import(force: true)
-      ReferenceRepository.import(force: true)
-    end
-
-    after :all do
-      Client.delete_index
-      ReferenceRepository.delete_index
-    end
-
     it "propegate from clients" do
       Rails.logger.level = :fatal
       client = create(:client)

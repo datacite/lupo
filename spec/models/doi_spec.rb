@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Doi, type: :model, vcr: true do
+describe Doi, type: :model, vcr: true, elasticsearch: true do
   it_behaves_like "an STI class"
 
   describe "validations" do
