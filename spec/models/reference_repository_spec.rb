@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ReferenceRepository, type: :model , elasticsearch: true do
+RSpec.describe ReferenceRepository, type: :model, elasticsearch: true do
   describe "Validations" do
     it { should validate_uniqueness_of(:re3doi).case_insensitive }
   end

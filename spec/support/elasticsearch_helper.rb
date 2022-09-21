@@ -30,7 +30,6 @@ RSpec.configure do |config|
         index: esc.index_name,
         body: { settings: esc.settings.to_hash, mappings: esc.mappings.to_hash }
       )
-
     end
   end
 
