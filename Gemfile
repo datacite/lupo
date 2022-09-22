@@ -113,4 +113,3 @@ group :test do
   gem "webmock", "~> 3.1"
   gem "parallel_tests", "~> 3.12"
 end
-
