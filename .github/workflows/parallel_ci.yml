@@ -11,10 +11,10 @@ jobs:
       matrix:
         # Set N number of parallel jobs you want to run
         # Remember to update ci_node_index below to 0..N-1
-        ci_node_total: [6]
+        ci_node_total: [8]
           # set N-1 indexes for parallel jobs
           # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
-        ci_node_index: [0, 1, 2, 3, 4, 5]
+        ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7]
 
     services:
       memcached:
