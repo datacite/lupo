@@ -18,7 +18,7 @@ class Activity < Audited::Audit
 
   # use different index for testing
   if Rails.env.test?
-    index_name "activities-test"
+    index_name "activities-test#{ENV['TEST_ENV_NUMBER']}"
   elsif ENV["ES_PREFIX"].present?
     index_name "activities-#{ENV['ES_PREFIX']}"
   else

@@ -127,7 +127,7 @@ class Event < ApplicationRecord
 
   # use different index for testing
   if Rails.env.test?
-    index_name "events-test"
+    index_name "events-test#{ENV['TEST_ENV_NUMBER']}"
   elsif ENV["ES_PREFIX"].present?
     index_name "events-#{ENV['ES_PREFIX']}"
   else
