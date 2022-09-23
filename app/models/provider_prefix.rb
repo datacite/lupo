@@ -20,7 +20,7 @@ class ProviderPrefix < ApplicationRecord
 
   # use different index for testing
   if Rails.env.test?
-    index_name "provider-prefixes-test"
+    index_name "provider-prefixes-test#{ENV['TEST_ENV_NUMBER']}"
   elsif ENV["ES_PREFIX"].present?
     index_name "provider-prefixes-#{ENV['ES_PREFIX']}"
   else

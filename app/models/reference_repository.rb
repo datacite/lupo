@@ -15,7 +15,7 @@ class ReferenceRepository < ApplicationRecord
   #
   # use different index for testing
   if Rails.env.test?
-    index_name "reference_repositories-test"
+    index_name "reference_repositories-test#{ENV['TEST_ENV_NUMBER']}"
   elsif ENV["ES_PREFIX"].present?
     index_name "reference_repositories-#{ENV['ES_PREFIX']}"
   else

@@ -111,4 +111,5 @@ group :test do
   gem "test-prof", "~> 0.10.2"
   gem "vcr", "~> 5.1"
   gem "webmock", "~> 3.1"
+  gem "parallel_tests", "~> 3.12"
 end

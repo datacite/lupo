@@ -5,7 +5,7 @@ class DataciteDoi < Doi
 
   # use different index for testing
   if Rails.env.test?
-    index_name "dois-test"
+    index_name "dois-test#{ENV['TEST_ENV_NUMBER']}"
   elsif ENV["ES_PREFIX"].present?
     index_name "dois-#{ENV['ES_PREFIX']}"
   else

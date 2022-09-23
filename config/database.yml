@@ -19,7 +19,7 @@ development:
 
 test:
   <<: *defaults
-  database: <%= ENV['MYSQL_DATABASE'] %>_test
+  database: <%= ENV['MYSQL_DATABASE'] %>_test<%= ENV['TEST_ENV_NUMBER'] %>
 
 production:
   <<: *defaults
