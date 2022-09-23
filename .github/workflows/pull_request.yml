@@ -1,0 +1,11 @@
+name: Test Pull Request
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  lint:
+    uses: ./.github/workflows/rubocop.yml
+  parallel-test:
+    uses: ./.github/workflows/parallel_ci.yml
+    secrets: inherit
