@@ -1,8 +1,25 @@
 name: Parallel CI
 on:
-  pull_request:
-    branches:
-      - master
+  workflow_call:
+    secrets:
+      SECRET_KEY_BASE:
+        required: true
+      SESSION_ENCRYPTED_COOKIE_SALT:
+        required: true
+      JWT_PRIVATE_KEY:
+        required: true
+      JWT_PUBLIC_KEY:
+        required: true
+      MDS_USERNAME:
+        required: true
+      MDS_PASSWORD:
+        required: true
+      AWS_REGION:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
 jobs:
   parallel-test:
     runs-on: ubuntu-latest
