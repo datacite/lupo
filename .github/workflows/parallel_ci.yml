@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Parallel CI
 on:
   workflow_call:
@@ -21,6 +22,19 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
 jobs:
+=======
+<<<<<<<< HEAD:.github/workflows/parallel_ci.yml
+name: Parallel CI
+========
+name: Test Pull Request
+>>>>>>>> Appease git rebase.:.github/workflows/pull_request.yml
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+<<<<<<<< HEAD:.github/workflows/parallel_ci.yml
+>>>>>>> Appease git rebase.
   parallel-test:
     runs-on: ubuntu-latest
     strategy:
@@ -106,3 +120,13 @@ jobs:
         run: |
           bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
           echo $?
+<<<<<<< HEAD
+=======
+========
+  lint:
+    uses: ./.github/workflows/rubocop.yml
+  parallel-test:
+    uses: ./.github/workflows/parallel_ci.yml
+    secrets: inherit
+>>>>>>>> Appease git rebase.:.github/workflows/pull_request.yml
+>>>>>>> Appease git rebase.
