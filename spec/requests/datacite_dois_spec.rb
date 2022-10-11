@@ -2310,6 +2310,42 @@ describe DataciteDoisController, type: :request, vcr: true do
           ]
         )
       end
+      
+      it "does not require optional properties" do
+        valid_attributes = {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/relateditems-optional",
+                "url" => "http://www.bl.uk/pdf/patspec.pdf",
+                "types" => { "bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle" },
+                "titles" => [{ "title" => "Eating your own Dog Food" }],
+                "publisher" => "DataCite",
+                "publicationYear" => 2016,
+                "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+                "source" => "test",
+                "event" => "publish",
+                "relatedItems" => [{              
+                  "relatedItemType" => "Journal",
+                  "relationType" => "IsPublishedIn",
+                  "titles" => [{ "title" => "Physics letters / B" }]
+                }],
+              },
+            },
+          }
+       
+          
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{              
+          "relatedItemType" => "Journal",
+          "relationType" => "IsPublishedIn",
+          "titles" => [{ "title" => "Physics letters / B" }]
+        }])
+
+      end
+      
     end
 
     context "with subject classificationcode" do
