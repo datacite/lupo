@@ -2310,7 +2310,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           ]
         )
       end
-      
+
       it "does not require optional properties" do
         valid_attributes = {
             "data" => {
@@ -2325,7 +2325,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                 "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
                 "source" => "test",
                 "event" => "publish",
-                "relatedItems" => [{              
+                "relatedItems" => [{
                   "relatedItemType" => "Journal",
                   "relationType" => "IsPublishedIn",
                   "titles" => [{ "title" => "Physics letters / B" }]
@@ -2333,19 +2333,16 @@ describe DataciteDoisController, type: :request, vcr: true do
               },
             },
           }
-       
-          
+
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
-        expect(json.dig("data", "attributes", "relatedItems")).to eq([{              
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{
           "relatedItemType" => "Journal",
           "relationType" => "IsPublishedIn",
           "titles" => [{ "title" => "Physics letters / B" }]
         }])
-
       end
-      
     end
 
     context "with subject classificationcode" do
