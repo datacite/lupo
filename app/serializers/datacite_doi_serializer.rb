@@ -24,7 +24,7 @@ class DataciteDoiSerializer
              :language,
              :types,
              :related_identifiers,
-             #  :related_items,
+             :related_items,
              :sizes,
              :formats,
              :version,
@@ -191,9 +191,9 @@ class DataciteDoiSerializer
     Array.wrap(object.related_identifiers)
   end
 
-  # attribute :related_items do |object|
-  #   Array.wrap(object.related_items)
-  # end
+  attribute :related_items do |object|
+    Array.wrap(object.related_items)
+  end
 
   attribute :geo_locations,
             if:

@@ -160,13 +160,11 @@ FactoryBot.define do
           "firstPage" => "249",
           "lastPage" => "264",
           "publicationYear" => "2018",
-          "relatedItemIdentifier" =>
-          { "__content__" => "10.1016/j.physletb.2017.11.044",
-            "relatedItemIdentifierType" => "DOI" },
-            "relatedItemType" => "Journal",
-            "relationType" => "IsPublishedIn",
-            "titles" => { "title" => "Physics letters / B" },
-            "volume" => "776"
+          "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044", "relatedItemIdentifierType" => "DOI" },
+          "relatedItemType" => "Journal",
+          "relationType" => "IsPublishedIn",
+          "titles" => [{ "title" => "Physics letters / B" }],
+          "volume" => "776"
         }
       ]
     end
