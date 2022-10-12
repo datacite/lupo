@@ -22,10 +22,10 @@ RSpec.describe Prefix, type: :model do
       # expect(meta).not_to be_empty
     end
 
-    it "prefixes with where year", :skip_prefix_pool do
+    it "prefixes with where year" do
       collection =
         Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
-      single = collection.first
+      single = collection[@prefix_pool.length]
       expect(single.created_at.year).to eq(prefix.created_at.year)
       expect(single.uid).to eq(prefix.uid)
     end
