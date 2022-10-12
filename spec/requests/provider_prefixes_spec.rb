@@ -179,7 +179,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
         sleep 2
       end
 
-      it "creates a provider-prefix", :skip_prefix_pool do
+      it "creates a provider-prefix" do
         post "/provider-prefixes", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
@@ -190,7 +190,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
         get "/prefixes?state=unassigned", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("meta", "total")).to eq(0)
+        expect(json.dig("meta", "total")).to eq(@prefix_pool.length)
 
 
         delete "/provider-prefixes/#{provider_prefix.uid}", nil, headers
@@ -202,7 +202,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
         get "/prefixes?state=unassigned", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("meta", "total")).to eq(@prefix_pool.length + 1)
       end
     end
 

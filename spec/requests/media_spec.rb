@@ -170,7 +170,7 @@ describe MediaController,
         }
       end
 
-      it "updates the record", :skip_prefix_pool do
+      it "updates the record" do
         patch "/dois/#{datacite_doi.doi}/media/#{media.uid}",
               valid_attributes, headers
 
