@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "pp"
 
 describe RepositoriesController, type: :request, elasticsearch: true do
   let(:ids) { clients.map(&:uid).join(",") }
