@@ -4154,10 +4154,9 @@ describe DataciteDoisController, type: :request, vcr: true do
     it "returns all dois" do
       get "/dois/get-dois", nil, headers
 
-      expect(prefix.uid).to eq("10.5081")
       expect(last_response.status).to eq(200)
       expect(json["dois"].length).to eq(449)
-      expect(json["dois"].first).to eq("10.5081/0000-00SS")
+      expect(json["dois"].first).to eq(prefix.uid + "/0000-00SS")
     end
   end
 
