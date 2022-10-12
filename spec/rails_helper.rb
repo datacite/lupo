@@ -75,10 +75,13 @@ RSpec.configure do |config|
     end
   end
 
-  # Need a supply of available prefixes for repository creation.
   config.before(:each) do |example|
     prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size] : ENV["PREFIX_POOL_SIZE"].to_i
-    @prefix_pool = create_list(:prefix, prefix_pool_size) unless example.metadata[:skip_prefix_pool]
+    if prefix_pool_size < 0
+      @prefix_pool = []
+    else
+      @prefix_pool = create_list(:prefix, prefix_pool_size)
+    end
   end
 end
 
