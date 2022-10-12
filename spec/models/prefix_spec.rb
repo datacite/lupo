@@ -11,10 +11,10 @@ RSpec.describe Prefix, type: :model do
   end
 
   describe "methods" do
-    it "prefixes all", :skip_prefix_pool do
+    it "prefixes all" do
       collection = Prefix.all
-      expect(collection.length).to eq(prefixes.length)
-      single = collection.first
+      expect(collection.length).to eq(prefixes.length + @prefix_pool.length)
+      single = collection[@prefix_pool.length]
       expect(single.uid).to eq(prefix.uid)
       # meta = providers[:meta]
       # expect(meta["resource-types"]).not_to be_empty
