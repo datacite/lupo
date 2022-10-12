@@ -4146,19 +4146,18 @@ describe DataciteDoisController, type: :request, vcr: true do
     # end
   end
 
-  describe "GET /dois/get-dois", vcr: true do
-    let!(:prefix) { Prefix.first }
-    let!(:provider) { create(:provider, symbol: "DATACITE") }
-    let!(:client) { create(:client, provider: provider, symbol: ENV["MDS_USERNAME"], password: ENV["MDS_PASSWORD"], re3data_id: "10.17616/r3xs37") }
+  # describe "GET /dois/get-dois", vcr: true do
+  #   let(:prefix) { create(:prefix, uid: "10.5438") }
+  #   let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
-    it "returns all dois" do
-      get "/dois/get-dois", nil, headers
+  #   it "returns all dois" do
+  #     get "/dois/get-dois", nil, headers
 
-      expect(last_response.status).to eq(200)
-      expect(json["dois"].length).to eq(449)
-      expect(json["dois"].first).to eq(prefix.uid + "/0000-00SS")
-    end
-  end
+  #     expect(last_response.status).to eq(200)
+  #     expect(json["dois"].length).to eq(449)
+  #     expect(json["dois"].first).to eq("10.5438/0000-00SS")
+  #   end
+  # end
 
   describe "GET /dois/get-dois no authentication", vcr: true do
     it "returns error message" do
