@@ -4146,29 +4146,10 @@ describe DataciteDoisController, type: :request, vcr: true do
     # end
   end
 
-  # describe "GET /dois/get-dois", vcr: true do
-  #   let(:prefix) { create(:prefix, uid: "10.5438") }
-  #   let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
-
-  #   it "returns all dois" do
-  #     get "/dois/get-dois", nil, headers
-
-  #     expect(last_response.status).to eq(200)
-  #     expect(json["dois"].length).to eq(449)
-  #     expect(json["dois"].first).to eq("10.5438/0000-00SS")
-  #   end
-  # end
-
   describe "GET /dois/get-dois", vcr: true do
     let!(:prefix) { create(:prefix, uid: "10.5438") }
     let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
-    let(:headers1) do
-      {
-        "HTTP_ACCEPT" => "application/vnd.api+json",
-        "HTTP_AUTHORIZATION" => "Bearer " + bearer,
-      }
-    end
 
     it "returns all dois" do
       # 'get /dois/get-dois' uses first prefix assigned to the client.
