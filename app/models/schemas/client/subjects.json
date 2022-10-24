@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "minItems": 0,
+  "items": {
+      "type": "object",
+      "properties": {
+        "classificationCode": { "type": "string" },
+        "schemeUri":          { "type": "string" },
+        "valueUri":           { "type": "string" },
+        "lang":               { "type": "string" },
+        "subject":            { "type": "string" },
+        "subjectScheme":      { "type": "string" }
+      },
+      "required": [
+        "classificationCode",
+        "schemeUri",
+        "subject",
+        "subjectScheme"
+      ],
+      "additionalProperties": false
+  }
+}
