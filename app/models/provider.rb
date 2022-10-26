@@ -110,6 +110,7 @@ class Provider < ApplicationRecord
                            professionalSociety
                            publisher
                            serviceProvider
+                           internationalOrganization
                            other
                          ],
                          message:

@@ -23,6 +23,7 @@ class RepositorySerializer
              :domains,
              :issn,
              :url,
+             :software,
              :salesforce_id,
              :from_salesforce,
              :created,
