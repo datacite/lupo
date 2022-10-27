@@ -872,6 +872,48 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
     end
 
+    context "create provider with internationalOrganization organization type" do
+      provider_symbol = "FG"
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "symbol" => provider_symbol,
+              "name" => "Figshare",
+              "displayName" => "Figshare",
+              "region" => "EMEA",
+              "systemEmail" => "doe@joe.joe",
+              "website" => "https://www.bl.uk",
+              "memberType" => "direct_member",
+              "organizationType" => "internationalOrganization",
+              "country" => "GB",
+            },
+          },
+        }
+      end
+
+      it "creates a provider" do
+        post "/providers", params, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "organizationType")).to eq(
+          "internationalOrganization",
+        )
+
+        sleep 1
+
+        get "/providers/#{
+              provider_symbol
+            }",
+            nil, headers
+        
+        expect(json.dig("data", "attributes", "organizationType")).to eq(
+          "internationalOrganization",
+        )
+      end
+    end
+
     context "when the request is missing a required attribute" do
       let(:params) do
         {
@@ -937,6 +979,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
               "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
               "displayName" => "British Library",
               "memberType" => "consortium_organization",
+              "organizationType" => "internationalOrganization",
               "website" => "https://www.bl.uk",
               "region" => "Americas",
               "systemEmail" => "Pepe@mdm.cod",
@@ -966,6 +1009,9 @@ describe ProvidersController, type: :request, elasticsearch: true do
         expect(
           json.dig("data", "relationships", "consortium", "data", "id"),
         ).to eq(consortium.symbol.downcase)
+        expect(json.dig("data", "attributes", "organizationType")).to eq(
+          "internationalOrganization",
+        )
       end
     end
 
