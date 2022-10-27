@@ -907,7 +907,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
               provider_symbol
             }",
             nil, headers
-        
+
         expect(json.dig("data", "attributes", "organizationType")).to eq(
           "internationalOrganization",
         )
