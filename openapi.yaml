@@ -184,9 +184,11 @@ paths:
               - invenio
               - islandora
               - nesstar
-              - open_journal_systems_ojs
+              - open journal systems (ojs)
               - opus
               - samvera
+              - pubman
+              - mycore
               - other
               - unknown
         - in: query
@@ -883,15 +885,13 @@ paths:
             type: string
             enum:
               - academicInstitution
-              - academicLibrary
               - governmentAgency
               - nationalInstitution
-              - nationalLibrary
               - publisher
               - professionalSociety
               - researchInstitution
               - serviceProvider
-              - vendor
+              - internationalOrganization
               - other
         - in: query
           name: focus-area

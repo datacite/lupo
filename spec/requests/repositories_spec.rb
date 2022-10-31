@@ -36,6 +36,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
           "name" => "Imperial College",
           "systemEmail" => "bob@example.com",
           "salesforceId" => "abc012345678901234",
+          "software" => "MyCoRe",
           "fromSalesforce" => true,
           "clientType" => "repository",
           "certificate" => %w[CoreTrustSeal],
@@ -125,6 +126,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(json.dig("data", "attributes", "globusUuid")).to eq(
           "bc7d0274-3472-4a79-b631-e4c7baccc667",
         )
+        expect(json.dig("data", "attributes", "software")).to eq(client.software)
         expect(json["meta"]).to eq("doiCount" => 0, "prefixCount" => 0)
       end
     end
@@ -240,6 +242,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(attributes["name"]).to eq("Imperial College")
         expect(attributes["systemEmail"]).to eq("bob@example.com")
         expect(attributes["certificate"]).to eq(%w[CoreTrustSeal])
+        expect(attributes["software"]).to eq("MyCoRe")
         expect(attributes["salesforceId"]).to eq("abc012345678901234")
 
         relationships = json.dig("data", "relationships")
@@ -322,6 +325,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
               "name" => "Imperial College 2",
               "clientType" => "periodical",
               "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
+              "software" => "OPUS"
             },
           },
         }
@@ -336,6 +340,9 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         )
         expect(json.dig("data", "attributes", "globusUuid")).to eq(
           "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
+        )
+        expect(json.dig("data", "attributes", "software")).to eq(
+          "OPUS",
         )
         expect(json.dig("data", "attributes", "name")).not_to eq(client.name)
         expect(json.dig("data", "attributes", "clientType")).to eq("periodical")
