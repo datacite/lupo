@@ -285,8 +285,7 @@ describe RepositoryType do
     it "uses the cursor to continue searching" do
       response = LupoSchema.execute(
         search_query,
-          variables: {
-          }
+          variables: {}
       ).as_json
       expect(response.dig("data",
                            "repositories",
