@@ -192,7 +192,11 @@ class DataciteDoiSerializer
   end
 
   attribute :related_items do |object|
-    Array.wrap(object.related_items)
+    if object.related_items?
+      Array.wrap(object.related_items)
+    else
+      []
+    end
   end
 
   attribute :geo_locations,
