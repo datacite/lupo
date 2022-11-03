@@ -86,36 +86,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  # # Test suite for GET /clients
-  # describe 'GET /clients query' do
-  #   before { get "/clients?query=#{query}", headers: headers }
-  #
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(11)
-  #   end
-  #
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
-  # describe 'GET /clients?ids=', elasticsearch: true do
-  #   before do
-  #     sleep 1
-  #     get "/clients?ids=#{ids}", headers: headers
-  #   end
-
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(10)
-  #   end
-
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
   describe "GET /repositories/:id" do
     context "when the record exists" do
       it "returns the repository" do
@@ -634,8 +604,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       sleep 1
 
       expect(last_response.status).to eq(200)
-      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
 
     it "transfered all DOIs consortium" do
@@ -644,8 +612,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       sleep 1
 
       expect(last_response.status).to eq(200)
-      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
   end
 end
