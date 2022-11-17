@@ -367,6 +367,39 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       end
     end
 
+    context "update subjects" do
+      let(:subjects) do
+        [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+           "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+           "subjectScheme" => "FOR",
+           "lang" => "en",
+           "classificationCode" => "001" }]
+      end
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "repositories",
+            "attributes" => {
+              "subjects" => subjects,
+            },
+          },
+        }
+      end
+
+      it "updates the repository" do
+        put "/repositories/#{client.symbol}", update_attributes, headers
+        expect(json.dig("data", "attributes", "subjects")).to eq([
+          { "lang" => "en",
+            "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+            "subject" => "80505 Web Technologies (excl. Web Search)",
+            "subjectScheme" => "FOR",
+            "classificationCode" => "001"
+          }
+        ])
+      end
+    end
+
+
     context "transfer repository" do
       let(:bearer) { User.generate_token }
       let(:staff_headers) do

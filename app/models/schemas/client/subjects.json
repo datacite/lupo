@@ -5,18 +5,34 @@
   "items": {
       "type": "object",
       "properties": {
-        "classificationCode": { "type": "string" },
-        "schemeUri":          { "type": "string" },
-        "valueUri":           { "type": "string" },
-        "lang":               { "type": "string" },
-        "subject":            { "type": "string" },
-        "subjectScheme":      { "type": "string" }
+        "classification_code": { "type": "string" },
+        "classificationCode":  { "type": "string" },
+        "scheme_uri":          { "type": "string" },
+        "schemeUri":           { "type": "string" },
+        "value_uri":           { "type": "string" },
+        "valueUri":            { "type": "string" },
+        "lang":                { "type": "string" },
+        "subject":             { "type": "string" },
+        "subject_scheme":      { "type": "string" },
+        "subjectScheme":       { "type": "string" }
       },
-      "required": [
-        "classificationCode",
-        "schemeUri",
-        "subject",
-        "subjectScheme"
+      "oneOf": [
+        {
+          "required": [
+            "classification_code",
+            "scheme_uri",
+            "subject",
+            "subject_scheme"
+          ]
+        },
+        {
+          "required": [
+            "classificationCode",
+            "schemeUri",
+            "subject",
+            "subjectScheme"
+          ]
+        }
       ],
       "additionalProperties": false
   }
