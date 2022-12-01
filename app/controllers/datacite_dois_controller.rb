@@ -6,7 +6,7 @@ require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
-  include Crosscitable
+  # include Crosscitable
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: %i[index show create update]
@@ -497,8 +497,7 @@ class DataciteDoisController < ApplicationController
   end
 
   def validate
-    @doi = DataciteDoi.new(safe_params.merge(only_validate: true))
-
+    @doi = DataciteDoi.new(sanitized_params.merge(only_validate: true))
     authorize! :validate, @doi
 
     if @doi.valid?
@@ -518,7 +517,7 @@ class DataciteDoisController < ApplicationController
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
 
-    @doi = DataciteDoi.new(safe_params)
+    @doi = DataciteDoi.new(sanitized_params)
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
@@ -559,24 +558,24 @@ class DataciteDoisController < ApplicationController
         # only update client_id
 
         authorize! :transfer, @doi
-        @doi.assign_attributes(safe_params.slice(:client_id))
+        @doi.assign_attributes(sanitized_params.slice(:client_id))
       else
         authorize! :update, @doi
-        if safe_params[:schema_version].blank?
+        if sanitized_params[:schema_version].blank?
           @doi.assign_attributes(
-            safe_params.except(:doi, :client_id).merge(
+            sanitized_params.except(:doi, :client_id).merge(
               schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION,
             ),
           )
         else
-          @doi.assign_attributes(safe_params.except(:doi, :client_id))
+          @doi.assign_attributes(sanitized_params.except(:doi, :client_id))
         end
       end
     else
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound if doi_id.blank?
 
-      @doi = DataciteDoi.new(safe_params.merge(doi: doi_id))
+      @doi = DataciteDoi.new(sanitized_params.merge(doi: doi_id))
       # capture username and password for reuse in the handle system
       @doi.current_user = current_user
 
@@ -604,7 +603,7 @@ class DataciteDoisController < ApplicationController
   end
 
   def undo
-    @doi = DataciteDoi.where(doi: safe_params[:doi]).first
+    @doi = DataciteDoi.where(doi: sanitized_params[:doi]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :undo, @doi
@@ -777,6 +776,9 @@ class DataciteDoisController < ApplicationController
             }
           end
       end
+
+      MetadataSanitizer.new.sanitaize_nameIdentifiers(params[:creators])
+      MetadataSanitizer.new.sanitaize_nameIdentifiers(params[:contributors])
 
       attributes = [
         :doi,
@@ -1037,182 +1039,14 @@ class DataciteDoisController < ApplicationController
         ).
           reverse_merge(defaults)
       client_id =
-        p.dig("relationships", "client", "data", "id") ||
-        current_user.try(:client_id)
+      p.dig("relationships", "client", "data", "id") ||
+      current_user.try(:client_id)
       p = p.fetch("attributes").merge(client_id: client_id)
+      p
+    end
 
-      # extract attributes from xml field and merge with attributes provided directly
-      xml =
-        p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
-
-      if xml.present?
-        # remove optional utf-8 bom
-        xml.gsub!("\xEF\xBB\xBF", "")
-
-        # remove leading and trailing whitespace
-        xml = xml.strip
-      end
-
-      Array.wrap(params[:creators])&.each do |c|
-        if c[:nameIdentifiers]&.respond_to?(:keys)
-          fail(
-            ActionController::UnpermittedParameters,
-            ["nameIdentifiers must be an Array"],
-          )
-        end
-      end
-
-      Array.wrap(params[:contributors])&.each do |c|
-        if c[:nameIdentifiers]&.respond_to?(:keys)
-          fail(
-            ActionController::UnpermittedParameters,
-            ["nameIdentifiers must be an Array"],
-          )
-        end
-      end
-
-      meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
-      p[:schemaVersion] =
-        if METADATA_FORMATS.include?(meta["from"])
-          LAST_SCHEMA_VERSION
-        else
-          p[:schemaVersion]
-        end
-      xml = meta["string"]
-
-      # if metadata for DOIs from other registration agencies are not found
-      fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
-
-      read_attrs = [
-        p[:creators],
-        p[:contributors],
-        p[:titles],
-        p[:publisher],
-        p[:publicationYear],
-        p[:types],
-        p[:descriptions],
-        p[:container],
-        p[:sizes],
-        p[:formats],
-        p[:version],
-        p[:language],
-        p[:dates],
-        p[:identifiers],
-        p[:relatedIdentifiers],
-        p[:relatedItems],
-        p[:fundingReferences],
-        p[:geoLocations],
-        p[:rightsList],
-        p[:subjects],
-        p[:contentUrl],
-        p[:schemaVersion],
-      ].compact
-
-      # generate random DOI if no DOI is provided
-      # make random DOI predictable in test
-      if p[:doi].blank? && p[:prefix].present? && Rails.env.test?
-        p[:doi] = generate_random_dois(p[:prefix], number: 123_456).first
-      elsif p[:doi].blank? && p[:prefix].present?
-        p[:doi] = generate_random_dois(p[:prefix]).first
-      end
-
-      # replace DOI, but otherwise don't touch the XML
-      # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
-      if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
-        xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
-      elsif xml.present? || Array.wrap(read_attrs.first).present?
-        regenerate = true
-      end
-
-      p[:xml] = xml if xml.present?
-
-
-      read_attrs_keys = %i[
-        url
-        creators
-        contributors
-        titles
-        publisher
-        publicationYear
-        types
-        descriptions
-        container
-        sizes
-        formats
-        language
-        dates
-        identifiers
-        relatedIdentifiers
-        relatedItems
-        fundingReferences
-        geoLocations
-        rightsList
-        agency
-        subjects
-        contentUrl
-        schemaVersion
-      ]
-
-      # merge attributes from xml into regular attributes
-      # make sure we don't accidentally set any attributes to nil
-      read_attrs_keys.each do |attr|
-        if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
-          p.merge!(
-            attr.to_s.underscore =>
-              p[attr] || meta[attr.to_s.underscore] || p[attr],
-          )
-        end
-      end
-
-      # handle version metadata
-      if p.has_key?(:version) || meta["version_info"].present?
-        p[:version_info] = p[:version] || meta["version_info"]
-      end
-
-      # only update landing_page info if something is received via API to not overwrite existing data
-      p[:landing_page] = p[:landingPage] if p[:landingPage].present?
-
-      p.merge(regenerate: p[:regenerate] || regenerate).except(
-        # ignore camelCase keys, and read-only keys
-        :confirmDoi,
-        :prefix,
-        :suffix,
-        :publicationYear,
-        :alternateIdentifiers,
-        :rightsList,
-        :relatedIdentifiers,
-        :relatedItems,
-        :fundingReferences,
-        :geoLocations,
-        :metadataVersion,
-        :schemaVersion,
-        :state,
-        :mode,
-        :isActive,
-        :landingPage,
-        :created,
-        :registered,
-        :updated,
-        :published,
-        :lastLandingPage,
-        :version,
-        :lastLandingPageStatus,
-        :lastLandingPageStatusCheck,
-        :lastLandingPageStatusResult,
-        :lastLandingPageContentType,
-        :contentUrl,
-        :viewsOverTime,
-        :downloadsOverTime,
-        :citationsOverTime,
-        :citationCount,
-        :downloadCount,
-        :partCount,
-        :partOfCount,
-        :referenceCount,
-        :versionCount,
-        :versionOfCount,
-        :viewCount,
-      )
+    def sanitized_params
+      MetadataSanitizer.new(safe_params.to_h).cleanse
     end
 
     def set_raven_context
