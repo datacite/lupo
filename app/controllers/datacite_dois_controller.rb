@@ -43,6 +43,10 @@ class DataciteDoisController < ApplicationController
         { citation_count: { order: "asc" } }
       when "-citation-count"
         { citation_count: { order: "desc" } }
+      when "title"
+        { "titles.title.keyword": { order: "asc" } }
+      when "-title"
+        { "titles.title.keyword": { order: "desc" } }
       when "relevance"
         { "_score": { "order": "desc" } }
       else
