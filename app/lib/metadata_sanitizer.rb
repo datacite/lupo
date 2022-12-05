@@ -191,7 +191,7 @@ class MetadataSanitizer
       end
   end
 
-  def sanitaize_nameIdentifiers(array)
+  def self.sanitaize_nameIdentifiers(array)
     Array.wrap(array)&.each do |c|
       if c[:nameIdentifiers]&.respond_to?(:keys)
         fail(

@@ -6,7 +6,6 @@ require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
-  # include Crosscitable
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: %i[index show create update]
@@ -777,8 +776,8 @@ class DataciteDoisController < ApplicationController
           end
       end
 
-      MetadataSanitizer.new.sanitaize_nameIdentifiers(params[:creators])
-      MetadataSanitizer.new.sanitaize_nameIdentifiers(params[:contributors])
+      MetadataSanitizer.sanitaize_nameIdentifiers(params[:creators])
+      MetadataSanitizer.sanitaize_nameIdentifiers(params[:contributors])
 
       attributes = [
         :doi,
