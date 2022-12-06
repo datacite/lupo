@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - master
-  workflow_displatch
+  workflow_displatch:
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
