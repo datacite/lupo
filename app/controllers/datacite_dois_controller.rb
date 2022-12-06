@@ -6,6 +6,7 @@ require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
+  include Crosscitable
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: %i[index show create update]
@@ -776,267 +777,17 @@ class DataciteDoisController < ApplicationController
           end
       end
 
-      MetadataSanitizer.sanitaize_nameIdentifiers(params[:creators])
-      MetadataSanitizer.sanitaize_nameIdentifiers(params[:contributors])
-
-      attributes = [
-        :doi,
-        :confirmDoi,
-        :url,
-        :titles,
-        { titles: %i[title titleType lang] },
-        :publisher,
-        :publicationYear,
-        :created,
-        :prefix,
-        :suffix,
-        :types,
-        {
-          types: %i[
-            resourceTypeGeneral
-            resourceType
-            schemaOrg
-            bibtex
-            citeproc
-            ris
-          ],
-        },
-        :dates,
-        { dates: %i[date dateType dateInformation] },
-        :subjects,
-        { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
-        :landingPage,
-        {
-          landingPage: [
-            :checked,
-            :url,
-            :status,
-            :contentType,
-            :error,
-            :redirectCount,
-            { redirectUrls: [] },
-            :downloadLatency,
-            :hasSchemaOrg,
-            :schemaOrgId,
-            { schemaOrgId: [] },
-            :dcIdentifier,
-            :citationDoi,
-            :bodyHasPid,
-          ],
-        },
-        :contentUrl,
-        { contentUrl: [] },
-        :sizes,
-        { sizes: [] },
-        :formats,
-        { formats: [] },
-        :language,
-        :descriptions,
-        { descriptions: %i[description descriptionType lang] },
-        :rightsList,
-        {
-          rightsList: %i[
-            rights
-            rightsUri
-            rightsIdentifier
-            rightsIdentifierScheme
-            schemeUri
-            lang
-          ],
-        },
-        :xml,
-        :regenerate,
-        :source,
-        :version,
-        :metadataVersion,
-        :schemaVersion,
-        :state,
-        :isActive,
-        :reason,
-        :registered,
-        :updated,
-        :mode,
-        :event,
-        :regenerate,
-        :should_validate,
-        :client,
-        :creators,
-        {
-          creators: [
-            :nameType,
-            {
-              nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-            },
-            :name,
-            :givenName,
-            :familyName,
-            {
-              affiliation: %i[
-                name
-                affiliationIdentifier
-                affiliationIdentifierScheme
-                schemeUri
-              ],
-            },
-            :lang,
-          ],
-        },
-        :contributors,
-        {
-          contributors: [
-            :nameType,
-            {
-              nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-            },
-            :name,
-            :givenName,
-            :familyName,
-            {
-              affiliation: %i[
-                name
-                affiliationIdentifier
-                affiliationIdentifierScheme
-                schemeUri
-              ],
-            },
-            :contributorType,
-            :lang,
-          ],
-        },
-        :identifiers,
-        { identifiers: %i[identifier identifierType] },
-        :alternateIdentifiers,
-        { alternateIdentifiers: %i[alternateIdentifier alternateIdentifierType] },
-        :relatedIdentifiers,
-        {
-          relatedIdentifiers: %i[
-            relatedIdentifier
-            relatedIdentifierType
-            relationType
-            relatedMetadataScheme
-            schemeUri
-            schemeType
-            resourceTypeGeneral
-            relatedMetadataScheme
-            schemeUri
-            schemeType
-          ],
-        },
-        :fundingReferences,
-        {
-          fundingReferences: %i[
-            funderName
-            funderIdentifier
-            funderIdentifierType
-            awardNumber
-            awardUri
-            awardTitle
-          ],
-        },
-        :geoLocations,
-        {
-          geoLocations: [
-            { geoLocationPoint: %i[pointLongitude pointLatitude] },
-            {
-              geoLocationBox: %i[
-                westBoundLongitude
-                eastBoundLongitude
-                southBoundLatitude
-                northBoundLatitude
-              ],
-            },
-            :geoLocationPlace,
-          ],
-        },
-        :container,
-        {
-          container: %i[
-            type
-            identifier
-            identifierType
-            title
-            volume
-            issue
-            firstPage
-            lastPage
-          ],
-        },
-        :relatedItems,
-        {
-          relatedItems: [
-            :relationType,
-            :relatedItemType,
-            {
-              relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
-            },
-            {
-              creators: %i[nameType name givenName familyName],
-            },
-            {
-              titles: %i[title titleType],
-            },
-            :publicationYear,
-            :volume,
-            :issue,
-            :number,
-            :numberType,
-            :firstPage,
-            :lastPage,
-            :publisher,
-            :edition,
-            {
-              contributors: %i[contributorType name givenName familyName nameType],
-            },
-          ],
-        },
-        :published,
-        :downloadsOverTime,
-        { downloadsOverTime: %i[yearMonth total] },
-        :viewsOverTime,
-        { viewsOverTime: %i[yearMonth total] },
-        :citationsOverTime,
-        { citationsOverTime: %i[year total] },
-        :citationCount,
-        :downloadCount,
-        :partCount,
-        :partOfCount,
-        :referenceCount,
-        :versionCount,
-        :versionOfCount,
-        :viewCount,
-      ]
-      relationships = [{ client: [data: %i[type id]] }]
-
-      # default values for attributes stored as JSON
-      defaults = {
-        data: {
-          titles: [],
-          descriptions: [],
-          types: {},
-          container: {},
-          dates: [],
-          subjects: [],
-          rightsList: [],
-          creators: [],
-          contributors: [],
-          sizes: [],
-          formats: [],
-          contentUrl: [],
-          identifiers: [],
-          relatedIdentifiers: [],
-          relatedItems: [],
-          fundingReferences: [],
-          geoLocations: [],
-        },
-      }
+      ParamsSanitizer.sanitaize_nameIdentifiers(params[:creators])
+      ParamsSanitizer.sanitaize_nameIdentifiers(params[:contributors])
 
       p =
         params.require(:data).permit(
           :type,
           :id,
-          attributes: attributes, relationships: relationships,
+          attributes: ParamsSanitizer.get_attributes_map,
+          relationships: ParamsSanitizer.get_relationships_map,
         ).
-          reverse_merge(defaults)
+          reverse_merge(ParamsSanitizer.get_defaults_map)
       client_id =
       p.dig("relationships", "client", "data", "id") ||
       current_user.try(:client_id)
@@ -1045,7 +796,7 @@ class DataciteDoisController < ApplicationController
     end
 
     def sanitized_params
-      MetadataSanitizer.new(safe_params.to_h).cleanse
+      ParamsSanitizer.new(safe_params.to_h).cleanse
     end
 
     def set_raven_context

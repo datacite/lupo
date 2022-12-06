@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe "MetadataSanitizer", type: :controller do
-  subject { MetadataSanitizer.new({}) }
+describe "ParamsSanitizer", type: :controller do
+  subject { ParamsSanitizer.new({}) }
 
   describe "add_xml" do
     it "it extract correctly" do
@@ -20,7 +20,7 @@ describe "MetadataSanitizer", type: :controller do
   end
 
   describe "add_random_id" do
-    subject { MetadataSanitizer.new({ prefix: "10.1233", doi: "" }) }
+    subject { ParamsSanitizer.new({ prefix: "10.1233", doi: "" }) }
 
     it "adds correctly random doi" do
       subject.add_random_id()
@@ -29,7 +29,7 @@ describe "MetadataSanitizer", type: :controller do
   end
 
   describe "add_schema_version" do
-    subject { MetadataSanitizer.new({ schemaVersion: "3.1" }) }
+    subject { ParamsSanitizer.new({ schemaVersion: "3.1" }) }
 
     it "add schema version correctly" do
       subject.add_schema_version({ from: "datacite" })
