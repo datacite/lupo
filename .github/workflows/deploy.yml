@@ -67,11 +67,11 @@ jobs:
       - name: Extract variables
         shell: bash
         run: |
-          echo "name=BRANCH::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_OUTPUT
-          echo "name=TAG::$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
-          echo "name=GIT_SHA::$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "name=GIT_SHA_SHORT::$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "name=MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})" >> $GITHUB_OUTPUT
+          echo "BRANCH::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_OUTPUT
+          echo "TAG::$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
+          echo "GIT_SHA::$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "GIT_SHA_SHORT::$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "MESSAGE::$(git log --format=%B -n 1 ${{ github.event.after }})" >> $GITHUB_OUTPUT
         id: extract_variables
 
       - name: Checkout terraform config repo
