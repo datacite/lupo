@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate changelog
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
 
       - name: Generate changelog
         uses: charmixer/auto-changelog-action@v1.1
