@@ -3,6 +3,9 @@
 class EventRegistrantUpdateByIdJob < ApplicationJob
   queue_as :lupo_background
 
+  include Modelable
+  include Identifiable
+
   rescue_from ActiveJob::DeserializationError,
               Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
@@ -94,19 +97,4 @@ class EventRegistrantUpdateByIdJob < ApplicationJob
     result.body.dig("data", 0, "RA")
   end
 
-  def validate_prefix(doi)
-    Array(
-      %r{\A(?:(http|https):/(/)?(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}).*\z}.
-        match(doi),
-    ).
-      last
-  end
-
-  def doi_from_url(url)
-    if %r{\A(?:(http|https)://(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}/.+)\z}.
-        match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(%r{^/}, "").downcase
-    end
-  end
 end
