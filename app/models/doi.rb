@@ -16,6 +16,8 @@ class Doi < ApplicationRecord
   # include helper module for generating random DOI suffixes
   include Helpable
 
+  include Modelable
+
   # include helper module for converting and exposing metadata
   include Crosscitable
 
