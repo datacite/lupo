@@ -178,15 +178,6 @@ module Facetable
       end
     end
 
-    # def facet_by_key(arr)
-    #   arr.map do |hsh|
-    #     {
-    #       "id" => hsh["key"],
-    #       "title" => hsh["key"].titleize,
-    #       "count" => hsh["doc_count"],
-    #     }
-    #   end
-    # end
 
     def facet_by_key(arr, title_case: true)
       arr.map do |hsh|
