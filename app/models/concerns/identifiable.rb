@@ -3,7 +3,15 @@
 module Identifiable
   extend ActiveSupport::Concern
 
-  included do
+  delegate :get_doi_ra, to: :class
+  delegate :validate_prefix, to: :class
+  delegate :normalize_doi, to: :class
+  delegate :validate_prefix, to: :class
+  delegate :validate_doi, to: :class
+
+
+  module ClassMethods
+
     def normalize_doi(doi)
       doi =
         Array(
@@ -17,25 +25,6 @@ module Identifiable
       "https://doi.org/#{doi}" if doi.present?
     end
 
-    def get_doi_ra(prefix)
-      return nil if prefix.blank?
-
-      url = "https://doi.org/ra/#{prefix}"
-      result = Maremma.get(url)
-
-      result.body.dig("data", 0, "RA")
-    end
-
-    def validate_prefix(doi)
-      Array(
-        %r{\A(?:(http|https):/(/)?(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}).*\z}.
-          match(doi),
-      ).
-        last
-    end
-  end
-
-  module ClassMethods
     def get_doi_ra(prefix)
       return nil if prefix.blank?
 
@@ -62,14 +51,6 @@ module Identifiable
           match(doi),
       ).
         last
-    end
-
-    def doi_from_url(url)
-      if %r{\A(?:(http|https)://(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}/.+)\z}.
-          match?(url)
-        uri = Addressable::URI.parse(url)
-        uri.path.gsub(%r{^/}, "").downcase
-      end
     end
   end
 end
