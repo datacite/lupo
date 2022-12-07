@@ -3,7 +3,6 @@
 require "rails_helper"
 
 describe "ParamsSanitizer", type: :concern do
-## test all instance methods
   describe "instance methods" do
     let(:params) { { "xml" => nil } }
     subject { ParamsSanitizer.new(params) }
