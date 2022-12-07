@@ -74,7 +74,6 @@ module Facetable
   LOWER_BOUND_YEAR = 2_010
 
   included do
-
     def facet_by_key_as_string(arr)
       arr.map do |hsh|
         {

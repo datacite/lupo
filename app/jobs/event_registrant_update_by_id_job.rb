@@ -96,5 +96,4 @@ class EventRegistrantUpdateByIdJob < ApplicationJob
 
     result.body.dig("data", 0, "RA")
   end
-
 end

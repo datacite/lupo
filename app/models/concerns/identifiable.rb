@@ -11,7 +11,6 @@ module Identifiable
 
 
   module ClassMethods
-
     def normalize_doi(doi)
       doi =
         Array(
