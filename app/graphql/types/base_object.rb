@@ -3,15 +3,12 @@
 class BaseObject < GraphQL::Schema::Object
   include ApolloFederation::Object
 
+  include Identifiable
+  include Facetable
+  include Modelable
+
   field_class BaseField
 
-  def doi_from_url(url)
-    if %r{\A(?:(http|https)://(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}/.+)\z}.
-        match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(%r{^/}, "").downcase
-    end
-  end
 
   def orcid_from_url(url)
     if %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(url)
@@ -34,15 +31,6 @@ class BaseObject < GraphQL::Schema::Object
     end
   end
 
-  def facet_by_resource_type(arr)
-    arr.map do |hsh|
-      {
-        "id" => hsh["key"].underscore.dasherize,
-        "title" => hsh["key"],
-        "count" => hsh["doc_count"],
-      }
-    end
-  end
 
   def aggregate_count(arr)
     arr.reduce(0) do |sum, hsh|
