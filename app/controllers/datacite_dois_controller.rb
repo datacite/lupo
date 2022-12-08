@@ -784,10 +784,10 @@ class DataciteDoisController < ApplicationController
         params.require(:data).permit(
           :type,
           :id,
-          attributes: ParamsSanitizer.get_attributes_map,
-          relationships: ParamsSanitizer.get_relationships_map,
+          attributes: ATTRIBUTES_MAP,
+          relationships: RELATIONSHIPS_MAP,
         ).
-          reverse_merge(ParamsSanitizer.get_defaults_map)
+          reverse_merge(DEFAULTS_MAP)
       client_id =
       p.dig("relationships", "client", "data", "id") ||
       current_user.try(:client_id)

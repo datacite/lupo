@@ -4,6 +4,259 @@ class ParamsSanitizer
   include Crosscitable
   include Helpable
 
+  DEFAULTS_MAP =
+    {
+      data: {
+        titles: [],
+        descriptions: [],
+        types: {},
+        container: {},
+        dates: [],
+        subjects: [],
+        rightsList: [],
+        creators: [],
+        contributors: [],
+        sizes: [],
+        formats: [],
+        contentUrl: [],
+        identifiers: [],
+        relatedIdentifiers: [],
+        relatedItems: [],
+        fundingReferences: [],
+        geoLocations: [],
+      },
+    }.freeze
+
+  ATTRIBUTES_MAP =
+  [
+    :doi,
+    :confirmDoi,
+    :url,
+    :titles,
+    { titles: %i[title titleType lang] },
+    :publisher,
+    :publicationYear,
+    :created,
+    :prefix,
+    :suffix,
+    :types,
+    {
+      types: %i[
+        resourceTypeGeneral
+        resourceType
+        schemaOrg
+        bibtex
+        citeproc
+        ris
+      ],
+    },
+    :dates,
+    { dates: %i[date dateType dateInformation] },
+    :subjects,
+    { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
+    :landingPage,
+    {
+      landingPage: [
+        :checked,
+        :url,
+        :status,
+        :contentType,
+        :error,
+        :redirectCount,
+        { redirectUrls: [] },
+        :downloadLatency,
+        :hasSchemaOrg,
+        :schemaOrgId,
+        { schemaOrgId: [] },
+        :dcIdentifier,
+        :citationDoi,
+        :bodyHasPid,
+      ],
+    },
+    :contentUrl,
+    { contentUrl: [] },
+    :sizes,
+    { sizes: [] },
+    :formats,
+    { formats: [] },
+    :language,
+    :descriptions,
+    { descriptions: %i[description descriptionType lang] },
+    :rightsList,
+    {
+      rightsList: %i[
+        rights
+        rightsUri
+        rightsIdentifier
+        rightsIdentifierScheme
+        schemeUri
+        lang
+      ],
+    },
+    :xml,
+    :regenerate,
+    :source,
+    :version,
+    :metadataVersion,
+    :schemaVersion,
+    :state,
+    :isActive,
+    :reason,
+    :registered,
+    :updated,
+    :mode,
+    :event,
+    :regenerate,
+    :should_validate,
+    :client,
+    :creators,
+    {
+      creators: [
+        :nameType,
+        {
+          nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
+        },
+        :name,
+        :givenName,
+        :familyName,
+        {
+          affiliation: %i[
+            name
+            affiliationIdentifier
+            affiliationIdentifierScheme
+            schemeUri
+          ],
+        },
+        :lang,
+      ],
+    },
+    :contributors,
+    {
+      contributors: [
+        :nameType,
+        {
+          nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
+        },
+        :name,
+        :givenName,
+        :familyName,
+        {
+          affiliation: %i[
+            name
+            affiliationIdentifier
+            affiliationIdentifierScheme
+            schemeUri
+          ],
+        },
+        :contributorType,
+        :lang,
+      ],
+    },
+    :identifiers,
+    { identifiers: %i[identifier identifierType] },
+    :alternateIdentifiers,
+    { alternateIdentifiers: %i[alternateIdentifier alternateIdentifierType] },
+    :relatedIdentifiers,
+    {
+      relatedIdentifiers: %i[
+        relatedIdentifier
+        relatedIdentifierType
+        relationType
+        relatedMetadataScheme
+        schemeUri
+        schemeType
+        resourceTypeGeneral
+        relatedMetadataScheme
+        schemeUri
+        schemeType
+      ],
+    },
+    :fundingReferences,
+    {
+      fundingReferences: %i[
+        funderName
+        funderIdentifier
+        funderIdentifierType
+        awardNumber
+        awardUri
+        awardTitle
+      ],
+    },
+    :geoLocations,
+    {
+      geoLocations: [
+        { geoLocationPoint: %i[pointLongitude pointLatitude] },
+        {
+          geoLocationBox: %i[
+            westBoundLongitude
+            eastBoundLongitude
+            southBoundLatitude
+            northBoundLatitude
+          ],
+        },
+        :geoLocationPlace,
+      ],
+    },
+    :container,
+    {
+      container: %i[
+        type
+        identifier
+        identifierType
+        title
+        volume
+        issue
+        firstPage
+        lastPage
+      ],
+    },
+    :relatedItems,
+    {
+      relatedItems: [
+        :relationType,
+        :relatedItemType,
+        {
+          relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
+        },
+        {
+          creators: %i[nameType name givenName familyName],
+        },
+        {
+          titles: %i[title titleType],
+        },
+        :publicationYear,
+        :volume,
+        :issue,
+        :number,
+        :numberType,
+        :firstPage,
+        :lastPage,
+        :publisher,
+        :edition,
+        {
+          contributors: %i[contributorType name givenName familyName nameType],
+        },
+      ],
+    },
+    :published,
+    :downloadsOverTime,
+    { downloadsOverTime: %i[yearMonth total] },
+    :viewsOverTime,
+    { viewsOverTime: %i[yearMonth total] },
+    :citationsOverTime,
+    { citationsOverTime: %i[year total] },
+    :citationCount,
+    :downloadCount,
+    :partCount,
+    :partOfCount,
+    :referenceCount,
+    :versionCount,
+    :versionOfCount,
+    :viewCount,
+  ].freeze
+
+  RELATIONSHIPS_MAP = [{ client: [data: %i[type id]] }].freeze
+
   def initialize(params = {})
     @params = params
   end
@@ -193,263 +446,6 @@ class ParamsSanitizer
       else
         @params[:schemaVersion]
       end
-  end
-
-  def self.get_attributes_map
-    [
-      :doi,
-      :confirmDoi,
-      :url,
-      :titles,
-      { titles: %i[title titleType lang] },
-      :publisher,
-      :publicationYear,
-      :created,
-      :prefix,
-      :suffix,
-      :types,
-      {
-        types: %i[
-          resourceTypeGeneral
-          resourceType
-          schemaOrg
-          bibtex
-          citeproc
-          ris
-        ],
-      },
-      :dates,
-      { dates: %i[date dateType dateInformation] },
-      :subjects,
-      { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
-      :landingPage,
-      {
-        landingPage: [
-          :checked,
-          :url,
-          :status,
-          :contentType,
-          :error,
-          :redirectCount,
-          { redirectUrls: [] },
-          :downloadLatency,
-          :hasSchemaOrg,
-          :schemaOrgId,
-          { schemaOrgId: [] },
-          :dcIdentifier,
-          :citationDoi,
-          :bodyHasPid,
-        ],
-      },
-      :contentUrl,
-      { contentUrl: [] },
-      :sizes,
-      { sizes: [] },
-      :formats,
-      { formats: [] },
-      :language,
-      :descriptions,
-      { descriptions: %i[description descriptionType lang] },
-      :rightsList,
-      {
-        rightsList: %i[
-          rights
-          rightsUri
-          rightsIdentifier
-          rightsIdentifierScheme
-          schemeUri
-          lang
-        ],
-      },
-      :xml,
-      :regenerate,
-      :source,
-      :version,
-      :metadataVersion,
-      :schemaVersion,
-      :state,
-      :isActive,
-      :reason,
-      :registered,
-      :updated,
-      :mode,
-      :event,
-      :regenerate,
-      :should_validate,
-      :client,
-      :creators,
-      {
-        creators: [
-          :nameType,
-          {
-            nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-          },
-          :name,
-          :givenName,
-          :familyName,
-          {
-            affiliation: %i[
-              name
-              affiliationIdentifier
-              affiliationIdentifierScheme
-              schemeUri
-            ],
-          },
-          :lang,
-        ],
-      },
-      :contributors,
-      {
-        contributors: [
-          :nameType,
-          {
-            nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-          },
-          :name,
-          :givenName,
-          :familyName,
-          {
-            affiliation: %i[
-              name
-              affiliationIdentifier
-              affiliationIdentifierScheme
-              schemeUri
-            ],
-          },
-          :contributorType,
-          :lang,
-        ],
-      },
-      :identifiers,
-      { identifiers: %i[identifier identifierType] },
-      :alternateIdentifiers,
-      { alternateIdentifiers: %i[alternateIdentifier alternateIdentifierType] },
-      :relatedIdentifiers,
-      {
-        relatedIdentifiers: %i[
-          relatedIdentifier
-          relatedIdentifierType
-          relationType
-          relatedMetadataScheme
-          schemeUri
-          schemeType
-          resourceTypeGeneral
-          relatedMetadataScheme
-          schemeUri
-          schemeType
-        ],
-      },
-      :fundingReferences,
-      {
-        fundingReferences: %i[
-          funderName
-          funderIdentifier
-          funderIdentifierType
-          awardNumber
-          awardUri
-          awardTitle
-        ],
-      },
-      :geoLocations,
-      {
-        geoLocations: [
-          { geoLocationPoint: %i[pointLongitude pointLatitude] },
-          {
-            geoLocationBox: %i[
-              westBoundLongitude
-              eastBoundLongitude
-              southBoundLatitude
-              northBoundLatitude
-            ],
-          },
-          :geoLocationPlace,
-        ],
-      },
-      :container,
-      {
-        container: %i[
-          type
-          identifier
-          identifierType
-          title
-          volume
-          issue
-          firstPage
-          lastPage
-        ],
-      },
-      :relatedItems,
-      {
-        relatedItems: [
-          :relationType,
-          :relatedItemType,
-          {
-            relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
-          },
-          {
-            creators: %i[nameType name givenName familyName],
-          },
-          {
-            titles: %i[title titleType],
-          },
-          :publicationYear,
-          :volume,
-          :issue,
-          :number,
-          :numberType,
-          :firstPage,
-          :lastPage,
-          :publisher,
-          :edition,
-          {
-            contributors: %i[contributorType name givenName familyName nameType],
-          },
-        ],
-      },
-      :published,
-      :downloadsOverTime,
-      { downloadsOverTime: %i[yearMonth total] },
-      :viewsOverTime,
-      { viewsOverTime: %i[yearMonth total] },
-      :citationsOverTime,
-      { citationsOverTime: %i[year total] },
-      :citationCount,
-      :downloadCount,
-      :partCount,
-      :partOfCount,
-      :referenceCount,
-      :versionCount,
-      :versionOfCount,
-      :viewCount,
-    ]
-  end
-
-  def self.get_defaults_map
-    {
-      data: {
-        titles: [],
-        descriptions: [],
-        types: {},
-        container: {},
-        dates: [],
-        subjects: [],
-        rightsList: [],
-        creators: [],
-        contributors: [],
-        sizes: [],
-        formats: [],
-        contentUrl: [],
-        identifiers: [],
-        relatedIdentifiers: [],
-        relatedItems: [],
-        fundingReferences: [],
-        geoLocations: [],
-      },
-    }
-  end
-
-  def self.get_relationships_map
-    [{ client: [data: %i[type id]] }]
   end
 
   def self.sanitaize_nameIdentifiers(array)
