@@ -371,14 +371,11 @@ describe DataciteDoisController, type: :request, vcr: true do
       [
         create(:doi, titles: [{ "title": "Brad" }]),
         create(:doi, titles: [{ "title": "Zack" }]),
-        create(:doi, titles: [{ "title": "Alphonso" }, { "title": "Zorro"}]),
+        create(:doi, titles: [{ "title": "Alphonso" }, { "title": "Zorro", "titleType": "AlternativeTitle"}]),
         create(:doi, titles: [{ "title": "Corey" }]),
-        create(:doi, titles: nil)
+        create(:doi, titles: nil),
+        create(:doi, titles: []),
       ]
-    }
-
-    let!(:dois_2) {
-      create_list(:doi, 200, aasm_state: "findable")
     }
 
     before do
@@ -391,8 +388,8 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       result = json.dig("data")
 
-      expect(result.dig(0, "attributes", "titles")).to eq([])
-      expect(result.dig(1, "attributes", "titles")).to eq(dois[2].titles)
+      expect(result.dig(0, "attributes", "titles")).to eq(dois[2].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[0].titles)
     end
 
     it "returns dois in descending title sort order" do
@@ -401,6 +398,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       result = json.dig("data")
 
       expect(result.dig(0, "attributes", "titles")).to eq(dois[1].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[3].titles)
     end
   end
 
