@@ -44,9 +44,25 @@ class DataciteDoisController < ApplicationController
       when "-citation-count"
         { citation_count: { order: "desc" } }
       when "title"
-        { "titles.title.keyword": { order: "asc" } }
+        { "_script": {
+            "type": "string",
+            "script": {
+                "lang": "painless",
+                "inline": "if (params._source.titles.length > 0) { return params._source.titles[0].title } else { return '' }"
+            },
+            "order": "asc"
+          }
+        }
       when "-title"
-        { "titles.title.keyword": { order: "desc" } }
+        { "_script": {
+            "type": "string",
+            "script": {
+                "lang": "painless",
+                "inline": "if (params._source.titles.length > 0) { return params._source.titles[0].title } else { return '' }"
+            },
+            "order": "desc"
+          }
+        }
       when "relevance"
         { "_score": { "order": "desc" } }
       else
