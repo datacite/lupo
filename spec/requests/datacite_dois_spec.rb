@@ -369,10 +369,10 @@ describe DataciteDoisController, type: :request, vcr: true do
   describe "GET /dois with sort", elasticsearch: true do
     let!(:dois) {
       [
-        create(:doi, titles: [{ "title": "Brad" }]),
-        create(:doi, titles: [{ "title": "Zack" }]),
-        create(:doi, titles: [{ "title": "Alphonso" }, { "title": "Zorro", "titleType": "AlternativeTitle"}]),
-        create(:doi, titles: [{ "title": "Corey" }]),
+        create(:doi, titles: [{ "title" => "Brad" }]),
+        create(:doi, titles: [{ "title" => "Zack" }]),
+        create(:doi, titles: [{ "title" => "Alphonso" }, { "title" => "Zorro", "titleType" => "AlternativeTitle" }]),
+        create(:doi, titles: [{ "title" => "Corey" }]),
         create(:doi, titles: nil),
         create(:doi, titles: []),
       ]
