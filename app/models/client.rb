@@ -396,6 +396,7 @@ class Client < ApplicationRecord
         end,
       "analytics_dashboard_url" => analytics_dashboard_url,
       "analytics_tracking_id" => analytics_tracking_id,
+      "subjects" => Array.wrap(subjects),
     }
   end
 

@@ -18,6 +18,16 @@ FactoryBot.define do
     role_name { "ROLE_DATACENTRE" }
     password_input { "12345" }
     is_active { true }
+    subjects do
+      [
+        {
+          classificationCode: "1001",
+          schemeUri: "http://example.com/schemeUri",
+          subject: "Example Subject",
+          subjectScheme: "Example Subject Scheme (ESS)",
+        },
+      ]
+    end
 
     initialize_with { Client.where(symbol: symbol).first_or_initialize }
   end
