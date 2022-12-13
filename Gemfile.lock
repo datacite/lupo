@@ -340,7 +340,7 @@ GEM
     logstash-event (1.2.02)
     logstash-logger (0.26.1)
       logstash-event (~> 1.2)
-    loofah (2.19.0)
+    loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     macaddr (1.7.2)
@@ -411,7 +411,7 @@ GEM
       docopt (~> 0.5)
       sysrandom
     qonfig (0.28.0)
-    racc (1.6.0)
+    racc (1.6.1)
     rack (2.2.4)
     rack-accept (0.4.5)
       rack (>= 0.4)
