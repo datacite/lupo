@@ -503,6 +503,11 @@ class Doi < ApplicationRecord
       indexes :version_of_ids, type: :keyword
       indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
+      indexes :primary_title, type: :object, properties: {
+        title: { type: :text, fields: { keyword: { type: "keyword" } } },
+        titleType: { type: :keyword },
+        lang: { type: :keyword },
+      }
     end
   end
 
@@ -582,6 +587,7 @@ class Doi < ApplicationRecord
       "part_of_ids" => part_of_ids,
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
+      "primary_title" => Array.wrap(primary_title),
     }
   end
 
@@ -1825,6 +1831,10 @@ class Doi < ApplicationRecord
   def cache_key
     timestamp = updated || Time.zone.now
     "dois/#{uid}-#{timestamp.iso8601}"
+  end
+
+  def primary_title
+    Array.wrap(Array.wrap(titles).first)
   end
 
   def event=(value)

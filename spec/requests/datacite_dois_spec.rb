@@ -366,6 +366,42 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois with sort", elasticsearch: true do
+    let!(:dois) {
+      [
+        create(:doi, titles: [{ "title" => "Brad" }]),
+        create(:doi, titles: [{ "title" => "Zack" }]),
+        create(:doi, titles: [{ "title" => "Alphonso" }, { "title" => "Zorro", "titleType" => "AlternativeTitle" }]),
+        create(:doi, titles: [{ "title" => "Corey" }]),
+        create(:doi, titles: nil),
+        create(:doi, titles: []),
+      ]
+    }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
+    it "returns dois in ascending title sort order" do
+      get "/dois?sort=title", nil, headers
+
+      result = json.dig("data")
+
+      expect(result.dig(0, "attributes", "titles")).to eq(dois[2].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[0].titles)
+    end
+
+    it "returns dois in descending title sort order" do
+      get "/dois?sort=-title", nil, headers
+
+      result = json.dig("data")
+
+      expect(result.dig(0, "attributes", "titles")).to eq(dois[1].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[3].titles)
+    end
+  end
+
   describe "GET /dois/:id", elasticsearch: true do
     let!(:doi) { create(:doi, client: client) }
 
