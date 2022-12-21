@@ -504,7 +504,7 @@ class Doi < ApplicationRecord
       indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
       indexes :primary_title, type: :object, properties: {
-        title: { type: :text, fields: { keyword: { type: "keyword" } } },
+        title: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true } } },
         titleType: { type: :keyword },
         lang: { type: :keyword },
       }

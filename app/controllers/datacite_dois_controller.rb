@@ -44,9 +44,9 @@ class DataciteDoisController < ApplicationController
       when "-citation-count"
         { citation_count: { order: "desc" } }
       when "title"
-        { "primary_title.title.keyword": { order: "asc" } }
+        { "primary_title.title.raw": { order: "asc" } }
       when "-title"
-        { "primary_title.title.keyword": { order: "desc" } }
+        { "primary_title.title.raw": { order: "desc" } }
       when "relevance"
         { "_score": { "order": "desc" } }
       else
