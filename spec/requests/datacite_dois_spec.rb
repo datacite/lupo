@@ -373,8 +373,12 @@ describe DataciteDoisController, type: :request, vcr: true do
         create(:doi, titles: [{ "title" => "Zack" }]),
         create(:doi, titles: [{ "title" => "Alphonso" }, { "title" => "Zorro", "titleType" => "AlternativeTitle" }]),
         create(:doi, titles: [{ "title" => "Corey" }]),
+        create(:doi, titles: [{ "title" => "Adorno" }]),
+        create(:doi, titles: [{ "title" => "acorn" }]),
+        create(:doi, titles: [{ "title" => "zoey" }]),
         create(:doi, titles: nil),
         create(:doi, titles: []),
+        create(:doi, titles: [{ "title" => "" }]),
       ]
     }
 
@@ -388,8 +392,10 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       result = json.dig("data")
 
-      expect(result.dig(0, "attributes", "titles")).to eq(dois[2].titles)
-      expect(result.dig(1, "attributes", "titles")).to eq(dois[0].titles)
+      expect(result.dig(0, "attributes", "titles")).to eq(dois[9].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[5].titles)
+      expect(result.dig(2, "attributes", "titles")).to eq(dois[4].titles)
+      expect(result.dig(3, "attributes", "titles")).to eq(dois[2].titles)
     end
 
     it "returns dois in descending title sort order" do
@@ -397,8 +403,9 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       result = json.dig("data")
 
-      expect(result.dig(0, "attributes", "titles")).to eq(dois[1].titles)
-      expect(result.dig(1, "attributes", "titles")).to eq(dois[3].titles)
+      expect(result.dig(0, "attributes", "titles")).to eq(dois[6].titles)
+      expect(result.dig(1, "attributes", "titles")).to eq(dois[1].titles)
+      expect(result.dig(2, "attributes", "titles")).to eq(dois[3].titles)
     end
   end
 
