@@ -298,17 +298,18 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.language).to eq("fr")
     end
 
-    it "error" do
+    it "non-iso 639-1" do
       doi.language = "hhh"
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
-      expect(doi.language).to be_nil
+      expect(doi.language).to eq("hhh")
     end
 
     it "nil" do
       doi.language = nil
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
+      expect(doi.language).to be_nil
     end
   end
 

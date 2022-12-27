@@ -124,7 +124,6 @@ class Doi < ApplicationRecord
   validate :check_related_items, if: :related_items?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
-  validate :check_language, if: :language?
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
@@ -132,7 +131,6 @@ class Doi < ApplicationRecord
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
-  before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
@@ -1685,6 +1683,16 @@ class Doi < ApplicationRecord
     write_attribute(:types, value || {})
   end
 
+  def language=(value)
+    lang = value.to_s.split("-").first
+    entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first) if lang
+    if entry.present? && entry.alpha2.present?
+      write_attribute(:language, entry.alpha2 || nil)
+    else
+      write_attribute(:language, value || nil)
+    end
+  end
+
   def landing_page=(value)
     write_attribute(:landing_page, value || {})
   end
@@ -1935,11 +1943,6 @@ class Doi < ApplicationRecord
 
   def check_container
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
-  end
-
-  def check_language
-    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
-    errors.add(:language, "Language #{language} not found.") if entry.blank?
   end
 
   # To be used for isolated clean up of errored individual DOIs
@@ -2210,14 +2213,6 @@ class Doi < ApplicationRecord
     else
       self.agency = "datacite"
       self.type = "DataciteDoi"
-    end
-  end
-
-  def update_language
-    lang = language.to_s.split("-").first
-    entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
-    self.language = if entry.present? && entry.alpha2.present?
-      entry.alpha2
     end
   end
 
