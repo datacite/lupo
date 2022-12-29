@@ -1938,8 +1938,7 @@ class Doi < ApplicationRecord
   end
 
   def check_language
-    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
-    errors.add(:language, "Language #{language} not found.") if entry.blank?
+    errors.add(:language, "Language #{language} not found.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
   end
 
   # To be used for isolated clean up of errored individual DOIs
@@ -2216,9 +2215,12 @@ class Doi < ApplicationRecord
   def update_language
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
-    self.language = if entry.present? && entry.alpha2.present?
-      entry.alpha2
-    end
+    self.language = 
+      if entry.present? && entry.alpha2.present?
+        entry.alpha2
+      elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
+        language
+      end
   end
 
   def update_field_of_science
