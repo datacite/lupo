@@ -2215,7 +2215,7 @@ class Doi < ApplicationRecord
   def update_language
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
-    self.language = 
+    self.language =
       if entry.present? && entry.alpha2.present?
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
