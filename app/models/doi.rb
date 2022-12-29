@@ -1938,7 +1938,7 @@ class Doi < ApplicationRecord
   end
 
   def check_language
-    errors.add(:language, "Language #{language} not found.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
+    errors.add(:language, "Language #{language} is in an invalid format.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
   end
 
   # To be used for isolated clean up of errored individual DOIs
