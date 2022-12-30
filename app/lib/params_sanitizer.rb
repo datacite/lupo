@@ -361,7 +361,6 @@ class ParamsSanitizer
   end
 
   def add_xml
-    # extract attributes from xml field and merge with attributes provided directly
     xml =
     @params[:xml].present? ? Base64.decode64(@params[:xml]).force_encoding("UTF-8") : nil
 
@@ -448,7 +447,7 @@ class ParamsSanitizer
       end
   end
 
-  def self.sanitaize_nameIdentifiers(array)
+  def self.sanitize_nameIdentifiers(array)
     Array.wrap(array)&.each do |c|
       if c[:nameIdentifiers]&.respond_to?(:keys)
         fail(

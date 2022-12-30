@@ -777,8 +777,8 @@ class DataciteDoisController < ApplicationController
           end
       end
 
-      ParamsSanitizer.sanitaize_nameIdentifiers(params[:creators])
-      ParamsSanitizer.sanitaize_nameIdentifiers(params[:contributors])
+      ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])
+      ParamsSanitizer.sanitize_nameIdentifiers(params[:contributors])
 
       p =
         params.require(:data).permit(
