@@ -249,11 +249,11 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
       expect(json["clients"]).to eq(
-        [{ "count" => 1, "id" => "2022", "title" => "2022" }],
+        [{ "count" => 1, "id" => "2023", "title" => "2023" }],
       )
       # expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
       expect(json["dois"]).to eq(
-        [{ "count" => 3, "id" => "2022", "title" => "2022" }],
+        [{ "count" => 3, "id" => "2023", "title" => "2023" }],
       )
     end
   end
