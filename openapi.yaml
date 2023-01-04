@@ -1612,6 +1612,214 @@ components:
                         type: string
                       awardTitle:
                         type: string
+                relatedItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      relatedItemType:
+                        type: string
+                        enum:
+                          - Audiovisual
+                          - Book
+                          - BookChapter
+                          - Collection
+                          - ComputationalNotebook
+                          - ConferencePaper
+                          - ConferenceProceeding
+                          - DataPaper
+                          - Dataset
+                          - Dissertation
+                          - Event
+                          - Image
+                          - InteractiveResource
+                          - JournalArticle
+                          - Model
+                          - OutputManagementPlan
+                          - PeerReview
+                          - PhysicalObject
+                          - Preprint
+                          - Report
+                          - Service
+                          - Software
+                          - Sound
+                          - Standard
+                          - Text
+                          - Workflow
+                          - Other
+                      relationType:
+                        type: string
+                        enum:
+                          - IsCitedBy
+                          - Cites
+                          - IsSupplementTo
+                          - IsSupplementedBy
+                          - IsContinuedBy
+                          - Continues
+                          - IsDescribedBy
+                          - Describes
+                          - HasMetadata
+                          - IsMetadataFor
+                          - HasVersion
+                          - IsVersionOf
+                          - IsNewVersionOf
+                          - IsPreviousVersionOf
+                          - IsPartOf
+                          - HasPart
+                          - IsPublishedIn
+                          - IsReferencedBy
+                          - References
+                          - IsDocumentedBy
+                          - Documents
+                          - IsCompiledBy
+                          - Compiles
+                          - IsVariantFormOf
+                          - IsOriginalFormOf
+                          - IsIdenticalTo
+                          - IsReviewedBy
+                          - Reviews
+                          - IsDerivedFrom
+                          - IsSourceOf
+                          - IsRequiredBy
+                          - Requires
+                          - IsObsoletedBy
+                          - Obsoletes
+                      relatedItemIdentifier:
+                        type: object
+                        properties:
+                          relatedItemIdentifier:
+                            type: string
+                          relatedItemIdentifierType:
+                            type: string
+                            enum:
+                              - ARK
+                              - arXiv
+                              - bibcode
+                              - DOI
+                              - EAN13
+                              - EISSN
+                              - Handle
+                              - IGSN
+                              - ISBN
+                              - ISSN
+                              - ISTC
+                              - LISSN
+                              - LSID
+                              - PMID
+                              - PURL
+                              - UPC
+                              - URL
+                              - URN
+                              - w3id
+                          relatedMetadataScheme:
+                            type: string
+                          schemeURI:
+                            type: string
+                          schemeType:
+                            type: string
+                      creators:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            givenName:
+                              type: string
+                            familyName:
+                              type: string
+                            nameType:
+                              type: string
+                              enum:
+                                - Personal
+                                - Organizational
+                          required:
+                            - name                          
+                      titles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            title:
+                              type: string
+                            titleType:
+                              type: string
+                              enum:
+                                - AlternativeTitle
+                                - Subtitle
+                                - TranslatedTitle
+                                - Other
+                          required:
+                            - title
+                      volume:
+                        type: string
+                      issue:
+                        type: string
+                      number:
+                        type: string
+                      numberType:
+                        type: string
+                        enum:
+                          - Article
+                          - Chapter
+                          - Report
+                          - Other
+                      firstPage:
+                        type: string
+                      lastPage:
+                        type: string
+                      publisher:
+                        type: string
+                      publicationYear:
+                        type: string
+                      edition:
+                        type: string
+                      contributors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            givenName:
+                              type: string
+                            familyName:
+                              type: string
+                            nameType:
+                              type: string
+                              enum:
+                                - Personal
+                                - Organizational
+                            contributorType:
+                              type: string
+                              enum:
+                                - ContactPerson
+                                - DataCollector
+                                - DataCurator
+                                - DataManager
+                                - Distributor
+                                - Editor
+                                - HostingInstitution
+                                - Producer
+                                - ProjectLeader
+                                - ProjectManager
+                                - ProjectMember
+                                - RegistrationAgency
+                                - RegistrationAuthority
+                                - RelatedPerson
+                                - Researcher
+                                - ResearchGroup
+                                - RightsHolder
+                                - Sponsor
+                                - Supervisor
+                                - WorkPackageLeader
+                                - Other
+                          required:
+                            - name
+                            - contributorType
+                    required:
+                      - relatedItemType
+                      - relationType
                 url:
                   type: string
                 contentUrl:
