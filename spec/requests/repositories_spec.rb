@@ -227,7 +227,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         [{ "count" => 3, "id" => "dataset", "title" => "Dataset" }],
       )
       expect(json["dois"]).to eq(
-        [{ "count" => 3, "id" => "2022", "title" => "2022" }],
+        [{ "count" => 3, "id" => "2023", "title" => "2023" }],
       )
     end
   end
