@@ -66,6 +66,11 @@ module DoiItem
   field :fields_of_science,
         [FieldOfScienceType],
         null: true, description: "OECD Fields of Science of the resource"
+
+  field :repository_fields_of_science,
+        [FieldOfScienceType],
+        null: true, description: "OECD Fields of Science of the containing repository"
+
   field :dates,
         [DateType],
         null: true, description: "Different dates relevant to the work"
@@ -382,6 +387,7 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :repository_field_of_science, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -418,13 +424,24 @@ module DoiItem
     { id: object.agency, name: REGISTRATION_AGENCIES[object.agency] }.compact
   end
 
-  def fields_of_science
-    Array.wrap(object.subjects).select do |s|
+  def _fos_filter(subjects)
+    Array.wrap(subjects).select do |s|
       s["subjectScheme"] == "Fields of Science and Technology (FOS)"
     end.map do |s|
       name = s["subject"].gsub("FOS: ", "")
       { "id" => name.parameterize(separator: "_"), "name" => name }
     end.uniq
+  end
+
+  def repository_fields_of_science
+    if object.client.blank?
+      return []
+    end
+    _fos_filter(object.client.subjects)
+  end
+
+  def fields_of_science
+    _fos_filter(object.subjects)
   end
 
   def creators(**args)
