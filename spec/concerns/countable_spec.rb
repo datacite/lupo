@@ -4,6 +4,17 @@ require "rails_helper"
 
 describe "Providers", type: :controller, elasticsearch: true do
   subject { ProvidersController.new }
+  before(:all) do
+    current_year = Date.today.year
+    @CUMULTATIVE_BY_YEAR = (2015..current_year).to_a.map do |year|
+      { "count" => 3, "id" => "#{year}", "title" => "#{year}" }
+    end
+    @CUMULTATIVE_BY_YEAR_WITH_DELETES = (2015..2017).to_a.map do |year|
+      { "count" => 2, "id" => "#{year}", "title" => "#{year}" }
+    end | (2018..current_year).to_a.map do |year|
+      { "count" => 1, "id" => "#{year}", "title" => "#{year}" }
+    end
+  end
 
   describe "provider_count" do
     before do
@@ -14,17 +25,8 @@ describe "Providers", type: :controller, elasticsearch: true do
     it "counts all providers" do
       Provider.import
       sleep 2
-      expect(subject.provider_count).to eq(
-        [
-          { "count" => 3, "id" => "2015", "title" => "2015" },
-          { "count" => 3, "id" => "2016", "title" => "2016" },
-          { "count" => 3, "id" => "2017", "title" => "2017" },
-          { "count" => 3, "id" => "2018", "title" => "2018" },
-          { "count" => 3, "id" => "2019", "title" => "2019" },
-          { "count" => 3, "id" => "2020", "title" => "2020" },
-          { "count" => 3, "id" => "2021", "title" => "2021" },
-          { "count" => 3, "id" => "2022", "title" => "2022" },
-        ],
+      expect(subject.provider_count).to match_array(
+        @CUMULTATIVE_BY_YEAR
       )
     end
 
@@ -33,17 +35,8 @@ describe "Providers", type: :controller, elasticsearch: true do
       @providers.last.update(deleted_at: "2015-06-14")
       Provider.import
       sleep 2
-      expect(subject.provider_count).to eq(
-        [
-          { "count" => 1, "id" => "2018", "title" => "2018" },
-          { "count" => 1, "id" => "2019", "title" => "2019" },
-          { "count" => 1, "id" => "2020", "title" => "2020" },
-          { "count" => 1, "id" => "2021", "title" => "2021" },
-          { "count" => 1, "id" => "2022", "title" => "2022" },
-          { "count" => 2, "id" => "2015", "title" => "2015" },
-          { "count" => 2, "id" => "2016", "title" => "2016" },
-          { "count" => 2, "id" => "2017", "title" => "2017" },
-        ],
+      expect(subject.provider_count).to match_array(
+        @CUMULTATIVE_BY_YEAR_WITH_DELETES
       )
     end
   end
@@ -57,17 +50,8 @@ describe "Providers", type: :controller, elasticsearch: true do
     it "counts all clients" do
       Client.import
       sleep 2
-      expect(subject.client_count).to eq(
-        [
-          { "count" => 3, "id" => "2015", "title" => "2015" },
-          { "count" => 3, "id" => "2016", "title" => "2016" },
-          { "count" => 3, "id" => "2017", "title" => "2017" },
-          { "count" => 3, "id" => "2018", "title" => "2018" },
-          { "count" => 3, "id" => "2019", "title" => "2019" },
-          { "count" => 3, "id" => "2020", "title" => "2020" },
-          { "count" => 3, "id" => "2021", "title" => "2021" },
-          { "count" => 3, "id" => "2022", "title" => "2022" },
-        ],
+      expect(subject.client_count).to match_array(
+        @CUMULTATIVE_BY_YEAR
       )
     end
 
@@ -76,17 +60,8 @@ describe "Providers", type: :controller, elasticsearch: true do
       @clients.last.update(deleted_at: "2015-06-14")
       Client.import
       sleep 2
-      expect(subject.client_count).to eq(
-        [
-          { "count" => 1, "id" => "2018", "title" => "2018" },
-          { "count" => 1, "id" => "2019", "title" => "2019" },
-          { "count" => 1, "id" => "2020", "title" => "2020" },
-          { "count" => 1, "id" => "2021", "title" => "2021" },
-          { "count" => 1, "id" => "2022", "title" => "2022" },
-          { "count" => 2, "id" => "2015", "title" => "2015" },
-          { "count" => 2, "id" => "2016", "title" => "2016" },
-          { "count" => 2, "id" => "2017", "title" => "2017" },
-        ],
+      expect(subject.client_count).to match_array(
+        @CUMULTATIVE_BY_YEAR_WITH_DELETES
       )
     end
   end
