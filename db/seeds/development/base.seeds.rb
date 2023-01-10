@@ -24,7 +24,7 @@ provider =
 client =
   Client.where(symbol: "DATACITE.TEST").first ||
   FactoryBot.create(
-    :client,
+    :client_with_fos,
     provider: provider,
     symbol: ENV["MDS_USERNAME"],
     password_input: ENV["MDS_PASSWORD"],

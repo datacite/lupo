@@ -29,6 +29,19 @@ FactoryBot.define do
       ]
     end
 
+    factory :client_with_fos do
+      subjects do
+        [
+          {
+            classificationCode: "1001",
+            schemeUri: "http://example.com/schemeUri",
+            subject: "Example Subject",
+            subjectScheme: "Fields of Science and Technology (FOS)"
+          },
+        ]
+      end
+    end
+
     initialize_with { Client.where(symbol: symbol).first_or_initialize }
   end
 end
