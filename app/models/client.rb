@@ -198,7 +198,7 @@ class Client < ApplicationRecord
       indexes :analytics_dashboard_url, type: :text
       indexes :analytics_tracking_id, type: :text
       indexes :cumulative_years, type: :integer, index: "false"
-      indexes :subjects, type: :object, properties: {
+      indexes :subjects,  type: :nested, include_in_parent: true,  properties: {
         subjectScheme: { type: :keyword },
         subject: { type: :keyword },
         schemeUri: { type: :keyword },
