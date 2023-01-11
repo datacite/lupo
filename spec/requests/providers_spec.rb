@@ -247,13 +247,14 @@ describe ProvidersController, type: :request, elasticsearch: true do
       get "/providers/#{provider.symbol.downcase}/stats",
           nil, headers
 
+      current_year = Date.today.year.to_s
       expect(last_response.status).to eq(200)
       expect(json["clients"]).to eq(
-        [{ "count" => 1, "id" => "2023", "title" => "2023" }],
+        [{ "count" => 1, "id" => current_year, "title" => current_year }],
       )
       # expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
       expect(json["dois"]).to eq(
-        [{ "count" => 3, "id" => "2023", "title" => "2023" }],
+        [{ "count" => 3, "id" => current_year, "title" => current_year }],
       )
     end
   end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
+  SUBJECTS_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/client/subjects.json"
   audited except: %i[
     system_email
     service_contact
@@ -50,6 +51,12 @@ class Client < ApplicationRecord
 
   attr_accessor :password_input, :target_id
   attr_reader :from_salesforce
+
+  validates :subjects, if: :subjects?,
+            json: {
+              message: ->(errors) { errors },
+              schema: SUBJECTS_JSON_SCHEMA
+            }
 
   validates_presence_of :symbol, :name, :system_email
   validates_uniqueness_of :symbol,
@@ -188,6 +195,14 @@ class Client < ApplicationRecord
       indexes :deleted_at, type: :date
       indexes :analytics_dashboard_url, type: :text
       indexes :cumulative_years, type: :integer, index: "false"
+      indexes :subjects, type: :object, properties: {
+        subjectScheme: { type: :keyword },
+        subject: { type: :keyword },
+        schemeUri: { type: :keyword },
+        valueUri: { type: :keyword },
+        lang: { type: :keyword },
+        classificationCode: { type: :keyword },
+      }
 
       # include parent objects
       indexes :provider,

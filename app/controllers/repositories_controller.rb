@@ -369,6 +369,8 @@ class RepositoriesController < ApplicationController
           "salesforceId",
           "fromSalesforce",
           "analyticsDashboardUrl",
+          :subjects,
+          { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
         ],
         keys: {
           "systemEmail" => :system_email,
@@ -383,6 +385,9 @@ class RepositoriesController < ApplicationController
           "repositoryType" => :repository_type,
           "serviceContact" => :service_contact,
           "analyticsDashboardUrl" => :analytics_dashboard_url,
+          "subjectScheme" => :subject_scheme,
+          "valueUri" => :value_uri,
+          "classificationCode" => :classification_code,
         },
       )
     end
