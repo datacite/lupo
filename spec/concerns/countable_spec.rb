@@ -6,10 +6,10 @@ describe "Providers", type: :controller, elasticsearch: true do
   subject { ProvidersController.new }
   before(:all) do
     current_year = Date.today.year.to_s
-    @CUMULTATIVE_BY_YEAR = ("2015"..current_year).to_a.map do |year|
+    @CUMULATIVE_BY_YEAR = ("2015"..current_year).to_a.map do |year|
       { "count" => 3, "id" => year, "title" => year }
     end
-    @CUMULTATIVE_BY_YEAR_WITH_DELETES = ("2015".."2017").to_a.map do |year|
+    @CUMULATIVE_BY_YEAR_WITH_DELETES = ("2015".."2017").to_a.map do |year|
       { "count" => 2, "id" => year, "title" => year }
     end | ("2018"..current_year).to_a.map do |year|
       { "count" => 1, "id" => year, "title" => year }
@@ -26,7 +26,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       Provider.import
       sleep 2
       expect(subject.provider_count).to match_array(
-        @CUMULTATIVE_BY_YEAR
+        @CUMULATIVE_BY_YEAR
       )
     end
 
@@ -36,7 +36,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       Provider.import
       sleep 2
       expect(subject.provider_count).to match_array(
-        @CUMULTATIVE_BY_YEAR_WITH_DELETES
+        @CUMULATIVE_BY_YEAR_WITH_DELETES
       )
     end
   end
@@ -51,7 +51,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       Client.import
       sleep 2
       expect(subject.client_count).to match_array(
-        @CUMULTATIVE_BY_YEAR
+        @CUMULATIVE_BY_YEAR
       )
     end
 
@@ -61,7 +61,7 @@ describe "Providers", type: :controller, elasticsearch: true do
       Client.import
       sleep 2
       expect(subject.client_count).to match_array(
-        @CUMULTATIVE_BY_YEAR_WITH_DELETES
+        @CUMULATIVE_BY_YEAR_WITH_DELETES
       )
     end
   end
