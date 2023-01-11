@@ -5,14 +5,14 @@ require "rails_helper"
 describe "Providers", type: :controller, elasticsearch: true do
   subject { ProvidersController.new }
   before(:all) do
-    current_year = Date.today.year
-    @CUMULTATIVE_BY_YEAR = (2015..current_year).to_a.map do |year|
-      { "count" => 3, "id" => "#{year}", "title" => "#{year}" }
+    current_year = Date.today.year.to_s
+    @CUMULTATIVE_BY_YEAR = ("2015"..current_year).to_a.map do |year|
+      { "count" => 3, "id" => year, "title" => year }
     end
-    @CUMULTATIVE_BY_YEAR_WITH_DELETES = (2015..2017).to_a.map do |year|
-      { "count" => 2, "id" => "#{year}", "title" => "#{year}" }
-    end | (2018..current_year).to_a.map do |year|
-      { "count" => 1, "id" => "#{year}", "title" => "#{year}" }
+    @CUMULTATIVE_BY_YEAR_WITH_DELETES = ("2015".."2017").to_a.map do |year|
+      { "count" => 2, "id" => year, "title" => year }
+    end | ("2018"..current_year).to_a.map do |year|
+      { "count" => 1, "id" => year, "title" => year }
     end
   end
 

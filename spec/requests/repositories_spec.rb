@@ -192,12 +192,13 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     it "returns repository" do
       get "/repositories/#{client.uid}/stats"
 
+      current_year = Date.today.year.to_s
       expect(last_response.status).to eq(200)
       expect(json["resourceTypes"]).to eq(
         [{ "count" => 3, "id" => "dataset", "title" => "Dataset" }],
       )
       expect(json["dois"]).to eq(
-        [{ "count" => 3, "id" => "2023", "title" => "2023" }],
+        [{ "count" => 3, "id" => current_year, "title" => current_year }],
       )
     end
   end

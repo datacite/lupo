@@ -102,6 +102,7 @@ describe MemberType do
 
     it "returns all members" do
       response = LupoSchema.execute(query).as_json
+      current_year = Date.today.year.to_s
 
       expect(response.dig("data", "members", "totalCount")).to eq(6)
       expect(
@@ -116,7 +117,7 @@ describe MemberType do
       ).to be true
 
       expect(response.dig("data", "members", "years")).to eq(
-        [{ "count" => 6, "id" => "2023", "title" => "2023" }],
+        [{ "count" => 6, "id" => current_year, "title" => current_year }],
       )
       expect(response.dig("data", "members", "regions")).to eq(
         [
@@ -210,6 +211,7 @@ describe MemberType do
 
     it "returns member" do
       response = LupoSchema.execute(query).as_json
+      current_year = Date.today.year.to_s
 
       expect(response.dig("data", "member", "id")).to eq(provider.uid)
       expect(response.dig("data", "member", "memberRole")).to eq(
@@ -224,7 +226,7 @@ describe MemberType do
         response.dig("data", "member", "repositories", "totalCount"),
       ).to eq(1)
       expect(response.dig("data", "member", "repositories", "years")).to eq(
-        [{ "count" => 1, "id" => "2023" }],
+        [{ "count" => 1, "id" => current_year }],
       )
       expect(response.dig("data", "member", "repositories", "software")).to eq(
         [{ "count" => 1, "id" => "dataverse" }],
@@ -239,7 +241,7 @@ describe MemberType do
 
       expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => "2023" }],
+        [{ "count" => 3, "id" => current_year }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
         3,
