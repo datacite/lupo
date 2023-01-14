@@ -332,6 +332,14 @@ class Doi < ApplicationRecord
         lang: { type: :keyword },
         classificationCode: { type: :keyword },
       }
+      indexes :subjects_combined, type: :object, properties: {
+        subjectScheme: { type: :keyword },
+        subject: { type: :keyword },
+        schemeUri: { type: :keyword },
+        valueUri: { type: :keyword },
+        lang: { type: :keyword },
+        classificationCode: { type: :keyword },
+      }
       indexes :container, type: :object, properties: {
         type: { type: :keyword },
         identifier: { type: :keyword, normalizer: "keyword_lowercase" },
@@ -575,6 +583,7 @@ class Doi < ApplicationRecord
       "sizes" => Array.wrap(sizes),
       "language" => language,
       "subjects" => Array.wrap(subjects),
+      "subjects_combined" => subjects_combined,
       "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
@@ -1707,6 +1716,12 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
+  end
+
+  def subjects_combined
+    ret = Array.wrap(subjects)
+    ret += Array.wrap(client&.subjects)
+    ret.uniq
   end
 
   def client_id_and_name

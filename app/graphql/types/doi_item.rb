@@ -67,6 +67,10 @@ module DoiItem
         [FieldOfScienceType],
         null: true, description: "OECD Fields of Science of the resource"
 
+  field :fields_of_science_combined,
+        [FieldOfScienceType],
+        null: true, description: "OECD Fields of Science of the resource and containing repository"
+
   field :repository_fields_of_science,
         [FieldOfScienceType],
         null: true, description: "OECD Fields of Science of the containing repository"
@@ -438,6 +442,10 @@ module DoiItem
       return []
     end
     _fos_filter(object.client.subjects)
+  end
+
+  def fields_of_science_combined
+    _fos_filter(object.subjects_combined)
   end
 
   def fields_of_science
