@@ -38,10 +38,11 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
       get "/provider-prefixes?consortium-id=#{consortium.uid}",
           nil, headers
 
+      current_year = Date.today.year.to_s
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
       expect(json.dig("meta", "years")).to eq(
-        [{ "count" => 3, "id" => "2022", "title" => "2022" }],
+        [{ "count" => 3, "id" => current_year, "title" => current_year }],
       )
       expect(json.dig("meta", "states")).to eq(
         [

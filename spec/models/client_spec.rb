@@ -14,6 +14,52 @@ describe Client, type: :model do
     it { is_expected.to strip_attribute(:domains) }
   end
 
+  describe "subjects" do
+    let(:client) { build(:client, provider: provider) }
+    let(:valid_subjects) do
+      {
+       classificationCode: "6.1",
+       schemeUri: "http://www.oecd.org/science/inno/38235147.pdf",
+       subject: "History and archaeology",
+       subjectScheme: "Fields of Science and Technology (FOS)",
+      }
+    end
+
+    it "valid hash" do
+      client.subjects = [valid_subjects]
+      expect(client).to be_valid
+      expect(client.errors.details).to be_empty
+      expect(client.subjects).to eq([
+        valid_subjects.with_indifferent_access
+      ])
+    end
+
+    it "invalid hash if missing classificationCode" do
+      client.subjects = [valid_subjects.except(:classificationCode)]
+      expect(client).to_not be_valid
+    end
+
+    it "invalid hash if missing subject" do
+      client.subjects = [valid_subjects.except(:subject)]
+      expect(client).to_not be_valid
+    end
+
+    it "invalid hash if missing schemeUri" do
+      client.subjects = [valid_subjects.except(:schemeUri)]
+      expect(client).to_not be_valid
+    end
+
+    it "invalid hash if missing subjectScheme" do
+      client.subjects = [valid_subjects.except(:subjectScheme)]
+      expect(client).to_not be_valid
+    end
+
+    it "invalid hash if missing classificationCode" do
+      client.subjects = [valid_subjects.except(:classificationCode)]
+      expect(client).to_not be_valid
+    end
+  end
+
   describe "to_jsonapi" do
     xit "works" do
       params = client.to_jsonapi

@@ -86,36 +86,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  # # Test suite for GET /clients
-  # describe 'GET /clients query' do
-  #   before { get "/clients?query=#{query}", headers: headers }
-  #
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(11)
-  #   end
-  #
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
-  # describe 'GET /clients?ids=', elasticsearch: true do
-  #   before do
-  #     sleep 1
-  #     get "/clients?ids=#{ids}", headers: headers
-  #   end
-
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(10)
-  #   end
-
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
   describe "GET /repositories/:id" do
     context "when the record exists" do
       it "returns the repository" do
@@ -224,12 +194,13 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     it "returns repository" do
       get "/repositories/#{client.uid}/stats"
 
+      current_year = Date.today.year.to_s
       expect(last_response.status).to eq(200)
       expect(json["resourceTypes"]).to eq(
         [{ "count" => 3, "id" => "dataset", "title" => "Dataset" }],
       )
       expect(json["dois"]).to eq(
-        [{ "count" => 3, "id" => "2022", "title" => "2022" }],
+        [{ "count" => 3, "id" => current_year, "title" => current_year }],
       )
     end
   end
@@ -398,6 +369,39 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         expect(json.dig("data", "attributes", "globusUuid")).to be_nil
       end
     end
+
+    context "update subjects" do
+      let(:subjects) do
+        [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+           "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+           "subjectScheme" => "FOR",
+           "lang" => "en",
+           "classificationCode" => "001" }]
+      end
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "repositories",
+            "attributes" => {
+              "subjects" => subjects,
+            },
+          },
+        }
+      end
+
+      it "updates the repository" do
+        put "/repositories/#{client.symbol}", update_attributes, headers
+        expect(json.dig("data", "attributes", "subjects")).to eq([
+          { "lang" => "en",
+            "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+            "subject" => "80505 Web Technologies (excl. Web Search)",
+            "subjectScheme" => "FOR",
+            "classificationCode" => "001"
+          }
+        ])
+      end
+    end
+
 
     context "transfer repository" do
       let(:bearer) { User.generate_token }
@@ -625,8 +629,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       sleep 1
 
       expect(last_response.status).to eq(200)
-      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
 
     it "transfered all DOIs consortium" do
@@ -635,8 +637,6 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       sleep 1
 
       expect(last_response.status).to eq(200)
-      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
   end
 end

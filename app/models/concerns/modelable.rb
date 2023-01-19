@@ -3,6 +3,10 @@
 module Modelable
   extend ActiveSupport::Concern
 
+  delegate :doi_from_url, to: :class
+  delegate :orcid_as_url, to: :class
+  delegate :orcid_from_url, to: :class
+
   module ClassMethods
     def doi_from_url(url)
       if %r{\A(?:(http|https)://(dx\.)?(doi.org|handle.test.datacite.org)/)?(doi:)?(10\.\d{4,5}/.+)\z}.

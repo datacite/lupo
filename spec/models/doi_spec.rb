@@ -298,8 +298,29 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.language).to eq("fr")
     end
 
-    it "error" do
+    it "human longer than 8 characters" do
+      doi.language = "Indonesian"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("id")
+    end
+
+    it "non-iso 639-1" do
       doi.language = "hhh"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("hhh")
+    end
+
+    it "non-iso 639-1 with country code" do
+      doi.language = "prq-PE"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("prq-PE")
+    end
+
+    it "fails xs:language regex" do
+      doi.language = "Borgesian"
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
       expect(doi.language).to be_nil
@@ -1305,6 +1326,30 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.media_ids.count).to eq(12)
       expect(doi.media_ids[-1]).to be_truthy
       expect(doi.as_indexed_json["media_ids"].count).to eq(12)
+    end
+  end
+
+  describe "primary_title" do
+    let(:doi) { create(:doi) }
+    titles = [{ "title" => "New title", "titleType" => "AlternativeTitle" }, { "title" => "Second title" }]
+
+    it "is first title" do
+      expect(doi.primary_title).to eq(Array.wrap(doi.titles.first))
+      expect(doi.as_indexed_json.dig("primary_title")).to eq(Array.wrap(doi.titles.first))
+    end
+
+    it "is first title after update" do
+      doi.titles = titles
+
+      expect(doi.primary_title).to eq(Array.wrap(titles.first))
+      expect(doi.as_indexed_json.dig("primary_title")).to eq(Array.wrap(titles.first))
+    end
+
+    it "is empty array if titles is nil" do
+      doi.titles = nil
+
+      expect(doi.primary_title).to eq([])
+      expect(doi.as_indexed_json.dig("primary_title")).to eq([])
     end
   end
 end

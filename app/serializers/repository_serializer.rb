@@ -28,7 +28,8 @@ class RepositorySerializer
              :from_salesforce,
              :created,
              :updated,
-             :analytics_dashboard_url
+             :analytics_dashboard_url,
+             :subjects
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
@@ -95,6 +96,20 @@ class RepositorySerializer
       {}
     end
   end
+
+  attribute :subjects,
+
+    Proc.new { |object, params| } do |object|
+      if object.subjects?
+        Array.wrap(object.subjects).map { |subject|
+          subject.transform_keys! do |key|
+            key.to_s.camelcase(:lower)
+          end
+        }
+      else
+        []
+      end
+    end
 
   attribute :globus_uuid,
             if:

@@ -4,6 +4,9 @@
 require "rails_helper"
 
 describe RepositoryType do
+  before(:all) do
+    @current_year = Date.today.year.to_s
+  end
   describe "fields" do
     subject { described_class }
 
@@ -681,7 +684,7 @@ describe RepositoryType do
         response.dig("data", "repository", "prefixes", "totalCount"),
       ).to eq(1)
       expect(response.dig("data", "repository", "prefixes", "years")).to eq(
-        [{ "count" => 1, "id" => "2022" }],
+        [{ "count" => 3, "id" => @current_year }],
       )
       expect(
         response.dig("data", "repository", "prefixes", "nodes").length,
