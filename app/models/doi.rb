@@ -283,7 +283,7 @@ class Doi < ApplicationRecord
         edition: { type: :keyword },
         contributors: { type: :object, properties: {
           contributorType: { type: :text },
-          contributorName: { type: :text },
+          name: { type: :text },
           nameType: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },
@@ -301,6 +301,7 @@ class Doi < ApplicationRecord
         funderName: { type: :keyword },
         funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
+        schemeUri: {type: :keyword}
         awardNumber: { type: :keyword },
         awardUri: { type: :keyword },
         awardTitle: { type: :keyword },
@@ -308,6 +309,7 @@ class Doi < ApplicationRecord
       indexes :dates, type: :object, properties: {
         date: { type: :text },
         dateType: { type: :keyword },
+        dateInformation: {type: :keyword},
       }
       indexes :geo_locations, type: :object, properties: {
         geoLocationPoint: { type: :object },
