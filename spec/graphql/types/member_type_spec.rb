@@ -239,8 +239,10 @@ describe MemberType do
       expect(repository1.fetch("software")).to eq(["dataverse"])
 
       expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(4)
+      # Remember when writing tests that the creation of a client will assign a prefix to that provider/client.
+      # Then when we assign 3 more prefixes ot the provider, the count will be 4 total.
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => current_year }],
+        [{ "count" => 4, "id" => current_year }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
         4,
