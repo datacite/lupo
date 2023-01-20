@@ -683,8 +683,10 @@ describe RepositoryType do
       expect(
         response.dig("data", "repository", "prefixes", "totalCount"),
       ).to eq(1)
+      # Remember when writing tests that the creation of a client will assign a prefix to that provider/client.
+      # There is only 1 prefix in this test.
       expect(response.dig("data", "repository", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => @current_year }],
+        [{ "count" => 1, "id" => @current_year }],
       )
       expect(
         response.dig("data", "repository", "prefixes", "nodes").length,
