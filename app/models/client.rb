@@ -501,6 +501,10 @@ class Client < ApplicationRecord
     write_attribute(:re3data_id, attr)
   end
 
+  def subjects=(value)
+    write_attribute(:subjects, Array.wrap(value))
+  end
+
   def opendoar=(value)
     attr = value.present? ? value[38..-1] : nil
     write_attribute(:opendoar_id, attr)
