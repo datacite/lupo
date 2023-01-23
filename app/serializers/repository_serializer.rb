@@ -29,6 +29,7 @@ class RepositorySerializer
              :created,
              :updated,
              :analytics_dashboard_url,
+             :analytics_tracking_id
              :subjects
 
   belongs_to :provider, record_type: :providers
@@ -37,6 +38,11 @@ class RepositorySerializer
   attribute :analytics_dashboard_url do |object|
     object["analytics_dashboard_url"]
   end
+
+  attribute :analytics_tracking_id do |object|
+    object["analytics_tracking_id"]
+  end
+
 
   attribute :re3data do |object|
     "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?

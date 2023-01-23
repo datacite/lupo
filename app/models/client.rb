@@ -194,6 +194,7 @@ class Client < ApplicationRecord
       indexes :updated, type: :date
       indexes :deleted_at, type: :date
       indexes :analytics_dashboard_url, type: :text
+      indexes :analytics_tracking_id, type: :text
       indexes :cumulative_years, type: :integer, index: "false"
       indexes :subjects, type: :object, properties: {
         subjectScheme: { type: :keyword },
@@ -392,6 +393,7 @@ class Client < ApplicationRecord
           provider.as_indexed_json(exclude_associations: true)
         end,
       "analytics_dashboard_url" => analytics_dashboard_url,
+      "analytics_tracking_id" => analytics_tracking_id,
     }
   end
 

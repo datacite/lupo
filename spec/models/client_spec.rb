@@ -432,4 +432,20 @@ describe Client, type: :model do
       expect(client.cumulative_years).to eq([])
     end
   end
+
+  describe "analytics_tracking id" do
+    subject { build(:client) }
+
+    it "valid" do
+      subject.analytics_tracking_id = "abc012345678901234"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "blank" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.analytics_tracking_id).to be_nil
+    end
+  end
 end
