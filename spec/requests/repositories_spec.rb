@@ -387,6 +387,17 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         }
       end
 
+      let(:empty_subject_attributes) do
+        {
+          "data" => {
+            "type" => "repositories",
+            "attributes" => {
+              "subjects" => nil,
+            },
+          },
+        }
+      end
+
       it "updates the repository" do
         put "/repositories/#{client.symbol}", update_attributes, headers
         expect(json.dig("data", "attributes", "subjects")).to eq([
@@ -397,6 +408,11 @@ describe RepositoriesController, type: :request, elasticsearch: true do
             "classificationCode" => "001"
           }
         ])
+      end
+
+      it "accepts an empty array" do
+        put "/repositories/#{client.symbol}", empty_subject_attributes, headers
+        expect(json.dig("data", "attributes", "subjects")).to match_array([])
       end
     end
 
