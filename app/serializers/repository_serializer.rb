@@ -29,18 +29,36 @@ class RepositorySerializer
              :created,
              :updated,
              :analytics_dashboard_url,
-             :analytics_tracking_id
+             :analytics_tracking_id,
              :subjects
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
 
-  attribute :analytics_dashboard_url do |object|
-    object["analytics_dashboard_url"]
+  attribute :analytics_dashboard_url,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_analytics,
+                    object,
+                  ) ==
+                    true
+              } do |object|
+    object.analytics_dashboard_url
   end
 
-  attribute :analytics_tracking_id do |object|
-    object["analytics_tracking_id"]
+  attribute :analytics_tracking_id,
+  if:
+    Proc.new { |object, params|
+      params[:current_ability] &&
+        params[:current_ability].can?(
+          :read_analytics,
+          object,
+        ) ==
+          true
+    } do |object|
+  object.analytics_tracking_id
   end
 
 
