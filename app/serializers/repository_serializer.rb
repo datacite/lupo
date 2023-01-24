@@ -58,7 +58,7 @@ class RepositorySerializer
         ) ==
           true
     } do |object|
-  object.analytics_tracking_id
+    object.analytics_tracking_id
   end
 
 
