@@ -417,7 +417,7 @@ describe Client, type: :model do
 
     it "should show all cumulative years" do
       client = create(:client, provider: provider)
-      expect(client.cumulative_years).to eq(2015..Date.today.year).to_a
+      expect(client.cumulative_years).to eq((2015..Date.today.year).to_a)
     end
 
     it "should show years before deleted" do
