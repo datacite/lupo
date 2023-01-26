@@ -1099,6 +1099,7 @@ module Indexable
               add: {
                 index: index_name,
                 alias: alias_name,
+                is_write_index: is_write_index,
               },
             },
           ],
