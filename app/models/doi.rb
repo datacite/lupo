@@ -332,7 +332,7 @@ class Doi < ApplicationRecord
         lang: { type: :keyword },
         classificationCode: { type: :keyword },
       }
-      indexes :subjects_combined, type: :object, properties: {
+      indexes :subjects_combined, type: :nested, properties: {
         subjectScheme: { type: :keyword },
         subject: { type: :keyword },
         schemeUri: { type: :keyword },
@@ -663,6 +663,39 @@ class Doi < ApplicationRecord
           aggs: {
             subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
                                 include: "FOS:.*" } },
+          },
+        },
+        subject_combined: {
+          "nested": {
+            "path": "subjects_combined"
+          },
+          "aggs": {
+            "fos": {
+              "filter": {
+                "term": {
+                  "subjects_combined.subjectScheme": "Fields of Science and Technology (FOS)"
+                }
+              },
+              "aggs": {
+                "subject": {
+                  "terms": {
+                    "field": "subjects_combined.subject",
+                    "size": 10,
+                    "min_doc_count": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        repository_fields_of_science: {
+          filter: { term: { "client.subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+          aggs: {
+            subject: { terms: {
+              field: "client.subjects.subject",
+              size: facet_count,
+              min_doc_count: 1
+            } },
           },
         },
         licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
