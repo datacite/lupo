@@ -117,6 +117,7 @@ describe RepositoryType do
 
       ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
+        create(:prefix, uid: "10.17616")
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
         create(:reference_repository, re3doi:  "10.17616/r3vg6n")
         create(:reference_repository, re3doi:  "10.17616/r37m1j")
@@ -475,6 +476,7 @@ describe RepositoryType do
     before :all do
       ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
+        create(:prefix)
         @client = create(:client)
         @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
         sleep 2
@@ -541,6 +543,7 @@ describe RepositoryType do
 
     before :all do
       VCR.use_cassette("ReferenceRepositoryType/related_works_citations", allow_playback_repeats: true) do
+        create_list(:prefix, 2)
         @provider = create(:provider)
         @client = create(:client, provider: @provider)
         @client2 = create(:client,  provider: @provider)
@@ -620,6 +623,7 @@ describe RepositoryType do
   end
 
   describe "find repository with prefixes" do
+    let!(:prefix) { create(:prefix) }
     let(:provider) { create(:provider, symbol: "TESTC") }
     let(:client) do
       create(
@@ -628,8 +632,6 @@ describe RepositoryType do
       )
     end
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:prefix) { create(:prefix) }
-    let!(:client_prefixes) { create_list(:client_prefix, 3, client: client) }
 
     before do
       Provider.import(force: true)
@@ -637,6 +639,8 @@ describe RepositoryType do
       Doi.import(force: true)
       Prefix.import(force: true)
       ClientPrefix.import(force: true)
+      ReferenceRepository.import(force: true)
+      Event.import(force: true)
       sleep 3
     end
 
@@ -678,15 +682,17 @@ describe RepositoryType do
 
       expect(
         response.dig("data", "repository", "prefixes", "totalCount"),
-      ).to eq(3)
+      ).to eq(1)
+      # Remember when writing tests that the creation of a client will assign a prefix to that provider/client.
+      # There is only 1 prefix in this test.
       expect(response.dig("data", "repository", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => @current_year }],
+        [{ "count" => 1, "id" => @current_year }],
       )
       expect(
         response.dig("data", "repository", "prefixes", "nodes").length,
-      ).to eq(3)
+      ).to eq(1)
       prefix1 = response.dig("data", "repository", "prefixes", "nodes", 0)
-      expect(prefix1.fetch("name")).to eq(client_prefixes.first.prefix_id)
+      expect(prefix1.fetch("name")).to eq(client.prefix_ids.first)
     end
   end
 end

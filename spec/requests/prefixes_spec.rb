@@ -21,9 +21,8 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
     it "returns prefixes" do
       get "/prefixes", nil, headers
-
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(10)
+      expect(json["meta"]["total"]).to eq(@prefix_pool.length + 10)
     end
 
     it "returns prefixes by id" do
@@ -37,7 +36,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
       get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(10)
+      expect(json["meta"]["total"]).to eq(@prefix_pool.length + 10)
     end
   end
 

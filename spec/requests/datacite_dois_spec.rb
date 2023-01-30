@@ -4190,10 +4190,15 @@ describe DataciteDoisController, type: :request, vcr: true do
   end
 
   describe "GET /dois/get-dois", vcr: true do
-    let(:prefix) { create(:prefix, uid: "10.5438") }
+    let!(:prefix) { create(:prefix, uid: "10.5438") }
+    let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
     it "returns all dois" do
+      # 'get /dois/get-dois' uses first prefix assigned to the client.
+      # The test expects the second prefix, which we defined above.
+      client.prefixes.first.delete
+
       get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)

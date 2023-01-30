@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Doi, vcr: true do
+describe Doi, vcr: true, elasticsearch: true do
   subject { create(:doi) }
 
   context "generate_random_provider_symbol" do
@@ -286,8 +286,7 @@ describe Doi, vcr: true do
       create(
         :client,
         provider: provider,
-        symbol: ENV["MDS_USERNAME"],
-        password: ENV["MDS_PASSWORD"],
+        password_input: ENV["MDS_PASSWORD"]
       )
     end
 

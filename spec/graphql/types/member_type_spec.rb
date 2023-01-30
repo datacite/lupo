@@ -150,7 +150,6 @@ describe MemberType do
     let(:provider) { create(:provider, symbol: "TESTC") }
     let!(:client) { create(:client, provider: provider, software: "dataverse") }
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:prefix) { create(:prefix) }
     let!(:provider_prefixes) do
       create_list(:provider_prefix, 3, provider: provider)
     end
@@ -239,12 +238,14 @@ describe MemberType do
       expect(repository1.fetch("name")).to eq(client.name)
       expect(repository1.fetch("software")).to eq(["dataverse"])
 
-      expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(3)
+      expect(response.dig("data", "member", "prefixes", "totalCount")).to eq(4)
+      # Remember when writing tests that the creation of a client will assign a prefix to that provider/client.
+      # Then when we assign 3 more prefixes ot the provider, the count will be 4 total.
       expect(response.dig("data", "member", "prefixes", "years")).to eq(
-        [{ "count" => 3, "id" => current_year }],
+        [{ "count" => 4, "id" => current_year }],
       )
       expect(response.dig("data", "member", "prefixes", "nodes").length).to eq(
-        3,
+        4,
       )
       prefix1 = response.dig("data", "member", "prefixes", "nodes", 0)
       expect(prefix1.fetch("name")).to eq(@provider_prefixes.first.prefix_id)

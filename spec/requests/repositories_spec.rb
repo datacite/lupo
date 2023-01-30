@@ -5,7 +5,7 @@ require "rails_helper"
 describe RepositoriesController, type: :request, elasticsearch: true do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
-  let(:provider) do
+  let!(:provider) do
     create(
       :provider,
       consortium: consortium,
@@ -97,7 +97,8 @@ describe RepositoriesController, type: :request, elasticsearch: true do
           "bc7d0274-3472-4a79-b631-e4c7baccc667",
         )
         expect(json.dig("data", "attributes", "software")).to eq(client.software)
-        expect(json["meta"]).to eq("doiCount" => 0, "prefixCount" => 0)
+        # Newly created repositories will have 1 prefix.
+        expect(json["meta"]).to eq("doiCount" => 0, "prefixCount" => 1)
       end
     end
 
@@ -145,7 +146,8 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   describe "GET /repositories/:id meta" do
     let(:provider) { create(:provider) }
     let(:client) { create(:client) }
-    let!(:client_prefix) { create(:client_prefix, client: client) }
+    # Do not need to create a client_prefix since the prefix is auto-assigned at repository creation.
+    # let!(:client_prefix) { create(:client_prefix, client: client) }
     let!(:datacite_dois) do
       create_list(
         :doi,
@@ -429,18 +431,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       let(:new_provider) do
         create(:provider, symbol: "QUECHUA", password_input: "12345")
       end
-      let!(:prefix) { create(:prefix) }
-      let!(:provider_prefix) do
-        create(:provider_prefix, provider: provider, prefix: prefix)
-      end
-      let!(:client_prefix) do
-        create(
-          :client_prefix,
-          client: client,
-          prefix: prefix,
-          provider_prefix_id: provider_prefix.uid,
-        )
-      end
+      let(:prefix) { client.prefixes.first }
       let(:doi) { create_list(:doi, 10, client: client) }
 
       let(:params) do
@@ -477,7 +468,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(new_provider.prefixes.first.uid)
 
         get "/prefixes/#{prefix.uid}"
         expect(
