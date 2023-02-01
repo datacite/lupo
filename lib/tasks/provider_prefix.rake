@@ -43,7 +43,9 @@ namespace :provider_prefix do
 
   desc "Import all provider_prefixes"
   task import: :environment do
-    ProviderPrefix.import(index: ENV["INDEX"] || ProviderPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
+    batch_size = ENV["BATCH_SIZE"].nil? ? 100 : ENV["BATCH_SIZE"].to_i
+
+    ProviderPrefix.import(index: ENV["INDEX"] || ProviderPrefix.inactive_index, batch_size: batch_size)
   end
 
   desc "Create alias for provider_prefixes"

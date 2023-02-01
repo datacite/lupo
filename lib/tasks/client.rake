@@ -53,7 +53,9 @@ namespace :client do
 
   desc "Import all clients"
   task import: :environment do
-    Client.import(index: Client.inactive_index)
+    batch_size = ENV["BATCH_SIZE"].nil? ? 10 : ENV["BATCH_SIZE"].to_i
+
+    Client.import(index: Client.inactive_index, batch_size: batch_size)
   end
 
   desc "Delete from index by query"
