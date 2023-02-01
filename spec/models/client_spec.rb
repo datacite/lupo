@@ -409,9 +409,7 @@ describe Client, type: :model do
 
     it "should show all cumulative years" do
       client = create(:client, provider: provider)
-      expect(client.cumulative_years).to eq(
-        [2_015, 2_016, 2_017, 2_018, 2_019, 2_020, 2_021, 2_022],
-      )
+      expect(client.cumulative_years).to eq((2015..Date.today.year).to_a)
     end
 
     it "should show years before deleted" do
@@ -422,6 +420,22 @@ describe Client, type: :model do
     it "empty if deleted in creation year" do
       client = create(:client, provider: provider, deleted_at: "2015-06-14")
       expect(client.cumulative_years).to eq([])
+    end
+  end
+
+  describe "analytics_tracking id" do
+    subject { build(:client) }
+
+    it "valid" do
+      subject.analytics_tracking_id = "abc012345678901234"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "blank" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.analytics_tracking_id).to be_nil
     end
   end
 end

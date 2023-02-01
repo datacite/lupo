@@ -113,6 +113,35 @@ describe RepositoriesController, type: :request, elasticsearch: true do
         )
       end
     end
+
+    context "when has analytics fields" do
+      # Create a client with analytics fields
+      let!(:client) do
+        create(
+          :client,
+          provider: provider,
+          client_type: "repository",
+          analytics_dashboard_url: "example.com/dashboard",
+          analytics_tracking_id: "example.com",
+        )
+      end
+
+      it "returns analytics fields" do
+        get "/repositories/#{client.uid}", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "analyticsDashboardUrl")).to eq("example.com/dashboard")
+        expect(json.dig("data", "attributes", "analyticsTrackingId")).to eq("example.com")
+      end
+
+      it "when anonymous, returns nil for analytics fields" do
+        get "/repositories/#{client.uid}", nil
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "analyticsDashboardUrl")).to eq(nil)
+        expect(json.dig("data", "attributes", "analyticsTrackingId")).to eq(nil)
+      end
+    end
   end
 
   describe "GET /repositories/totals" do

@@ -60,6 +60,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.not_to be_able_to(:read_contact_information, client) }
+      it { is_expected.not_to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -102,6 +103,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -150,6 +152,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -197,6 +200,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -242,6 +246,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -297,6 +302,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.to be_able_to(:update, client) }
       it { is_expected.to be_able_to(:destroy, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -342,6 +348,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -381,6 +388,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.to be_able_to(:update, client) }
       it { is_expected.to be_able_to(:destroy, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.to be_able_to(:read, doi) }
       it { is_expected.to be_able_to(:transfer, doi) }
@@ -412,6 +420,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.to be_able_to(:read_contact_information, client) }
+      it { is_expected.to be_able_to(:read_analytics, client) }
 
       it { is_expected.to be_able_to(:read, doi) }
       it { is_expected.not_to be_able_to(:transfer, doi) }
@@ -471,6 +480,7 @@ describe User, type: :model, elasticsearch: true do
       it { is_expected.not_to be_able_to(:destroy, client) }
       it { is_expected.not_to be_able_to(:transfer, client) }
       it { is_expected.not_to be_able_to(:read_contact_information, client) }
+      it { is_expected.not_to be_able_to(:read_analytics, client) }
 
       it { is_expected.to be_able_to(:read, doi) }
       it { is_expected.not_to be_able_to(:transfer, doi) }
