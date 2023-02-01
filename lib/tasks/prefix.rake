@@ -43,7 +43,9 @@ namespace :prefix do
 
   desc "Import all prefixes"
   task import: :environment do
-    Prefix.import(index: ENV["INDEX"] || Prefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
+    batch_size = ENV["BATCH_SIZE"].nil? ? 100 : ENV["BATCH_SIZE"].to_i
+
+    Prefix.import(index: ENV["INDEX"] || Prefix.inactive_index, batch_size: batch_size)
   end
 
   desc "Create alias for prefixes"

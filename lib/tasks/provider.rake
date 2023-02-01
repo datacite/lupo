@@ -53,7 +53,9 @@ namespace :provider do
 
   desc "Import all providers"
   task import: :environment do
-    Provider.import(index: Provider.inactive_index)
+    batch_size = ENV["BATCH_SIZE"].nil? ? 10 : ENV["BATCH_SIZE"].to_i
+
+    Provider.import(index: Provider.inactive_index, batch_size: batch_size)
   end
 
   desc "Export all providers to Salesforce"
