@@ -121,9 +121,7 @@ class RepositorySerializer
     end
   end
 
-  attribute :subjects,
-
-    Proc.new { |object, params| } do |object|
+  attribute :subjects do |object|
       if object.subjects?
         Array.wrap(object.subjects).map { |subject|
           subject.transform_keys! do |key|

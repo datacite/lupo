@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe ProviderPrefix, type: :model do
-  let(:prefix) { create(:prefix, uid: "10.5083") }
+  let(:prefix) { create(:prefix, uid: "10.6000") }
   let(:provider) { create(:provider) }
   subject { create(:provider_prefix, prefix: prefix, provider: provider) }
 
@@ -15,7 +15,7 @@ describe ProviderPrefix, type: :model do
   describe "methods" do
     it "is valid" do
       expect(subject.provider.name).to eq("My provider")
-      expect(subject.prefix.uid).to eq("10.5083")
+      expect(subject.prefix.uid).to eq("10.6000")
     end
   end
 end

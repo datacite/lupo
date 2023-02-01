@@ -80,6 +80,7 @@ class Client < ApplicationRecord
                          message: "Client type %s is not included in the list"
   validates_associated :provider
   validate :check_id, on: :create
+  validate :check_prefix, on: :create
   validate :freeze_symbol, on: :update
   validate :check_issn, if: :issn?
   validate :check_certificate, if: :certificate?
@@ -97,6 +98,7 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_create :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
@@ -913,6 +915,47 @@ class Client < ApplicationRecord
         errors.add(
           :symbol,
           ", Your Client ID must include the name of your provider. Separated by a dot '.' ",
+        )
+      end
+    end
+
+    def get_prefix
+      provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_provider_prefix| (_provider_prefix.state == "without-repository") }.first : nil
+      prefix = Prefix.all.count > 0 ? Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first : nil
+
+      provider_prefix || prefix || nil
+    end
+
+    def check_prefix
+      if !get_prefix
+        errors.add(
+          :base,
+          "No prefixes available.  Unable to create repository.",
+        )
+      end
+    end
+
+    def assign_prefix
+      available_prefix = get_prefix
+      if !available_prefix
+        errors.add(
+          :base,
+          "No prefixes available.  Created repository, but a prefix was not assigned.  Contact support to get a prefix.",
+        )
+      else
+        prefix, provider_prefix = nil
+        available_prefix.class.name == "Prefix" ? prefix = available_prefix : provider_prefix = available_prefix
+
+        if !provider_prefix.present?
+          provider_prefix = ProviderPrefix.create(
+            provider_id: provider.symbol, prefix_id: prefix.uid
+          )
+        end
+
+        ClientPrefix.create(
+          client_id: symbol,
+          provider_prefix_id: provider_prefix.uid,
+          prefix_id: provider_prefix.prefix.uid,
         )
       end
     end

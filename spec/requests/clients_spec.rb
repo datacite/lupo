@@ -38,6 +38,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
     before do
       Client.import
+      Provider.import
       sleep 1
     end
 
@@ -107,7 +108,7 @@ describe ClientsController, type: :request, elasticsearch: true do
   end
 
   describe "GET /clients/totals" do
-    let(:client) { create(:client) }
+    let!(:client) { create(:client, provider: provider) }
     let!(:datacite_dois) do
       create_list(
         :doi,
@@ -202,6 +203,69 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
+  describe "POST /clients" do
+    context "when there are available prefixes" do
+      it "creates a client with a prefix from the pool" do
+        post "/clients", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["contactEmail"]).to eq("bob@example.com")
+        expect(attributes["clientType"]).to eq("repository")
+        relationships = json.dig("data", "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+
+        prefixes = json.dig("data", "relationships", "prefixes", "data")
+        expect(prefixes.count).to eq(1)
+        expect(prefixes.first["id"]).to eq(@prefix_pool[1].uid)
+      end
+    end
+
+    context "when there are available provider prefixes" do
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) do
+        create(:provider_prefix, provider: provider, prefix: prefix)
+      end
+
+      it "creates a client with a provider prefix" do
+        post "/clients", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["contactEmail"]).to eq("bob@example.com")
+        expect(attributes["clientType"]).to eq("repository")
+        relationships = json.dig("data", "relationships")
+        expect(relationships.dig("provider", "data", "id")).to eq(
+          provider.uid,
+        )
+
+        prefixes = json.dig("data", "relationships", "prefixes", "data")
+        expect(prefixes.count).to eq(1)
+        expect(prefixes.first["id"]).to eq("10.14454")
+      end
+    end
+
+    context "when there are no available prefixes" do
+      it "returns error message", prefix_pool_size: 1 do
+        post "/clients", params, headers
+
+        expect(json["errors"]).to eq(
+          [
+            {
+              "source" => "base",
+              "title" => "No prefixes available.  Unable to create repository.",
+              "uid" => params["data"]["attributes"]["symbol"].downcase
+            },
+          ],
+        )
+      end
+    end
+  end
+
   describe "PUT /clients/:id" do
     context "when the record exists" do
       let(:params) do
@@ -267,7 +331,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
 
     context "transfer repository" do
-      let(:new_provider) do
+      let!(:new_provider) do
         create(:provider, symbol: "QUECHUA", password_input: "12345")
       end
       let!(:prefixes) { create_list(:prefix, 3) }
@@ -313,7 +377,7 @@ describe ClientsController, type: :request, elasticsearch: true do
         ).to eq("quechua")
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(client.prefixes.first.uid)
 
         get "/providers/#{provider.symbol}"
 
@@ -324,15 +388,21 @@ describe ClientsController, type: :request, elasticsearch: true do
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
         ).to eq(prefixes.last.uid)
 
+        Provider.import
+        Client.import
+        sleep 2
+
         get "/providers/#{new_provider.symbol}"
         expect(
           json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefix.uid)
+        ).to eq(new_provider.prefixes.first.uid)
 
         get "/prefixes/#{prefix.uid}"
         expect(
           json.dig("data", "relationships", "clients", "data").first.dig("id"),
         ).to eq(client.uid)
+
+        ProviderPrefix.import
 
         get "provider-prefixes?query=#{prefix.uid}"
         expect(

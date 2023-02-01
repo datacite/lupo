@@ -177,10 +177,11 @@ describe User, type: :model, elasticsearch: true do
     end
 
     context "draft doi" do
-      let(:consortium) do
+      let!(:consortium) do
         create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM")
       end
-      let(:provider) do
+
+      let!(:provider) do
         create(
           :provider,
           symbol: "DATACITE",
@@ -188,10 +189,23 @@ describe User, type: :model, elasticsearch: true do
           role_name: "ROLE_CONSORTIUM_ORGANIZATION",
         )
       end
-      let(:client) do
+      let!(:client) do
         create(:client, provider: provider, symbol: "DATACITE.RPH")
       end
-      let(:doi) { create(:doi, client: client) }
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) do
+        create(:provider_prefix, provider: provider, prefix: prefix)
+      end
+      let!(:client_prefix) do
+        create(
+          :client_prefix,
+          client: client,
+          prefix: prefix,
+          provider_prefix: provider_prefix
+        )
+      end
+
+      let!(:doi) { create(:doi, client: client) }
 
       it "staff_admin" do
         token = User.generate_token(role_id: "staff_admin")

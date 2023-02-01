@@ -13,8 +13,8 @@ RSpec.describe Prefix, type: :model do
   describe "methods" do
     it "prefixes all" do
       collection = Prefix.all
-      expect(collection.length).to eq(prefixes.length)
-      single = collection.first
+      expect(collection.length).to eq(prefixes.length + @prefix_pool.length)
+      single = collection[@prefix_pool.length]
       expect(single.uid).to eq(prefix.uid)
       # meta = providers[:meta]
       # expect(meta["resource-types"]).not_to be_empty
@@ -25,7 +25,7 @@ RSpec.describe Prefix, type: :model do
     it "prefixes with where year" do
       collection =
         Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
-      single = collection.first
+      single = collection[@prefix_pool.length]
       expect(single.created_at.year).to eq(prefix.created_at.year)
       expect(single.uid).to eq(prefix.uid)
     end

@@ -2,6 +2,7 @@
 
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
+ENV["PREFIX_POOL_SIZE"] = "20"
 
 # set up Code Climate
 require "simplecov"
@@ -71,6 +72,15 @@ RSpec.configure do |config|
     puts("Caching re3data")
     VCR.use_cassette("DataCatalog/cache_warmer") do
       DataCatalog.fetch_and_cache_all(pages: 3, duration: 30.minutes)
+    end
+  end
+
+  config.before(:each) do |example|
+    prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size] : ENV["PREFIX_POOL_SIZE"].to_i
+    if prefix_pool_size < 0
+      @prefix_pool = []
+    else
+      @prefix_pool = create_list(:prefix, prefix_pool_size)
     end
   end
 end

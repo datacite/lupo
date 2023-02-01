@@ -3,11 +3,11 @@
 require "rails_helper"
 require "cancan/matchers"
 
-describe User, type: :model do
+describe User, type: :model, elasticsearch: true do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
-  let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
-  let(:provider) do
+  let!(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+  let!(:provider) do
     create(
       :provider,
       consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION",
@@ -15,13 +15,13 @@ describe User, type: :model do
   end
   let(:contact) { create(:contact, provider: provider) }
   let(:consortium_contact) { create(:contact, provider: consortium) }
-  let(:client) { create(:client, provider: provider) }
-  let(:prefix) { create(:prefix, uid: "10.14454") }
+  let!(:prefix) { create(:prefix, uid: "10.14454") }
+  let!(:client) { create(:client, provider: provider) }
+  let!(:provider_prefix) do
+    create(:provider_prefix, provider: provider, prefix: prefix)
+  end
   let!(:client_prefix) do
     create(:client_prefix, client: client, prefix: prefix)
-  end
-  let(:provider_prefix) do
-    create(:provider_prefix, provider: provider, prefix: prefix)
   end
   let(:doi) { create(:doi, client: client) }
   let(:media) { create(:media, doi: doi) }

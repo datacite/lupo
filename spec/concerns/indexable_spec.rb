@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Indexable", vcr: true do
+describe "Indexable", vcr: true, elasticsearch: true do
   subject { create(:doi) }
 
   xit "send_message" do

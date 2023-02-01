@@ -4,9 +4,10 @@ require "rails_helper"
 
 describe MediaController,
          type: :request, order: :defined, elasticsearch: true do
-  let(:provider) { create(:provider, symbol: "ADMIN") }
-  let(:client) { create(:client, provider: provider) }
-  let(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi") }
+  let!(:provider) { create(:provider, symbol: "ADMIN") }
+  let!(:prefix) { create(:prefix, uid: "10.14455") }
+  let!(:client) { create(:client, provider: provider) }
+  let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi", doi: (prefix.uid + "/" + Faker::Internet.password(8)).downcase) }
   let!(:medias) { create_list(:media, 5, doi: datacite_doi) }
   let!(:media) { create(:media, doi: datacite_doi) }
   let(:bearer) do
@@ -153,6 +154,8 @@ describe MediaController,
 
   describe "PATCH /dois/DOI/media/:id" do
     context "when the request is valid" do
+      let(:media_type) { "application/xml" }
+
       let(:valid_attributes) do
         {
           "data" => {
