@@ -1203,15 +1203,14 @@ describe WorkType do
   end
 
   describe "query works with repository subjects" do
-
     before :all do
-      SLEEP_TIME=2
-      WORK_COUNT=10
+      SLEEP_TIME = 2
+      WORK_COUNT = 10
 
       DataciteDoi.import(force: true)
       Client.import(force: true)
 
-      search_query='
+      search_query = '
         fragment facetFields on Facet {
           id
           title
@@ -1228,7 +1227,7 @@ describe WorkType do
       '
 
       client = create(:client_with_fos)
-      create_list( :doi, WORK_COUNT,
+      create_list(:doi, WORK_COUNT,
         aasm_state: "findable",
         client: client
       )
@@ -1262,8 +1261,8 @@ describe WorkType do
       ).to match_array([
         {
           "id" => "example_subject",
-          "title" =>"Example Subject",
-          "count" =>WORK_COUNT
+          "title" => "Example Subject",
+          "count" => WORK_COUNT
         }
       ])
     end
@@ -1274,8 +1273,8 @@ describe WorkType do
       ).to match_array([
         {
           "id" => "example_subject",
-          "title" =>"Example Subject",
-          "count" =>WORK_COUNT
+          "title" => "Example Subject",
+          "count" => WORK_COUNT
         }
       ])
     end
