@@ -58,7 +58,12 @@ class RepositorySerializer
         ) ==
           true
     } do |object|
-    object.analytics_tracking_id
+
+    if object.analytics_tracking_id.present?
+      object.analytics_tracking_id
+    else
+      ""
+    end
   end
 
 
