@@ -71,7 +71,7 @@ module DoiItem
         [FieldOfScienceType],
         null: true, description: "OECD Fields of Science of the resource and containing repository"
 
-  field :repository_fields_of_science,
+  field :fields_of_science_repository,
         [FieldOfScienceType],
         null: true, description: "OECD Fields of Science of the containing repository"
 
@@ -391,7 +391,7 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
-    argument :repository_field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -437,7 +437,7 @@ module DoiItem
     end.uniq
   end
 
-  def repository_fields_of_science
+  def fields_of_science_repository
     if object.client.blank?
       return []
     end
