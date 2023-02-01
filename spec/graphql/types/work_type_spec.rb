@@ -1202,9 +1202,16 @@ describe WorkType do
     end
   end
 
-  describe "query works with repository subjects" , elasticsearch: true do
-    let(:search_query) do
-        '
+  describe "query works with repository subjects" do
+
+    before :all do
+      SLEEP_TIME=2
+      WORK_COUNT=10
+
+      DataciteDoi.import(force: true)
+      Client.import(force: true)
+
+      search_query='
         fragment facetFields on Facet {
           id
           title
@@ -1219,33 +1226,48 @@ describe WorkType do
           }
         }
       '
-    end
-    let(:client){create(:client_with_fos)}
-    let!(:works) do
-      create_list(
-        :doi,
-        10,
-         aasm_state: "findable",
-         client: client
+
+      client = create(:client_with_fos)
+      create_list( :doi, WORK_COUNT,
+        aasm_state: "findable",
+        client: client
       )
-    end
-
-    before :all do
-      SLEEP_TIME=2
-    end
-
-    before do
       Doi.import
       sleep SLEEP_TIME
       @facet_response = LupoSchema.execute(search_query).as_json
     end
 
+    after :all do
+      Rails.logger.level = :fatal
+      Client.destroy_all
+      DataciteDoi.destroy_all
+    end
+
     it "has all dois in the search results" do
       response = @facet_response
-      expect(response.dig("data", "works", "totalCount")).to eq(10)
+      expect(response.dig("data", "works", "totalCount")).to eq(WORK_COUNT)
     end
 
     it "returns Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScience")
+      ).to match_array([])
+    end
+
+    it "returns Field of Science Facets from the repository" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceRepository")
+      ).to match_array([
+        {
+          "id" => "example_subject",
+          "title" =>"Example Subject",
+          "count" =>WORK_COUNT
+        }
+      ])
+    end
+    it "returns combined Field of Science Facets" do
       response = @facet_response
       expect(
         response.dig("data", "works", "fieldsOfScienceCombined")
@@ -1253,7 +1275,7 @@ describe WorkType do
         {
           "id" => "example_subject",
           "title" =>"Example Subject",
-          "count" =>10
+          "count" =>WORK_COUNT
         }
       ])
     end
