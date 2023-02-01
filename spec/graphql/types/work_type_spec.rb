@@ -1201,4 +1201,61 @@ describe WorkType do
       )
     end
   end
+
+  describe "query works with repository subjects" , elasticsearch: true do
+    let(:search_query) do
+        '
+        fragment facetFields on Facet {
+          id
+          title
+          count
+        }
+        query{
+          works(query:"*"){
+            totalCount
+            fieldsOfScience { ...facetFields }
+            fieldsOfScienceRepository { ...facetFields }
+            fieldsOfScienceCombined{ ...facetFields }
+          }
+        }
+      '
+    end
+    let(:client){create(:client_with_fos)}
+    let!(:works) do
+      create_list(
+        :doi,
+        10,
+         aasm_state: "findable",
+         client: client
+      )
+    end
+
+    before :all do
+      SLEEP_TIME=2
+    end
+
+    before do
+      Doi.import
+      sleep SLEEP_TIME
+      @facet_response = LupoSchema.execute(search_query).as_json
+    end
+
+    it "has all dois in the search results" do
+      response = @facet_response
+      expect(response.dig("data", "works", "totalCount")).to eq(10)
+    end
+
+    it "returns Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceCombined")
+      ).to match_array([
+        {
+          "id" => "example_subject",
+          "title" =>"Example Subject",
+          "count" =>10
+        }
+      ])
+    end
+  end
 end
