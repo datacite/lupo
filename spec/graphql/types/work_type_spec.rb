@@ -1209,6 +1209,10 @@ describe WorkType do
 
       DataciteDoi.import(force: true)
       Client.import(force: true)
+      Prefix.import(force: true)
+      ClientPrefix.import(force: true)
+      ReferenceRepository.import(force: true)
+      Event.import(force: true)
 
       search_query = '
         fragment facetFields on Facet {
@@ -1226,6 +1230,7 @@ describe WorkType do
         }
       '
 
+      create(:prefix)
       client = create(:client_with_fos)
       create_list(:doi, WORK_COUNT,
         aasm_state: "findable",
@@ -1234,12 +1239,17 @@ describe WorkType do
       Doi.import
       sleep SLEEP_TIME
       @facet_response = LupoSchema.execute(search_query).as_json
+      Rails.logger.level = :fatal
+      DataciteDoi.destroy_all
+      ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
+      Prefix.destroy_all
+      ClientPrefix.destroy_all
+      Event.destroy_all
     end
 
     after :all do
-      Rails.logger.level = :fatal
-      Client.destroy_all
-      DataciteDoi.destroy_all
     end
 
     it "has all dois in the search results" do
