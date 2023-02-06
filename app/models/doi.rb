@@ -141,6 +141,8 @@ class Doi < ApplicationRecord
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
+  FIELD_OF_SCIENCE_SCHEME = "Fields of Science and Technology (FOS)"
+
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
   # use different index for testing
@@ -325,14 +327,6 @@ class Doi < ApplicationRecord
         lang: { type: :keyword },
       }
       indexes :subjects, type: :object, properties: {
-        subjectScheme: { type: :keyword },
-        subject: { type: :keyword },
-        schemeUri: { type: :keyword },
-        valueUri: { type: :keyword },
-        lang: { type: :keyword },
-        classificationCode: { type: :keyword },
-      }
-      indexes :subjects_combined, type: :nested, properties: {
         subjectScheme: { type: :keyword },
         subject: { type: :keyword },
         schemeUri: { type: :keyword },
@@ -528,6 +522,9 @@ class Doi < ApplicationRecord
         titleType: { type: :keyword },
         lang: { type: :keyword },
       }
+      indexes :fields_of_science, type: :keyword
+      indexes :fields_of_science_combined, type: :keyword
+      indexes :fields_of_science_repository, type: :keyword
     end
   end
 
@@ -583,7 +580,9 @@ class Doi < ApplicationRecord
       "sizes" => Array.wrap(sizes),
       "language" => language,
       "subjects" => Array.wrap(subjects),
-      "subjects_combined" => subjects_combined,
+      "fields_of_science" => fields_of_science,
+      "fields_of_science_repository" => fields_of_science_repository,
+      "fields_of_science_combined" => fields_of_science_combined,
       "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
@@ -659,44 +658,13 @@ class Doi < ApplicationRecord
           },
         },
         fields_of_science: {
-          filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-          aggs: {
-            subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
-                                include: "FOS:.*" } },
-          },
+          terms: { field: "fields_of_science", size: facet_count, min_doc_count: 1 }
         },
-        subject_combined: {
-          "nested": {
-            "path": "subjects_combined"
-          },
-          "aggs": {
-            "fos": {
-              "filter": {
-                "term": {
-                  "subjects_combined.subjectScheme": "Fields of Science and Technology (FOS)"
-                }
-              },
-              "aggs": {
-                "subject": {
-                  "terms": {
-                    "field": "subjects_combined.subject",
-                    "size": 10,
-                    "min_doc_count": 1
-                  }
-                }
-              }
-            }
-          }
+        fields_of_science_combined: {
+          terms: { field: "fields_of_science_combined", size: facet_count, min_doc_count: 1 }
         },
-        repository_fields_of_science: {
-          filter: { term: { "client.subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-          aggs: {
-            subject: { terms: {
-              field: "client.subjects.subject",
-              size: facet_count,
-              min_doc_count: 1
-            } },
-          },
+        fields_of_science_repository: {
+          terms: { field: "fields_of_science_repository", size: facet_count, min_doc_count: 1 }
         },
         licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
         languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
@@ -751,11 +719,7 @@ class Doi < ApplicationRecord
           },
         },
         fields_of_science: {
-          filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-          aggs: {
-            subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                                include: "FOS:.*" } },
-          },
+          terms: { field: "fields_of_science", size: 10, min_doc_count: 1 }
         },
         licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
         languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
@@ -953,7 +917,7 @@ class Doi < ApplicationRecord
       filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
+      filter << { term: { "subjects.subjectScheme": FIELD_OF_SCIENCE_SCHEME} }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
@@ -1153,7 +1117,7 @@ class Doi < ApplicationRecord
       filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
+      filter << { term: { "subjects.subjectScheme": FIELD_OF_SCIENCE_SCHEME} }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
@@ -1751,10 +1715,24 @@ class Doi < ApplicationRecord
     client.symbol.downcase if client.present?
   end
 
-  def subjects_combined
-    ret = Array.wrap(subjects)
-    ret += Array.wrap(client&.subjects)
-    ret.uniq
+  def _fos_filter(subject_array)
+    Array.wrap(subject_array).select{ |sub|
+      sub.dig('subjectScheme') == FIELD_OF_SCIENCE_SCHEME
+    }.map do |fos|
+      fos["subject"].gsub("FOS: ", "")
+    end
+  end
+
+  def fields_of_science
+    _fos_filter(subjects)
+  end
+
+  def fields_of_science_repository
+    _fos_filter(client&.subjects)
+  end
+
+  def fields_of_science_combined
+    fields_of_science | fields_of_science_repository
   end
 
   def client_id_and_name
