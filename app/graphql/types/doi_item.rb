@@ -428,11 +428,8 @@ module DoiItem
     { id: object.agency, name: REGISTRATION_AGENCIES[object.agency] }.compact
   end
 
-  def _fos_filter(subjects)
-    Array.wrap(subjects).select do |s|
-      s["subjectScheme"] == "Fields of Science and Technology (FOS)"
-    end.map do |s|
-      name = s["subject"].gsub("FOS: ", "")
+  def _fos_to_facet(fos_list)
+    Array.wrap(fos_list).map do |name|
       { "id" => name.parameterize(separator: "_"), "name" => name }
     end.uniq
   end
@@ -441,15 +438,15 @@ module DoiItem
     if object.client.blank?
       return []
     end
-    _fos_filter(object.client.subjects)
+    _fos_to_facet(object.fields_of_science_repository)
   end
 
   def fields_of_science_combined
-    _fos_filter(object.subjects_combined)
+    _fos_to_facet(object.fields_of_science_combined)
   end
 
   def fields_of_science
-    _fos_filter(object.subjects)
+    _fos_to_facet(object.fields_of_science)
   end
 
   def creators(**args)
