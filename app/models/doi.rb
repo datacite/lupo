@@ -917,8 +917,13 @@ class Doi < ApplicationRecord
       filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": FIELD_OF_SCIENCE_SCHEME} }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+      filter << { terms: { "fields_of_science": options[:field_of_science].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
@@ -1117,8 +1122,13 @@ class Doi < ApplicationRecord
       filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": FIELD_OF_SCIENCE_SCHEME} }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+      filter << { terms: { "fields_of_science": options[:field_of_science].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?

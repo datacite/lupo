@@ -271,13 +271,20 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
     argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
 
   def works(**args)
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(
+      response(args), {
+      context: context,
+      first: args[:first],
+      after: args[:after]
+    })
   end
 
   field :work, WorkType, null: false do
@@ -1253,7 +1260,39 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.gql_query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], published: args[:published], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_affiliation: args[:has_affiliation], has_member: args[:has_member], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], facet_count: args[:facet_count], pid_entity: args[:pid_entity], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
+    Doi.gql_query(
+      args[:query],
+      ids: args[:ids],
+      user_id: args[:user_id],
+      client_id: args[:repository_id],
+      provider_id: args[:member_id],
+      resource_type_id: args[:resource_type_id],
+      resource_type: args[:resource_type],
+      published: args[:published],
+      agency: args[:registration_agency],
+      language: args[:language],
+      license: args[:license],
+      has_person: args[:has_person],
+      has_funder: args[:has_funder],
+      has_organization: args[:has_organization],
+      has_affiliation: args[:has_affiliation],
+      has_member: args[:has_member],
+      has_citations: args[:has_citations],
+      has_parts: args[:has_parts],
+      has_versions: args[:has_versions],
+      has_views: args[:has_views],
+      has_downloads: args[:has_downloads],
+      field_of_science: args[:field_of_science],
+      field_of_science_repository: args[:field_of_science_repository],
+      field_of_science_combined: args[:field_of_science_combined],
+      facet_count: args[:facet_count],
+      pid_entity: args[:pid_entity],
+      state: "findable",
+      page: {
+        cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [],
+        size: args[:first]
+      }
+    )
   end
 
   def set_doi(id)
