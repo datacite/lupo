@@ -102,23 +102,23 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def fields_of_science
     if object.aggregations.fields_of_science
-      facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
+      facet_by_fos(object.aggregations.fields_of_science.buckets)
     else
       []
     end
   end
 
   def fields_of_science_combined
-    if object.aggregations.subject_combined&.fos&.subject
-      facet_by_fos(object.aggregations.subject_combined.fos.subject.buckets)
+    if object.aggregations.fields_of_science_combined
+      facet_by_fos(object.aggregations.fields_of_science_combined.buckets)
     else
       []
     end
   end
 
   def fields_of_science_repository
-    if object.aggregations.repository_fields_of_science
-      facet_by_fos(object.aggregations.repository_fields_of_science.subject.buckets)
+    if object.aggregations.fields_of_science_repository
+      facet_by_fos(object.aggregations.fields_of_science_repository.buckets)
     else
       []
     end
