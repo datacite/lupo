@@ -1726,8 +1726,8 @@ class Doi < ApplicationRecord
   end
 
   def _fos_filter(subject_array)
-    Array.wrap(subject_array).select{ |sub|
-      sub.dig('subjectScheme') == FIELD_OF_SCIENCE_SCHEME
+    Array.wrap(subject_array).select { |sub|
+      sub.dig("subjectScheme") == FIELD_OF_SCIENCE_SCHEME
     }.map do |fos|
       fos["subject"].gsub("FOS: ", "")
     end
