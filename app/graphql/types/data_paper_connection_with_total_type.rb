@@ -42,4 +42,12 @@ class DataPaperConnectionWithTotalType < BaseConnection
   def languages
     facet_by_language(object.aggregations.languages.buckets)
   end
+
+  def fields_of_science
+    if object.aggregations.fields_of_science
+      facet_by_fos(object.aggregations.fields_of_science.buckets)
+    else
+      []
+    end
+  end
 end
