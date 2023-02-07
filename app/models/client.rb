@@ -98,7 +98,7 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_create :assign_prefix
+  after_create_commit :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
@@ -955,7 +955,7 @@ class Client < ApplicationRecord
         ClientPrefix.create(
           client_id: symbol,
           provider_prefix_id: provider_prefix.uid,
-          prefix_id: provider_prefix.prefix.uid,
+          prefix_id: (prefix ? prefix.uid : provider_prefix.prefix.uid),
         )
       end
     end
