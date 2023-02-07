@@ -955,7 +955,7 @@ class Client < ApplicationRecord
         ClientPrefix.create(
           client_id: symbol,
           provider_prefix_id: provider_prefix.uid,
-          prefix_id: (prefix ? prefix.uid : provider_prefix.prefix.uid),
+          prefix_id: provider_prefix.prefix.uid
         )
       end
     end
