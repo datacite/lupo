@@ -1246,6 +1246,7 @@ describe WorkType do
       Provider.destroy_all
       Prefix.destroy_all
       ClientPrefix.destroy_all
+      ProviderPrefix.destroy_all
       Event.destroy_all
     end
 
