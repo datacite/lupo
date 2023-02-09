@@ -933,7 +933,7 @@ class Client < ApplicationRecord
 
     def prefixes_available
       (Prefix.find_by_state("unassigned").count > 0) ||
-        (provider.present? && (ProviderPrefix.find_by_symbol_and_state(provider.symbol, 'without-repository').count > 0))
+        (provider.present? && (ProviderPrefix.find_by_symbol_and_state(provider.symbol, "without-repository").count > 0))
     end
 
     def get_unassigned_prefix_es
@@ -943,13 +943,13 @@ class Client < ApplicationRecord
     end
 
     def get_unassigned_provider_prefix_es
-      p = provider.present? ? ProviderPrefix.find_by_symbol_and_state(provider.symbol, 'without-repository').first : nil
-      
+      p = provider.present? ? ProviderPrefix.find_by_symbol_and_state(provider.symbol, "without-repository").first : nil
+
       p ? p._source : nil
     end
 
     def assign_prefix
-      # 2nd check to prevent race condition. 
+      # 2nd check to prevent race condition.
       if !prefixes_available
         errors.add(
           :base,
