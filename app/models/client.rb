@@ -76,7 +76,7 @@ class Client < ApplicationRecord
                          in: %w[ROLE_DATACENTRE],
                          message: "Role %s is not included in the list"
   validates_inclusion_of :client_type,
-                         in: %w[repository periodical],
+                         in: %w[repository periodical igsnCatalog],
                          message: "Client type %s is not included in the list"
   validates_associated :provider
   validate :check_id, on: :create
