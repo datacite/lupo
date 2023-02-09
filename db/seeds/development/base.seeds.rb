@@ -15,6 +15,8 @@ end
 # Need available prefixes for repository creation.
 if Prefix.where(uid: "10.14454").blank?
   FactoryBot.create(:prefix, uid: "10.14454")
+  # Need time to let prefixes migrate to elastic search before creating repositories.
+  sleep(3)
 end
 provider =
   Provider.where(symbol: "DATACITE").first ||

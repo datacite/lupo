@@ -105,6 +105,12 @@ class Prefix < ApplicationRecord
     )
   end
 
+  def self.find_by_state(state)
+    __elasticsearch__.search(
+      query: { term: { state: state } }, aggregations: {}
+    )
+  end
+
   def self.get_registration_agency
     headers = [
       "Prefix",

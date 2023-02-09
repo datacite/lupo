@@ -115,6 +115,16 @@ class ProviderPrefix < ApplicationRecord
     }
   end
 
+  def self.find_by_symbol_and_state(symbol, state)
+    __elasticsearch__.search(
+      "query": {
+        "query_string": {
+            "query": "provider_id:#{symbol.downcase} AND state:#{state}"
+        }
+      }, aggregations: {}
+    )
+  end
+
   def consortium_id
     provider.consortium_id.downcase if provider.consortium_id.present?
   end
