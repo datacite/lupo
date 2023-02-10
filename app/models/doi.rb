@@ -410,7 +410,7 @@ class Doi < ApplicationRecord
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
-        subjects: { type: :nested, include_in_parent: true,  properties: {
+        subjects: { type: :object, properties: {
           subjectScheme: { type: :keyword },
           subject: { type: :keyword },
           schemeUri: { type: :keyword },
