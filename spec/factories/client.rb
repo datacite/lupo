@@ -18,25 +18,16 @@ FactoryBot.define do
     role_name { "ROLE_DATACENTRE" }
     password_input { "12345" }
     is_active { true }
-    subjects do
-      [
-        {
-          classificationCode: "1001",
-          schemeUri: "http://example.com/schemeUri",
-          subject: "Example Subject",
-          subjectScheme: "Example Subject Scheme (ESS)",
-        },
-      ]
-    end
 
     factory :client_with_fos do
       subjects do
         [
           {
+            subject: "Physical sciences",
+            valueUri: "",
+            schemeUri: "http://www.oecd.org/science/inno/38235147.pdf",
+            subjectScheme: "Fields of Science and Technology (FOS)",
             classificationCode: "1001",
-            schemeUri: "http://example.com/schemeUri",
-            subject: "Example Subject",
-            subjectScheme: "Fields of Science and Technology (FOS)"
           },
         ]
       end
