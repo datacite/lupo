@@ -1250,7 +1250,12 @@ describe WorkType do
       Event.destroy_all
     end
 
-    after :all do
+    let (:fos_facet) do
+        {
+          "id" => "physical_sciences",
+          "title" => "Physical sciences",
+          "count" => WORK_COUNT
+        }
     end
 
     it "has all dois in the search results" do
@@ -1269,25 +1274,14 @@ describe WorkType do
       response = @facet_response
       expect(
         response.dig("data", "works", "fieldsOfScienceRepository")
-      ).to match_array([
-        {
-          "id" => "example_subject",
-          "title" => "Example Subject",
-          "count" => WORK_COUNT
-        }
-      ])
+      ).to match_array([ fos_facet ])
     end
+
     it "returns combined Field of Science Facets" do
       response = @facet_response
       expect(
         response.dig("data", "works", "fieldsOfScienceCombined")
-      ).to match_array([
-        {
-          "id" => "example_subject",
-          "title" => "Example Subject",
-          "count" => WORK_COUNT
-        }
-      ])
+      ).to match_array([ fos_facet ])
     end
   end
 end
