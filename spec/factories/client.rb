@@ -20,6 +20,7 @@ FactoryBot.define do
     is_active { true }
 
     factory :client_with_fos do
+      repository_type { "disciplinary" }
       subjects do
         [
           {
