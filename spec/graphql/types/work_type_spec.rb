@@ -1251,11 +1251,11 @@ describe WorkType do
     end
 
     let (:fos_facet) do
-        {
-          "id" => "physical_sciences",
-          "title" => "Physical sciences",
-          "count" => WORK_COUNT
-        }
+      {
+        "id" => "physical_sciences",
+        "title" => "Physical sciences",
+        "count" => WORK_COUNT
+      }
     end
 
     it "has all dois in the search results" do

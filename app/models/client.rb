@@ -923,7 +923,6 @@ class Client < ApplicationRecord
           "Subjects are only allowed for disciplinary repositories.  This repository_type is: #{repository_type}",
         )
       end
-
     end
 
     def check_id
