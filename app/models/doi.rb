@@ -1734,11 +1734,11 @@ class Doi < ApplicationRecord
   end
 
   def fields_of_science
-    _fos_filter(subjects)
+    _fos_filter(subjects).uniq
   end
 
   def fields_of_science_repository
-    _fos_filter(client&.subjects)
+    _fos_filter(client&.subjects).uniq
   end
 
   def fields_of_science_combined

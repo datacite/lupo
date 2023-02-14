@@ -510,7 +510,7 @@ class Client < ApplicationRecord
   end
 
   def subjects=(value)
-    write_attribute(:subjects, Array.wrap(value))
+    write_attribute(:subjects, Array.wrap(value).uniq)
   end
 
   def opendoar=(value)
