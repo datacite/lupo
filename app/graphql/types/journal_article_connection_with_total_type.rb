@@ -66,4 +66,12 @@ class JournalArticleConnectionWithTotalType < BaseConnection
       []
     end
   end
+
+  def fields_of_science
+    if object.aggregations.fields_of_science
+      facet_by_fos(object.aggregations.fields_of_science.buckets)
+    else
+      []
+    end
+  end
 end
