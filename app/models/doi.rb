@@ -769,6 +769,13 @@ class Doi < ApplicationRecord
     }
   end
 
+  def self.igsn_id_catalog_aggregations
+    {
+      created: { date_histogram: { field: "created", interval: "month", format: "yyyy-MM", order: { _key: "desc" }, min_doc_count: 1 },
+      aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } }
+    }
+  end
+
   def self.query_fields
     ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3"]
   end
@@ -1028,6 +1035,8 @@ class Doi < ApplicationRecord
       client_export_aggregations
     elsif options[:totals_agg] == "prefix"
       prefix_aggregations
+    elsif options[:client_type] == "igsnCatalog"
+      query_aggregations(disable_facets: options[:disable_facets]).merge(self.igsn_id_catalog_aggregations)
     else
       query_aggregations(disable_facets: options[:disable_facets])
     end
@@ -1133,6 +1142,8 @@ class Doi < ApplicationRecord
     filter << { terms: { "client.certificate" => options[:certificate].split(",") } } if options[:certificate].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" } } if options[:user_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } } if options[:has_person].present?
+    filter << { term: { "client.client_type" =>  options[:client_type] } } if options[:client_type]
+    filter << { term: { "types.resourceTypeGeneral" => "PhysicalObject" } } if options[:client_type] == "igsnCatalog"
 
     # match either one of has_affiliation, has_organization, or has_funder
     if options[:has_organization].present?

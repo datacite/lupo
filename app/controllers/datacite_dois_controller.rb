@@ -133,6 +133,7 @@ class DataciteDoisController < ApplicationController
           page: page,
           sort: sort,
           random: params[:random],
+          client_type: params[:client_type],
         )
     end
 
