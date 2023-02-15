@@ -67,7 +67,7 @@ class ClientsController < ApplicationController
         end
       client_types =
         if total.positive?
-          facet_by_key(response.aggregations.client_types.buckets)
+          facet_by_client_type(response.aggregations.client_types.buckets)
         end
       certificates =
          if total.positive?
