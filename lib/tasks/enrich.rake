@@ -19,7 +19,7 @@ namespace :enrich do
     end
 
     puts "Searching for disciplinary repositories with re3data_ids without subjects"
-    search_results = Client.search("re3data_id:* AND -subjects:* AND repository_type:disciplinary")
+    search_results = Client.search("re3data_id:* AND -subjects:* AND -deleted_at:* AND repository_type:disciplinary")
     puts "Found #{search_results.records.count} repostitories.  Enriching now..."
     search_results.records.map do |c|
       enrich_client(c)
