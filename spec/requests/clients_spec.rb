@@ -155,7 +155,7 @@ describe ClientsController, type: :request, elasticsearch: true do
           },
         }
       end
-    
+
       it "creates a client" do
         post "/clients", params, headers
 

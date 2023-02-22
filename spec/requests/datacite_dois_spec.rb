@@ -228,8 +228,8 @@ describe DataciteDoisController, type: :request, vcr: true do
   describe "GET /dois with filter", elasticsearch: true do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
-    let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" } ) }
-    let!(:dois_other) { create_list(:doi, 5, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" } ) }
+    let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" }) }
+    let!(:dois_other) { create_list(:doi, 5, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" }) }
 
     before do
       DataciteDoi.import
@@ -249,7 +249,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
       expect(json.dig("data", 0, "id")).to eq(doi_igsn_id.uid)
-      expect(json.dig("meta", "created", 0, "title")).to eq(doi_igsn_id.created.to_time.strftime('%Y-%m'))
+      expect(json.dig("meta", "created", 0, "title")).to eq(doi_igsn_id.created.to_time.strftime("%Y-%m"))
     end
   end
 
