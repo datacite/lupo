@@ -337,6 +337,12 @@ describe Client, type: :model do
       expect(client.errors.details).to be_empty
     end
 
+    it "igsnCatalog" do
+      client.client_type = "igsnCatalog"
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
     it "unsupported" do
       client.client_type = "conference"
       expect(client.save).to be false
