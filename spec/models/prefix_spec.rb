@@ -6,6 +6,10 @@ RSpec.describe Prefix, type: :model do
   let!(:prefixes) { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
 
+  after(:each) do
+    Prefix.destroy_all
+  end
+
   describe "Validations" do
     it { should validate_presence_of(:uid) }
   end

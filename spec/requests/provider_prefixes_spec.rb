@@ -14,10 +14,19 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   end
   let(:prefix) { create(:prefix) }
   let!(:provider_prefixes) do
-    create_list(:provider_prefix, 3, provider: provider)
+    [
+      create(:provider_prefix, provider: provider, prefix: @prefix_pool[0]),
+      create(:provider_prefix, provider: provider, prefix: @prefix_pool[1]),
+      create(:provider_prefix, provider: provider, prefix: @prefix_pool[2])
+    ]
   end
-  let!(:provider_prefixes2) { create_list(:provider_prefix, 2) }
-  let(:provider_prefix) { create(:provider_prefix) }
+  let!(:provider_prefixes2) do
+    [
+      create(:provider_prefix, prefix: @prefix_pool[3]),
+      create(:provider_prefix, prefix: @prefix_pool[4])
+    ]
+  end
+  let(:provider_prefix) { create(:provider_prefix, prefix: @prefix_pool[5]) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) do
     {
@@ -26,7 +35,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
     }
   end
 
-  before do
+  before(:each) do
     ProviderPrefix.import
     Prefix.import
     Provider.import
@@ -191,19 +200,21 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
         get "/prefixes?state=unassigned", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("meta", "total")).to eq(@prefix_pool.length)
+        expect(json.dig("meta", "total")).to eq(@prefix_pool.length - 5)
 
 
         delete "/provider-prefixes/#{provider_prefix.uid}", nil, headers
 
         expect(last_response.status).to eq(204)
 
+        Prefix.import
+        ProviderPrefix.import
         sleep 2
 
         get "/prefixes?state=unassigned", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("meta", "total")).to eq(@prefix_pool.length + 1)
+        expect(json.dig("meta", "total")).to eq(@prefix_pool.length - 5)
       end
     end
 
