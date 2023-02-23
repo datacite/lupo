@@ -771,7 +771,7 @@ class Doi < ApplicationRecord
 
   def self.igsn_id_catalog_aggregations
     {
-      created: { date_histogram: { field: "created", interval: "month", format: "yyyy-MM", order: { _key: "desc" }, min_doc_count: 1 },
+      created_by_month: { date_histogram: { field: "created", interval: "month", format: "yyyy-MM", order: { _key: "desc" }, min_doc_count: 1 },
       aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } }
     }
   end

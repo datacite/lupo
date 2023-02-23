@@ -220,6 +220,7 @@ class DataciteDoisController < ApplicationController
           resource_types = facet_by_combined_key(response.aggregations.resource_types.buckets)
           published = facet_by_range(response.aggregations.published.buckets)
           created = facet_by_key_as_string(response.aggregations.created.buckets)
+          created_by_month = response.aggregations.created_by_month ? facet_by_key_as_string(response.aggregations.created_by_month.buckets) : nil
           registered = facet_by_key_as_string(response.aggregations.registered.buckets)
           providers = facet_by_combined_key(response.aggregations.providers.buckets)
           clients = facet_by_combined_key(response.aggregations.clients.buckets)
@@ -279,6 +280,7 @@ class DataciteDoisController < ApplicationController
               states: states,
               "resourceTypes" => resource_types,
               created: created,
+              createdByMonth: created_by_month,
               published: published,
               registered: registered,
               providers: providers,
