@@ -187,16 +187,6 @@ type Audiovisual implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -355,7 +345,7 @@ type Audiovisual implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -506,16 +496,6 @@ type Book implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -674,7 +654,7 @@ type Book implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -780,16 +760,6 @@ type BookChapter implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -948,7 +918,7 @@ type BookChapter implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1184,16 +1154,6 @@ type Collection implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1352,7 +1312,7 @@ type Collection implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1502,16 +1462,6 @@ type ConferencePaper implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1670,7 +1620,7 @@ type ConferencePaper implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2113,16 +2063,6 @@ type DataManagementPlan implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2281,7 +2221,7 @@ type DataManagementPlan implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2432,16 +2372,6 @@ type DataPaper implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2600,7 +2530,7 @@ type DataPaper implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2748,16 +2678,6 @@ type Dataset implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -2939,7 +2859,7 @@ type Dataset implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3187,16 +3107,6 @@ type Dissertation implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3355,7 +3265,7 @@ type Dissertation implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3509,16 +3419,6 @@ interface DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3677,7 +3577,7 @@ interface DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3833,16 +3733,6 @@ type Event implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4001,7 +3891,7 @@ type Event implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4136,16 +4026,6 @@ type EventData implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4304,7 +4184,7 @@ type EventData implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4735,16 +4615,6 @@ type Image implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4903,7 +4773,7 @@ type Image implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5052,16 +4922,6 @@ type Instrument implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5220,7 +5080,7 @@ type Instrument implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5369,16 +5229,6 @@ type InteractiveResource implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5537,7 +5387,7 @@ type InteractiveResource implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5692,16 +5542,6 @@ type JournalArticle implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5860,7 +5700,7 @@ type JournalArticle implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6306,16 +6146,6 @@ type Model implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6474,7 +6304,7 @@ type Model implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6796,16 +6626,6 @@ type Other implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6964,7 +6784,7 @@ type Other implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7139,16 +6959,6 @@ type PeerReview implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7307,7 +7117,7 @@ type PeerReview implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7594,16 +7404,6 @@ type PhysicalObject implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7762,7 +7562,7 @@ type PhysicalObject implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7965,16 +7765,6 @@ type Preprint implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8133,7 +7923,7 @@ type Preprint implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -8283,16 +8073,6 @@ type Publication implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8451,7 +8231,7 @@ type Publication implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -8615,7 +8395,7 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -9246,16 +9026,6 @@ type Service implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9414,7 +9184,7 @@ type Service implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -9565,16 +9335,6 @@ type Software implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9733,7 +9493,7 @@ type Software implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -9914,16 +9674,6 @@ type Sound implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10082,7 +9832,7 @@ type Sound implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -10443,16 +10193,6 @@ type Work implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10611,7 +10351,7 @@ type Work implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -10651,8 +10391,6 @@ type WorkConnectionWithTotal {
   """
   edges: [WorkEdge]
   fieldsOfScience: [Facet!]
-  fieldsOfScienceCombined: [Facet!]
-  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10769,16 +10507,6 @@ type Workflow implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
-  OECD Fields of Science of the resource and containing repository
-  """
-  fieldsOfScienceCombined: [FieldOfScience!]
-
-  """
-  OECD Fields of Science of the containing repository
-  """
-  fieldsOfScienceRepository: [FieldOfScience!]
-
-  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10937,7 +10665,7 @@ type Workflow implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, fieldOfScience: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of

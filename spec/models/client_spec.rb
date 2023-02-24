@@ -15,11 +15,7 @@ describe Client, type: :model do
   end
 
   describe "subjects" do
-    let(:client) { build(:client,
-                         provider: provider,
-                         repository_type: "disciplinary"
-                        )
-    }
+    let(:client) { build(:client, provider: provider) }
     let(:valid_subjects) do
       {
        classificationCode: "6.1",
@@ -27,12 +23,6 @@ describe Client, type: :model do
        subject: "History and archaeology",
        subjectScheme: "Fields of Science and Technology (FOS)",
       }
-    end
-
-    it "are invalid if the repository_type is not disciplinary" do
-      client.repository_type = nil
-      client.subjects = [valid_subjects]
-      expect(client).to_not be_valid
     end
 
     it "valid hash" do

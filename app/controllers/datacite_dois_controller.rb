@@ -228,7 +228,7 @@ class DataciteDoisController < ApplicationController
           # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
           subjects = facet_by_key(response.aggregations.subjects.buckets)
           fields_of_science = facet_by_fos(
-            response.aggregations.fields_of_science.buckets,
+            response.aggregations.fields_of_science.subject.buckets,
               )
           certificates = facet_by_key(response.aggregations.certificates.buckets)
           licenses = facet_by_license(response.aggregations.licenses.buckets)

@@ -17,8 +17,6 @@ class WorkConnectionWithTotalType < BaseConnection
   field :affiliations, [FacetType], null: true, cache: true
   field :authors, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
-  field :fields_of_science_combined, [FacetType], null: true, cache: true
-  field :fields_of_science_repository, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
 
@@ -102,23 +100,7 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def fields_of_science
     if object.aggregations.fields_of_science
-      facet_by_fos(object.aggregations.fields_of_science.buckets)
-    else
-      []
-    end
-  end
-
-  def fields_of_science_combined
-    if object.aggregations.fields_of_science_combined
-      facet_by_fos(object.aggregations.fields_of_science_combined.buckets)
-    else
-      []
-    end
-  end
-
-  def fields_of_science_repository
-    if object.aggregations.fields_of_science_repository
-      facet_by_fos(object.aggregations.fields_of_science_repository.buckets)
+      facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
     else
       []
     end
