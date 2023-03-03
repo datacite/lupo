@@ -73,6 +73,12 @@ module Facetable
 
   LOWER_BOUND_YEAR = 2_010
 
+  CLIENT_TYPES = {
+    "repository" => "Repository",
+    "periodical" => "Periodical",
+    "igsnCatalog" => "IGSN ID Catalog"
+  }.freeze
+
   included do
     def facet_by_key_as_string(arr)
       arr.map do |hsh|
@@ -196,6 +202,16 @@ module Facetable
         {
           "id" => id,
           "title" => id.capitalize,
+          "count" => hsh["doc_count"],
+        }
+      end
+    end
+
+    def facet_by_client_type(arr)
+      arr.map do |hsh|
+        {
+          "id" => hsh["key"],
+          "title" => CLIENT_TYPES[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"],
         }
       end

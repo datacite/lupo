@@ -137,6 +137,25 @@ describe ClientsController, type: :request, elasticsearch: true do
 
   describe "POST /clients" do
     context "when the request is valid" do
+      let(:params_igsn_catalog) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => {
+              "symbol" => provider.symbol + ".IGSN",
+              "name" => "Imperial College",
+              "contactEmail" => "bob@example.com",
+              "clientType" => "igsnCatalog",
+            },
+            "relationships": {
+              "provider": {
+                "data": { "type": "providers", "id": provider.uid },
+              },
+            },
+          },
+        }
+      end
+
       it "creates a client" do
         post "/clients", params, headers
 
@@ -159,6 +178,24 @@ describe ClientsController, type: :request, elasticsearch: true do
         expect(json["data"].size).to eq(2)
         expect(json.dig("meta", "clientTypes")).to eq(
           [{ "count" => 2, "id" => "repository", "title" => "Repository" }],
+        )
+      end
+
+      it "creates a client with igsnCatalog client_type" do
+        post "/clients", params_igsn_catalog, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["clientType"]).to eq("igsnCatalog")
+
+        Client.import
+        sleep 2
+
+        get "/clients", nil, headers
+
+        expect(json["data"].size).to eq(2)
+        expect(json.dig("meta", "clientTypes").find { |clientTypeAgg| clientTypeAgg["id"] == "igsnCatalog" }).to eq(
+          { "count" => 1, "id" => "igsnCatalog", "title" => "IGSN ID Catalog" },
         )
       end
     end

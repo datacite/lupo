@@ -76,12 +76,13 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
-    prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size] : ENV["PREFIX_POOL_SIZE"].to_i
-    if prefix_pool_size < 0
+    prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size].to_i : ENV["PREFIX_POOL_SIZE"].to_i
+    if prefix_pool_size <= 0
       @prefix_pool = []
     else
       @prefix_pool = create_list(:prefix, prefix_pool_size)
     end
+    Prefix.import
   end
 end
 
