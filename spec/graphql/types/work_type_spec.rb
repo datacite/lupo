@@ -1201,4 +1201,87 @@ describe WorkType do
       )
     end
   end
+
+  describe "query works with repository subjects" do
+    before :all do
+      SLEEP_TIME = 2
+      WORK_COUNT = 10
+
+      DataciteDoi.import(force: true)
+      Client.import(force: true)
+      Prefix.import(force: true)
+      ClientPrefix.import(force: true)
+      ReferenceRepository.import(force: true)
+      Event.import(force: true)
+
+      search_query = '
+        fragment facetFields on Facet {
+          id
+          title
+          count
+        }
+        query{
+          works(query:"*"){
+            totalCount
+            fieldsOfScience { ...facetFields }
+            fieldsOfScienceRepository { ...facetFields }
+            fieldsOfScienceCombined{ ...facetFields }
+          }
+        }
+      '
+
+      create(:prefix)
+      client = create(:client_with_fos)
+      create_list(:doi, WORK_COUNT,
+        aasm_state: "findable",
+        client: client
+      )
+      Doi.import
+      sleep SLEEP_TIME
+      @facet_response = LupoSchema.execute(search_query).as_json
+      Rails.logger.level = :fatal
+      DataciteDoi.destroy_all
+      ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
+      Prefix.destroy_all
+      ClientPrefix.destroy_all
+      ProviderPrefix.destroy_all
+      Event.destroy_all
+    end
+
+    let (:fos_facet) do
+      {
+        "id" => "physical_sciences",
+        "title" => "Physical sciences",
+        "count" => WORK_COUNT
+      }
+    end
+
+    it "has all dois in the search results" do
+      response = @facet_response
+      expect(response.dig("data", "works", "totalCount")).to eq(WORK_COUNT)
+    end
+
+    it "returns Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScience")
+      ).to match_array([])
+    end
+
+    it "returns Field of Science Facets from the repository" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceRepository")
+      ).to match_array([ fos_facet ])
+    end
+
+    it "returns combined Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceCombined")
+      ).to match_array([ fos_facet ])
+    end
+  end
 end
