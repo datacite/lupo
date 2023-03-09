@@ -13,6 +13,9 @@ describe DoiItem do
     it { is_expected.to have_field(:publicationYear).of_type("Int") }
     it { is_expected.to have_field(:publisher).of_type("String") }
     it { is_expected.to have_field(:subjects).of_type("[Subject!]") }
+    it { is_expected.to have_field(:fieldsOfScience).of_type("[FieldOfScience!]") }
+    it { is_expected.to have_field(:fieldsOfScienceRepository).of_type("[FieldOfScience!]") }
+    it { is_expected.to have_field(:fieldsOfScienceCombined).of_type("[FieldOfScience!]") }
     it { is_expected.to have_field(:dates).of_type("[Date!]") }
     it { is_expected.to have_field(:registered).of_type("ISO8601DateTime") }
     it { is_expected.to have_field(:language).of_type("Language") }

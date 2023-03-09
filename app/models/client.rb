@@ -52,6 +52,7 @@ class Client < ApplicationRecord
   attr_accessor :password_input, :target_id
   attr_reader :from_salesforce
 
+  validate :subjects_only_for_disciplinary_repos
   validates :subjects, if: :subjects?,
             json: {
               message: ->(errors) { errors },
@@ -96,12 +97,16 @@ class Client < ApplicationRecord
   has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_defaults
+  before_validation :convert_subject_hashes_to_camelcase
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_create :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
+  after_commit on: %i[update] do
+    ::Client.import_dois(self.symbol)
+  end
 
   # use different index for testing
   if Rails.env.test?
@@ -396,6 +401,7 @@ class Client < ApplicationRecord
         end,
       "analytics_dashboard_url" => analytics_dashboard_url,
       "analytics_tracking_id" => analytics_tracking_id,
+      "subjects" => Array.wrap(subjects),
     }
   end
 
@@ -504,7 +510,7 @@ class Client < ApplicationRecord
   end
 
   def subjects=(value)
-    write_attribute(:subjects, Array.wrap(value))
+    write_attribute(:subjects, Array.wrap(value).uniq)
   end
 
   def opendoar=(value)
@@ -910,6 +916,15 @@ class Client < ApplicationRecord
       errors.add(:symbol, "cannot be changed") if symbol_changed?
     end
 
+    def subjects_only_for_disciplinary_repos
+      if Array.wrap(subjects).any? && Array.wrap(repository_type).exclude?("disciplinary")
+        errors.add(
+          :subjects,
+          "Subjects are only allowed for disciplinary repositories.  This repository_type is: #{repository_type}",
+        )
+      end
+    end
+
     def check_id
       if symbol && symbol.split(".").first != provider.symbol
         errors.add(
@@ -955,7 +970,7 @@ class Client < ApplicationRecord
         ClientPrefix.create(
           client_id: symbol,
           provider_prefix_id: provider_prefix.uid,
-          prefix_id: provider_prefix.prefix.uid,
+          prefix_id: provider_prefix.prefix.uid
         )
       end
     end
@@ -978,6 +993,18 @@ class Client < ApplicationRecord
       self.role_name = "ROLE_DATACENTRE" if role_name.blank?
       self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
       self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+    end
+
+    def convert_subject_hashes_to_camelcase
+      if self.subjects?
+        self.subjects = Array.wrap(self.subjects).map { |subject|
+          subject.transform_keys! do |key|
+            key.to_s.camelcase(:lower)
+          end
+        }
+      else
+        []
+      end
     end
 
     def create_reference_repository
