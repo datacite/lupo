@@ -141,8 +141,6 @@ class Doi < ApplicationRecord
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
-  FIELD_OF_SCIENCE_SCHEME = "Fields of Science and Technology (FOS)"
-
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
   # use different index for testing
@@ -410,14 +408,6 @@ class Doi < ApplicationRecord
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
-        subjects: { type: :object, properties: {
-          subjectScheme: { type: :keyword },
-          subject: { type: :keyword },
-          schemeUri: { type: :keyword },
-          valueUri: { type: :keyword },
-          lang: { type: :keyword },
-          classificationCode: { type: :keyword },
-        } }
       }
       indexes :provider, type: :object, properties: {
         id: { type: :keyword },
@@ -522,9 +512,6 @@ class Doi < ApplicationRecord
         titleType: { type: :keyword },
         lang: { type: :keyword },
       }
-      indexes :fields_of_science, type: :keyword
-      indexes :fields_of_science_combined, type: :keyword
-      indexes :fields_of_science_repository, type: :keyword
     end
   end
 
@@ -580,9 +567,6 @@ class Doi < ApplicationRecord
       "sizes" => Array.wrap(sizes),
       "language" => language,
       "subjects" => Array.wrap(subjects),
-      "fields_of_science" => fields_of_science,
-      "fields_of_science_repository" => fields_of_science_repository,
-      "fields_of_science_combined" => fields_of_science_combined,
       "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
@@ -1726,26 +1710,6 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
-  end
-
-  def _fos_filter(subject_array)
-    Array.wrap(subject_array).select { |sub|
-      sub.dig("subjectScheme") == FIELD_OF_SCIENCE_SCHEME
-    }.map do |fos|
-      fos["subject"].gsub("FOS: ", "")
-    end
-  end
-
-  def fields_of_science
-    _fos_filter(subjects).uniq
-  end
-
-  def fields_of_science_repository
-    _fos_filter(client&.subjects).uniq
-  end
-
-  def fields_of_science_combined
-    fields_of_science | fields_of_science_repository
   end
 
   def client_id_and_name

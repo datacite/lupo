@@ -65,14 +65,8 @@ namespace :datacite_doi do
   task import: :environment do
     from_id = (ENV["FROM_ID"] || DataciteDoi.minimum(:id)).to_i
     until_id = (ENV["UNTIL_ID"] || DataciteDoi.maximum(:id)).to_i
-    batch_size = ENV["BATCH_SIZE"].nil? ? 50 : ENV["BATCH_SIZE"].to_i
 
-    DataciteDoi.import_by_ids(
-      from_id: from_id,
-      until_id: until_id,
-      batch_size: batch_size,
-      index: ENV["INDEX"] || DataciteDoi.inactive_index
-    )
+    DataciteDoi.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"] || DataciteDoi.inactive_index)
   end
 
   desc "Import one datacite DOI"
