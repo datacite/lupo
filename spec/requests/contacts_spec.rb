@@ -191,12 +191,11 @@ describe ContactsController, type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq(contact.name)
         expect(json.dig("included", 0, "id")).to eq(provider.symbol.downcase)
-        expect(json.dig("included", 0, "type")).to eq('providers')
+        expect(json.dig("included", 0, "type")).to eq("providers")
         expect(json.dig("included", 0, "attributes", "symbol")).to eq(provider.symbol)
         expect(json.dig("included", 0, "attributes", "displayName")).to eq(provider.display_name)
         expect(json.dig("included", 0, "attributes", "systemEmail")).to eq(provider.system_email)
         expect(json.dig("included", 0, "attributes", "memberType")).to eq(provider.member_type)
-
       end
     end
   end
