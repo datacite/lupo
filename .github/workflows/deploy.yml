@@ -3,77 +3,28 @@ on:
   push:
     branches:
       - "master"
+env:
+  IMAGE_TAG: main
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
   test:
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
-  build:
+  call_build_and_push:
     needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ github.repository }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-
+    uses: ./.github/workflows/build.yml
+    with:
+      image_name: ${{ github.repository }}
+      image_tag: ${{ env.IMAGE_TAG }}
+    secrets: inherit
   deploy:
-    needs: [test, build]
+    needs: [test, call_build_and_push]
     runs-on: ubuntu-latest
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    #env:
+      #BRANCH: ${{ github.ref_name }}
+      #SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Extract variables
-        shell: bash
-        run: |
-          echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_OUTPUT
-          echo "TAG=$(git tag --points-at HEAD)" >> $GITHUB_OUTPUT
-          echo "GIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "GIT_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          # echo "MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})" >> $GITHUB_OUTPUT
-        id: extract_variables
-
       - name: Checkout terraform config repo
         uses: actions/checkout@v3
         with:
@@ -84,8 +35,8 @@ jobs:
         # use go template in terraform config repository to update git sha and tag
         # commit and push changes to trigger terraform workflow
         run: |
-          export GIT_SHA=${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}
-          export GIT_TAG=${{ steps.extract_variables.outputs.GIT_TAG }}
+          export GIT_SHA=${{ github.sha }}
+          export GIT_TAG=${{ env.IMAGE_TAG }}
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
@@ -94,7 +45,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add stage/services/client-api/_lupo.auto.tfvars
-          git commit -m "Adding lupo git variables for commit ${{ steps.extract_variables.outputs.GIT_SHA }}"
+          git commit -m "Adding lupo git variables for commit ${{ github.sha }}"
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
@@ -102,17 +53,3 @@ jobs:
           repository: 'datacite/mastino'
           branch: 'refs/heads/master'
           tags: false
-
-      # - name: Notify Slack
-      #   uses: edge/simple-slack-notify@master
-      #   with:
-      #     channel: '#ops'
-      #     color: 'good'
-      #     text: 'A new version of the <https://api.stage.datacite.org|REST API> is been deployed to stage.'
-      #     failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
-      #     fields: |
-      #       [{ "title": "Commit message", "value": "${{ steps.extract_variables.outputs.MESSAGE }}" },
-      #        { "title": "Committed by", "value": "<https://github.com/${{ github.repository }}/commits?author=${{ github.actor }}|${{ github.actor }}>", "short": true },
-      #        { "title": "Commit SHA", "value": "<https://github.com/${{ github.repository }}/commit/${{ steps.extract_variables.outputs.GIT_SHA }}|${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}>", "short": true },
-      #        { "title": "Repository", "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>", "short": true },
-      #        { "title": "Branch", "value": "<https://github.com/${{ github.repository }}/tree/${{ steps.extract_variables.outputs.BRANCH }}|${{ steps.extract_variables.outputs.BRANCH }}>", "short": true }]
