@@ -23,8 +23,6 @@ jobs:
   deploy:
     needs: [test, call_build_and_push]
     runs-on: ubuntu-latest
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - name: Checkout terraform config repo
         uses: actions/checkout@v3
@@ -57,16 +55,3 @@ jobs:
           repository: 'datacite/mastino'
           branch: 'refs/heads/master'
           tags: false
-
-      - name: Notify Slack
-        uses: edge/simple-slack-notify@master
-        with:
-          channel: '#ops'
-          color: 'good'
-          text: 'Version <https://github.com/${{ github.repository }}/${{github.ref}}> of the <https://api.datacite.org|REST API> is being released to test and production.'
-          failure_text: '${env.GITHUB_WORKFLOW} (${env.GITHUB_RUN_NUMBER}) build failed'
-          fields: |
-            [{ "title": "Committed by", "value": "<https://github.com/${{ github.repository }}/commits?author=${{ github.actor }}|${{ github.actor }}>", "short": true },
-             { "title": "Commit SHA", "value": "<https://github.com/${{ github.repository }}/commit/${{ steps.extract_variables.outputs.GIT_SHA }}|${{ steps.extract_variables.outputs.GIT_SHA_SHORT }}>", "short": true },
-             { "title": "Repository", "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>", "short": true },
-             { "title": "Release", "value": "<https://github.com/${{ github.repository }}/releases/tag/${{ steps.extract_variables.outputs.TAG }}|${{ steps.extract_variables.outputs.TAG }}>", "short": true }]
