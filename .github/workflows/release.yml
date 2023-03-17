@@ -10,8 +10,6 @@ jobs:
   test:
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
-  build:
-    needs: test
   call_build_and_push:
     needs: test
     uses: ./.github/workflows/build.yml
