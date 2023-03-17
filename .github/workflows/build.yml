@@ -6,8 +6,6 @@ on:
         required: true
       DOCKERHUB_TOKEN:
         required: true
-      GITHUB_TOKEN:
-        required: true
     inputs:
       image_name:
         description: The name of the image for docker/ghcr registries
@@ -17,8 +15,6 @@ on:
         description: Tag for the image for docker/ghcr registries
         required: true
         type: string
-
-    
 jobs:
   build:
     runs-on: ubuntu-latest
