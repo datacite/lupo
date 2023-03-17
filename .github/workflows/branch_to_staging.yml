@@ -1,0 +1,26 @@
+name: Build/Deploy Branch to Staging
+on:
+  workflow_dispatch:
+env:
+  IMAGE_TAG: ${{ github.ref_name }}
+  DEPLOYMENT_ENV: staging
+jobs:
+  lint:
+    uses: ./.github/workflows/rubocop.yml
+  test:
+    uses: ./.github/workflows/parallel_ci.yml
+    secrets: inherit
+  call_build_and_push:
+    needs: test
+    uses: ./.github/workflows/build.yml
+    with:
+      image_name: ${{ github.repository }}
+      image_tag: ${{ env.IMAGE_TAG }}
+    secrets: inherit
+  deploy:
+    needs: [test, call_build_and_push]
+    uses: ./.github/workflows/_update_terraform.yml
+    with:
+      image_tag: ${{ env.IMAGE_TAG }}
+      deployment_environment: ${{ env.DEPLOYMENT_ENV }}
+    secrets: inherit
