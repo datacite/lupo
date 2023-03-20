@@ -1,4 +1,4 @@
-name: Release
+name: Release to Production
 on:
   release:
     types: [published]
@@ -15,39 +15,10 @@ jobs:
       image_name: ${{ github.repository }}
       image_tag: ${{ github.ref_name }}
     secrets: inherit
-
   deploy:
     needs: [test, call_build_and_push]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout terraform config repo
-        uses: actions/checkout@v3
-        with:
-          # public repo with terraform configuration
-          repository: 'datacite/mastino'
-          persist-credentials: false
-      - name: Commit changes to terraform config repository
-        # use go template in terraform config repository to update git sha and tag
-        # commit and push changes to trigger terraform workflow
-        run: |
-          export GIT_SHA=${{ github.sha }}
-          export GIT_TAG=${{ github.ref_name }}
-          wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
-          tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
-          rm dockerize-linux-amd64-v0.6.0.tar.gz
-
-          ./dockerize -template prod-eu-west/services/client-api/_lupo.auto.tfvars.tmpl:prod-eu-west/services/client-api/_lupo.auto.tfvars
-          ./dockerize -template test/services/client-api/_lupo.auto.tfvars.tmpl:test/services/client-api/_lupo.auto.tfvars
-
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add prod-eu-west/services/client-api/_lupo.auto.tfvars
-          git add test/services/client-api/_lupo.auto.tfvars
-          git commit -m "Adding lupo git variables for tag ${{ env.IMAGE_TAG }}"
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          repository: 'datacite/mastino'
-          branch: 'refs/heads/master'
-          tags: false
+    uses: ./.github/workflows/_update_terraform.yml
+    with:
+      image_tag: ${{ github.ref_name }}
+      deployment_environment: production
+    secrets: inherit
