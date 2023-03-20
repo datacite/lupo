@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - "master"
-env:
-  IMAGE_TAG: main
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
@@ -16,7 +14,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       image_name: ${{ github.repository }}
-      image_tag: ${{ env.IMAGE_TAG }}
+      image_tag: main
     secrets: inherit
   deploy:
     needs: [test, call_build_and_push]
@@ -36,7 +34,7 @@ jobs:
         # commit and push changes to trigger terraform workflow
         run: |
           export GIT_SHA=${{ github.sha }}
-          export GIT_TAG=${{ env.IMAGE_TAG }}
+          export GIT_TAG=main
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
           tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
           rm dockerize-linux-amd64-v0.6.0.tar.gz
