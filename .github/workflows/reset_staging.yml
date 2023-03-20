@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
-    needs: [test, call_build_and_push]
     uses: ./.github/workflows/_update_terraform.yml
     with:
       image_tag: main
