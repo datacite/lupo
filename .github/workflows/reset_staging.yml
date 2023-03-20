@@ -1,14 +1,11 @@
 name: Reset Staging to Main Branch
 on:
   workflow_dispatch:
-env:
-  IMAGE_TAG: main
-  DEPLOYMENT_ENV: staging
 jobs:
   deploy:
     needs: [test, call_build_and_push]
     uses: ./.github/workflows/_update_terraform.yml
     with:
-      image_tag: ${{ env.IMAGE_TAG }}
-      deployment_environment: ${{ env.DEPLOYMENT_ENV }}
+      image_tag: main
+      deployment_environment: staging
     secrets: inherit
