@@ -17,6 +17,9 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      GIT_SHA: ${{ github.sha }}
+      GIT_TAG: ${{ inputs.image_tag }}
     steps:
       - name: Checkout terraform config repo
         uses: actions/checkout@v3
@@ -26,8 +29,6 @@ jobs:
           persist-credentials: false
       - name: Setup dokerize and template parameters
         run: |
-          export GIT_SHA=${{ github.sha }}
-          export GIT_TAG=${{ inputs.image_tag }}
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
