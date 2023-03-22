@@ -98,7 +98,7 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_create :assign_prefix
+  after_create_commit :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
@@ -922,8 +922,15 @@ class Client < ApplicationRecord
       end
     end
 
+    def get_prefix
+      provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_provider_prefix| (_provider_prefix.state == "without-repository") }.first : nil
+      prefix = Prefix.all.count > 0 ? Prefix.where.missing(:client_prefixes).merge(Prefix.where.missing(:provider_prefixes)).first : nil
+
+      provider_prefix || prefix || nil
+    end
+
     def check_prefix
-      if !prefixes_available
+      if !get_prefix
         errors.add(
           :base,
           "No prefixes available.  Unable to create repository.",
@@ -931,51 +938,27 @@ class Client < ApplicationRecord
       end
     end
 
-    def prefixes_available
-      (Prefix.find_by_state("unassigned").count > 0) ||
-        (provider.present? && (ProviderPrefix.find_by_symbol_and_state(provider.symbol, "without-repository").count > 0))
-    end
-
-    def get_unassigned_prefix_es
-      p = Prefix.find_by_state("unassigned").first
-
-      p ? p._source : nil
-    end
-
-    def get_unassigned_provider_prefix_es
-      p = provider.present? ? ProviderPrefix.find_by_symbol_and_state(provider.symbol, "without-repository").first : nil
-
-      p ? p._source : nil
-    end
-
     def assign_prefix
-      # 2nd check to prevent race condition.
-      if !prefixes_available
+      available_prefix = get_prefix
+      if !available_prefix
         errors.add(
           :base,
           "No prefixes available.  Created repository, but a prefix was not assigned.  Contact support to get a prefix.",
         )
       else
-        provider_prefix_uid, prefix_id = nil
-        prefix_es = get_unassigned_prefix_es
-        provider_prefix_es = get_unassigned_provider_prefix_es
+        prefix, provider_prefix = nil
+        available_prefix.class.name == "Prefix" ? prefix = available_prefix : provider_prefix = available_prefix
 
-        if !provider_prefix_es
-          # Use free prefix from in the pool.
-          provider_prefix_uid = ProviderPrefix.create(
-            provider_id: provider.symbol, prefix_id: prefix_es.uid
-          ).uid
-          prefix_id = prefix_es.uid
-        else
-          # Use free prefix found in provider's prefixes
-          provider_prefix_uid = provider_prefix_es.uid
-          prefix_id = provider_prefix_es.prefix_id
+        if !provider_prefix.present?
+          provider_prefix = ProviderPrefix.create(
+            provider_id: provider.symbol, prefix_id: prefix.uid
+          )
         end
 
         ClientPrefix.create(
           client_id: symbol,
-          provider_prefix_id: provider_prefix_uid,
-          prefix_id: prefix_id
+          provider_prefix_id: provider_prefix.uid,
+          prefix_id: provider_prefix.prefix.uid,
         )
       end
     end
