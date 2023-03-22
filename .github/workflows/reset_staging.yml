@@ -1,0 +1,10 @@
+name: Reset Staging to Main Branch
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    uses: ./.github/workflows/_update_terraform.yml
+    with:
+      image_tag: main
+      deployment_environment: staging
+    secrets: inherit

@@ -1,8 +1,6 @@
-name: Deploy Main to Staging
+name: Build/Deploy Branch to Staging
 on:
-  push:
-    branches:
-      - "master"
+  workflow_dispatch:
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
@@ -14,12 +12,12 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       image_name: ${{ github.repository }}
-      image_tag: main
+      image_tag: ${{ github.ref_name }}
     secrets: inherit
   deploy:
     needs: [test, call_build_and_push]
     uses: ./.github/workflows/_update_terraform.yml
     with:
-      image_tag: main
+      image_tag: ${{ github.ref_name }}
       deployment_environment: staging
     secrets: inherit
