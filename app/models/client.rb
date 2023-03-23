@@ -102,9 +102,6 @@ class Client < ApplicationRecord
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
-  after_commit on: %i[update] do
-    ::Client.import_dois(self.symbol)
-  end
 
   # use different index for testing
   if Rails.env.test?
