@@ -98,7 +98,7 @@ class Client < ApplicationRecord
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_create :assign_prefix
+  after_create_commit :assign_prefix
   after_create_commit :create_reference_repository
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
@@ -921,7 +921,7 @@ class Client < ApplicationRecord
 
     def get_prefix
       provider_prefix = (provider.present? && provider.provider_prefixes.present?) ? provider.provider_prefixes.select { |_provider_prefix| (_provider_prefix.state == "without-repository") }.first : nil
-      prefix = Prefix.all.count > 0 ? Prefix.all.select { |_prefix| (_prefix.state == "unassigned") }.first : nil
+      prefix = Prefix.all.count > 0 ? Prefix.where.missing(:client_prefixes).merge(Prefix.where.missing(:provider_prefixes)).first : nil
 
       provider_prefix || prefix || nil
     end
