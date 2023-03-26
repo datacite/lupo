@@ -8,7 +8,7 @@ end
 
 after "development:base" do
   if Prefix.where(uid: "10.14459").blank?
-    prefix = FactoryBot.create(:prefix, uid: "10.14459")
+    FactoryBot.create(:prefix, uid: "10.14459")
   end
   provider =
     Provider.where(symbol: "QUECHUA").first ||
