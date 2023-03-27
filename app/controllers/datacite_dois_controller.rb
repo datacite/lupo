@@ -504,8 +504,7 @@ class DataciteDoisController < ApplicationController
   end
 
   def validate
-    @doi = DataciteDoi.new(safe_params.merge(only_validate: true))
-
+    @doi = DataciteDoi.new(sanitized_params.merge(only_validate: true))
     authorize! :validate, @doi
 
     if @doi.valid?
@@ -525,7 +524,7 @@ class DataciteDoisController < ApplicationController
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
 
-    @doi = DataciteDoi.new(safe_params)
+    @doi = DataciteDoi.new(sanitized_params)
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
@@ -566,24 +565,24 @@ class DataciteDoisController < ApplicationController
         # only update client_id
 
         authorize! :transfer, @doi
-        @doi.assign_attributes(safe_params.slice(:client_id))
+        @doi.assign_attributes(sanitized_params.slice(:client_id))
       else
         authorize! :update, @doi
-        if safe_params[:schema_version].blank?
+        if sanitized_params[:schema_version].blank?
           @doi.assign_attributes(
-            safe_params.except(:doi, :client_id).merge(
+            sanitized_params.except(:doi, :client_id).merge(
               schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION,
             ),
           )
         else
-          @doi.assign_attributes(safe_params.except(:doi, :client_id))
+          @doi.assign_attributes(sanitized_params.except(:doi, :client_id))
         end
       end
     else
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound if doi_id.blank?
 
-      @doi = DataciteDoi.new(safe_params.merge(doi: doi_id))
+      @doi = DataciteDoi.new(sanitized_params.merge(doi: doi_id))
       # capture username and password for reuse in the handle system
       @doi.current_user = current_user
 
@@ -611,7 +610,7 @@ class DataciteDoisController < ApplicationController
   end
 
   def undo
-    @doi = DataciteDoi.where(doi: safe_params[:doi]).first
+    @doi = DataciteDoi.where(doi: sanitized_params[:doi]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :undo, @doi
@@ -785,441 +784,26 @@ class DataciteDoisController < ApplicationController
           end
       end
 
-      attributes = [
-        :doi,
-        :confirmDoi,
-        :url,
-        :titles,
-        { titles: %i[title titleType lang] },
-        :publisher,
-        :publicationYear,
-        :created,
-        :prefix,
-        :suffix,
-        :types,
-        {
-          types: %i[
-            resourceTypeGeneral
-            resourceType
-            schemaOrg
-            bibtex
-            citeproc
-            ris
-          ],
-        },
-        :dates,
-        { dates: %i[date dateType dateInformation] },
-        :subjects,
-        { subjects: %i[subject subjectScheme schemeUri valueUri lang classificationCode] },
-        :landingPage,
-        {
-          landingPage: [
-            :checked,
-            :url,
-            :status,
-            :contentType,
-            :error,
-            :redirectCount,
-            { redirectUrls: [] },
-            :downloadLatency,
-            :hasSchemaOrg,
-            :schemaOrgId,
-            { schemaOrgId: [] },
-            :dcIdentifier,
-            :citationDoi,
-            :bodyHasPid,
-          ],
-        },
-        :contentUrl,
-        { contentUrl: [] },
-        :sizes,
-        { sizes: [] },
-        :formats,
-        { formats: [] },
-        :language,
-        :descriptions,
-        { descriptions: %i[description descriptionType lang] },
-        :rightsList,
-        {
-          rightsList: %i[
-            rights
-            rightsUri
-            rightsIdentifier
-            rightsIdentifierScheme
-            schemeUri
-            lang
-          ],
-        },
-        :xml,
-        :regenerate,
-        :source,
-        :version,
-        :metadataVersion,
-        :schemaVersion,
-        :state,
-        :isActive,
-        :reason,
-        :registered,
-        :updated,
-        :mode,
-        :event,
-        :regenerate,
-        :should_validate,
-        :client,
-        :creators,
-        {
-          creators: [
-            :nameType,
-            {
-              nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-            },
-            :name,
-            :givenName,
-            :familyName,
-            {
-              affiliation: %i[
-                name
-                affiliationIdentifier
-                affiliationIdentifierScheme
-                schemeUri
-              ],
-            },
-            :lang,
-          ],
-        },
-        :contributors,
-        {
-          contributors: [
-            :nameType,
-            {
-              nameIdentifiers: %i[nameIdentifier nameIdentifierScheme schemeUri],
-            },
-            :name,
-            :givenName,
-            :familyName,
-            {
-              affiliation: %i[
-                name
-                affiliationIdentifier
-                affiliationIdentifierScheme
-                schemeUri
-              ],
-            },
-            :contributorType,
-            :lang,
-          ],
-        },
-        :identifiers,
-        { identifiers: %i[identifier identifierType] },
-        :alternateIdentifiers,
-        { alternateIdentifiers: %i[alternateIdentifier alternateIdentifierType] },
-        :relatedIdentifiers,
-        {
-          relatedIdentifiers: %i[
-            relatedIdentifier
-            relatedIdentifierType
-            relationType
-            relatedMetadataScheme
-            schemeUri
-            schemeType
-            resourceTypeGeneral
-            relatedMetadataScheme
-            schemeUri
-            schemeType
-          ],
-        },
-        :fundingReferences,
-        {
-          fundingReferences: %i[
-            funderName
-            funderIdentifier
-            funderIdentifierType
-            awardNumber
-            awardUri
-            awardTitle
-          ],
-        },
-        :geoLocations,
-        {
-          geoLocations: [
-            { geoLocationPoint: %i[pointLongitude pointLatitude] },
-            {
-              geoLocationBox: %i[
-                westBoundLongitude
-                eastBoundLongitude
-                southBoundLatitude
-                northBoundLatitude
-              ],
-            },
-            :geoLocationPlace,
-          ],
-        },
-        :container,
-        {
-          container: %i[
-            type
-            identifier
-            identifierType
-            title
-            volume
-            issue
-            firstPage
-            lastPage
-          ],
-        },
-        :relatedItems,
-        {
-          relatedItems: [
-            :relationType,
-            :relatedItemType,
-            {
-              relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
-            },
-            {
-              creators: %i[nameType name givenName familyName],
-            },
-            {
-              titles: %i[title titleType],
-            },
-            :publicationYear,
-            :volume,
-            :issue,
-            :number,
-            :numberType,
-            :firstPage,
-            :lastPage,
-            :publisher,
-            :edition,
-            {
-              contributors: %i[contributorType name givenName familyName nameType],
-            },
-          ],
-        },
-        :published,
-        :downloadsOverTime,
-        { downloadsOverTime: %i[yearMonth total] },
-        :viewsOverTime,
-        { viewsOverTime: %i[yearMonth total] },
-        :citationsOverTime,
-        { citationsOverTime: %i[year total] },
-        :citationCount,
-        :downloadCount,
-        :partCount,
-        :partOfCount,
-        :referenceCount,
-        :versionCount,
-        :versionOfCount,
-        :viewCount,
-      ]
-      relationships = [{ client: [data: %i[type id]] }]
-
-      # default values for attributes stored as JSON
-      defaults = {
-        data: {
-          titles: [],
-          descriptions: [],
-          types: {},
-          container: {},
-          dates: [],
-          subjects: [],
-          rightsList: [],
-          creators: [],
-          contributors: [],
-          sizes: [],
-          formats: [],
-          contentUrl: [],
-          identifiers: [],
-          relatedIdentifiers: [],
-          relatedItems: [],
-          fundingReferences: [],
-          geoLocations: [],
-        },
-      }
+      ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])
+      ParamsSanitizer.sanitize_nameIdentifiers(params[:contributors])
 
       p =
         params.require(:data).permit(
           :type,
           :id,
-          attributes: attributes, relationships: relationships,
+          attributes: ParamsSanitizer::ATTRIBUTES_MAP,
+          relationships: ParamsSanitizer::RELATIONSHIPS_MAP,
         ).
-          reverse_merge(defaults)
+          reverse_merge(ParamsSanitizer::DEFAULTS_MAP)
       client_id =
-        p.dig("relationships", "client", "data", "id") ||
-        current_user.try(:client_id)
+      p.dig("relationships", "client", "data", "id") ||
+      current_user.try(:client_id)
       p = p.fetch("attributes").merge(client_id: client_id)
+      p
+    end
 
-      # extract attributes from xml field and merge with attributes provided directly
-      xml =
-        p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
-
-      if xml.present?
-        # remove optional utf-8 bom
-        xml.gsub!("\xEF\xBB\xBF", "")
-
-        # remove leading and trailing whitespace
-        xml = xml.strip
-      end
-
-      Array.wrap(params[:creators])&.each do |c|
-        if c[:nameIdentifiers]&.respond_to?(:keys)
-          fail(
-            ActionController::UnpermittedParameters,
-            ["nameIdentifiers must be an Array"],
-          )
-        end
-      end
-
-      Array.wrap(params[:contributors])&.each do |c|
-        if c[:nameIdentifiers]&.respond_to?(:keys)
-          fail(
-            ActionController::UnpermittedParameters,
-            ["nameIdentifiers must be an Array"],
-          )
-        end
-      end
-
-      meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
-      p[:schemaVersion] =
-        if METADATA_FORMATS.include?(meta["from"])
-          LAST_SCHEMA_VERSION
-        else
-          p[:schemaVersion]
-        end
-      xml = meta["string"]
-
-      # if metadata for DOIs from other registration agencies are not found
-      fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
-
-      read_attrs = [
-        p[:creators],
-        p[:contributors],
-        p[:titles],
-        p[:publisher],
-        p[:publicationYear],
-        p[:types],
-        p[:descriptions],
-        p[:container],
-        p[:sizes],
-        p[:formats],
-        p[:version],
-        p[:language],
-        p[:dates],
-        p[:identifiers],
-        p[:relatedIdentifiers],
-        p[:relatedItems],
-        p[:fundingReferences],
-        p[:geoLocations],
-        p[:rightsList],
-        p[:subjects],
-        p[:contentUrl],
-        p[:schemaVersion],
-      ].compact
-
-      # generate random DOI if no DOI is provided
-      # make random DOI predictable in test
-      if p[:doi].blank? && p[:prefix].present? && Rails.env.test?
-        p[:doi] = generate_random_dois(p[:prefix], number: 123_456).first
-      elsif p[:doi].blank? && p[:prefix].present?
-        p[:doi] = generate_random_dois(p[:prefix]).first
-      end
-
-      # replace DOI, but otherwise don't touch the XML
-      # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
-      if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
-        xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
-      elsif xml.present? || Array.wrap(read_attrs.first).present?
-        regenerate = true
-      end
-
-      p[:xml] = xml if xml.present?
-
-
-      read_attrs_keys = %i[
-        url
-        creators
-        contributors
-        titles
-        publisher
-        publicationYear
-        types
-        descriptions
-        container
-        sizes
-        formats
-        language
-        dates
-        identifiers
-        relatedIdentifiers
-        relatedItems
-        fundingReferences
-        geoLocations
-        rightsList
-        agency
-        subjects
-        contentUrl
-        schemaVersion
-      ]
-
-      # merge attributes from xml into regular attributes
-      # make sure we don't accidentally set any attributes to nil
-      read_attrs_keys.each do |attr|
-        if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
-          p.merge!(
-            attr.to_s.underscore =>
-              p[attr] || meta[attr.to_s.underscore] || p[attr],
-          )
-        end
-      end
-
-      # handle version metadata
-      if p.has_key?(:version) || meta["version_info"].present?
-        p[:version_info] = p[:version] || meta["version_info"]
-      end
-
-      # only update landing_page info if something is received via API to not overwrite existing data
-      p[:landing_page] = p[:landingPage] if p[:landingPage].present?
-
-      p.merge(regenerate: p[:regenerate] || regenerate).except(
-        # ignore camelCase keys, and read-only keys
-        :confirmDoi,
-        :prefix,
-        :suffix,
-        :publicationYear,
-        :alternateIdentifiers,
-        :rightsList,
-        :relatedIdentifiers,
-        :relatedItems,
-        :fundingReferences,
-        :geoLocations,
-        :metadataVersion,
-        :schemaVersion,
-        :state,
-        :mode,
-        :isActive,
-        :landingPage,
-        :created,
-        :registered,
-        :updated,
-        :published,
-        :lastLandingPage,
-        :version,
-        :lastLandingPageStatus,
-        :lastLandingPageStatusCheck,
-        :lastLandingPageStatusResult,
-        :lastLandingPageContentType,
-        :contentUrl,
-        :viewsOverTime,
-        :downloadsOverTime,
-        :citationsOverTime,
-        :citationCount,
-        :downloadCount,
-        :partCount,
-        :partOfCount,
-        :referenceCount,
-        :versionCount,
-        :versionOfCount,
-        :viewCount,
-      )
+    def sanitized_params
+      ParamsSanitizer.new(safe_params.to_h).cleanse
     end
 
     def set_raven_context
