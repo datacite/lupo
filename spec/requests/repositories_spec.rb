@@ -413,6 +413,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
             "type" => "repositories",
             "attributes" => {
               "subjects" => subjects,
+              "repositoryType" => "disciplinary",
             },
           },
         }
