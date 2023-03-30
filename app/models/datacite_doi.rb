@@ -67,10 +67,9 @@ class DataciteDoi < Doi
     end
 
     # import DOIs for client
-    Rails.logger.info "Started import of #{client.dois.length} DOIs for repository #{client_id}."
+    Rails.logger.info "Started import of #{client.dois.count} DOIs for repository #{client_id}."
 
-    # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "DataciteDoi").where(datacentre: client.id).
+    DataciteDoi.where(datacentre: client.id).
       find_in_batches(batch_size: 50) do |dois|
       ids = dois.pluck(:id)
       DataciteDoiImportInBulkJob.perform_later(ids, index: self.active_index)
