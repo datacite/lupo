@@ -35,7 +35,7 @@ services:
     networks:
       - public
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     ports:
       - "9201:9200"
       - "9301:9300"
