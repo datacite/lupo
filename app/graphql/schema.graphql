@@ -187,6 +187,16 @@ type Audiovisual implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -496,6 +506,16 @@ type Book implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -758,6 +778,16 @@ type BookChapter implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -1154,6 +1184,16 @@ type Collection implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1460,6 +1500,16 @@ type ConferencePaper implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -2063,6 +2113,16 @@ type DataManagementPlan implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2372,6 +2432,16 @@ type DataPaper implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2678,6 +2748,16 @@ type Dataset implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -3107,6 +3187,16 @@ type Dissertation implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3417,6 +3507,16 @@ interface DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -3733,6 +3833,16 @@ type Event implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4024,6 +4134,16 @@ type EventData implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -4615,6 +4735,16 @@ type Image implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4922,6 +5052,16 @@ type Instrument implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5227,6 +5367,16 @@ type InteractiveResource implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -5540,6 +5690,16 @@ type JournalArticle implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -6146,6 +6306,16 @@ type Model implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6626,6 +6796,16 @@ type Other implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6957,6 +7137,16 @@ type PeerReview implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -7404,6 +7594,16 @@ type PhysicalObject implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7765,6 +7965,16 @@ type Preprint implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8071,6 +8281,16 @@ type Publication implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -9026,6 +9246,16 @@ type Service implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9333,6 +9563,16 @@ type Software implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -9672,6 +9912,16 @@ type Sound implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -10193,6 +10443,16 @@ type Work implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10391,6 +10651,8 @@ type WorkConnectionWithTotal {
   """
   edges: [WorkEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10505,6 +10767,16 @@ type Workflow implements DoiItem {
   OECD Fields of Science of the resource
   """
   fieldsOfScience: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
 
   """
   Technical format of the resource
