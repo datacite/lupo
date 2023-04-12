@@ -271,6 +271,8 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
     argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
@@ -1281,6 +1283,8 @@ class QueryType < BaseObject
       has_views: args[:has_views],
       has_downloads: args[:has_downloads],
       field_of_science: args[:field_of_science],
+      field_of_science_repository: args[:field_of_science_repository],
+      field_of_science_combined: args[:field_of_science_combined],
       facet_count: args[:facet_count],
       pid_entity: args[:pid_entity],
       state: "findable",
