@@ -664,6 +664,12 @@ class Doi < ApplicationRecord
                                 include: "FOS:.*" } },
           },
         },
+        fields_of_science_combined: {
+          terms: { field: "fields_of_science_combined", size: facet_count, min_doc_count: 1 }
+        },
+        fields_of_science_repository: {
+          terms: { field: "fields_of_science_repository", size: facet_count, min_doc_count: 1 }
+        },
         licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
         languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
         view_count: { sum: { field: "view_count" } },
@@ -929,6 +935,12 @@ class Doi < ApplicationRecord
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
+    end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
@@ -1130,6 +1142,12 @@ class Doi < ApplicationRecord
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+    end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
