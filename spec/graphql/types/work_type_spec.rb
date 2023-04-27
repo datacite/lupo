@@ -1284,4 +1284,42 @@ describe WorkType do
       ).to match_array([ fos_facet ])
     end
   end
+
+
+  describe "get formatted citation", elasticsearch: true do
+    let!(:work_one) do
+      create(
+        :doi,
+        doi: "10.14454/X45ZNPCOA",
+        aasm_state: "findable",
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_works) do
+      '
+      query (
+        $id: ID!
+        ){
+          work(id:$id) {
+          id
+          formattedCitation(style: "apa", locale: "en-US")
+          publicationYear
+        }
+        }
+      '
+    end
+
+    it "returns formatted citation" do
+      response = LupoSchema.execute(query_works, variables: { id: work_one.doi }).as_json
+      pp(response)
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
+      )
+    end
+  end
 end
