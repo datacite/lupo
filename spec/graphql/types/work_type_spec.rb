@@ -1304,21 +1304,31 @@ describe WorkType do
       '
       query (
         $id: ID!
+        $format: String
         ){
           work(id:$id) {
-          id
-          formattedCitation(style: "apa", locale: "en-US")
-          publicationYear
-        }
+            id
+            formattedCitation(format: $format)
+            publicationYear
+          }
         }
       '
     end
 
-    it "returns formatted citation" do
+    it "returns formatted citation in html" do
       response = LupoSchema.execute(query_works, variables: { id: work_one.doi }).as_json
-      pp(response)
       expect(response.dig("data", "work", "formattedCitation")).to eq(
         "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
+      )
+    end
+
+    it "returns formatted citation in plain text" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "text" }
+      ).as_json
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
       )
     end
   end

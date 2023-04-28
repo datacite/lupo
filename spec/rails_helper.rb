@@ -84,6 +84,10 @@ RSpec.configure do |config|
     end
     Prefix.import
   end
+
+  config.expect_with :rspec do |c|
+    c.max_formatted_output_length = nil
+  end
 end
 
 VCR.configure do |c|

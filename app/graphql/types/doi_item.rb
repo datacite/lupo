@@ -165,6 +165,7 @@ module DoiItem
         null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
+    argument :format, String, required: false, default_value: "html"
   end
   field :xml,
         String,
@@ -678,19 +679,32 @@ module DoiItem
     }.compact
   end
 
-  # defaults to style: apa and locale: en-US
-  def formatted_citation(style: nil, locale: nil)
-    cp =
-      CiteProc::Processor.new(
-        style: style || "apa", locale: locale || "en-US", format: "html",
-      )
+  def build_bibliography(style: "apa", locale: "en-US", format: "html")
+    cp = CiteProc::Processor.new(
+        style:  style  || "apa",
+        locale: locale || "en-US",
+        format: format || "html",
+    )
     cp.import Array.wrap(citeproc_hsh)
-    bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
-    url = object.doi
-    unless %r{^https?://}i.match?(object.doi)
-      url = "https://doi.org/#{object.doi}"
+    bibliographyies = cp.render(:bibliography, id: normalize_doi(object.doi))
+    bibliography = bibliographyies.first
+  end
+
+  def build_linked_bibliography(bibliography)
+      url = object.doi
+      unless %r{^https?://}i.match?(object.doi)
+        url = "https://doi.org/#{object.doi}"
+      end
+      bibliography.gsub(url, doi_link(url))
+  end
+
+  def formatted_citation(style: nil, locale: nil, format: nil)
+    bibliography = build_bibliography(style: style, locale: locale, format: format)
+    if format == "html"
+      build_linked_bibliography(bibliography)
+    else
+      bibliography
     end
-    bibliography.first.gsub(url, doi_link(url))
   end
 
   def references(**args)
