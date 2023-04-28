@@ -687,23 +687,24 @@ module DoiItem
     }.compact
   end
 
-  def build_bibliography(style: "apa", locale: "en-US", format: "html")
+  def build_bibliography(style: nil, locale: nil, format: nil)
     cp = CiteProc::Processor.new(
-        style:  style  || "apa",
-        locale: locale || "en-US",
-        format: format || "html",
+      style:  style  || "apa",
+      locale: locale || "en-US",
+      format: format || "html",
     )
     cp.import Array.wrap(citeproc_hsh)
-    bibliographyies = cp.render(:bibliography, id: normalize_doi(object.doi))
-    bibliography = bibliographyies.first
+    bibliographies = cp.render(:bibliography, id: normalize_doi(object.doi))
+    bibliographies.first
   end
 
   def build_linked_bibliography(bibliography)
-      url = object.doi
-      unless %r{^https?://}i.match?(object.doi)
-        url = "https://doi.org/#{object.doi}"
-      end
-      bibliography.gsub(url, doi_link(url))
+    _doi = object.doi
+    url = _doi
+    unless %r{^https?://}i.match?(_doi)
+      url = "https://doi.org/#{_doi}"
+    end
+    bibliography.gsub(url, doi_link(url))
   end
 
   def formatted_citation(style: nil, locale: nil, format: nil)
