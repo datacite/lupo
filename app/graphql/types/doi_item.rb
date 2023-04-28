@@ -16,6 +16,14 @@ module DoiItem
     "op" => "OP",
   }.freeze
 
+  class CitationFormat < GraphQL::Schema::Enum
+    description "Citation formats"
+    value :html
+    value :text
+  end
+
+
+
   description "Information about DOIs"
 
   field :id,
@@ -165,7 +173,7 @@ module DoiItem
         null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
-    argument :format, String, required: false, default_value: "html"
+    argument :format, CitationFormat, required: false, default_value: "html"
   end
   field :xml,
         String,

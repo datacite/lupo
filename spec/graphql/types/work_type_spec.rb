@@ -1304,7 +1304,7 @@ describe WorkType do
       '
       query (
         $id: ID!
-        $format: String
+        $format: CitationFormat
         ){
           work(id:$id) {
             id
@@ -1316,7 +1316,9 @@ describe WorkType do
     end
 
     it "returns formatted citation in html" do
-      response = LupoSchema.execute(query_works, variables: { id: work_one.doi }).as_json
+      response = LupoSchema.execute(
+        query_works, variables: { id: work_one.doi }
+      ).as_json
       expect(response.dig("data", "work", "formattedCitation")).to eq(
         "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
       )
@@ -1329,6 +1331,17 @@ describe WorkType do
       ).as_json
       expect(response.dig("data", "work", "formattedCitation")).to eq(
         "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
+      )
+    end
+
+    it "returns error for unknown citation format" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "unsupported" }
+      ).as_json
+      problem = response.dig("errors", 0, "extensions", "problems").first
+      expect(problem.dig("explanation")).to eq(
+        "Expected \"unsupported\" to be one of: html, text"
       )
     end
   end
