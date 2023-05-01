@@ -16,6 +16,14 @@ module DoiItem
     "op" => "OP",
   }.freeze
 
+  class CitationFormat < GraphQL::Schema::Enum
+    description "Citation formats"
+    value :html
+    value :text
+  end
+
+
+
   description "Information about DOIs"
 
   field :id,
@@ -165,6 +173,7 @@ module DoiItem
         null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
+    argument :format, CitationFormat, required: false, default_value: "html"
   end
   field :xml,
         String,
@@ -678,19 +687,33 @@ module DoiItem
     }.compact
   end
 
-  # defaults to style: apa and locale: en-US
-  def formatted_citation(style: nil, locale: nil)
-    cp =
-      CiteProc::Processor.new(
-        style: style || "apa", locale: locale || "en-US", format: "html",
-      )
+  def build_bibliography(style: nil, locale: nil, format: nil)
+    cp = CiteProc::Processor.new(
+      style:  style  || "apa",
+      locale: locale || "en-US",
+      format: format || "html",
+    )
     cp.import Array.wrap(citeproc_hsh)
-    bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
-    url = object.doi
-    unless %r{^https?://}i.match?(object.doi)
-      url = "https://doi.org/#{object.doi}"
+    bibliographies = cp.render(:bibliography, id: normalize_doi(object.doi))
+    bibliographies.first
+  end
+
+  def build_linked_bibliography(bibliography)
+    _doi = object.doi
+    url = _doi
+    unless %r{^https?://}i.match?(_doi)
+      url = "https://doi.org/#{_doi}"
     end
-    bibliography.first.gsub(url, doi_link(url))
+    bibliography.gsub(url, doi_link(url))
+  end
+
+  def formatted_citation(style: nil, locale: nil, format: nil)
+    bibliography = build_bibliography(style: style, locale: locale, format: format)
+    if format == "html"
+      build_linked_bibliography(bibliography)
+    else
+      bibliography
+    end
   end
 
   def references(**args)

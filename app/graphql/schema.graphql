@@ -204,7 +204,7 @@ type Audiovisual implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -523,7 +523,7 @@ type Book implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -797,7 +797,7 @@ type BookChapter implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -1067,6 +1067,14 @@ type BookEdge {
 }
 
 """
+Citation formats
+"""
+enum CitationFormat {
+  html
+  text
+}
+
+"""
 A claim.
 """
 type Claim {
@@ -1201,7 +1209,7 @@ type Collection implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -1519,7 +1527,7 @@ type ConferencePaper implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2130,7 +2138,7 @@ type DataManagementPlan implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2449,7 +2457,7 @@ type DataPaper implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2767,7 +2775,7 @@ type Dataset implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -3204,7 +3212,7 @@ type Dissertation implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -3526,7 +3534,7 @@ interface DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -3850,7 +3858,7 @@ type Event implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -4153,7 +4161,7 @@ type EventData implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -4752,7 +4760,7 @@ type Image implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5069,7 +5077,7 @@ type Instrument implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5386,7 +5394,7 @@ type InteractiveResource implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5709,7 +5717,7 @@ type JournalArticle implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -6323,7 +6331,7 @@ type Model implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -6813,7 +6821,7 @@ type Other implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7156,7 +7164,7 @@ type PeerReview implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7611,7 +7619,7 @@ type PhysicalObject implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7982,7 +7990,7 @@ type Preprint implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -8300,7 +8308,7 @@ type Publication implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -8615,7 +8623,7 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -9263,7 +9271,7 @@ type Service implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -9582,7 +9590,7 @@ type Software implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -9931,7 +9939,7 @@ type Sound implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -10460,7 +10468,7 @@ type Work implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -10786,7 +10794,7 @@ type Workflow implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered

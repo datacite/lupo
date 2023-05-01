@@ -1284,4 +1284,65 @@ describe WorkType do
       ).to match_array([ fos_facet ])
     end
   end
+
+
+  describe "get formatted citation", elasticsearch: true do
+    let!(:work_one) do
+      create(
+        :doi,
+        doi: "10.14454/X45ZNPCOA",
+        aasm_state: "findable",
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_works) do
+      '
+      query (
+        $id: ID!
+        $format: CitationFormat
+        ){
+          work(id:$id) {
+            id
+            formattedCitation(format: $format)
+            publicationYear
+          }
+        }
+      '
+    end
+
+    it "returns formatted citation in html" do
+      response = LupoSchema.execute(
+        query_works, variables: { id: work_one.doi }
+      ).as_json
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
+      )
+    end
+
+    it "returns formatted citation in plain text" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "text" }
+      ).as_json
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
+      )
+    end
+
+    it "returns error for unknown citation format" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "unsupported" }
+      ).as_json
+      problem = response.dig("errors", 0, "extensions", "problems").first
+      expect(problem.dig("explanation")).to eq(
+        "Expected \"unsupported\" to be one of: html, text"
+      )
+    end
+  end
 end
