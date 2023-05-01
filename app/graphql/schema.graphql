@@ -6682,7 +6682,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """

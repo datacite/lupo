@@ -187,10 +187,9 @@ describe OrganizationType do
       expect(
         response.dig("data", "organization", "works", "resourceTypes"),
       ).to eq([{ "count" => 3, "title" => "Dataset" }])
-      # TODO should be 3 nodes
       expect(
         response.dig("data", "organization", "works", "nodes").length,
-      ).to eq(2)
+      ).to eq(3)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq(
