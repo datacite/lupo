@@ -1445,6 +1445,7 @@ components:
                         - Event
                         - Image
                         - InteractiveResource
+                        - Journal
                         - JournalArticle
                         - Model
                         - OutputManagementPlan
@@ -1633,6 +1634,7 @@ components:
                           - Event
                           - Image
                           - InteractiveResource
+                          - Journal
                           - JournalArticle
                           - Model
                           - OutputManagementPlan
