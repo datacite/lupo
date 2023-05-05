@@ -346,10 +346,6 @@ paths:
               - RatSWD
               - WDS
         - in: query
-          name: person-id
-          schema:
-            type: string
-        - in: query
           name: affiliation-id
           schema:
             type: string
@@ -1734,7 +1730,7 @@ components:
                                 - Personal
                                 - Organizational
                           required:
-                            - name                          
+                            - name
                       titles:
                         type: array
                         items:
