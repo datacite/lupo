@@ -67,8 +67,8 @@ class DataciteDoisController < ApplicationController
         "types.resourceTypeGeneral"
       end
 
-    # only show findable DOIs to anonymous users and role user
-    if current_user.nil? || current_user.role_id == "user"
+    # only show findable DOIs to no user, role user, and role anonymous
+    if current_user.nil? || current_user.role_id == "user" || current_user.role_id == "anonymous"
       params[:state] = "findable"
     end
 
