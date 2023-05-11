@@ -2978,7 +2978,7 @@ type Dataset implements DoiItem {
 """
 The connection type for Dataset.
 """
-type DatasetConnectionWithTotal {
+type DatasetConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
   datasetConnectionCount: Int!
@@ -2988,6 +2988,8 @@ type DatasetConnectionWithTotal {
   """
   edges: [DatasetEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -2996,6 +2998,7 @@ type DatasetConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Dataset]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -3007,6 +3010,7 @@ type DatasetConnectionWithTotal {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  resourceTypes: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
 }
@@ -10650,7 +10654,7 @@ type Work implements DoiItem {
 """
 The connection type for Work.
 """
-type WorkConnectionWithTotal {
+type WorkConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -10697,6 +10701,21 @@ type WorkEdge {
   The item at the end of the edge.
   """
   node: Work
+}
+
+interface WorkFacetsInterface {
+  affiliations: [Facet!]
+  authors: [Facet!]
+  fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
+  openLicenseResourceTypes: [Facet!]
+  published: [Facet!]
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  resourceTypes: [Facet!]
 }
 
 type Workflow implements DoiItem {
