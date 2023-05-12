@@ -7,7 +7,6 @@ module Interfaces::WorkFacetsInterface
   field :total_count, Integer, null: false, cache: true
 
   field :published, [FacetType], null: true, cache: true
-  field :resource_types, [FacetType], null: true, cache: true
   field :open_license_resource_types, [FacetType], null: true, cache: true
   field :registration_agencies, [FacetType], null: true, cache: true
   field :repositories, [FacetType], null: true, cache: true
@@ -21,14 +20,6 @@ module Interfaces::WorkFacetsInterface
 
   def total_count
     object.total_count
-  end
-
-  def resource_types
-    if object.aggregations.resource_types
-      facet_by_combined_key(object.aggregations.resource_types.buckets)
-    else
-      []
-    end
   end
 
   def published
