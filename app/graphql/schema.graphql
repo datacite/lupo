@@ -386,7 +386,7 @@ type Audiovisual implements DoiItem {
 """
 The connection type for Audiovisual.
 """
-type AudiovisualConnectionWithTotal {
+type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -395,6 +395,8 @@ type AudiovisualConnectionWithTotal {
   """
   edges: [AudiovisualEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -402,6 +404,7 @@ type AudiovisualConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Audiovisual]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -979,7 +982,7 @@ type BookChapter implements DoiItem {
 """
 The connection type for BookChapter.
 """
-type BookChapterConnectionWithTotal {
+type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -988,6 +991,8 @@ type BookChapterConnectionWithTotal {
   """
   edges: [BookChapterEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -995,6 +1000,7 @@ type BookChapterConnectionWithTotal {
   A list of nodes.
   """
   nodes: [BookChapter]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -1024,7 +1030,7 @@ type BookChapterEdge {
 """
 The connection type for Book.
 """
-type BookConnectionWithTotal {
+type BookConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1033,6 +1039,8 @@ type BookConnectionWithTotal {
   """
   edges: [BookEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1040,6 +1048,7 @@ type BookConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Book]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -1391,7 +1400,7 @@ type Collection implements DoiItem {
 """
 The connection type for Collection.
 """
-type CollectionConnectionWithTotal {
+type CollectionConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1400,6 +1409,8 @@ type CollectionConnectionWithTotal {
   """
   edges: [CollectionEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1407,12 +1418,14 @@ type CollectionConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Collection]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
   published: [Facet!]
+  registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
 }
@@ -1709,7 +1722,7 @@ type ConferencePaper implements DoiItem {
 """
 The connection type for ConferencePaper.
 """
-type ConferencePaperConnectionWithTotal {
+type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1718,6 +1731,8 @@ type ConferencePaperConnectionWithTotal {
   """
   edges: [ConferencePaperEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1725,6 +1740,7 @@ type ConferencePaperConnectionWithTotal {
   A list of nodes.
   """
   nodes: [ConferencePaper]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -2320,7 +2336,7 @@ type DataManagementPlan implements DoiItem {
 """
 The connection type for DataManagementPlan.
 """
-type DataManagementPlanConnectionWithTotal {
+type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -2329,6 +2345,8 @@ type DataManagementPlanConnectionWithTotal {
   """
   edges: [DataManagementPlanEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2336,6 +2354,7 @@ type DataManagementPlanConnectionWithTotal {
   A list of nodes.
   """
   nodes: [DataManagementPlan]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -2639,14 +2658,17 @@ type DataPaper implements DoiItem {
 """
 The connection type for DataPaper.
 """
-type DataPaperConnectionWithTotal {
+type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [DataPaperEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2654,6 +2676,7 @@ type DataPaperConnectionWithTotal {
   A list of nodes.
   """
   nodes: [DataPaper]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -3010,7 +3033,6 @@ type DatasetConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
-  resourceTypes: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
 }
@@ -3398,7 +3420,7 @@ type Dissertation implements DoiItem {
 """
 The connection type for Dissertation.
 """
-type DissertationConnectionWithTotal {
+type DissertationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -3407,6 +3429,8 @@ type DissertationConnectionWithTotal {
   """
   edges: [DissertationEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -3414,6 +3438,7 @@ type DissertationConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Dissertation]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -4946,13 +4971,17 @@ type Image implements DoiItem {
 """
 The connection type for Image.
 """
-type ImageConnectionWithTotal {
+type ImageConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ImageEdge]
+  fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -4960,6 +4989,7 @@ type ImageConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Image]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -5263,20 +5293,25 @@ type Instrument implements DoiItem {
 """
 The connection type for Instrument.
 """
-type InstrumentConnectionWithTotal {
+type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [InstrumentEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
+  languages: [Facet!]
   licenses: [Facet!]
 
   """
   A list of nodes.
   """
   nodes: [Instrument]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -5580,14 +5615,17 @@ type InteractiveResource implements DoiItem {
 """
 The connection type for InteractiveResource.
 """
-type InteractiveResourceConnectionWithTotal {
+type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [InteractiveResourceEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5595,6 +5633,7 @@ type InteractiveResourceConnectionWithTotal {
   A list of nodes.
   """
   nodes: [InteractiveResource]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -5903,14 +5942,17 @@ type JournalArticle implements DoiItem {
 """
 The connection type for JournalArticle.
 """
-type JournalArticleConnectionWithTotal {
+type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [JournalArticleEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5918,6 +5960,7 @@ type JournalArticleConnectionWithTotal {
   A list of nodes.
   """
   nodes: [JournalArticle]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -6517,14 +6560,17 @@ type Model implements DoiItem {
 """
 The connection type for Model.
 """
-type ModelConnectionWithTotal {
+type ModelConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ModelEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -6532,6 +6578,7 @@ type ModelConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Model]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -7007,14 +7054,17 @@ type Other implements DoiItem {
 """
 The connection type for Other.
 """
-type OtherConnectionWithTotal {
+type OtherConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [OtherEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7022,15 +7072,16 @@ type OtherConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Other]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -7350,14 +7401,17 @@ type PeerReview implements DoiItem {
 """
 The connection type for PeerReview.
 """
-type PeerReviewConnectionWithTotal {
+type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PeerReviewEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7365,6 +7419,7 @@ type PeerReviewConnectionWithTotal {
   A list of nodes.
   """
   nodes: [PeerReview]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -7805,14 +7860,17 @@ type PhysicalObject implements DoiItem {
 """
 The connection type for PhysicalObject.
 """
-type PhysicalObjectConnectionWithTotal {
+type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PhysicalObjectEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7820,6 +7878,7 @@ type PhysicalObjectConnectionWithTotal {
   A list of nodes.
   """
   nodes: [PhysicalObject]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -8176,14 +8235,17 @@ type Preprint implements DoiItem {
 """
 The connection type for Preprint.
 """
-type PreprintConnectionWithTotal {
+type PreprintConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PreprintEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -8191,6 +8253,7 @@ type PreprintConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Preprint]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -8494,8 +8557,9 @@ type Publication implements DoiItem {
 """
 The connection type for Publication.
 """
-type PublicationConnectionWithTotal {
+type PublicationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -8503,6 +8567,8 @@ type PublicationConnectionWithTotal {
   """
   edges: [PublicationEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -8511,6 +8577,7 @@ type PublicationConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Publication]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -9457,14 +9524,17 @@ type Service implements DoiItem {
 """
 The connection type for Service.
 """
-type ServiceConnectionWithTotal {
+type ServiceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ServiceEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -9472,6 +9542,7 @@ type ServiceConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Service]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -9801,8 +9872,9 @@ type SoftwareApplication {
 """
 The connection type for Software.
 """
-type SoftwareConnectionWithTotal {
+type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -9810,6 +9882,8 @@ type SoftwareConnectionWithTotal {
   """
   edges: [SoftwareEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -9818,6 +9892,7 @@ type SoftwareConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Software]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -10125,14 +10200,17 @@ type Sound implements DoiItem {
 """
 The connection type for Sound.
 """
-type SoundConnectionWithTotal {
+type SoundConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [SoundEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10140,6 +10218,7 @@ type SoundConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Sound]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -10715,7 +10794,7 @@ interface WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
-  resourceTypes: [Facet!]
+  totalCount: Int!
 }
 
 type Workflow implements DoiItem {
@@ -10995,7 +11074,7 @@ type Workflow implements DoiItem {
 """
 The connection type for Workflow.
 """
-type WorkflowConnectionWithTotal {
+type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -11004,6 +11083,8 @@ type WorkflowConnectionWithTotal {
   """
   edges: [WorkflowEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -11011,6 +11092,7 @@ type WorkflowConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Workflow]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
