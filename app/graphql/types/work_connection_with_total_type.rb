@@ -2,9 +2,8 @@
 
 class WorkConnectionWithTotalType < BaseConnection
   edge_type(WorkEdgeType)
-  implements Interfaces::WorkFacetsInterface
-
   field_class GraphQL::Cache::Field
+  implements Interfaces::WorkFacetsInterface
 
   field :totalCountFromCrossref,
         resolver: TotalCountFromCrossref, null: true, cache: true

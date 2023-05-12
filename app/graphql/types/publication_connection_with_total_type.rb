@@ -3,7 +3,7 @@
 class PublicationConnectionWithTotalType < BaseConnection
   edge_type(PublicationEdgeType)
   field_class GraphQL::Cache::Field
-  implements Interfaces::WorkFacetsInterfacet
+  implements Interfaces::WorkFacetsInterface
 
   field :publication_connection_count, Integer, null: false, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
