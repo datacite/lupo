@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Interfaces::WorkFacetsInterface
   include BaseInterface
   field_class GraphQL::Cache::Field
@@ -118,5 +120,4 @@ module Interfaces::WorkFacetsInterface
       []
     end
   end
-
 end

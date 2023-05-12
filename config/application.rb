@@ -78,8 +78,6 @@ module Lupo
                      eager_load: true
     config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
                      eager_load: true
-    #config.paths.add Rails.root.join("app", "graphql", "types", "interfaces").to_s,
-                     #eager_load: true
 
     # Allow middleware to be loaded. (compressed_requests)
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
