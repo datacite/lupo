@@ -164,6 +164,14 @@ class ApplicationController < ActionController::API
     Bullet.enable = previous_value
   end
 
+  def serve_manifest
+    send_file(
+      "#{Rails.root}/.well-known/ai-plugin.json",
+      type: "application/json",
+      disposition: "inline"
+    )
+  end
+
   protected
     def is_admin_or_staff?
       current_user&.is_admin_or_staff? ? 1 : 0
