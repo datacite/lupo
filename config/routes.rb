@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
   ## to route when requesting .well-known/ai-plugin.json to route to that file
   get "/.well-known/ai-plugin.json", to: "application#serve_manifest"
+  get "/graphql-openapi.yaml", to: "application#serve_openapi_spec"
 
   # content negotiation via index path
   get "/application/vnd.datacite.datacite+xml/:id",

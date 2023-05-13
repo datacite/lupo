@@ -1,7 +1,7 @@
 {
   "schema_version": "v1",
   "name_for_human": "Science Knowledge Graph",
-  "name_for_model": "Science Knowledge Graph",
+  "name_for_model": "science_knowledge_graph",
   "description_for_human": "Plugin for discoverying scientific knowledge. You can search for papers, authors, datasets and software.",
   "description_for_model": "Plugin for discoverying scientific knowledge. You can search for papers, authors, datasets and software.",
   "auth": {
@@ -9,7 +9,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://raw.githubusercontent.com/kjgarza/science-knowledge-graph-gpt-plugin/master/openapi.yaml",
+    "url": "http://localhost:8065/graphql-openapi.yaml",
     "is_user_authenticated": false
   },
   "logo_url": "https://datacite.org/assets/DataCite-Logo_Schwoop.png",

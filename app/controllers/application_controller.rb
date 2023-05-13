@@ -172,6 +172,14 @@ class ApplicationController < ActionController::API
     )
   end
 
+  def serve_openapi_spec
+    send_file(
+      "#{Rails.root}/graphql-openapi.yaml",
+      type: "text/yaml",
+      disposition: "inline"
+    )
+  end
+
   protected
     def is_admin_or_staff?
       current_user&.is_admin_or_staff? ? 1 : 0
