@@ -165,19 +165,11 @@ class ApplicationController < ActionController::API
   end
 
   def serve_manifest
-    send_file(
-      "#{Rails.root}/.well-known/ai-plugin.json",
-      type: "application/json",
-      disposition: "inline"
-    )
+    redirect_to ENV["PLUGIN_MANIFEST_URL"] || "https://api.datacite.org"
   end
 
   def serve_openapi_spec
-    send_file(
-      "#{Rails.root}/graphql-openapi.yaml",
-      type: "text/yaml",
-      disposition: "inline"
-    )
+    redirect_to ENV["PLUGIN_OPENAPI_URL"] || "https://api.datacite.org"
   end
 
   protected
