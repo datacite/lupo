@@ -83,6 +83,8 @@ module Lupo
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
     config.autoload_paths += %W(#{config.root}/app/graphql/types )
     config.eager_load_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
+    config.eager_load_paths += %W(#{config.root}/app/graphql/types )
+
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
