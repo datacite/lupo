@@ -72,6 +72,8 @@ module Lupo
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
                      eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "types", "interfaces").to_s,
+                     eager_load: true
     config.paths.add Rails.root.join("app", "graphql", "mutations").to_s,
                      eager_load: true
     config.paths.add Rails.root.join("app", "graphql", "connections").to_s,
