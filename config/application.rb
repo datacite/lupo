@@ -72,8 +72,6 @@ module Lupo
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
                      eager_load: true
-    config.paths.add Rails.root.join("app", "graphql", "types", "interfaces").to_s,
-                     eager_load: true
     config.paths.add Rails.root.join("app", "graphql", "mutations").to_s,
                      eager_load: true
     config.paths.add Rails.root.join("app", "graphql", "connections").to_s,
@@ -83,9 +81,9 @@ module Lupo
 
     # Allow middleware to be loaded. (compressed_requests)
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    config.autoload_paths += %W(#{config.root}/app/graphql/types )
+    config.autoload_paths += %W(#{config.root}/app/graphql/types)
     config.eager_load_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    config.eager_load_paths += %W(#{config.root}/app/graphql/types )
+    config.eager_load_paths += %W(#{config.root}/app/graphql/types)
 
 
     # Settings in config/environments/* take precedence over those specified here.
