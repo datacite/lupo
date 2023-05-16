@@ -1759,6 +1759,17 @@ components:
                 bodyhasPid:
                   type: boolean
         - $ref: '#/components/schemas/DoiDateAttributes'
+    DoiDataObject:
+        type: object
+        properties:
+          id:
+            type: string
+          type:
+            type: string
+    DoiDataArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/DoiDataObject'
     DoiArray:
       description: >-
         Represents a list of DOIs and provides access to metadata attributes, further
@@ -1777,6 +1788,14 @@ components:
                 enum: [dois]
               attributes:
                   $ref: '#/components/schemas/DoiArrayAttributes'
+              relationships:
+                type: object
+                properties:
+                  client:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataObject'
             required:
               - type
       example:
@@ -1816,6 +1835,54 @@ components:
               enum: [dois]
             attributes:
                 $ref: '#/components/schemas/DoiItemAttributes'
+            relationships:
+                type: object
+                properties:
+                  client:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataObject'
+                  provider:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataObject'
+                  media:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataObject'
+                  references:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
+                  citations:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
+                  parts:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
+                  partOf:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
+                  versions:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
+                  versionOf:
+                    type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/DoiDataArray'
           required:
             - type
       example:
