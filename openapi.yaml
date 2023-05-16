@@ -1770,6 +1770,19 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/DoiDataObject'
+    DoiMetaObject:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        count:
+          type: number
+    DoiMetaArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/DoiMetaObject'
     DoiArray:
       description: >-
         Represents a list of DOIs and provides access to metadata attributes, further
@@ -1798,6 +1811,58 @@ components:
                         $ref: '#/components/schemas/DoiDataObject'
             required:
               - type
+        meta:
+          type: object
+          properties:
+            total:
+              type: number
+            totalPages:
+              type: number
+            page:
+              type: number
+            states:
+               $ref: '#/components/schemas/DoiMetaArray'
+            resourceTypes:
+               $ref: '#/components/schemas/DoiMetaArray'
+            created:
+               $ref: '#/components/schemas/DoiMetaArray'
+            published:
+               $ref: '#/components/schemas/DoiMetaArray'
+            registered:
+               $ref: '#/components/schemas/DoiMetaArray'
+            providers:
+               $ref: '#/components/schemas/DoiMetaArray'
+            clients:
+               $ref: '#/components/schemas/DoiMetaArray'
+            affiliations:
+               $ref: '#/components/schemas/DoiMetaArray'
+            prefixes:
+               $ref: '#/components/schemas/DoiMetaArray'
+            certificates:
+               $ref: '#/components/schemas/DoiMetaArray'
+            licenses:
+               $ref: '#/components/schemas/DoiMetaArray'
+            schemaVersions:
+               $ref: '#/components/schemas/DoiMetaArray'
+            linkChecksStatus:
+               $ref: '#/components/schemas/DoiMetaArray'
+            subjects:
+               $ref: '#/components/schemas/DoiMetaArray'
+            fieldsOfScience:
+               $ref: '#/components/schemas/DoiMetaArray'
+            citations:
+               $ref: '#/components/schemas/DoiMetaArray'
+            views:
+               $ref: '#/components/schemas/DoiMetaArray'
+            downloads:
+               $ref: '#/components/schemas/DoiMetaArray'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+            next:
+              type: string
       example:
         data:
           type: dois
