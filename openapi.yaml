@@ -1821,23 +1821,30 @@ components:
                 url:
                   type: string
                 contentUrl:
+                  readOnly: true
                   type: array
                   items:
                     type: string
                 metadataVersion:
+                  readOnly: true
                   type: number
                 schemaVersion:
+                  readOnly: true
                   type: string
                 source:
+                  readOnly: true
                   type: string
                 isActive:
+                  readOnly: true
                   type: boolean
                 state:
                   readOnly: true
                   type: string
                 reason:
+                  readOnly: true
                   type: string
                 landingPage:
+                  readOnly: true
                   description: 'Data describing the landing page, used by link checking.'
                   type: object
                   properties:
