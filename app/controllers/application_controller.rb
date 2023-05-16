@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'open-uri'
+
+require "open-uri"
 
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Basic::ControllerMethods
@@ -170,7 +171,7 @@ class ApplicationController < ActionController::API
     data = URI.open(url).read
 
     send_data(
-       data, 
+      data,
       type: "application/json",
       disposition: "inline"
     )
@@ -179,11 +180,11 @@ class ApplicationController < ActionController::API
   def serve_openapi_spec
     url = ENV["PLUGIN_OPENAPI_URL"] || "https://api.datacite.org"
     data = URI.open(url).read
-  
+
     send_data(
-       data, 
-       type: 'text/yaml', 
-       disposition: 'inline'
+      data,
+      type: 'text/yaml',
+      disposition: 'inline'
     )
   end
 
