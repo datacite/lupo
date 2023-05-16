@@ -8,9 +8,10 @@
 
 # Rails.application.config.middleware.insert_before 0, Rack::Cors do
 #   allow do
-#     origins ""  # replace with your actual trusted sites
-#     resource "graphql",
-#       headers: "*",
-#       methods: [:get, :post, :head, :options]
+#     origins 'example.com'
+#
+#     resource '*',
+#       headers: :any,
+#       methods: [:get, :post, :put, :patch, :delete, :options, :head]
 #   end
 # end
