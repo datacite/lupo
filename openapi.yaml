@@ -1608,6 +1608,8 @@ components:
                         type: string
                       awardTitle:
                         type: string
+                xml:
+                  type: string
                 relatedItems:
                   type: array
                   items:
