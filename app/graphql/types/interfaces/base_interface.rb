@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module BaseInterface
+module Interfaces::BaseInterface
   include GraphQL::Schema::Interface
 end
