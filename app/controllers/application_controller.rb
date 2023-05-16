@@ -173,11 +173,12 @@ class ApplicationController < ActionController::API
   end
 
   def serve_openapi_spec
-    send_file(
-      "#{Rails.root}/graphql-openapi.yaml",
-      type: "text/yaml",
-      disposition: "inline"
-    )
+    redirect_to ENV["PLUGIN_OPENAPI_URL"] || "https://api.datacite.org"
+    # send_file(
+    #   "#{Rails.root}/graphql-openapi.yaml",
+    #   type: "text/yaml",
+    #   disposition: "inline"
+    # )
   end
 
   protected
