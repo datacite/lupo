@@ -183,8 +183,8 @@ class ApplicationController < ActionController::API
 
     send_data(
       data,
-      type: 'text/yaml',
-      disposition: 'inline'
+      type: "text/yaml",
+      disposition: "inline"
     )
   end
 
