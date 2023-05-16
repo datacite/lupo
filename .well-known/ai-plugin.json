@@ -9,7 +9,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "http://api.stage.datacite.org/graphql-openapi.yaml",
+    "url": "https://api.stage.datacite.org/graphql-openapi.yaml",
     "is_user_authenticated": false
   },
   "logo_url": "https://datacite.org/assets/DataCite-Logo_Schwoop.png",
