@@ -1413,6 +1413,15 @@ components:
                     type: string
                   identifierType:
                     type: string
+            alternateIdentifiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  alternateIdentifierType:
+                    type: string
+                  alternateIdentifier:
+                    type: string
         - $ref: '#/components/schemas/DoiPropertiesMetadata'
         - type: object
           properties:
