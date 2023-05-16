@@ -1611,6 +1611,60 @@ components:
                 reason:
                   readOnly: true
                   type: string
+                viewCount:
+                  readOnly: true
+                  type: number
+                # viewsOverTime:
+                #   readOnly: true
+                #   type: array
+                #   items:
+                #     type: object
+                #     properties:
+                #       yearMonth:
+                #         type: string
+                #       total:
+                #         type: number
+                downloadCount:
+                  readOnly: true
+                  type: number
+                # downloadsOverTime:
+                #   readOnly: true
+                #   type: array
+                #   items:
+                #     type: object
+                #     properties:
+                #       yearMonth:
+                #         type: string
+                #       total:
+                #         type: number
+                referenceCount:
+                  readOnly: true
+                  type: number
+                citationCount:
+                  readOnly: true
+                  type: number
+                # citationsOverTime:
+                #   readOnly: true
+                #   type: array
+                #   items:
+                #     type: object
+                #     properties:
+                #       yearMonth:
+                #         type: string
+                #       total:
+                #         type: number
+                partCount:
+                  readOnly: true
+                  type: number
+                partOfCount:
+                  readOnly: true
+                  type: number
+                versionCount:
+                  readOnly: true
+                  type: number
+                versionOfCount:
+                  readOnly: true
+                  type: number
                 landingPage:
                   readOnly: true
                   description: 'Data describing the landing page, used by link checking.'
