@@ -1,0 +1,61 @@
+name: Update Terraform
+on:
+  workflow_call:
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: true
+    inputs:
+      image_tag:
+        description: Tag for the image for docker/ghcr registries
+        required: true
+        type: string
+      deployment_environment:
+        description: The terraform target environment
+        required: true
+        type: string
+        default: staging
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      GIT_SHA: ${{ github.sha }}
+      GIT_TAG: ${{ inputs.image_tag }}
+    steps:
+      - name: Checkout terraform config repo
+        uses: actions/checkout@v3
+        with:
+          # public repo with terraform configuration
+          repository: 'datacite/mastino'
+          persist-credentials: false
+      - name: Setup dokerize and template parameters
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz
+          tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz
+          rm dockerize-linux-amd64-v0.6.0.tar.gz
+
+      - name: Conditionally update staging environment
+        if: ${{ (inputs.deployment_environment == 'staging') }}
+        run: |
+          ./dockerize -template stage/services/client-api/_lupo.auto.tfvars.tmpl:stage/services/client-api/_lupo.auto.tfvars
+          git add stage/services/client-api/_lupo.auto.tfvars
+          git commit -m "Adding lupo git variables for commit ${{ github.sha }}"
+
+      - name: Conditionally update production/test environments
+        if: ${{ (inputs.deployment_environment == 'production') }}
+        run: |
+          ./dockerize -template prod-eu-west/services/client-api/_lupo.auto.tfvars.tmpl:prod-eu-west/services/client-api/_lupo.auto.tfvars
+          ./dockerize -template test/services/client-api/_lupo.auto.tfvars.tmpl:test/services/client-api/_lupo.auto.tfvars
+
+          git add prod-eu-west/services/client-api/_lupo.auto.tfvars
+          git add test/services/client-api/_lupo.auto.tfvars
+          git commit -m "Adding lupo git variables for tag ${{ inputs.image_tag }}"
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: 'datacite/mastino'
+          branch: 'refs/heads/master'
+          tags: false
+

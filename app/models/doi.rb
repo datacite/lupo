@@ -141,6 +141,8 @@ class Doi < ApplicationRecord
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
+  FIELD_OF_SCIENCE_SCHEME = "Fields of Science and Technology (FOS)"
+
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
   # use different index for testing
@@ -408,6 +410,14 @@ class Doi < ApplicationRecord
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
+        subjects: { type: :object, properties: {
+          subjectScheme: { type: :keyword },
+          subject: { type: :keyword },
+          schemeUri: { type: :keyword },
+          valueUri: { type: :keyword },
+          lang: { type: :keyword },
+          classificationCode: { type: :keyword },
+        } }
       }
       indexes :provider, type: :object, properties: {
         id: { type: :keyword },
@@ -512,6 +522,9 @@ class Doi < ApplicationRecord
         titleType: { type: :keyword },
         lang: { type: :keyword },
       }
+      indexes :fields_of_science, type: :keyword
+      indexes :fields_of_science_combined, type: :keyword
+      indexes :fields_of_science_repository, type: :keyword
     end
   end
 
@@ -567,6 +580,9 @@ class Doi < ApplicationRecord
       "sizes" => Array.wrap(sizes),
       "language" => language,
       "subjects" => Array.wrap(subjects),
+      "fields_of_science" => fields_of_science,
+      "fields_of_science_repository" => fields_of_science_repository,
+      "fields_of_science_combined" => fields_of_science_combined,
       "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
@@ -647,6 +663,12 @@ class Doi < ApplicationRecord
             subject: { terms: { field: "subjects.subject", size: facet_count, min_doc_count: 1,
                                 include: "FOS:.*" } },
           },
+        },
+        fields_of_science_combined: {
+          terms: { field: "fields_of_science_combined", size: facet_count, min_doc_count: 1 }
+        },
+        fields_of_science_repository: {
+          terms: { field: "fields_of_science_repository", size: facet_count, min_doc_count: 1 }
         },
         licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1 } },
         languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
@@ -913,6 +935,12 @@ class Doi < ApplicationRecord
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
+    end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
@@ -1114,6 +1142,12 @@ class Doi < ApplicationRecord
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+    end
+    if options[:field_of_science_repository].present?
+      filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+    end
+    if options[:field_of_science_combined].present?
+      filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
     end
     filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
@@ -1710,6 +1744,26 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
+  end
+
+  def _fos_filter(subject_array)
+    Array.wrap(subject_array).select { |sub|
+      sub.dig("subjectScheme") == FIELD_OF_SCIENCE_SCHEME
+    }.map do |fos|
+      fos["subject"].gsub("FOS: ", "")
+    end
+  end
+
+  def fields_of_science
+    _fos_filter(subjects).uniq
+  end
+
+  def fields_of_science_repository
+    _fos_filter(client&.subjects).uniq
+  end
+
+  def fields_of_science_combined
+    fields_of_science | fields_of_science_repository
   end
 
   def client_id_and_name

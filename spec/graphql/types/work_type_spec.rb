@@ -1201,4 +1201,148 @@ describe WorkType do
       )
     end
   end
+
+  describe "query works with repository subjects" do
+    before :all do
+      SLEEP_TIME = 2
+      WORK_COUNT = 10
+
+      DataciteDoi.import(force: true)
+      Client.import(force: true)
+      Prefix.import(force: true)
+      ClientPrefix.import(force: true)
+      ReferenceRepository.import(force: true)
+      Event.import(force: true)
+
+      search_query = '
+        fragment facetFields on Facet {
+          id
+          title
+          count
+        }
+        query{
+          works(query:"*"){
+            totalCount
+            fieldsOfScience { ...facetFields }
+            fieldsOfScienceRepository { ...facetFields }
+            fieldsOfScienceCombined{ ...facetFields }
+          }
+        }
+      '
+
+      create(:prefix)
+      client = create(:client_with_fos)
+      create_list(:doi, WORK_COUNT,
+        aasm_state: "findable",
+        client: client
+      )
+      Doi.import
+      sleep SLEEP_TIME
+      @facet_response = LupoSchema.execute(search_query).as_json
+      Rails.logger.level = :fatal
+      DataciteDoi.destroy_all
+      ReferenceRepository.destroy_all
+      Client.destroy_all
+      Provider.destroy_all
+      Prefix.destroy_all
+      ClientPrefix.destroy_all
+      ProviderPrefix.destroy_all
+      Event.destroy_all
+    end
+
+    let (:fos_facet) do
+      {
+        "id" => "physical_sciences",
+        "title" => "Physical sciences",
+        "count" => WORK_COUNT
+      }
+    end
+
+    it "has all dois in the search results" do
+      response = @facet_response
+      expect(response.dig("data", "works", "totalCount")).to eq(WORK_COUNT)
+    end
+
+    it "returns Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScience")
+      ).to match_array([])
+    end
+
+    it "returns Field of Science Facets from the repository" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceRepository")
+      ).to match_array([ fos_facet ])
+    end
+
+    it "returns combined Field of Science Facets" do
+      response = @facet_response
+      expect(
+        response.dig("data", "works", "fieldsOfScienceCombined")
+      ).to match_array([ fos_facet ])
+    end
+  end
+
+
+  describe "get formatted citation", elasticsearch: true do
+    let!(:work_one) do
+      create(
+        :doi,
+        doi: "10.14454/X45ZNPCOA",
+        aasm_state: "findable",
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_works) do
+      '
+      query (
+        $id: ID!
+        $format: CitationFormat
+        ){
+          work(id:$id) {
+            id
+            formattedCitation(format: $format)
+            publicationYear
+          }
+        }
+      '
+    end
+
+    it "returns formatted citation in html" do
+      response = LupoSchema.execute(
+        query_works, variables: { id: work_one.doi }
+      ).as_json
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
+      )
+    end
+
+    it "returns formatted citation in plain text" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "text" }
+      ).as_json
+      expect(response.dig("data", "work", "formattedCitation")).to eq(
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
+      )
+    end
+
+    it "returns error for unknown citation format" do
+      response = LupoSchema.execute(
+        query_works,
+        variables: { id: work_one.doi, format: "unsupported" }
+      ).as_json
+      problem = response.dig("errors", 0, "extensions", "problems").first
+      expect(problem.dig("explanation")).to eq(
+        "Expected \"unsupported\" to be one of: html, text"
+      )
+    end
+  end
 end

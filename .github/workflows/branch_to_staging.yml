@@ -1,7 +1,6 @@
-name: Release to Production
+name: Build/Deploy Branch to Staging
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
@@ -20,5 +19,5 @@ jobs:
     uses: ./.github/workflows/_update_terraform.yml
     with:
       image_tag: ${{ github.ref_name }}
-      deployment_environment: production
+      deployment_environment: staging
     secrets: inherit

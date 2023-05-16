@@ -5,6 +5,8 @@ class ContactsController < ApplicationController
 
   before_action :set_contact, only: %i[show update destroy]
   before_action :authenticate_user!
+  before_action :set_include
+
   after_action :set_provider_contacts, only: %i[create update]
   after_action :remove_provider_contacts, only: %i[destroy]
   load_and_authorize_resource

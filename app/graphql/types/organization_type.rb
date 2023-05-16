@@ -203,7 +203,7 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
-    argument :first, Int, required: false, default_value: 2
+    argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
 

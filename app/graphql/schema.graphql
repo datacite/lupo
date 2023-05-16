@@ -187,6 +187,16 @@ type Audiovisual implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -194,7 +204,7 @@ type Audiovisual implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -376,7 +386,7 @@ type Audiovisual implements DoiItem {
 """
 The connection type for Audiovisual.
 """
-type AudiovisualConnectionWithTotal {
+type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -385,6 +395,8 @@ type AudiovisualConnectionWithTotal {
   """
   edges: [AudiovisualEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -392,6 +404,7 @@ type AudiovisualConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Audiovisual]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -496,6 +509,16 @@ type Book implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -503,7 +526,7 @@ type Book implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -760,6 +783,16 @@ type BookChapter implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -767,7 +800,7 @@ type BookChapter implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -949,7 +982,7 @@ type BookChapter implements DoiItem {
 """
 The connection type for BookChapter.
 """
-type BookChapterConnectionWithTotal {
+type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -958,6 +991,8 @@ type BookChapterConnectionWithTotal {
   """
   edges: [BookChapterEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -965,6 +1000,7 @@ type BookChapterConnectionWithTotal {
   A list of nodes.
   """
   nodes: [BookChapter]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -994,7 +1030,7 @@ type BookChapterEdge {
 """
 The connection type for Book.
 """
-type BookConnectionWithTotal {
+type BookConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1003,6 +1039,8 @@ type BookConnectionWithTotal {
   """
   edges: [BookEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1010,6 +1048,7 @@ type BookConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Book]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -1034,6 +1073,14 @@ type BookEdge {
   The item at the end of the edge.
   """
   node: Book
+}
+
+"""
+Citation formats
+"""
+enum CitationFormat {
+  html
+  text
 }
 
 """
@@ -1154,6 +1201,16 @@ type Collection implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1161,7 +1218,7 @@ type Collection implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -1343,7 +1400,7 @@ type Collection implements DoiItem {
 """
 The connection type for Collection.
 """
-type CollectionConnectionWithTotal {
+type CollectionConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1352,6 +1409,8 @@ type CollectionConnectionWithTotal {
   """
   edges: [CollectionEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1359,12 +1418,14 @@ type CollectionConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Collection]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
   published: [Facet!]
+  registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
 }
@@ -1462,6 +1523,16 @@ type ConferencePaper implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1469,7 +1540,7 @@ type ConferencePaper implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -1651,7 +1722,7 @@ type ConferencePaper implements DoiItem {
 """
 The connection type for ConferencePaper.
 """
-type ConferencePaperConnectionWithTotal {
+type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -1660,6 +1731,8 @@ type ConferencePaperConnectionWithTotal {
   """
   edges: [ConferencePaperEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1667,6 +1740,7 @@ type ConferencePaperConnectionWithTotal {
   A list of nodes.
   """
   nodes: [ConferencePaper]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -2063,6 +2137,16 @@ type DataManagementPlan implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2070,7 +2154,7 @@ type DataManagementPlan implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2252,7 +2336,7 @@ type DataManagementPlan implements DoiItem {
 """
 The connection type for DataManagementPlan.
 """
-type DataManagementPlanConnectionWithTotal {
+type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -2261,6 +2345,8 @@ type DataManagementPlanConnectionWithTotal {
   """
   edges: [DataManagementPlanEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2268,6 +2354,7 @@ type DataManagementPlanConnectionWithTotal {
   A list of nodes.
   """
   nodes: [DataManagementPlan]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -2372,6 +2459,16 @@ type DataPaper implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2379,7 +2476,7 @@ type DataPaper implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2561,14 +2658,17 @@ type DataPaper implements DoiItem {
 """
 The connection type for DataPaper.
 """
-type DataPaperConnectionWithTotal {
+type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [DataPaperEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2576,6 +2676,7 @@ type DataPaperConnectionWithTotal {
   A list of nodes.
   """
   nodes: [DataPaper]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -2680,6 +2781,16 @@ type Dataset implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2687,7 +2798,7 @@ type Dataset implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -2890,7 +3001,7 @@ type Dataset implements DoiItem {
 """
 The connection type for Dataset.
 """
-type DatasetConnectionWithTotal {
+type DatasetConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
   datasetConnectionCount: Int!
@@ -2900,6 +3011,8 @@ type DatasetConnectionWithTotal {
   """
   edges: [DatasetEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -2908,6 +3021,7 @@ type DatasetConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Dataset]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -3107,6 +3221,16 @@ type Dissertation implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3114,7 +3238,7 @@ type Dissertation implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -3296,7 +3420,7 @@ type Dissertation implements DoiItem {
 """
 The connection type for Dissertation.
 """
-type DissertationConnectionWithTotal {
+type DissertationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -3305,6 +3429,8 @@ type DissertationConnectionWithTotal {
   """
   edges: [DissertationEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -3312,6 +3438,7 @@ type DissertationConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Dissertation]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -3419,6 +3546,16 @@ interface DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3426,7 +3563,7 @@ interface DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -3733,6 +3870,16 @@ type Event implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3740,7 +3887,7 @@ type Event implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -4026,6 +4173,16 @@ type EventData implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4033,7 +4190,7 @@ type EventData implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -4615,6 +4772,16 @@ type Image implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4622,7 +4789,7 @@ type Image implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -4804,13 +4971,17 @@ type Image implements DoiItem {
 """
 The connection type for Image.
 """
-type ImageConnectionWithTotal {
+type ImageConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ImageEdge]
+  fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -4818,6 +4989,7 @@ type ImageConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Image]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -4922,6 +5094,16 @@ type Instrument implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4929,7 +5111,7 @@ type Instrument implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5111,20 +5293,25 @@ type Instrument implements DoiItem {
 """
 The connection type for Instrument.
 """
-type InstrumentConnectionWithTotal {
+type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [InstrumentEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
+  languages: [Facet!]
   licenses: [Facet!]
 
   """
   A list of nodes.
   """
   nodes: [Instrument]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -5229,6 +5416,16 @@ type InteractiveResource implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5236,7 +5433,7 @@ type InteractiveResource implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5418,14 +5615,17 @@ type InteractiveResource implements DoiItem {
 """
 The connection type for InteractiveResource.
 """
-type InteractiveResourceConnectionWithTotal {
+type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [InteractiveResourceEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5433,6 +5633,7 @@ type InteractiveResourceConnectionWithTotal {
   A list of nodes.
   """
   nodes: [InteractiveResource]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -5542,6 +5743,16 @@ type JournalArticle implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5549,7 +5760,7 @@ type JournalArticle implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -5731,14 +5942,17 @@ type JournalArticle implements DoiItem {
 """
 The connection type for JournalArticle.
 """
-type JournalArticleConnectionWithTotal {
+type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [JournalArticleEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5746,6 +5960,7 @@ type JournalArticleConnectionWithTotal {
   A list of nodes.
   """
   nodes: [JournalArticle]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -6146,6 +6361,16 @@ type Model implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6153,7 +6378,7 @@ type Model implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -6335,14 +6560,17 @@ type Model implements DoiItem {
 """
 The connection type for Model.
 """
-type ModelConnectionWithTotal {
+type ModelConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ModelEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -6350,6 +6578,7 @@ type ModelConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Model]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -6504,7 +6733,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -6626,6 +6855,16 @@ type Other implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6633,7 +6872,7 @@ type Other implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -6815,14 +7054,17 @@ type Other implements DoiItem {
 """
 The connection type for Other.
 """
-type OtherConnectionWithTotal {
+type OtherConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [OtherEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -6830,15 +7072,16 @@ type OtherConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Other]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -6959,6 +7202,16 @@ type PeerReview implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6966,7 +7219,7 @@ type PeerReview implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7148,14 +7401,17 @@ type PeerReview implements DoiItem {
 """
 The connection type for PeerReview.
 """
-type PeerReviewConnectionWithTotal {
+type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PeerReviewEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7163,6 +7419,7 @@ type PeerReviewConnectionWithTotal {
   A list of nodes.
   """
   nodes: [PeerReview]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -7404,6 +7661,16 @@ type PhysicalObject implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7411,7 +7678,7 @@ type PhysicalObject implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7593,14 +7860,17 @@ type PhysicalObject implements DoiItem {
 """
 The connection type for PhysicalObject.
 """
-type PhysicalObjectConnectionWithTotal {
+type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PhysicalObjectEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7608,6 +7878,7 @@ type PhysicalObjectConnectionWithTotal {
   A list of nodes.
   """
   nodes: [PhysicalObject]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -7765,6 +8036,16 @@ type Preprint implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7772,7 +8053,7 @@ type Preprint implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -7954,14 +8235,17 @@ type Preprint implements DoiItem {
 """
 The connection type for Preprint.
 """
-type PreprintConnectionWithTotal {
+type PreprintConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [PreprintEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7969,6 +8253,7 @@ type PreprintConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Preprint]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -8073,6 +8358,16 @@ type Publication implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8080,7 +8375,7 @@ type Publication implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -8262,8 +8557,9 @@ type Publication implements DoiItem {
 """
 The connection type for Publication.
 """
-type PublicationConnectionWithTotal {
+type PublicationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -8271,6 +8567,8 @@ type PublicationConnectionWithTotal {
   """
   edges: [PublicationEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -8279,6 +8577,7 @@ type PublicationConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Publication]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -8395,7 +8694,7 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -9026,6 +9325,16 @@ type Service implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9033,7 +9342,7 @@ type Service implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -9215,14 +9524,17 @@ type Service implements DoiItem {
 """
 The connection type for Service.
 """
-type ServiceConnectionWithTotal {
+type ServiceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [ServiceEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -9230,6 +9542,7 @@ type ServiceConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Service]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -9335,6 +9648,16 @@ type Software implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9342,7 +9665,7 @@ type Software implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -9549,8 +9872,9 @@ type SoftwareApplication {
 """
 The connection type for Software.
 """
-type SoftwareConnectionWithTotal {
+type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -9558,6 +9882,8 @@ type SoftwareConnectionWithTotal {
   """
   edges: [SoftwareEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
   languages: [Facet!]
   licenses: [Facet!]
@@ -9566,6 +9892,7 @@ type SoftwareConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Software]
+  openLicenseResourceTypes: [Facet!]
   organizationConnectionCount: Int!
 
   """
@@ -9674,6 +10001,16 @@ type Sound implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -9681,7 +10018,7 @@ type Sound implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -9863,14 +10200,17 @@ type Sound implements DoiItem {
 """
 The connection type for Sound.
 """
-type SoundConnectionWithTotal {
+type SoundConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
+  authors: [Facet!]
 
   """
   A list of edges.
   """
   edges: [SoundEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -9878,6 +10218,7 @@ type SoundConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Sound]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
@@ -10193,6 +10534,16 @@ type Work implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10200,7 +10551,7 @@ type Work implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -10382,7 +10733,7 @@ type Work implements DoiItem {
 """
 The connection type for Work.
 """
-type WorkConnectionWithTotal {
+type WorkConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -10391,6 +10742,8 @@ type WorkConnectionWithTotal {
   """
   edges: [WorkEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10427,6 +10780,21 @@ type WorkEdge {
   The item at the end of the edge.
   """
   node: Work
+}
+
+interface WorkFacetsInterface {
+  affiliations: [Facet!]
+  authors: [Facet!]
+  fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
+  openLicenseResourceTypes: [Facet!]
+  published: [Facet!]
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
 }
 
 type Workflow implements DoiItem {
@@ -10507,6 +10875,16 @@ type Workflow implements DoiItem {
   fieldsOfScience: [FieldOfScience!]
 
   """
+  OECD Fields of Science of the resource and containing repository
+  """
+  fieldsOfScienceCombined: [FieldOfScience!]
+
+  """
+  OECD Fields of Science of the containing repository
+  """
+  fieldsOfScienceRepository: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -10514,7 +10892,7 @@ type Workflow implements DoiItem {
   """
   Metadata as formatted citation
   """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+  formattedCitation(format: CitationFormat = html, locale: String = "en-US", style: String = "apa"): String
 
   """
   Information about financial support (funding) for the resource being registered
@@ -10696,7 +11074,7 @@ type Workflow implements DoiItem {
 """
 The connection type for Workflow.
 """
-type WorkflowConnectionWithTotal {
+type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
 
@@ -10705,6 +11083,8 @@ type WorkflowConnectionWithTotal {
   """
   edges: [WorkflowEdge]
   fieldsOfScience: [Facet!]
+  fieldsOfScienceCombined: [Facet!]
+  fieldsOfScienceRepository: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10712,6 +11092,7 @@ type WorkflowConnectionWithTotal {
   A list of nodes.
   """
   nodes: [Workflow]
+  openLicenseResourceTypes: [Facet!]
 
   """
   Information to aid in pagination.
