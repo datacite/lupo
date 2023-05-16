@@ -485,7 +485,7 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiArray'
     post:
       tags:
         - dois
@@ -498,7 +498,7 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiItem'
       responses:
         '201':
           description: Created
@@ -520,7 +520,7 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiItem'
     put:
       parameters:
       - name: id
@@ -540,7 +540,7 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiItem'
       responses:
         '200':
           description: OK
@@ -1196,9 +1196,613 @@ components:
                   type: number
                 changes:
                   type: object
-    Doi:
+    DoiMetadataAttributes:
+      type: object
+      properties:
+        creators:
+            type: array
+            items:
+              type: object
+              properties:
+                nameType:
+                  $ref: '#/components/schemas/nameType'
+                nameIdentifiers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nameIdentifier:
+                        type: string
+                      nameIdentifierScheme:
+                        type: string
+                      schemeUri:
+                        type: string
+                name:
+                  type: string
+                givenName:
+                  type: string
+                familyName:
+                  type: string
+                affiliation:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      affiliationIdentifier:
+                        type: string
+                      affiliationIdentifierScheme:
+                        type: string
+                      name:
+                        type: string
+                      schemeUri:
+                        type: string
+              required:
+                - name
+        titles:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              titleType:
+                $ref: '#/components/schemas/titleType'
+              lang:
+                type: string
+            required:
+              - title
+        publisher:
+          type: string
+        container:
+          readOnly: true
+          type: object
+          properties:
+            type:
+              type: string
+            identifier:
+              type: string
+            identifierType:
+              type: string
+            title:
+              type: string
+            volume:
+              type: string
+            issue:
+              type: string
+            firstPage:
+              type: string
+            lastPage:
+              type: string
+        publicationYear:
+          type: integer
+        subjects:
+          type: array
+          items:
+            type: object
+            properties:
+              subject:
+                type: string
+              subjectScheme:
+                type: string
+              schemeUri:
+                type: string
+              valueUri:
+                type: string
+              lang:
+                type: string
+        contributors:
+          type: array
+          items:
+            type: object
+            properties:
+              nameType:
+                $ref: '#/components/schemas/nameType'
+              nameIdentifiers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nameIdentifier:
+                      type: string
+                    nameIdentifierScheme:
+                      type: string
+                    schemeUri:
+                      type: string
+              name:
+                type: string
+              givenName:
+                type: string
+              familyName:
+                type: string
+              affiliation:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    affiliationIdentifier:
+                      type: string
+                    affiliationIdentifierScheme:
+                      type: string
+                    name:
+                      type: string
+                    schemeUri:
+                      type: string
+              contributorType:
+                $ref: '#/components/schemas/contributorType'
+        dates:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              dateType:
+                type: string
+                enum:
+                  - Accepted
+                  - Available
+                  - Copyrighted
+                  - Collected
+                  - Created
+                  - Issued
+                  - Submitted
+                  - Updated
+                  - Valid
+                  - Withdrawn
+                  - Other
+        language:
+          type: string
+        types:
+          type: object
+          properties:
+            resourceTypeGeneral:
+              $ref: '#/components/schemas/resourceTypeGeneral'
+            resourceType:
+              type: string
+            schemaOrg:
+              type: string
+            bibtex:
+              type: string
+            citeproc:
+              type: string
+            ris:
+              type: string
+          required:
+            - resourceTypeGeneral
+        relatedIdentifiers:
+          type: array
+          items:
+            type: object
+            properties:
+              relatedIdentifier:
+                type: string
+              relatedIdentifierType:
+                $ref: '#/components/schemas/relatedIdentifierType'
+              relationType:
+                $ref: '#/components/schemas/relationType'
+              resourceTypeGeneral:
+                $ref: '#/components/schemas/resourceTypeGeneral'
+        relatedItems:
+          type: array
+          items:
+            type: object
+            properties:
+              relatedItemType:
+                $ref: '#/components/schemas/resourceTypeGeneral'
+              relationType:
+                $ref: '#/components/schemas/relationType'
+              relatedItemIdentifier:
+                type: object
+                properties:
+                  relatedItemIdentifier:
+                    type: string
+                  relatedItemIdentifierType:
+                    $ref: '#/components/schemas/relatedIdentifierType'
+                  relatedMetadataScheme:
+                    type: string
+                  schemeURI:
+                    type: string
+                  schemeType:
+                    type: string
+              creators:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    givenName:
+                      type: string
+                    familyName:
+                      type: string
+                    nameType:
+                      $ref: '#/components/schemas/nameType'
+                  required:
+                    - name
+              titles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    titleType:
+                      $ref: '#/components/schemas/titleType'
+                  required:
+                    - title
+              volume:
+                type: string
+              issue:
+                type: string
+              number:
+                type: string
+              numberType:
+                type: string
+                enum:
+                  - Article
+                  - Chapter
+                  - Report
+                  - Other
+              firstPage:
+                type: string
+              lastPage:
+                type: string
+              publisher:
+                type: string
+              publicationYear:
+                type: string
+              edition:
+                type: string
+              contributors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    givenName:
+                      type: string
+                    familyName:
+                      type: string
+                    nameType:
+                      $ref: '#/components/schemas/nameType'
+                    contributorType:
+                      $ref: '#/components/schemas/contributorType'
+                  required:
+                    - name
+                    - contributorType
+            required:
+              - relatedItemType
+              - relationType
+        sizes:
+          type: array
+          items:
+            type: string
+        formats:
+          type: array
+          items:
+            type: string
+        version:
+          type: string
+        rightsList:
+          type: array
+          items:
+            type: object
+            properties:
+              rights:
+                type: string
+              rightsUri:
+                type: string
+              lang:
+                type: string
+        descriptions:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+              descriptionType:
+                type: string
+                enum:
+                  - Abstract
+                  - Methods
+                  - SeriesInformation
+                  - TableOfContents
+                  - TechnicalInfo
+                  - Other
+              lang:
+                type: string
+        geoLocations:
+          type: array
+          items:
+            type: object
+            properties:
+              geoLocationPoint:
+                type: object
+              geoLocationBox:
+                type: object
+              geoLocationPlace:
+                type: string
+        fundingReferences:
+          type: array
+          items:
+            type: object
+            properties:
+              funderName:
+                type: string
+              funderIdentifier:
+                type: string
+              funderIdentifierType:
+                type: string
+                enum:
+                  - Crossref Funder ID
+                  - GRID
+                  - ISNI
+                  - ROR
+                  - Other
+              awardNumber:
+                type: string
+              awardUri:
+                type: string
+              awardTitle:
+                type: string
+    DoiCommonAttributes:
+      type: object
+      properties:
+        url:
+          type: string
+        contentUrl:
+          readOnly: true
+          type: array
+          items:
+            type: string
+        metadataVersion:
+          readOnly: true
+          type: number
+        schemaVersion:
+          readOnly: true
+          type: string
+        source:
+          readOnly: true
+          type: string
+        isActive:
+          readOnly: true
+          type: boolean
+        state:
+          readOnly: true
+          type: string
+        reason:
+          readOnly: true
+          type: string
+    DoiDateAttributes:
+      type: object
+      properties:
+        created:
+          type: string
+          readOnly: true
+        registered:
+          type: string
+          readOnly: true
+        updated:
+          type: string
+          readOnly: true
+    DoiArrayAttributes:
       description: >-
-        Represents a DOI and provides access to metadata attributes, further
+        Doi attributes used in /dois list response.
+      allOf:
+        - type: object
+          properties:
+            doi:
+              type: string
+            identifiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                  identifierType:
+                    type: string
+        - $ref: '#/components/schemas/DoiMetadataAttributes'
+        - $ref: '#/components/schemas/DoiCommonAttributes'
+        - type: object
+          properties:
+            viewCount:
+              readOnly: true
+              type: number
+            downloadCount:
+              readOnly: true
+              type: number
+            referenceCount:
+              readOnly: true
+              type: number
+            citationCount:
+              readOnly: true
+              type: number
+            partCount:
+              readOnly: true
+              type: number
+            partOfCount:
+              readOnly: true
+              type: number
+            versionCount:
+              readOnly: true
+              type: number
+            versionOfCount:
+              readOnly: true
+              type: number
+        - $ref: '#/components/schemas/DoiDateAttributes'
+      required:
+        - publisher
+        - publicationYear   
+    DoiItemAttributes:
+      description: >-
+          Extended attributes for Doi model, used in /dois{id} response.
+      allOf:
+        - type: object
+          properties:
+            doi:
+              type: string
+            event:
+              description: Can be set to trigger a DOI state change.
+              type: string
+              enum:
+                - publish
+                - register
+                - hide
+              writeOnly: true
+            prefix:
+              type: string
+            suffix:
+              type: string
+            identifiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                  identifierType:
+                    type: string
+        - $ref: '#/components/schemas/DoiMetadataAttributes'
+        - type: object
+          properties:
+            xml:
+              type: string
+        - $ref: '#/components/schemas/DoiCommonAttributes'
+        - type: object
+          properties:
+            viewCount:
+              readOnly: true
+              type: number
+            viewsOverTime:
+              readOnly: true
+              type: array
+              items:
+                type: object
+                properties:
+                  yearMonth:
+                    type: string
+                  total:
+                    type: number
+            downloadCount:
+              readOnly: true
+              type: number
+            downloadsOverTime:
+              readOnly: true
+              type: array
+              items:
+                type: object
+                properties:
+                  yearMonth:
+                    type: string
+                  total:
+                    type: number
+            referenceCount:
+              readOnly: true
+              type: number
+            citationCount:
+              readOnly: true
+              type: number
+            citationsOverTime:
+              readOnly: true
+              type: array
+              items:
+                type: object
+                properties:
+                  yearMonth:
+                    type: string
+                  total:
+                    type: number
+            partCount:
+              readOnly: true
+              type: number
+            partOfCount:
+              readOnly: true
+              type: number
+            versionCount:
+              readOnly: true
+              type: number
+            versionOfCount:
+              readOnly: true
+              type: number
+            landingPage:
+              readOnly: true
+              description: 'Data describing the landing page, used by link checking.'
+              type: object
+              properties:
+                checked:
+                  type: string
+                url:
+                  type: string
+                contentType:
+                  type: string
+                error:
+                  type: string
+                redirectCount:
+                  type: number
+                redirectUrls:
+                  type: array
+                  items:
+                    type: string
+                downloadLatency:
+                  type: number
+                hasSchemaOrg:
+                  type: boolean
+                schemaOrgid:
+                  type: string
+                dcIdentifier:
+                  type: string
+                citationDoi:
+                  type: string
+                bodyhasPid:
+                  type: boolean
+        - $ref: '#/components/schemas/DoiDateAttributes'
+    DoiArray:
+      description: >-
+        Represents a list of DOIs and provides access to metadata attributes, further
+        schema specific information can be found at https://schema.datacite.org
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                enum: [dois]
+              attributes:
+                  $ref: '#/components/schemas/DoiArrayAttributes'
+            required:
+              - type
+      example:
+        data:
+          type: dois
+          attributes:
+            doi: 10.5438/0014
+            prefix: "10.5438"
+            suffix: "0014"
+            identifiers:
+              - identifier: 'https://doi.org/10.5438/0014'
+                identifierType: DOI
+            creators:
+              - name: DataCite Metadata Working Group
+            titles:
+              - title: >-
+                  DataCite Metadata Schema Documentation for the Publication and
+                  Citation of Research Data v4.1
+            publisher: DataCite
+            publicationYear: 2017
+            types:
+              resourceTypeGeneral: Text
+            url: https://schema.datacite.org/meta/kernel-4.1/            
+    DoiItem:
+      description: >-
+        Represents a single DOI and provides access to metadata attributes, further
         schema specific information can be found at https://schema.datacite.org
       type: object
       properties:
@@ -1211,503 +1815,7 @@ components:
               type: string
               enum: [dois]
             attributes:
-              type: object
-              properties:
-                doi:
-                  type: string
-                prefix:
-                  type: string
-                suffix:
-                  type: string
-                event:
-                  description: Can be set to trigger a DOI state change.
-                  type: string
-                  enum:
-                    - publish
-                    - register
-                    - hide
-                  writeOnly: true
-                identifiers:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      identifier:
-                        type: string
-                      identifierType:
-                        type: string
-                creators:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      nameType:
-                        $ref: '#/components/schemas/nameType'
-                      nameIdentifiers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            nameIdentifier:
-                              type: string
-                            nameIdentifierScheme:
-                              type: string
-                            schemeUri:
-                              type: string
-                      name:
-                        type: string
-                      givenName:
-                        type: string
-                      familyName:
-                        type: string
-                      affiliation:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            affiliationIdentifier:
-                              type: string
-                            affiliationIdentifierScheme:
-                              type: string
-                            name:
-                              type: string
-                            schemeUri:
-                              type: string
-                    required:
-                      - name
-                titles:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                      titleType:
-                        $ref: '#/components/schemas/titleType'
-                      lang:
-                        type: string
-                    required:
-                      - title
-                publisher:
-                  type: string
-                container:
-                  readOnly: true
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                    identifier:
-                      type: string
-                    identifierType:
-                      type: string
-                    title:
-                      type: string
-                    volume:
-                      type: string
-                    issue:
-                      type: string
-                    firstPage:
-                      type: string
-                    lastPage:
-                      type: string
-                publicationYear:
-                  type: integer
-                subjects:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      subject:
-                        type: string
-                      subjectScheme:
-                        type: string
-                      schemeUri:
-                        type: string
-                      valueUri:
-                        type: string
-                      lang:
-                        type: string
-                contributors:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      nameType:
-                        $ref: '#/components/schemas/nameType'
-                      nameIdentifiers:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            nameIdentifier:
-                              type: string
-                            nameIdentifierScheme:
-                              type: string
-                            schemeUri:
-                              type: string
-                      name:
-                        type: string
-                      givenName:
-                        type: string
-                      familyName:
-                        type: string
-                      affiliation:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            affiliationIdentifier:
-                              type: string
-                            affiliationIdentifierScheme:
-                              type: string
-                            name:
-                              type: string
-                            schemeUri:
-                              type: string
-                      contributorType:
-                        $ref: '#/components/schemas/contributorType'
-                dates:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      date:
-                        type: string
-                      dateType:
-                        type: string
-                        enum:
-                          - Accepted
-                          - Available
-                          - Copyrighted
-                          - Collected
-                          - Created
-                          - Issued
-                          - Submitted
-                          - Updated
-                          - Valid
-                          - Withdrawn
-                          - Other
-                language:
-                  type: string
-                types:
-                  type: object
-                  properties:
-                    resourceTypeGeneral:
-                      $ref: '#/components/schemas/resourceTypeGeneral'
-                    resourceType:
-                      type: string
-                    schemaOrg:
-                      type: string
-                    bibtex:
-                      type: string
-                    citeproc:
-                      type: string
-                    ris:
-                      type: string
-                  required:
-                    - resourceTypeGeneral
-                relatedIdentifiers:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      relatedIdentifier:
-                        type: string
-                      relatedIdentifierType:
-                        $ref: '#/components/schemas/relatedIdentifierType'
-                      relationType:
-                        $ref: '#/components/schemas/relationType'
-                      resourceTypeGeneral:
-                        $ref: '#/components/schemas/resourceTypeGeneral'
-                sizes:
-                  type: array
-                  items:
-                    type: string
-                formats:
-                  type: array
-                  items:
-                    type: string
-                version:
-                  type: string
-                rightsList:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      rights:
-                        type: string
-                      rightsUri:
-                        type: string
-                      lang:
-                        type: string
-                descriptions:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      description:
-                        type: string
-                      descriptionType:
-                        type: string
-                        enum:
-                          - Abstract
-                          - Methods
-                          - SeriesInformation
-                          - TableOfContents
-                          - TechnicalInfo
-                          - Other
-                      lang:
-                        type: string
-                geoLocations:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      geoLocationPoint:
-                        type: object
-                      geoLocationBox:
-                        type: object
-                      geoLocationPlace:
-                        type: string
-                fundingReferences:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      funderName:
-                        type: string
-                      funderIdentifier:
-                        type: string
-                      funderIdentifierType:
-                        type: string
-                        enum:
-                          - Crossref Funder ID
-                          - GRID
-                          - ISNI
-                          - ROR
-                          - Other
-                      awardNumber:
-                        type: string
-                      awardUri:
-                        type: string
-                      awardTitle:
-                        type: string
-                xml:
-                  type: string
-                relatedItems:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      relatedItemType:
-                        $ref: '#/components/schemas/resourceTypeGeneral'
-                      relationType:
-                        $ref: '#/components/schemas/relationType'
-                      relatedItemIdentifier:
-                        type: object
-                        properties:
-                          relatedItemIdentifier:
-                            type: string
-                          relatedItemIdentifierType:
-                            $ref: '#/components/schemas/relatedIdentifierType'
-                          relatedMetadataScheme:
-                            type: string
-                          schemeURI:
-                            type: string
-                          schemeType:
-                            type: string
-                      creators:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            givenName:
-                              type: string
-                            familyName:
-                              type: string
-                            nameType:
-                              $ref: '#/components/schemas/nameType'
-                          required:
-                            - name
-                      titles:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            title:
-                              type: string
-                            titleType:
-                              $ref: '#/components/schemas/titleType'
-                          required:
-                            - title
-                      volume:
-                        type: string
-                      issue:
-                        type: string
-                      number:
-                        type: string
-                      numberType:
-                        type: string
-                        enum:
-                          - Article
-                          - Chapter
-                          - Report
-                          - Other
-                      firstPage:
-                        type: string
-                      lastPage:
-                        type: string
-                      publisher:
-                        type: string
-                      publicationYear:
-                        type: string
-                      edition:
-                        type: string
-                      contributors:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            givenName:
-                              type: string
-                            familyName:
-                              type: string
-                            nameType:
-                              $ref: '#/components/schemas/nameType'
-                            contributorType:
-                              $ref: '#/components/schemas/contributorType'
-                          required:
-                            - name
-                            - contributorType
-                    required:
-                      - relatedItemType
-                      - relationType
-                url:
-                  type: string
-                contentUrl:
-                  readOnly: true
-                  type: array
-                  items:
-                    type: string
-                metadataVersion:
-                  readOnly: true
-                  type: number
-                schemaVersion:
-                  readOnly: true
-                  type: string
-                source:
-                  readOnly: true
-                  type: string
-                isActive:
-                  readOnly: true
-                  type: boolean
-                state:
-                  readOnly: true
-                  type: string
-                reason:
-                  readOnly: true
-                  type: string
-                viewCount:
-                  readOnly: true
-                  type: number
-                # viewsOverTime:
-                #   readOnly: true
-                #   type: array
-                #   items:
-                #     type: object
-                #     properties:
-                #       yearMonth:
-                #         type: string
-                #       total:
-                #         type: number
-                downloadCount:
-                  readOnly: true
-                  type: number
-                # downloadsOverTime:
-                #   readOnly: true
-                #   type: array
-                #   items:
-                #     type: object
-                #     properties:
-                #       yearMonth:
-                #         type: string
-                #       total:
-                #         type: number
-                referenceCount:
-                  readOnly: true
-                  type: number
-                citationCount:
-                  readOnly: true
-                  type: number
-                # citationsOverTime:
-                #   readOnly: true
-                #   type: array
-                #   items:
-                #     type: object
-                #     properties:
-                #       yearMonth:
-                #         type: string
-                #       total:
-                #         type: number
-                partCount:
-                  readOnly: true
-                  type: number
-                partOfCount:
-                  readOnly: true
-                  type: number
-                versionCount:
-                  readOnly: true
-                  type: number
-                versionOfCount:
-                  readOnly: true
-                  type: number
-                landingPage:
-                  readOnly: true
-                  description: 'Data describing the landing page, used by link checking.'
-                  type: object
-                  properties:
-                    checked:
-                      type: string
-                    url:
-                      type: string
-                    contentType:
-                      type: string
-                    error:
-                      type: string
-                    redirectCount:
-                      type: number
-                    redirectUrls:
-                      type: array
-                      items:
-                        type: string
-                    downloadLatency:
-                      type: number
-                    hasSchemaOrg:
-                      type: boolean
-                    schemaOrgid:
-                      type: string
-                    dcIdentifier:
-                      type: string
-                    citationDoi:
-                      type: string
-                    bodyhasPid:
-                      type: boolean
-                created:
-                  type: string
-                  readOnly: true
-                registered:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
-              required:
-                - publisher
-                - publicationYear
+                $ref: '#/components/schemas/DoiItemAttributes'
           required:
             - type
       example:
