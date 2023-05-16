@@ -1242,10 +1242,7 @@ components:
                     type: object
                     properties:
                       nameType:
-                        type: string
-                        enum:
-                          - Personal
-                          - Organizational
+                        $ref: '#/components/schemas/nameType'
                       nameIdentifiers:
                         type: array
                         items:
@@ -1286,12 +1283,7 @@ components:
                       title:
                         type: string
                       titleType:
-                        type: string
-                        enum:
-                          - AlternativeTitle
-                          - Subtitle
-                          - TranslatedTitle
-                          - Other
+                        $ref: '#/components/schemas/titleType'
                       lang:
                         type: string
                     required:
@@ -1341,10 +1333,7 @@ components:
                     type: object
                     properties:
                       nameType:
-                        type: string
-                        enum:
-                          - Personal
-                          - Organizational
+                        $ref: '#/components/schemas/nameType'
                       nameIdentifiers:
                         type: array
                         items:
@@ -1376,29 +1365,7 @@ components:
                             schemeUri:
                               type: string
                       contributorType:
-                        type: string
-                        enum:
-                          - ContactPerson
-                          - DataCollector
-                          - DataCurator
-                          - DataManager
-                          - Distributor
-                          - Editor
-                          - HostingInstitution
-                          - Producer
-                          - ProjectLeader
-                          - ProjectManager
-                          - ProjectMember
-                          - RegistrationAgency
-                          - RegistrationAuthority
-                          - RelatedPerson
-                          - Researcher
-                          - ResearchGroup
-                          - RightsHolder
-                          - Sponsor
-                          - Supervisor
-                          - WorkPackageLeader
-                          - Other
+                        $ref: '#/components/schemas/contributorType'
                 dates:
                   type: array
                   items:
@@ -1426,35 +1393,7 @@ components:
                   type: object
                   properties:
                     resourceTypeGeneral:
-                      type: string
-                      enum:
-                        - Audiovisual
-                        - Book
-                        - BookChapter
-                        - Collection
-                        - ComputationalNotebook
-                        - ConferencePaper
-                        - ConferenceProceeding
-                        - DataPaper
-                        - Dataset
-                        - Dissertation
-                        - Event
-                        - Image
-                        - InteractiveResource
-                        - JournalArticle
-                        - Model
-                        - OutputManagementPlan
-                        - PeerReview
-                        - PhysicalObject
-                        - Preprint
-                        - Report
-                        - Service
-                        - Software
-                        - Sound
-                        - Standard
-                        - Text
-                        - Workflow
-                        - Other
+                      $ref: '#/components/schemas/resourceTypeGeneral'
                     resourceType:
                       type: string
                     schemaOrg:
@@ -1475,66 +1414,11 @@ components:
                       relatedIdentifier:
                         type: string
                       relatedIdentifierType:
-                        type: string
-                        enum:
-                          - ARK
-                          - arXiv
-                          - bibcode
-                          - DOI
-                          - EAN13
-                          - EISSN
-                          - Handle
-                          - IGSN
-                          - ISBN
-                          - ISSN
-                          - ISTC
-                          - LISSN
-                          - LSID
-                          - PMID
-                          - PURL
-                          - UPC
-                          - URL
-                          - URN
-                          - w3id
+                        $ref: '#/components/schemas/relatedIdentifierType'
                       relationType:
-                        type: string
-                        enum:
-                          - IsCitedBy
-                          - Cites
-                          - IsSupplementTo
-                          - IsSupplementedBy
-                          - IsContinuedBy
-                          - Continues
-                          - IsDescribedBy
-                          - Describes
-                          - HasMetadata
-                          - IsMetadataFor
-                          - HasVersion
-                          - IsVersionOf
-                          - IsNewVersionOf
-                          - IsPreviousVersionOf
-                          - IsPartOf
-                          - HasPart
-                          - IsPublishedIn
-                          - IsReferencedBy
-                          - References
-                          - IsDocumentedBy
-                          - Documents
-                          - IsCompiledBy
-                          - Compiles
-                          - IsVariantFormOf
-                          - IsOriginalFormOf
-                          - IsIdenticalTo
-                          - IsReviewedBy
-                          - Reviews
-                          - IsDerivedFrom
-                          - IsSourceOf
-                          - IsRequiredBy
-                          - Requires
-                          - IsObsoletedBy
-                          - Obsoletes
+                        $ref: '#/components/schemas/relationType'
                       resourceTypeGeneral:
-                        type: string
+                        $ref: '#/components/schemas/resourceTypeGeneral'
                 sizes:
                   type: array
                   items:
@@ -1616,99 +1500,16 @@ components:
                     type: object
                     properties:
                       relatedItemType:
-                        type: string
-                        enum:
-                          - Audiovisual
-                          - Book
-                          - BookChapter
-                          - Collection
-                          - ComputationalNotebook
-                          - ConferencePaper
-                          - ConferenceProceeding
-                          - DataPaper
-                          - Dataset
-                          - Dissertation
-                          - Event
-                          - Image
-                          - InteractiveResource
-                          - JournalArticle
-                          - Model
-                          - OutputManagementPlan
-                          - PeerReview
-                          - PhysicalObject
-                          - Preprint
-                          - Report
-                          - Service
-                          - Software
-                          - Sound
-                          - Standard
-                          - Text
-                          - Workflow
-                          - Other
+                        $ref: '#/components/schemas/resourceTypeGeneral'
                       relationType:
-                        type: string
-                        enum:
-                          - IsCitedBy
-                          - Cites
-                          - IsSupplementTo
-                          - IsSupplementedBy
-                          - IsContinuedBy
-                          - Continues
-                          - IsDescribedBy
-                          - Describes
-                          - HasMetadata
-                          - IsMetadataFor
-                          - HasVersion
-                          - IsVersionOf
-                          - IsNewVersionOf
-                          - IsPreviousVersionOf
-                          - IsPartOf
-                          - HasPart
-                          - IsPublishedIn
-                          - IsReferencedBy
-                          - References
-                          - IsDocumentedBy
-                          - Documents
-                          - IsCompiledBy
-                          - Compiles
-                          - IsVariantFormOf
-                          - IsOriginalFormOf
-                          - IsIdenticalTo
-                          - IsReviewedBy
-                          - Reviews
-                          - IsDerivedFrom
-                          - IsSourceOf
-                          - IsRequiredBy
-                          - Requires
-                          - IsObsoletedBy
-                          - Obsoletes
+                        $ref: '#/components/schemas/relationType'
                       relatedItemIdentifier:
                         type: object
                         properties:
                           relatedItemIdentifier:
                             type: string
                           relatedItemIdentifierType:
-                            type: string
-                            enum:
-                              - ARK
-                              - arXiv
-                              - bibcode
-                              - DOI
-                              - EAN13
-                              - EISSN
-                              - Handle
-                              - IGSN
-                              - ISBN
-                              - ISSN
-                              - ISTC
-                              - LISSN
-                              - LSID
-                              - PMID
-                              - PURL
-                              - UPC
-                              - URL
-                              - URN
-                              - w3id
+                            $ref: '#/components/schemas/relatedIdentifierType'
                           relatedMetadataScheme:
                             type: string
                           schemeURI:
@@ -1727,10 +1528,7 @@ components:
                             familyName:
                               type: string
                             nameType:
-                              type: string
-                              enum:
-                                - Personal
-                                - Organizational
+                              $ref: '#/components/schemas/nameType'
                           required:
                             - name
                       titles:
@@ -1741,12 +1539,7 @@ components:
                             title:
                               type: string
                             titleType:
-                              type: string
-                              enum:
-                                - AlternativeTitle
-                                - Subtitle
-                                - TranslatedTitle
-                                - Other
+                              $ref: '#/components/schemas/titleType'
                           required:
                             - title
                       volume:
@@ -1784,34 +1577,9 @@ components:
                             familyName:
                               type: string
                             nameType:
-                              type: string
-                              enum:
-                                - Personal
-                                - Organizational
+                              $ref: '#/components/schemas/nameType'
                             contributorType:
-                              type: string
-                              enum:
-                                - ContactPerson
-                                - DataCollector
-                                - DataCurator
-                                - DataManager
-                                - Distributor
-                                - Editor
-                                - HostingInstitution
-                                - Producer
-                                - ProjectLeader
-                                - ProjectManager
-                                - ProjectMember
-                                - RegistrationAgency
-                                - RegistrationAuthority
-                                - RelatedPerson
-                                - Researcher
-                                - ResearchGroup
-                                - RightsHolder
-                                - Sponsor
-                                - Supervisor
-                                - WorkPackageLeader
-                                - Other
+                              $ref: '#/components/schemas/contributorType'
                           required:
                             - name
                             - contributorType
@@ -2064,6 +1832,131 @@ components:
         - release
         - created-by
         - reporting-period
+    relationType:
+      type: string
+      enum:
+        - IsCitedBy
+        - Cites
+        - IsSupplementTo
+        - IsSupplementedBy
+        - IsContinuedBy
+        - Continues
+        - IsDescribedBy
+        - Describes
+        - HasMetadata
+        - IsMetadataFor
+        - HasVersion
+        - IsVersionOf
+        - IsNewVersionOf
+        - IsPreviousVersionOf
+        - IsPartOf
+        - HasPart
+        - IsPublishedIn
+        - IsReferencedBy
+        - References
+        - IsDocumentedBy
+        - Documents
+        - IsCompiledBy
+        - Compiles
+        - IsVariantFormOf
+        - IsOriginalFormOf
+        - IsIdenticalTo
+        - IsReviewedBy
+        - Reviews
+        - IsDerivedFrom
+        - IsSourceOf
+        - IsRequiredBy
+        - Requires
+        - IsObsoletedBy
+        - Obsoletes
+    resourceTypeGeneral:
+      type: string
+      enum:
+        - Audiovisual
+        - Book
+        - BookChapter
+        - Collection
+        - ComputationalNotebook
+        - ConferencePaper
+        - ConferenceProceeding
+        - DataPaper
+        - Dataset
+        - Dissertation
+        - Event
+        - Image
+        - InteractiveResource
+        - JournalArticle
+        - Model
+        - OutputManagementPlan
+        - PeerReview
+        - PhysicalObject
+        - Preprint
+        - Report
+        - Service
+        - Software
+        - Sound
+        - Standard
+        - Text
+        - Workflow
+        - Other
+    contributorType:
+      type: string
+      enum:
+        - ContactPerson
+        - DataCollector
+        - DataCurator
+        - DataManager
+        - Distributor
+        - Editor
+        - HostingInstitution
+        - Producer
+        - ProjectLeader
+        - ProjectManager
+        - ProjectMember
+        - RegistrationAgency
+        - RegistrationAuthority
+        - RelatedPerson
+        - Researcher
+        - ResearchGroup
+        - RightsHolder
+        - Sponsor
+        - Supervisor
+        - WorkPackageLeader
+        - Other
+    relatedIdentifierType:
+      type: string
+      enum:
+        - ARK
+        - arXiv
+        - bibcode
+        - DOI
+        - EAN13
+        - EISSN
+        - Handle
+        - IGSN
+        - ISBN
+        - ISSN
+        - ISTC
+        - LISSN
+        - LSID
+        - PMID
+        - PURL
+        - UPC
+        - URL
+        - URN
+        - w3id
+    titleType:
+      type: string
+      enum:
+        - AlternativeTitle
+        - Subtitle
+        - TranslatedTitle
+        - Other
+    nameType:
+      type: string
+      enum:
+        - Personal
+        - Organizational
   securitySchemes:
     BasicAuth:
       type: http
