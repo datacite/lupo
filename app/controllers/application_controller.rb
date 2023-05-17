@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "open-uri"
+
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include Authenticable
@@ -162,6 +164,28 @@ class ApplicationController < ActionController::API
     yield
   ensure
     Bullet.enable = previous_value
+  end
+
+  def serve_manifest
+    url = ENV["PLUGIN_MANIFEST_URL"] || "https://api.datacite.org"
+    data = URI.open(url).read
+
+    send_data(
+      data,
+      type: "application/json",
+      disposition: "inline"
+    )
+  end
+
+  def serve_openapi_spec
+    url = ENV["PLUGIN_OPENAPI_URL"] || "https://api.datacite.org"
+    data = URI.open(url).read
+
+    send_data(
+      data,
+      type: "text/yaml",
+      disposition: "inline"
+    )
   end
 
   protected
