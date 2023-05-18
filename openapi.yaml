@@ -1214,6 +1214,7 @@ components:
                 $ref: '#/components/schemas/DoiAttributes'
             relationships:
                 type: object
+                readOnly: true
                 properties:
                   client:
                     type: object
