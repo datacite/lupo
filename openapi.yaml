@@ -1215,9 +1215,11 @@ components:
           properties:
             id:
               type: string
+              readOnly: true
             type:
               type: string
               enum: [dois]
+              readOnly: true
             attributes:
                 $ref: '#/components/schemas/DoiAttributes'
             relationships:
@@ -1614,6 +1616,8 @@ components:
                         type: string
                       schemeUri:
                         type: string
+                lang:
+                  type: string
               required:
                 - name
         titles:
@@ -1668,6 +1672,8 @@ components:
                 type: string
               lang:
                 type: string
+              classificationCode:
+                type: string
         contributors:
           type: array
           items:
@@ -1707,6 +1713,8 @@ components:
                       type: string
               contributorType:
                 $ref: '#/components/schemas/contributorType'
+              lang:
+                type: string
         dates:
           type: array
           items:
@@ -1728,6 +1736,8 @@ components:
                   - Valid
                   - Withdrawn
                   - Other
+              dateInformation:
+                type: string
         language:
           type: string
         types:
@@ -1760,6 +1770,12 @@ components:
                 $ref: '#/components/schemas/relationType'
               resourceTypeGeneral:
                 $ref: '#/components/schemas/resourceTypeGeneral'
+              relatedMetadataScheme:
+                type: string
+              schemeUri:
+                type: string
+              schemeType:
+                type: string
         relatedItems:
           type: array
           items:
@@ -1871,6 +1887,12 @@ components:
                 type: string
               rightsUri:
                 type: string
+              schemeUri:
+                type: string
+              rightsIdentifier:
+                type: string
+              rightsIdentifierScheme:
+                type: string
               lang:
                 type: string
         descriptions:
@@ -1898,8 +1920,22 @@ components:
             properties:
               geoLocationPoint:
                 type: object
+                properties:
+                  pointLongitude:
+                    type: string
+                  pointLatitude:
+                    type: string
               geoLocationBox:
                 type: object
+                properties:
+                  westBoundLongitude:
+                    type: string
+                  eastBoundLongitude:
+                    type: string
+                  southBoundLatitude:
+                    type: string
+                  northBoundLatitude:
+                    type: string
               geoLocationPlace:
                 type: string
         fundingReferences:
