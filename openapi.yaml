@@ -2189,6 +2189,7 @@ components:
         - Event
         - Image
         - InteractiveResource
+        - Journal
         - JournalArticle
         - Model
         - OutputManagementPlan
