@@ -176,19 +176,27 @@ paths:
           schema:
             type: string
             enum:
+              - cayuse
               - ckan
               - dataverse
+              - dlibra
               - dspace
               - eprints
+              - ex libris esploro
               - fedora
               - invenio
               - islandora
+              - mycore
               - nesstar
+              - omega-psir
+              - omeka s
               - open journal systems (ojs)
               - opus
-              - samvera
               - pubman
-              - mycore
+              - pure
+              - redivis
+              - samvera
+              - ubiquity
               - other
               - unknown
         - in: query
