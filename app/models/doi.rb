@@ -633,7 +633,7 @@ class Doi < ApplicationRecord
   def self.gql_query_aggregations(facet_count: 10)
     if facet_count.positive?
       {
-        resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } }, # Add missing: __missing__
+        resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } },
         clients: { terms: { field: "client_id_and_name", size: facet_count, min_doc_count: 1 } },
         open_licenses: {
           filter: { terms: { "rights_list.rightsIdentifier": ["cc-by-1.0", "cc-by-2.0", "cc-by-2.5", "cc-by-3.0", "cc-by-3.0-at", "cc-by-3.0-us", "cc-by-4.0", "cc-pddc", "cc0-1.0", "cc-pdm-1.0"] } },
@@ -655,8 +655,8 @@ class Doi < ApplicationRecord
           },
         },
         registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
-        affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } }, # Add missing
-        authors: { # Add missing?
+        affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } },
+        authors: {
           terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1 },
           aggs: {
             authors: {
@@ -702,7 +702,7 @@ class Doi < ApplicationRecord
         fields_of_science_repository: {
           terms: { field: "fields_of_science_repository", size: facet_count, min_doc_count: 1 }
         },
-        licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1, missing: "__missing__" } }, # Add missing
+        licenses: { terms: { field: "rights_list.rightsIdentifier", size: facet_count, min_doc_count: 1, missing: "__missing__" } },
         languages: { terms: { field: "language", size: facet_count, min_doc_count: 1 } },
         view_count: { sum: { field: "view_count" } },
         download_count: { sum: { field: "download_count" } },
