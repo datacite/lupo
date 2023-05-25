@@ -738,7 +738,7 @@ describe WorkType do
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
       expect(response.dig("data", "works", "licenses")).to eq(
-        [{"count"=>10, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}, {"count"=>0, "id"=>"__other__", "title"=>"Other"}],
+        [{ "count" => 10, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }],
       )
       # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(
@@ -1380,7 +1380,7 @@ describe WorkType do
             "affiliationIdentifierScheme": "ROR",
           }],
         }],
-        rights_list: [{ "rightsIdentifier" => "cc-by-1.0"}]
+        rights_list: [{ "rightsIdentifier" => "cc-by-1.0" }]
       )
     end
     let!(:works_4) do
@@ -1393,7 +1393,7 @@ describe WorkType do
             "affiliationIdentifierScheme": "ROR",
           }],
         }],
-        rights_list: [{ "rightsIdentifier" => "cc-by-2.0"}]
+        rights_list: [{ "rightsIdentifier" => "cc-by-2.0" }]
       )
     end
     let!(:works_3) do
@@ -1406,7 +1406,7 @@ describe WorkType do
             "affiliationIdentifierScheme": "ROR",
           }],
         }],
-        rights_list: [{ "rightsIdentifier" => "cc-by-2.5"}]
+        rights_list: [{ "rightsIdentifier" => "cc-by-2.5" }]
       )
     end
     let!(:works_2) do
@@ -1419,7 +1419,7 @@ describe WorkType do
             "affiliationIdentifierScheme": "ROR",
           }],
         }],
-        rights_list: [{ "rightsIdentifier" => "cc-by-3.0"}]
+        rights_list: [{ "rightsIdentifier" => "cc-by-3.0" }]
       )
     end
     let!(:works_other) do
@@ -1440,8 +1440,8 @@ describe WorkType do
           ],
         }],
         rights_list: [
-          { "rightsIdentifier" => "bsd-2-clause"},
-          { "rightsIdentifier" => "bsd-3-clause"},
+          { "rightsIdentifier" => "bsd-2-clause" },
+          { "rightsIdentifier" => "bsd-3-clause" },
       ])
     end
     let!(:missing) do

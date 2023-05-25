@@ -68,7 +68,7 @@ describe DataManagementPlanType do
         [{ "count" => 2, "id" => "de", "title" => "German" }],
       )
       expect(response.dig("data", "dataManagementPlans", "licenses")).to eq(
-        [{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, {"count"=>0, "id"=>"__other__", "title"=>"Other"}],
+        [{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }],
       )
       expect(response.dig("data", "dataManagementPlans", "nodes").length).to eq(
         2,
@@ -175,7 +175,7 @@ describe DataManagementPlanType do
       ).to eq([{ "count" => 2, "id" => "de", "title" => "German" }])
       expect(
         response.dig("data", "organization", "dataManagementPlans", "licenses"),
-      ).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, {"count"=>0, "id"=>"__other__", "title"=>"Other"}])
+      ).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }])
       expect(
         response.dig("data", "organization", "dataManagementPlans", "nodes").
           length,
@@ -309,7 +309,7 @@ describe DataManagementPlanType do
       ).to eq([{ "count" => 2, "id" => "de", "title" => "German" }])
       expect(
         response.dig("data", "organization", "dataManagementPlans", "licenses"),
-      ).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, {"count"=>0, "id"=>"__other__", "title"=>"Other"}])
+      ).to eq([{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }])
       expect(
         response.dig("data", "organization", "dataManagementPlans", "nodes").
           length,
@@ -426,7 +426,7 @@ describe DataManagementPlanType do
         response.dig("data", "dataManagementPlans", "registrationAgencies"),
       ).to eq([{ "count" => 2, "id" => "datacite", "title" => "DataCite" }])
       expect(response.dig("data", "dataManagementPlans", "licenses")).to eq(
-        [{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, {"count"=>0, "id"=>"__other__", "title"=>"Other"}],
+        [{ "count" => 2, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }],
       )
       expect(response.dig("data", "dataManagementPlans", "nodes").length).to eq(
         2,
