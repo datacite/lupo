@@ -496,11 +496,15 @@ module Facetable
     end
 
     def add_other(arr, other_count)
-      arr << {
-        "id" => "__other__",
-        "title" => OTHER["__other__"],
-        "count" => other_count,
-      }
+      if other_count > 0
+        arr << {
+          "id" => "__other__",
+          "title" => OTHER["__other__"],
+          "count" => other_count,
+        }
+      end
+
+      arr
     end
   end
 end
