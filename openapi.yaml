@@ -1219,7 +1219,6 @@ components:
             type:
               type: string
               enum: [dois]
-              readOnly: true
             attributes:
                 $ref: '#/components/schemas/DoiAttributes'
             relationships:
