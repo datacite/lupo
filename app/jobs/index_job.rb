@@ -5,7 +5,8 @@ class IndexJob < ApplicationJob
 
   rescue_from ActiveJob::DeserializationError,
               SocketError,
-              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+              Elasticsearch::Transport::Transport::Errors::BadRequest,
+              Elasticsearch::Transport::Transport::Error do |error|
     Rails.logger.error error.message
   end
 
