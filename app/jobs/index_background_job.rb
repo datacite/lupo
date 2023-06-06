@@ -4,7 +4,9 @@ class IndexBackgroundJob < ApplicationJob
   queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError,
-              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+              SocketError,
+              Elasticsearch::Transport::Transport::Errors::BadRequest,
+              Elasticsearch::Transport::Transport::Error do |error|
     Rails.logger.error error.message
   end
 
