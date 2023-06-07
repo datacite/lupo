@@ -468,7 +468,7 @@ module DoiItem
     Array.wrap(object.creators)[0...args[:first]].map do |c|
       Hashie::Mash.new(
         "id" =>
-          c.fetch("nameIdentifiers", []).detect do |n|
+          Array.wrap(c.fetch("nameIdentifiers", [])).detect do |n|
             %w[ORCID ROR].include?(n.fetch("nameIdentifierScheme", nil))
           end.to_h.
             fetch("nameIdentifier", nil),
@@ -493,7 +493,7 @@ module DoiItem
     contrib.map do |c|
       Hashie::Mash.new(
         "id" =>
-          c.fetch("nameIdentifiers", []).detect do |n|
+          Array.wrap(c.fetch("nameIdentifiers", [])).detect do |n|
             %w[ORCID ROR].include?(n.fetch("nameIdentifierScheme", nil))
           end.to_h.
             fetch("nameIdentifier", nil),

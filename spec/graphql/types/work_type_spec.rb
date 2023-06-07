@@ -1052,6 +1052,143 @@ describe WorkType do
     end
   end
 
+  describe "find work with a creator or contributor with a nameIdentifier property that's a hash", elasticsearch: true do
+    let!(:work) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "name" => "Kristian Garza",
+            "nameType" => "Personal",
+            "nameIdentifiers" =>
+              {
+                "schemeUri": "https://orcid.org",
+                "nameIdentifier": "https://orcid.org/0000-0002-7105-9881",
+                "nameIdentifierScheme": "ORCID"
+              }
+          },
+          {
+            "name" => "Ross, Cody",
+            "familyName" => "Ross",
+            "givenName" => "Cody",
+            "nameIdentifiers" =>
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            "nameType" => "Personal",
+          },
+        ],
+        contributors: [
+          {
+            "givenName" => "Cody",
+            "familyName" => "Ross",
+            "contributorType" => "Editor",
+            "nameIdentifiers" =>
+              {
+                "schemeUri": "https://orcid.org",
+                "nameIdentifier": "https://orcid.org/0000-0002-7105-9881",
+                "nameIdentifierScheme": "ORCID"
+              }
+          },
+          {
+            "givenName" => "Kristian",
+            "familyName" => "Garza",
+            "contributorType" => "Editor",
+            "nameIdentifiers" =>
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+          },
+        ],
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query_works) do
+      "query {
+        works(ids: [\"#{
+        work.doi
+      }\"]) {
+          authors {
+            id
+            title
+            count
+          }
+          nodes {
+            creators {
+              id
+              name
+              givenName
+              familyName
+            }
+            contributors {
+              id
+              name
+              givenName
+              familyName
+              contributorType
+            }
+          }
+        }
+      }"
+    end
+
+    it "returns works with authors facet" do
+      response = LupoSchema.execute(query_works).as_json
+
+      expect(response).to_not have_key("errors")
+      expect(response.dig("data", "works", "authors").length).to eq(2)
+      expect(response.dig("data", "works", "authors", 0)).to eq(
+        { "id" => "https://orcid.org/0000-0002-7105-9881",
+          "title" => "Kristian Garza",
+          "count" => 1 }
+      )
+    end
+
+    it "returns work node with creators and contributors" do
+      response = LupoSchema.execute(query_works).as_json
+
+      expect(response).to_not have_key("errors")
+      expect(response.dig("data", "works", "nodes", 0, "creators").length).to eq(2)
+      expect(response.dig("data", "works", "nodes", 0, "creators")).to eq(
+        [
+          { "id" => "https://orcid.org/0000-0002-7105-9881",
+          "name" => "Kristian Garza",
+          "givenName" => nil,
+          "familyName" => nil },
+         { "id" => "https://orcid.org/0000-0003-3484-6875",
+          "name" => "Ross, Cody",
+          "givenName" => "Cody",
+          "familyName" => "Ross" }
+        ]
+      )
+      expect(response.dig("data", "works", "nodes", 0, "contributors").length).to eq(2)
+      expect(response.dig("data", "works", "nodes", 0, "contributors")).to eq(
+        [
+          { "id" => "https://orcid.org/0000-0002-7105-9881",
+          "name" => nil,
+          "givenName" => "Cody",
+          "familyName" => "Ross",
+          "contributorType" => "Editor" },
+          { "id" => "https://orcid.org/0000-0003-3484-6875",
+            "name" => nil,
+            "givenName" => "Kristian",
+            "familyName" => "Garza",
+            "contributorType" => "Editor" }
+        ]
+      )
+    end
+  end
+
   describe "get author aggregations when creators have multiple nameIdentifiers", elasticsearch: true do
     let!(:work_one) do
       create(

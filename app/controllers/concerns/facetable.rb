@@ -474,7 +474,7 @@ module Facetable
         # Filter through creators to find creator that matches the key
         matched_creator = creators.select do |creator|
           if creator.key?("nameIdentifiers")
-            creator["nameIdentifiers"].any? { |ni| ni["nameIdentifier"] == orcid_id }
+            Array.wrap(creator["nameIdentifiers"]).any? { |ni| ni["nameIdentifier"] == orcid_id }
           end
         end
 
