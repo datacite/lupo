@@ -1394,9 +1394,7 @@ components:
             types:
               resourceTypeGeneral: Text
             url: https://schema.datacite.org/meta/kernel-4.1/       
-    DoiAttributes:
-      description: >-
-          Extended attributes for Doi model, used in /dois{id} response.
+    DoiAttributes: # Extended attributes for Doi model, used in /dois{id} response.
       allOf:
         - type: object
           properties:
@@ -1526,9 +1524,7 @@ components:
                 bodyhasPid:
                   type: boolean
         - $ref: '#/components/schemas/DoiPropertiesDates'
-    DoisAttributes:
-      description: >-
-        Doi attributes used in /dois list response.
+    DoisAttributes: # Doi attributes used in /dois list response.
       allOf:
         - type: object
           properties:
