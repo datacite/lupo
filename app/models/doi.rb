@@ -1808,6 +1808,15 @@ class Doi < ApplicationRecord
     client.provider.consortium_id.downcase if client.present? && client.provider.consortium_id.present?
   end
 
+  def related_dmp_ids
+    related_identifiers.select{ |related_identifier|
+      related_identifier["relatedIdentifierType"] == "DOI"
+    }.select{ |related_identifier|
+      related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagmentPlan"
+    }.map do |related_identifier|
+      related_identifier['relatedIdentifier']
+    end
+  end
 
   def sponsor_contributors
     Array.wrap(contributors).select{ |c|

@@ -574,23 +574,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
-  # describe "related_identifiers" do
-  #   it "has part" do
-  #     subject = build(:doi, related_identifiers: [      {
-  #       "relatedIdentifier": "10.5061/dryad.8515/1",
-  #       "relatedIdentifierType": "DOI",
-  #       "relationType": "HasPart",
-  #     }])
-  #     expect(subject).to be_valid
-  #     expect(subject.related_identifiers).to eq([{"relatedIdentifier"=>"10.5061/dryad.8515/1", "relatedIdentifierType"=>"DOI", "relationType"=>"HasPart"}])
-  #   end
-
-  #   it "string" do
-  #     subject = build(:doi, related_identifiers: ["10.5061/dryad.8515/1"])
-  #     expect(subject).to_not be_valid
-  #     expect(subject.errors.messages).to eq(:related_identifiers=>["Related identifier '10.5061/dryad.8515/1' should be an object instead of a string."])
-  #   end
-  # end
    describe "affiliation_id" do
 
      it "from creators" do
@@ -756,6 +739,47 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
          ]
        )
      end
+   end
+
+   describe "related_identifiers" do
+     it "has part" do
+       subject = build(:doi, related_identifiers: [
+         {
+           "relatedIdentifier": "10.5061/dryad.8515/1",
+           "relatedIdentifierType": "DOI",
+           "relationType": "HasPart",
+         }
+       ])
+       expect(subject).to be_valid
+       expect(subject.related_identifiers).to eq([
+         {
+           "relatedIdentifier"=>"10.5061/dryad.8515/1",
+           "relatedIdentifierType"=>"DOI",
+           "relationType"=>"HasPart"
+         }
+       ])
+     end
+
+     it "has a related datamanagment plan" do
+       subject = build(:doi, related_identifiers: [
+         {
+           "relatedIdentifier": "10.5061/dryad.8515/1",
+           "relatedIdentifierType": "DOI",
+           "relationType": "HasPart",
+           "resourceTypeGeneral": "OutputManagmentPlan",
+         }
+       ])
+       expect(subject).to be_valid
+       expect(subject.related_dmp_ids).to eq([
+          "10.5061/dryad.8515/1",
+       ])
+     end
+
+     #it "string" do
+       #subject = build(:doi, related_identifiers: ["10.5061/dryad.8515/1"])
+       #expect(subject).to_not be_valid
+       #expect(subject.errors.messages).to eq(:related_identifiers=>["Related identifier '10.5061/dryad.8515/1' should be an object instead of a string."])
+     #end
    end
 
   describe "metadata" do
