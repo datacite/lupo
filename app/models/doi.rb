@@ -669,6 +669,19 @@ class Doi < ApplicationRecord
             }
           }
         },
+        creators_and_contributors: {
+          terms: { field: "creators_and_contributors.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1 },
+          aggs: {
+            creators_and_contributors: {
+              top_hits: {
+                _source: {
+                  includes: [ "creators_and_contributors.name", "creators_and_contributors.nameIdentifiers.nameIdentifier"]
+                },
+                size: 1
+              }
+            }
+          }
+        },
         pid_entities: {
           filter: { term: { "subjects.subjectScheme": "PidEntity" } },
           aggs: {

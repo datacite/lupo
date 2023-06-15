@@ -12,6 +12,7 @@ module Interfaces::WorkFacetsInterface
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :authors, [FacetType], null: true, cache: true
+  field :creators_and_contributors, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
   field :fields_of_science_combined, [FacetType], null: true, cache: true
   field :fields_of_science_repository, [FacetType], null: true, cache: true
@@ -67,6 +68,14 @@ module Interfaces::WorkFacetsInterface
   def authors
     if object.aggregations.authors
       facet_by_authors(object.aggregations.authors.buckets)
+    else
+      []
+    end
+  end
+
+  def creators_and_contributors
+    if object.aggregations.creators_and_contributors
+      facet_by_creators_and_contributors(object.aggregations.creators_and_contributors.buckets)
     else
       []
     end
