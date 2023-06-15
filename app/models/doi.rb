@@ -1808,8 +1808,16 @@ class Doi < ApplicationRecord
     client.provider.consortium_id.downcase if client.present? && client.provider.consortium_id.present?
   end
 
+
+  def sponsor_contributors
+    Array.wrap(contributors).select{ |c|
+      c["contributorType"] == "Sponsor"
+    }
+  end
+
+
   def affiliation_id
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
