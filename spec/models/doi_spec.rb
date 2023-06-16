@@ -574,6 +574,161 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe "organization_id" do
+
+    it "from creators" do
+      subject = build(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh555",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.organization_id).to eq(
+        [
+          "ror.org/013meh555",
+        ]
+      )
+
+    end
+
+    it "from contributors(sponsor)" do
+      subject = build(
+        :doi,
+        creators: [],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh444",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh723",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.organization_id).to eq(
+        [
+          "ror.org/013meh444",
+        ]
+      )
+    end
+
+    it "will be empty from contributors(non-sponsor)" do
+      subject = build(
+        :doi,
+        creators: [],
+        contributors: [
+          {
+            "contributorType" => "ProjectLeader",
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh333",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh723",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.organization_id).to eq(
+        [
+        ]
+      )
+    end
+
+    it "from creators_and_contributors(sponsored)" do
+      subject = build(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh333",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh722",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Bob",
+            "givenName" => "Jones",
+            "name" => "Jones, Bob",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh111",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Examples",
+                "affiliationIdentifier" => "https://ror.org/013meh8888",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.organization_id).to eq(
+        [
+          "ror.org/013meh333",
+          "ror.org/013meh111",
+        ]
+      )
+    end
+  end
+
   describe "affiliation_id" do
 
     it "from creators" do
