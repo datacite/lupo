@@ -574,113 +574,113 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
-   describe "affiliation_id" do
+  describe "affiliation_id" do
 
-     it "from creators" do
-       subject = build(
-         :doi,
-         creators: [
-           {
-             "familyName" => "Garza",
-             "givenName" => "Kristian",
-             "name" => "Garza, Kristian",
-             "nameIdentifiers" => [
-               {
-                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                 "nameIdentifierScheme" => "ORCID",
-                 "schemeUri" => "https://orcid.org",
-               },
-             ],
-             "nameType" => "Personal",
-             "affiliation" => [
-               {
-                 "name" => "University of Cambridge",
-                 "affiliationIdentifier" => "https://ror.org/013meh722",
-                 "affiliationIdentifierScheme" => "ROR",
-               },
+    it "from creators" do
+      subject = build(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
             ],
-           },
-         ]
-       )
-       expect(subject).to be_valid
-       expect(subject.affiliation_id).to eq(
-         [
-           "ror.org/013meh722",
-         ]
-       )
-
-     end
-
-     it "from contributors(sponsor)" do
-       subject = build(
-         :doi,
-         creators: [],
-         contributors: [
-           {
-             "contributorType" => "Sponsor",
-             "familyName" => "Garza",
-             "givenName" => "Kristian",
-             "name" => "Garza, Kristian",
-             "nameIdentifiers" => [
-               {
-                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                 "nameIdentifierScheme" => "ORCID",
-                 "schemeUri" => "https://orcid.org",
-               },
-             ],
-             "nameType" => "Personal",
-             "affiliation" => [
-               {
-                 "name" => "University of Cambridge",
-                 "affiliationIdentifier" => "https://ror.org/013meh723",
-                 "affiliationIdentifierScheme" => "ROR",
-               },
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh722",
+                "affiliationIdentifierScheme" => "ROR",
+              },
             ],
-           },
-         ]
-       )
-       expect(subject).to be_valid
-       expect(subject.affiliation_id).to eq(
-         [
-           "ror.org/013meh723",
-         ]
-       )
-     end
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.affiliation_id).to eq(
+        [
+          "ror.org/013meh722",
+        ]
+      )
 
-     it "will be empty from contributors(non-sponsor)" do
-       subject = build(
-         :doi,
-         creators: [],
-         contributors: [
-           {
-             "contributorType" => "ProjectLeader",
-             "familyName" => "Garza",
-             "givenName" => "Kristian",
-             "name" => "Garza, Kristian",
-             "nameIdentifiers" => [
-               {
-                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                 "nameIdentifierScheme" => "ORCID",
-                 "schemeUri" => "https://orcid.org",
-               },
-             ],
-             "nameType" => "Personal",
-             "affiliation" => [
-               {
-                 "name" => "University of Cambridge",
-                 "affiliationIdentifier" => "https://ror.org/013meh723",
-                 "affiliationIdentifierScheme" => "ROR",
-               },
+    end
+
+    it "from contributors(sponsor)" do
+      subject = build(
+        :doi,
+        creators: [],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
             ],
-           },
-         ]
-       )
-       expect(subject).to be_valid
-       expect(subject.affiliation_id).to eq(
-         [
-         ]
-       )
-     end
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh723",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.affiliation_id).to eq(
+        [
+          "ror.org/013meh723",
+        ]
+      )
+    end
+
+    it "will be empty from contributors(non-sponsor)" do
+      subject = build(
+        :doi,
+        creators: [],
+        contributors: [
+          {
+            "contributorType" => "ProjectLeader",
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh723",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.affiliation_id).to eq(
+        [
+        ]
+      )
+    end
 
      it "from creators_and_contributors(sponsored)" do
        subject = build(
