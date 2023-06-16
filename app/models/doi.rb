@@ -1836,7 +1836,7 @@ class Doi < ApplicationRecord
   end
 
   def affiliation_id_and_name
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
