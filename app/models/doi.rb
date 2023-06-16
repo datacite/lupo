@@ -244,6 +244,7 @@ class Doi < ApplicationRecord
       indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
       indexes :affiliation_id,                 type: :keyword
+      indexes :organization_id,                type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
@@ -568,6 +569,7 @@ class Doi < ApplicationRecord
       "provider_id_and_name" => provider_id_and_name,
       "resource_type_id_and_name" => resource_type_id_and_name,
       "affiliation_id" => affiliation_id,
+      "organization_id" => organization_id,
       "affiliation_id_and_name" => affiliation_id_and_name,
       "media_ids" => media_ids,
       "view_count" => view_count,
@@ -1824,6 +1826,15 @@ class Doi < ApplicationRecord
     }
   end
 
+
+  def organization_id
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
+        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+      end
+      sum
+    end
+  end
 
   def affiliation_id
     (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
