@@ -208,6 +208,24 @@ class Doi < ApplicationRecord
         } },
         contributorType: { type: :keyword },
       }
+      indexes :creators_and_contributors, type: :object, properties: {
+        nameType: { type: :keyword },
+        nameIdentifiers: { type: :object, properties: {
+          nameIdentifier: { type: :keyword },
+          nameIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword },
+        } },
+        name: { type: :text },
+        givenName: { type: :text },
+        familyName: { type: :text },
+        affiliation: { type: :object, properties: {
+          name: { type: :keyword },
+          affiliationIdentifier: { type: :keyword },
+          affiliationIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword },
+        } },
+        contributorType: { type: :keyword },
+      }
       indexes :creator_names,                  type: :text
       indexes :titles,                         type: :object, properties: {
         title: { type: :text, fields: { keyword: { type: "keyword" } } },
@@ -537,6 +555,7 @@ class Doi < ApplicationRecord
       "url" => url,
       "creators" => Array.wrap(creators),
       "contributors" => Array.wrap(contributors),
+      "creators_and_contributors" => Array.wrap(creators) + Array.wrap(contributors),
       "creator_names" => creator_names,
       "titles" => Array.wrap(titles),
       "descriptions" => Array.wrap(descriptions),
