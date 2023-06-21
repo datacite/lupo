@@ -930,11 +930,76 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
        ])
      end
 
-     #it "string" do
-       #subject = build(:doi, related_identifiers: ["10.5061/dryad.8515/1"])
-       #expect(subject).to_not be_valid
-       #expect(subject.errors.messages).to eq(:related_identifiers=>["Related identifier '10.5061/dryad.8515/1' should be an object instead of a string."])
-     #end
+     it "has a organization_id thorugh a related datamanagment plan" do
+      related_dmp = create(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh333",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh722",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Bob",
+            "givenName" => "Jones",
+            "name" => "Jones, Bob",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://ror.org/013meh111",
+                "nameIdentifierScheme" => "ROR",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Examples",
+                "affiliationIdentifier" => "https://ror.org/013meh8888",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+            ],
+          },
+        ]
+      )
+
+       subject = build(:doi, related_identifiers: [
+         {
+           "relatedIdentifier": related_dmp.doi,
+           "relatedIdentifierType": "DOI",
+           "relationType": "HasPart",
+           "resourceTypeGeneral": "OutputManagmentPlan",
+         }
+       ])
+       expect(subject).to be_valid
+       expect(subject.related_dmp_ids).to eq([
+         related_dmp.doi,
+       ])
+       expect(subject.related_dmp_organization_and_affiliation_id).to eq(
+         [
+           "ror.org/013meh333",
+           "ror.org/013meh111",
+           "ror.org/013meh722",
+           "ror.org/013meh8888",
+         ]
+       )
+     end
+
    end
 
   describe "metadata" do

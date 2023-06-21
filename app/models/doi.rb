@@ -237,7 +237,8 @@ class Doi < ApplicationRecord
         descriptionType: { type: :keyword },
         lang: { type: :keyword },
       }
-      indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" } }
+      indexes :publisher,                      type: :text,
+        fields: { keyword: { type: "keyword" } }
       indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
       indexes :client_id,                      type: :keyword
       indexes :provider_id,                    type: :keyword
@@ -245,6 +246,7 @@ class Doi < ApplicationRecord
       indexes :resource_type_id,               type: :keyword
       indexes :affiliation_id,                 type: :keyword
       indexes :organization_id,                type: :keyword
+      indexes :related_dmp_organization_id,    type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
@@ -570,6 +572,7 @@ class Doi < ApplicationRecord
       "resource_type_id_and_name" => resource_type_id_and_name,
       "affiliation_id" => affiliation_id,
       "organization_id" => organization_id,
+      "related_dmp_organization_id" => related_dmp_organization_and_affiliation_id,
       "affiliation_id_and_name" => affiliation_id_and_name,
       "media_ids" => media_ids,
       "view_count" => view_count,
@@ -1818,6 +1821,20 @@ class Doi < ApplicationRecord
     }.map do |related_identifier|
       related_identifier['relatedIdentifier']
     end
+  end
+
+  def related_dmp_works
+    Doi.where(doi: related_dmp_ids)
+  end
+
+  def related_dmp_organization_and_affiliation_id
+    related_dmp_works.reduce([]) do |sum, dmp|
+      sum.concat(dmp.organization_id)
+      sum.concat(dmp.affiliation_id)
+
+      sum
+    end
+
   end
 
   def sponsor_contributors
