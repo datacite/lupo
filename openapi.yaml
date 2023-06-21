@@ -1970,7 +1970,6 @@ components:
           readOnly: true
           type: number
         schemaVersion:
-          readOnly: true
           type: string
         source:
           readOnly: true
