@@ -575,7 +575,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
   end
 
   describe "organization_id" do
-
     it "from creators" do
       subject = build(
         :doi,
@@ -600,7 +599,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           "ror.org/013meh555",
         ]
       )
-
     end
 
     it "from contributors(sponsor)" do
@@ -730,112 +728,110 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
   end
 
   describe "affiliation_id" do
+     it "from creators" do
+       subject = build(
+         :doi,
+         creators: [
+           {
+             "familyName" => "Garza",
+             "givenName" => "Kristian",
+             "name" => "Garza, Kristian",
+             "nameIdentifiers" => [
+               {
+                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                 "nameIdentifierScheme" => "ORCID",
+                 "schemeUri" => "https://orcid.org",
+               },
+             ],
+             "nameType" => "Personal",
+             "affiliation" => [
+               {
+                 "name" => "University of Cambridge",
+                 "affiliationIdentifier" => "https://ror.org/013meh722",
+                 "affiliationIdentifierScheme" => "ROR",
+               },
+             ],
+           },
+         ]
+       )
+       expect(subject).to be_valid
+       expect(subject.affiliation_id).to eq(
+         [
+           "ror.org/013meh722",
+         ]
+       )
+     end
 
-    it "from creators" do
-      subject = build(
-        :doi,
-        creators: [
-          {
-            "familyName" => "Garza",
-            "givenName" => "Kristian",
-            "name" => "Garza, Kristian",
-            "nameIdentifiers" => [
-              {
-                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                "nameIdentifierScheme" => "ORCID",
-                "schemeUri" => "https://orcid.org",
-              },
-            ],
-            "nameType" => "Personal",
-            "affiliation" => [
-              {
-                "name" => "University of Cambridge",
-                "affiliationIdentifier" => "https://ror.org/013meh722",
-                "affiliationIdentifierScheme" => "ROR",
-              },
-            ],
-          },
-        ]
-      )
-      expect(subject).to be_valid
-      expect(subject.affiliation_id).to eq(
-        [
-          "ror.org/013meh722",
-        ]
-      )
+     it "from contributors(sponsor)" do
+       subject = build(
+         :doi,
+         creators: [],
+         contributors: [
+           {
+             "contributorType" => "Sponsor",
+             "familyName" => "Garza",
+             "givenName" => "Kristian",
+             "name" => "Garza, Kristian",
+             "nameIdentifiers" => [
+               {
+                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                 "nameIdentifierScheme" => "ORCID",
+                 "schemeUri" => "https://orcid.org",
+               },
+             ],
+             "nameType" => "Personal",
+             "affiliation" => [
+               {
+                 "name" => "University of Cambridge",
+                 "affiliationIdentifier" => "https://ror.org/013meh723",
+                 "affiliationIdentifierScheme" => "ROR",
+               },
+             ],
+           },
+         ]
+       )
+       expect(subject).to be_valid
+       expect(subject.affiliation_id).to eq(
+         [
+           "ror.org/013meh723",
+         ]
+       )
+     end
 
-    end
-
-    it "from contributors(sponsor)" do
-      subject = build(
-        :doi,
-        creators: [],
-        contributors: [
-          {
-            "contributorType" => "Sponsor",
-            "familyName" => "Garza",
-            "givenName" => "Kristian",
-            "name" => "Garza, Kristian",
-            "nameIdentifiers" => [
-              {
-                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                "nameIdentifierScheme" => "ORCID",
-                "schemeUri" => "https://orcid.org",
-              },
-            ],
-            "nameType" => "Personal",
-            "affiliation" => [
-              {
-                "name" => "University of Cambridge",
-                "affiliationIdentifier" => "https://ror.org/013meh723",
-                "affiliationIdentifierScheme" => "ROR",
-              },
-            ],
-          },
-        ]
-      )
-      expect(subject).to be_valid
-      expect(subject.affiliation_id).to eq(
-        [
-          "ror.org/013meh723",
-        ]
-      )
-    end
-
-    it "will be empty from contributors(non-sponsor)" do
-      subject = build(
-        :doi,
-        creators: [],
-        contributors: [
-          {
-            "contributorType" => "ProjectLeader",
-            "familyName" => "Garza",
-            "givenName" => "Kristian",
-            "name" => "Garza, Kristian",
-            "nameIdentifiers" => [
-              {
-                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                "nameIdentifierScheme" => "ORCID",
-                "schemeUri" => "https://orcid.org",
-              },
-            ],
-            "nameType" => "Personal",
-            "affiliation" => [
-              {
-                "name" => "University of Cambridge",
-                "affiliationIdentifier" => "https://ror.org/013meh723",
-                "affiliationIdentifierScheme" => "ROR",
-              },
-            ],
-          },
-        ]
-      )
-      expect(subject).to be_valid
-      expect(subject.affiliation_id).to eq(
-        [
-        ]
-      )
-    end
+     it "will be empty from contributors(non-sponsor)" do
+       subject = build(
+         :doi,
+         creators: [],
+         contributors: [
+           {
+             "contributorType" => "ProjectLeader",
+             "familyName" => "Garza",
+             "givenName" => "Kristian",
+             "name" => "Garza, Kristian",
+             "nameIdentifiers" => [
+               {
+                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                 "nameIdentifierScheme" => "ORCID",
+                 "schemeUri" => "https://orcid.org",
+               },
+             ],
+             "nameType" => "Personal",
+             "affiliation" => [
+               {
+                 "name" => "University of Cambridge",
+                 "affiliationIdentifier" => "https://ror.org/013meh723",
+                 "affiliationIdentifierScheme" => "ROR",
+               },
+             ],
+           },
+         ]
+       )
+       expect(subject).to be_valid
+       expect(subject.affiliation_id).to eq(
+         [
+         ]
+       )
+     end
 
      it "from creators_and_contributors(sponsored)" do
        subject = build(
@@ -896,41 +892,41 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
      end
    end
 
-   describe "related_identifiers" do
-     it "has part" do
-       subject = build(:doi, related_identifiers: [
-         {
-           "relatedIdentifier": "10.5061/dryad.8515/1",
-           "relatedIdentifierType": "DOI",
-           "relationType": "HasPart",
-         }
-       ])
-       expect(subject).to be_valid
-       expect(subject.related_identifiers).to eq([
-         {
-           "relatedIdentifier"=>"10.5061/dryad.8515/1",
-           "relatedIdentifierType"=>"DOI",
-           "relationType"=>"HasPart"
-         }
-       ])
-     end
+  describe "related_identifiers" do
+    it "has part" do
+      subject = build(:doi, related_identifiers: [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        }
+      ])
+      expect(subject).to be_valid
+      expect(subject.related_identifiers).to eq([
+        {
+          "relatedIdentifier" => "10.5061/dryad.8515/1",
+          "relatedIdentifierType" => "DOI",
+          "relationType" => "HasPart"
+        }
+      ])
+    end
 
-     it "has a related datamanagment plan" do
-       subject = build(:doi, related_identifiers: [
-         {
-           "relatedIdentifier": "10.5061/dryad.8515/1",
-           "relatedIdentifierType": "DOI",
-           "relationType": "HasPart",
-           "resourceTypeGeneral": "OutputManagmentPlan",
-         }
-       ])
-       expect(subject).to be_valid
-       expect(subject.related_dmp_ids).to eq([
-          "10.5061/dryad.8515/1",
-       ])
-     end
+    it "has a related datamanagment plan" do
+      subject = build(:doi, related_identifiers: [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+          "resourceTypeGeneral": "OutputManagmentPlan",
+        }
+      ])
+      expect(subject).to be_valid
+      expect(subject.related_dmp_ids).to eq([
+         "10.5061/dryad.8515/1",
+      ])
+    end
 
-     it "has a organization_id thorugh a related datamanagment plan" do
+    it "has a organization_id thorugh a related datamanagment plan" do
       related_dmp = create(
         :doi,
         creators: [
@@ -978,29 +974,28 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         ]
       )
 
-       subject = build(:doi, related_identifiers: [
-         {
-           "relatedIdentifier": related_dmp.doi,
-           "relatedIdentifierType": "DOI",
-           "relationType": "HasPart",
-           "resourceTypeGeneral": "OutputManagmentPlan",
-         }
-       ])
-       expect(subject).to be_valid
-       expect(subject.related_dmp_ids).to eq([
-         related_dmp.doi,
-       ])
-       expect(subject.related_dmp_organization_and_affiliation_id).to eq(
-         [
-           "ror.org/013meh333",
-           "ror.org/013meh111",
-           "ror.org/013meh722",
-           "ror.org/013meh8888",
-         ]
-       )
-     end
-
-   end
+      subject = build(:doi, related_identifiers: [
+        {
+          "relatedIdentifier": related_dmp.doi,
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+          "resourceTypeGeneral": "OutputManagmentPlan",
+        }
+      ])
+      expect(subject).to be_valid
+      expect(subject.related_dmp_ids).to eq([
+        related_dmp.doi,
+      ])
+      expect(subject.related_dmp_organization_and_affiliation_id).to eq(
+        [
+          "ror.org/013meh333",
+          "ror.org/013meh111",
+          "ror.org/013meh722",
+          "ror.org/013meh8888",
+        ]
+      )
+    end
+  end
 
   describe "metadata" do
     subject { create(:doi) }

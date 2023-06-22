@@ -1814,12 +1814,12 @@ class Doi < ApplicationRecord
   end
 
   def related_dmp_ids
-    related_identifiers.select{ |related_identifier|
+    related_identifiers.select { |related_identifier|
       related_identifier["relatedIdentifierType"] == "DOI"
-    }.select{ |related_identifier|
+    }.select { |related_identifier|
       related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagmentPlan"
     }.map do |related_identifier|
-      related_identifier['relatedIdentifier']
+      related_identifier["relatedIdentifier"]
     end
   end
 
@@ -1834,11 +1834,10 @@ class Doi < ApplicationRecord
 
       sum
     end
-
   end
 
   def sponsor_contributors
-    Array.wrap(contributors).select{ |c|
+    Array.wrap(contributors).select { |c|
       c["contributorType"] == "Sponsor"
     }
   end
