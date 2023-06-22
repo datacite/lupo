@@ -69,6 +69,7 @@ module Facetable
     "mit" => "MIT",
     "mpl-2.0" => "MPL-2.0",
     "ogl-canada-2.0" => "OGL-Canada-2.0",
+    "__missing__" => "Missing",
   }.freeze
 
   LOWER_BOUND_YEAR = 2_010
@@ -78,6 +79,8 @@ module Facetable
     "periodical" => "Periodical",
     "igsnCatalog" => "IGSN ID Catalog"
   }.freeze
+
+  OTHER = { "__other__" => "Other", "__missing__" => "Missing" }.freeze
 
   included do
     def facet_by_key_as_string(arr)
@@ -443,7 +446,9 @@ module Facetable
     def facet_by_combined_key(arr)
       arr.map do |hsh|
         id, title = hsh["key"].split(":", 2)
-
+        if id == "__missing__"
+          title = OTHER["__missing__"]
+        end
         { "id" => id, "title" => title, "count" => hsh["doc_count"] }
       end
     end
@@ -508,6 +513,14 @@ module Facetable
       end
 
       arr
+    end
+
+    def add_other(arr, other_count)
+      arr << {
+        "id" => "__other__",
+        "title" => OTHER["__other__"],
+        "count" => other_count,
+      }
     end
   end
 end

@@ -186,7 +186,7 @@ describe OrganizationType do
       )
       expect(
         response.dig("data", "organization", "works", "resourceTypes"),
-      ).to eq([{ "count" => 3, "title" => "Dataset" }])
+      ).to eq([{ "count" => 3, "title" => "Dataset" }, {"count"=>0, "title"=>"Other"}])
       expect(
         response.dig("data", "organization", "works", "nodes").length,
       ).to eq(3)
@@ -334,7 +334,7 @@ describe OrganizationType do
       )
       expect(
         response.dig("data", "organization", "works", "resourceTypes"),
-      ).to eq([{ "count" => 2, "title" => "Dataset" }])
+      ).to eq([{ "count" => 2, "title" => "Dataset" }, {"count"=>0, "title"=>"Other"}])
       expect(
         response.dig("data", "organization", "works", "nodes").length,
       ).to eq(2)
@@ -483,7 +483,7 @@ describe OrganizationType do
       )
       expect(
         response.dig("data", "organization", "works", "resourceTypes"),
-      ).to eq([{ "count" => 2, "title" => "Dataset" }])
+      ).to eq([{ "count" => 2, "title" => "Dataset" }, {"count"=>0, "title"=>"Other"}])
       expect(
         response.dig("data", "organization", "works", "nodes").length,
       ).to eq(2)

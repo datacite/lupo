@@ -59,7 +59,8 @@ module Interfaces::WorkFacetsInterface
 
   def affiliations
     if object.aggregations.affiliations
-      facet_by_combined_key(object.aggregations.affiliations.buckets)
+      arr = facet_by_combined_key(object.aggregations.affiliations.buckets)
+      add_other(arr, object.aggregations.affiliations.sum_other_doc_count)
     else
       []
     end
@@ -83,7 +84,8 @@ module Interfaces::WorkFacetsInterface
 
   def licenses
     if object.aggregations.licenses
-      facet_by_license(object.aggregations.licenses.buckets)
+      arr = facet_by_license(object.aggregations.licenses.buckets)
+      add_other(arr, object.aggregations.licenses.sum_other_doc_count)
     else
       []
     end
