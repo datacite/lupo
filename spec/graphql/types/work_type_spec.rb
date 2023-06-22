@@ -1482,4 +1482,233 @@ describe WorkType do
       )
     end
   end
+
+  describe "query fields with __other__ and __missing__ data", elasticsearch: true do
+    let(:query) do
+      "query($first: Int, $cursor: String, $facetCount: Int) {
+        works(first: $first, after: $cursor, facetCount: $facetCount) {
+          totalCount
+          resourceTypes {
+            id
+            title
+            count
+          }
+          affiliations {
+            id
+            title
+            count
+          }
+          licenses {
+            id
+            title
+            count
+          }
+        }
+      }"
+    end
+
+    let!(:works_5) do
+      create_list(:doi, 5, aasm_state: "findable",
+        types: { "resourceTypeGeneral" => "Text" },
+        creators: [{
+          affiliation: [{
+            "name": "5",
+            "affiliationIdentifier": "https://ror.org/5",
+            "affiliationIdentifierScheme": "ROR",
+          }],
+        }],
+        rights_list: [{ "rightsIdentifier" => "cc-by-1.0" }]
+      )
+    end
+    let!(:works_4) do
+      create_list(:doi, 4, aasm_state: "findable",
+        types: { "resourceTypeGeneral" => "JournalArticle" },
+        creators: [{
+          affiliation: [{
+            "name": "4",
+            "affiliationIdentifier": "https://ror.org/4",
+            "affiliationIdentifierScheme": "ROR",
+          }],
+        }],
+        rights_list: [{ "rightsIdentifier" => "cc-by-2.0" }]
+      )
+    end
+    let!(:works_3) do
+      create_list(:doi, 3, aasm_state: "findable",
+        types: { "resourceTypeGeneral" => "Image" },
+        creators: [{
+          affiliation: [{
+            "name": "3",
+            "affiliationIdentifier": "https://ror.org/3",
+            "affiliationIdentifierScheme": "ROR",
+          }],
+        }],
+        rights_list: [{ "rightsIdentifier" => "cc-by-2.5" }]
+      )
+    end
+    let!(:works_2) do
+      create_list(:doi, 2, aasm_state: "findable",
+        types: { "resourceTypeGeneral" => "PhysicalObject" },
+        creators: [{
+          affiliation: [{
+            "name": "2",
+            "affiliationIdentifier": "https://ror.org/2",
+            "affiliationIdentifierScheme": "ROR",
+          }],
+        }],
+        rights_list: [{ "rightsIdentifier" => "cc-by-3.0" }]
+      )
+    end
+    let!(:works_other) do
+      create(:doi, aasm_state: "findable",
+        types: { "resourceTypeGeneral" => "Preprint" },
+        creators: [{
+          affiliation: [
+            {
+              "name": "1",
+              "affiliationIdentifier": "https://ror.org/1",
+              "affiliationIdentifierScheme": "ROR",
+            },
+            {
+              "name": "0",
+              "affiliationIdentifier": "https://ror.org/0",
+              "affiliationIdentifierScheme": "ROR",
+            }
+          ],
+        }],
+        rights_list: [
+          { "rightsIdentifier" => "bsd-2-clause" },
+          { "rightsIdentifier" => "bsd-3-clause" },
+      ])
+    end
+    let!(:missing) do
+      create_list(:doi, 3, aasm_state: "findable",
+        creators: [{ affiliation: [] }],
+        rights_list: [])
+    end
+
+    before do
+      Doi.import
+      sleep 2
+      @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
+    end
+
+    it "returns all works" do
+      response =
+        LupoSchema.execute(
+          query,
+          variables: { first: 4, cursor: nil, facetCount: 5 }
+        ).
+          as_json
+
+      expect(response.dig("data", "works", "totalCount")).to eq(18)
+      expect(response.dig("data", "works", "resourceTypes")).to eq(
+        [{ "count" => 5, "id" => "text", "title" => "Text" }, { "count" => 4, "id" => "journal-article", "title" => "Journal Article" }, { "count" => 3, "id" => "dataset", "title" => "Dataset" }, { "count" => 3, "id" => "image", "title" => "Image" }, { "count" => 2, "id" => "physical-object", "title" => "Physical Object" }, { "count" => 1, "id" => "__other__", "title" => "Other" }]
+      )
+      expect(response.dig("data", "works", "affiliations")).to eq(
+        [{ "count" => 5, "id" => "ror.org/5", "title" => "5" }, { "count" => 4, "id" => "ror.org/4", "title" => "4" }, { "count" => 3, "id" => "__missing__", "title" => "Missing" }, { "count" => 3, "id" => "ror.org/3", "title" => "3" }, { "count" => 2, "id" => "ror.org/2", "title" => "2" }, { "count" => 2, "id" => "__other__", "title" => "Other" }]
+      )
+      expect(response.dig("data", "works", "licenses")).to eq(
+        [{ "count" => 5, "id" => "cc-by-1.0", "title" => "CC-BY-1.0" }, { "count" => 4, "id" => "cc-by-2.0", "title" => "CC-BY-2.0" }, { "count" => 3, "id" => "__missing__", "title" => "Missing" }, { "count" => 3, "id" => "cc-by-2.5", "title" => "CC-BY-2.5" }, { "count" => 2, "id" => "cc-by-3.0", "title" => "CC-BY-3.0" }, { "count" => 2, "id" => "__other__", "title" => "Other" }]
+      )
+    end
+  end
+
+  describe "query creators and contributors", elasticsearch: true do
+    let!(:work) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "name" => "Kristian Garza",
+            "nameType" => "Personal",
+            "affiliation" => {
+              "name" => "Ruhr-University Bochum, Germany"
+            }
+          },
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation": [
+              {
+                "name": "University of Cambridge",
+                "affiliationIdentifier": "https://ror.org/013meh722",
+                "affiliationIdentifierScheme": "ROR",
+              },
+            ],
+          }
+        ],
+        contributors: [
+          {
+            "givenName" => "Cody",
+            "familyName" => "Ross",
+            "name" => "Ross, Cody",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6876",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "contributorType" => "Editor",
+            "affiliation" => {
+              "name" => "Ruhr-University Bochum, Germany",
+              "affiliationIdentifier": "https://ror.org/013meh722",
+              "affiliationIdentifierScheme": "ROR"
+            }
+          },
+          {
+            "givenName" => "Kristian",
+            "familyName" => "Garza",
+            "contributorType" => "Editor",
+            "affiliation" => [
+              {
+              "name" => "University of Cambridge"
+            }
+          ]
+          },
+        ],
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query($first: Int, $cursor: String, $facetCount: Int) {
+        works(first: $first, after: $cursor, facetCount: $facetCount) {
+          totalCount
+          authors {
+            id
+            title
+            count
+          }
+          creatorsAndContributors {
+            id
+            title
+            count
+          }
+        }
+      }"
+    end
+
+    it "returns the correct counts for authors and creatorsAndContributors" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "works", "authors").length()).to eq(1)
+      expect(response.dig("data", "works", "creatorsAndContributors").length()).to eq(2)
+    end
+  end
 end
