@@ -738,7 +738,7 @@ describe WorkType do
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
       expect(response.dig("data", "works", "licenses")).to eq(
-        [{"count"=>10, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}, {"count"=>0, "id"=>"__other__", "title"=>"Other"}],
+        [{ "count" => 10, "id" => "cc0-1.0", "title" => "CC0-1.0" }, { "count" => 0, "id" => "__other__", "title" => "Other" }],
       )
       # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(
