@@ -1817,7 +1817,7 @@ class Doi < ApplicationRecord
     related_identifiers.select { |related_identifier|
       related_identifier["relatedIdentifierType"] == "DOI"
     }.select { |related_identifier|
-      related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagmentPlan"
+      related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagementPlan"
     }.map do |related_identifier|
       related_identifier["relatedIdentifier"]
     end

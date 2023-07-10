@@ -917,7 +917,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           "relatedIdentifier": "10.5061/dryad.8515/1",
           "relatedIdentifierType": "DOI",
           "relationType": "HasPart",
-          "resourceTypeGeneral": "OutputManagmentPlan",
+          "resourceTypeGeneral": "OutputManagementPlan",
         }
       ])
       expect(subject).to be_valid
@@ -979,7 +979,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           "relatedIdentifier": related_dmp.doi,
           "relatedIdentifierType": "DOI",
           "relationType": "HasPart",
-          "resourceTypeGeneral": "OutputManagmentPlan",
+          "resourceTypeGeneral": "OutputManagementPlan",
         }
       ])
       expect(subject).to be_valid
