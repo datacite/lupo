@@ -1230,8 +1230,8 @@ class Doi < ApplicationRecord
     # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id,
     # funder_id or member_id is a query parameter
     if options[:organization_id].present?
-      #should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
-      #should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      # should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      # should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
       should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
       should << { term: { "related_dmp_organization_id" => ror_from_url(options[:organization_id]) } }
       minimum_should_match = 1

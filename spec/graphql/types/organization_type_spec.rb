@@ -219,10 +219,10 @@ describe OrganizationType do
 
       # Commented out July 2023 by Jrhoads
       # Order of nodes is not deterministic
-      #work = response.dig("data", "organization", "works", "nodes", 0)
-      #expect(work.dig("titles", 0, "title")).to eq(
-        #"Related to org thorugh creator affiliation",
-      #)
+      # work = response.dig("data", "organization", "works", "nodes", 0)
+      # expect(work.dig("titles", 0, "title")).to eq(
+      # "Related to org thorugh creator affiliation",
+      # )
     end
   end
 
