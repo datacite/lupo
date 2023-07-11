@@ -13,6 +13,7 @@ SEARCHABLE_MODELS = [
   ProviderPrefix,
   Contact,
   ReferenceRepository,
+  DataDump,
 ].freeze
 
 RSpec.configure do |config|
