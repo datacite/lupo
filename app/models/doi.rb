@@ -237,13 +237,16 @@ class Doi < ApplicationRecord
         descriptionType: { type: :keyword },
         lang: { type: :keyword },
       }
-      indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" } }
+      indexes :publisher,                      type: :text,
+        fields: { keyword: { type: "keyword" } }
       indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
       indexes :client_id,                      type: :keyword
       indexes :provider_id,                    type: :keyword
       indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
       indexes :affiliation_id,                 type: :keyword
+      indexes :organization_id,                type: :keyword
+      indexes :related_dmp_organization_id,    type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
@@ -568,6 +571,8 @@ class Doi < ApplicationRecord
       "provider_id_and_name" => provider_id_and_name,
       "resource_type_id_and_name" => resource_type_id_and_name,
       "affiliation_id" => affiliation_id,
+      "organization_id" => organization_id,
+      "related_dmp_organization_id" => related_dmp_organization_and_affiliation_id,
       "affiliation_id_and_name" => affiliation_id_and_name,
       "media_ids" => media_ids,
       "view_count" => view_count,
@@ -1011,8 +1016,12 @@ class Doi < ApplicationRecord
     # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id,
     # funder_id or member_id is a query parameter
     if options[:organization_id].present?
+      # TODO: remove after organization_id has been indexed
       should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      # TODO: remove after organization_id has been indexed
       should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
+      should << { term: { "related_dmp_organization_id" => ror_from_url(options[:organization_id]) } }
       minimum_should_match = 1
     end
     if options[:affiliation_id].present?
@@ -1221,8 +1230,10 @@ class Doi < ApplicationRecord
     # match either ROR ID or Crossref Funder ID if either organization_id, affiliation_id,
     # funder_id or member_id is a query parameter
     if options[:organization_id].present?
-      should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
-      should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      # should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      # should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+      should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
+      should << { term: { "related_dmp_organization_id" => ror_from_url(options[:organization_id]) } }
       minimum_should_match = 1
     end
     if options[:affiliation_id].present?
@@ -1808,8 +1819,47 @@ class Doi < ApplicationRecord
     client.provider.consortium_id.downcase if client.present? && client.provider.consortium_id.present?
   end
 
+  def related_dmp_ids
+    related_identifiers.select { |related_identifier|
+      related_identifier["relatedIdentifierType"] == "DOI"
+    }.select { |related_identifier|
+      related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagementPlan"
+    }.map do |related_identifier|
+      related_identifier["relatedIdentifier"]
+    end
+  end
+
+  def related_dmp_works
+    Doi.where(doi: related_dmp_ids)
+  end
+
+  def related_dmp_organization_and_affiliation_id
+    related_dmp_works.reduce([]) do |sum, dmp|
+      sum.concat(dmp.organization_id)
+      sum.concat(dmp.affiliation_id)
+
+      sum
+    end
+  end
+
+  def sponsor_contributors
+    Array.wrap(contributors).select { |c|
+      c["contributorType"] == "Sponsor"
+    }
+  end
+
+
+  def organization_id
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
+        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+      end
+      sum
+    end
+  end
+
   def affiliation_id
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
@@ -1819,7 +1869,7 @@ class Doi < ApplicationRecord
   end
 
   def affiliation_id_and_name
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
