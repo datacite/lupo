@@ -1833,7 +1833,7 @@ class Doi < ApplicationRecord
   end
 
   def related_dmp_ids
-    related_identifiers.select { |related_identifier|
+    Array.wrap(related_identifiers).select { |related_identifier|
       related_identifier["relatedIdentifierType"] == "DOI"
     }.select { |related_identifier|
       related_identifier.fetch("resourceTypeGeneral", nil) == "OutputManagementPlan"
