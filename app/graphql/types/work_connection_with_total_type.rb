@@ -22,7 +22,8 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def resource_types
     if object.aggregations.resource_types
-      facet_by_combined_key(object.aggregations.resource_types.buckets)
+      arr = facet_by_combined_key(object.aggregations.resource_types.buckets)
+      add_other(arr, object.aggregations.resource_types.sum_other_doc_count)
     else
       []
     end

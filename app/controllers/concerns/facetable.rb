@@ -69,6 +69,7 @@ module Facetable
     "mit" => "MIT",
     "mpl-2.0" => "MPL-2.0",
     "ogl-canada-2.0" => "OGL-Canada-2.0",
+    "__missing__" => "Missing",
   }.freeze
 
   LOWER_BOUND_YEAR = 2_010
@@ -78,6 +79,8 @@ module Facetable
     "periodical" => "Periodical",
     "igsnCatalog" => "IGSN ID Catalog"
   }.freeze
+
+  OTHER = { "__other__" => "Other", "__missing__" => "Missing" }.freeze
 
   included do
     def facet_by_key_as_string(arr)
@@ -443,7 +446,9 @@ module Facetable
     def facet_by_combined_key(arr)
       arr.map do |hsh|
         id, title = hsh["key"].split(":", 2)
-
+        if id == "__missing__"
+          title = OTHER["__missing__"]
+        end
         { "id" => id, "title" => title, "count" => hsh["doc_count"] }
       end
     end
@@ -459,7 +464,7 @@ module Facetable
       end
     end
 
-    def facet_by_authors(arr)
+    def _facet_by_general_contributor(arr, aggregate, source)
       arr.map { |hsh|
         orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
 
@@ -469,7 +474,7 @@ module Facetable
 
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
-        creators = hsh.dig("authors", "hits", "hits")[0].dig("_source", "creators")
+        creators = hsh.dig(aggregate, "hits", "hits")[0].dig("_source", source)
 
         # Filter through creators to find creator that matches the key
         matched_creator = creators.select do |creator|
@@ -488,6 +493,38 @@ module Facetable
           }
         end
       }.compact
+    end
+
+    def facet_by_authors(arr)
+      _facet_by_general_contributor(arr, "authors", "creators")
+    end
+
+    def facet_by_creators_and_contributors(arr)
+      _facet_by_general_contributor(arr, "creators_and_contributors", "creators_and_contributors")
+    end
+
+    def add_other(arr, other_count)
+      if other_count > 0
+        arr << {
+          "id" => "__other__",
+          "title" => OTHER["__other__"],
+          "count" => other_count,
+        }
+      end
+
+      arr
+    end
+
+    def add_other(arr, other_count)
+      if other_count > 0
+        arr << {
+          "id" => "__other__",
+          "title" => OTHER["__other__"],
+          "count" => other_count,
+        }
+      end
+
+      arr
     end
   end
 end

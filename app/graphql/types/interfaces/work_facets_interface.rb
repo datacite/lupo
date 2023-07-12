@@ -12,6 +12,7 @@ module Interfaces::WorkFacetsInterface
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :authors, [FacetType], null: true, cache: true
+  field :creators_and_contributors, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
   field :fields_of_science_combined, [FacetType], null: true, cache: true
   field :fields_of_science_repository, [FacetType], null: true, cache: true
@@ -58,7 +59,8 @@ module Interfaces::WorkFacetsInterface
 
   def affiliations
     if object.aggregations.affiliations
-      facet_by_combined_key(object.aggregations.affiliations.buckets)
+      arr = facet_by_combined_key(object.aggregations.affiliations.buckets)
+      add_other(arr, object.aggregations.affiliations.sum_other_doc_count)
     else
       []
     end
@@ -72,9 +74,18 @@ module Interfaces::WorkFacetsInterface
     end
   end
 
+  def creators_and_contributors
+    if object.aggregations.creators_and_contributors
+      facet_by_creators_and_contributors(object.aggregations.creators_and_contributors.buckets)
+    else
+      []
+    end
+  end
+
   def licenses
     if object.aggregations.licenses
-      facet_by_license(object.aggregations.licenses.buckets)
+      arr = facet_by_license(object.aggregations.licenses.buckets)
+      add_other(arr, object.aggregations.licenses.sum_other_doc_count)
     else
       []
     end
