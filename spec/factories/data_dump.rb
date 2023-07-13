@@ -7,6 +7,8 @@ FactoryBot.define do
     uid { Faker::Internet.password(8).downcase }
     scope { "metadata" }
     description { "Test Metadata Data Dump Factory creation"}
+    start_date { "01/01/2022" }
+    end_date { "31/12/2022" }
     records { 12345 }
     checksum { Faker::Crypto.sha256}
     created_at { Faker::Time.backward(1, :morning) }
