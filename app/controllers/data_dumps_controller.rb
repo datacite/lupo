@@ -21,6 +21,7 @@ class DataDumpsController < ApplicationController
     page = page_from_params(params)
 
     response = DataDump.query(
+      "",
       page: page,
       sort: sort
     )

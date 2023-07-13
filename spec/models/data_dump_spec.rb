@@ -8,11 +8,9 @@ RSpec.describe DataDump, type: :model, elasticsearch: true do
     it { should validate_presence_of(:scope) }
     it { should validate_presence_of(:start_date) }
     it { should validate_presence_of(:end_date) }
-    # Temporarily disabled as these break with the other validators
-    # Potentially adding a factory will resolve this?
-    # Otherwise shift them to a separate second suite that _does_ create the object
-    # it { should allow_value("metadata").for(:scope) }
-    # it { should allow_value("link").for(:scope) }
-    # it { should_not allow_value("invalid").for(:scope) }
+    it { should validate_inclusion_of(:scope).in_array(%w(metadata link)) }
+    it { should allow_value("metadata").for(:scope).on(:create) }
+    it { should allow_value("link").for(:scope).on(:create) }
+    it { should_not allow_value("invalid").for(:scope).on(:create) }
   end
 end

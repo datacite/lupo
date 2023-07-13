@@ -13,7 +13,7 @@ class DataDump < ApplicationRecord
 
   validates_uniqueness_of :uid, message: "This Data Dump UID is already in use"
 
-  validates_inclusion_of :scope, in: %w(metadata, link), allow_blank: false
+  validates_inclusion_of :scope, in: %w(metadata link), allow_blank: false
 
   aasm whiny_transitions: false do
     # initial state should prevent public visibility
@@ -73,5 +73,9 @@ class DataDump < ApplicationRecord
                 updated_sort: { type: :date }
               }
     end
+  end
+
+  def self.query_aggregations
+    {}
   end
 end
