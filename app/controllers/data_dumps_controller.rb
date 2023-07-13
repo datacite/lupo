@@ -52,8 +52,15 @@ class DataDumpsController < ApplicationController
               }.compact.to_query
           end,
         prev:
-          if data_dumps.blank? || page[:number] == 1 || page[:number] == 0
+          if page[:number] == 1 || page[:number] == 0
             nil
+          elsif data_dumps.blank?
+            # use the max page size
+            request.base_url + "/data_dumps?" +
+              { "page[number]" => total_pages,
+                "page[size]" => page[:size],
+                sort: params[:sort],
+              }.compact.to_query
           else
             request.base_url + "/data_dumps?" +
               { "page[number]" => page[:number] - 1,
