@@ -44,7 +44,7 @@ describe DataDumpsController, type: :request, elasticsearch: true do
       prev_link = prev_link_absolute.path + "?" + prev_link_absolute.query
       expect(prev_link).to eq("/data_dumps?page%5Bnumber%5D=1&page%5Bsize%5D=4")
 
-      get next_link, nil, headers
+      get next_link
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(2)
@@ -66,7 +66,7 @@ describe DataDumpsController, type: :request, elasticsearch: true do
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/data_dumps?page%5Bnumber%5D=2&page%5Bsize%5D=5")
 
-      get next_link, nil, headers
+      get next_link
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
