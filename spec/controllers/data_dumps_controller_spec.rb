@@ -12,7 +12,7 @@ RSpec.describe DataDumpsController, type: :controller do
   describe "GET #show" do
     let(:data_dump) { create(:data_dump) }
     it "returns http success" do
-      get :show, { uid: data_dump.uid }
+      get :show, params: { id: data_dump.uid }
       expect(response).to have_http_status(:success)
     end
   end
