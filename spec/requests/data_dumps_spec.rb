@@ -98,7 +98,7 @@ describe DataDumpsController, type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "description")).to eq("Test Metadata Data Dump Factory creation")
-        expect(json.dig("data", "attributes", "start_date")).to eq(data_dump.start_date)
+        expect(json.dig("data", "attributes", "startDate")).to eq(data_dump.start_date)
       end
     end
 
