@@ -56,7 +56,7 @@ describe DataDumpsController, type: :request, elasticsearch: true do
     end
 
     it "returns correct page links when results is exactly divisible by page size" do
-      get "/data_dumps?page[number]=1&page[size]=5", nil, headers
+      get "/data_dumps?page[number]=1&page[size]=5"
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(5)
@@ -78,7 +78,7 @@ describe DataDumpsController, type: :request, elasticsearch: true do
     end
 
     it "returns a blank resultset when page is above max page" do
-      get "/data_dumps?page[number]=3&page[size]=5", nil, headers
+      get "/data_dumps?page[number]=3&page[size]=5"
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(0)
