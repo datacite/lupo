@@ -74,4 +74,8 @@ class DataDump < ApplicationRecord
               }
     end
   end
+
+  def self.query_aggregations
+    {}
+  end
 end
