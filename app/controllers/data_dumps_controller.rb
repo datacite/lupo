@@ -46,7 +46,7 @@ class DataDumpsController < ApplicationController
             nil
           else
             request.base_url + "/data_dumps?" +
-              { "page[number" => page[:number] + 1,
+              { "page[number]" => page[:number] + 1,
                 "page[size]" => page[:size],
                 sort: params[:sort],
               }.compact.to_query
@@ -56,7 +56,7 @@ class DataDumpsController < ApplicationController
             nil
           else
             request.base_url + "/data_dumps?" +
-              { "page[number" => page[:number] - 1,
+              { "page[number]" => page[:number] - 1,
                 "page[size]" => page[:size],
                 sort: params[:sort],
               }.compact.to_query
