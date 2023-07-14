@@ -239,7 +239,7 @@ describe DataManagementPlanType do
     before do
       Doi.import
       sleep 2
-      #@dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
+      @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do
