@@ -1045,9 +1045,15 @@ class Doi < ApplicationRecord
 
     if options[:fair_organization_id].present?
       _ror_id = ror_from_url(options[:fair_organization_id])
-      should << { term: { "fair_organization_id" => _ror_id } }
-      should << { term: { "fair_affiliation_id" => _ror_id } }
-      should << { term: { "related_dmp_organization_id" => _ror_id } }
+      if Flipper.enabled?(:feature_org_work_affiliation)
+        should << { term: { "fair_organization_id" => _ror_id } }
+        should << { term: { "fair_affiliation_id" => _ror_id } }
+        should << { term: { "related_dmp_organization_id" => _ror_id } }
+      else
+        should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{_ror_id}" } }
+        should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{_ror_id}" } }
+        should << { term: { "affiliation_id" => _ror_id } }
+      end
       minimum_should_match = 1
     end
 
