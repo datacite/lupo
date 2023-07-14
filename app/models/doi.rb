@@ -245,12 +245,15 @@ class Doi < ApplicationRecord
       indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
       indexes :affiliation_id,                 type: :keyword
+      indexes :fair_affiliation_id,            type: :keyword
       indexes :organization_id,                type: :keyword
+      indexes :fair_organization_id,           type: :keyword
       indexes :related_dmp_organization_id,    type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
       indexes :affiliation_id_and_name,        type: :keyword
+      indexes :fair_affiliation_id_and_name,   type: :keyword
       indexes :media_ids,                      type: :keyword
       indexes :media,                          type: :object, properties: {
         type: { type: :keyword },
@@ -571,9 +574,12 @@ class Doi < ApplicationRecord
       "provider_id_and_name" => provider_id_and_name,
       "resource_type_id_and_name" => resource_type_id_and_name,
       "affiliation_id" => affiliation_id,
+      "fair_affiliation_id" => fair_affiliation_id,
       "organization_id" => organization_id,
+      "fair_organization_id" => fair_organization_id,
       "related_dmp_organization_id" => related_dmp_organization_and_affiliation_id,
       "affiliation_id_and_name" => affiliation_id_and_name,
+      "fair_affiliation_id_and_name" => fair_affiliation_id_and_name,
       "media_ids" => media_ids,
       "view_count" => view_count,
       "views_over_time" => views_over_time,
@@ -1034,9 +1040,17 @@ class Doi < ApplicationRecord
       # TODO: remove after organization_id has been indexed
       should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
       should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
-      should << { term: { "related_dmp_organization_id" => ror_from_url(options[:organization_id]) } }
       minimum_should_match = 1
     end
+
+    if options[:fair_organization_id].present?
+      _ror_id = ror_from_url(options[:fair_organization_id])
+      should << { term: { "fair_organization_id" => _ror_id } }
+      should << { term: { "fair_affiliation_id" => _ror_id } }
+      should << { term: { "related_dmp_organization_id" => _ror_id } }
+      minimum_should_match = 1
+    end
+
     if options[:affiliation_id].present?
       should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) } }
       minimum_should_match = 1
@@ -1246,7 +1260,6 @@ class Doi < ApplicationRecord
       # should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
       # should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
       should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
-      should << { term: { "related_dmp_organization_id" => ror_from_url(options[:organization_id]) } }
       minimum_should_match = 1
     end
     if options[:affiliation_id].present?
@@ -1848,8 +1861,8 @@ class Doi < ApplicationRecord
 
   def related_dmp_organization_and_affiliation_id
     related_dmp_works.reduce([]) do |sum, dmp|
-      sum.concat(dmp.organization_id)
-      sum.concat(dmp.affiliation_id)
+      sum.concat(dmp.fair_organization_id)
+      sum.concat(dmp.fair_affiliation_id)
 
       sum
     end
@@ -1863,6 +1876,15 @@ class Doi < ApplicationRecord
 
 
   def organization_id
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
+        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+      end
+      sum
+    end
+  end
+
+  def fair_organization_id
     (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
         sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
@@ -1872,24 +1894,41 @@ class Doi < ApplicationRecord
   end
 
   def affiliation_id
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
+        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+      end
+      sum
+    end
+  end
+
+  def fair_affiliation_id
     (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-
       sum
     end
   end
 
   def affiliation_id_and_name
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
+        sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+      end
+      sum
+    end
+  end
+
+  def fair_affiliation_id_and_name
     (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-
       sum
     end
   end
+
 
   def prefix
     doi.split("/", 2).first if doi.present?

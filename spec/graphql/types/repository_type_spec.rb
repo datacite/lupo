@@ -138,6 +138,7 @@ describe RepositoryType do
       ReferenceRepository.destroy_all
       Client.destroy_all
       Provider.destroy_all
+      Prefix.destroy_all
     end
 
     let(:search_query) { @search_query }
@@ -488,6 +489,7 @@ describe RepositoryType do
       Client.destroy_all
       Provider.destroy_all
       ReferenceRepository.destroy_all
+      Prefix.destroy_all
     end
 
     before :each do
@@ -599,6 +601,7 @@ describe RepositoryType do
       Provider.destroy_all
       Doi.destroy_all
       Event.destroy_all
+      Prefix.destroy_all
     end
 
     it "returns repository with works total count" do

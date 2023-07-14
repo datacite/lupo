@@ -351,8 +351,7 @@ class OrganizationType < BaseObject
     Doi.gql_query(
       args[:query],
       ids: args[:ids],
-      affiliation_id: object.id,
-      organization_id: object.id,
+      fair_organization_id: object.id,
       member_id:
         if %w[direct_member consortium_organization].include?(
           member["member_role_id"],
