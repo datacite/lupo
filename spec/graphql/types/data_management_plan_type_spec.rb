@@ -222,7 +222,7 @@ describe DataManagementPlanType do
         contributors: [
           {
             "name" => "European Commission",
-            "contributorType" => "HostingInstitution",
+            "contributorType" => "Sponsor",
             "nameIdentifiers" => [
               {
                 "nameIdentifier" => "https://ror.org/00k4n6c32",
@@ -239,7 +239,7 @@ describe DataManagementPlanType do
     before do
       Doi.import
       sleep 2
-      @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
+      #@dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do
@@ -350,7 +350,7 @@ describe DataManagementPlanType do
       ).to eq(
         [
           {
-            "contributorType" => "HostingInstitution",
+            "contributorType" => "Sponsor",
             "id" => "https://ror.org/00k4n6c32",
             "name" => "European Commission",
           },
