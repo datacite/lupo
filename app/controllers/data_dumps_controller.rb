@@ -1,5 +1,9 @@
 class DataDumpsController < ApplicationController
+
+  prepend_before_action :authenticate_user!
+  # load_and_authorize_resource
   def index
+    authorize! :read, :read_data_dumps
     sort =
       case params[:sort]
       when "created"
@@ -90,6 +94,7 @@ class DataDumpsController < ApplicationController
   end
 
   def show
+    authorize! :read, :read_data_dumps
     data_dump = DataDump.where(uid: params[:id]).first
     if data_dump.blank? ||
       (
