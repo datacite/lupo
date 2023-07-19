@@ -23,6 +23,7 @@ class Ability
       can :export, :contacts
       can :export, :organizations
       can :export, :repositories
+      can :read, :read_data_dumps
     elsif user.role_id == "staff_user"
       can %i[read read_billing_information read_contact_information read_analytics], :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
