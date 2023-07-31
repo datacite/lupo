@@ -668,7 +668,7 @@ class Doi < ApplicationRecord
         registration_agencies: { terms: { field: "agency", size: facet_count, min_doc_count: 1 } },
         affiliations: { terms: { field: "affiliation_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } },
         authors: {
-          terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1 },
+          terms: { field: "creators.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1, include: "https?://orcid.org/.*" },
           aggs: {
             authors: {
               top_hits: {
@@ -681,7 +681,7 @@ class Doi < ApplicationRecord
           }
         },
         creators_and_contributors: {
-          terms: { field: "creators_and_contributors.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1 },
+          terms: { field: "creators_and_contributors.nameIdentifiers.nameIdentifier", size: facet_count, min_doc_count: 1, include: "https?://orcid.org/.*" },
           aggs: {
             creators_and_contributors: {
               top_hits: {
