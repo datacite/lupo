@@ -1711,4 +1711,135 @@ describe WorkType do
       expect(response.dig("data", "works", "creatorsAndContributors").length()).to eq(2)
     end
   end
+
+
+  describe "query contributors with a mix of ORCID iDs and local identifiers", elasticsearch: true do
+    let!(:work) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        creators: [
+          {
+            "givenName" => "Cody",
+            "familyName" => "Ross",
+            "name" => "Ross, Cody",
+            "nameIdentifiers" => [{
+                "nameIdentifier" => "local identifier 1",
+                "nameIdentifierScheme" => "local",
+                "schemeUri" => "https://test.org",
+            }],
+          },
+          {
+            "name" => "Test Author",
+            "nameType" => "Personal",
+            "nameIdentifiers" => [{
+                "nameIdentifier" => "local identifier 2",
+                "nameIdentifierScheme" => "local",
+                "schemeUri" => "test.org",
+            }],
+          },
+          {
+            "name" => "Bryceson Laing",
+            "nameType" => "Personal",
+            "nameIdentifiers" => [{
+              "nameIdentifier" => "https://orcid.org/0000-0002-8249-1629",
+              "nameIdentifierScheme" => "ORCID",
+              "schemeUri" => "https://orcid.org",
+            }],
+          },
+        ],
+        contributors:  [
+          {
+            "name": "Contributor",
+            "nameType": "Personal",
+            "givenName": "Test 1",
+            "familyName": "Contributor",
+            "nameIdentifiers": [
+              {
+                  "schemeUri": "",
+                  "nameIdentifier": "7482",
+                  "nameIdentifierScheme": "local"
+              }
+            ],
+            "contributorType" => "Editor"
+          },
+          {
+            "name": "Contributor",
+            "nameType": "Personal",
+            "givenName": "Test 2",
+            "familyName": "Contributor",
+            "nameIdentifiers": [
+              {
+                  "schemeUri": "",
+                  "nameIdentifier": "7482",
+                  "nameIdentifierScheme": "local"
+              },
+            ],
+            "contributorType" => "Editor"
+          },
+          {
+              "name": "Joseph Rhoads",
+              "nameType": "Personal",
+              "givenName": "Joseph",
+              "familyName": "Rhoads",
+              "nameIdentifiers": [
+                {
+                    "schemeUri": "",
+                    "nameIdentifier": "7483",
+                    "nameIdentifierScheme": "local"
+                },
+                {
+                    "schemeUri": "https://orcid.org",
+                    "nameIdentifier": "https://orcid.org/0000-0003-3484-6876",
+                    "nameIdentifierScheme": "ORCID"
+                }
+              ],
+              "contributorType" => "Editor"
+          }
+        ]
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query($first: Int, $cursor: String, $facetCount: Int) {
+        works(first: $first, after: $cursor, facetCount: $facetCount) {
+          totalCount
+          authors {
+            id
+            title
+            count
+          }
+          creatorsAndContributors {
+            id
+            title
+            count
+          }
+        }
+      }"
+    end
+
+    it "returns the correct counts for authors, filtering out those that don't include ORCID iDs" do
+      response = LupoSchema.execute(
+        query,
+        variables: { first: nil, cursor: nil, facetCount: 3 }
+      ).as_json
+
+      expect(response.dig("data", "works", "authors").length()).to eq(1)
+    end
+
+
+    it "returns the correct counts for creatorsAndContributors, filtering out those that don't include ORCID iDs" do
+      response = LupoSchema.execute(
+        query,
+        variables: { first: nil, cursor: nil, facetCount: 3 }
+      ).as_json
+
+      expect(response.dig("data", "works", "creatorsAndContributors").length()).to eq(2)
+    end
+  end
 end
