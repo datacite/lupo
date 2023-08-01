@@ -1842,4 +1842,48 @@ describe WorkType do
       expect(response.dig("data", "works", "creatorsAndContributors").length()).to eq(2)
     end
   end
+
+  describe "query funders", elasticsearch: true do
+    let!(:work) do
+      create_list(
+        :doi,
+        10,
+        aasm_state: "findable",
+        funding_references: [
+          { "funderName": "Fake Funders R Us: We're just in the way and should be skipped"},
+          {
+            "schemeUri": "https://ror.org",
+            "funderName": "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France",
+            "funderIdentifier": "https://ror.org/04tqhj682",
+            "funderIdentifierType": "ROR"
+          }
+        ]
+      )
+    end
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      "query($first: Int, $cursor: String, $facetCount: Int) {
+        works(first: $first, after: $cursor, facetCount: $facetCount) {
+          totalCount
+          funders {
+            id
+            title
+            count
+          }
+        }
+      }"
+    end
+
+    it "returns the correct counts for funders" do
+      response = LupoSchema.execute(query).as_json
+      pp(response)
+
+      expect(response.dig("data", "works", "funders").length()).to eq(1)
+    end
+  end
 end
