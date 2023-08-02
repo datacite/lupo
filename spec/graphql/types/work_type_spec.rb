@@ -1850,7 +1850,7 @@ describe WorkType do
         10,
         aasm_state: "findable",
         funding_references: [
-          { "funderName": "Fake Funders R Us: We're just in the way and should be skipped"},
+          { "funderName": "Fake Funders R Us: We're just in the way and should be skipped" },
           {
             "schemeUri": "https://ror.org",
             "funderName": "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France",

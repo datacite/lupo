@@ -474,7 +474,7 @@ module Facetable
 
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
-        all_funders = hsh.dig('funders', "hits", "hits")[0].dig("_source", "funding_references")
+        all_funders = hsh.dig("funders", "hits", "hits")[0].dig("_source", "funding_references")
 
         # Filter through funders to find the funder that matches the key
         matched_funder = all_funders.find do |funder|

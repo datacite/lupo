@@ -69,20 +69,19 @@ describe "Facetable", type: :controller do
       funders = model.facet_by_funders(funder_aggs)
 
       expected_result = [
-        {"count"=>5, "id"=>"https://ror.org/00cvxb145", "title"=>"Gift to the University of Washington College of the Environment (from the Seeley family)"},
-        {"count"=>5, "id"=>"https://ror.org/021nxhr62", "title"=>"National Science Foundation (NSF)"},
-        {"count"=>5, "id"=>"https://ror.org/04p8xrf95", "title"=>"Tetiaroa Society"},
-        {"count"=>2, "id"=>"https://ror.org/04tqhj682", "title"=>"The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France"},
-        {"count"=>1, "id"=>"https://doi.org/10.13039/100000001", "title"=>"National Science Foundation "},
-        {"count"=>1, "id"=>"https://ror.org/0040r6f76", "title"=>"Victoria University of Wellington"},
-        {"count"=>1, "id"=>"https://ror.org/0128rbw31", "title"=>"AAUS"},
-        {"count"=>1, "id"=>"https://ror.org/019w4f821", "title"=>"EU - Horizon 2020"},
-        {"count"=>1, "id"=>"https://ror.org/01zkghx44", "title"=>"Teasley Endowment to Georgia Tech"},
-        {"count"=>1, "id"=>"https://ror.org/02t274463", "title"=>"UCSB"}
+        { "count" => 5, "id" => "https://ror.org/00cvxb145", "title" => "Gift to the University of Washington College of the Environment (from the Seeley family)" },
+        { "count" => 5, "id" => "https://ror.org/021nxhr62", "title" => "National Science Foundation (NSF)" },
+        { "count" => 5, "id" => "https://ror.org/04p8xrf95", "title" => "Tetiaroa Society" },
+        { "count" => 2, "id" => "https://ror.org/04tqhj682", "title" => "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France" },
+        { "count" => 1, "id" => "https://doi.org/10.13039/100000001", "title" => "National Science Foundation " },
+        { "count" => 1, "id" => "https://ror.org/0040r6f76", "title" => "Victoria University of Wellington" },
+        { "count" => 1, "id" => "https://ror.org/0128rbw31", "title" => "AAUS" },
+        { "count" => 1, "id" => "https://ror.org/019w4f821", "title" => "EU - Horizon 2020" },
+        { "count" => 1, "id" => "https://ror.org/01zkghx44", "title" => "Teasley Endowment to Georgia Tech" },
+        { "count" => 1, "id" => "https://ror.org/02t274463", "title" => "UCSB" }
       ]
 
       expect(funders).to eq (expected_result)
-
     end
   end
 
