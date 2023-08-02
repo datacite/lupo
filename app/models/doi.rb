@@ -693,6 +693,26 @@ class Doi < ApplicationRecord
             }
           }
         },
+        funders: {
+          terms: {
+            field: "funding_references.funderIdentifier",
+            size: facet_count,
+            min_doc_count: 1
+          },
+          aggs: {
+            funders: {
+              top_hits: {
+                _source: {
+                  includes: [
+                    "funding_references.funderName",
+                    "funding_references.funderIdentifier"
+                  ]
+                },
+                size: 1
+              }
+            }
+          }
+        },
         pid_entities: {
           filter: { term: { "subjects.subjectScheme": "PidEntity" } },
           aggs: {

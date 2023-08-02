@@ -1,0 +1,318 @@
+[
+    {
+        "key": "https://ror.org/00cvxb145",
+        "doc_count": 5,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 5,
+                    "relation": "eq"
+                },
+                "max_score": 20.274427,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946146",
+                        "_score": 20.274427,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "Gift to the University of Washington College of the Environment (from the Seeley family)",
+                                    "funderIdentifier": "https://ror.org/00cvxb145"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/021nxhr62",
+        "doc_count": 5,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 5,
+                    "relation": "eq"
+                },
+                "max_score": 20.274427,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946241",
+                        "_score": 20.274427,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "National Science Foundation (NSF)",
+                                    "funderIdentifier": "https://ror.org/021nxhr62"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/04p8xrf95",
+        "doc_count": 5,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 5,
+                    "relation": "eq"
+                },
+                "max_score": 19.965984,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946233",
+                        "_score": 19.965984,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "Tetiaroa Society",
+                                    "funderIdentifier": "https://ror.org/04p8xrf95"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/04tqhj682",
+        "doc_count": 2,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 2,
+                    "relation": "eq"
+                },
+                "max_score": 20.976042,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69997697",
+                        "_score": 20.976042,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France",
+                                    "funderIdentifier": "https://ror.org/04tqhj682"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://doi.org/10.13039/100000001",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 6.643292,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "57692160",
+                        "_score": 6.643292,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "National Science Foundation ",
+                                    "funderIdentifier": "https://doi.org/10.13039/100000001"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/0040r6f76",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 19.387146,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69997724",
+                        "_score": 19.387146,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "Victoria University of Wellington",
+                                    "funderIdentifier": "https://ror.org/0040r6f76"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/0128rbw31",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 19.75341,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946261",
+                        "_score": 19.75341,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "International Society for Reef Studies"
+                                },
+                                {
+                                    "funderName": "Smithsonian Tropical Research Institute",
+                                    "funderIdentifier": "https://ror.org/035jbxr46"
+                                },
+                                {
+                                    "funderName": "UCSB",
+                                    "funderIdentifier": "https://ror.org/02t274463"
+                                },
+                                {
+                                    "funderName": "AAUS",
+                                    "funderIdentifier": "https://ror.org/0128rbw31"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/019w4f821",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 19.965984,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946229",
+                        "_score": 19.965984,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "EU - Horizon 2020",
+                                    "funderIdentifier": "https://ror.org/019w4f821"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/01zkghx44",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 20.274427,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946147",
+                        "_score": 20.274427,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "National Science Foundation (NSF)",
+                                    "funderIdentifier": "https://ror.org/021nxhr62"
+                                },
+                                {
+                                    "funderName": "Teasley Endowment to Georgia Tech",
+                                    "funderIdentifier": "https://ror.org/01zkghx44"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        "key": "https://ror.org/02t274463",
+        "doc_count": 1,
+        "funders": {
+            "hits": {
+                "total": {
+                    "value": 1,
+                    "relation": "eq"
+                },
+                "max_score": 19.75341,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "69946261",
+                        "_score": 19.75341,
+                        "_source": {
+                            "funding_references": [
+                                {
+                                    "funderName": "International Society for Reef Studies"
+                                },
+                                {
+                                    "funderName": "Smithsonian Tropical Research Institute",
+                                    "funderIdentifier": "https://ror.org/035jbxr46"
+                                },
+                                {
+                                    "funderName": "UCSB",
+                                    "funderIdentifier": "https://ror.org/02t274463"
+                                },
+                                {
+                                    "funderName": "AAUS",
+                                    "funderIdentifier": "https://ror.org/0128rbw31"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+]

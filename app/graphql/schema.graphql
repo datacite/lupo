@@ -398,6 +398,7 @@ type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -995,6 +996,7 @@ type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1044,6 +1046,7 @@ type BookConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1415,6 +1418,7 @@ type CollectionConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -1738,6 +1742,7 @@ type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2353,6 +2358,7 @@ type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -2676,6 +2682,7 @@ type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -3022,6 +3029,7 @@ type DatasetConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -3440,6 +3448,7 @@ type DissertationConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -4992,6 +5001,7 @@ type ImageConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5315,6 +5325,7 @@ type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5638,6 +5649,7 @@ type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -5966,6 +5978,7 @@ type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -6585,6 +6598,7 @@ type ModelConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7080,6 +7094,7 @@ type OtherConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7428,6 +7443,7 @@ type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -7888,6 +7904,7 @@ type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -8264,6 +8281,7 @@ type PreprintConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -8589,6 +8607,7 @@ type PublicationConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -9555,6 +9574,7 @@ type ServiceConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -9906,6 +9926,7 @@ type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
   funderConnectionCount: Int!
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10233,6 +10254,7 @@ type SoundConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10767,6 +10789,7 @@ type WorkConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 
@@ -10812,6 +10835,7 @@ interface WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
   openLicenseResourceTypes: [Facet!]
@@ -11110,6 +11134,7 @@ type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
   fieldsOfScienceRepository: [Facet!]
+  funders: [Facet!]
   languages: [Facet!]
   licenses: [Facet!]
 

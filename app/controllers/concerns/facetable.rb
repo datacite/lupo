@@ -464,6 +464,34 @@ module Facetable
       end
     end
 
+    def facet_by_funders(arr)
+      arr.map { |hsh|
+        funder_id = hsh["key"]
+
+        if funder_id.nil?
+          next
+        end
+
+        # The aggregation query should only return 1 hit, so hence the index
+        # into first element
+        all_funders = hsh.dig("funders", "hits", "hits")[0].dig("_source", "funding_references")
+
+        # Filter through funders to find the funder that matches the key
+        matched_funder = all_funders.find do |funder|
+          funder.fetch("funderIdentifier", nil) == funder_id
+        end
+
+        if matched_funder
+          title = matched_funder.fetch("funderName", funder_id)
+          {
+            "id" => funder_id,
+            "title" => title,
+            "count" => hsh["doc_count"],
+          }
+        end
+      }.compact
+    end
+
     def _facet_by_general_contributor(arr, aggregate, source)
       arr.map { |hsh|
         orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
