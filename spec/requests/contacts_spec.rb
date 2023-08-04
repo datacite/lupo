@@ -230,7 +230,7 @@ describe ContactsController, type: :request, elasticsearch: true do
 
         relationships = json.dig("data", 1, "relationships")
         expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.symbol,
+          provider.symbol.downcase,
         )
       end
     end
