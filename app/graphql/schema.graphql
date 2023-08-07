@@ -6661,12 +6661,12 @@ type Organization implements ActorItem {
   """
   Data management plans from this organization
   """
-  dataManagementPlans(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): DataManagementPlanConnectionWithTotal
+  dataManagementPlans(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): DataManagementPlanConnectionWithTotal
 
   """
   Datasets from this organization
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -6721,12 +6721,12 @@ type Organization implements ActorItem {
   """
   Publications from this organization
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): PublicationConnectionWithTotal
 
   """
   Software from this organization
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, userId: String): SoftwareConnectionWithTotal
 
   """
   Twitter username of the organization.
@@ -6761,7 +6761,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -8732,7 +8732,7 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
