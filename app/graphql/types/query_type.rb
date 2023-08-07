@@ -249,7 +249,6 @@ class QueryType < BaseObject
   end
 
   field :works, WorkConnectionWithTotalType, null: false do
-
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :published, String, required: false
