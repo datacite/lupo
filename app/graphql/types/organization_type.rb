@@ -70,22 +70,21 @@ class OrganizationType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
-    argument :member_id, String, required: false
     argument :registration_agency, String, required: false
-    argument :license, String, required: false
     argument :resource_type, String, required: false
+    argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
+    argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -99,22 +98,21 @@ class OrganizationType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
-    argument :member_id, String, required: false
     argument :registration_agency, String, required: false
-    argument :license, String, required: false
     argument :resource_type, String, required: false
+    argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
+    argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -128,22 +126,21 @@ class OrganizationType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
-    argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
+    argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -158,29 +155,27 @@ class OrganizationType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
-    argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
+    argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
 
-  field :works,
-        WorkConnectionWithTotalType,
-        null: true, description: "Works from this organization" do
+  field :works, WorkConnectionWithTotalType, null: true,
+        description: "Works from this organization" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :published, String, required: false
@@ -194,15 +189,15 @@ class OrganizationType < BaseObject
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :has_organization, Boolean, required: false
-    argument :has_affiliation, Boolean, required: false
-    argument :has_member, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :field_of_science, String, required: false
+    argument :field_of_science_repository, String, required: false
+    argument :field_of_science_combined, String, required: false
+    argument :facet_count, Int, required: false, default_value: 10
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -358,6 +353,7 @@ class OrganizationType < BaseObject
         )
           object.id
         end,
+      published: args[:published],
       user_id: args[:user_id],
       client_id: args[:repository_id],
       funder_id: args[:funder_id] || object.fundref.join(","),
@@ -374,7 +370,9 @@ class OrganizationType < BaseObject
       has_views: args[:has_views],
       has_downloads: args[:has_downloads],
       field_of_science: args[:field_of_science],
-      published: args[:published],
+      field_of_science_repository: args[:field_of_science_repository],
+      field_of_science_combined: args[:field_of_science_combined],
+      facet_count: args[:facet_count],
       state: "findable",
       page: {
         cursor:
