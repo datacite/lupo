@@ -16,7 +16,11 @@ class ContactSerializer
              :updated,
              :deleted
 
-  belongs_to :provider, record_type: :providers
+  belongs_to :provider, record_type: :providers,
+      if:
+        Proc.new { |object, params|
+          object.provider_id = object.provider_id.downcase
+        }
 
   attribute :name do |object|
     object.name.present? ? object.name : nil
