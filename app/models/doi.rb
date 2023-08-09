@@ -1065,8 +1065,8 @@ class Doi < ApplicationRecord
 
     if options[:fair_organization_id].present?
       _ror_id = ror_from_url(options[:fair_organization_id])
-      should << { term: { "fair_organization_id" => _ror_id } }
-      should << { term: { "fair_affiliation_id" => _ror_id } }
+      should << { term: { "organization_id" => _ror_id } }
+      should << { term: { "affiliation_id" => _ror_id } }
       should << { term: { "related_dmp_organization_id" => _ror_id } }
       minimum_should_match = 1
     end
@@ -1881,8 +1881,8 @@ class Doi < ApplicationRecord
 
   def related_dmp_organization_and_affiliation_id
     related_dmp_works.reduce([]) do |sum, dmp|
-      sum.concat(dmp.fair_organization_id)
-      sum.concat(dmp.fair_affiliation_id)
+      sum.concat(dmp.organization_id)
+      sum.concat(dmp.affiliation_id)
 
       sum
     end
