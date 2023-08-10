@@ -190,4 +190,176 @@ describe DataDumpsController, type: :request, elasticsearch: true do
     end
   end
 
+  describe "GET /data_dumps/:id" do
+    context "with valid authorization" do
+      context "when the record exists" do
+        it "returns the record" do
+          get "/data_dumps/#{data_dump.uid}", nil, headers
+
+          expect(last_response.status).to eq(200)
+          expect(json.dig("data", "attributes", "description")).to eq("Test Metadata Data Dump Factory creation")
+          expect(json.dig("data", "attributes", "startDate")).to eq(data_dump.start_date.rfc3339(3))
+        end
+      end
+
+      context "when the record does not exist" do
+        it "returns status code 404" do
+          get "/data_dumps/invalid_id", nil, headers
+
+          expect(last_response.status).to eq(404)
+          expect(json["errors"].first).to eq("status" => "404", "title" => "The resource you are looking for doesn't exist.")
+        end
+      end
+    end
+
+    context "without authorization" do
+      context "when the record exists" do
+        it "returns access denied" do
+          get "/data_dumps/#{data_dump.uid}"
+          expect(last_response.status).to eq(401)
+        end
+      end
+
+      context "when the record does not exist" do
+        it "returns access denied" do
+          get "/data_dumps/invalid_id"
+          expect(last_response.status).to eq(401)
+        end
+      end
+    end
+
+    context "with bad authorization" do
+      context "when the record exists" do
+        it "returns access denied" do
+          get "/data_dumps/#{data_dump.uid}", nil, bad_headers
+          expect(last_response.status).to eq(401)
+        end
+      end
+
+      context "when the record does not exist" do
+        it "returns access denied" do
+          get "/data_dumps/invalid_id", nil, bad_headers
+          expect(last_response.status).to eq(401)
+        end
+      end
+    end
+
+    context "with insufficient permission" do
+      context "when the record exists" do
+        it "returns access denied" do
+          get "/data_dumps/#{data_dump.uid}", nil, user_headers
+          expect(last_response.status).to eq(403)
+        end
+      end
+
+      context "when the record does not exist" do
+        it "returns access denied" do
+          get "/data_dumps/invalid_id", nil, user_headers
+          expect(last_response.status).to eq(403)
+        end
+      end
+    end
+  end
+
+  describe "GET /data_dumps/:scope", elasticsearch: true do
+    let!(:data_dumps) { create_list(:data_dump, 10) }
+    let!(:link_dumps) { create_list(:data_dump, 10, {scope: "link"}) }
+
+    before do
+      DataDump.import
+      sleep 1
+    end
+
+    context "with valid authorization" do
+      it "returns metadata data dumps" do
+        get "/data_dumps/metadata", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+      end
+
+      it "returns link data dumps" do
+        get "/data_dumps/link", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+      end
+    end
+
+    context "without authorization" do
+      it "returns access denied" do
+        get "/data_dumps/metadata"
+        expect(last_response.status).to eq(401)
+      end
+    end
+
+    context "with bad authorization" do
+      it "returns access denied" do
+        get "/data_dumps/metadata", nil, bad_headers
+        expect(last_response.status).to eq(401)
+      end
+    end
+
+    context "with insufficient permission" do
+      it "returns access denied" do
+        get "/data_dumps/metadata", nil, user_headers
+        expect(last_response.status).to eq(403)
+      end
+    end
+  end
+
+  describe "GET /data_dumps/:scope/latest", elasticsearch: true do
+    let!(:data_dumps) { create_list(:data_dump, 10) }
+    let!(:link_dumps) { create_list(:data_dump, 10, {scope: "link"}) }
+    let!(:latest_data) { create(:data_dump, uid: "latest_data", end_date:"2023-12-31")}
+    let!(:latest_link) { create(:data_dump, uid: "latest_link", scope: "link", end_date:"2023-12-31")}
+    before do
+      DataDump.import
+      sleep 1
+    end
+
+    context "with valid authorization" do
+      it "returns latest metadata data dump" do
+        get "/data_dumps/metadata/latest", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "id")).to eq("latest_data")
+        expect(json.dig("data", "attributes", "endDate")).to eq("2023-12-31T00:00:00.000Z")
+        expect(json.dig("data", "attributes", "startDate")).to eq(latest_data.start_date.rfc3339(3))
+      end
+
+      it "returns latest link data dump" do
+        get "/data_dumps/link/latest", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "id")).to eq("latest_link")
+        expect(json.dig("data", "attributes", "endDate")).to eq("2023-12-31T00:00:00.000Z")
+        expect(json.dig("data", "attributes", "startDate")).to eq(latest_link.start_date.rfc3339(3))
+      end
+    end
+
+    context "without authorization" do
+      it "returns access denied" do
+        get "/data_dumps/metadata/latest"
+        expect(last_response.status).to eq(401)
+      end
+    end
+
+    context "with bad authorization" do
+      it "returns access denied" do
+        get "/data_dumps/metadata/latest", nil, bad_headers
+        expect(last_response.status).to eq(401)
+      end
+    end
+
+    context "with insufficient permission" do
+      it "returns access denied" do
+        get "/data_dumps/metadata/latest", nil, user_headers
+        expect(last_response.status).to eq(403)
+      end
+    end
+  end
+
 end

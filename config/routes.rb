@@ -230,7 +230,9 @@ Rails.application.routes.draw do
   resources :repository_prefixes, path: "repository-prefixes"
   resources :resource_types, path: "resource-types", only: %i[show index]
 
-  resources :data_dumps, constraints: { id: /.+/ }, only: %i[show index]
+  get "/data_dumps/:scope/latest", to: "data_dumps#latest", constraints: { scope: /(metadata|link)/ }
+  get "/data_dumps/:scope", to: "data_dumps#index", constraints: { scope: /(metadata|link)/ }
+  resources :data_dumps, constraints: { id: /[A-Za-z0-9_-]+/ }, only: %i[show index]
 
   # custom routes for maintenance tasks
   post ":username", to: "datacite_dois#show", as: :user

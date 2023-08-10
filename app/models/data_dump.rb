@@ -78,4 +78,45 @@ class DataDump < ApplicationRecord
   def self.query_aggregations
     {}
   end
+
+  def self.query(options = {})
+
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 25
+
+    from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
+    sort = options[:sort]
+
+    filter = []
+    if options[:scope].present?
+      filter << { term: { scope: options[:scope].downcase } }
+    end
+
+    es_query = {bool: {filter: filter}}
+
+    if options.fetch(:page, {}).key?(:cursor)
+      __elasticsearch__.search(
+        {
+          size: options.dig(:page, :size),
+          search_after: search_after,
+          sort: sort,
+          query: es_query,
+          track_total_hits: true,
+        }.compact,
+        )
+    else
+      __elasticsearch__.search(
+        {
+          size: options.dig(:page, :size),
+          from: from,
+          sort: sort,
+          query: es_query,
+          track_total_hits: true,
+        }.compact,
+        )
+    end
+
+  end
+
 end

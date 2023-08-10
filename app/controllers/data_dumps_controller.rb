@@ -25,9 +25,9 @@ class DataDumpsController < ApplicationController
     page = page_from_params(params)
 
     response = DataDump.query(
-      "",
       page: page,
-      sort: sort
+      sort: sort,
+      scope: params[:scope]
     )
 
     begin
@@ -96,6 +96,19 @@ class DataDumpsController < ApplicationController
   def show
     authorize! :read, :read_data_dumps
     data_dump = DataDump.where(uid: params[:id]).first
+    if data_dump.blank? ||
+      (
+        data_dump.aasm_state != "complete"
+        # TODO: Add conditional check for role here
+      )
+      fail ActiveRecord::RecordNotFound
+    end
+    render json: DataDumpSerializer.new(data_dump).serialized_json, status: :ok
+  end
+
+  def latest
+    authorize! :read, :read_data_dumps
+    data_dump = DataDump.where(scope: params[:scope], aasm_state: "complete").order(end_date: :desc).first
     if data_dump.blank? ||
       (
         data_dump.aasm_state != "complete"
