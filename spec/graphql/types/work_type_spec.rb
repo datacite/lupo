@@ -1881,8 +1881,6 @@ describe WorkType do
 
     it "returns the correct counts for funders" do
       response = LupoSchema.execute(query).as_json
-      pp(response)
-
       expect(response.dig("data", "works", "funders").length()).to eq(1)
     end
   end
