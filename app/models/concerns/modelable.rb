@@ -6,6 +6,7 @@ module Modelable
   delegate :doi_from_url, to: :class
   delegate :orcid_as_url, to: :class
   delegate :orcid_from_url, to: :class
+  delegate :ror_from_url, to: :class
 
   module ClassMethods
     def doi_from_url(url)
@@ -27,6 +28,11 @@ module Modelable
         uri = Addressable::URI.parse(url)
         uri.path.gsub(%r{^/}, "").upcase
       end
+    end
+
+    def ror_from_url(url)
+      ror = Array(%r{\A(?:(http|https)://)?(ror\.org/)?(.+)}.match(url)).last
+      "ror.org/#{ror}" if ror.present?
     end
   end
 end
