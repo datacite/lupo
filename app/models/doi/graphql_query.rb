@@ -4,13 +4,32 @@ module Doi::GraphqlQuery
   class Builder
     include Modelable
 
+    DEFAULT_CURSOR = [0, ""]
+    DEFAULT_PAGE_SIZE = 0
+    DEFAULT_FACET_COUNT = 10
+
     def initialize(query, options)
       @query = query
       @options = options
     end
 
     def search_query
-      inner_query(@query, @options)
+      {
+        size: size,
+        search_after: search_after,
+        sort: sort,
+        query: inner_query,
+        aggregations: aggregations,
+        track_total_hits: true,
+      }.compact
+    end
+
+    def size
+      (@options.dig(:page, :size)|| DEFAULT_PAGE_SIZE).to_i
+    end
+
+    def sort
+      [{ created: "asc", uid: "asc" }]
     end
 
     def query_fields
@@ -26,56 +45,63 @@ module Doi::GraphqlQuery
       ]
     end
 
-    def inner_query(query, options)
-      options[:page] ||= {}
-      options[:facet_count] = (options[:facet_count] || 10).to_i
-      aggregations = gql_query_aggregations(facet_count: options[:facet_count])
-
-      # cursor nav uses search_after, this should always be an array of values that match the sort.
-      # make sure we have a valid cursor
-      cursor = [0, ""]
-      if options.dig(:page, :cursor).is_a?(Array)
-        timestamp, uid = options.dig(:page, :cursor)
-        cursor = [timestamp.to_i, uid.to_s]
-      elsif options.dig(:page, :cursor).is_a?(String)
-        timestamp, uid = options.dig(:page, :cursor).split(",")
-        cursor = [timestamp.to_i, uid.to_s]
+    def cursor
+      tmp_cursor = @options.dig(:page,:cursor)
+      if tmp_cursor.nil?
+        return DEFAULT_CURSOR
       end
 
-      # from = 0
-      search_after = cursor
-      sort = [{ created: "asc", uid: "asc" }]
+      if tmp_cursor.is_a?(Array)
+        timestamp, uid = tmp_cursor
+      elsif tmp_cursor.is_a?(String)
+        timestamp, uid = tmp_cursor.split(",")
+      end
+      [timestamp.to_i, uid.to_s]
+    end
 
+    def search_after
+      cursor
+    end
+
+    def clean_query
       # make sure field name uses underscore
       # escape forward slash, but not other Elasticsearch special characters
-      if query.present?
-        query = query.gsub(/publicationYear/, "publication_year")
-        query = query.gsub(/relatedIdentifiers/, "related_identifiers")
-        query = query.gsub(/relatedItems/, "related_items")
-        query = query.gsub(/rightsList/, "rights_list")
-        query = query.gsub(/fundingReferences/, "funding_references")
-        query = query.gsub(/geoLocations/, "geo_locations")
-        query = query.gsub(/landingPage/, "landing_page")
-        query = query.gsub(/contentUrl/, "content_url")
-        query = query.gsub(/citationCount/, "citation_count")
-        query = query.gsub(/viewCount/, "view_count")
-        query = query.gsub(/downloadCount/, "download_count")
-        query = query.gsub("/", "\\/")
-      end
-
-      # turn ids into an array if provided as comma-separated string
-      options[:ids] = options[:ids].split(",") if options[:ids].is_a?(String)
-
-      if query.present?
-        must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+      if @query.present?
+        @query.gsub(/publicationYear/, "publication_year")\
+          .gsub(/relatedIdentifiers/, "related_identifiers")\
+          .gsub(/relatedItems/, "related_items")\
+          .gsub(/rightsList/, "rights_list")\
+          .gsub(/fundingReferences/, "funding_references")\
+          .gsub(/geoLocations/, "geo_locations")\
+          .gsub(/landingPage/, "landing_page")\
+          .gsub(/contentUrl/, "content_url")\
+          .gsub(/citationCount/, "citation_count")\
+          .gsub(/viewCount/, "view_count")\
+          .gsub(/downloadCount/, "download_count")\
+          .gsub("/", "\\/")
       else
-        must = [{ match_all: {} }]
+        @query
       end
+    end
 
+    def must
+      if !@query.present?
+        [{ match_all: {} }]
+      else
+        [{
+          query_string: {
+            query: clean_query,
+            fields: query_fields,
+            default_operator: "AND",
+            phrase_slop: 1
+          }
+        }]
+      end
+    end
+
+    def filters
+      options = @options
       filter = []
-      should = []
-      minimum_should_match = 0
-
       filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
       filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize } } if options[:resource_type_id].present?
       filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
@@ -131,23 +157,30 @@ module Doi::GraphqlQuery
       filter << { terms: { "creators.nameIdentifiers.nameIdentifier" => options[:user_id].split(",").collect { |id| "https://orcid.org/#{orcid_from_url(id)}" } } } if options[:user_id].present?
       filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } } if options[:has_person].present?
 
+      filter
+    end
+
+    def get_should_clause
+      options = @options
+      should_query = []
+      minimum_should_match = 0
       # match either one of has_affiliation, has_organization, has_funder or has_member
       if options[:has_organization].present?
-        should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" } }
-        should << { term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" } }
+        should_query << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" } }
+        should_query << { term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" } }
         minimum_should_match = 1
       end
       if options[:has_affiliation].present?
-        should << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" } }
-        should << { term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" } }
+        should_query << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" } }
+        should_query << { term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" } }
         minimum_should_match = 1
       end
       if options[:has_funder].present?
-        should << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" } }
+        should_query << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" } }
         minimum_should_match = 1
       end
       if options[:has_member].present?
-        should << { exists: { field: "provider.ror_id" } }
+        should_query << { exists: { field: "provider.ror_id" } }
         minimum_should_match = 1
       end
 
@@ -155,54 +188,54 @@ module Doi::GraphqlQuery
       # funder_id or member_id is a query parameter
       if options[:organization_id].present?
         # TODO: remove after organization_id has been indexed
-        should << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+        should_query << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
         # TODO: remove after organization_id has been indexed
-        should << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
-        should << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
+        should_query << { term: { "contributors.nameIdentifiers.nameIdentifier" => "https://#{ror_from_url(options[:organization_id])}" } }
+        should_query << { term: { "organization_id" => ror_from_url(options[:organization_id]) } }
         minimum_should_match = 1
       end
 
       if options[:fair_organization_id].present?
         _ror_id = ror_from_url(options[:fair_organization_id])
-        should << { term: { "organization_id" => _ror_id } }
-        should << { term: { "affiliation_id" => _ror_id } }
-        should << { term: { "related_dmp_organization_id" => _ror_id } }
+        should_query << { term: { "organization_id" => _ror_id } }
+        should_query << { term: { "affiliation_id" => _ror_id } }
+        should_query << { term: { "related_dmp_organization_id" => _ror_id } }
         minimum_should_match = 1
       end
 
       if options[:affiliation_id].present?
-        should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) } }
+        should_query << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) } }
         minimum_should_match = 1
       end
       if options[:funder_id].present?
-        should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
+        should_query << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
         minimum_should_match = 1
       end
       if options[:member_id].present?
-        should << { term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" } }
+        should_query << { term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" } }
         minimum_should_match = 1
       end
 
-      es_query = {
+      OpenStruct.new(
+        should_query: should_query,
+        minimum_should_match: minimum_should_match
+      )
+    end
+
+    def inner_query
+      should = get_should_clause
+      {
         bool: {
           must: must,
-          filter: filter,
-          should: should,
-          minimum_should_match: minimum_should_match,
+          filter: filters,
+          should: should.should_query,
+          minimum_should_match: should.minimum_should_match,
         },
-      }
-
-      {
-        size: options.dig(:page, :size),
-        search_after: search_after,
-        sort: sort,
-        query: es_query,
-        aggregations: aggregations,
-        track_total_hits: true,
       }.compact
     end
 
-    def gql_query_aggregations(facet_count: 10)
+    def aggregations
+      facet_count = (@options[:facet_count] || DEFAULT_FACET_COUNT).to_i
       if facet_count.positive?
         {
           resource_types: { terms: { field: "resource_type_id_and_name", size: facet_count, min_doc_count: 1, missing: "__missing__" } },
