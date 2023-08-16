@@ -63,6 +63,21 @@ module Doi::GraphqlQuery
       cursor
     end
 
+    QUERY_SUBSTITUTIONS = {
+      "publicationYear" => "publication_year",
+      "relatedIdentifiers" => "related_identifiers",
+      "relatedItems" => "related_items",
+      "rightsList" => "rights_list",
+      "fundingReferences" => "funding_references",
+      "geoLocations" => "geo_locations",
+      "landingPage" => "landing_page",
+      "contentUrl" => "content_url",
+      "citationCount" => "citation_count",
+      "viewCount" => "view_count",
+      "downloadCount" => "download_count"
+    }
+
+
     def clean_query
       # make sure field name uses underscore
       # escape forward slash, but not other Elasticsearch special characters
@@ -80,7 +95,7 @@ module Doi::GraphqlQuery
           .gsub(/downloadCount/, "download_count")\
           .gsub("/", "\\/")
       else
-        @query
+        ""
       end
     end
 
