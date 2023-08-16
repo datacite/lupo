@@ -25,7 +25,7 @@ module Doi::GraphqlQuery
     end
 
     def size
-      (@options.dig(:page, :size)|| DEFAULT_PAGE_SIZE).to_i
+      (@options.dig(:page, :size) || DEFAULT_PAGE_SIZE).to_i
     end
 
     def sort
@@ -46,7 +46,7 @@ module Doi::GraphqlQuery
     end
 
     def cursor
-      tmp_cursor = @options.dig(:page,:cursor)
+      tmp_cursor = @options.dig(:page, :cursor)
       if tmp_cursor.nil?
         return DEFAULT_CURSOR
       end

@@ -4,7 +4,6 @@
 require "rails_helper"
 
 RSpec.describe Doi::GraphqlQuery::Builder do
-
   describe "page size" do
     let(:query) { "" }
     let(:options) { {} }
@@ -17,9 +16,9 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     context "when set in options" do
       let(:test_size) { 10 }
       let(:options) { { page: { size: test_size } } }
-        it "will override DEFAULT_PAGE_SIZE" do
-          expect(builder.size).to eq(test_size)
-        end
+      it "will override DEFAULT_PAGE_SIZE" do
+        expect(builder.size).to eq(test_size)
+      end
     end
   end
 
@@ -35,9 +34,9 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     context "when set in options" do
       let(:test_cursor) { [1, "2"] }
       let(:options) { { page: { cursor: test_cursor } } }
-        it "will override DEFAULT_CURSOR" do
-          expect(builder.cursor).to eq(test_cursor)
-        end
+      it "will override DEFAULT_CURSOR" do
+        expect(builder.cursor).to eq(test_cursor)
+      end
     end
   end
 
@@ -57,9 +56,5 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     it "escapses foward slashes" do
       expect(described_class.new("foo/bar", {}).clean_query).to eq("foo\\/bar")
     end
-
   end
-
-
-
 end
