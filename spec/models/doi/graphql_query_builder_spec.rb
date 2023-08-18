@@ -57,4 +57,29 @@ RSpec.describe Doi::GraphqlQuery::Builder do
       expect(described_class.new("foo/bar", {}).clean_query).to eq("foo\\/bar")
     end
   end
+
+  describe "filters"  do
+    it "is an empty array if not set" do
+      expect(described_class.new("", {}).filters).to eq([])
+      expect(described_class.new(nil, {}).filters).to eq([])
+    end
+
+    it "can filter for ids" do
+      expect(described_class.new("foo", { ids: ["bar"] }).filters).to eq([{ terms: { doi: ["BAR"] } }])
+    end
+
+    it "can filter for ids as single string" do
+      expect(described_class.new("foo", { ids: "bar" }).filters).to eq([{ terms: { doi: ["BAR"] } }])
+    end
+
+
+  end
+
+
+
+
+
+
+
+
 end
