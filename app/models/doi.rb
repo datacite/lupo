@@ -829,7 +829,7 @@ class Doi < ApplicationRecord
   def self.gql_query(query, options = {})
     builder = Doi::GraphqlQuery::Builder.new(query, options)
     __elasticsearch__.search(
-      builder.search_query
+      builder.build_full_search_query
     )
   end
 

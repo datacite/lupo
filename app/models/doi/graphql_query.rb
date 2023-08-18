@@ -13,7 +13,7 @@ module Doi::GraphqlQuery
       @options = options
     end
 
-    def search_query
+    def build_full_search_query
       {
         size: size,
         search_after: search_after,
