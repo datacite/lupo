@@ -71,15 +71,5 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     it "can filter for ids as single string" do
       expect(described_class.new("foo", { ids: "bar" }).filters).to eq([{ terms: { doi: ["BAR"] } }])
     end
-
-
   end
-
-
-
-
-
-
-
-
 end
