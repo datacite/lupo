@@ -116,6 +116,10 @@ module Doi::GraphqlQuery
 
     def filters
       options = @options
+
+      # turn ids into an array if provided as comma-separated string
+      options[:ids] = options[:ids].split(",") if options[:ids].is_a?(String)
+
       filter = []
       filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
       filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize } } if options[:resource_type_id].present?
