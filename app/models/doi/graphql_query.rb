@@ -324,6 +324,12 @@ module Doi::GraphqlQuery
                   },
                   size: 1
                 }
+              },
+              "work_types": {
+                "terms": {
+                  "field": "resource_type_id_and_name",
+                  "min_doc_count":1
+                }
               }
             }
           },
