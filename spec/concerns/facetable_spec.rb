@@ -89,15 +89,14 @@ describe "Facetable", type: :controller do
       contributors_works = model.multi_facet_by_contributors_and_worktype(contributor_worktype_multiaggs)
 
 
-      expected_results = [{"count"=>98,
+      expected_results = [
+        {"count"=>98,
          "id"=>"https://orcid.org/0000-0003-1419-2405",
          "inner"=>
           [{"count"=>75, "id"=>"text", "title"=>"Text"},
            {"count"=>15, "id"=>"software", "title"=>"Software"},
            {"count"=>4, "id"=>"collection", "title"=>"Collection"},
-           {"count"=>1,
-            "id"=>"computational-notebook",
-            "title"=>"Computational Notebook"},
+           {"count"=>1, "id"=>"computational-notebook", "title"=>"Computational Notebook"},
            {"count"=>1, "id"=>"dataset", "title"=>"Dataset"},
            {"count"=>1, "id"=>"report", "title"=>"Report"},
            {"count"=>1, "id"=>"service", "title"=>"Service"}],
@@ -135,6 +134,37 @@ describe "Facetable", type: :controller do
          "title"=>"Garza, Kristian"}]
 
       expect(contributors_works).to eq (expected_results)
+    end
+
+    it "flattened multifacet contributor-worktype combinations" do
+      contributors_works = model.multi_facet_by_contributors_and_worktype(contributor_worktype_multiaggs)
+      flattened_contributors_works = model.flatten_muti_facet(contributors_works)
+
+      expected_results = [
+        {"count"=>75, "data"=>["Fenner, Martin", "Text"]},
+        {"count"=>15, "data"=>["Fenner, Martin", "Software"]},
+        {"count"=>4, "data"=>["Fenner, Martin", "Collection"]},
+        {"count"=>1, "data"=>["Fenner, Martin", "Computational Notebook"]},
+        {"count"=>1, "data"=>["Fenner, Martin", "Dataset"]},
+        {"count"=>1, "data"=>["Fenner, Martin", "Report"]},
+        {"count"=>1, "data"=>["Fenner, Martin", "Service"]},
+        {"count"=>34, "data"=>["Cousijn, Helena", "Text"]},
+        {"count"=>1, "data"=>["Cousijn, Helena", "Audiovisual"]},
+        {"count"=>1, "data"=>["Cousijn, Helena", "Output Management Plan"]},
+        {"count"=>1, "data"=>["Cousijn, Helena", "Service"]},
+        {"count"=>28, "data"=>["Dasler, Robin", "Text"]},
+        {"count"=>1, "data"=>["Dasler, Robin", "Collection"]},
+        {"count"=>27, "data"=>["Vierkant, Paul", "Text"]},
+        {"count"=>1, "data"=>["Vierkant, Paul", "Other"]},
+        {"count"=>1, "data"=>["Vierkant, Paul", "Report"]},
+        {"count"=>21, "data"=>["Garza, Kristian", "Text"]},
+        {"count"=>4, "data"=>["Garza, Kristian", "Software"]},
+        {"count"=>2, "data"=>["Garza, Kristian", "Collection"]},
+        {"count"=>1, "data"=>["Garza, Kristian", "Other"]}
+      ]
+
+
+      expect(flattened_contributors_works).to eq (expected_results)
     end
   end
 
