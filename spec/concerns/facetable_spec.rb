@@ -90,48 +90,48 @@ describe "Facetable", type: :controller do
 
 
       expected_results = [
-        {"count"=>98,
-         "id"=>"https://orcid.org/0000-0003-1419-2405",
-         "inner"=>
-          [{"count"=>75, "id"=>"text", "title"=>"Text"},
-           {"count"=>15, "id"=>"software", "title"=>"Software"},
-           {"count"=>4, "id"=>"collection", "title"=>"Collection"},
-           {"count"=>1, "id"=>"computational-notebook", "title"=>"Computational Notebook"},
-           {"count"=>1, "id"=>"dataset", "title"=>"Dataset"},
-           {"count"=>1, "id"=>"report", "title"=>"Report"},
-           {"count"=>1, "id"=>"service", "title"=>"Service"}],
-         "title"=>"Fenner, Martin"},
-        {"count"=>37,
-         "id"=>"https://orcid.org/0000-0001-6660-6214",
-         "inner"=>
-          [{"count"=>34, "id"=>"text", "title"=>"Text"},
-           {"count"=>1, "id"=>"audiovisual", "title"=>"Audiovisual"},
-           {"count"=>1,
-            "id"=>"output-management-plan",
-            "title"=>"Output Management Plan"},
-           {"count"=>1, "id"=>"service", "title"=>"Service"}],
-         "title"=>"Cousijn, Helena"},
-        {"count"=>29,
-         "id"=>"https://orcid.org/0000-0002-4695-7874",
-         "inner"=>
-          [{"count"=>28, "id"=>"text", "title"=>"Text"},
-           {"count"=>1, "id"=>"collection", "title"=>"Collection"}],
-         "title"=>"Dasler, Robin"},
-        {"count"=>29,
-         "id"=>"https://orcid.org/0000-0003-4448-3844",
-         "inner"=>
-          [{"count"=>27, "id"=>"text", "title"=>"Text"},
-           {"count"=>1, "id"=>"other", "title"=>"Other"},
-           {"count"=>1, "id"=>"report", "title"=>"Report"}],
-         "title"=>"Vierkant, Paul"},
-        {"count"=>28,
-         "id"=>"https://orcid.org/0000-0003-3484-6875",
-         "inner"=>
-          [{"count"=>21, "id"=>"text", "title"=>"Text"},
-           {"count"=>4, "id"=>"software", "title"=>"Software"},
-           {"count"=>2, "id"=>"collection", "title"=>"Collection"},
-           {"count"=>1, "id"=>"other", "title"=>"Other"}],
-         "title"=>"Garza, Kristian"}]
+        { "count" => 98,
+         "id" => "https://orcid.org/0000-0003-1419-2405",
+         "inner" =>
+          [{ "count" => 75, "id" => "text", "title" => "Text" },
+           { "count" => 15, "id" => "software", "title" => "Software" },
+           { "count" => 4, "id" => "collection", "title" => "Collection" },
+           { "count" => 1, "id" => "computational-notebook", "title" => "Computational Notebook" },
+           { "count" => 1, "id" => "dataset", "title" => "Dataset" },
+           { "count" => 1, "id" => "report", "title" => "Report" },
+           { "count" => 1, "id" => "service", "title" => "Service" }],
+         "title" => "Fenner, Martin" },
+        { "count" => 37,
+         "id" => "https://orcid.org/0000-0001-6660-6214",
+         "inner" =>
+          [{ "count" => 34, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "audiovisual", "title" => "Audiovisual" },
+           { "count" => 1,
+            "id" => "output-management-plan",
+            "title" => "Output Management Plan" },
+           { "count" => 1, "id" => "service", "title" => "Service" }],
+         "title" => "Cousijn, Helena" },
+        { "count" => 29,
+         "id" => "https://orcid.org/0000-0002-4695-7874",
+         "inner" =>
+          [{ "count" => 28, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "collection", "title" => "Collection" }],
+         "title" => "Dasler, Robin" },
+        { "count" => 29,
+         "id" => "https://orcid.org/0000-0003-4448-3844",
+         "inner" =>
+          [{ "count" => 27, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "other", "title" => "Other" },
+           { "count" => 1, "id" => "report", "title" => "Report" }],
+         "title" => "Vierkant, Paul" },
+        { "count" => 28,
+         "id" => "https://orcid.org/0000-0003-3484-6875",
+         "inner" =>
+          [{ "count" => 21, "id" => "text", "title" => "Text" },
+           { "count" => 4, "id" => "software", "title" => "Software" },
+           { "count" => 2, "id" => "collection", "title" => "Collection" },
+           { "count" => 1, "id" => "other", "title" => "Other" }],
+         "title" => "Garza, Kristian" }]
 
       expect(contributors_works).to eq (expected_results)
     end
@@ -141,26 +141,26 @@ describe "Facetable", type: :controller do
       flattened_contributors_works = model.flatten_muti_facet(contributors_works)
 
       expected_results = [
-        {"count"=>75, "data"=>["Fenner, Martin", "Text"]},
-        {"count"=>15, "data"=>["Fenner, Martin", "Software"]},
-        {"count"=>4, "data"=>["Fenner, Martin", "Collection"]},
-        {"count"=>1, "data"=>["Fenner, Martin", "Computational Notebook"]},
-        {"count"=>1, "data"=>["Fenner, Martin", "Dataset"]},
-        {"count"=>1, "data"=>["Fenner, Martin", "Report"]},
-        {"count"=>1, "data"=>["Fenner, Martin", "Service"]},
-        {"count"=>34, "data"=>["Cousijn, Helena", "Text"]},
-        {"count"=>1, "data"=>["Cousijn, Helena", "Audiovisual"]},
-        {"count"=>1, "data"=>["Cousijn, Helena", "Output Management Plan"]},
-        {"count"=>1, "data"=>["Cousijn, Helena", "Service"]},
-        {"count"=>28, "data"=>["Dasler, Robin", "Text"]},
-        {"count"=>1, "data"=>["Dasler, Robin", "Collection"]},
-        {"count"=>27, "data"=>["Vierkant, Paul", "Text"]},
-        {"count"=>1, "data"=>["Vierkant, Paul", "Other"]},
-        {"count"=>1, "data"=>["Vierkant, Paul", "Report"]},
-        {"count"=>21, "data"=>["Garza, Kristian", "Text"]},
-        {"count"=>4, "data"=>["Garza, Kristian", "Software"]},
-        {"count"=>2, "data"=>["Garza, Kristian", "Collection"]},
-        {"count"=>1, "data"=>["Garza, Kristian", "Other"]}
+        { "count" => 75, "data" => ["Fenner, Martin", "Text"] },
+        { "count" => 15, "data" => ["Fenner, Martin", "Software"] },
+        { "count" => 4, "data" => ["Fenner, Martin", "Collection"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Computational Notebook"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Dataset"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Report"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Service"] },
+        { "count" => 34, "data" => ["Cousijn, Helena", "Text"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Audiovisual"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Output Management Plan"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Service"] },
+        { "count" => 28, "data" => ["Dasler, Robin", "Text"] },
+        { "count" => 1, "data" => ["Dasler, Robin", "Collection"] },
+        { "count" => 27, "data" => ["Vierkant, Paul", "Text"] },
+        { "count" => 1, "data" => ["Vierkant, Paul", "Other"] },
+        { "count" => 1, "data" => ["Vierkant, Paul", "Report"] },
+        { "count" => 21, "data" => ["Garza, Kristian", "Text"] },
+        { "count" => 4, "data" => ["Garza, Kristian", "Software"] },
+        { "count" => 2, "data" => ["Garza, Kristian", "Collection"] },
+        { "count" => 1, "data" => ["Garza, Kristian", "Other"] }
       ]
 
 

@@ -328,7 +328,7 @@ module Doi::GraphqlQuery
               "work_types": {
                 "terms": {
                   "field": "resource_type_id_and_name",
-                  "min_doc_count":1
+                  "min_doc_count": 1
                 }
               }
             }

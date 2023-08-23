@@ -534,8 +534,8 @@ module Facetable
     def multi_facet_by_contributors_and_worktype(arr)
       outer = _facet_by_general_contributor(arr, "creators_and_contributors", "creators_and_contributors")
       outer.map do |hsh|
-        creator_hash = arr.find{ |h| h["key"] == hsh["id"] }
-        inner = facet_by_combined_key(creator_hash.dig("work_types","buckets"))
+        creator_hash = arr.find { |h| h["key"] == hsh["id"] }
+        inner = facet_by_combined_key(creator_hash.dig("work_types", "buckets"))
         hsh.merge("inner" => inner)
       end
     end
@@ -543,7 +543,7 @@ module Facetable
     def flatten_muti_facet(arr)
       arr.map do |hsh|
         outer_title = hsh["title"]
-        inner = hsh.fetch("inner",[])
+        inner = hsh.fetch("inner", [])
         inner.map do |ihsh|
           {
             "data" => [outer_title, ihsh["title"]],

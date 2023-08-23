@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 class MultiFacetType < BaseObject
   description "Multi-level Facets"
