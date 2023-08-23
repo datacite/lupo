@@ -1735,7 +1735,6 @@ describe WorkType do
       expect(response.dig(
         "data", "works", "personToWorkTypesMultilevel", 0, "inner"
       ).length()).to eq(1)
-
     end
 
     it "returns the correct counts for the person_to_work_types flattened" do
@@ -1755,11 +1754,10 @@ describe WorkType do
       expect(response.dig("data", "works", "personToWorkTypesFlat").length()).to eq(2)
       expect(response.dig("data", "works", "personToWorkTypesFlat")).to eq(
         [
-          {"count"=>1, "data"=>["Garza, Kristian", "Dataset"]},
-          {"count"=>1, "data"=>["Ross, Cody", "Dataset"]}
+          { "count" => 1, "data" => ["Garza, Kristian", "Dataset"] },
+          { "count" => 1, "data" => ["Ross, Cody", "Dataset"] }
         ]
       )
-
     end
   end
 
