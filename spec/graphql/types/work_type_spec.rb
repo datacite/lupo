@@ -1710,6 +1710,55 @@ describe WorkType do
       expect(response.dig("data", "works", "authors").length()).to eq(1)
       expect(response.dig("data", "works", "creatorsAndContributors").length()).to eq(2)
     end
+
+    it "returns the correct counts for the person_to_work_types multi-facet" do
+      gql_query = """
+        query($first: Int, $cursor: String, $facetCount: Int) {
+          works(first: $first, after: $cursor, facetCount: $facetCount) {
+            totalCount
+            personToWorkTypesMultilevel {
+              id
+              title
+              count
+              inner {
+                id
+                title
+                count
+              }
+            }
+          }
+        }
+      """
+
+      response = LupoSchema.execute(gql_query).as_json
+      expect(response.dig("data", "works", "personToWorkTypesMultilevel").length()).to eq(2)
+      expect(response.dig(
+        "data", "works", "personToWorkTypesMultilevel", 0, "inner"
+      ).length()).to eq(1)
+    end
+
+    it "returns the correct counts for the person_to_work_types flattened" do
+      gql_query = """
+        query($first: Int, $cursor: String, $facetCount: Int) {
+          works(first: $first, after: $cursor, facetCount: $facetCount) {
+            totalCount
+            personToWorkTypesFlat{
+              count
+              data
+            }
+          }
+        }
+      """
+
+      response = LupoSchema.execute(gql_query).as_json
+      expect(response.dig("data", "works", "personToWorkTypesFlat").length()).to eq(2)
+      expect(response.dig("data", "works", "personToWorkTypesFlat")).to eq(
+        [
+          { "count" => 1, "data" => ["Garza, Kristian", "Dataset"] },
+          { "count" => 1, "data" => ["Ross, Cody", "Dataset"] }
+        ]
+      )
+    end
   end
 
 

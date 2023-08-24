@@ -1,0 +1,305 @@
+[
+    {
+        "key": "https://orcid.org/0000-0003-1419-2405",
+        "doc_count": 98,
+        "creators_and_contributors": {
+            "hits": {
+                "total": {
+                    "value": 98,
+                    "relation": "eq"
+                },
+                "max_score": 18.399986,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "10082554",
+                        "_score": 18.399986,
+                        "_ignored": [
+                            "landing_page.checked"
+                        ],
+                        "_source": {
+                            "creators_and_contributors": [
+                                {
+                                    "name": "Fenner, Martin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "work_types": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": "text:Text",
+                    "doc_count": 75
+                },
+                {
+                    "key": "software:Software",
+                    "doc_count": 15
+                },
+                {
+                    "key": "collection:Collection",
+                    "doc_count": 4
+                },
+                {
+                    "key": "computational-notebook:Computational Notebook",
+                    "doc_count": 1
+                },
+                {
+                    "key": "dataset:Dataset",
+                    "doc_count": 1
+                },
+                {
+                    "key": "report:Report",
+                    "doc_count": 1
+                },
+                {
+                    "key": "service:Service",
+                    "doc_count": 1
+                }
+            ]
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0001-6660-6214",
+        "doc_count": 37,
+        "creators_and_contributors": {
+            "hits": {
+                "total": {
+                    "value": 37,
+                    "relation": "eq"
+                },
+                "max_score": 18.399986,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "17024242",
+                        "_score": 18.399986,
+                        "_ignored": [
+                            "landing_page.checked"
+                        ],
+                        "_source": {
+                            "creators_and_contributors": [
+                                {
+                                    "name": "Cousijn, Helena",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0001-6660-6214"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Lowenberg, Daniella",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-2255-1869"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "work_types": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": "text:Text",
+                    "doc_count": 34
+                },
+                {
+                    "key": "audiovisual:Audiovisual",
+                    "doc_count": 1
+                },
+                {
+                    "key": "output-management-plan:Output Management Plan",
+                    "doc_count": 1
+                },
+                {
+                    "key": "service:Service",
+                    "doc_count": 1
+                }
+            ]
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0002-4695-7874",
+        "doc_count": 29,
+        "creators_and_contributors": {
+            "hits": {
+                "total": {
+                    "value": 29,
+                    "relation": "eq"
+                },
+                "max_score": 18.399986,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "19717809",
+                        "_score": 18.399986,
+                        "_ignored": [
+                            "landing_page.checked"
+                        ],
+                        "_source": {
+                            "creators_and_contributors": [
+                                {
+                                    "name": "Dasler, Robin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0002-4695-7874"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "work_types": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": "text:Text",
+                    "doc_count": 28
+                },
+                {
+                    "key": "collection:Collection",
+                    "doc_count": 1
+                }
+            ]
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0003-4448-3844",
+        "doc_count": 29,
+        "creators_and_contributors": {
+            "hits": {
+                "total": {
+                    "value": 29,
+                    "relation": "eq"
+                },
+                "max_score": 18.399986,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "50877604",
+                        "_score": 18.399986,
+                        "_source": {
+                            "creators_and_contributors": [
+                                {
+                                    "name": "Vierkant, Paul",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-4448-3844"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "work_types": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": "text:Text",
+                    "doc_count": 27
+                },
+                {
+                    "key": "other:Other",
+                    "doc_count": 1
+                },
+                {
+                    "key": "report:Report",
+                    "doc_count": 1
+                }
+            ]
+        }
+    },
+    {
+        "key": "https://orcid.org/0000-0003-3484-6875",
+        "doc_count": 28,
+        "creators_and_contributors": {
+            "hits": {
+                "total": {
+                    "value": 28,
+                    "relation": "eq"
+                },
+                "max_score": 18.399986,
+                "hits": [
+                    {
+                        "_index": "dois_v2",
+                        "_type": "_doc",
+                        "_id": "15175593",
+                        "_score": 18.399986,
+                        "_ignored": [
+                            "landing_page.checked"
+                        ],
+                        "_source": {
+                            "creators_and_contributors": [
+                                {
+                                    "name": "Garza, Kristian",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-3484-6875"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Fenner, Martin",
+                                    "nameIdentifiers": [
+                                        {
+                                            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "work_types": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": "text:Text",
+                    "doc_count": 21
+                },
+                {
+                    "key": "software:Software",
+                    "doc_count": 4
+                },
+                {
+                    "key": "collection:Collection",
+                    "doc_count": 2
+                },
+                {
+                    "key": "other:Other",
+                    "doc_count": 1
+                }
+            ]
+        }
+    }
+]

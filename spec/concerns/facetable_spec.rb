@@ -7,6 +7,7 @@ describe "Facetable", type: :controller do
     let(:author_aggs_with_multiple_name_identifiers) { JSON.parse(file_fixture("authors_aggs_with_multiple_name_identifiers.json").read) }
     let(:model) { DataciteDoisController.new }
     let(:funder_aggs) { JSON.parse(file_fixture("funders_aggs.json").read) }
+    let(:contributor_worktype_multiaggs) { JSON.parse(file_fixture("contributor_worktype_multi_aggs.json").read) }
     it "facet by author" do
       authors = model.facet_by_authors(author_aggs)
 
@@ -82,6 +83,88 @@ describe "Facetable", type: :controller do
       ]
 
       expect(funders).to eq (expected_result)
+    end
+
+    it "multifacet by contributor-worktype combinations" do
+      contributors_works = model.multi_facet_by_contributors_and_worktype(contributor_worktype_multiaggs)
+
+
+      expected_results = [
+        { "count" => 98,
+         "id" => "https://orcid.org/0000-0003-1419-2405",
+         "inner" =>
+          [{ "count" => 75, "id" => "text", "title" => "Text" },
+           { "count" => 15, "id" => "software", "title" => "Software" },
+           { "count" => 4, "id" => "collection", "title" => "Collection" },
+           { "count" => 1, "id" => "computational-notebook", "title" => "Computational Notebook" },
+           { "count" => 1, "id" => "dataset", "title" => "Dataset" },
+           { "count" => 1, "id" => "report", "title" => "Report" },
+           { "count" => 1, "id" => "service", "title" => "Service" }],
+         "title" => "Fenner, Martin" },
+        { "count" => 37,
+         "id" => "https://orcid.org/0000-0001-6660-6214",
+         "inner" =>
+          [{ "count" => 34, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "audiovisual", "title" => "Audiovisual" },
+           { "count" => 1,
+            "id" => "output-management-plan",
+            "title" => "Output Management Plan" },
+           { "count" => 1, "id" => "service", "title" => "Service" }],
+         "title" => "Cousijn, Helena" },
+        { "count" => 29,
+         "id" => "https://orcid.org/0000-0002-4695-7874",
+         "inner" =>
+          [{ "count" => 28, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "collection", "title" => "Collection" }],
+         "title" => "Dasler, Robin" },
+        { "count" => 29,
+         "id" => "https://orcid.org/0000-0003-4448-3844",
+         "inner" =>
+          [{ "count" => 27, "id" => "text", "title" => "Text" },
+           { "count" => 1, "id" => "other", "title" => "Other" },
+           { "count" => 1, "id" => "report", "title" => "Report" }],
+         "title" => "Vierkant, Paul" },
+        { "count" => 28,
+         "id" => "https://orcid.org/0000-0003-3484-6875",
+         "inner" =>
+          [{ "count" => 21, "id" => "text", "title" => "Text" },
+           { "count" => 4, "id" => "software", "title" => "Software" },
+           { "count" => 2, "id" => "collection", "title" => "Collection" },
+           { "count" => 1, "id" => "other", "title" => "Other" }],
+         "title" => "Garza, Kristian" }]
+
+      expect(contributors_works).to eq (expected_results)
+    end
+
+    it "flattened multifacet contributor-worktype combinations" do
+      contributors_works = model.multi_facet_by_contributors_and_worktype(contributor_worktype_multiaggs)
+      flattened_contributors_works = model.flatten_muti_facet(contributors_works)
+
+      expected_results = [
+        { "count" => 75, "data" => ["Fenner, Martin", "Text"] },
+        { "count" => 15, "data" => ["Fenner, Martin", "Software"] },
+        { "count" => 4, "data" => ["Fenner, Martin", "Collection"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Computational Notebook"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Dataset"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Report"] },
+        { "count" => 1, "data" => ["Fenner, Martin", "Service"] },
+        { "count" => 34, "data" => ["Cousijn, Helena", "Text"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Audiovisual"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Output Management Plan"] },
+        { "count" => 1, "data" => ["Cousijn, Helena", "Service"] },
+        { "count" => 28, "data" => ["Dasler, Robin", "Text"] },
+        { "count" => 1, "data" => ["Dasler, Robin", "Collection"] },
+        { "count" => 27, "data" => ["Vierkant, Paul", "Text"] },
+        { "count" => 1, "data" => ["Vierkant, Paul", "Other"] },
+        { "count" => 1, "data" => ["Vierkant, Paul", "Report"] },
+        { "count" => 21, "data" => ["Garza, Kristian", "Text"] },
+        { "count" => 4, "data" => ["Garza, Kristian", "Software"] },
+        { "count" => 2, "data" => ["Garza, Kristian", "Collection"] },
+        { "count" => 1, "data" => ["Garza, Kristian", "Other"] }
+      ]
+
+
+      expect(flattened_contributors_works).to eq (expected_results)
     end
   end
 
