@@ -540,19 +540,6 @@ module Facetable
       end
     end
 
-    def flatten_muti_facet(arr)
-      arr.map do |hsh|
-        outer_title = hsh["title"]
-        inner = hsh.fetch("inner", [])
-        inner.map do |ihsh|
-          {
-            "data" => [outer_title, ihsh["title"]],
-            "count" => ihsh["count"]
-          }
-        end
-      end.flatten
-    end
-
     def add_other(arr, other_count)
       if other_count > 0
         arr << {
