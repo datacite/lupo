@@ -20,22 +20,10 @@ module Interfaces::WorkFacetsInterface
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
   field :person_to_work_types_multilevel, [MultiFacetType], null: true, cache: true
-  field :person_to_work_types_flat, [FlattenedCountType], null: true, cache: true
 
   def person_to_work_types_multilevel
     if object.aggregations.creators_and_contributors
       multi_facet_by_contributors_and_worktype(object.aggregations.creators_and_contributors.buckets)
-    else
-      []
-    end
-  end
-
-  def person_to_work_types_flat
-    if object.aggregations.creators_and_contributors
-      contributors_works = multi_facet_by_contributors_and_worktype(
-        object.aggregations.creators_and_contributors.buckets
-      )
-      flatten_muti_facet(contributors_works)
     else
       []
     end

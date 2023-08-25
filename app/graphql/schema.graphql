@@ -412,7 +412,6 @@ type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -1012,7 +1011,6 @@ type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -1064,7 +1062,6 @@ type BookConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -1438,7 +1435,6 @@ type CollectionConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -1764,7 +1760,6 @@ type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -2382,7 +2377,6 @@ type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -2708,7 +2702,6 @@ type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -3059,7 +3052,6 @@ type DatasetConnectionWithTotal implements WorkFacetsInterface {
   """
   pageInfo: PageInfo!
   personConnectionCount: Int!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   publicationConnectionCount: Int!
   published: [Facet!]
@@ -3478,7 +3470,6 @@ type DissertationConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -4496,21 +4487,6 @@ type FieldOfScience {
 }
 
 """
-Flattened Count Type for Multi-level Facets
-"""
-type FlattenedCount {
-  """
-  Count
-  """
-  count: Int
-
-  """
-  Flattened facets
-  """
-  data: [String!]
-}
-
-"""
 Information about funders
 """
 type Funder implements ActorItem {
@@ -5048,7 +5024,6 @@ type ImageConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -5374,7 +5349,6 @@ type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -5700,7 +5674,6 @@ type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -6031,7 +6004,6 @@ type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -6653,7 +6625,6 @@ type ModelConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -7176,7 +7147,6 @@ type OtherConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -7527,7 +7497,6 @@ type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -7990,7 +7959,6 @@ type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -8369,7 +8337,6 @@ type PreprintConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -8699,7 +8666,6 @@ type PublicationConnectionWithTotal implements WorkFacetsInterface {
   """
   pageInfo: PageInfo!
   personConnectionCount: Int!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   publicationConnectionCount: Int!
   published: [Facet!]
@@ -9666,7 +9632,6 @@ type ServiceConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   pidEntities: [Facet!]
   published: [Facet!]
@@ -10022,7 +9987,6 @@ type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   """
   pageInfo: PageInfo!
   personConnectionCount: Int!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   publicationConnectionCount: Int!
   published: [Facet!]
@@ -10350,7 +10314,6 @@ type SoundConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -10887,7 +10850,6 @@ type WorkConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -10925,7 +10887,6 @@ interface WorkFacetsInterface {
   languages: [Facet!]
   licenses: [Facet!]
   openLicenseResourceTypes: [Facet!]
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
@@ -11236,7 +11197,6 @@ type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  personToWorkTypesFlat: [FlattenedCount!]
   personToWorkTypesMultilevel: [MultiFacet!]
   published: [Facet!]
   registrationAgencies: [Facet!]
