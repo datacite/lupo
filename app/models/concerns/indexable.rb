@@ -313,7 +313,7 @@ module Indexable
           filter << { term: { region: options[:region].upcase } }
         end
         if options[:consortium_id].present?
-          filter << { term: { "consortium_id": {value: options[:consortium_id], case_insensitive: true  } } }
+          filter << { term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true  } } }
         end
         if options[:member_type].present?
           filter << { terms: { member_type: options[:member_type].split(",") } }
@@ -582,10 +582,10 @@ module Indexable
             }
         end
         if options[:provider_id].present?
-            options[:provider_id].split(",").each { |id|
-              should << { term: { "provider_id": { value: id, case_insensitive: true } } }
-            }
-            minimum_should_match = 1
+          options[:provider_id].split(",").each { |id|
+            should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:consortium_organization_id].present?
           options[:consortium_organization_id].split(",").each { |id|
@@ -629,7 +629,7 @@ module Indexable
           options[:client_id].split(",").each { |id|
             should << { term: { "client_id": { value: id, case_insensitive: true } } }
           }
-          minimum_should_match = 1 
+          minimum_should_match = 1
         end
         if options[:prefix_id].present?
           filter << { term: { prefix_id: options[:prefix_id], case_insensitive: true  } }
