@@ -114,7 +114,7 @@ module Doi::GraphqlQuery
       end
     end
 
-    def 
+    def filters
       options = @options
 
       # turn ids into an array if provided as comma-separated string
