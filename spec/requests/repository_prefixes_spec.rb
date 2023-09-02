@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "pp"
 
 describe RepositoryPrefixesController, type: :request do
   let!(:provider) { create(:provider) }
@@ -38,10 +39,13 @@ describe RepositoryPrefixesController, type: :request do
       expect(json["data"].size).to eq(1)
     end
 
-    # skv temp
-    xit "returns repository-prefixes by prefix-id" do
+    it "returns repository-prefixes by prefix-id" do
       get "/repository-prefixes?prefix-id=#{client.client_prefixes.first.prefix_id}",
           nil, headers
+
+      pp "LAST_RESPONSE: "
+      pp last_response
+      pp "/repository-prefixes?prefix-id=#{client.client_prefixes.first.prefix_id}"
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)

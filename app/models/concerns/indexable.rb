@@ -632,7 +632,7 @@ module Indexable
           minimum_should_match = 1
         end
         if options[:prefix_id].present?
-          filter << { term: { prefix_id: options[:prefix_id], case_insensitive: true  } }
+          filter << { term: { "prefix_id": { value: options[:prefix_id], case_insensitive: true  } } }
         end
       elsif name == "Activity"
         must = if query.present?
