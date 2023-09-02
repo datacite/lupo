@@ -24,7 +24,7 @@ jobs:
   parallel-test:
     runs-on: ubuntu-latest
     strategy:
-      # fail-fast: true
+      fail-fast: true
       matrix:
           # set N-1 indexes for parallel jobs
           # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
