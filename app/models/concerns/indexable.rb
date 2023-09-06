@@ -313,7 +313,7 @@ module Indexable
           filter << { term: { region: options[:region].upcase } }
         end
         if options[:consortium_id].present?
-          filter << { term: { "consortium_id.raw" => options[:consortium_id] } }
+          filter << { term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true  } } }
         end
         if options[:member_type].present?
           filter << { terms: { member_type: options[:member_type].split(",") } }
@@ -377,7 +377,10 @@ module Indexable
             { range: { updated: { lte: "#{options[:until_date]}||/d" } } }
         end
         if options[:provider_id].present?
-          filter << { terms: { provider_id: options[:provider_id].split(",") } }
+          options[:provider_id].split(",").each { |id|
+            should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:software].present?
           filter <<
@@ -391,7 +394,7 @@ module Indexable
             { terms: { repository_type: options[:repository_type].split(",") } }
         end
         if options[:consortium_id].present?
-          filter << { term: { consortium_id: options[:consortium_id] } }
+          filter << { term: { consortium_id: { value: options[:consortium_id], case_insensitive: true } } }
         end
         if options[:re3data_id].present?
           filter <<
@@ -515,8 +518,10 @@ module Indexable
             { terms: { registrant_id: options[:registrant_id].split(",") } }
         end
         if options[:provider_id].present?
-          filter <<
-            { terms: { registrant_id: options[:provider_id].split(",") } }
+          options[:provider_id].split(",").each { |id|
+            should << { term: { "provider_ids": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:issn].present?
           filter << { terms: { issn: options[:issn].split(",") } }
@@ -542,12 +547,16 @@ module Indexable
             }
         end
         if options[:provider_id].present?
-          filter <<
-            { terms: { provider_ids: options[:provider_id].split(",") } }
+          options[:provider_id].split(",").each { |id|
+            should << { term: { "provider_ids": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:client_id].present?
-          filter <<
-            { terms: { client_ids: options[:client_id].to_s.split(",") } }
+          options[:client_id].split(",").each { |id|
+            should << { term: { "client_ids": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:state].present?
           filter << { terms: { state: options[:state].to_s.split(",") } }
@@ -573,18 +582,19 @@ module Indexable
             }
         end
         if options[:provider_id].present?
-          filter << { terms: { provider_id: options[:provider_id].split(",") } }
+          options[:provider_id].split(",").each { |id|
+            should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:consortium_organization_id].present?
-          filter <<
-            {
-              terms: {
-                provider_id: options[:consortium_organization_id].split(","),
-              },
-            }
+          options[:consortium_organization_id].split(",").each { |id|
+            should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:consortium_id].present?
-          filter << { term: { consortium_id: options[:consortium_id] } }
+          filter << { term: { consortium_id: { value: options[:consortium_id], case_insensitive: true  } } }
         end
         if options[:prefix_id].present?
           filter << { term: { prefix_id: options[:prefix_id] } }
@@ -616,10 +626,13 @@ module Indexable
             }
         end
         if options[:client_id].present?
-          filter << { terms: { client_id: options[:client_id].split(",") } }
+          options[:client_id].split(",").each { |id|
+            should << { term: { "client_id": { value: id, case_insensitive: true } } }
+          }
+          minimum_should_match = 1
         end
         if options[:prefix_id].present?
-          filter << { term: { prefix_id: options[:prefix_id] } }
+          filter << { term: { "prefix_id": { value: options[:prefix_id], case_insensitive: true  } } }
         end
       elsif name == "Activity"
         must = if query.present?
@@ -655,13 +668,13 @@ module Indexable
         end
 
         if options[:provider_id].present?
-          filter << { term: { provider_id: options[:provider_id] } }
+          filter << { term: { "provider_id": { value: options[:provider_id], case_insensitive: true } } }
         end
 
         # match either consortium_id or provider_id
         if options[:consortium_id].present?
-          should << { term: { provider_id: options[:consortium_id] } }
-          should << { term: { consortium_id: options[:consortium_id] } }
+          should << { term: { provider_id: { value: options[:consortium_id], case_insensitive: true } } }
+          should << { term: { consortium_id: { value: options[:consortium_id], case_insensitive: true } } }
           minimum_should_match = 1
         end
 

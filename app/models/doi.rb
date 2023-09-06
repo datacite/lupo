@@ -804,9 +804,9 @@ class Doi < ApplicationRecord
 
   def self.stats_query(options = {})
     filter = []
-    filter << { term: { provider_id: options[:provider_id] } } if options[:provider_id].present?
-    filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
-    filter << { term: { consortium_id: options[:consortium_id] } } if options[:consortium_id].present?
+    filter << { term: { provider_id: { value: options[:provider_id], case_insensitive: true } } } if options[:provider_id].present?
+    filter << { term: { client_id: { value: options[:client_id], case_insensitive: true } } } if options[:client_id].present?
+    filter << { term: { consortium_id: { value: options[:consortium_id], case_insensitive: true } } } if options[:consortium_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" } } if options[:user_id].present?
 
     aggregations = {
@@ -930,8 +930,18 @@ class Doi < ApplicationRecord
     filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
     filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize } } if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
-    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
-    filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+    if options[:provider_id].present?
+      options[:provider_id].split(",").each { |id|
+        should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+      }
+      minimum_should_match = 1
+    end
+    if options[:client_id].present?
+      options[:client_id].split(",").each { |id|
+        should << { term: { "client_id": { value: id, case_insensitive: true } } }
+      }
+      minimum_should_match = 1
+    end
     filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
@@ -974,7 +984,7 @@ class Doi < ApplicationRecord
     filter << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
     filter << { terms: { aasm_state: options[:state].to_s.split(",") } } if options[:state].present?
     filter << { range: { registered: { gte: "#{options[:registered].split(',').min}||/y", lte: "#{options[:registered].split(',').max}||/y", format: "yyyy" } } } if options[:registered].present?
-    filter << { term: { consortium_id: options[:consortium_id] } } if options[:consortium_id].present?
+    filter << { term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true  } } } if options[:consortium_id].present?
     # TODO align PID parsing
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) } } if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] } } if options[:opendoar_id].present?
