@@ -180,6 +180,7 @@ class ParamsSanitizer
         awardNumber
         awardUri
         awardTitle
+        schemeUri
       ],
     },
     :geoLocations,

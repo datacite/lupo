@@ -1517,6 +1517,10 @@ describe DataciteDoisController, type: :request, vcr: true do
               "xml" => xml,
               "source" => "test",
               "event" => "publish",
+              "fundingReferences": [{
+                "funderName": "fake_funder_name",
+                "schemeUri": "http://funder_uri"
+              }]
             },
           },
         }
@@ -1527,7 +1531,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "type" => "dois",
             "attributes" => {
               "doi" => doi.doi,
-            },
+            }
           },
         }
       end
@@ -1537,6 +1541,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
+        expect(json.dig("data", "attributes", "fundingReferences").first["schemeUri"]).to eq("http://funder_uri")
       end
 
       it "revert the changes" do
