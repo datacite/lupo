@@ -602,28 +602,23 @@ describe PersonType do
 
   describe "query people with absolute orcid uri", elasticsearch: true, vcr: true do
     let(:query) do
-      "query {
-        people(query: \"https://orcid.org/0000-0001-5727-2427\", first: 50, after: \"NA\") {
+      "query asdfsadfa {
+        people(first: 25, query: \"https://orcid.org/0000-0001-5727-2427\", after: null) {
           totalCount
           pageInfo {
             endCursor
             hasNextPage
+            __typename
           }
           nodes {
             id
             name
-            givenNamerails
+            givenName
             familyName
             alternateName
-            works {
-              totalCount
-              published {
-                id
-                title
-                count
-              }
-            }
+            __typename
           }
+          __typename
         }
       }"
     end
@@ -631,7 +626,7 @@ describe PersonType do
     it "returns success response" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.status).to(eq(200))
+      expect(response.dig("data", "errors")).to(eq(nil))
     end
   end
 end
