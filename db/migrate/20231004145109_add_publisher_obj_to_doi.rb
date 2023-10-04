@@ -4,6 +4,6 @@ class AddPublisherObjToDoi < ActiveRecord::Migration[6.1]
   end
 
   def down
-    remove_column :dataset, :related_items
+    remove_column :dataset, :publisher_obj
   end
 end
