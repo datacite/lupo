@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_23_122711) do
+ActiveRecord::Schema.define(version: 2023_10_04_145109) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -224,6 +224,7 @@ ActiveRecord::Schema.define(version: 2023_01_23_122711) do
     t.string "agency", limit: 191, default: "datacite"
     t.string "type", limit: 16, default: "DataCiteDoi"
     t.json "related_items"
+    t.json "publisher_obj"
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
