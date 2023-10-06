@@ -117,7 +117,7 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
-  validate :check_publisher_obj, if: :publsher_obj?
+  validate :check_publisher_obj, if: :publisher_obj?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
@@ -315,13 +315,6 @@ class Doi < ApplicationRecord
           givenName: { type: :text },
           familyName: { type: :text },
         }},
-        publisher_obj { type: :object, properties: {
-          name: { type: :text, fields: { keyword: { type: "keyword" } } },
-          publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
-          publisherIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword },
-          lang: { type: :keyword },
-        }}
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -1563,8 +1556,8 @@ class Doi < ApplicationRecord
     write_attribute(:container, value || {})
   end
 
-  def publsher_obj=(value)
-    write_attribute(:publsher_obj, value || {})
+  def publisher_obj=(value)
+    write_attribute(:publisher_obj, value || {})
   end
 
   def types=(value)
@@ -1909,7 +1902,7 @@ class Doi < ApplicationRecord
   end
 
   def check_publisher_obj
-    errors.add(:publsher_obj, "Publisher_obj '#{publisher_obj}' should be an object instead of a string.") unless publisher_obj.is_a?(Hash)
+    errors.add(:publisher_obj, "Publisher_obj '#{publisher_obj}' should be an object instead of a string.") unless publisher_obj.is_a?(Hash)
   end
 
   def check_language
