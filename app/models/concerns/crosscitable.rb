@@ -119,6 +119,7 @@ module Crosscitable
           subjects
           content_url
           schema_version
+          publisher_obj
         ].map { |a| [a.to_sym, send(a.to_s)] }.to_h.
           compact
 

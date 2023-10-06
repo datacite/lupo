@@ -4,7 +4,7 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
+  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason publisher_obj]
 
   # disable STI
   self.inheritance_column = :_type_disabled
@@ -117,6 +117,7 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
+  validate :check_publisher_obj, if: :publsher_obj?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
@@ -313,7 +314,14 @@ class Doi < ApplicationRecord
           nameType: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },
-        } },
+        }},
+        publisher_obj { type: :object, properties: {
+          name: { type: :text, fields: { keyword: { type: "keyword" } } },
+          publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+          publisherIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword },
+          lang: { type: :keyword },
+        }}
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -549,6 +557,13 @@ class Doi < ApplicationRecord
       indexes :fields_of_science, type: :keyword
       indexes :fields_of_science_combined, type: :keyword
       indexes :fields_of_science_repository, type: :keyword
+      indexes :publisher_obj, type: :object, properties: {
+        name: { type: :text, fields: { keyword: { type: "keyword" } } },
+        publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+        publisherIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        lang: { type: :keyword },
+      }
     end
   end
 
@@ -638,6 +653,7 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
+      "publisher_obj" => publisher_obj,
     }
   end
 
@@ -761,7 +777,7 @@ class Doi < ApplicationRecord
   end
 
   def self.query_fields
-    ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3"]
+    ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3", "publisher_obj.name^3"]
   end
 
   # return results for one or more ids
@@ -910,6 +926,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
+      query = query.gsub(/publisherObj/, "publisher_obj")
       query = query.gsub("/", "\\/")
     end
 
@@ -1170,7 +1187,7 @@ class Doi < ApplicationRecord
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info).map do |a|
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info publisher_obj).map do |a|
       [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
 
@@ -1546,6 +1563,10 @@ class Doi < ApplicationRecord
     write_attribute(:container, value || {})
   end
 
+  def publsher_obj=(value)
+    write_attribute(:publsher_obj, value || {})
+  end
+
   def types=(value)
     write_attribute(:types, value || {})
   end
@@ -1885,6 +1906,10 @@ class Doi < ApplicationRecord
 
   def check_container
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
+  end
+
+  def check_publisher_obj
+    errors.add(:publsher_obj, "Publisher_obj '#{publisher_obj}' should be an object instead of a string.") unless publisher_obj.is_a?(Hash)
   end
 
   def check_language
