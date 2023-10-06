@@ -132,6 +132,7 @@ class Doi < ApplicationRecord
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
+  before_validation :update_publisher, if: [ :will_save_change_to_publisher?, :publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
@@ -2232,6 +2233,15 @@ class Doi < ApplicationRecord
       "bibtex" => Bolognese::Utils::CR_TO_BIB_TRANSLATIONS[res] || Bolognese::Utils::SO_TO_BIB_TRANSLATIONS[schema_org] || "misc",
       "ris" => Bolognese::Utils::CR_TO_RIS_TRANSLATIONS[res] || Bolognese::Utils::DC_TO_RIS_TRANSLATIONS[resgen] || "GEN",
     ).compact
+  end
+
+  def update_publisher
+    if publisher_before_type_cast.is_a?(Hash)
+      self.publisher_obj = publisher_before_type_cast
+      self.publisher = publisher_before_type_cast.dig(:name)
+    else
+      self.publisher_obj = { :name => publisher }
+    end
   end
 
   def self.repair_landing_page(id: nil)

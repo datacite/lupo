@@ -1210,6 +1210,20 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(subject.publication_year).to eq(2011)
     end
 
+    it "publisher" do
+      expect(subject.publisher).to eq("Dryad Digital Repository")
+    end
+
+    it "publisher_obj" do
+      expect(subject.publisher_obj).to eq({ 
+        "name" => "Dryad Digital Repository",
+        "publisherIdentifier" => "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme" => "ROR",
+        "schemeUri" => "https://ror.org/",
+        "lang" => "en"
+      })
+    end
+
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
@@ -1269,6 +1283,10 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("publisher")).to eq(publisher)
+    end
+
+    it "publisher_obj" do
+      expect(subject.publisher_obj).to eq({ "name" => publisher })
     end
 
     it "publication_year" do

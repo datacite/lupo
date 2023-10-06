@@ -35,6 +35,15 @@ class ParamsSanitizer
     :titles,
     { titles: %i[title titleType lang] },
     :publisher,
+      {
+        publisher: %i[
+          name
+          publisherIdentifier
+          publisherIdentifierScheme
+          schemeUri
+          lang
+        ],
+      },
     :publicationYear,
     :created,
     :prefix,
@@ -287,6 +296,7 @@ class ParamsSanitizer
     add_metadata_version(meta)
     add_landingpage()
 
+    #Add regenerate value to params, either from the params themselves or from the line above
     @params.merge(regenerate: @params[:regenerate] || regenerate).except(
       # ignore camelCase keys, and read-only keys
       :confirmDoi,
@@ -456,6 +466,16 @@ class ParamsSanitizer
           ["nameIdentifiers must be an Array"],
         )
       end
+    end
+  end
+
+  def self.normalize_publisher(params_publisher_value)
+    if params_publisher_value.respond_to?(:keys)
+      params_publisher_value
+    else
+      {
+        "name": params_publisher_value
+      }
     end
   end
 end
