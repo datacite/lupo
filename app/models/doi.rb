@@ -117,7 +117,7 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
-  validate :check_publisher_obj, if: :publisher_obj?
+  # validate :check_publisher_obj, if: :publisher_obj?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
