@@ -75,7 +75,7 @@ gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
 gem "mimemagic", "0.3.10"
-gem 'zeitwerk', '2.6.1'
+gem "zeitwerk", "2.6.1"
 
 group :development, :test do
   gem "better_errors"
