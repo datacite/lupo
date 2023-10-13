@@ -118,6 +118,12 @@ class DataciteDoiSerializer
 
   attribute :doi, &:uid
 
+  attribute :publisher do |object, params|
+    # publisher accessor will now always return a publisher object.
+    # new obj format only if ?publisher=true, otherwise serialize the old format (a string)
+    params[:publisher] ? object.publisher : ( object.publisher["name"] || nil )
+  end
+
   attribute :creators do |object, params|
     # Always return an array of creators and affiliations
     # use new array format only if affiliation param present
