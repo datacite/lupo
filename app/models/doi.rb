@@ -4,7 +4,7 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason publisher_obj]
+  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
   self.inheritance_column = :_type_disabled
