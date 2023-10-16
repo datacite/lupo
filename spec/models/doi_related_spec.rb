@@ -4,7 +4,6 @@
 require "rails_helper"
 
 describe Doi, type: :model, vcr: true, elasticsearch: true do
-
   describe "views" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -127,21 +126,21 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
-   describe "versions" do
-     let(:client) { create(:client) }
-     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-     let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
+  describe "versions" do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
 
-     it "has versions" do
-       expect(doi.versions.count).to eq(1)
-       expect(doi.version_ids.count).to eq(1)
-       expect(doi.version_count).to eq(1)
+    it "has versions" do
+      expect(doi.versions.count).to eq(1)
+      expect(doi.version_ids.count).to eq(1)
+      expect(doi.version_count).to eq(1)
 
-       version_id = doi.version_ids.first
-       expect(version_id).to eq(target_doi.doi.downcase)
-     end
-   end
+      version_id = doi.version_ids.first
+      expect(version_id).to eq(target_doi.doi.downcase)
+    end
+  end
 
   describe "version of" do
     let(:client) { create(:client) }
