@@ -1211,11 +1211,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
 
     it "publisher" do
-      expect(subject.publisher).to eq("Dryad Digital Repository")
-    end
-
-    it "publisher_obj" do
-      expect(subject.publisher_obj).to eq({ 
+      expect(subject.publisher).to eq({ 
         "name" => "Dryad Digital Repository",
         "publisherIdentifier" => "https://ror.org/00x6h5n95",
         "publisherIdentifierScheme" => "ROR",
@@ -1279,14 +1275,10 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
 
     it "publisher" do
-      expect(subject.publisher).to eq(publisher)
+      expect(subject.publisher).to eq({ "name" => publisher })
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("publisher")).to eq(publisher)
-    end
-
-    it "publisher_obj" do
-      expect(subject.publisher_obj).to eq({ "name" => publisher })
     end
 
     it "publication_year" do

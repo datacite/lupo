@@ -576,7 +576,7 @@ class Doi < ApplicationRecord
       "creator_names" => creator_names,
       "titles" => Array.wrap(titles),
       "descriptions" => Array.wrap(descriptions),
-      "publisher" => publisher,
+      "publisher" => publisher && publisher["name"],
       "client_id" => client_id,
       "provider_id" => provider_id,
       "consortium_id" => consortium_id,
@@ -2240,11 +2240,12 @@ class Doi < ApplicationRecord
   end
 
   def update_publisher
-    if publisher_before_type_cast.is_a?(Hash)
+    if publisher_before_type_cast.respond_to?(:to_hash)
       self.publisher_obj = publisher_before_type_cast
       self.publisher = publisher_before_type_cast.dig(:name)
-    else
-      self.publisher_obj = { :name => publisher }
+    elsif publisher_before_type_cast.respond_to?(:to_str)
+      self.publisher_obj = { :name => publisher_before_type_cast }
+      self.publisher = publisher_before_type_cast
     end
   end
 

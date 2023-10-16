@@ -122,9 +122,17 @@ class DataciteDoiSerializer
     # publisher accessor will now always return a publisher object.
     # new obj format only if ?publisher=true, otherwise serialize the old format (a string)
     if params && (params[:publisher] == 'true')
-      object.publisher ? object.publisher : nil
+      if object.publisher.respond_to?(:to_hash)
+        object.publisher
+      elsif object.publisher.respond_to?(:to_str)
+        { "name" => object.publisher }
+      end
     else
-      object.publisher ? object.publisher["name"] : nil
+      if object.publisher.respond_to?(:to_hash)
+        object.publisher["name"]
+      elsif object.publisher.respond_to?(:to_str)
+        object.publisher
+      end
     end
   end
 
