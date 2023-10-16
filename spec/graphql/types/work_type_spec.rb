@@ -58,6 +58,7 @@ describe WorkType do
             identifierType
             title
           }
+          publisher
           bibtex
           xml
           schemaOrg
@@ -89,6 +90,9 @@ describe WorkType do
       )
       expect(response.dig("data", "work", "id")).to eq(
         "https://handle.stage.datacite.org/#{work.doi.downcase}",
+      )
+      expect(response.dig("data", "work", "publisher")).to eq(
+        "Dryad Digital Repository",
       )
 
       bibtex =
@@ -331,6 +335,7 @@ describe WorkType do
           nodes {
             id
             doi
+            publisher
             creators{
               type
             }
@@ -514,6 +519,9 @@ describe WorkType do
       expect(
         response.dig("data", "works", "nodes", 0, "creators", 1, "type"),
       ).to be nil
+      expect(
+        response.dig("data", "works", "nodes", 0, "publisher"),
+      ).to eq("Dryad Digital Repository")
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
 
       response =

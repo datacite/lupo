@@ -524,6 +524,14 @@ module DoiItem
     end
   end
 
+  def publisher
+    if object.publisher.respond_to?(:to_hash)
+      object.publisher["name"]
+    elsif object.publisher.respond_to?(:to_str)
+      object.publisher
+    end
+  end
+
   def bibtex
     pages =
       if object.container.to_h["firstPage"].present?
@@ -854,7 +862,7 @@ module DoiItem
       "volume" => object.container.to_h["volume"],
       "issue" => object.container.to_h["issue"],
       "page" => page,
-      "publisher" => object.publisher,
+      "publisher" => object.publisher["name"] || object.publisher,
       "title" => parse_attributes(object.titles, content: "title", first: true),
       "URL" => object.url,
       "version" => object.version_info,
