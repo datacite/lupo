@@ -1346,6 +1346,10 @@ class Doi < ApplicationRecord
     end.flatten.uniq - [doi.downcase]
   end
 
+  def other_relation_count
+    other_relation_ids.length
+  end
+
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
   rescue ArgumentError

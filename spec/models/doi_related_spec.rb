@@ -157,4 +157,79 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(version_of_id).to eq(source_doi.doi.downcase)
     end
   end
+
+  describe "other relation types" do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+    let!(:ref_target_dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
+    let!(:reference_events) do
+      ref_target_dois.each do |ref_target_doi|
+        create(:event_for_crossref, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{ref_target_doi.doi}",
+          relation_type_id: "references"
+        })
+      end
+    end
+    let!(:citation_target_dois) { create_list(:doi, 7, client: client, aasm_state: "findable") }
+    let!(:citation_events) do
+      citation_target_dois.each do |citation_target_doi|
+        create(:event_for_datacite_crossref, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{citation_target_doi.doi}",
+          relation_type_id: "is-referenced-by"
+        })
+      end
+    end
+
+    let!(:version_target_dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:version_events) do
+      version_target_dois.each do |version_target_doi|
+        create(:event_for_datacite_versions, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{version_target_doi.doi}"
+        })
+      end
+    end
+
+    let!(:part_target_dois) { create_list(:doi, 9, client: client, aasm_state: "findable") }
+    let!(:part_events) do
+      part_target_dois.each do |part_target_doi|
+        create(:event_for_datacite_parts, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{part_target_doi.doi}",
+          relation_type_id: "has-part"
+        })
+      end
+    end
+
+    it "references exist" do
+      expect(doi.references.count).to eq(5)
+      expect(doi.reference_count).to eq(5)
+    end
+
+    it "citations exist" do
+      expect(doi.citations.count).to eq(7)
+      expect(doi.citation_count).to eq(7)
+    end
+
+    it "versions exist" do
+      expect(doi.versions.count).to eq(3)
+      expect(doi.version_count).to eq(3)
+    end
+
+    it "parts exist" do
+      expect(doi.parts.count).to eq(9)
+      expect(doi.part_count).to eq(9)
+    end
+
+    it "other_relations should not include citations,parts,references" do
+      Event.import
+      sleep 2
+      expect(doi.other_relation_ids.length).to eq(3)
+      expect(doi.other_relation_count).to eq(3)
+    end
+
+  end
 end
