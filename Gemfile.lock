@@ -198,6 +198,10 @@ GEM
     ddtrace (0.32.0)
       msgpack
     debug_inspector (1.1.0)
+    departure (6.5.0)
+      activerecord (>= 5.2.0, < 7.1, != 7.0.0)
+      mysql2 (>= 0.4.0, <= 0.5.5)
+      railties (>= 5.2.0, < 7.1, != 7.0.0)
     diff-lcs (1.5.0)
     diffy (3.4.2)
     docile (1.4.0)
@@ -677,6 +681,7 @@ DEPENDENCIES
   dalli (~> 2.7, >= 2.7.6)
   database_cleaner
   ddtrace (~> 0.32.0)
+  departure (~> 6.2)
   diffy (~> 3.2, >= 3.2.1)
   dotenv
   elasticsearch (= 7.5)
@@ -756,4 +761,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.3.20
+   2.4.20
