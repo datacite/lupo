@@ -11,6 +11,7 @@ defaults: &defaults
   database: <%= ENV['MYSQL_DATABASE'] %>
   host: <%= ENV['MYSQL_HOST'] %>
   port: <%= ENV['MYSQL_PORT'] %>
+  reconnect: true
 
   <<: *mysql
 
