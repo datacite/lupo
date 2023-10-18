@@ -315,7 +315,7 @@ describe Event, type: :model, vcr: true do
       expect(subject.subj_id).to eq("https://doi.org/10.5061/dryad.47sd5")
       expect(subject.obj_id).to eq("https://doi.org/10.5061/dryad.47sd5/1")
       expect(subject.relation_type_id).to eq("has-version")
-      expect(subject.source_id).to eq("datacite_related")
+      expect(subject.source_id).to eq("datacite-related")
       expect(subject.dois_to_import).to eq([])
     end
   end
