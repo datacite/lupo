@@ -1315,29 +1315,8 @@ class Doi < ApplicationRecord
     Doi.query(nil, ids: version_of_ids, page: { number: 1, size: 25 }).results
   end
 
-  def _other_relation_types
-    additional_relation_types = %w[
-      is-reply-to
-      is-translation-of
-      is-published-in
-    ].freeze
-    remove_relation_types = Event::INCLUDED_RELATION_TYPES | ["is-part-of", "has-part"]
-    other_relation_types = (Event::RELATIONS_RELATION_TYPES | additional_relation_types) - remove_relation_types
-  end
-
   def other_relation_events
-    other_related_source_ids =  %w[
-      datacite_related
-      datacite-crossref
-      crossref
-    ]
-    Event.query(
-      nil,
-      doi: doi,
-      source_id: other_related_source_ids.join(","),
-      relation_type_id: _other_relation_types.join(","),
-      page:{size:500}
-    ).results.results
+    Event.events_involving(doi, Event::OTHER_RELATION_TYPES)
   end
 
   def other_relation_ids
