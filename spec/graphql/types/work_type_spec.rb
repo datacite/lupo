@@ -1911,7 +1911,7 @@ describe WorkType do
     end
   end
 
-describe "query with relationships", elasticsearch: true, vcr: true do
+  describe "query with relationships", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
@@ -2029,9 +2029,5 @@ describe "query with relationships", elasticsearch: true, vcr: true do
       expect(@response.dig("data", "work", "otherRelatedCount")).to eq(3)
       expect(@response.dig("data", "work", "otherRelated", "nodes").length).to eq(3)
     end
-end
-
-
-
-
+  end
 end

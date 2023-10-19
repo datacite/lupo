@@ -230,6 +230,5 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.other_relation_ids.length).to eq(3)
       expect(doi.other_relation_count).to eq(3)
     end
-
   end
 end

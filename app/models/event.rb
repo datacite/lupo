@@ -127,7 +127,7 @@ class Event < ApplicationRecord
     RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES
   ) - INCLUDED_RELATION_TYPES - PART_RELATION_TYPES
 
-  RELATED_SOURCE_IDS =  %w[
+  RELATED_SOURCE_IDS = %w[
     datacite-related
     datacite-crossref
     crossref
@@ -1062,8 +1062,7 @@ class Event < ApplicationRecord
       doi: _doi,
       source_id: RELATED_SOURCE_IDS.join(","),
       relation_type_id: relation_types.join(","),
-      page:{size:500}
+      page: { size: 500 }
     ).results.results
   end
-
 end
