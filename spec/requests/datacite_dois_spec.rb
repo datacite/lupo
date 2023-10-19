@@ -2384,7 +2384,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "name" => "Miller, Elizabeth",
                                                                     "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0001-5000-0007", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
                                                                     "nameType" => "Personal")
-        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "name" => "Wesleyan University" }],
+        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "schemeUri" => "https://grid.ac/institutes/", "name" => "Wesleyan University" }],
                                                                     "familyName" => "Carberry",
                                                                     "givenName" => "Josiah",
                                                                     "name" => "Carberry, Josiah",
@@ -2986,12 +2986,29 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "creates a Doi" do
         post "/dois", valid_attributes, headers
+        pp json
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi)
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
         expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 34)).to eq(
+          {
+            "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
+            "relatedIdentifierType" => "DOI",
+            "relationType" => "Collects",
+            "resourceTypeGeneral" => "Other",
+          }
+        )
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 35)).to eq(
+          {
+            "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
+            "relatedIdentifierType" => "DOI",
+            "relationType" => "IsCollectedBy",
+            "resourceTypeGeneral" => "Other"
+          }
+        )
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("publisher").content).to eq("Example Publisher")

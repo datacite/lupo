@@ -2399,7 +2399,4 @@ class Doi < ApplicationRecord
 
     "Finished updating dois, total #{count}"
   end
-
-  private
-  #attr_accessor :publisher_obj
 end

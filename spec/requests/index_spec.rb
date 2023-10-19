@@ -47,7 +47,15 @@ describe IndexController, type: :request do
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-        expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+        expect(data.dig("publisher")).to eq(
+          {
+            "__content__" => "Dryad Digital Repository",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeURI" => "https://ror.org/",
+            "xml:lang" => "en"
+          }
+        )
         expect(data.dig("titles", "title")).to eq(
           "Data from: A new malaria agent in African hominids.",
         )
@@ -61,7 +69,15 @@ describe IndexController, type: :request do
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-        expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+        expect(data.dig("publisher")).to eq(
+          {
+            "__content__" => "Dryad Digital Repository",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeURI" => "https://ror.org/",
+            "xml:lang" => "en"
+          }
+        )
         expect(data.dig("titles", "title")).to eq(
           "Data from: A new malaria agent in African hominids.",
         )

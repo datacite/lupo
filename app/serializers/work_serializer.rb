@@ -67,7 +67,13 @@ class WorkSerializer
     Array.wrap(object.descriptions).first.to_h.fetch("description", nil)
   end
 
-  attribute :container_title, &:publisher
+  attribute :container_title do |object|
+    if object.publisher.respond_to?(:to_hash)
+      object.publisher["name"]
+    elsif object.publisher.respond_to?(:to_str)
+      object.publisher
+    end
+  end
 
   attribute :resource_type_subtype do |object|
     object.types.to_h.fetch("resourceType", nil)
