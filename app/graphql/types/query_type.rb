@@ -208,7 +208,7 @@ class QueryType < BaseObject
   end
 
   def people(**args)
-    query = args[:query].gsub(/^https?:\/\//, "")
+    query = args[:query]&.gsub(/^https?:\/\//, "")
     response = Person.query(query, limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
     HashConnection.new(response, context: context, first: args[:first], after: args[:after])
   end
