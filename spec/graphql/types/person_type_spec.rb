@@ -629,4 +629,34 @@ describe PersonType do
       expect(response.dig("data", "errors")).to(eq(nil))
     end
   end
+
+  describe "query people with nil query should not throw NilClass error", elasticsearch: true, vcr: true do
+    let(:query) do
+      "query asdfsadfa {
+        people(first: 25, query: null, after: null) {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+            __typename
+          }
+          nodes {
+            id
+            name
+            givenName
+            familyName
+            alternateName
+            __typename
+          }
+          __typename
+        }
+      }"
+    end
+
+    it "returns success response" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "errors")).to(eq(nil))
+    end
+  end
 end
