@@ -47,6 +47,7 @@ describe DoiItem do
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
     it { is_expected.to have_field(:versionCount).of_type("Int") }
     it { is_expected.to have_field(:versionOfCount).of_type("Int") }
+    it { is_expected.to have_field(:otherRelatedCount).of_type("Int") }
     it { is_expected.to have_field(:partCount).of_type("Int") }
     it { is_expected.to have_field(:partOfCount).of_type("Int") }
     it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
@@ -71,6 +72,9 @@ describe DoiItem do
     end
     it do
       is_expected.to have_field(:version_of).of_type("WorkConnectionWithTotal")
+    end
+    it do
+      is_expected.to have_field(:other_related).of_type("WorkConnectionWithTotal")
     end
   end
 end

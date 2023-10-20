@@ -76,21 +76,23 @@ class Event < ApplicationRecord
   alias_attribute :created, :created_at
   alias_attribute :updated, :updated_at
 
-  INCLUDED_RELATION_TYPES = %w[
-    cites
-    is-cited-by
-    is-supplement-to
-    is-supplemented-by
-    references
-    is-referenced-by
+  # renamed to make it clearer that these relation types are grouped together as references
+  REFERENCE_RELATION_TYPES = %w[
+    cites is-supplemented-by references
   ].freeze
 
-  # renamed to make it clearer that these relation types are grouped together as references
-  REFERENCE_RELATION_TYPES = %w[cites is-supplemented-by references].freeze
-
   # renamed to make it clearer that these relation types are grouped together as citations
-  CITATION_RELATION_TYPES = %w[is-cited-by is-supplement-to is-referenced-by].freeze
+  CITATION_RELATION_TYPES = %w[
+    is-cited-by is-supplement-to is-referenced-by
+  ].freeze
 
+  INCLUDED_RELATION_TYPES = REFERENCE_RELATION_TYPES | CITATION_RELATION_TYPES
+
+  PART_RELATION_TYPES = %w[
+    is-part-of has-part
+  ]
+
+  NEW_RELATION_TYPES = %w[ is-reply-to is-translation-of is-published-in ]
   RELATIONS_RELATION_TYPES = %w[
     compiles
     is-compiled-by
@@ -119,6 +121,16 @@ class Event < ApplicationRecord
     is-previous-version-of
     describes
     is-described-by
+  ].freeze
+
+  OTHER_RELATION_TYPES = (
+    RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES
+  ) - INCLUDED_RELATION_TYPES - PART_RELATION_TYPES
+
+  RELATED_SOURCE_IDS = %w[
+    datacite-related
+    datacite-crossref
+    crossref
   ].freeze
 
   validates :subj_id, :source_id, :source_token, presence: true
@@ -1043,4 +1055,14 @@ class Event < ApplicationRecord
       self.license = "https://creativecommons.org/publicdomain/zero/1.0/"
     end
   end # overridden, use uuid instead of id
+
+  def self.events_involving(_doi, relation_types = OTHER_RELATION_TYPES)
+    self.query(
+      nil,
+      doi: _doi,
+      source_id: RELATED_SOURCE_IDS.join(","),
+      relation_type_id: relation_types.join(","),
+      page: { size: 500 }
+    ).results.results
+  end
 end
