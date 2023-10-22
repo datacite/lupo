@@ -1,29 +1,12 @@
 version: "3"
 
 services:
-  web:
-    env_file: .env
-    environment:
-      - ELASTIC_PASSWORD=changeme
-    image: ghcr.io/datacite/lupo
-    ports:
-      - "8065:80"
-      - "2265:22"
-    volumes:
-      - ./app:/home/app/webapp/app
-      - ./config:/home/app/webapp/config
-      - ./db:/home/app/webapp/db
-      - ./lib:/home/app/webapp/lib
-      - ./spec:/home/app/webapp/spec
-      - ./storage:/home/app/webapp/storage
-    networks:
-      - public
-    depends_on:
-      - elasticsearch
   memcached:
     image: memcached:1.4.31
     networks:
       - public
+    ports:
+      - "11211:11211"  # Expose the memcached port for external access
   mysql:
     command: --max_allowed_packet=50000000
     environment:
@@ -61,8 +44,4 @@ volumes:
 
 networks:
   public:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.40.0/24
+    name: public

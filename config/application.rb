@@ -34,7 +34,7 @@ end
 # default values for some ENV variables
 ENV["APPLICATION"] ||= "client-api"
 ENV["HOSTNAME"] ||= "lupo"
-ENV["MEMCACHE_SERVERS"] ||= "memcached:11211"
+ENV["MEMCACHE_SERVERS"] ||= "localhost:11211"
 ENV["SITE_TITLE"] ||= "DataCite REST API"
 ENV["LOG_LEVEL"] ||= "info"
 ENV["CONCURRENCY"] ||= "25"
@@ -50,10 +50,10 @@ ENV["HANDLE_URL"] ||= "https://handle.test.datacite.org"
 ENV["MYSQL_DATABASE"] ||= "lupo"
 ENV["MYSQL_USER"] ||= "root"
 ENV["MYSQL_PASSWORD"] ||= ""
-ENV["MYSQL_HOST"] ||= "mysql"
-ENV["MYSQL_PORT"] ||= "3306"
+ENV["MYSQL_HOST"] ||= "127.0.0.1"
+ENV["MYSQL_PORT"] ||= "3309"
 ENV["ES_REQUEST_TIMEOUT"] ||= "120"
-ENV["ES_HOST"] ||= "elasticsearch:9200"
+ENV["ES_HOST"] ||= "localhost:9201"
 ENV["ES_NAME"] ||= "elasticsearch"
 ENV["ES_SCHEME"] ||= "http"
 ENV["ES_PORT"] ||= "80"
@@ -63,6 +63,7 @@ ENV["MG_FROM"] ||= "support@datacite.org"
 ENV["MG_DOMAIN"] ||= "mg.datacite.org"
 ENV["HANDLES_MINTED"] ||= "10132"
 ENV["REALM"] ||= ENV["API_URL"]
+ENV["ELASTIC_PASSWORD"] = "changeme"
 
 module Lupo
   class Application < Rails::Application
