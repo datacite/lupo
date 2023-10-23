@@ -1,9 +1,9 @@
 GIT
-  remote: https://github.com/datacite/bolognese.git
-  revision: 4e5584329a66d801adc629da90a01e6fc990d36c
-  ref: 4e55843
+  remote: https://github.com/datacite/bolognese
+  revision: 7b602b596bbbcda3cd8d222cfec46417aa488132
+  branch: schema-4.5
   specs:
-    bolognese (1.11.2)
+    bolognese (1.11.4)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)

@@ -13,8 +13,7 @@ gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
 # gem "bolognese", "~> 1.11.0"
-# gem "bolognese", git: "https://github.com/datacite/bolognese", branch: "schema-4.5"
-gem 'bolognese', git: 'https://github.com/datacite/bolognese.git', ref: '4e55843'
+gem "bolognese", git: "https://github.com/datacite/bolognese", branch: "schema-4.5"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "commonmarker", "~> 0.23.4"
