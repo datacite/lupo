@@ -25,7 +25,7 @@ FactoryBot.define do
     occurred_at { Time.zone.now }
 
     factory :event_for_datacite_related do
-      source_id { "datacite_related" }
+      source_id { "datacite-related" }
       source_token { "datacite_related_123" }
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       subj do
@@ -39,7 +39,7 @@ FactoryBot.define do
     end
 
     factory :event_for_datacite_parts do
-      source_id { "datacite_related" }
+      source_id { "datacite-related" }
       source_token { "datacite_related_123" }
       subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
@@ -48,7 +48,7 @@ FactoryBot.define do
     end
 
     factory :event_for_datacite_part_of do
-      source_id { "datacite_related" }
+      source_id { "datacite-related" }
       source_token { "datacite_related_123" }
       subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
@@ -57,7 +57,7 @@ FactoryBot.define do
     end
 
     factory :event_for_datacite_versions do
-      source_id { "datacite_related" }
+      source_id { "datacite-related" }
       source_token { "datacite_related_123" }
       subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
@@ -66,7 +66,7 @@ FactoryBot.define do
     end
 
     factory :event_for_datacite_version_of do
-      source_id { "datacite_related" }
+      source_id { "datacite-related" }
       source_token { "datacite_related_123" }
       subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }

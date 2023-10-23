@@ -1330,6 +1330,20 @@ class Doi < ApplicationRecord
     Doi.query(nil, ids: version_of_ids, page: { number: 1, size: 25 }).results
   end
 
+  def other_relation_events
+    Event.events_involving(doi, Event::OTHER_RELATION_TYPES)
+  end
+
+  def other_relation_ids
+    other_relation_events.map do |e|
+      e.doi
+    end.flatten.uniq - [doi.downcase]
+  end
+
+  def other_relation_count
+    other_relation_ids.length
+  end
+
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
   rescue ArgumentError

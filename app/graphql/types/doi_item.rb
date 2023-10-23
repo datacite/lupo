@@ -206,6 +206,10 @@ module DoiItem
         Int,
         null: true,
         description: "Total number of DOIs the resource is a part of"
+  field :other_related_count,
+        Int,
+        null: true,
+        description: "Total number of DOIs related to the resource"
   field :citations_over_time,
         [YearTotalType],
         null: true, description: "Citations by year"
@@ -279,6 +283,57 @@ module DoiItem
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
+
+  field :other_related,
+       WorkConnectionWithTotalType,
+       null: true,
+       max_page_size: 100,
+       description: "Other works related to this DOI." do
+    argument :query, String, required: false
+    argument :ids, [String], required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :organization_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_affiliation, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  def other_related(**args)
+    args[:ids] = get_other_related_ids(object.doi)
+    ElasticsearchModelResponseConnection.new(
+      response(args),
+      context: context, first: args[:first], after: args[:after],
+    )
+  end
+
+  def other_related_count
+    get_other_related_ids(object.doi).count
+  end
+
+  def get_other_related_ids(_doi)
+    Event.events_involving(_doi).map do |e|
+      e.doi
+    end.flatten.uniq - [_doi.downcase]
+  end
+
 
   field :parts,
         WorkConnectionWithTotalType,

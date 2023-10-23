@@ -14,7 +14,9 @@ class GraphqlController < ApplicationController
     result =
       LupoSchema.execute(
         query,
-        variables: variables, context: context, operation_name: operation_name,
+        variables: variables,
+        context: context,
+        operation_name: operation_name,
       )
     render json: ApolloFederation::Tracing.attach_trace_to_result(result)
   rescue StandardError => e
