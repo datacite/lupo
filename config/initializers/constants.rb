@@ -82,6 +82,7 @@ RESOURCE_TYPES_GENERAL = {
   "Standard" => "Standard",
   "Text" => "Text",
   "Workflow" => "Workflow",
+  "Project" => "Project",
   "Other" => "Other",
 }.freeze
 
