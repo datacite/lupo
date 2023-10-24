@@ -1211,14 +1211,14 @@ class Doi < ApplicationRecord
   end
 
   def resource_type_id
-    r = types.to_h["resourceTypeGeneral"]
+    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
     r.underscore.dasherize if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
   end
 
   def resource_type_id_and_name
-    r = types.to_h["resourceTypeGeneral"]
+    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
     "#{r.underscore.dasherize}:#{RESOURCE_TYPES_GENERAL[r]}" if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
@@ -2412,5 +2412,15 @@ class Doi < ApplicationRecord
     end
 
     "Finished updating dois, total #{count}"
+  end
+
+
+  # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
+  def handleResourceType(types)
+    if types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
+      "Project"
+    else
+      types.to_h["resourceTypeGeneral"]
+    end
   end
 end

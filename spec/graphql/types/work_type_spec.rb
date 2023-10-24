@@ -2039,3 +2039,64 @@ describe WorkType do
     end
   end
 end
+
+
+
+describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL)", elasticsearch: true do
+  let!(:text_projects) do
+    create_list(:doi, 5, aasm_state: "findable",
+      types: {
+        "resourceTypeGeneral" => "Text",
+        "resourceType" => "Project"
+      },
+    )
+  end
+
+  let!(:other_projects) do
+    create_list(:doi, 5, aasm_state: "findable",
+      types: {
+        "resourceTypeGeneral" => "Other",
+        "resourceType" => "Project"
+      },
+    )
+  end
+
+  let!(:invalid_projects) do
+    create_list(:doi, 5, aasm_state: "findable",
+      types: {
+        "resourceTypeGeneral" => "Dataset",
+        "resourceType" => "Project"
+      },
+    )
+  end
+
+  before do
+    Doi.import
+    sleep 2
+  end
+
+  let(:query) do
+    "query($first: Int, $cursor: String, $facetCount: Int) {
+      works(first: $first, after: $cursor, facetCount: $facetCount) {
+        resourceTypes {
+          id
+          title
+          count
+        }
+      }
+    }"
+  end
+
+  it "returns project resource types" do
+    response =
+      LupoSchema.execute(
+        query,
+        variables: { first: 15, cursor: nil }
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "resourceTypes")).to eq(
+      [{ "count" => 10, "id" => "project", "title" => "Project" }, { "count" => 5, "id" => "dataset", "title" => "Dataset" }]
+    )
+  end
+end
