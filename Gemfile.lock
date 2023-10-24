@@ -113,7 +113,7 @@ GEM
       latex-decode (~> 0.0)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bolognese (1.11.0)
+    bolognese (1.11.5)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -216,7 +216,7 @@ GEM
       scanf (~> 1.0)
       sxp (~> 1.2)
       unicode-types (~> 1.7)
-    edtf (3.1.0)
+    edtf (3.1.1)
       activesupport (>= 3.0, < 8.0)
     elasticsearch (7.5.0)
       elasticsearch-api (= 7.5.0)
@@ -279,9 +279,6 @@ GEM
       graphql (~> 1, > 1.8)
     graphql-errors (0.4.0)
       graphql (>= 1.6.0, < 2)
-    haml (5.2.2)
-      temple (>= 0.8.0)
-      tilt
     hashdiff (1.0.1)
     hashid-rails (1.4.1)
       activerecord (>= 4.0)
@@ -299,7 +296,7 @@ GEM
     iso8601 (0.9.1)
     jmespath (1.6.2)
     json (2.6.3)
-    json-canonicalization (0.3.1)
+    json-canonicalization (0.3.2)
     json-ld (3.2.3)
       htmlentities (~> 4.3)
       json-canonicalization (~> 0.3)
@@ -479,23 +476,14 @@ GEM
       link_header (~> 0.0, >= 0.0.8)
     rdf-aggregate-repo (3.2.1)
       rdf (~> 3.2)
-    rdf-rdfa (3.2.0)
-      haml (~> 5.2)
+    rdf-rdfxml (3.2.2)
+      builder (~> 3.2)
       htmlentities (~> 4.3)
       rdf (~> 3.2)
-      rdf-aggregate-repo (~> 3.2)
-      rdf-vocab (~> 3.2)
-      rdf-xsd (~> 3.2)
-    rdf-rdfxml (3.2.0)
-      htmlentities (~> 4.3)
-      rdf (~> 3.2)
-      rdf-rdfa (~> 3.2)
       rdf-xsd (~> 3.2)
     rdf-turtle (3.2.1)
       ebnf (~> 2.3)
       rdf (~> 3.2)
-    rdf-vocab (3.2.3)
-      rdf (~> 3.2, >= 3.2.4)
     rdf-xsd (3.2.1)
       rdf (~> 3.2)
       rexml (~> 3.2)
@@ -616,7 +604,6 @@ GEM
       rdf (~> 3.2)
     sysrandom (1.0.5)
     systemu (2.6.5)
-    temple (0.9.1)
     terrapin (0.6.0)
       climate_control (>= 0.0.3, < 1.0)
     test-prof (0.10.2)
@@ -653,6 +640,7 @@ GEM
 
 PLATFORMS
   universal-darwin-21
+  x86_64-darwin-20
   x86_64-linux
 
 DEPENDENCIES
@@ -668,7 +656,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   better_errors
   binding_of_caller
-  bolognese (~> 1.11.0)
+  bolognese (~> 1.11.5)
   bootsnap (~> 1.4, >= 1.4.4)
   bullet (~> 6.1)
   byebug
@@ -761,4 +749,4 @@ DEPENDENCIES
   webmock (~> 3.1)
 
 BUNDLED WITH
-   2.4.20
+   2.4.10

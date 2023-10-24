@@ -2302,7 +2302,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "name" => "Miller, Elizabeth",
                                                                     "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0001-5000-0007", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
                                                                     "nameType" => "Personal")
-        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "name" => "Wesleyan University" }],
+        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "name" => "Wesleyan University", "schemeUri" => "https://grid.ac/institutes/" }],
                                                                     "familyName" => "Carberry",
                                                                     "givenName" => "Josiah",
                                                                     "name" => "Carberry, Josiah",
