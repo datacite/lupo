@@ -1467,6 +1467,45 @@ class Doi < ApplicationRecord
     count
   end
 
+  def self.convert_publishers(options = {})
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
+
+    # get every id between from_id and until_id
+    (from_id..until_id).step(500).each do |id|
+      DoiConvertPublisherByIdJob.perform_later(options.merge(id: id))
+      Rails.logger.info "Queued converting publisher to publisher_obj for DOIs with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    "Queued converting #{(from_id..until_id).to_a.length} publishers."
+  end
+
+  def self.convert_publisher_by_id(options = {})
+    return nil if options[:id].blank?
+
+    id = options[:id].to_i
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      should_update = true
+
+      if should_update
+        Doi.auditing_enabled = false
+        doi.update_columns(publisher_obj: doi.publisher)
+        Doi.auditing_enabled = true
+
+        count += 1
+      end
+    end
+
+    Rails.logger.info "[MySQL] Converted publishers for #{count} DOIs with IDs #{id} - #{id + 499}." if count > 0
+
+    count
+  rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
+    Rails.logger.error "[MySQL] Error converting publishers for DOIs with IDs #{id} - #{id + 499}: #{e.message}."
+    count
+  end
+
   def self.convert_containers(options = {})
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
@@ -2269,7 +2308,7 @@ class Doi < ApplicationRecord
 
     return nil if pub.nil? && pub_obj.nil?
 
-    if !pub_obj.nil?
+    if !(pub_obj.nil? || pub_obj.empty?)
       pub_obj
     else
       return { "name" => pub || "" }

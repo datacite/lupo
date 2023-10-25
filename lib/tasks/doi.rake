@@ -245,6 +245,14 @@ namespace :doi do
     puts Doi.convert_affiliations(from_id: from_id, until_id: until_id)
   end
 
+  desc "Convert publishers to new format"
+  task convert_publishers: :environment do
+    from_id = (ENV["FROM_ID"] || Doi.minimum(:id)).to_i
+    until_id = (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i
+
+    puts Doi.convert_publishers(from_id: from_id, until_id: until_id)
+  end
+
   desc "Convert containers to new format"
   task convert_containers: :environment do
     from_id = (ENV["FROM_ID"] || Doi.minimum(:id)).to_i
