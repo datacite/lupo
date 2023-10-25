@@ -515,7 +515,11 @@ class DataciteDoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = { 
+        current_ability: current_ability,
+        affiliation: params[:affiliation],
+        publisher: params[:publisher]
+      }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
              status: :ok
