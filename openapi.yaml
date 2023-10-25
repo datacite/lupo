@@ -504,7 +504,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Doi'
       responses:
@@ -546,7 +546,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Doi'
       responses:
@@ -1047,7 +1047,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Report'
       responses:
@@ -1089,7 +1089,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Report'
       responses:
