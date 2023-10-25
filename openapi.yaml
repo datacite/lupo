@@ -206,6 +206,7 @@ paths:
             enum:
               - repository
               - periodical
+              - igsnCatalog
         - in: query
           name: repository-type
           schema:
