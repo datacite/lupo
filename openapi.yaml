@@ -343,6 +343,14 @@ paths:
           schema:
             type: string
         - in: query
+          name: client-type
+          schema:
+            type: string
+            enum:
+              - repository
+              - periodical
+              - igsnCatalog
+        - in: query
           name: certificate
           schema:
             type: string
@@ -359,7 +367,12 @@ paths:
           schema:
             type: string
         - in: query
+          name: funder-id
+          schema:
+            type: string
+        - in: query
           name: resource-type-id
+          description: Filter by the resourceTypeGeneral.
           schema:
             type: string
             enum:
@@ -391,6 +404,11 @@ paths:
               - text
               - workflow
               - other
+        - in: query
+          name: resource-type
+          description: Filter by the free text resourceType.
+          schema:
+            type: string  
         - in: query
           name: subject
           schema:
@@ -488,6 +506,21 @@ paths:
               - '-created'
               - updated
               - '-updated'
+        - in: query
+          name: disable-facets
+          description: Exclude facets from the response.
+          schema:
+            type: boolean
+        - in: query
+          name: detail
+          description: When set to true, will include the following attributes in the response - prefix, suffix, viewsOverTime, citationsOverTime, provider, references, citations. parts, partOf, versions, versionOf, xml, alternateIdentifiers.
+          schema:
+            type: boolean
+        - in: query
+          name: field[dois]
+          description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
+          schema:
+            type: string
       responses:
         '200':
           description: A JSON array of dois.
