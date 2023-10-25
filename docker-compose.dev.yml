@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  web:
+    container_name: lupo-api
+    env_file: .env
+    environment:
+      - ELASTIC_PASSWORD=changeme
+    image: ghcr.io/datacite/lupo
+    ports:
+      - "8065:80"
+      - "2265:22"
+    volumes:
+      - ./app:/home/app/webapp/app
+      - ./config:/home/app/webapp/config
+      - ./db:/home/app/webapp/db
+      - ./lib:/home/app/webapp/lib
+      - ./spec:/home/app/webapp/spec
+      - ./storage:/home/app/webapp/storage
+    networks:
+      - public
+    depends_on:
+      - elasticsearch
+  memcached:
+    image: memcached:1.4.31
+    networks:
+      - public
+    platform: linux/amd64
+  mysql:
+    command: 
+      - --max_allowed_packet=50000000
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    environment:
+      MYSQL_DATABASE: datacite
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    image: mysql:5.7
+    ports:
+      - "3309:3306"
+    networks:
+      - public
+    platform: linux/amd64
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: changeme
+      xpack.security.enabled: "false"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
+    volumes:
+      - data:/usr/share/elasticsearch/data
+    networks:
+      - public
+    healthcheck:
+      test: curl -f http://elastic:changeme@elasticsearch:9200
+      interval: 10s
+      timeout: 1s
+    platform: linux/arm64
+
+volumes:
+  data:
+    driver: local
+
+networks:
+  public:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.40.0/24
