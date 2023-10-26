@@ -2463,7 +2463,7 @@ class Doi < ApplicationRecord
     end
   end
 
-  private
+  protected
 
   # Make the publisher_obj attribute private.
   def publisher_obj
