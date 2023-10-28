@@ -2462,16 +2462,4 @@ class Doi < ApplicationRecord
       types.to_h["resourceTypeGeneral"]
     end
   end
-
-  protected
-
-  # Make the publisher_obj attribute private.
-  def publisher_obj
-    self[:publisher_obj]
-  end
-
-  def publisher_obj=(value)
-    write_attribute(:publisher_obj, value)
-  end
-
 end
