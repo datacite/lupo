@@ -69,6 +69,9 @@ class ActivitiesController < ApplicationController
             end,
         }.compact
         options[:is_collection] = true
+        options[:params] = {
+          publisher: params[:publisher],
+        }
 
         render json: ActivitySerializer.new(results, options).serialized_json,
                status: :ok
@@ -105,6 +108,9 @@ class ActivitiesController < ApplicationController
         }.compact
         options[:include] = @include
         options[:is_collection] = true
+        options[:params] = {
+          publisher: params[:publisher],
+        }
 
         render json: ActivitySerializer.new(results, options).serialized_json,
                status: :ok
@@ -129,6 +135,9 @@ class ActivitiesController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
+    options[:params] = {
+      publisher: params[:publisher],
+    }
 
     render json: ActivitySerializer.new(@activity, options).serialized_json,
            status: :ok
