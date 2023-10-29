@@ -178,4 +178,60 @@ describe ActivitiesController, type: :request do
       end
     end
   end
+
+  describe "query activities - when the publisher param is not 'true'", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
+
+    before do
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    context "query by doi" do
+      it "returns the activities" do
+        get "/activities?datacite-doi-id=#{doi.doi.downcase}",
+            nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data", 0, "attributes", "action")).to eq("create")
+        expect(json.dig("data", 0, "attributes", "changes", "publisher")).to eq("Dryad Digital Repository")
+      end
+    end
+  end
+
+  describe "query activities - when the publisher param is set to true", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+    let!(:other_doi) { create(:doi, client: client) }
+
+    before do
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    context "query by doi" do
+      it "returns the activities" do
+        get "/activities?publisher=true&datacite-doi-id=#{doi.doi.downcase}",
+            nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").length).to eq(1)
+        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data", 0, "attributes", "action")).to eq("create")
+        expect(json.dig("data", 0, "attributes", "changes", "publisher")).to eq(
+          {
+            "lang" => "en",
+            "name" => "Dryad Digital Repository",
+            "schemeUri" => "https://ror.org/",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR"
+          }
+        )
+      end
+    end
+  end
 end
