@@ -1196,14 +1196,14 @@ class Doi < ApplicationRecord
   end
 
   def resource_type_id
-    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
+    r = handle_resource_type(types) # types.to_h["resourceTypeGeneral"]
     r.underscore.dasherize if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
   end
 
   def resource_type_id_and_name
-    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
+    r = handle_resource_type(types) # types.to_h["resourceTypeGeneral"]
     "#{r.underscore.dasherize}:#{RESOURCE_TYPES_GENERAL[r]}" if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
@@ -2370,7 +2370,7 @@ class Doi < ApplicationRecord
 
 
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
-  def handleResourceType(types)
+  def handle_resource_type(types)
     if types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
       "Project"
     else
