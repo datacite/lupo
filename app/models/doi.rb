@@ -4,6 +4,7 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
+  PUBLISHER_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/doi/publisher.json"
   audited only: %i[doi url creators contributors titles publisher publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
@@ -103,6 +104,12 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
+  validates :publisher_obj, if: :publisher_obj?,
+    json: {
+      message: ->(errors) { errors },
+      schema: PUBLISHER_JSON_SCHEMA
+    }
+
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
@@ -117,7 +124,7 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
-  # validate :check_publisher_obj, if: :publisher_obj?
+  validate :check_publisher, if: :publisher?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
@@ -1614,10 +1621,6 @@ class Doi < ApplicationRecord
     write_attribute(:container, value || {})
   end
 
-  #def publisher_obj=(value)
-  #  write_attribute(:publisher_obj, value || {})
-  #end
-
   def types=(value)
     write_attribute(:types, value || {})
   end
@@ -1959,9 +1962,9 @@ class Doi < ApplicationRecord
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
   end
 
-  # def check_publisher_obj
-  #   errors.add(:publisher_obj, "Publisher_obj '#{publisher_obj}' should be an object instead of a string.") unless publisher_obj.is_a?(Hash)
-  # end
+  def check_publisher
+    errors.add(:publisher, "Publisher '#{publisher}' should be an object instead of a string.") unless publisher.is_a?(Hash)
+  end
 
   def check_language
     errors.add(:language, "Language #{language} is in an invalid format.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
