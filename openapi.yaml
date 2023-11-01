@@ -368,6 +368,9 @@ paths:
             type: string
         - in: query
           name: funder-id
+        - in: query
+          name: user-id
+          description: Searches creators.nameIdentifiers.nameIdentifier for an ORCID iD.
           schema:
             type: string
         - in: query
