@@ -364,10 +364,14 @@ paths:
               - WDS
         - in: query
           name: affiliation-id
+          description: Searches creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
           schema:
             type: string
         - in: query
           name: funder-id
+          description: Searches fundingReferences.funderIdentifier for a Crossref Funder ID.
+          schema:
+            type: string
         - in: query
           name: user-id
           description: Searches creators.nameIdentifiers.nameIdentifier for an ORCID iD.
