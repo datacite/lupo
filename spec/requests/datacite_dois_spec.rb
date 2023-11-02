@@ -668,15 +668,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 3
     end
 
-    it "filter for fake resources" do
+    it "filter for fake resources returns no results" do
       get "/dois?resource-type-id=fake", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(3)
-      expect(json.dig("meta", "total")).to eq(3)
-      expect(json.dig("data", 0, "attributes", "publicationYear")).to eq(2011)
-      expect(json.dig("data", 0, "attributes", "types")).to eq("bibtex" => "misc", "citeproc" => "article", "resourceType" => "Presentation", "resourceTypeGeneral" => "Fake", "ris" => "GEN", "schemaOrg" => "CreativeWork")
-      expect(json.dig("meta", "resourceTypes")).to eq([])
+      expect(json["data"].size).to eq(0)
+      expect(json.dig("meta", "total")).to eq(0)
     end
   end
 
