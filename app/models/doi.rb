@@ -2370,7 +2370,7 @@ class Doi < ApplicationRecord
 
 
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
-  def handle_resource_type(types)    
+  def handle_resource_type(types)
     if !types.nil? && types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
       "Project"
     else
