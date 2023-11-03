@@ -6,7 +6,7 @@
     "publisherIdentifier":        { "type": "string" },
     "publisherIdentifierScheme":  { "type": "string" },
     "schemeUri":                  { "type": "string" },
-    "xml:lang":                   { "type": "string" }
+    "lang":                       { "type": "string" }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

@@ -104,7 +104,7 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  validates :publisher_obj, if: :publisher_obj?,
+  validates :publisher_obj, if: :publisher?,
     json: {
       message: ->(errors) { errors },
       schema: PUBLISHER_JSON_SCHEMA
