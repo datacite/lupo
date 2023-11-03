@@ -75,6 +75,7 @@ RESOURCE_TYPES_GENERAL = {
   "PeerReview" => "Peer Review",
   "PhysicalObject" => "Physical Object",
   "Preprint" => "Preprint",
+  "Project" => "Project",
   "Report" => "Report",
   "Service" => "Service",
   "Sound" => "Sound",
@@ -82,7 +83,6 @@ RESOURCE_TYPES_GENERAL = {
   "Standard" => "Standard",
   "Text" => "Text",
   "Workflow" => "Workflow",
-  "Project" => "Project",
   "Other" => "Other",
 }.freeze
 

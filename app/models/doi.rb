@@ -928,7 +928,7 @@ class Doi < ApplicationRecord
     minimum_should_match = 0
 
     filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
-    filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize } } if options[:resource_type_id].present?
+    filter << { term: { resource_type_id: options[:resource_type_id].underscore.dasherize } } if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
     if options[:provider_id].present?
       options[:provider_id].split(",").each { |id|
@@ -1196,14 +1196,14 @@ class Doi < ApplicationRecord
   end
 
   def resource_type_id
-    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
+    r = handle_resource_type(types) # types.to_h["resourceTypeGeneral"]
     r.underscore.dasherize if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
   end
 
   def resource_type_id_and_name
-    r = handleResourceType(types) # types.to_h["resourceTypeGeneral"]
+    r = handle_resource_type(types) # types.to_h["resourceTypeGeneral"]
     "#{r.underscore.dasherize}:#{RESOURCE_TYPES_GENERAL[r]}" if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
@@ -2370,8 +2370,8 @@ class Doi < ApplicationRecord
 
 
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
-  def handleResourceType(types)
-    if types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
+  def handle_resource_type(types)
+    if types.present? && types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
       "Project"
     else
       types.to_h["resourceTypeGeneral"]

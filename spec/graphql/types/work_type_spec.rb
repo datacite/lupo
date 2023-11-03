@@ -2068,8 +2068,9 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
   end
 
   let(:query) do
-    "query($first: Int, $cursor: String, $facetCount: Int) {
-      works(first: $first, after: $cursor, facetCount: $facetCount) {
+    "query($first: Int, $cursor: String, $resourceTypeId: String) {
+      works(first: $first, after: $cursor, resourceTypeId: $resourceTypeId) {
+        totalCount
         resourceTypes {
           id
           title
@@ -2090,5 +2091,16 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
     expect(response.dig("data", "works", "resourceTypes")).to eq(
       [{ "count" => 10, "id" => "project", "title" => "Project" }, { "count" => 5, "id" => "dataset", "title" => "Dataset" }]
     )
+  end
+
+  it "returns projects when querying works based on resource_type_id" do
+    response =
+      LupoSchema.execute(
+        query,
+        variables: { first: 15, cursor: nil, resourceTypeId: "Project" }
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "totalCount")).to eq(10)
   end
 end
