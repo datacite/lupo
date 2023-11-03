@@ -104,11 +104,13 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
+=begin
   validates :publisher_obj, if: :publisher?,
     json: {
       message: ->(errors) { errors },
       schema: PUBLISHER_JSON_SCHEMA
     }
+=end
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
