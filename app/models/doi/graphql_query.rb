@@ -122,7 +122,7 @@ module Doi::GraphqlQuery
 
       filter = []
       filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
-      filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize } } if options[:resource_type_id].present?
+      filter << { term: { resource_type_id: options[:resource_type_id].underscore.dasherize } } if options[:resource_type_id].present?
       filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
       filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
       filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
