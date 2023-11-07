@@ -794,10 +794,6 @@ class DataciteDoisController < ApplicationController
           end
       end
 
-      if params.dig(:data, :attributes, :publisher).present? && params.dig(:data, :attributes, :publisher).respond_to?(:to_hash)
-        params[:data][:attributes][:publisher].compact_blank!
-      end
-
       ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])
       ParamsSanitizer.sanitize_nameIdentifiers(params[:contributors])
 
