@@ -21,6 +21,7 @@ services:
       - public
     depends_on:
       - elasticsearch
+
   memcached:
     image: memcached:1.4.31
     networks:
@@ -41,6 +42,7 @@ services:
     networks:
       - public
     platform: linux/amd64
+    
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     ports:
