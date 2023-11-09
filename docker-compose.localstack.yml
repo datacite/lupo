@@ -18,15 +18,16 @@ services:
       - ./spec:/home/app/webapp/spec
       - ./storage:/home/app/webapp/storage
     networks:
-      - public
+      - localstack_datacite
     depends_on:
       - elasticsearch
 
   memcached:
     image: memcached:1.4.31
     networks:
-      - public
+      - localstack_datacite
     platform: linux/amd64
+
   mysql:
     command: 
       - --max_allowed_packet=50000000
@@ -40,7 +41,7 @@ services:
     ports:
       - "3309:3306"
     networks:
-      - public
+      - localstack_datacite
     platform: linux/amd64
     
   elasticsearch:
@@ -58,7 +59,7 @@ services:
     volumes:
       - data:/usr/share/elasticsearch/data
     networks:
-      - public
+      - localstack_datacite
     healthcheck:
       test: curl -f http://elastic:changeme@elasticsearch:9200
       interval: 10s
@@ -70,9 +71,5 @@ volumes:
     driver: local
 
 networks:
-  public:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.40.0/24
+  localstack_datacite:
+    external: true
