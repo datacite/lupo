@@ -104,11 +104,14 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi| doi.validatable? },
-  json: {
-    message: ->(errors) { errors },
-    schema: PUBLISHER_JSON_SCHEMA
-  }
+validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi| 
+  doi.validatable? && 
+  !(doi.publisher.blank? || doi.publisher.all?(nil))
+},
+json: {
+  message: ->(errors) { errors },
+  schema: PUBLISHER_JSON_SCHEMA
+}
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -2297,8 +2300,19 @@ class Doi < ApplicationRecord
 
   def update_publisher
     if publisher_before_type_cast.respond_to?(:to_hash)
-      self.publisher_obj = publisher_before_type_cast
-      self.publisher = publisher_before_type_cast.dig(:name)
+      if !(publisher_before_type_cast.blank? || publisher_before_type_cast.values.all?(nil))
+        self.publisher_obj = {
+          :name => publisher_before_type_cast.fetch(:name, nil),
+          :lang => publisher_before_type_cast.fetch(:lang, nil), 
+          :schemeUri => publisher_before_type_cast.fetch(:schemeUri, nil),
+          :publisherIdentifier => publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+          :publisherIdentifierScheme => publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+        }.compact
+        self.publisher = publisher_before_type_cast.dig(:name)
+      else
+        self.publisher_obj = nil
+        self.publisher = nil
+      end
     elsif publisher_before_type_cast.respond_to?(:to_str)
       self.publisher_obj = { :name => publisher_before_type_cast }
       self.publisher = publisher_before_type_cast
