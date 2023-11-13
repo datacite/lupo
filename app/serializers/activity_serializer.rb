@@ -20,16 +20,16 @@ class ActivitySerializer
 
     ret = changes
 
-    if object._source.action == 'update'
-      if (pub || pub_obj)
-        if params[:publisher] == 'true'
+    if object._source.action == "update"
+      if pub || pub_obj
+        if params[:publisher] == "true"
           if !pub_obj
             changes.publisher =
               [
                 { "name": pub[0] },
                 { "name": pub[1] },
               ]
-          else 
+          else
             changes.publisher = changes.publisher_obj
           end
         else
@@ -40,9 +40,9 @@ class ActivitySerializer
 
         ret = changes
       end
-    elsif object._source.action == 'create'
-      if (pub || pub_obj)
-        if params[:publisher] == 'true'
+    elsif object._source.action == "create"
+      if pub || pub_obj
+        if params[:publisher] == "true"
           if !pub_obj
             changes.publisher = { "name": pub }
           else

@@ -104,14 +104,14 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi| 
-  doi.validatable? && 
-  !(doi.publisher.blank? || doi.publisher.all?(nil))
-},
-json: {
-  message: ->(errors) { errors },
-  schema: PUBLISHER_JSON_SCHEMA
-}
+  validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi|
+    doi.validatable? &&
+    !(doi.publisher.blank? || doi.publisher.all?(nil))
+  },
+  json: {
+    message: ->(errors) { errors },
+    schema: PUBLISHER_JSON_SCHEMA
+  }
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -325,7 +325,7 @@ json: {
           nameType: { type: :text },
           givenName: { type: :text },
           familyName: { type: :text },
-        }},
+        } },
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -561,7 +561,7 @@ json: {
       indexes :fields_of_science, type: :keyword
       indexes :fields_of_science_combined, type: :keyword
       indexes :fields_of_science_repository, type: :keyword
-=begin      
+=begin
       indexes :publisher_obj, type: :object, properties: {
         name: { type: :text, fields: { keyword: { type: "keyword" } } },
         publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
@@ -1196,7 +1196,7 @@ json: {
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     # attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info publisher_obj).map do |a|
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info).map do |a|
-        [a.to_sym, meta[a]]
+      [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
 
     # update_attributes will trigger validations and Elasticsearch indexing
@@ -2302,11 +2302,11 @@ json: {
     if publisher_before_type_cast.respond_to?(:to_hash)
       if !(publisher_before_type_cast.blank? || publisher_before_type_cast.values.all?(nil))
         self.publisher_obj = {
-          :name => publisher_before_type_cast.fetch(:name, nil),
-          :lang => publisher_before_type_cast.fetch(:lang, nil), 
-          :schemeUri => publisher_before_type_cast.fetch(:schemeUri, nil),
-          :publisherIdentifier => publisher_before_type_cast.fetch(:publisherIdentifier, nil),
-          :publisherIdentifierScheme => publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+          name: publisher_before_type_cast.fetch(:name, nil),
+          lang: publisher_before_type_cast.fetch(:lang, nil),
+          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
+          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
         }.compact
         self.publisher = publisher_before_type_cast.dig(:name)
       else
@@ -2314,21 +2314,21 @@ json: {
         self.publisher = nil
       end
     elsif publisher_before_type_cast.respond_to?(:to_str)
-      self.publisher_obj = { :name => publisher_before_type_cast }
+      self.publisher_obj = { name: publisher_before_type_cast }
       self.publisher = publisher_before_type_cast
     end
   end
 
   def publisher
-    pub = read_attribute('publisher')
-    pub_obj = read_attribute('publisher_obj')
+    pub = read_attribute("publisher")
+    pub_obj = read_attribute("publisher_obj")
 
     return nil if pub.nil? && pub_obj.nil?
 
     if !(pub_obj.nil? || pub_obj.empty?)
       pub_obj
     else
-      return { "name" => pub || "" }
+      { "name" => pub || "" }
     end
   end
 

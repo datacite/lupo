@@ -1211,7 +1211,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
 
     it "publisher" do
-      expect(subject.publisher).to eq({ 
+      expect(subject.publisher).to eq({
         "name" => "Dryad Digital Repository",
         "publisherIdentifier" => "https://ror.org/00x6h5n95",
         "publisherIdentifierScheme" => "ROR",

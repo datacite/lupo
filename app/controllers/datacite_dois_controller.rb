@@ -515,7 +515,7 @@ class DataciteDoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { 
+      options[:params] = {
         current_ability: current_ability,
         affiliation: params[:affiliation],
         publisher: params[:publisher]
