@@ -122,13 +122,6 @@ module Crosscitable
         ].map { |a| [a.to_sym, send(a.to_s)] }.to_h.
           compact
 
-# Insert publisher_obj for publisher to generate XML
-=begin
-      if read_attrs.dig(:publisher).present? && publisher_obj.present?
-        read_attrs[:publisher] = publisher_obj
-      end
-=end
-
       if from.present?
         send(
           "read_" + from,
