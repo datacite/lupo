@@ -239,11 +239,11 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with publisher param", elasticsearch: true do
+  describe "GET /dois with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
     it "returns nil publisher when publisher param is not set" do
-      get "/dois?publisher=true", nil, headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       json["data"].each do |doi|
@@ -261,11 +261,11 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/:id with publisher param", elasticsearch: true do
+  describe "GET /dois/:id with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
     it "returns nil publisher when publisher param is not set" do
-      get "/dois/#{doi.doi}?publisher=true", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig("attributes", "publisher")).to eq(nil)
