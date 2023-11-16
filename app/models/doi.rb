@@ -561,7 +561,6 @@ class Doi < ApplicationRecord
       indexes :fields_of_science, type: :keyword
       indexes :fields_of_science_combined, type: :keyword
       indexes :fields_of_science_repository, type: :keyword
-=begin
       indexes :publisher_obj, type: :object, properties: {
         name: { type: :text, fields: { keyword: { type: "keyword" } } },
         publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
@@ -569,7 +568,6 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
-=end
     end
   end
 
@@ -659,7 +657,7 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
-      # "publisher_obj" => publisher_obj,
+      "publisher_obj" => publisher,
     }
   end
 
@@ -783,7 +781,6 @@ class Doi < ApplicationRecord
   end
 
   def self.query_fields
-    # ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3", "publisher_obj.name^3"]
     ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3"]
   end
 
@@ -933,7 +930,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
-      # query = query.gsub(/publisherObj/, "publisher_obj")
+      query = query.gsub(/(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/, 'publisher_obj.\2')
       query = query.gsub("/", "\\/")
     end
 
@@ -1194,7 +1191,6 @@ class Doi < ApplicationRecord
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    # attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info publisher_obj).map do |a|
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info).map do |a|
       [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
