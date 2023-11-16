@@ -414,7 +414,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with filter", elasticsearch: true do
+  describe "GET /dois with client-type filter", elasticsearch: true do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
     let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" }) }
@@ -439,6 +439,48 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["data"].size).to eq(1)
       expect(json.dig("data", 0, "id")).to eq(doi_igsn_id.uid)
       expect(json.dig("meta", "createdByMonth", 0, "title")).to eq(doi_igsn_id.created.to_time.strftime("%Y-%m"))
+    end
+  end
+
+  describe "GET /dois with resource-type-id filter", elasticsearch: true do
+    let!(:instrument_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "Instrument" }) }
+    let!(:study_registration_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "StudyRegistration" }) }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
+    it "filters for Instrument dois when resource-type-id is set to instrument", vcr: true do
+      get "/dois?resource-type-id=instrument", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("meta", "resourceTypes", 0)).to eq(
+        {
+          "id" => "instrument",
+          "title" => "Instrument",
+          "count" => 1
+        }
+      )
+      expect(json.dig("meta", "resourceTypes").length).to eq(1)
+      expect(json.dig("data", 0, "attributes", "types", "resourceTypeGeneral")).to eq("Instrument")
+    end
+
+    it "filters for StudyRegistration dois when resource-type-id is set to instrument", vcr: true do
+      get "/dois?resource-type-id=study-registration", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("meta", "resourceTypes", 0)).to eq(
+        {
+          "id" => "study-registration",
+          "title" => "Study Registration",
+          "count" => 1
+        }
+      )
+      expect(json.dig("meta", "resourceTypes").length).to eq(1)
+      expect(json.dig("data", 0, "attributes", "types", "resourceTypeGeneral")).to eq("StudyRegistration")
     end
   end
 
@@ -3118,7 +3160,6 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "creates a Doi" do
         post "/dois", valid_attributes, headers
-        pp json
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi)
