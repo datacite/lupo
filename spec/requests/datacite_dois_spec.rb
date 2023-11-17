@@ -3674,6 +3674,30 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
       end
 
+      context "validates schema 4.5 xml" do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-full-v4.5.xml"))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/10703",
+                "xml" => xml,
+              },
+            },
+          }
+        end
+
+        it "validates a Doi" do
+          post "/dois/validate", params, headers
+
+          expect(last_response.status).to eq(200)
+          expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+          expect(json.dig("data", "attributes", "titles", 0)).to eq({ "title" => "Example Title", "lang" => "en" })
+          expect(json.dig("data", "attributes", "relatedIdentifiers").last).to eq({ "relatedIdentifierType" => "DOI", "relationType" => "IsCollectedBy", "resourceTypeGeneral" => "Other", "relatedIdentifier" => "10.1016/j.epsl.2011.11.037" })
+        end
+      end
+      
       context "when the creators are missing" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite_missing_creator.xml"))) }
         let(:params) do
