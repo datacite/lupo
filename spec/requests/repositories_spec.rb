@@ -405,6 +405,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
            "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
            "subjectScheme" => "FOR",
            "lang" => "en",
+           "valueUri" => nil,
            "classificationCode" => "001" }]
       end
       let(:update_attributes) do
@@ -437,6 +438,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
             "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
             "subject" => "80505 Web Technologies (excl. Web Search)",
             "subjectScheme" => "FOR",
+            "valueUri" => nil,
             "classificationCode" => "001"
           }
         ])
