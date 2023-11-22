@@ -1911,8 +1911,6 @@ components:
                       type: string
                     nameType:
                       $ref: '#/components/schemas/nameType'
-                  required:
-                    - name
               titles:
                 type: array
                 items:
@@ -1922,8 +1920,6 @@ components:
                       type: string
                     titleType:
                       $ref: '#/components/schemas/titleType'
-                  required:
-                    - title
               volume:
                 type: string
               issue:
@@ -1962,12 +1958,6 @@ components:
                       $ref: '#/components/schemas/nameType'
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
-                  required:
-                    - name
-                    - contributorType
-            required:
-              - relatedItemType
-              - relationType
         sizes:
           type: array
           items:
