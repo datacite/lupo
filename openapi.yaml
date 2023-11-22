@@ -1724,8 +1724,6 @@ components:
                         type: string
                 lang:
                   type: string
-              required:
-                - name
         titles:
           type: array
           items:
@@ -1737,8 +1735,6 @@ components:
                 $ref: '#/components/schemas/titleType'
               lang:
                 type: string
-            required:
-              - title
         publisher:
           type: string
         container:
@@ -1861,8 +1857,6 @@ components:
               type: string
             ris:
               type: string
-          required:
-            - resourceTypeGeneral
         relatedIdentifiers:
           type: array
           items:
