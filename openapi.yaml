@@ -1724,8 +1724,6 @@ components:
                         type: string
                 lang:
                   type: string
-              required:
-                - name
         titles:
           type: array
           items:
@@ -1737,8 +1735,6 @@ components:
                 $ref: '#/components/schemas/titleType'
               lang:
                 type: string
-            required:
-              - title
         publisher:
           type: string
         container:
@@ -1861,8 +1857,6 @@ components:
               type: string
             ris:
               type: string
-          required:
-            - resourceTypeGeneral
         relatedIdentifiers:
           type: array
           items:
@@ -1917,8 +1911,6 @@ components:
                       type: string
                     nameType:
                       $ref: '#/components/schemas/nameType'
-                  required:
-                    - name
               titles:
                 type: array
                 items:
@@ -1928,8 +1920,6 @@ components:
                       type: string
                     titleType:
                       $ref: '#/components/schemas/titleType'
-                  required:
-                    - title
               volume:
                 type: string
               issue:
@@ -1968,12 +1958,6 @@ components:
                       $ref: '#/components/schemas/nameType'
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
-                  required:
-                    - name
-                    - contributorType
-            required:
-              - relatedItemType
-              - relationType
         sizes:
           type: array
           items:

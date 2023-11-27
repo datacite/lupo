@@ -7,8 +7,18 @@
       "properties": {
         "classificationCode":  { "type": "string" },
         "schemeUri":           { "type": "string" },
-        "valueUri":            { "type": "string" },
-        "lang":                { "type": "string" },
+        "valueUri": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "subject":             { "type": "string" },
         "subjectScheme":       { "type": "string" }
       },
