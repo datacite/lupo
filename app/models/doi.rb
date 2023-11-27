@@ -108,11 +108,11 @@ class Doi < ApplicationRecord
     message: ->(errors) { errors },
     schema: PUBLISHER_JSON_SCHEMA
   }
-  
+
   def validate_publisher_obj?(doi)
     doi.validatable? && doi.publisher_obj? && !(doi.publisher.blank? || doi.publisher.all?(nil))
   end
-  
+
   validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
@@ -2459,29 +2459,28 @@ class Doi < ApplicationRecord
   end
 
   private
-
-  def update_publisher_from_hash
-    if !publisher_before_type_cast.values.all?(nil)
-      self.publisher_obj = {
-        name: publisher_before_type_cast.fetch(:name, nil),
-        lang: publisher_before_type_cast.fetch(:lang, nil),
-        schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
-        publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
-        publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
-      }.compact
-      self.publisher = publisher_before_type_cast.dig(:name)
-    else
-      reset_publishers
+    def update_publisher_from_hash
+      if !publisher_before_type_cast.values.all?(nil)
+        self.publisher_obj = {
+          name: publisher_before_type_cast.fetch(:name, nil),
+          lang: publisher_before_type_cast.fetch(:lang, nil),
+          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
+          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+        }.compact
+        self.publisher = publisher_before_type_cast.dig(:name)
+      else
+        reset_publishers
+      end
     end
-  end
-  
-  def update_publisher_from_string
-    self.publisher_obj = { name: publisher_before_type_cast }
-    self.publisher = publisher_before_type_cast
-  end
-  
-  def reset_publishers
-    self.publisher_obj = nil
-    self.publisher = nil
-  end  
+
+    def update_publisher_from_string
+      self.publisher_obj = { name: publisher_before_type_cast }
+      self.publisher = publisher_before_type_cast
+    end
+
+    def reset_publishers
+      self.publisher_obj = nil
+      self.publisher = nil
+    end
 end
