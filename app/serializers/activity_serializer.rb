@@ -17,7 +17,7 @@ class ActivitySerializer
     changes = object._source.changes
     pub = changes.publisher
     pub_obj = changes.publisher_obj
-    
+
     if params[:publisher] == "true"
       changes.publisher =
         if pub
@@ -29,9 +29,9 @@ class ActivitySerializer
       changes.publisher = object._source.action == "update" ? [pub_obj[0].name, pub_obj[1].name] : pub_obj.name
     end
 
-      changes.delete("publisher_obj") if pub_obj
+    changes.delete("publisher_obj") if pub_obj
 
-      changes
+    changes
   end
 
   attribute "prov:wasDerivedFrom", &:was_derived_from
