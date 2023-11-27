@@ -2481,6 +2481,7 @@ class Doi < ApplicationRecord
   end
   
   def reset_publishers
-    self.publisher_obj = nil self.publisher = nil
+    self.publisher_obj = nil
+    self.publisher = nil
   end  
 end
