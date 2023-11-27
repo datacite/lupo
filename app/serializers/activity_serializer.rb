@@ -17,52 +17,21 @@ class ActivitySerializer
     changes = object._source.changes
     pub = changes.publisher
     pub_obj = changes.publisher_obj
-
-    ret = changes
-
-    if object._source.action == "update"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher =
-              [
-                { "name": pub[0] },
-                { "name": pub[1] },
-              ]
-          else
-            changes.publisher = changes.publisher_obj
-          end
+    
+    if params[:publisher] == "true"
+      changes.publisher =
+        if pub
+          object._source.action == "update" ? [{ "name": pub[0] }, { "name": pub[1] }] : { "name": pub }
         else
-          if !pub
-            changes.publisher = [ pub_obj[0].name, pub_obj[1].name ]
-          end
+          changes.publisher_obj
         end
-
-        ret = changes
-      end
-    elsif object._source.action == "create"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher = { "name": pub }
-          else
-            changes.publisher = changes.publisher_obj
-          end
-        else
-          if !pub
-            changes.publisher = pub_obj.name
-          end
-        end
-
-        ret = changes
-      end
+    elsif pub_obj
+      changes.publisher = object._source.action == "update" ? [pub_obj[0].name, pub_obj[1].name] : pub_obj.name
     end
 
-    if pub_obj
-      changes.delete("publisher_obj")
-    end
+      changes.delete("publisher_obj") if pub_obj
 
-    ret
+      changes
   end
 
   attribute "prov:wasDerivedFrom", &:was_derived_from

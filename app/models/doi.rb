@@ -104,14 +104,16 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi|
-    doi.validatable? &&
-    !(doi.publisher.blank? || doi.publisher.all?(nil))
-  },
-  json: {
+  json_schema_validation = {
     message: ->(errors) { errors },
     schema: PUBLISHER_JSON_SCHEMA
   }
+  
+  def validate_publisher_obj?(doi)
+    doi.validatable? && doi.publisher_obj? && !(doi.publisher.blank? || doi.publisher.all?(nil))
+  end
+  
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -561,15 +563,6 @@ class Doi < ApplicationRecord
       indexes :fields_of_science, type: :keyword
       indexes :fields_of_science_combined, type: :keyword
       indexes :fields_of_science_repository, type: :keyword
-=begin
-      indexes :publisher_obj, type: :object, properties: {
-        name: { type: :text, fields: { keyword: { type: "keyword" } } },
-        publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
-        publisherIdentifierScheme: { type: :keyword },
-        schemeUri: { type: :keyword },
-        lang: { type: :keyword },
-      }
-=end
     end
   end
 
@@ -659,7 +652,6 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
-      # "publisher_obj" => publisher_obj,
     }
   end
 
@@ -783,7 +775,6 @@ class Doi < ApplicationRecord
   end
 
   def self.query_fields
-    # ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3", "publisher_obj.name^3"]
     ["uid^50", "related_identifiers.relatedIdentifier^3", "titles.title^3", "creator_names^3", "creators.id^3", "publisher^3", "descriptions.description^3", "subjects.subject^3"]
   end
 
@@ -933,7 +924,6 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
-      # query = query.gsub(/publisherObj/, "publisher_obj")
       query = query.gsub("/", "\\/")
     end
 
@@ -1194,7 +1184,6 @@ class Doi < ApplicationRecord
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    # attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info publisher_obj).map do |a|
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects content_url version_info).map do |a|
       [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
@@ -1487,7 +1476,7 @@ class Doi < ApplicationRecord
       Rails.logger.info "Queued converting publisher to publisher_obj for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
-    "Queued converting #{(from_id..until_id).to_a.length} publishers."
+    "Queued converting #{(from_id..until_id).size} publishers."
   end
 
   def self.convert_publisher_by_id(options = {})
@@ -2299,23 +2288,13 @@ class Doi < ApplicationRecord
   end
 
   def update_publisher
-    if publisher_before_type_cast.respond_to?(:to_hash)
-      if !(publisher_before_type_cast.blank? || publisher_before_type_cast.values.all?(nil))
-        self.publisher_obj = {
-          name: publisher_before_type_cast.fetch(:name, nil),
-          lang: publisher_before_type_cast.fetch(:lang, nil),
-          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
-          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
-          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
-        }.compact
-        self.publisher = publisher_before_type_cast.dig(:name)
-      else
-        self.publisher_obj = nil
-        self.publisher = nil
-      end
-    elsif publisher_before_type_cast.respond_to?(:to_str)
-      self.publisher_obj = { name: publisher_before_type_cast }
-      self.publisher = publisher_before_type_cast
+    case publisher_before_type_cast
+    when Hash
+      update_publisher_from_hash
+    when String
+      update_publisher_from_string
+    else
+      reset_publishers
     end
   end
 
@@ -2470,7 +2449,6 @@ class Doi < ApplicationRecord
     "Finished updating dois, total #{count}"
   end
 
-
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
   def handle_resource_type(types)
     if types.present? && types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
@@ -2479,4 +2457,30 @@ class Doi < ApplicationRecord
       types.to_h["resourceTypeGeneral"]
     end
   end
+
+  private
+
+  def update_publisher_from_hash
+    if !publisher_before_type_cast.values.all?(nil)
+      self.publisher_obj = {
+        name: publisher_before_type_cast.fetch(:name, nil),
+        lang: publisher_before_type_cast.fetch(:lang, nil),
+        schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
+        publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+        publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+      }.compact
+      self.publisher = publisher_before_type_cast.dig(:name)
+    else
+      reset_publishers
+    end
+  end
+  
+  def update_publisher_from_string
+    self.publisher_obj = { name: publisher_before_type_cast }
+    self.publisher = publisher_before_type_cast
+  end
+  
+  def reset_publishers
+    self.publisher_obj = nil self.publisher = nil
+  end  
 end
