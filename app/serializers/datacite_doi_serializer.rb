@@ -124,16 +124,16 @@ class DataciteDoiSerializer
       nil
     else
       if params&.dig(:publisher) == "true"
-        if object.publisher.respond_to?(:to_str)
-          { "name" => object.publisher }
-        else
+        if object.publisher.respond_to?(:to_hash)
           object.publisher
+        else
+          { "name" => object.publisher }
         end
       else
-        if object.publisher.respond_to?(:to_str)
-          object.publisher
-        else
+        if object.publisher.respond_to?(:to_hash)
           object.publisher["name"]
+        else
+          object.publisher
         end
       end
     end
