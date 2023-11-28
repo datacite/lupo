@@ -104,14 +104,16 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  validates :publisher_obj, if: :publisher_obj? && Proc.new { |doi|
-    doi.validatable? &&
-    !(doi.publisher.blank? || doi.publisher.all?(nil))
-  },
-  json: {
+  json_schema_validation = {
     message: ->(errors) { errors },
     schema: PUBLISHER_JSON_SCHEMA
   }
+
+  def validate_publisher_obj?(doi)
+    doi.validatable? && doi.publisher_obj? && !(doi.publisher.blank? || doi.publisher.all?(nil))
+  end
+
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -1483,7 +1485,7 @@ class Doi < ApplicationRecord
       Rails.logger.info "Queued converting publisher to publisher_obj for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
-    "Queued converting #{(from_id..until_id).to_a.length} publishers."
+    "Queued converting #{(from_id..until_id).size} publishers."
   end
 
   def self.convert_publisher_by_id(options = {})
@@ -2295,23 +2297,13 @@ class Doi < ApplicationRecord
   end
 
   def update_publisher
-    if publisher_before_type_cast.respond_to?(:to_hash)
-      if !(publisher_before_type_cast.blank? || publisher_before_type_cast.values.all?(nil))
-        self.publisher_obj = {
-          name: publisher_before_type_cast.fetch(:name, nil),
-          lang: publisher_before_type_cast.fetch(:lang, nil),
-          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
-          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
-          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
-        }.compact
-        self.publisher = publisher_before_type_cast.dig(:name)
-      else
-        self.publisher_obj = nil
-        self.publisher = nil
-      end
-    elsif publisher_before_type_cast.respond_to?(:to_str)
-      self.publisher_obj = { name: publisher_before_type_cast }
-      self.publisher = publisher_before_type_cast
+    case publisher_before_type_cast
+    when Hash
+      update_publisher_from_hash
+    when String
+      update_publisher_from_string
+    else
+      reset_publishers
     end
   end
 
@@ -2466,7 +2458,6 @@ class Doi < ApplicationRecord
     "Finished updating dois, total #{count}"
   end
 
-
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
   def handle_resource_type(types)
     if types.present? && types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
@@ -2475,4 +2466,30 @@ class Doi < ApplicationRecord
       types.to_h["resourceTypeGeneral"]
     end
   end
+
+  private
+    def update_publisher_from_hash
+      if !publisher_before_type_cast.values.all?(nil)
+        self.publisher_obj = {
+          name: publisher_before_type_cast.fetch(:name, nil),
+          lang: publisher_before_type_cast.fetch(:lang, nil),
+          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
+          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+        }.compact
+        self.publisher = publisher_before_type_cast.dig(:name)
+      else
+        reset_publishers
+      end
+    end
+
+    def update_publisher_from_string
+      self.publisher_obj = { name: publisher_before_type_cast }
+      self.publisher = publisher_before_type_cast
+    end
+
+    def reset_publishers
+      self.publisher_obj = nil
+      self.publisher = nil
+    end
 end

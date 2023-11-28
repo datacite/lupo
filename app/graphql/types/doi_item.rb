@@ -580,9 +580,12 @@ module DoiItem
   end
 
   def publisher
-    if object.publisher.respond_to?(:to_hash)
+    case object.publisher
+    when Hash
       object.publisher["name"]
-    elsif object.publisher.respond_to?(:to_str)
+    when String
+      object.publisher
+    else
       object.publisher
     end
   end
