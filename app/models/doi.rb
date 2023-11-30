@@ -1649,21 +1649,38 @@ class Doi < ApplicationRecord
   end
 
 
+  def person_id
+    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+      Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
+        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ORCID" && name_identifier.fetch("nameIdentifier", nil).present?
+          sum << orcid_as_url(
+            orcid_from_url(name_identifier.fetch("nameIdentifier", nil))
+          )
+        end
+      end
+      sum.uniq
+    end
+  end
+
   def organization_id
     (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
-        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+          sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil))
+        end
       end
-      sum
+      sum.uniq
     end
   end
 
   def fair_organization_id
     (Array.wrap(creators) + sponsor_contributors).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
-        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+          sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil))
+        end
       end
-      sum
+      sum.uniq
     end
   end
 
@@ -1672,7 +1689,7 @@ class Doi < ApplicationRecord
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-      sum
+      sum.uniq
     end
   end
 
@@ -1681,7 +1698,7 @@ class Doi < ApplicationRecord
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-      sum
+      sum.uniq
     end
   end
 
@@ -1690,7 +1707,7 @@ class Doi < ApplicationRecord
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-      sum
+      sum.uniq
     end
   end
 
@@ -1699,7 +1716,7 @@ class Doi < ApplicationRecord
       Array.wrap(c.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch('affiliationIdentifier', nil))}:#{affiliation.fetch('name', nil)}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-      sum
+      sum.uniq
     end
   end
 
