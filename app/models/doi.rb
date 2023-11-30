@@ -244,6 +244,7 @@ class Doi < ApplicationRecord
       indexes :provider_id,                    type: :keyword
       indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
+      indexes :person_id,                      type: :keyword
       indexes :affiliation_id,                 type: :keyword
       indexes :fair_affiliation_id,            type: :keyword
       indexes :organization_id,                type: :keyword
