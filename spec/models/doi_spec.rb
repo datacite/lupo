@@ -578,6 +578,9 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "from creators" do
       subject = build(
         :doi,
+        publisher: {
+          "name": "DataCite"
+        },
         creators: [
           {
             "familyName" => "Garza",
@@ -604,6 +607,9 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "from contributors(sponsor)" do
       subject = build(
         :doi,
+        publisher: {
+          "name": "DataCite"
+        },
         creators: [],
         contributors: [
           {
@@ -639,6 +645,9 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "will be populated with contributors(non-sponsor)" do
       subject = build(
         :doi,
+        publisher: {
+          "name": "DataCite"
+        },
         creators: [],
         contributors: [
           {
@@ -674,6 +683,9 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "from creators_and_contributors(sponsored)" do
       subject = build(
         :doi,
+        publisher: {
+          "name": "DataCite"
+        },
         creators: [
           {
             "familyName" => "Garza",
@@ -723,6 +735,25 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "ror.org/013meh333",
           "ror.org/013meh111",
+        ]
+      )
+    end
+
+    it "from publisher" do
+      subject = build(
+        :doi,
+        publisher: {
+          "name": "DataCite",
+          "publisherIdentifier": "https://ror.org/013meh444",
+          "publisherIdentifierScheme": "ROR"
+        },
+        creators: [],
+        contributors: []
+      )
+      expect(subject).to be_valid
+      expect(subject.organization_id).to eq(
+        [
+          "ror.org/013meh444",
         ]
       )
     end
@@ -1118,6 +1149,11 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "has a organization_id thorugh a related datamanagment plan" do
       related_dmp = create(
         :doi,
+        publisher: {
+          "name": "DataCite",
+          "publisherIdentifier": "https://ror.org/013meh555",
+          "publisherIdentifierScheme": "ROR"
+        },
         creators: [
           {
             "familyName" => "Garza",
@@ -1179,6 +1215,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "ror.org/013meh333",
           "ror.org/013meh111",
+          "ror.org/013meh555",
           "ror.org/013meh722",
           "ror.org/013meh8888",
         ]

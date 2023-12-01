@@ -36,7 +36,7 @@ describe OrganizationType do
   end
 
   describe "find organization", elasticsearch: true, vcr: true do
-    let!(:doi) do
+    let!(:creator_doi) do
       create(
         :doi,
         aasm_state: "findable",
@@ -48,6 +48,38 @@ describe OrganizationType do
             "familyName" => "Garza",
             "givenName" => "Kristian",
             "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation": [
+              {
+                "name": "University of Cambridge",
+                "affiliationIdentifier": "https://ror.org/013meh722",
+                "affiliationIdentifierScheme": "ROR",
+              },
+            ],
+          },
+        ],
+      )
+    end
+    let!(:contributor_doi) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        titles: [
+          { title: "Related to org thorugh contributor affiliation" }
+        ],
+        contributors: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "contributorType" => "DataManager",
             "nameIdentifiers" => [
               {
                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
@@ -83,6 +115,21 @@ describe OrganizationType do
         ],
       )
     end
+    let!(:publisher_doi) do
+      create(
+        :doi,
+        aasm_state: "findable",
+        titles: [
+          { title: "Related to org through publisher identifier" }
+        ],
+        publisher: {
+          "publisherIdentifier": "https://ror.org/013meh722",
+          "publisherIdentifierScheme": "ROR",
+          "name": "University of Cambridge",
+        },
+      )
+    end
+
     let(:provider) do
       create(:provider, symbol: "LPSW", ror_id: "https://ror.org/013meh722")
     end
@@ -102,12 +149,15 @@ describe OrganizationType do
         ],
         related_identifiers: [
           {
-          "relatedIdentifier": doi.doi,
+          "relatedIdentifier": creator_doi.doi,
           "relatedIdentifierType": "DOI",
           "relationType": "HasPart",
           "resourceTypeGeneral": "OutputManagementPlan",
         }
       ])
+    }
+    let(:unrelated_doi) {
+      create(:doi)
     }
     before do
       Doi.import
@@ -154,6 +204,7 @@ describe OrganizationType do
             }
             nodes {
               id
+              doi
               titles {
                 title
               }
@@ -205,24 +256,26 @@ describe OrganizationType do
       )
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(
-        4
+        6
       )
       expect(response.dig("data", "organization", "works", "published")).to eq(
-        [{ "count" => 4, "id" => "2011", "title" => "2011" }],
+        [{ "count" => 6, "id" => "2011", "title" => "2011" }],
       )
       expect(
         response.dig("data", "organization", "works", "resourceTypes"),
-      ).to eq([{ "count" => 4, "title" => "Dataset" }])
+      ).to eq([{ "count" => 6, "title" => "Dataset" }])
       expect(
         response.dig("data", "organization", "works", "nodes").length,
-      ).to eq(4)
+      ).to eq(6)
 
-      # Commented out July 2023 by Jrhoads
-      # Order of nodes is not deterministic
-      # work = response.dig("data", "organization", "works", "nodes", 0)
-      # expect(work.dig("titles", 0, "title")).to eq(
-      # "Related to org thorugh creator affiliation",
-      # )
+      works = response.dig("data", "organization", "works", "nodes")
+      expect(works.any? {|w| w.dig("doi") == creator_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == contributor_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == funder_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == member_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == related_through_dmp_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == publisher_doi.doi.downcase} ).to be true
+      expect(works.any? {|w| w.dig("doi") == unrelated_doi.doi.downcase} ).to be false
     end
   end
 

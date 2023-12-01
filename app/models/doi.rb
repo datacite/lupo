@@ -1712,12 +1712,14 @@ class Doi < ApplicationRecord
 
 
   def organization_id
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    organization_ids = (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
         sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
       end
       sum
     end
+    organization_ids << ror_from_url(publisher.fetch("publisherIdentifier", nil)) if publisher.is_a?(Hash) && publisher.fetch("publisherIdentifierScheme", nil) == "ROR" && publisher.fetch("publisherIdentifier", nil).present?
+    organization_ids
   end
 
   def fair_organization_id
