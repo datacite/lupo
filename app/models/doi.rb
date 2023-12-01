@@ -1620,6 +1620,10 @@ class Doi < ApplicationRecord
     client.provider.consortium_id.downcase if client.present? && client.provider.consortium_id.present?
   end
 
+  def related_dois
+    Doi::Indexer::RelatedDoiIndexer.new(related_identifiers).as_indexed_json
+  end
+
   def related_dmp_ids
     Array.wrap(related_identifiers).select { |related_identifier|
       related_identifier["relatedIdentifierType"] == "DOI"
