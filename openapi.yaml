@@ -206,6 +206,7 @@ paths:
             enum:
               - repository
               - periodical
+              - igsnCatalog
         - in: query
           name: repository-type
           schema:
@@ -342,6 +343,14 @@ paths:
           schema:
             type: string
         - in: query
+          name: client-type
+          schema:
+            type: string
+            enum:
+              - repository
+              - periodical
+              - igsnCatalog
+        - in: query
           name: certificate
           schema:
             type: string
@@ -355,10 +364,22 @@ paths:
               - WDS
         - in: query
           name: affiliation-id
+          description: Searches creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
+          schema:
+            type: string
+        - in: query
+          name: funder-id
+          description: Searches fundingReferences.funderIdentifier for a Crossref Funder ID.
+          schema:
+            type: string
+        - in: query
+          name: user-id
+          description: Searches creators.nameIdentifiers.nameIdentifier for an ORCID iD.
           schema:
             type: string
         - in: query
           name: resource-type-id
+          description: Filter by the resourceTypeGeneral.
           schema:
             type: string
             enum:
@@ -390,6 +411,11 @@ paths:
               - text
               - workflow
               - other
+        - in: query
+          name: resource-type
+          description: Filter by the free text resourceType.
+          schema:
+            type: string  
         - in: query
           name: subject
           schema:
@@ -435,6 +461,66 @@ paths:
               - 500
               - 502
               - 503
+        - in: query
+          name: has-citations
+          description: Searches the citationCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-references
+          description: Searches the referenceCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-parts
+          description: Searches the partCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-part-of
+          description: Searches the partOfCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-versions
+          description: Searches the versionCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-version-of
+          description: Searches the versionOfCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-views
+          description: Searches the viewCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-downloads
+          description: Searches the downloadCount field for integer values greater than or equal to the inputted value. 
+          schema:
+            type: integer
+        - in: query
+          name: has-person
+          description: Returns DOIs where creators.nameIdentifiers.nameIdentifierScheme has at least one "ORCID" value. 
+          schema:
+            type: boolean
+        - in: query
+          name: has-affiliation
+          description: Returns DOIs where either creators.affiliation.affiliationIdentifierScheme or contributors.affiliation.affiliationIdentifierScheme has at least one "ROR" value. 
+          schema:
+            type: boolean
+        - in: query
+          name: has-organization
+          description: Returns DOIs where either creators.nameIdentifiers.nameIdentifierScheme or contributors.nameIdentifiers.nameIdentifierScheme has at least one "ROR" value. 
+          schema:
+            type: boolean
+        - in: query
+          name: has-funder
+          description: Returns DOIs where fundingReferences.funderIdentifierType has at least one "Crossref Funder ID" value. 
+          schema:
+            type: boolean
         - in: query
           name: random
           description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
@@ -487,6 +573,31 @@ paths:
               - '-created'
               - updated
               - '-updated'
+        - in: query
+          name: disable-facets
+          description: Exclude facets from the response.
+          schema:
+            type: boolean
+        - in: query
+          name: detail
+          description: When set to true, will include the following attributes in the response - prefix, suffix, viewsOverTime, citationsOverTime, provider, references, citations. parts, partOf, versions, versionOf, xml, alternateIdentifiers.
+          schema:
+            type: boolean
+        - in: query
+          name: field[dois]
+          description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
+          schema:
+            type: string
+        - in: query
+          name: source
+          schema:
+            type: string
+            enum:
+                - mds
+                - api
+                - fabricaForm
+                - fabrica
+                - ez
       responses:
         '200':
           description: A JSON array of dois.
@@ -504,7 +615,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Doi'
       responses:
@@ -546,7 +657,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Doi'
       responses:
@@ -1047,7 +1158,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Report'
       responses:
@@ -1089,7 +1200,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/Report'
       responses:
@@ -1613,8 +1724,6 @@ components:
                         type: string
                 lang:
                   type: string
-              required:
-                - name
         titles:
           type: array
           items:
@@ -1626,8 +1735,6 @@ components:
                 $ref: '#/components/schemas/titleType'
               lang:
                 type: string
-            required:
-              - title
         publisher:
           type: string
         container:
@@ -1750,8 +1857,6 @@ components:
               type: string
             ris:
               type: string
-          required:
-            - resourceTypeGeneral
         relatedIdentifiers:
           type: array
           items:
@@ -1806,8 +1911,6 @@ components:
                       type: string
                     nameType:
                       $ref: '#/components/schemas/nameType'
-                  required:
-                    - name
               titles:
                 type: array
                 items:
@@ -1817,8 +1920,6 @@ components:
                       type: string
                     titleType:
                       $ref: '#/components/schemas/titleType'
-                  required:
-                    - title
               volume:
                 type: string
               issue:
@@ -1857,12 +1958,6 @@ components:
                       $ref: '#/components/schemas/nameType'
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
-                  required:
-                    - name
-                    - contributorType
-            required:
-              - relatedItemType
-              - relationType
         sizes:
           type: array
           items:
