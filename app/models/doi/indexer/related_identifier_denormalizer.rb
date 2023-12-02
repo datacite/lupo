@@ -28,7 +28,5 @@ module Doi::Indexer
     def doi
       @related_doi.doi.downcase
     end
-
   end
 end
-

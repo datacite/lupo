@@ -12,12 +12,12 @@ module Doi::Indexer
     end
 
     def related_grouped_by_id
-      related_dois.group_by{ |r| r["relatedIdentifier"].downcase }
+      related_dois.group_by { |r| r["relatedIdentifier"].downcase }
     end
 
     def relation_types_gouped_by_id
       related_grouped_by_id.transform_values do |values|
-        values.map{ |val| val["relationType"].underscore }.uniq
+        values.map { |val| val["relationType"].underscore }.uniq
       end
     end
 
@@ -43,4 +43,3 @@ module Doi::Indexer
     end
   end
 end
-

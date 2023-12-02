@@ -56,6 +56,5 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     it "indexes all relations to the related doi" do
       expect(doi.related_dois.first["relation_type"]).to eq(["has_part", "cites"])
     end
-
   end
 end
