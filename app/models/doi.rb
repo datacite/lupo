@@ -550,6 +550,14 @@ class Doi < ApplicationRecord
       indexes :fields_of_science, type: :keyword
       indexes :fields_of_science_combined, type: :keyword
       indexes :fields_of_science_repository, type: :keyword
+      indexes :related_doi, type: :object, properties: {
+        client_id: { type: :keyword },
+        doi: { type: :keyword },
+        organization_id: { type: :keyword },
+        person_id: { type: :keyword },
+        resource_type_id: { type: :keyword },
+        resource_type_id_and_name: { type: :keyword },
+      }
     end
   end
 
