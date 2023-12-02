@@ -4,7 +4,7 @@ module Doi::Indexer
   class RelatedDoiIndexer
     def initialize(related_identifiers)
       @related_identifiers = related_identifiers
-      @related_dois = []
+      @related_dois = nil
     end
 
     def related_dois
@@ -12,12 +12,12 @@ module Doi::Indexer
     end
 
     def related_grouped_by_id
-      related_dois.group_by{ |r| r[:relatedIdentifier].downcase }
+      related_dois.group_by{ |r| r["relatedIdentifier"].downcase }
     end
 
     def relation_types_gouped_by_id
       related_grouped_by_id.transform_values do |values|
-        values.map{ |val| val[:relationType] }.uniq
+        values.map{ |val| val["relationType"].underscore }.uniq
       end
     end
 
@@ -34,7 +34,12 @@ module Doi::Indexer
     end
 
     def as_indexed_json
-      indexed_dois
+      rtypes = relation_types_gouped_by_id
+      indexed_dois.map do |indexed_doi|
+        doi = indexed_doi["doi"]
+        indexed_doi["relation_type"] = rtypes[doi]
+        indexed_doi
+      end
     end
   end
 end
