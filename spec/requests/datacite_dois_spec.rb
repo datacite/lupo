@@ -224,6 +224,59 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
     end
+
+    it "returns publisher objects when publisher param is set to true" do
+      get "/dois?publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "Dryad Digital Repository",
+          }
+        )
+      end
+    end
+  end
+
+  describe "GET /dois with nil publisher values", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, publisher: nil) }
+
+    it "returns nil publisher when publisher param is not set" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(nil)
+      end
+    end
+
+    it "returns nil publisher when publisher param is set to true" do
+      get "/dois?publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(nil)
+      end
+    end
+  end
+
+  describe "GET /dois/:id with nil publisher values", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, publisher: nil) }
+
+    it "returns nil publisher when publisher param is not set" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("attributes", "publisher")).to eq(nil)
+    end
+
+    it "returns nil publisher when publisher param is set to true" do
+      get "/dois/#{doi.doi}?publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("attributes", "publisher")).to eq(nil)
+    end
   end
 
   describe "GET /dois with filter", elasticsearch: true do
@@ -587,6 +640,29 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "creators", 0, "nameIdentifiers")).to eq([{ "nameIdentifier" => "http://viaf.org/viaf/4934600", "nameIdentifierScheme" => "VIAF" }])
+      end
+    end
+
+    context "when the publisher param is set to true" do
+      it "returns the Doi" do
+        get "/dois/#{doi.doi}?publisher=true", nil, headers
+
+        expect(last_response.status).to eq(200)
+        result = json.dig("data")
+
+        expect(result.dig("attributes", "doi")).to eq(doi.doi.downcase)
+        expect(result.dig("attributes", "titles")).to eq(doi.titles)
+        expect(result.dig("attributes", "identifiers")).to eq([{ "identifier" => "pk-1234", "identifierType" => "publisher ID" }])
+        expect(result.dig("attributes", "alternateIdentifiers")).to eq([{ "alternateIdentifier" => "pk-1234", "alternateIdentifierType" => "publisher ID" }])
+        expect(result.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "Dryad Digital Repository",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en"
+          }
+        )
       end
     end
   end
@@ -1936,6 +2012,12 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+
+        expect(Doi.where(doi: "10.14454/10703").first.publisher).to eq(
+          {
+            "name" => "DataCite"
+          }
+        )
       end
     end
 
@@ -2299,7 +2381,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "name" => "Miller, Elizabeth",
                                                                     "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0001-5000-0007", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }],
                                                                     "nameType" => "Personal")
-        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "name" => "Wesleyan University", "schemeUri" => "https://grid.ac/institutes/" }],
+        expect(json.dig("data", "attributes", "creators")[1]).to eq("affiliation" => [{ "affiliationIdentifierScheme" => "ROR", "affiliationIdentifier" => "https://ror.org/05gq02987", "name" => "Brown University" }, { "affiliationIdentifierScheme" => "GRID", "affiliationIdentifier" => "https://grid.ac/institutes/grid.268117.b", "schemeUri" => "https://grid.ac/institutes/", "name" => "Wesleyan University" }],
                                                                     "familyName" => "Carberry",
                                                                     "givenName" => "Josiah",
                                                                     "name" => "Carberry, Josiah",
@@ -2560,7 +2642,6 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "updates the record" do
         patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
-        p json
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/8na3-9s47")
@@ -2879,6 +2960,156 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek meteorological data, soil moisture and temperature, snow depth and air temperature" }])
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+      end
+    end
+
+    context "when the request uses schema 4.5" do
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.5.xml").read) }
+      let(:doi) { "10.14454/10703" }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => doi,
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "creates a Doi" do
+        post "/dois", valid_attributes, headers
+        pp json
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 34)).to eq(
+          {
+            "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
+            "relatedIdentifierType" => "DOI",
+            "relationType" => "Collects",
+            "resourceTypeGeneral" => "Other",
+          }
+        )
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 35)).to eq(
+          {
+            "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
+            "relatedIdentifierType" => "DOI",
+            "relationType" => "IsCollectedBy",
+            "resourceTypeGeneral" => "Other"
+          }
+        )
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("publisher").content).to eq("Example Publisher")
+        expect(doc.at_css("publisher")["publisherIdentifier"]).to eq("https://ror.org/04z8jg394")
+        expect(doc.at_css("publisher")["publisherIdentifierScheme"]).to eq("ROR")
+        expect(doc.at_css("publisher")["schemeURI"]).to eq("https://ror.org/")
+        expect(doc.at_css("publisher")["xml:lang"]).to eq("en")
+
+        expect(Doi.where(doi: "10.14454/10703").first.publisher).to eq(
+          {
+            "name" => "Example Publisher",
+            "publisherIdentifier" => "https://ror.org/04z8jg394",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+
+      it "creates a Doi with publisher param set to true" do
+        post "/dois?publisher=true", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq(
+          {
+            "name" => "Example Publisher",
+            "publisherIdentifier" => "https://ror.org/04z8jg394",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+
+    context "when the request is valid with publisher as a hash" do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types" => { "resourceTypeGeneral" => "Text" },
+              "titles" => [{ "title" => "Eating your own Dog Food" }],
+              "publisher" => {
+                "name" => "DataCite",
+                "publisherIdentifier" => "https://ror.org/04wxnsj81",
+                "publisherIdentifierScheme" => "ROR",
+                "schemeUri" => "https://ror.org/",
+                "lang" => "en",
+              },
+              "publicationYear" => 2016,
+              "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "creates a Doi with publisher param not set" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
+        expect(json.dig("data", "attributes", "creators")).to eq([{ "affiliation" => [], "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }])
+        expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
+        expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+
+        expect(Doi.where(doi: "10.14454/10703").first.publisher).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+
+      it "creates a Doi with publisher param set to true" do
+        post "/dois?publisher=true", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
+        expect(json.dig("data", "attributes", "creators")).to eq([{ "affiliation" => [], "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }])
+        expect(json.dig("data", "attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+        expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
         expect(json.dig("data", "attributes", "state")).to eq("findable")
       end
     end
@@ -4048,6 +4279,175 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "PUT /dois/:id" do
+    context "update publisher" do
+      let(:doi) { create(:doi, doi: "10.14454/10703", publisher: nil, client: client) }
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.5.xml").read) }
+
+      let(:publisher_as_string_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "publisher" => "DataCite",
+              "event" => "publish",
+            }
+          }
+        }
+      end
+
+      let(:publisher_as_obj_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "publisher" => {
+                "name" => "DataCite",
+                "publisherIdentifier" => "https://ror.org/04wxnsj81",
+                "publisherIdentifierScheme" => "ROR",
+                "schemeUri" => "https://ror.org/",
+                "lang" => "en",
+              },
+              "event" => "publish",
+            }
+          }
+        }
+      end
+
+      let(:publisher_obj_in_xml) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "with publisher as string" do
+        put "/dois/#{doi.doi}", publisher_as_string_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
+
+        expect(Doi.where(doi: doi.doi).first.publisher).to eq(
+          {
+            "name" => "DataCite",
+          }
+        )
+      end
+
+      it "with publisher as string with publisher param set to true" do
+        put "/dois/#{doi.doi}?publisher=true", publisher_as_string_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+          }
+        )
+      end
+
+      it "with publisher as object" do
+        put "/dois/#{doi.doi}", publisher_as_obj_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("publisher").content).to eq("DataCite")
+        expect(doc.at_css("publisher")["publisherIdentifier"]).to eq("https://ror.org/04wxnsj81")
+        expect(doc.at_css("publisher")["publisherIdentifierScheme"]).to eq("ROR")
+        expect(doc.at_css("publisher")["schemeURI"]).to eq("https://ror.org/")
+        expect(doc.at_css("publisher")["xml:lang"]).to eq("en")
+
+        expect(Doi.where(doi: doi.doi).first.publisher).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+
+      it "with publisher as object with publisher param set to true" do
+        put "/dois/#{doi.doi}?publisher=true", publisher_as_obj_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+
+      it "with publisher obj in xml" do
+        put "/dois/#{doi.doi}", publisher_obj_in_xml, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("publisher").content).to eq("Example Publisher")
+        expect(doc.at_css("publisher")["publisherIdentifier"]).to eq("https://ror.org/04z8jg394")
+        expect(doc.at_css("publisher")["publisherIdentifierScheme"]).to eq("ROR")
+        expect(doc.at_css("publisher")["schemeURI"]).to eq("https://ror.org/")
+        expect(doc.at_css("publisher")["xml:lang"]).to eq("en")
+
+        expect(Doi.where(doi: "10.14454/10703").first.publisher).to eq(
+          {
+            "name" => "Example Publisher",
+            "publisherIdentifier" => "https://ror.org/04z8jg394",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+
+      it "with publisher obj in xml with publisher param set to true" do
+        put "/dois/#{doi.doi}?publisher=true", publisher_obj_in_xml, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq(
+          {
+            "name" => "Example Publisher",
+            "publisherIdentifier" => "https://ror.org/04z8jg394",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+  end
+
   describe "DELETE /dois/:id" do
     let(:doi) { create(:doi, client: client, aasm_state: "draft") }
 
@@ -4368,7 +4768,15 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-        expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+        expect(data.dig("publisher")).to eq(
+          {
+            "__content__" => "Dryad Digital Repository",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeURI" => "https://ror.org/",
+            "xml:lang" => "en"
+          }
+        )
         expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
       end
     end
@@ -4380,7 +4788,15 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
         expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-        expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+        expect(data.dig("publisher")).to eq(
+          {
+            "__content__" => "Dryad Digital Repository",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeURI" => "https://ror.org/",
+            "xml:lang" => "en"
+          }
+        )
         expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
       end
     end

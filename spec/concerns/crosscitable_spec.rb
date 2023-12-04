@@ -199,7 +199,11 @@ describe Doi, vcr: true do
       )
       expect(meta["titles"]).to eq([{ "title" => "Eating your own Dog Food" }])
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("DataCite")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "DataCite"
+        }
+      )
     end
 
     it "from schema 3" do
@@ -222,7 +226,11 @@ describe Doi, vcr: true do
         [{ "title" => "Data from: A new malaria agent in African hominids." }],
       )
       expect(meta["publication_year"]).to eq("2011")
-      expect(meta["publisher"]).to eq("Dryad Digital Repository")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "Dryad Digital Repository"
+        }
+      )
     end
 
     it "from schema 2.2" do
@@ -263,7 +271,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2010")
-      expect(meta["publisher"]).to eq("Springer")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "Springer"
+        }
+      )
     end
 
     it "from schema 4 missing creators" do
@@ -276,7 +288,11 @@ describe Doi, vcr: true do
       expect(meta["creators"]).to be_empty
       expect(meta["titles"]).to eq([{ "title" => "Eating your own Dog Food" }])
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("DataCite")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "DataCite"
+        }
+      )
     end
 
     it "from namespaced xml" do
@@ -322,7 +338,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "eLife Sciences Publications, Ltd"
+        }
+      )
       expect(meta["container"]).to eq(
         "firstPage" => "e01567",
         "identifier" => "2050-084X",
@@ -361,7 +381,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "eLife Sciences Publications, Ltd"
+        }
+      )
       expect(meta["container"]).to eq(
         "firstPage" => "e01567",
         "identifier" => "2050-084X",
@@ -421,7 +445,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "{eLife} Sciences Organisation, Ltd."
+        }
+      )
       expect(meta["container"]).to eq(
         "identifier" => "2050-084X",
         "identifierType" => "ISSN",
@@ -456,7 +484,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "(:unav)"
+        }
+      )
       expect(meta["container"]).to eq(
         "title" => "eLife", "type" => "Journal", "volume" => "3",
       )
@@ -488,7 +520,11 @@ describe Doi, vcr: true do
         [{ "title" => "R Interface to the DataONE REST API" }],
       )
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("https://cran.r-project.org")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "https://cran.r-project.org"
+        }
+      )
     end
 
     it "from schema_org" do
@@ -514,7 +550,11 @@ describe Doi, vcr: true do
       )
       expect(meta["titles"]).to eq([{ "title" => "Eating your own Dog Food" }])
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("DataCite")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "DataCite"
+        }
+      )
     end
 
     it "from schema_org url" do
@@ -540,7 +580,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("PANGAEA")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "PANGAEA"
+        }
+      )
       expect(meta["schema_version"]).to eq(nil)
     end
   end
@@ -576,7 +620,11 @@ describe Doi, vcr: true do
         [{ "title" => "Data from: A new malaria agent in African hominids." }],
       )
       expect(meta["publication_year"]).to eq("2011")
-      expect(meta["publisher"]).to eq("Dryad Digital Repository")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "Dryad Digital Repository"
+        }
+      )
     end
 
     it "from schema 2.2" do
@@ -615,7 +663,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2010")
-      expect(meta["publisher"]).to eq("Springer")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "Springer"
+        }
+      )
     end
 
     it "from schema 4 missing creators" do
@@ -626,7 +678,11 @@ describe Doi, vcr: true do
       expect(meta["creators"]).to be_empty
       expect(meta["titles"]).to eq([{ "title" => "Eating your own Dog Food" }])
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("DataCite")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "DataCite"
+        }
+      )
     end
 
     it "from crossref" do
@@ -656,7 +712,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "eLife Sciences Publications, Ltd"
+        }
+      )
       expect(meta["container"]).to eq(
         "firstPage" => "e01567",
         "identifier" => "2050-084X",
@@ -688,7 +748,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "{eLife} Sciences Organisation, Ltd."
+        }
+      )
       expect(meta["container"]).to eq(
         "identifier" => "2050-084X",
         "identifierType" => "ISSN",
@@ -721,7 +785,11 @@ describe Doi, vcr: true do
         ],
       )
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "(:unav)"
+        }
+      )
       expect(meta["container"]).to eq(
         "title" => "eLife", "type" => "Journal", "volume" => "3",
       )
@@ -751,7 +819,11 @@ describe Doi, vcr: true do
         [{ "title" => "R Interface to the DataONE REST API" }],
       )
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("https://cran.r-project.org")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "https://cran.r-project.org"
+        }
+      )
     end
 
     it "from schema_org" do
@@ -775,7 +847,11 @@ describe Doi, vcr: true do
       )
       expect(meta["titles"]).to eq([{ "title" => "Eating your own Dog Food" }])
       expect(meta["publication_year"]).to eq("2016")
-      expect(meta["publisher"]).to eq("DataCite")
+      expect(meta["publisher"]).to eq(
+        {
+          "name" => "DataCite"
+        }
+      )
     end
   end
 end

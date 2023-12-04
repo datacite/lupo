@@ -35,6 +35,15 @@ class ParamsSanitizer
     :titles,
     { titles: %i[title titleType lang] },
     :publisher,
+      {
+        publisher: %i[
+          name
+          publisherIdentifier
+          publisherIdentifierScheme
+          schemeUri
+          lang
+        ],
+      },
     :publicationYear,
     :created,
     :prefix,

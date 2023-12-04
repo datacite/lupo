@@ -196,6 +196,7 @@ class DataciteDoisController < ApplicationController
           current_ability: current_ability,
           detail: params[:detail],
           affiliation: params[:affiliation],
+          publisher: params[:publisher],
           is_collection: options[:is_collection],
         }
 
@@ -339,6 +340,7 @@ class DataciteDoisController < ApplicationController
                       detail: params[:detail],
                       composite: params[:composite],
                       affiliation: params[:affiliation],
+                      publisher: params[:publisher],
                       # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                       "page[cursor]" =>
                         page[:cursor] ? make_cursor(results) : nil,
@@ -359,6 +361,7 @@ class DataciteDoisController < ApplicationController
               detail: params[:detail],
               composite: params[:composite],
               affiliation: params[:affiliation],
+              publisher: params[:publisher],
               is_collection: options[:is_collection],
             }
 
@@ -459,6 +462,7 @@ class DataciteDoisController < ApplicationController
           detail: true,
           composite: nil,
           affiliation: params[:affiliation],
+          publisher: params[:publisher],
         }
 
         render json: DataciteDoiSerializer.new(doi, options).serialized_json,
@@ -511,7 +515,11 @@ class DataciteDoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+      options[:params] = {
+        current_ability: current_ability,
+        affiliation: params[:affiliation],
+        publisher: params[:publisher]
+      }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
              status: :ok
@@ -539,6 +547,7 @@ class DataciteDoisController < ApplicationController
         current_ability: current_ability,
         detail: true,
         affiliation: params[:affiliation],
+        publisher: params[:publisher],
       }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
@@ -597,6 +606,7 @@ class DataciteDoisController < ApplicationController
         current_ability: current_ability,
         detail: true,
         affiliation: params[:affiliation],
+        publisher: params[:publisher],
       }
 
       render json: DataciteDoiSerializer.new(@doi, options).serialized_json,

@@ -579,6 +579,17 @@ module DoiItem
     end
   end
 
+  def publisher
+    case object.publisher
+    when Hash
+      object.publisher["name"]
+    when String
+      object.publisher
+    else
+      object.publisher
+    end
+  end
+
   def bibtex
     pages =
       if object.container.to_h["firstPage"].present?
@@ -909,7 +920,7 @@ module DoiItem
       "volume" => object.container.to_h["volume"],
       "issue" => object.container.to_h["issue"],
       "page" => page,
-      "publisher" => object.publisher,
+      "publisher" => (object.publisher.is_a?(Hash) ? object.publisher&.fetch("name", nil) : object.publisher),
       "title" => parse_attributes(object.titles, content: "title", first: true),
       "URL" => object.url,
       "version" => object.version_info,

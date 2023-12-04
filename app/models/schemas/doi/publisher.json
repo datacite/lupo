@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "name":                       { "type": "string" },
+    "publisherIdentifier":        { "type": "string" },
+    "publisherIdentifierScheme":  { "type": "string" },
+    "schemeUri":                  { "type": "string" },
+    "lang":                       { "type": "string" }
+  },
+  "additionalProperties": false
+}

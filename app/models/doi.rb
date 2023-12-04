@@ -4,7 +4,8 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-  audited only: %i[doi url creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
+  PUBLISHER_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/doi/publisher.json"
+  audited only: %i[doi url creators contributors titles publisher publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
   self.inheritance_column = :_type_disabled
@@ -103,6 +104,17 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
+  json_schema_validation = {
+    message: ->(errors) { errors },
+    schema: PUBLISHER_JSON_SCHEMA
+  }
+
+  def validate_publisher_obj?(doi)
+    doi.validatable? && doi.publisher_obj? && !(doi.publisher.blank? || doi.publisher.all?(nil))
+  end
+
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
+
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
@@ -117,6 +129,7 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
+  validate :check_publisher, if: :publisher?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
@@ -131,6 +144,7 @@ class Doi < ApplicationRecord
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
+  before_validation :update_publisher, if: [ :will_save_change_to_publisher?, :publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
@@ -565,7 +579,7 @@ class Doi < ApplicationRecord
       "creator_names" => creator_names,
       "titles" => Array.wrap(titles),
       "descriptions" => Array.wrap(descriptions),
-      "publisher" => publisher,
+      "publisher" => publisher && publisher["name"],
       "client_id" => client_id,
       "provider_id" => provider_id,
       "consortium_id" => consortium_id,
@@ -1452,6 +1466,45 @@ class Doi < ApplicationRecord
     count
   end
 
+  def self.convert_publishers(options = {})
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
+
+    # get every id between from_id and until_id
+    (from_id..until_id).step(500).each do |id|
+      DoiConvertPublisherByIdJob.perform_later(options.merge(id: id))
+      Rails.logger.info "Queued converting publisher to publisher_obj for DOIs with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    "Queued converting #{(from_id..until_id).size} publishers."
+  end
+
+  def self.convert_publisher_by_id(options = {})
+    return nil if options[:id].blank?
+
+    id = options[:id].to_i
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      should_update = true
+
+      if should_update
+        Doi.auditing_enabled = false
+        doi.update_columns(publisher_obj: doi.publisher)
+        Doi.auditing_enabled = true
+
+        count += 1
+      end
+    end
+
+    Rails.logger.info "[MySQL] Converted publishers for #{count} DOIs with IDs #{id} - #{id + 499}." if count > 0
+
+    count
+  rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
+    Rails.logger.error "[MySQL] Error converting publishers for DOIs with IDs #{id} - #{id + 499}: #{e.message}."
+    count
+  end
+
   def self.convert_containers(options = {})
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
@@ -1901,6 +1954,10 @@ class Doi < ApplicationRecord
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
   end
 
+  def check_publisher
+    errors.add(:publisher, "Publisher '#{publisher}' should be an object instead of a string.") unless publisher.is_a?(Hash)
+  end
+
   def check_language
     errors.add(:language, "Language #{language} is in an invalid format.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
   end
@@ -2230,6 +2287,30 @@ class Doi < ApplicationRecord
     ).compact
   end
 
+  def update_publisher
+    case publisher_before_type_cast
+    when Hash
+      update_publisher_from_hash
+    when String
+      update_publisher_from_string
+    else
+      reset_publishers
+    end
+  end
+
+  def publisher
+    pub = read_attribute("publisher")
+    pub_obj = read_attribute("publisher_obj")
+
+    return nil if pub.nil? && pub_obj.nil?
+
+    if !(pub_obj.nil? || pub_obj.empty?)
+      pub_obj
+    else
+      { "name" => pub || "" }
+    end
+  end
+
   def self.repair_landing_page(id: nil)
     if id.blank?
       Rails.logger.error "[Error] No id provided."
@@ -2368,7 +2449,6 @@ class Doi < ApplicationRecord
     "Finished updating dois, total #{count}"
   end
 
-
   # QUICK FIX UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL IN THE SCHEMA
   def handle_resource_type(types)
     if types.present? && types["resourceType"] == "Project" && (types["resourceTypeGeneral"] == "Text" || types["resourceTypeGeneral"] == "Other")
@@ -2377,4 +2457,30 @@ class Doi < ApplicationRecord
       types.to_h["resourceTypeGeneral"]
     end
   end
+
+  private
+    def update_publisher_from_hash
+      if !publisher_before_type_cast.values.all?(nil)
+        self.publisher_obj = {
+          name: publisher_before_type_cast.fetch(:name, nil),
+          lang: publisher_before_type_cast.fetch(:lang, nil),
+          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
+          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
+          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+        }.compact
+        self.publisher = publisher_before_type_cast.dig(:name)
+      else
+        reset_publishers
+      end
+    end
+
+    def update_publisher_from_string
+      self.publisher_obj = { name: publisher_before_type_cast }
+      self.publisher = publisher_before_type_cast
+    end
+
+    def reset_publishers
+      self.publisher_obj = nil
+      self.publisher = nil
+    end
 end

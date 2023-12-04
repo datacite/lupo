@@ -118,6 +118,27 @@ class DataciteDoiSerializer
 
   attribute :doi, &:uid
 
+  attribute :publisher do |object, params|
+    # new - format obj only if ?publisher=true, otherwise serialize the old format (a string)
+    if object.publisher.nil?
+      nil
+    else
+      if params&.dig(:publisher) == "true"
+        if object.publisher.respond_to?(:to_hash)
+          object.publisher
+        else
+          { "name" => object.publisher }
+        end
+      else
+        if object.publisher.respond_to?(:to_hash)
+          object.publisher["name"]
+        else
+          object.publisher
+        end
+      end
+    end
+  end
+
   attribute :creators do |object, params|
     # Always return an array of creators and affiliations
     # use new array format only if affiliation param present
