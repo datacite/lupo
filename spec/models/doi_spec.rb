@@ -1138,7 +1138,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           "https://orcid.org/0000-0003-3484-0000",
         ]
       )
-
     end
   end
 
