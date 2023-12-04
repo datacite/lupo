@@ -267,15 +267,15 @@ describe DataciteDoisController, type: :request, vcr: true do
   end
 
   describe "GET /dois with publisher values", elasticsearch: true do
-    let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable" ) }
-    let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher: 
+    let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher:
         {
           "name": "DataCite",
           "publisherIdentifier": "https://ror.org/04wxnsj81",
           "publisherIdentifierScheme": "ROR",
           "schemeUri": "https://ror.org/",
           "lang": "en",
-        } 
+        }
       )
     }
 
@@ -325,7 +325,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -344,7 +344,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -363,7 +363,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -382,7 +382,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -3697,7 +3697,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("data", "attributes", "relatedIdentifiers").last).to eq({ "relatedIdentifierType" => "DOI", "relationType" => "IsCollectedBy", "resourceTypeGeneral" => "Other", "relatedIdentifier" => "10.1016/j.epsl.2011.11.037" })
         end
       end
-      
+
       context "when the creators are missing" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite_missing_creator.xml"))) }
         let(:params) do
