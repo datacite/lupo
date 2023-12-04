@@ -88,11 +88,13 @@ module Doi::GraphqlQuery
           .gsub(/rightsList/, "rights_list")\
           .gsub(/fundingReferences/, "funding_references")\
           .gsub(/geoLocations/, "geo_locations")\
+          .gsub(/version:/, "version_info:")\
           .gsub(/landingPage/, "landing_page")\
           .gsub(/contentUrl/, "content_url")\
           .gsub(/citationCount/, "citation_count")\
           .gsub(/viewCount/, "view_count")\
           .gsub(/downloadCount/, "download_count")\
+          .gsub(/(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/, 'publisher_obj.\2')\
           .gsub("/", "\\/")
       else
         ""
