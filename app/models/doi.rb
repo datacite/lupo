@@ -1718,8 +1718,14 @@ class Doi < ApplicationRecord
       end
       sum
     end
-    organization_ids << ror_from_url(publisher.fetch("publisherIdentifier", nil)) if publisher.is_a?(Hash) && publisher.fetch("publisherIdentifierScheme", nil) == "ROR" && publisher.fetch("publisherIdentifier", nil).present?
+    organization_ids << ror_from_url(publisher["publisherIdentifier"]) if publisher_has_ror?
     organization_ids
+  end
+
+  def publisher_has_ror?
+    publisher.is_a?(Hash) &&
+      publisher.fetch("publisherIdentifierScheme", nil) == "ROR" &&
+      publisher.fetch("publisherIdentifier", nil).present?
   end
 
   def fair_organization_id
