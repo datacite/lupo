@@ -1081,6 +1081,66 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe "person_ids" do
+    it "from creators and contributors" do
+      subject = build(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh722",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
+        ],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Bob",
+            "givenName" => "Jones",
+            "name" => "Jones, Bob",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-0000",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Examples",
+                "affiliationIdentifier" => "https://ror.org/013meh8888",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.person_id).to eq(
+        [
+          "https://orcid.org/0000-0003-3484-6875",
+          "https://orcid.org/0000-0003-3484-0000",
+        ]
+      )
+    end
+  end
+
   describe "related_identifiers" do
     it "has part" do
       subject = build(:doi, related_identifiers: [
