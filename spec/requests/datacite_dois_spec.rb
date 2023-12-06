@@ -2983,7 +2983,6 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "creates a Doi" do
         post "/dois", valid_attributes, headers
-        # pp json
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi)
