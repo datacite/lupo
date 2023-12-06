@@ -2983,13 +2983,13 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "creates a Doi" do
         post "/dois", valid_attributes, headers
-        pp json
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi)
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
         expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+
         expect(json.dig("data", "attributes", "relatedIdentifiers", 34)).to eq(
           {
             "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
@@ -3006,6 +3006,11 @@ describe DataciteDoisController, type: :request, vcr: true do
             "resourceTypeGeneral" => "Other"
           }
         )
+
+        expect(json.dig("data", "attributes", "relatedItems", 1, "relationType")).to eq("Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 1, "titles", 0, "title")).to eq("Journal of Metadata Examples - Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "relationType")).to eq("IsCollectedBy")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "titles", 0, "title")).to eq("Journal of Metadata Examples - IsCollectedBy")
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("publisher").content).to eq("Example Publisher")
