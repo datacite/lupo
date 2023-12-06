@@ -31,6 +31,54 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe 'after_commit' do
+    let(:doi) { create(:doi, aasm_state: 'findable') }
+    context 'when aasm_state is findable' do
+      before do
+        allow(doi).to receive(:saved_change_to_attribute?).and_return(false)
+        allow(doi).to receive(:aasm_state_changed?).and_return(false)
+        allow(doi).to receive(:send_import_message)
+      end
+
+      it 'sends import message if related_identifiers is modified' do
+        doi.related_identifiers = ['new_identifier']
+        doi.save
+        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      end
+
+      it 'sends import message if creators is modified' do
+        doi.creators = ['new_creator']
+        doi.save
+        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      end
+
+      it 'sends import message if funding_references is modified' do
+        doi.funding_references = ['new_reference']
+        doi.save
+        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      end
+
+      it 'sends import message if aasm_state is changed' do
+        doi.aasm_state = 'another_state'
+        doi.save
+        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      end
+
+      it 'does not send import message if none of the conditions are met' do
+        doi.save
+        expect(doi).not_to have_received(:send_import_message)
+      end
+    end
+
+    context 'when aasm_state is not findable' do
+      it 'does not send import message' do
+        allow(doi).to receive(:aasm_state).and_return('not_findable')
+        doi.save
+        expect(doi).not_to have_received(:send_import_message)
+      end
+    end
+  end
+
   describe "validate agency" do
     it "DataCite" do
       subject = build(:doi, agency: "DataCite")

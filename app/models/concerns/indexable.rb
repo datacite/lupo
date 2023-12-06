@@ -20,17 +20,12 @@ module Indexable
         end
       end
 
-      if (
-         instance_of?(DataciteDoi) || instance_of?(OtherDoi) ||
-           instance_of?(Doi)
-       ) &&
-          (
-            saved_change_to_attribute?("related_identifiers") ||
-              saved_change_to_attribute?("creators") ||
-              saved_change_to_attribute?("funding_references")
-          )
-        if aasm_state == "findable" && !Rails.env.test?
-          send_import_message(to_jsonapi)
+      if (instance_of?(DataciteDoi) || instance_of?(OtherDoi) ||instance_of?(Doi))
+        if aasm_state == "findable"
+          # If following fields are modified or the state has changed (any other state to findable), send import message
+          if saved_change_to_attribute?("related_identifiers") || saved_change_to_attribute?("creators") || saved_change_to_attribute?("funding_references") || aasm_state_changed?
+            send_import_message(to_jsonapi)
+          end
         end
       elsif instance_of?(Event)
         OtherDoiJob.perform_later(dois_to_import)
