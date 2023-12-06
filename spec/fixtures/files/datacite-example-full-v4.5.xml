@@ -223,7 +223,7 @@
     <relatedItems>
         <relatedItem relatedItemType="Text" relationType="Cites">
             <relatedItemIdentifier relatedItemIdentifierType="ISSN">1234-5678</relatedItemIdentifier>
-            <creators>
+                <creators>
                 <creator>
                     <creatorName nameType="Personal">ExampleFamilyName, ExampleGivenName</creatorName>
                     <givenName>ExampleGivenName</givenName>
@@ -249,6 +249,18 @@
                     <familyName>ExampleFamilyName</familyName>
                 </contributor>
             </contributors>
+        </relatedItem>
+        <relatedItem relationType="Collects" relatedItemType="Journal">
+            <relatedItemIdentifier relatedItemIdentifierType="ISSN">1234-5678</relatedItemIdentifier>
+            <titles>
+              <title>Journal of Metadata Examples - Collects</title>
+            </titles>
+        </relatedItem>
+        <relatedItem relationType="IsCollectedBy" relatedItemType="Journal">
+            <relatedItemIdentifier relatedItemIdentifierType="ISSN">0123-4567</relatedItemIdentifier>
+            <titles>
+              <title>Journal of Metadata Examples - IsCollectedBy</title>
+            </titles>
         </relatedItem>
     </relatedItems>
 </resource>
