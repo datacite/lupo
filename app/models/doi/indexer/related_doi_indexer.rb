@@ -3,12 +3,12 @@
 module Doi::Indexer
   class RelatedDoiIndexer
     def initialize(related_identifiers)
-      @related_identifiers = related_identifiers
+      @related_identifiers = Array.wrap(related_identifiers)
       @related_dois = nil
     end
 
     def related_dois
-      @related_dois ||= @related_identifiers.select { |r| r["relatedIdentifierType"] == "DOI" }
+      @related_dois ||= @related_identifiers.select { |r| r.fetch("relatedIdentifierType", nil) == "DOI" }
     end
 
     def related_grouped_by_id
