@@ -234,4 +234,68 @@ describe ActivitiesController, type: :request do
       end
     end
   end
+
+  describe "query activities - when the publisher is nil", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, publisher: nil) }
+
+    before do
+      doi.publisher = {
+        "lang": "en",
+        "name": "Dryad Digital Repository",
+        "schemeUri": "https://ror.org/",
+        "publisherIdentifier": "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme": "ROR"
+      }
+      doi.save
+
+      DataciteDoi.import
+      Activity.import
+      sleep 2
+    end
+
+    it "returns the activities when publisher param is set to true" do
+      get "/activities?publisher=true&datacite-doi-id=#{doi.doi.downcase}",
+          nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data").length).to eq(2)
+      expect(json.dig("meta", "total")).to eq(2)
+      expect(json.dig("data", 1, "attributes", "action")).to eq("create")
+      expect(json.dig("data", 1, "attributes", "changes", "publisher")).to eq(
+        nil
+      )
+      expect(json.dig("data", 0, "attributes", "action")).to eq("update")
+      expect(json.dig("data", 0, "attributes", "changes", "publisher")).to eq(
+        [ nil,
+          {
+            "lang" => "en",
+            "name" => "Dryad Digital Repository",
+            "schemeUri" => "https://ror.org/",
+            "publisherIdentifier" => "https://ror.org/00x6h5n95",
+            "publisherIdentifierScheme" => "ROR"
+          }
+        ]
+      )
+      expect(json.dig("data", 0, "attributes", "changes", "publisher_obj")).not_to be_present
+    end
+
+    it "returns the activities when publisher param is not set" do
+      get "/activities?datacite-doi-id=#{doi.doi.downcase}",
+          nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data").length).to eq(2)
+      expect(json.dig("meta", "total")).to eq(2)
+      expect(json.dig("data", 1, "attributes", "action")).to eq("create")
+      expect(json.dig("data", 1, "attributes", "changes", "publisher")).to eq(
+        nil
+      )
+      expect(json.dig("data", 0, "attributes", "action")).to eq("update")
+      expect(json.dig("data", 0, "attributes", "changes", "publisher")).to eq(
+        [ nil,
+          "Dryad Digital Repository",
+        ]
+      )
+    end
+  end
 end

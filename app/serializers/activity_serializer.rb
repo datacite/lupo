@@ -15,54 +15,53 @@ class ActivitySerializer
 
   attribute :changes do |object, params|
     changes = object._source.changes
-    pub = changes.publisher
-    pub_obj = changes.publisher_obj
+    publisher = changes.try(:publisher)
+    publisher_obj = changes.try(:publisher_obj)
+    changes.delete(:publisher_obj) if publisher_obj
 
-    ret = changes
-
-    if object._source.action == "update"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher =
-              [
-                { "name": pub[0] },
-                { "name": pub[1] },
-              ]
-          else
-            changes.publisher = changes.publisher_obj
-          end
-        else
-          if !pub
-            changes.publisher = [ pub_obj[0].name, pub_obj[1].name ]
-          end
+    if publisher || publisher_obj
+      original_pub =
+        if publisher_obj.is_a?(Array)
+          publisher_obj[0]
+        elsif publisher.is_a?(Array)
+          publisher[0].present? ? { "name" => publisher[0] } : nil
+        elsif publisher_obj.is_a?(Hash)
+          publisher_obj
+        elsif publisher.is_a?(String)
+          { "name" => publisher }
         end
 
-        ret = changes
-      end
-    elsif object._source.action == "create"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher = { "name": pub }
-          else
-            changes.publisher = changes.publisher_obj
-          end
-        else
-          if !pub
-            changes.publisher = pub_obj.name
-          end
+      changed_pub =
+        if publisher_obj.is_a?(Array)
+          publisher_obj[1]
+        elsif publisher.is_a?(Array)
+          publisher[1].present? ? { "name" => publisher[1] } : nil
         end
 
-        ret = changes
+      case object._source.action
+      when "update"
+        if params&.dig(:publisher) == "true"
+          changes.publisher =
+          [
+            original_pub,
+            changed_pub
+          ]
+        else
+          changes.publisher = [
+            original_pub.present? ? original_pub.fetch("name", nil) : nil,
+            changed_pub.present? ? changed_pub.fetch("name", nil) : nil,
+          ]
+        end
+      when "create"
+        if params&.dig(:publisher) == "true"
+          changes.publisher = original_pub
+        else
+          changes.publisher = original_pub.fetch("name", nil)
+        end
       end
     end
 
-    if pub_obj
-      changes.delete("publisher_obj")
-    end
-
-    ret
+    changes
   end
 
   attribute "prov:wasDerivedFrom", &:was_derived_from
