@@ -600,6 +600,7 @@ class Doi < ApplicationRecord
       "provider_id" => provider_id,
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
+      "person_id" => person_id,
       "client_id_and_name" => client_id_and_name,
       "provider_id_and_name" => provider_id_and_name,
       "resource_type_id_and_name" => resource_type_id_and_name,
@@ -668,6 +669,7 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
+      "related_doi" => related_dois,
       "publisher_obj" => publisher,
     }
   end
