@@ -4,7 +4,6 @@
 require "rails_helper"
 
 RSpec.describe Doi::Indexer::RelatedDoiIndexer do
-
   describe "related_dois with different input" do
     let(:good_related_identifier) do
       {
@@ -40,13 +39,13 @@ RSpec.describe Doi::Indexer::RelatedDoiIndexer do
     it "exclude DOIs with if a required key is missing" do
       expect(described_class.new(
         good_related_identifier.except("relatedIdentifier")
-      ).related_dois).to eq( [])
+      ).related_dois).to eq([])
       expect(described_class.new(
         good_related_identifier.except("relatedIdentifierType")
-      ).related_dois).to eq( [])
+      ).related_dois).to eq([])
       expect(described_class.new(
         good_related_identifier.except("relationType")
-      ).related_dois).to eq( [])
+      ).related_dois).to eq([])
     end
   end
 
@@ -92,24 +91,24 @@ RSpec.describe Doi::Indexer::RelatedDoiIndexer do
         {
           "10.1234/5678" => [
             {
-              "relatedIdentifier"=> "10.1234/5678",
-              "relatedIdentifierType"=> "DOI",
-              "relationType"=> "IsPartOf",
-              "resourceTypeGeneral"=> "Dataset",
+              "relatedIdentifier" => "10.1234/5678",
+              "relatedIdentifierType" => "DOI",
+              "relationType" => "IsPartOf",
+              "resourceTypeGeneral" => "Dataset",
             }
           ],
           "10.1234/9999" => [
             {
-              "relatedIdentifier"=> "10.1234/9999",
-              "relatedIdentifierType"=> "DOI",
-              "relationType"=> "HasVersion",
-              "resourceTypeGeneral"=> "Text",
+              "relatedIdentifier" => "10.1234/9999",
+              "relatedIdentifierType" => "DOI",
+              "relationType" => "HasVersion",
+              "resourceTypeGeneral" => "Text",
             },
             {
-              "relatedIdentifier"=> "10.1234/9999",
-              "relatedIdentifierType"=> "DOI",
-              "relationType"=> "References",
-              "resourceTypeGeneral"=> "Text",
+              "relatedIdentifier" => "10.1234/9999",
+              "relatedIdentifierType" => "DOI",
+              "relationType" => "References",
+              "resourceTypeGeneral" => "Text",
             }
           ],
         }
