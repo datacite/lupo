@@ -178,7 +178,7 @@ Rails.application.routes.draw do
 
   resources :heartbeat, only: %i[index]
 
-  resources :activities, only: %i[index show]
+  resources :activities, constraints: { id: /.+/ }
 
   resources :clients, constraints: { id: /.+/ } do
     resources :prefixes, constraints: { id: /.+/ }

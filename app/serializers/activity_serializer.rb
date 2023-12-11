@@ -14,55 +14,33 @@ class ActivitySerializer
              :version
 
   attribute :changes do |object, params|
-    changes = object._source.changes
-    pub = changes.publisher
-    pub_obj = changes.publisher_obj
+    if object.is_a? Activity
+      changes = object.audited_changes
+      action = object.action
+    else
+      changes = object._source.changes
+      action = object._source.action
+    end
 
-    ret = changes
+    pub = changes.dig("publisher")
+    pub_obj = changes.dig("publisher_obj")
 
-    if object._source.action == "update"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher =
-              [
-                { "name": pub[0] },
-                { "name": pub[1] },
-              ]
-          else
-            changes.publisher = changes.publisher_obj
-          end
+    if params&.dig(:publisher) == "true"
+      changes[:publisher] =
+        if pub_obj
+          changes[:publisher] = pub_obj
         else
-          if !pub
-            changes.publisher = [ pub_obj[0].name, pub_obj[1].name ]
-          end
+          changes[:publisher] = action == "update" ? [{ "name": pub[0] }, { "name": pub[1] }] : { "name": pub }
         end
-
-        ret = changes
-      end
-    elsif object._source.action == "create"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher = { "name": pub }
-          else
-            changes.publisher = changes.publisher_obj
-          end
-        else
-          if !pub
-            changes.publisher = pub_obj.name
-          end
-        end
-
-        ret = changes
+    else
+      if pub_obj
+        changes[:publisher] = action == "update" ? [pub_obj[0]["name"], pub_obj[1]["name"]] : pub_obj["name"]
       end
     end
 
-    if pub_obj
-      changes.delete("publisher_obj")
-    end
+    changes.delete("publisher_obj") if pub_obj
 
-    ret
+    changes
   end
 
   attribute "prov:wasDerivedFrom", &:was_derived_from
