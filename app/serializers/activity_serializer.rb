@@ -14,6 +14,7 @@ class ActivitySerializer
              :version
 
   attribute :changes do |object, params|
+    # Object is of different class if it comes from /activities/:uid
     if object.is_a? Activity
       changes = object.audited_changes
       action = object.action
@@ -22,16 +23,15 @@ class ActivitySerializer
       action = object._source.action
     end
 
-    pub = changes.dig("publisher")
-    pub_obj = changes.dig("publisher_obj")
+    pub = changes&.dig("publisher")
+    pub_obj = changes&.dig("publisher_obj")
 
     if params&.dig(:publisher) == "true"
-      changes[:publisher] =
-        if pub_obj
-          changes[:publisher] = pub_obj
-        else
-          changes[:publisher] = action == "update" ? [{ "name": pub[0] }, { "name": pub[1] }] : { "name": pub }
-        end
+      if pub_obj
+        changes[:publisher] = pub_obj
+      else
+        changes[:publisher] = action == "update" ? [{ "name": pub[0] }, { "name": pub[1] }] : { "name": pub }
+      end
     else
       if pub_obj
         changes[:publisher] = action == "update" ? [pub_obj[0]["name"], pub_obj[1]["name"]] : pub_obj["name"]
