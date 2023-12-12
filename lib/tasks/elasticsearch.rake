@@ -32,6 +32,7 @@ namespace :elasticsearch do
     Rake::Task["event:create_alias"].invoke
 
     Rake::Task["activity:create_index"].invoke
+    Rake::Task["activity:create_alias"].invoke
 
     Rake::Task["contact:create_index"].invoke
     Rake::Task["contact:create_alias"].invoke

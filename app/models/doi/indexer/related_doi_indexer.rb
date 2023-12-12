@@ -2,13 +2,27 @@
 
 module Doi::Indexer
   class RelatedDoiIndexer
+    REQUIRED_KEYS = %w[
+      relatedIdentifier
+      relatedIdentifierType
+      relationType
+    ]
+
     def initialize(related_identifiers)
       @related_identifiers = Array.wrap(related_identifiers)
       @related_dois = nil
     end
 
+    def is_related_doi?(related)
+      related.is_a?(Hash) &&
+        REQUIRED_KEYS.all? { |k| related.key?(k) } &&
+        related.fetch("relatedIdentifierType", nil) == "DOI"
+    end
+
     def related_dois
-      @related_dois ||= @related_identifiers.select { |r| r.fetch("relatedIdentifierType", nil) == "DOI" }
+      @related_dois ||= @related_identifiers.select do |r|
+        is_related_doi?(r)
+      end
     end
 
     def related_grouped_by_id

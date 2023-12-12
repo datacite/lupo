@@ -36,6 +36,11 @@ namespace :activity do
     puts Activity.monitor_reindex
   end
 
+  desc "Create alias for activities"
+  task create_alias: :environment do
+    puts Activity.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
   desc "Import all activities"
   task import: :environment do
     from_id = (ENV["FROM_ID"] || 1).to_i

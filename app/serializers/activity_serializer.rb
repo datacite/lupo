@@ -14,55 +14,49 @@ class ActivitySerializer
              :version
 
   attribute :changes do |object, params|
-    changes = object._source.changes
-    pub = changes.publisher
-    pub_obj = changes.publisher_obj
+    # Determine the source and action based on the object's type
+    if object.is_a? Activity
+      changes = object.audited_changes
+      action = object.action
+    else
+      changes = object._source.changes
+      action = object._source.action
+    end
 
-    ret = changes
+    # Extract publisher and publisher_obj from changes
+    pub = changes&.dig("publisher")
+    pub_obj = changes&.dig("publisher_obj")
 
-    if object._source.action == "update"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher =
-              [
-                { "name": pub[0] },
-                { "name": pub[1] },
-              ]
-          else
-            changes.publisher = changes.publisher_obj
-          end
+    # Customize publisher information based on params[:publisher]
+    if pub || pub_obj
+      if params&.dig(:publisher) == "true"
+        if pub_obj
+          changes["publisher"] = pub_obj
         else
-          if !pub
-            changes.publisher = [ pub_obj[0].name, pub_obj[1].name ]
-          end
+          changes["publisher"] =
+            action == "update" ? [
+              pub[0] ? { "name": pub[0] } : nil,
+              pub[1] ? { "name": pub[1] } : nil
+            ] : { "name": pub }
         end
-
-        ret = changes
-      end
-    elsif object._source.action == "create"
-      if pub || pub_obj
-        if params[:publisher] == "true"
-          if !pub_obj
-            changes.publisher = { "name": pub }
-          else
-            changes.publisher = changes.publisher_obj
-          end
+      else
+        if pub_obj
+          changes["publisher"] =
+            action == "update" ? [
+              pub_obj[0] ? pub_obj[0]["name"] : nil,
+              pub_obj[1] ? pub_obj[1]["name"] : nil
+            ] : pub_obj["name"]
         else
-          if !pub
-            changes.publisher = pub_obj.name
-          end
+          changes["publisher"] = pub
         end
-
-        ret = changes
       end
     end
 
-    if pub_obj
-      changes.delete("publisher_obj")
-    end
+    # Remove the not needed "publisher_obj" key
+    changes.delete("publisher_obj")
 
-    ret
+    # Return the modified changes
+    changes
   end
 
   attribute "prov:wasDerivedFrom", &:was_derived_from
