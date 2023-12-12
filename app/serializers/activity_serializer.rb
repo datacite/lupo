@@ -14,7 +14,7 @@ class ActivitySerializer
              :version
 
   attribute :changes do |object, params|
-    # Object is of different class if it comes from /activities/:uid
+    # Determine the source and action based on the object's type
     if object.is_a? Activity
       changes = object.audited_changes
       action = object.action
@@ -23,9 +23,11 @@ class ActivitySerializer
       action = object._source.action
     end
 
+    # Extract publisher and publisher_obj from changes
     pub = changes&.dig("publisher")
     pub_obj = changes&.dig("publisher_obj")
 
+    # Customize publisher information based on params[:publisher]
     if pub || pub_obj
       if params&.dig(:publisher) == "true"
         if pub_obj
@@ -50,8 +52,10 @@ class ActivitySerializer
       end
     end
 
+    # Remove the not needed "publisher_obj" key
     changes.delete("publisher_obj")
 
+    # Return the modified changes
     changes
   end
 

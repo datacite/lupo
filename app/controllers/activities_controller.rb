@@ -145,9 +145,7 @@ class ActivitiesController < ApplicationController
 
   protected
     def set_activity
-      response = Activity.find_by_request_uuid!(params[:id])
-      @activity = response
-
+      @activity = Activity.find_by_request_uuid!(params[:id])
       fail ActiveRecord::RecordNotFound if @activity.blank?
     end
 end
