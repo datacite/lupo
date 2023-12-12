@@ -30,15 +30,15 @@ class ActivitySerializer
       if pub_obj
         changes["publisher"] = pub_obj
       else
-        changes["publisher"] = 
+        changes["publisher"] =
           action == "update" ? [
-            pub[0] ? { "name": pub[0] } : nil, 
+            pub[0] ? { "name": pub[0] } : nil,
             pub[1] ? { "name": pub[1] } : nil
           ] : { "name": pub }
       end
     else
       if pub_obj
-        changes["publisher"] = 
+        changes["publisher"] =
           action == "update" ? [
             pub_obj[0] ? pub_obj[0]["name"] : nil,
             pub_obj[1] ? pub_obj[1]["name"] : nil
