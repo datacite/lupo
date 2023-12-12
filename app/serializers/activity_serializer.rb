@@ -28,13 +28,23 @@ class ActivitySerializer
 
     if params&.dig(:publisher) == "true"
       if pub_obj
-        changes[:publisher] = pub_obj
+        changes["publisher"] = pub_obj
       else
-        changes[:publisher] = action == "update" ? [{ "name": pub[0] }, { "name": pub[1] }] : { "name": pub }
+        changes["publisher"] = 
+          action == "update" ? [
+            pub[0] ? { "name": pub[0] } : nil, 
+            pub[1] ? { "name": pub[1] } : nil
+          ] : { "name": pub }
       end
     else
       if pub_obj
-        changes[:publisher] = action == "update" ? [pub_obj[0]["name"], pub_obj[1]["name"]] : pub_obj["name"]
+        changes["publisher"] = 
+          action == "update" ? [
+            pub_obj[0] ? pub_obj[0]["name"] : nil,
+            pub_obj[1] ? pub_obj[1]["name"] : nil
+          ] : pub_obj["name"]
+      else
+        changes["publisher"] = pub
       end
     end
 
