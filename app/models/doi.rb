@@ -1742,7 +1742,9 @@ class Doi < ApplicationRecord
   def organization_id
     organization_ids = (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
-        sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil)) if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
+          sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil))
+        end
       end
       sum
     end
