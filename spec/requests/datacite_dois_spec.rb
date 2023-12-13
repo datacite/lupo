@@ -248,6 +248,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       get "/dois?publisher=true", nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json["data"].length).to eq(1)
       json["data"].each do |doi|
         expect(doi.dig("attributes", "publisher")).to eq(nil)
       end
@@ -266,7 +267,6 @@ describe DataciteDoisController, type: :request, vcr: true do
       get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].length).to eq(1)
       expect(json.dig("attributes", "publisher")).to eq(nil)
     end
 
