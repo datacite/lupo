@@ -123,10 +123,10 @@ class DataciteDoiSerializer
     # new obj format only if ?publisher=true, otherwise serialize the old format (a string)
     publisher = object.try(:publisher_obj) || object.try(:publisher)
 
-    nil if publisher.nil?
-
     if params&.dig(:publisher) == "true"
-      publisher = publisher.respond_to?(:to_hash) ? publisher : { "name" => publisher }
+      if !publisher.nil?
+        publisher = publisher.respond_to?(:to_hash) ? publisher : { "name" => publisher }
+      end
     else
       publisher = publisher.respond_to?(:to_hash) ? publisher["name"] : publisher
     end
