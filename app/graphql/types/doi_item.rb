@@ -331,7 +331,7 @@ module DoiItem
   def get_other_related_ids(_doi)
     Event.events_involving(_doi).map do |e|
       e.doi
-    end.flatten.uniq - [_doi.downcase]
+    end.flatten.uniq - [_doi.downcase, nil]
   end
 
 
