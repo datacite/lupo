@@ -669,7 +669,6 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
-      "related_doi" => related_dois,
       "publisher_obj" => publisher,
     }
   end
