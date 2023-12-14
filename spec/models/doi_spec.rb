@@ -33,48 +33,79 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
   describe "after_commit" do
     let(:doi) { create(:doi, aasm_state: "findable") }
-    context "when aasm_state is findable" do
-      before do
-        allow(doi).to receive(:saved_change_to_attribute?).and_return(false)
-        allow(doi).to receive(:aasm_state_changed?).and_return(false)
-        allow(doi).to receive(:send_import_message)
+    let(:sqs_client) { instance_double(Aws::SQS::Client) }
+
+    before do
+      allow_any_instance_of(DataciteDoi).to receive(:send_message)
+      allow(Aws::SQS::Client).to receive(:new).and_return(sqs_client)
+      allow(IndexJob).to receive(:perform_later)
+      allow(DataciteDoi).to receive_message_chain(:__elasticsearch__, :index_document)
+    end
+
+    context "On Update event" do
+      it "sends import message if relevant attributes are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(related_identifiers: [{ "relatedIdentifier" => "new_identifier", "relatedIdentifierType" => "DOI", "relationType" => "IsPartOf" }])
+        end
       end
 
-      it "sends import message if related_identifiers is modified" do
-        doi.related_identifiers = ["new_identifier"]
-        doi.save
-        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      it "sends import message if creators are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(creators: [{ "nameType" => "Personal", "name" => "New Creator" }])
+        end
       end
 
-      it "sends import message if creators is modified" do
-        doi.creators = ["new_creator"]
-        doi.save
-        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      it "sends import message if funding_references are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(funding_references: [{ "funder" => "New Funder", "title" => "New Title" }])
+        end
       end
 
-      it "sends import message if funding_references is modified" do
-        doi.funding_references = ["new_reference"]
-        doi.save
-        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      it "does not send import message if no relevant attributes are modified" do
+        expect(doi).not_to receive(:send_import_message)
+
+        doi.update(titles: "New Title")
       end
 
-      it "sends import message if aasm_state is changed" do
-        doi.aasm_state = "another_state"
-        doi.save
-        expect(doi).to have_received(:send_import_message).with(doi.to_jsonapi)
+      it "does not send import message if aasm_state is not 'findable'" do
+        expect(doi).not_to receive(:send_import_message)
+
+        doi.update(aasm_state: "draft")
       end
 
-      it "does not send import message if none of the conditions are met" do
-        doi.save
-        expect(doi).not_to have_received(:send_import_message)
+      it "does not send import message after create if aasm_state is not 'findable'" do
+        new_doi = create(:doi, aasm_state: "draft")
+
+        expect(new_doi).not_to receive(:send_import_message)
       end
     end
 
-    context "when aasm_state is not findable" do
-      it "does not send import message" do
-        allow(doi).to receive(:aasm_state).and_return("not_findable")
-        doi.save
-        expect(doi).not_to have_received(:send_import_message)
+    context "On Create event" do
+      it "sends import message after create if aasm_state is 'findable'" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          new_doi = build(:doi, aasm_state: "findable")
+          allow(new_doi).to receive(:send_import_message)
+          new_doi.save
+
+          # Sleep for a short duration to ensure the asynchronous after_commit has completed
+          sleep 1
+
+          expect(new_doi).to have_received(:send_import_message).with(new_doi.to_jsonapi)
+        end
+      end
+
+      it "does not send import message after create if aasm_state is not 'findable'" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          new_doi = create(:doi, aasm_state: "draft")
+
+          expect(new_doi).not_to receive(:send_import_message)
+        end
       end
     end
   end
