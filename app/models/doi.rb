@@ -572,6 +572,13 @@ class Doi < ApplicationRecord
         resource_type_id: { type: :keyword },
         resource_type_id_and_name: { type: :keyword },
       }
+      indexes :publisher_obj, type: :object, properties: {
+        name: { type: :text, fields: { keyword: { type: "keyword" } } },
+        publisherIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+        publisherIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        lang: { type: :keyword },
+      }
     end
   end
 
@@ -662,6 +669,7 @@ class Doi < ApplicationRecord
       "version_ids" => version_ids,
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
+      "publisher_obj" => publisher,
     }
   end
 
@@ -934,6 +942,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
+      query = query.gsub(/(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/, 'publisher_obj.\2')
       query = query.gsub("/", "\\/")
     end
 
@@ -1730,14 +1739,22 @@ class Doi < ApplicationRecord
   end
 
   def organization_id
-    (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
+    organization_ids = (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
         if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ROR" && name_identifier.fetch("nameIdentifier", nil).present?
           sum << ror_from_url(name_identifier.fetch("nameIdentifier", nil))
         end
       end
-      sum.uniq
+      sum
     end
+    organization_ids << ror_from_url(publisher["publisherIdentifier"]) if publisher_has_ror?
+    organization_ids.uniq
+  end
+
+  def publisher_has_ror?
+    publisher.is_a?(Hash) &&
+      publisher.fetch("publisherIdentifierScheme", nil) == "ROR" &&
+      publisher.fetch("publisherIdentifier", nil).present?
   end
 
   def fair_organization_id

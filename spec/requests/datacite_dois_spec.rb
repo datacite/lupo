@@ -224,28 +224,21 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
     end
-
-    it "returns publisher objects when publisher param is set to true" do
-      get "/dois?publisher=true", nil, headers
-
-      expect(last_response.status).to eq(200)
-      json["data"].each do |doi|
-        expect(doi.dig("attributes", "publisher")).to eq(
-          {
-            "name" => "Dryad Digital Repository",
-          }
-        )
-      end
-    end
   end
 
   describe "GET /dois with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
     it "returns nil publisher when publisher param is not set" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json["data"].length).to eq(1)
       json["data"].each do |doi|
         expect(doi.dig("attributes", "publisher")).to eq(nil)
       end
@@ -255,6 +248,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       get "/dois?publisher=true", nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json["data"].length).to eq(1)
       json["data"].each do |doi|
         expect(doi.dig("attributes", "publisher")).to eq(nil)
       end
@@ -263,6 +257,11 @@ describe DataciteDoisController, type: :request, vcr: true do
 
   describe "GET /dois/:id with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
 
     it "returns nil publisher when publisher param is not set" do
       get "/dois/#{doi.doi}", nil, headers
@@ -279,7 +278,155 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with filter", elasticsearch: true do
+  describe "GET /dois with publisher values", elasticsearch: true do
+    let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher:
+        {
+          "name": "DataCite",
+          "publisherIdentifier": "https://ror.org/04wxnsj81",
+          "publisherIdentifierScheme": "ROR",
+          "schemeUri": "https://ror.org/",
+          "lang": "en",
+        }
+      )
+    }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
+    it "returns publisher hashes when publisher param is set to true" do
+      get "/dois?publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(11)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher").class).to be(Hash)
+        expect(doi.dig("attributes", "publisher").keys.length).to be(5)
+        doi.dig("attributes", "publisher").each do |key, value|
+          expect(value).to be_present
+        end
+      end
+    end
+
+    it "returns publisher strings when publisher param is not set" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(11)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher").class).to be(String)
+        expect(doi.dig("attributes", "publisher")).to be_present
+      end
+    end
+
+    it "filters by publisher using query" do
+      get "/dois?query=datacite&publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+
+    it "filters by publisher using query string query" do
+      get "/dois?query=publisher:datacite&publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+
+    it "filters by publisher name using query string query" do
+      get "/dois?query=publisher.name:datacite&publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+
+    it "filters by publisherIdentifier using query string query" do
+      get "/dois?query=publisher.publisherIdentifier:\"https://ror.org/04wxnsj81\"&publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "publisher")).to eq(
+          {
+            "name" => "DataCite",
+            "publisherIdentifier" => "https://ror.org/04wxnsj81",
+            "publisherIdentifierScheme" => "ROR",
+            "schemeUri" => "https://ror.org/",
+            "lang" => "en",
+          }
+        )
+      end
+    end
+  end
+
+  describe "GET /dois/:id with publisher values", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+    it "returns publisher hash when publisher param is set to true" do
+      get "/dois/#{doi.doi}?publisher=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", "attributes", "publisher")).to eq(
+        {
+          "name" => "Dryad Digital Repository",
+          "publisherIdentifier" => "https://ror.org/00x6h5n95",
+          "publisherIdentifierScheme" => "ROR",
+          "schemeUri" => "https://ror.org/",
+          "lang" => "en"
+        }
+      )
+    end
+
+    it "returns publisher string when publisher param is not set" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", "attributes", "publisher")).to eq("Dryad Digital Repository")
+    end
+  end
+
+  describe "GET /dois with client-type filter", elasticsearch: true do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
     let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" }) }
@@ -304,6 +451,48 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["data"].size).to eq(1)
       expect(json.dig("data", 0, "id")).to eq(doi_igsn_id.uid)
       expect(json.dig("meta", "createdByMonth", 0, "title")).to eq(doi_igsn_id.created.to_time.strftime("%Y-%m"))
+    end
+  end
+
+  describe "GET /dois with resource-type-id filter", elasticsearch: true do
+    let!(:instrument_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "Instrument" }) }
+    let!(:study_registration_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "StudyRegistration" }) }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
+    it "filters for Instrument dois when resource-type-id is set to instrument", vcr: true do
+      get "/dois?resource-type-id=instrument", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("meta", "resourceTypes", 0)).to eq(
+        {
+          "id" => "instrument",
+          "title" => "Instrument",
+          "count" => 1
+        }
+      )
+      expect(json.dig("meta", "resourceTypes").length).to eq(1)
+      expect(json.dig("data", 0, "attributes", "types", "resourceTypeGeneral")).to eq("Instrument")
+    end
+
+    it "filters for StudyRegistration dois when resource-type-id is set to instrument", vcr: true do
+      get "/dois?resource-type-id=study-registration", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("meta", "resourceTypes", 0)).to eq(
+        {
+          "id" => "study-registration",
+          "title" => "Study Registration",
+          "count" => 1
+        }
+      )
+      expect(json.dig("meta", "resourceTypes").length).to eq(1)
+      expect(json.dig("data", 0, "attributes", "types", "resourceTypeGeneral")).to eq("StudyRegistration")
     end
   end
 
@@ -3500,6 +3689,30 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
           expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
           expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2011", "dateType" => "Issued" }])
+        end
+      end
+
+      context "validates schema 4.5 xml" do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-full-v4.5.xml"))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/10703",
+                "xml" => xml,
+              },
+            },
+          }
+        end
+
+        it "validates a Doi" do
+          post "/dois/validate", params, headers
+
+          expect(last_response.status).to eq(200)
+          expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+          expect(json.dig("data", "attributes", "titles", 0)).to eq({ "title" => "Example Title", "lang" => "en" })
+          expect(json.dig("data", "attributes", "relatedIdentifiers").last).to eq({ "relatedIdentifierType" => "DOI", "relationType" => "IsCollectedBy", "resourceTypeGeneral" => "Other", "relatedIdentifier" => "10.1016/j.epsl.2011.11.037" })
         end
       end
 

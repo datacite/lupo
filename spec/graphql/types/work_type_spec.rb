@@ -2112,3 +2112,75 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
     expect(response.dig("data", "works", "totalCount")).to eq(10)
   end
 end
+
+describe "query with resourceTypeId", elasticsearch: true do
+  let!(:instrument_doi) do
+    create(:doi, aasm_state: "findable",
+      types: {
+        "resourceTypeGeneral" => "Instrument",
+      },
+    )
+  end
+
+  let!(:study_registration_doi) do
+    create(:doi, aasm_state: "findable",
+      types: {
+        "resourceTypeGeneral" => "StudyRegistration",
+      },
+    )
+  end
+
+  before do
+    Doi.import
+    sleep 2
+  end
+
+  let(:query) do
+    "query($first: Int, $cursor: String, $resourceTypeId: String) {
+      works(first: $first, after: $cursor, resourceTypeId: $resourceTypeId) {
+        totalCount
+        resourceTypes {
+          id
+          title
+          count
+        }
+        nodes {
+          doi
+          types {
+            resourceTypeGeneral
+          }
+        }
+      }
+    }"
+  end
+
+  it "returns instrument resource types" do
+    response =
+      LupoSchema.execute(
+        query,
+        variables: { resourceTypeId: "instrument" }
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "resourceTypes")).to eq(
+      [{ "count" => 1, "id" => "instrument", "title" => "Instrument" }]
+    )
+    expect(response.dig("data", "works", "nodes", 0, "doi")).to eq(instrument_doi.doi.downcase)
+    expect(response.dig("data", "works", "nodes", 0, "types", "resourceTypeGeneral")).to eq("Instrument")
+  end
+
+  it "returns study registration resource types" do
+    response =
+      LupoSchema.execute(
+        query,
+        variables: { resourceTypeId: "study-registration" }
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "resourceTypes")).to eq(
+      [{ "count" => 1, "id" => "study-registration", "title" => "Study Registration" }]
+    )
+    expect(response.dig("data", "works", "nodes", 0, "doi")).to eq(study_registration_doi.doi.downcase)
+    expect(response.dig("data", "works", "nodes", 0, "types", "resourceTypeGeneral")).to eq("StudyRegistration")
+  end
+end
