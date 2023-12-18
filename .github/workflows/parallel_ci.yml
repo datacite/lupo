@@ -88,7 +88,7 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         run: |
           cp .env.build .env
-          gem install bundler
+          gem install bundler -v 2.1.4
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           bundle exec rails db:setup RAILS_ENV=test
