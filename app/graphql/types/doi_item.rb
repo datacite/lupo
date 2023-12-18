@@ -62,10 +62,10 @@ module DoiItem
         description:
           "The year when the data was or will be made publicly available"
   field :publisher,
-        String,
+        PublisherType,
         null: true,
         description:
-          "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
+          "The entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects,
         [SubjectType],
         null: true,
@@ -580,14 +580,7 @@ module DoiItem
   end
 
   def publisher
-    case object.publisher
-    when Hash
-      object.publisher["name"]
-    when String
-      object.publisher
-    else
-      object.publisher
-    end
+    publisher = object.try(:publisher_obj) || object.try(:publisher)
   end
 
   def bibtex
