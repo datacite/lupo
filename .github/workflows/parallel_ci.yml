@@ -88,8 +88,8 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         run: |
           cp .env.build .env
-          gem update --system 3.0.8
-          gem install bundler
+          gem install rubygems-update -v 3.4.22
+          gem install bundler:2.4.20
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
           bundle exec rails db:setup RAILS_ENV=test
