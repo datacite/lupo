@@ -580,7 +580,7 @@ module DoiItem
   end
 
   def publisher
-    publisher = object.try(:publisher_obj) || object.try(:publisher)
+    object.try(:publisher_obj) || object.try(:publisher)
   end
 
   def bibtex
