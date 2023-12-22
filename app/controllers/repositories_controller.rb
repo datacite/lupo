@@ -10,7 +10,6 @@ class RepositoriesController < ApplicationController
   load_and_authorize_resource :client,
                               parent: false,
                               except: %i[index show create totals random stats]
-  around_action :skip_bullet, only: %i[index], if: -> { defined?(Bullet) }
 
   def index
     sort =

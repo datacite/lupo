@@ -79,4 +79,11 @@ Rails.application.configure do
 
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
+
+  # Should this be removed?
+  # I love to have this in to test the index process.
+  config.after_initialize do
+    Prosopite.rails_logger = true
+    Prosopite.raise = true
+  end
 end

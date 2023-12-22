@@ -5,7 +5,6 @@ class ProviderPrefixesController < ApplicationController
   before_action :set_provider_prefix, only: %i[show update destroy]
   before_action :set_include
   authorize_resource except: %i[index show]
-  around_action :skip_bullet, only: %i[index], if: -> { defined?(Bullet) }
 
   def index
     sort =

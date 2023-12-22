@@ -44,12 +44,14 @@ class DataciteDoi < Doi
 
     # TODO remove query for type once STI is enabled
     # SQS message size limit is 256 kB, up to 2 GB with S3
-    DataciteDoi.where(type: "DataciteDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: batch_size) do |dois|
-      ids = dois.pluck(:id)
-      DataciteDoiImportInBulkJob.perform_later(ids, index: index)
-      count += ids.length
-    end
+    DataciteDoi
+      .where(type: "DataciteDoi")
+      .where(id: from_id..until_id)
+      .find_in_batches(batch_size: batch_size) do |dois|
+        ids = dois.pluck(:id)
+        DataciteDoiImportInBulkJob.perform_later(ids, index: index)
+        count += ids.length
+      end
 
     Rails.logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
     count
@@ -89,7 +91,7 @@ class DataciteDoi < Doi
     errors = 0
 
     # get database records from array of database ids
-    dois = DataciteDoi.where(id: ids)
+    dois = DataciteDoi.where(id: ids).include(:metadata)
 
     response =
       DataciteDoi.__elasticsearch__.client.bulk index: index,
