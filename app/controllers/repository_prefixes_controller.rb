@@ -6,7 +6,6 @@ class RepositoryPrefixesController < ApplicationController
   before_action :set_client_prefix, only: %i[show update destroy]
   before_action :authenticate_user!
   before_action :set_include
-  around_action :skip_bullet, only: %i[index], if: -> { defined?(Bullet) }
 
   def index
     sort =
