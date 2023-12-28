@@ -13,7 +13,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2023_10_04_145109) do
-
   create_table "active_storage_attachments", charset: "latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
