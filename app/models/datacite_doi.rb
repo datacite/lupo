@@ -89,7 +89,7 @@ class DataciteDoi < Doi
     errors = 0
 
     # get database records from array of database ids
-    dois = DataciteDoi.include(:metadata).where(id: ids)
+    dois = DataciteDoi.includes(:metadata).where(id: ids)
 
     response =
       DataciteDoi.__elasticsearch__.client.bulk index: index,
