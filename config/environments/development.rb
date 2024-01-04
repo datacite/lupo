@@ -46,6 +46,8 @@ Rails.application.configure do
     Prosopite.rails_logger = true
     Prosopite.raise = true
   end
+
+  ActiveRecord::Base.logger = Logger.new(STDOUT)
 end
 
 BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]
