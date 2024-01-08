@@ -7,6 +7,7 @@ module Indexable
 
   included do
     after_commit on: %i[create update] do
+      Rails.logger.info "[Event Data Import Message] After commit"
       # use index_document instead of update_document to also update virtual attributes
       unless %w[Prefix ProviderPrefix ClientPrefix].include?(self.class.name)
         IndexJob.perform_later(self)
@@ -21,8 +22,10 @@ module Indexable
       end
 
       if instance_of?(DataciteDoi) || instance_of?(OtherDoi) || instance_of?(Doi)
+        Rails.logger.info "[Event Data Import Message] #{aasm_state} #{to_jsonapi.inspect} its a DOI"
         if aasm_state == "findable"
           changed_attributes = saved_changes
+          Rails.logger.info "[Event Data Import Message] #{aasm_state} #{changed_attributes.inspect} before call"
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
           if relevant_changes.any?
             send_import_message(to_jsonapi)
