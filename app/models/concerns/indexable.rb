@@ -27,7 +27,7 @@ module Indexable
           changed_attributes = saved_changes
           Rails.logger.info "[Event Data Import Message] #{aasm_state} #{changed_attributes.inspect} before call"
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
-          if relevant_changes.any?
+          if relevant_changes.any? || (created == updated)
             send_import_message(to_jsonapi)
             Rails.logger.info "[Event Data Import Message] #{aasm_state} #{to_jsonapi.inspect} send to Event Data service."
           end
