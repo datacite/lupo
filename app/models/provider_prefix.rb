@@ -57,6 +57,8 @@ class ProviderPrefix < ApplicationRecord
     indexes :client_prefixes, type: :object
   end
 
+  default_scope { includes(:client_prefixes) }
+
   def as_indexed_json(options = {})
     {
       "id" => uid,

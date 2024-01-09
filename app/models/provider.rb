@@ -155,7 +155,7 @@ class Provider < ApplicationRecord
 
   strip_attributes
 
-  scope :eager_import, -> {
+  scope :eager, -> {
     includes(:clients, :contacts, :prefixes).where(clients: { deleted_at: nil }, contacts: { deleted_at: nil }) }
 
   has_many :clients, foreign_key: :allocator

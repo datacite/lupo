@@ -48,7 +48,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     let!(:providers) { create_list(:provider, 3) }
 
     before do
-      Provider.import scope: "eager_import"
+      Provider.import
       sleep 2
     end
 

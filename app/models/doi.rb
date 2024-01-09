@@ -159,6 +159,8 @@ class Doi < ApplicationRecord
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
+  default_scope { includes(:metadata) }
+
   # use different index for testing
   if Rails.env.test?
     index_name "dois-test#{ENV['TEST_ENV_NUMBER']}"
@@ -1874,7 +1876,7 @@ class Doi < ApplicationRecord
   end
 
   def metadata_version
-    current_metadata.metadata_version || 0
+    current_metadata&.metadata_version || 0
   end
 
   def current_media
