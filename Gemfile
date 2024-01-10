@@ -12,7 +12,7 @@ gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
-gem "bolognese", "~> 2.0.3"
+gem "bolognese", "~> 2.1.0"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "commonmarker", "~> 0.23.4"
