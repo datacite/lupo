@@ -22,14 +22,16 @@ module Indexable
       end
 
       if instance_of?(DataciteDoi) || instance_of?(OtherDoi) || instance_of?(Doi)
-        Rails.logger.info "[Event Data Import Message] #{aasm_state} #{to_jsonapi.inspect} its a DOI"
+        Rails.logger.info "[Event Data Import Message] its a DOI #{aasm_state} #{to_jsonapi} "
         if aasm_state == "findable"
           changed_attributes = saved_changes
-          Rails.logger.info "[Event Data Import Message] #{aasm_state} #{changed_attributes.inspect} before call"
+          Rails.logger.info "[Event Data Import Message] changes -- #{aasm_state} -- #{changes}"
+          Rails.logger.info "[Event Data Import Message] saved_changes -- #{aasm_state} -- #{saved_changes}"
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
+          Rails.logger.info "[Event Data Import Message] before call -- #{aasm_state} -- #{relevant_changes} --- #{(created == updated)}  "
           if relevant_changes.any? || (created == updated)
             send_import_message(to_jsonapi)
-            Rails.logger.info "[Event Data Import Message] #{aasm_state} #{to_jsonapi.inspect} send to Event Data service."
+            Rails.logger.info "[Event Data Import Message] send to Event Data service. #{aasm_state} #{to_jsonapi} "
           end
         end
       elsif instance_of?(Event)
