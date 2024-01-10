@@ -927,6 +927,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
   context "show" do
     let(:doi) do
       allow_any_instance_of(DataciteDoi).to receive(:send_import_message)
+      allow_any_instance_of(Doi).to receive(:send_import_message)
       create(:doi, client: client, aasm_state: "findable")
     end
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
