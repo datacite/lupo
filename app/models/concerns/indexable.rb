@@ -28,7 +28,8 @@ module Indexable
           Rails.logger.info "[Event Data Import Message] changes -- #{aasm_state} -- #{changes}"
           Rails.logger.info "[Event Data Import Message] saved_changes -- #{aasm_state} -- #{saved_changes}"
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
-          Rails.logger.info "[Event Data Import Message] before call -- #{aasm_state} -- #{relevant_changes} --- #{(created == updated)}  "
+          Rails.logger.info "[Event Data Import Message] before call -- #{aasm_state} -- #{relevant_changes} --- #{(created == updated)}"
+          Rails.logger.info "[Event Data Import Message] dates -- #{aasm_state} -- #{created} --- #{updated}  "
           if relevant_changes.any? || (created == updated)
             send_import_message(to_jsonapi)
             Rails.logger.info "[Event Data Import Message] send to Event Data service. #{aasm_state} #{to_jsonapi} "
