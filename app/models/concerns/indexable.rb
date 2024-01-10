@@ -7,7 +7,6 @@ module Indexable
 
   included do
     after_commit on: %i[create update] do
-      Rails.logger.info "[Event Data Import Message] After commit"
       # use index_document instead of update_document to also update virtual attributes
       unless %w[Prefix ProviderPrefix ClientPrefix].include?(self.class.name)
         IndexJob.perform_later(self)
@@ -22,17 +21,12 @@ module Indexable
       end
 
       if instance_of?(DataciteDoi) || instance_of?(OtherDoi) || instance_of?(Doi)
-        Rails.logger.info "[Event Data Import Message] its a DOI #{aasm_state} #{to_jsonapi} "
         if aasm_state == "findable"
           changed_attributes = saved_changes
-          Rails.logger.info "[Event Data Import Message] changes -- #{aasm_state} -- #{changes}"
-          Rails.logger.info "[Event Data Import Message] saved_changes -- #{aasm_state} -- #{saved_changes}"
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
-          Rails.logger.info "[Event Data Import Message] before call -- #{aasm_state} -- #{relevant_changes} --- #{(created == updated)}"
-          Rails.logger.info "[Event Data Import Message] dates -- #{aasm_state} -- #{created} --- #{updated}  "
-          if relevant_changes.any? || (created == updated)
+          if relevant_changes.any? || previously_new_record?
             send_import_message(to_jsonapi)
-            Rails.logger.info "[Event Data Import Message] send to Event Data service. #{aasm_state} #{to_jsonapi} "
+            Rails.logger.info "[Event Data Import Message] State: #{aasm_state} Params: #{to_jsonapi} message sent to Event Data service."
           end
         end
       elsif instance_of?(Event)
