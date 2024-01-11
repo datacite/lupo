@@ -24,7 +24,7 @@ module Indexable
         if aasm_state == "findable"
           changed_attributes = saved_changes
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
-          if relevant_changes.any? || previously_new_record?
+          if relevant_changes.any? || (created == updated)
             send_import_message(to_jsonapi)
             Rails.logger.info "[Event Data Import Message] State: #{aasm_state} Params: #{to_jsonapi} message sent to Event Data service."
           end
