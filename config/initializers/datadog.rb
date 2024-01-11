@@ -8,7 +8,8 @@ Datadog.configure do |c|
     c.env = Rails.env
 
     # Tracing settings
-    c.tracing.analytics.enabled = Rails.env.production?
+    c.tracing.enabled = Rails.env.production?
+    c.tracing.analytics.enabled = true
 
     # Instrumentation
     c.tracing.instrument :rails
