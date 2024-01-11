@@ -98,20 +98,6 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
-    # enable datadog tracing here so that we can inject tracing
-    # information into logs
-    Datadog.configure do |c|
-      c.tracer hostname: "datadog.local",
-               enabled: Rails.env.production?,
-               env: Rails.env
-      c.use :rails, service_name: "client-api"
-      c.use :elasticsearch
-      c.use :active_record, analytics_enabled: false
-      # define graphql integration in app/graphql/lupo_schema.rb
-      # c.use :graphql, schemas: [LupoSchema]
-      c.analytics_enabled = true
-    end
-
     # disable ActiveJob logging, as it is very verbose at log level INFO
     config.active_job.logger = Logger.new(nil)
 
@@ -132,8 +118,7 @@ module Lupo
 
     config.lograge.custom_options = lambda do |event|
       # Retrieves trace information for current thread
-      correlation =
-        Datadog.tracer.active_correlation
+      correlation = Datadog::Tracing.correlation
 
       exceptions = %w[controller action format id]
 

@@ -20,7 +20,7 @@ gem "countries", "~> 2.1", ">= 2.1.2"
 gem "country_select", "~> 3.1"
 gem "crawler_detect"
 gem "dalli", "~> 2.7", ">= 2.7.6"
-gem "ddtrace", "~> 0.32.0"
+gem 'ddtrace', require: 'ddtrace/auto_instrument'
 gem "departure", "~> 6.2"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "dotenv"
