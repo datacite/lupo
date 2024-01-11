@@ -124,7 +124,9 @@ module Lupo
 
       {
         dd: {
-          # Adds IDs as tags to log output
+          env: correlation.env,
+          service: correlation.service,
+          version: correlation.version,
           trace_id: correlation.trace_id,
           span_id: correlation.span_id,
         },

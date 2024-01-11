@@ -12,6 +12,8 @@ Datadog.configure do |c|
   # Tracing settings
   c.tracing.enabled = Rails.env.production?
   c.tracing.analytics.enabled = true
+  # We disable automatic log injection because it doesn't play nice with our formatter
+  c.tracing.log_injection = false
 
   # Instrumentation
   c.tracing.instrument :rails
