@@ -395,6 +395,7 @@ paths:
               - dissertation
               - event
               - image
+              - instrument
               - interactive-resource
               - journal
               - journal-article
@@ -408,6 +409,7 @@ paths:
               - software
               - sound
               - standard
+              - study-registration
               - text
               - workflow
               - other
