@@ -269,13 +269,13 @@ describe OrganizationType do
       ).to eq(6)
 
       works = response.dig("data", "organization", "works", "nodes")
-      expect(works.any? {|w| w.dig("doi") == creator_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == contributor_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == funder_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == member_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == related_through_dmp_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == publisher_doi.doi.downcase} ).to be true
-      expect(works.any? {|w| w.dig("doi") == unrelated_doi.doi.downcase} ).to be false
+      expect(works.any? { |w| w.dig("doi") == creator_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == contributor_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == funder_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == member_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == related_through_dmp_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == publisher_doi.doi.downcase }).to be true
+      expect(works.any? { |w| w.dig("doi") == unrelated_doi.doi.downcase }).to be false
     end
   end
 

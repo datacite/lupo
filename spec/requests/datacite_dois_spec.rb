@@ -229,10 +229,16 @@ describe DataciteDoisController, type: :request, vcr: true do
   describe "GET /dois with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
+
     it "returns nil publisher when publisher param is not set" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json["data"].length).to eq(1)
       json["data"].each do |doi|
         expect(doi.dig("attributes", "publisher")).to eq(nil)
       end
@@ -242,6 +248,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       get "/dois?publisher=true", nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json["data"].length).to eq(1)
       json["data"].each do |doi|
         expect(doi.dig("attributes", "publisher")).to eq(nil)
       end
@@ -250,6 +257,11 @@ describe DataciteDoisController, type: :request, vcr: true do
 
   describe "GET /dois/:id with nil publisher values", elasticsearch: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
+
+    before do
+      DataciteDoi.import
+      sleep 2
+    end
 
     it "returns nil publisher when publisher param is not set" do
       get "/dois/#{doi.doi}", nil, headers
@@ -267,15 +279,15 @@ describe DataciteDoisController, type: :request, vcr: true do
   end
 
   describe "GET /dois with publisher values", elasticsearch: true do
-    let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable" ) }
-    let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher: 
+    let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher:
         {
           "name": "DataCite",
           "publisherIdentifier": "https://ror.org/04wxnsj81",
           "publisherIdentifierScheme": "ROR",
           "schemeUri": "https://ror.org/",
           "lang": "en",
-        } 
+        }
       )
     }
 
@@ -325,7 +337,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -344,7 +356,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -363,7 +375,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -382,7 +394,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "publisherIdentifierScheme" => "ROR",
             "schemeUri" => "https://ror.org/",
             "lang" => "en",
-          } 
+          }
         )
       end
     end
@@ -3166,6 +3178,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
         expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+
         expect(json.dig("data", "attributes", "relatedIdentifiers", 34)).to eq(
           {
             "relatedIdentifier" => "10.1016/j.epsl.2011.11.037",
@@ -3182,6 +3195,11 @@ describe DataciteDoisController, type: :request, vcr: true do
             "resourceTypeGeneral" => "Other"
           }
         )
+
+        expect(json.dig("data", "attributes", "relatedItems", 1, "relationType")).to eq("Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 1, "titles", 0, "title")).to eq("Journal of Metadata Examples - Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "relationType")).to eq("IsCollectedBy")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "titles", 0, "title")).to eq("Journal of Metadata Examples - IsCollectedBy")
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("publisher").content).to eq("Example Publisher")
@@ -3697,7 +3715,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("data", "attributes", "relatedIdentifiers").last).to eq({ "relatedIdentifierType" => "DOI", "relationType" => "IsCollectedBy", "resourceTypeGeneral" => "Other", "relatedIdentifier" => "10.1016/j.epsl.2011.11.037" })
         end
       end
-      
+
       context "when the creators are missing" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite_missing_creator.xml"))) }
         let(:params) do

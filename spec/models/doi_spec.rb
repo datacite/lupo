@@ -31,6 +31,85 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe "after_commit" do
+    let(:doi) { create(:doi, aasm_state: "findable") }
+    let(:sqs_client) { instance_double(Aws::SQS::Client) }
+
+    before do
+      allow_any_instance_of(DataciteDoi).to receive(:send_message)
+      allow(Aws::SQS::Client).to receive(:new).and_return(sqs_client)
+      allow(IndexJob).to receive(:perform_later)
+      allow(DataciteDoi).to receive_message_chain(:__elasticsearch__, :index_document)
+    end
+
+    context "On Update event" do
+      it "sends import message if relevant attributes are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(related_identifiers: [{ "relatedIdentifier" => "new_identifier", "relatedIdentifierType" => "DOI", "relationType" => "IsPartOf" }])
+        end
+      end
+
+      it "sends import message if creators are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(creators: [{ "nameType" => "Personal", "name" => "New Creator" }])
+        end
+      end
+
+      it "sends import message if funding_references are modified" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
+
+          doi.update(funding_references: [{ "funder" => "New Funder", "title" => "New Title" }])
+        end
+      end
+
+      it "does not send import message if no relevant attributes are modified" do
+        expect(doi).not_to receive(:send_import_message)
+
+        doi.update(titles: "New Title")
+      end
+
+      it "does not send import message if aasm_state is not 'findable'" do
+        expect(doi).not_to receive(:send_import_message)
+
+        doi.update(aasm_state: "draft")
+      end
+
+      it "does not send import message after create if aasm_state is not 'findable'" do
+        new_doi = create(:doi, aasm_state: "draft")
+
+        expect(new_doi).not_to receive(:send_import_message)
+      end
+    end
+
+    context "On Create event" do
+      it "sends import message after create if aasm_state is 'findable'" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          new_doi = build(:doi, aasm_state: "findable")
+          allow(new_doi).to receive(:send_import_message)
+          new_doi.save
+
+          # Sleep for a short duration to ensure the asynchronous after_commit has completed
+          sleep 1
+
+          expect(new_doi).to have_received(:send_import_message).with(new_doi.to_jsonapi)
+        end
+      end
+
+      it "does not send import message after create if aasm_state is not 'findable'" do
+        travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
+          new_doi = create(:doi, aasm_state: "draft")
+
+          expect(new_doi).not_to receive(:send_import_message)
+        end
+      end
+    end
+  end
+
   describe "validate agency" do
     it "DataCite" do
       subject = build(:doi, agency: "DataCite")
@@ -1107,6 +1186,66 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "ror.org/013meh722",
           "ror.org/013meh8888",
+        ]
+      )
+    end
+  end
+
+  describe "person_ids" do
+    it "from creators and contributors" do
+      subject = build(
+        :doi,
+        creators: [
+          {
+            "familyName" => "Garza",
+            "givenName" => "Kristian",
+            "name" => "Garza, Kristian",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Cambridge",
+                "affiliationIdentifier" => "https://ror.org/013meh722",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
+        ],
+        contributors: [
+          {
+            "contributorType" => "Sponsor",
+            "familyName" => "Bob",
+            "givenName" => "Jones",
+            "name" => "Jones, Bob",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-0000",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "University of Examples",
+                "affiliationIdentifier" => "https://ror.org/013meh8888",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
+        ]
+      )
+      expect(subject).to be_valid
+      expect(subject.person_id).to eq(
+        [
+          "https://orcid.org/0000-0003-3484-6875",
+          "https://orcid.org/0000-0003-3484-0000",
         ]
       )
     end

@@ -122,23 +122,16 @@ class DataciteDoiSerializer
     # publisher accessor will now always return a publisher object, and indexed documents will store a "publisher_obj" attribute with the publisher object
     # new obj format only if ?publisher=true, otherwise serialize the old format (a string)
     publisher = object.try(:publisher_obj) || object.try(:publisher)
-    if publisher.nil?
-      nil
-    else
-      if params&.dig(:publisher) == "true"
-        if publisher.respond_to?(:to_hash)
-          publisher
-        else
-          { "name" => publisher }
-        end
-      else
-        if publisher.respond_to?(:to_hash)
-          publisher["name"]
-        else
-          publisher
-        end
+
+    if params&.dig(:publisher) == "true"
+      if !publisher.nil?
+        publisher = publisher.respond_to?(:to_hash) ? publisher : { "name" => publisher }
       end
+    else
+      publisher = publisher.respond_to?(:to_hash) ? publisher["name"] : publisher
     end
+
+    publisher
   end
 
   attribute :creators do |object, params|

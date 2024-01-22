@@ -331,7 +331,7 @@ module DoiItem
   def get_other_related_ids(_doi)
     Event.events_involving(_doi).map do |e|
       e.doi
-    end.flatten.uniq - [_doi.downcase]
+    end.flatten.uniq - [_doi.downcase, nil]
   end
 
 
@@ -920,7 +920,7 @@ module DoiItem
       "volume" => object.container.to_h["volume"],
       "issue" => object.container.to_h["issue"],
       "page" => page,
-      "publisher" => object.publisher["name"] || object.publisher,
+      "publisher" => (object.publisher.is_a?(Hash) ? object.publisher&.fetch("name", nil) : object.publisher),
       "title" => parse_attributes(object.titles, content: "title", first: true),
       "URL" => object.url,
       "version" => object.version_info,
