@@ -274,7 +274,7 @@ type Audiovisual implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -609,7 +609,7 @@ type Book implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -893,7 +893,7 @@ type BookChapter implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -1327,7 +1327,7 @@ type Collection implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -1662,7 +1662,7 @@ type ConferencePaper implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -2289,7 +2289,7 @@ type DataManagementPlan implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -2624,7 +2624,7 @@ type DataPaper implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -2959,7 +2959,7 @@ type Dataset implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -3412,7 +3412,7 @@ type Dissertation implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -3750,7 +3750,7 @@ interface DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -4084,7 +4084,7 @@ type Event implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -4397,7 +4397,7 @@ type EventData implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -5006,7 +5006,7 @@ type Image implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -5341,7 +5341,7 @@ type Instrument implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -5676,7 +5676,7 @@ type InteractiveResource implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -6016,7 +6016,7 @@ type JournalArticle implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -6647,7 +6647,7 @@ type Model implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -7179,7 +7179,7 @@ type Other implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -7539,7 +7539,7 @@ type PeerReview implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -8011,7 +8011,7 @@ type PhysicalObject implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -8399,7 +8399,7 @@ type Preprint implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -8734,7 +8734,7 @@ type Publication implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -9714,7 +9714,7 @@ type Service implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -10050,7 +10050,7 @@ type Software implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -10416,7 +10416,7 @@ type Sound implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -10962,7 +10962,7 @@ type Work implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references
@@ -11319,7 +11319,7 @@ type Workflow implements DoiItem {
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
-  publisher: String
+  publisher: String @deprecated(reason: "This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.")
 
   """
   Total number of references

@@ -65,7 +65,9 @@ module DoiItem
         String,
         null: true,
         description:
-          "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
+          "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource",
+        deprecation_reason:
+          'This field will change structure on February 25, 2024.  Applications that use it will need to be updated to the new structure by then.  Please see support.datacite.org for details.' 
   field :subjects,
         [SubjectType],
         null: true,
