@@ -1,4 +1,4 @@
-concurrency: <%= ENV.fetch('SHORYUKEN_CONCURRENCY', 15) %>
+concurrency: <%= ENV.fetch('SHORYUKEN_CONCURRENCY', 30) %>
 delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
