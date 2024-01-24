@@ -395,6 +395,7 @@ paths:
               - dissertation
               - event
               - image
+              - instrument
               - interactive-resource
               - journal
               - journal-article
@@ -408,6 +409,7 @@ paths:
               - software
               - sound
               - standard
+              - study-registration
               - text
               - workflow
               - other
@@ -584,7 +586,7 @@ paths:
           schema:
             type: boolean
         - in: query
-          name: field[dois]
+          name: fields[dois]
           description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
           schema:
             type: string
@@ -1736,7 +1738,18 @@ components:
               lang:
                 type: string
         publisher:
-          type: string
+          type: object
+          properties:
+            name:
+              type: string
+            publisherIdentifier:
+              type: string
+            publisherIdentifierScheme:
+              type: string
+            schemeUri:
+              type: string
+            lang:
+              type: string
         container:
           readOnly: true
           type: object
@@ -2306,6 +2319,8 @@ components:
         - Requires
         - IsObsoletedBy
         - Obsoletes
+        - IsCollectedBy
+        - Collects
     resourceTypeGeneral:
       type: string
       enum:
@@ -2321,6 +2336,7 @@ components:
         - Dissertation
         - Event
         - Image
+        - Instrument
         - InteractiveResource
         - Journal
         - JournalArticle
@@ -2334,6 +2350,7 @@ components:
         - Software
         - Sound
         - Standard
+        - StudyRegistration
         - Text
         - Workflow
         - Other
