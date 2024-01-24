@@ -1,23 +1,9 @@
-concurrency: 15
+concurrency: <%= ENV.fetch('SHORYUKEN_CONCURRENCY', 15) %>
 delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
-  - lupo
-
-groups:
-  import:
-    concurrency: 10
-    queues:
-      - lupo_import
-  import_other_doi:
-    concurrency: 10
-    queues:
-      - lupo_import_other_doi
-  transfer:
-    concurrency: 10
-    queues:
-      - lupo_transfer
-  background:
-    concurrency: 3
-    queues:
-      - lupo_background
+  - [lupo, 8]
+  - [lupo_import, 8]
+  - [lupo_import_other_doi, 8]
+  - [lupo_transfer, 4]
+  - [lupo_background, 2]
