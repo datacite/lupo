@@ -586,7 +586,7 @@ paths:
           schema:
             type: boolean
         - in: query
-          name: field[dois]
+          name: fields[dois]
           description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
           schema:
             type: string
