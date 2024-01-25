@@ -376,9 +376,9 @@ class Provider < ApplicationRecord
 
   # also index id as workaround for finding the correct key in associations
 
+  # default_scope { includes(:clients, :contacts) }
+  # scope :eager_load, { includes(:clients, :contact, :prefixes) }
 
-  # THE MASSIVE ISSUE HERE IS THIS METHOD
-  # HOW CAN I EAGER LOAD THE ASSOCIATIONS
   def as_indexed_json(options = {})
     {
       "id" => uid,
