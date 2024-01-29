@@ -2000,4 +2000,22 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.as_indexed_json.dig("primary_title")).to eq([])
     end
   end
+
+  describe "update publisher" do
+    let(:doi) { create(:doi) }
+
+    it "with string key hash updates publisher" do
+      doi.update(:publisher: { "name" => "Plazi.org taxonomic treatments database" })
+      expect(doi.publisher).to eq(
+        { "name" => "Plazi.org taxonomic treatments database" }
+      )
+    end
+
+    it "with symbol key hash updates publisher" do
+      doi.update(:publisher: { :name: "Plazi.org taxonomic treatments database" })
+      expect(doi.publisher).to eq(
+        { "name" => "Plazi.org taxonomic treatments database" }
+      )
+    end
+  end
 end

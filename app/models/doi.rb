@@ -2508,15 +2508,16 @@ class Doi < ApplicationRecord
 
   private
     def update_publisher_from_hash
-      if !publisher_before_type_cast.values.all?(nil)
+      symbolized_publisher_hash = publisher_before_type_cast.symbolize_keys
+      if !symbolized_publisher_hash.values.all?(nil)
         self.publisher_obj = {
-          name: publisher_before_type_cast.fetch(:name, nil),
-          lang: publisher_before_type_cast.fetch(:lang, nil),
-          schemeUri: publisher_before_type_cast.fetch(:schemeUri, nil),
-          publisherIdentifier: publisher_before_type_cast.fetch(:publisherIdentifier, nil),
-          publisherIdentifierScheme: publisher_before_type_cast.fetch(:publisherIdentifierScheme, nil)
+          name: symbolized_publisher_hash.fetch(:name, nil),
+          lang: symbolized_publisher_hash.fetch(:lang, nil),
+          schemeUri: symbolized_publisher_hash.fetch(:schemeUri, nil),
+          publisherIdentifier: symbolized_publisher_hash.fetch(:publisherIdentifier, nil),
+          publisherIdentifierScheme: symbolized_publisher_hash.fetch(:publisherIdentifierScheme, nil)
         }.compact
-        self.publisher = publisher_before_type_cast.dig(:name)
+        self.publisher = symbolized_publisher_hash.dig(:name)
       else
         reset_publishers
       end
