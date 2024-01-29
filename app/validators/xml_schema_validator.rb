@@ -45,8 +45,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
           http://datacite.org/schema/kernel-2.1
           http://datacite.org/schema/kernel-2.2
         ].include?(record.schema_version)
-      record.errors[:xml] <<
-        "DOI #{record.uid}: Schema #{record.schema_version} is no longer supported"
+      record.errors[:xml].add("DOI #{record.uid}: Schema #{record.schema_version} is no longer supported")
       return false
     end
 
@@ -66,11 +65,11 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       end
       source = source.split("}").last[0..-2] if line.present?
       source = schema_attributes(source) if source.present?
-      record.errors[source.to_sym] << title
+      record.errors[source.to_sym].add(title)
     end
   rescue Nokogiri::XML::SyntaxError => e
     line, column, _level, text = e.message.split(":", 4)
     message = text.strip + " at line #{line}, column #{column}"
-    record.errors[:xml] << message
+    record.errors[:xml].add(message)
   end
 end

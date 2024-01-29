@@ -8,7 +8,8 @@ module ErrorSerializable
       return nil if errors.nil?
 
       arr =
-        Array.wrap(errors).reduce([]) do |sum, err|
+        # Array.wrap(errors).reduce([]) do |sum, err|
+        errors.map { |error| error.message }.reduce([]) do |sum, err|
           source = err.keys.first
 
           Array.wrap(err.values.first).each do |title|
