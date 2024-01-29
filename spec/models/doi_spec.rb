@@ -2005,14 +2005,14 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     let(:doi) { create(:doi) }
 
     it "with string key hash updates publisher" do
-      doi.update(:publisher: { "name" => "Plazi.org taxonomic treatments database" })
+      doi.update(publisher: { "name" => "Plazi.org taxonomic treatments database" })
       expect(doi.publisher).to eq(
         { "name" => "Plazi.org taxonomic treatments database" }
       )
     end
 
     it "with symbol key hash updates publisher" do
-      doi.update(:publisher: { :name: "Plazi.org taxonomic treatments database" })
+      doi.update(publisher: { name: "Plazi.org taxonomic treatments database" })
       expect(doi.publisher).to eq(
         { "name" => "Plazi.org taxonomic treatments database" }
       )
