@@ -1903,7 +1903,6 @@ class Doi < ApplicationRecord
   end
 
   def event=(value)
-    debugger
     send(value) if %w(register publish hide show).include?(value)
   end
 

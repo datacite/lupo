@@ -203,17 +203,15 @@ class DataciteDoisController < ApplicationController
         # sparse fieldsets
         fields = fields_from_params(params)
         if fields
-          render json:
-                   DataciteDoiSerializer.new(
-                     results,
-                     options.merge(fields: fields),
-                   ).
-                     serialized_json,
-                 status: :ok
+          render(
+            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            status: :ok
+          )
         else
-          render json:
-                   DataciteDoiSerializer.new(results, options).serialized_json,
-                 status: :ok
+          render(
+            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            status: :ok
+          )
         end
       else
         if total.positive? && !disable_facets
@@ -368,18 +366,15 @@ class DataciteDoisController < ApplicationController
             # sparse fieldsets
             fields = fields_from_params(params)
             if fields
-              render json:
-                       DataciteDoiSerializer.new(
-                         results,
-                         options.merge(fields: fields),
-                       ).
-                         serialized_json,
-                     status: :ok
+              render(
+                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                status: :ok
+              )
             else
-              render json:
-                       DataciteDoiSerializer.new(results, options).
-                         serialized_json,
-                     status: :ok
+              render(
+                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                status: :ok
+              )
             end
           end
 
@@ -465,8 +460,10 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
         }
 
-        render json: DataciteDoiSerializer.new(doi, options).serialized_json,
-               status: :ok
+        render(
+          json: DataciteDoiSerializer.new(doi, options).serializable_hash.to_json,
+          status: :ok
+        )
       end
 
       # doi = response.records.first
@@ -521,8 +518,10 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher]
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :ok
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       logger.info @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid), status: :ok
@@ -550,9 +549,11 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher],
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :created,
-             location: @doi
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :created,
+        location: @doi
+      )
     else
       logger.error @doi.errors.inspect
       render json: serialize_errors(@doi.errors, uid: @doi.uid),
@@ -609,8 +610,10 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher],
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: exists ? :ok : :created
+      )
     else
       logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
@@ -631,8 +634,10 @@ class DataciteDoisController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :ok
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
