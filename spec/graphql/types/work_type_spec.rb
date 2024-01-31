@@ -34,7 +34,7 @@ describe WorkType do
     before do
       Doi.import
       ReferenceRepository.import
-      sleep 5
+      sleep 2
     end
 
     let(:query) do
