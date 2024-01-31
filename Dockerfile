@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:2.5.1
+FROM phusion/passenger-full:2.1.0
 LABEL maintainer="kgarza@datacite.org"
 
 # Set correct environment variables.
@@ -12,8 +12,8 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-#  Use Ruby 2.7.8
-RUN bash -lc 'rvm --default use ruby-2.7.8'
+#  Use Ruby 3.0.3
+RUN bash -lc 'rvm --default use ruby-3.0.3'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
@@ -44,7 +44,7 @@ COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 # RUN chmod +x /etc/service/passenger-datadog/run
 
 # Install Ruby gems
-COPY Gemfile* /home/app/webapp/
+COPY Gemfile /home/app/webapp/
 WORKDIR /home/app/webapp
 RUN mkdir -p vendor/bundle && \
     chown -R app:app . && \

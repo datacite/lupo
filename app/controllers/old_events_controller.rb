@@ -32,8 +32,9 @@ class OldEventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: OldEventSerializer.new(@event, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+        status: exists ? :ok : :created)
     else
       errors =
         @event.errors.full_messages.map do |message|
@@ -56,8 +57,10 @@ class OldEventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: OldEventSerializer.new(@event, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+        status: exists ? :ok : :created
+      )
     else
       errors =
         @event.errors.full_messages.map do |message|
@@ -71,8 +74,10 @@ class OldEventsController < ApplicationController
     options = {}
     options[:is_collection] = false
 
-    render json: OldEventSerializer.new(@event, options).serialized_json,
-           status: :ok
+    render(
+      json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def index
@@ -163,8 +168,10 @@ class OldEventsController < ApplicationController
       }.compact
       options[:is_collection] = true
 
-      render json: OldEventSerializer.new(results, options).serialized_json,
-             status: :ok
+      render(
+        json: OldEventSerializer.new(results, options)..serializable_hash.to_json,
+        status: :ok
+      )
     else
       results = response.results
 
@@ -244,8 +251,10 @@ class OldEventsController < ApplicationController
           }.compact
           options[:is_collection] = true
 
-          render json: OldEventSerializer.new(results, options).serialized_json,
-                status: :ok
+          render(
+            json: OldEventSerializer.new(results, options).serializable_hash.to_json,
+            status: :ok
+          )
         end
         format.csv do
           headers = %w[

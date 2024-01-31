@@ -71,10 +71,10 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Ruby 2.7.8
+      - name: Set up Ruby 3.0.3
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.8
+          ruby-version: 3.0.3
       - uses: actions/cache@v3
         with:
           path: vendor/bundle
