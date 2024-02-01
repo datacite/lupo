@@ -35,16 +35,8 @@ WORKDIR /home/app/webapp
 RUN mkdir /etc/service/shoryuken
 COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
-# Install Passenger monitor for Datadog
-# RUN wget https://github.com/Sjeanpierre/passenger-datadog-monitor/releases/download/v1.00/passenger-datadog-monitor && \
-#     mv passenger-datadog-monitor /usr/local/bin && \
-#     chmod +x /usr/local/bin/passenger-datadog-monitor && \
-#     mkdir /etc/service/passenger-datadog
-# COPY vendor/docker/passenger-datadog.sh /etc/service/passenger-datadog/run
-# RUN chmod +x /etc/service/passenger-datadog/run
-
 # Install Ruby gems
-COPY Gemfile /home/app/webapp/
+COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
 RUN mkdir -p vendor/bundle && \
     chown -R app:app . && \

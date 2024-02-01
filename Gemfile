@@ -32,7 +32,7 @@ gem "equivalent-xml", "~> 0.6.0"
 gem "facets", require: false
 gem "faraday", "~> 0.17.3"
 gem "faraday_middleware-aws-sigv4", "~> 0.3.0"
-gem "fast_jsonapi", "~> 1.3"
+# gem "fast_jsonapi", "~> 1.3"
 # add this to fix json serialization
 # https://github.com/jsonapi-serializer/jsonapi-serializer
 gem "jsonapi-serializer", "~> 2.2"
