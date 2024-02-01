@@ -5,7 +5,7 @@ require "benchmark"
 
 class Doi < ApplicationRecord
   PUBLISHER_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/doi/publisher.json"
-  audited only: %i[doi url creators contributors titles publisher publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
+  audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
   self.inheritance_column = :_type_disabled
@@ -76,6 +76,7 @@ class Doi < ApplicationRecord
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
   attribute :should_validate, :boolean, default: false
+  attribute :publisher, :string, default: nil
 
   belongs_to :client, foreign_key: :datacentre, optional: true
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
@@ -110,7 +111,7 @@ class Doi < ApplicationRecord
   }
 
   def validate_publisher_obj?(doi)
-    doi.validatable? && doi.publisher_obj? && !(doi.publisher.blank? || doi.publisher.all?(nil))
+    doi.validatable? && doi.publisher_obj? && !(doi.publisher_obj.blank? || doi.publisher_obj.all?(nil))
   end
 
   validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
@@ -129,7 +130,6 @@ class Doi < ApplicationRecord
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
-  validate :check_publisher, if: :publisher?
   validate :check_subjects, if: :subjects?
   validate :check_creators, if: :creators?
   validate :check_contributors, if: :contributors?
@@ -2002,10 +2002,6 @@ class Doi < ApplicationRecord
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
   end
 
-  def check_publisher
-    errors.add(:publisher, "Publisher '#{publisher}' should be an object instead of a string.") unless publisher.is_a?(Hash)
-  end
-
   def check_language
     errors.add(:language, "Language #{language} is in an invalid format.") if !language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
   end
@@ -2347,16 +2343,7 @@ class Doi < ApplicationRecord
   end
 
   def publisher
-    pub = read_attribute("publisher")
-    pub_obj = read_attribute("publisher_obj")
-
-    return nil if pub.nil? && pub_obj.nil?
-
-    if !(pub_obj.nil? || pub_obj.empty?)
-      pub_obj
-    else
-      { "name" => pub || "" }
-    end
+    read_attribute("publisher_obj")
   end
 
   def self.repair_landing_page(id: nil)
@@ -2517,7 +2504,7 @@ class Doi < ApplicationRecord
           publisherIdentifier: symbolized_publisher_hash.fetch(:publisherIdentifier, nil),
           publisherIdentifierScheme: symbolized_publisher_hash.fetch(:publisherIdentifierScheme, nil)
         }.compact
-        self.publisher = symbolized_publisher_hash.dig(:name)
+        #self.publisher = symbolized_publisher_hash.dig(:name)
       else
         reset_publishers
       end
@@ -2525,11 +2512,9 @@ class Doi < ApplicationRecord
 
     def update_publisher_from_string
       self.publisher_obj = { name: publisher_before_type_cast }
-      self.publisher = publisher_before_type_cast
-    end
+     end
 
     def reset_publishers
       self.publisher_obj = nil
-      self.publisher = nil
     end
 end
