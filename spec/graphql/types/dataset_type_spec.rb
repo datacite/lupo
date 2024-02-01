@@ -36,7 +36,8 @@ describe DatasetType do
     end
 
     it "returns all datasets" do
-      response = LupoSchema.execute(query).as_json
+      response = LupoSchema.execute(**{query: query})
+      response = response.as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(

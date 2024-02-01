@@ -328,7 +328,7 @@ class QueryType < BaseObject
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :dataset, DatasetType, null: false do
