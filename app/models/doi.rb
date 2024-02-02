@@ -2504,7 +2504,6 @@ class Doi < ApplicationRecord
           publisherIdentifier: symbolized_publisher_hash.fetch(:publisherIdentifier, nil),
           publisherIdentifierScheme: symbolized_publisher_hash.fetch(:publisherIdentifierScheme, nil)
         }.compact
-        #self.publisher = symbolized_publisher_hash.dig(:name)
       else
         reset_publishers
       end
