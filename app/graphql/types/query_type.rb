@@ -1217,7 +1217,7 @@ class QueryType < BaseObject
   def journal_articles(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "JournalArticle"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :journal_article, JournalArticleType, null: false do
