@@ -143,7 +143,7 @@ class ClientPrefix < ApplicationRecord
   end
 
   def provider_id
-    client.provider_id if client.present?
+    client&.provider_id
   end
 
   def provider_id_and_name

@@ -579,7 +579,10 @@ class Client < ApplicationRecord
     prefixes_names = associated_prefixes.pluck(:uid)
 
     if prefix_ids.present?
-      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
+      response = ProviderPrefix
+        .includes(:provider)
+        .where(prefix_id: prefix_ids)
+        .destroy_all
       Rails.logger.info "[Transfer][Prefix] #{response.count} provider prefixes deleted. #{prefix_ids}"
 
       response = ClientPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all

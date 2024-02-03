@@ -80,8 +80,8 @@ gem "mimemagic", "0.3.10"
 group :development, :test do
   gem "better_errors"
   gem "binding_of_caller"
-  gem "bullet", "~> 6.1"
   gem "byebug", platforms: %i[mri mingw x64_mingw]
+  gem "prosopite"
   gem "rspec-benchmark", "~> 0.4.0"
   gem "rspec-graphql_matchers", "~> 1.1"
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"

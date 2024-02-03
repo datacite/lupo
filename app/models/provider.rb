@@ -155,6 +155,9 @@ class Provider < ApplicationRecord
 
   strip_attributes
 
+  scope :eager, -> {
+    includes(:clients, :contacts, :prefixes).where(clients: { deleted_at: nil }, contacts: { deleted_at: nil }) }
+
   has_many :clients, foreign_key: :allocator
   has_many :dois, through: :clients
   has_many :provider_prefixes, dependent: :destroy
@@ -372,6 +375,10 @@ class Provider < ApplicationRecord
   end
 
   # also index id as workaround for finding the correct key in associations
+
+  # default_scope { includes(:clients, :contacts) }
+  # scope :eager_load, { includes(:clients, :contact, :prefixes) }
+
   def as_indexed_json(options = {})
     {
       "id" => uid,
@@ -798,7 +805,8 @@ class Provider < ApplicationRecord
   end
 
   def client_ids
-    clients.where(deleted_at: nil).pluck(:symbol).map(&:downcase)
+    # .where(deleted_at: nil)
+    clients.pluck(:symbol).map(&:downcase)
   end
 
   def prefix_ids
@@ -806,7 +814,8 @@ class Provider < ApplicationRecord
   end
 
   def contact_ids
-    contacts.where(deleted_at: nil).pluck(:uid)
+    # contacts.where(deleted_at: nil).pluck(:uid)
+    contacts.pluck(:uid)
   end
 
   def can_be_in_consortium

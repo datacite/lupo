@@ -48,7 +48,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     let!(:providers) { create_list(:provider, 3) }
 
     before do
-      Provider.import
+      Provider.import query: -> { includes(:clients, :contacts, prefixes: :provider_prefixes) }
       sleep 2
     end
 

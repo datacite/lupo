@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://handle.test.datacite.org/api/handles/10.14454/10703
+    body:
+      encoding: UTF-8
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://luettgen.org/alex"}}]'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.9.8; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Thu, 28 Dec 2023 13:36:51 GMT
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="jla5j8ao05yocarqta719jck", nonce="j2RBgZi0KM3MCcHfWjZ9hw==",
+        error="Identity not verified"
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+    http_version: null
+  recorded_at: Thu, 28 Dec 2023 13:36:51 GMT
+recorded_with: VCR 5.1.0
