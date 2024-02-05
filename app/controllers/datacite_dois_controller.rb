@@ -226,22 +226,11 @@ class DataciteDoisController < ApplicationController
           prefixes = facet_by_key(response.aggregations.prefixes.buckets)
           schema_versions = facet_by_schema(response.aggregations.schema_versions.buckets)
           affiliations = facet_by_combined_key(response.aggregations.affiliations.buckets)
-          # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
           subjects = facet_by_key(response.aggregations.subjects.buckets)
-          fields_of_science = facet_by_fos(
-            response.aggregations.fields_of_science.subject.buckets,
-              )
+          fields_of_science = facet_by_fos(response.aggregations.fields_of_science.subject.buckets)
           certificates = facet_by_key(response.aggregations.certificates.buckets)
           licenses = facet_by_license(response.aggregations.licenses.buckets)
-          link_checks_status = facet_by_cumulative_year(
-            response.aggregations.link_checks_status.buckets,
-              )
-          # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-          # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-          # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-          # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-          # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
-
+          link_checks_status = facet_by_cumulative_year(response.aggregations.link_checks_status.buckets)
           citations = metric_facet_by_year(response.aggregations.citations.buckets)
           views = metric_facet_by_year(response.aggregations.views.buckets)
           downloads = metric_facet_by_year(response.aggregations.downloads.buckets)
@@ -289,13 +278,7 @@ class DataciteDoisController < ApplicationController
               certificates: certificates,
               licenses: licenses,
               "schemaVersions" => schema_versions,
-              # sources: sources,
               "linkChecksStatus" => link_checks_status,
-              # "linksChecked" => links_checked,
-              # "linksWithSchemaOrg" => links_with_schema_org,
-              # "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-              # "linkChecksDcIdentifier" => link_checks_dc_identifier,
-              # "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
               "fieldsOfScience" => fields_of_science,
               citations: citations,

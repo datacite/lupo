@@ -291,7 +291,7 @@ class OrganizationType < BaseObject
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end

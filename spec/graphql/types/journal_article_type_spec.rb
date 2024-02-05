@@ -40,7 +40,7 @@ describe JournalArticleType do
     end
 
     it "returns all journal articles" do
-      response = LupoSchema.execute(**{query: query}).as_json
+      response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "journalArticles", "totalCount")).to eq(3)
       expect(response.dig("data", "journalArticles", "nodes").length).to eq(3)

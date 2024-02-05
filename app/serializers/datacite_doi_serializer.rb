@@ -6,6 +6,7 @@ class DataciteDoiSerializer
   set_key_transform :camel_lower
   set_type :dois
   set_id :uid
+
   # don't cache dois, as works are cached using the doi model
 
   attributes :doi,
