@@ -74,6 +74,8 @@ Layout/EmptyLinesAroundAccessModifier:
 
 Layout/EmptyLinesAroundBlockBody:
   Enabled: true
+  Exclude:
+    - 'db/schema.rb'
 
 # In a regular class definition, no empty lines around the body.
 Layout/EmptyLinesAroundClassBody:
