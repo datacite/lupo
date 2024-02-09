@@ -105,7 +105,7 @@ class Client < ApplicationRecord
   after_update_commit :update_reference_repository
   after_destroy_commit :destroy_reference_repository
   after_commit on: %i[update] do
-    ::Client.import_dois(self.symbol)
+    ::Client.import_dois(self.id)
   end
 
   # use different index for testing
@@ -812,7 +812,7 @@ class Client < ApplicationRecord
 
   def self.import_dois(client_id)
     if client_id.blank?
-      Rails.logger.error "Repository not found for client ID #{client_id}."
+      Rails.logger.error "Missing client ID."
       exit
     end
 
