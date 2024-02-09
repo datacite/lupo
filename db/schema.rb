@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_09_113122) do
-
+ActiveRecord::Schema.define(version: 2024_02_09_120111) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -84,7 +83,9 @@ ActiveRecord::Schema.define(version: 2024_02_09_113122) do
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
     t.integer "doi_estimate", default: 0, null: false
+    t.index ["deleted_at"], name: "index_allocator_deleted_at"
     t.index ["organization_type"], name: "index_allocator_organization_type"
+    t.index ["role_name"], name: "index_allocator_role_name"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
