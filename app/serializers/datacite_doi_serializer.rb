@@ -65,7 +65,7 @@ class DataciteDoiSerializer
              :citations_over_time,
              if: Proc.new { |_object, params| params && params[:detail] }
 
-  belongs_to :client, record_type: :clients
+  belongs_to :client, serializer: ClientSerializer
   belongs_to :provider,
              record_type: :providers,
              if: Proc.new { |_object, params| params && params[:detail] }

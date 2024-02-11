@@ -119,7 +119,9 @@ group :test do
   gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
   gem "simplecov", "~> 0.17.1"
   gem "test-prof", "~> 0.10.2"
-  gem "vcr", "~> 5.1"
-  gem "webmock", "~> 3.1"
+  # gem "vcr", "~> 5.1"
+  gem 'vcr', '~> 6.1'
+  # gem "webmock", "~> 3.1"
+  gem 'webmock', '~> 3.18', '>= 3.18.1'
   gem "parallel_tests", "~> 3.12"
 end
