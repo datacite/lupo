@@ -204,12 +204,12 @@ class DataciteDoisController < ApplicationController
         fields = fields_from_params(params)
         if fields
           render(
-            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serialized_json,
             status: :ok
           )
         else
           render(
-            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(results, options).serialized_json,
             status: :ok
           )
         end
@@ -350,12 +350,12 @@ class DataciteDoisController < ApplicationController
             fields = fields_from_params(params)
             if fields
               render(
-                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serialized_json,
                 status: :ok
               )
             else
               render(
-                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(results, options).serialized_json,
                 status: :ok
               )
             end
@@ -444,7 +444,7 @@ class DataciteDoisController < ApplicationController
         }
 
         render(
-          json: DataciteDoiSerializer.new(doi, options).serializable_hash.to_json,
+          json: DataciteDoiSerializer.new(doi, options).serialized_json,
           status: :ok
         )
       end
@@ -502,7 +502,7 @@ class DataciteDoisController < ApplicationController
       }
 
       render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        json: DataciteDoiSerializer.new(@doi, options).serialized_json,
         status: :ok
       )
     else
@@ -533,7 +533,7 @@ class DataciteDoisController < ApplicationController
       }
 
       render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        json: DataciteDoiSerializer.new(@doi, options).serialized_json,
         status: :created,
         location: @doi
       )
@@ -594,7 +594,7 @@ class DataciteDoisController < ApplicationController
       }
 
       render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        json: DataciteDoiSerializer.new(@doi, options).serialized_json,
         status: exists ? :ok : :created
       )
     else
@@ -618,7 +618,7 @@ class DataciteDoisController < ApplicationController
       options[:params] = { current_ability: current_ability, detail: true }
 
       render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        json: DataciteDoiSerializer.new(@doi, options).serialized_json,
         status: :ok
       )
     else

@@ -33,7 +33,7 @@ class OldEventsController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+        json: OldEventSerializer.new(@event, options).serialized_json,
         status: exists ? :ok : :created)
     else
       errors =
@@ -58,7 +58,7 @@ class OldEventsController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+        json: OldEventSerializer.new(@event, options).serialized_json,
         status: exists ? :ok : :created
       )
     else
@@ -75,7 +75,7 @@ class OldEventsController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: OldEventSerializer.new(@event, options).serializable_hash.to_json,
+      json: OldEventSerializer.new(@event, options).serialized_json,
       status: :ok
     )
   end
@@ -169,7 +169,7 @@ class OldEventsController < ApplicationController
       options[:is_collection] = true
 
       render(
-        json: OldEventSerializer.new(results, options)..serializable_hash.to_json,
+        json: OldEventSerializer.new(results, options)..serialized_json,
         status: :ok
       )
     else
@@ -252,7 +252,7 @@ class OldEventsController < ApplicationController
           options[:is_collection] = true
 
           render(
-            json: OldEventSerializer.new(results, options).serializable_hash.to_json,
+            json: OldEventSerializer.new(results, options).serialized_json,
             status: :ok
           )
         end

@@ -55,7 +55,7 @@ class MetadataController < ApplicationController
     options[:is_collection] = true
 
     render(
-      json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+      json: MetadataSerializer.new(@metadata, options).serialized_json,
       status: :ok
     )
   end
@@ -66,7 +66,7 @@ class MetadataController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+      json: MetadataSerializer.new(@metadata, options).serialized_json,
       status: :ok
     )
   end
@@ -84,7 +84,7 @@ class MetadataController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+        json: MetadataSerializer.new(@metadata, options).serialized_json,
         status: :created
       )
     else

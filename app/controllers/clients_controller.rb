@@ -123,12 +123,12 @@ class ClientsController < ApplicationController
       fields = fields_from_params(params)
       if fields
         render(
-          json: ClientSerializer.new(@clients, options.merge(fields: fields)).serializable_hash.to_json,
+          json: ClientSerializer.new(@clients, options.merge(fields: fields)).serialized_json,
           status: :ok
         )
       else
         render(
-          json: ClientSerializer.new(@clients, options).serializable_hash.to_json,
+          json: ClientSerializer.new(@clients, options).serialized_json,
           status: :ok
         )
       end
@@ -155,7 +155,7 @@ class ClientsController < ApplicationController
     options[:params] = { current_ability: current_ability }
 
     render(
-      json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+      json: ClientSerializer.new(@client, options).serialized_json,
       status: :ok
     )
   end
@@ -171,7 +171,7 @@ class ClientsController < ApplicationController
       options[:params] = { current_ability: current_ability, detail: true }
 
       render(
-        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        json: ClientSerializer.new(@client, options).serialized_json,
         status: :created
       )
     else
@@ -192,12 +192,12 @@ class ClientsController < ApplicationController
 
       @client.transfer(provider_target_id: safe_params[:target_id])
       render(
-        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        json: ClientSerializer.new(@client, options).serialized_json,
         status: :ok
       )
     elsif @client.update(safe_params)
       render(
-        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        json: ClientSerializer.new(@client, options).serialized_json,
         status: :ok
       )
     else

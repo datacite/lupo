@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ObjectSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
   set_type :objects

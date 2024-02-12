@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OldEventSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   set_key_transform :dash
   set_type :events

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   set_key_transform :dash
   set_type :works

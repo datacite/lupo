@@ -137,7 +137,7 @@ class WorksController < ApplicationController
       @dois = sample_dois || response.results
 
       render(
-        json: WorkSerializer.new(@dois, options).serializable_hash.to_json,
+        json: WorkSerializer.new(@dois, options).serialized_json,
         status: :ok
       )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -161,7 +161,7 @@ class WorksController < ApplicationController
     options[:params] = { current_ability: current_ability, detail: true }
 
     render(
-      json: WorkSerializer.new(@doi, options).serializable_hash.to_json,
+      json: WorkSerializer.new(@doi, options).serialized_json,
       status: :ok
     )
   end

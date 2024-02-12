@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PrefixSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
   set_type :prefixes

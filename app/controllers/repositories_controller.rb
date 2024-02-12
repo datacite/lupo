@@ -126,12 +126,12 @@ class RepositoriesController < ApplicationController
           fields = fields_from_params(params)
           if fields
             render(
-              json: RepositorySerializer.new(response.results, options.merge(fields: fields)).serializable_hash.to_json,
+              json: RepositorySerializer.new(response.results, options.merge(fields: fields)).serialized_json,
               status: :ok
             )
           else
             render(
-              json: RepositorySerializer.new(response.results, options).serializable_hash.to_json,
+              json: RepositorySerializer.new(response.results, options).serialized_json,
               status: :ok
             )
           end
@@ -191,7 +191,7 @@ class RepositoriesController < ApplicationController
     options[:params] = { current_ability: current_ability }
 
     render(
-      json: RepositorySerializer.new(repository, options).serializable_hash.to_json,
+      json: RepositorySerializer.new(repository, options).serialized_json,
       status: :ok
     )
   end
@@ -208,7 +208,7 @@ class RepositoriesController < ApplicationController
       options[:params] = { current_ability: current_ability, detail: true }
 
       render(
-        json: RepositorySerializer.new(@client, options).serializable_hash.to_json,
+        json: RepositorySerializer.new(@client, options).serialized_json,
         status: :created
       )
     else
@@ -229,12 +229,12 @@ class RepositoriesController < ApplicationController
 
       @client.transfer(provider_target_id: safe_params[:target_id])
       render(
-        json: RepositorySerializer.new(@client, options).serializable_hash.to_json,
+        json: RepositorySerializer.new(@client, options).serialized_json,
         status: :ok
       )
     elsif @client.update(safe_params)
       render(
-        json: RepositorySerializer.new(@client, options).serializable_hash.to_json,
+        json: RepositorySerializer.new(@client, options).serialized_json,
         status: :ok
       )
     else

@@ -114,12 +114,12 @@ class OrganizationsController < ApplicationController
           fields = fields_from_params(params)
           if fields
             render(
-              json: ProviderSerializer.new(@providers, options.merge(fields: fields)).serializable_hash.to_json,
+              json: ProviderSerializer.new(@providers, options.merge(fields: fields)).serialized_json,
               status: :ok
             )
           else
             render(
-              json: ProviderSerializer.new(@providers, options).serializable_hash.to_json,
+              json: ProviderSerializer.new(@providers, options).serialized_json,
               status: :ok
             )
           end
@@ -208,7 +208,7 @@ class OrganizationsController < ApplicationController
     options[:params] = { current_ability: current_ability }
 
     render(
-      json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
+      json: ProviderSerializer.new(@provider, options).serialized_json,
       status: :ok
     )
   end

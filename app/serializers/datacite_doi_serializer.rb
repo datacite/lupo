@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DataciteDoiSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
   set_type :dois
@@ -65,7 +65,7 @@ class DataciteDoiSerializer
              :citations_over_time,
              if: Proc.new { |_object, params| params && params[:detail] }
 
-  belongs_to :client, serializer: ClientSerializer
+  belongs_to :client
   belongs_to :provider,
              record_type: :providers,
              if: Proc.new { |_object, params| params && params[:detail] }
