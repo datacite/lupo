@@ -51,8 +51,8 @@ gem "iso8601", "~> 0.9.0"
 gem "jsonlint", "~> 0.3.0"
 gem "jwt"
 gem "kaminari", "~> 1.2"
-gem "kt-paperclip", "~> 6.2", ">= 6.2.2"
-# gem "kt-paperclip", "~> 7.2", ">= 7.2.2"
+# gem "kt-paperclip", "~> 6.2", ">= 6.2.2"
+gem "kt-paperclip", "~> 7.2", ">= 7.2.2"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
 gem "logstash-logger", "~> 0.26.1"
@@ -68,7 +68,7 @@ gem "pwqgen.rb", "~> 0.1.0"
 gem "rack-cors", "~> 1.0", require: "rack/cors"
 gem "rack-utf8_sanitizer", "~> 1.6"
 gem "rails", "~> 6.1.7"
-gem "rake", "~> 12.0"
+gem "rake", "~> 13.1"
 gem "sentry-raven", "~> 2.9"
 gem "shoryuken", "~> 4.0"
 gem "simple_command"
@@ -99,7 +99,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "listen", ">= 3.0.5", "< 3.2" # we don't seem to be using this
+  gem "listen", ">= 3.0.5", "< 3.2"
   gem "seedbank"
   gem "spring"
   gem "spring-commands-rspec"
@@ -119,8 +119,8 @@ group :test do
   gem "simplecov", "~> 0.17.1"
   gem "test-prof", "~> 0.10.2"
   # gem "vcr", "~> 5.1"
-  gem 'vcr', '~> 6.1'
+  gem "vcr", "~> 6.1"
   # gem "webmock", "~> 3.1"
-  gem 'webmock', '~> 3.18', '>= 3.18.1'
+  gem "webmock", "~> 3.18", ">= 3.18.1"
   gem "parallel_tests", "~> 3.12"
 end
