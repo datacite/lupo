@@ -11,16 +11,25 @@ class DataciteDoi < Doi
   else
     index_name "dois"
   end
-  # TODO switch index
-  # if Rails.env.test?
-  #   index_name "dois-datacite-test"
-  # elsif ENV["ES_PREFIX"].present?
-  #   index_name"dois-datacite-#{ENV["ES_PREFIX"]}"
-  # else
-  #   index_name "dois-datacite"
-  # end
 
-  # TODO remove query for type once STI is enabled
+  def self.index_all_by_client(options = {})
+    client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
+    #throw out id 0
+    client_to_doi_count.delete(0)
+
+
+    index = options[:index] || self.inactive_index
+    batch_size = options[:batch_size] || 2000
+    client_to_doi_count.keys.each do |client_id|
+      DoiImportByClientJob.perform_later(
+        client_id,
+        index: index,
+        batch_size: batch_size
+      )
+    end
+
+  end
+
   def self.import_by_ids(options = {})
     index =
       if Rails.env.test?
@@ -72,10 +81,15 @@ class DataciteDoi < Doi
       Rails.logger.error "Missing client ID."
       exit
     end
+    # Search by propper ID
     client = ::Client.find_by(id: client_id, deleted_at: nil)
     if client.nil?
-      Rails.logger.error "Repository not found for client ID #{client_id}."
-      exit
+      # Search by symbol
+      client = ::Client.find_by(symbol: client_id, deleted_at: nil)
+      if client.nil?
+        Rails.logger.error "Repository not found for client ID #{client_id}."
+        exit
+      end
     end
 
     # import DOIs for client
