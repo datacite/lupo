@@ -61,6 +61,31 @@ namespace :datacite_doi do
     puts DataciteDoi.delete_alias
   end
 
+  desc "Index all datacite DOIs grouped by Client"
+  task index_all_by_client: :environment do
+    import_index = ENV["INDEX"] || DataciteDoi.inactive_index
+    batch_size = ENV["BATCH_SIZE"].nil? ? 2000 : ENV["BATCH_SIZE"].to_i
+    DataciteDoi.index_all_by_client(
+      index: import_index,
+      batch_size: batch_size,
+    )
+  end
+
+  desc "Import all datacite DOIs for a given Client(id)"
+  task import_by_client: :environment do
+    if ENV["CLIENT_ID"].nil?
+      puts "ENV variable CLIENT_ID is required"
+      exit
+    end
+    import_index = ENV["INDEX"] || DataciteDoi.inactive_index
+    batch_size = ENV["BATCH_SIZE"].nil? ? 2000 : ENV["BATCH_SIZE"].to_i
+    DataciteDoi.import_by_client(
+      client_id: ENV["CLIENT_ID"],
+      import_index: import_index,
+      batch_size: batch_size,
+    )
+  end
+
   desc "Import all datacite DOIs"
   task import: :environment do
     from_id = (ENV["FROM_ID"] || DataciteDoi.minimum(:id)).to_i
@@ -91,7 +116,6 @@ namespace :datacite_doi do
       puts "ENV['DOI'] is required"
       exit
     end
-
     puts DataciteDoi.index_one(doi_id: ENV["DOI"])
   end
 end
