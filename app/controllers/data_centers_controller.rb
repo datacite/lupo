@@ -88,7 +88,7 @@ class DataCentersController < ApplicationController
       options[:links] = nil
 
       render(
-        json: DataCenterSerializer.new(@clients, options).serialized_json,
+        json: DataCenterSerializer.new(@clients, options).serializable_hash.to_json,
         status: :ok
       )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -113,7 +113,7 @@ class DataCentersController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: DataCenterSerializer.new(@client, options).serialized_json,
+      json: DataCenterSerializer.new(@client, options).serializable_hash.to_json,
       status: :ok
     )
   end

@@ -33,7 +33,7 @@ class EventsController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: EventSerializer.new(@event, options).serialized_json,
+        json: EventSerializer.new(@event, options).serializable_hash.to_json,
         status: exists ? :ok : :created
       )
     else
@@ -60,7 +60,7 @@ class EventsController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: EventSerializer.new(@event, options).serialized_json,
+        json: EventSerializer.new(@event, options).serializable_hash.to_json,
         status: exists ? :ok : :created
       )
     else
@@ -79,7 +79,7 @@ class EventsController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: EventSerializer.new(@event, options).serialized_json,
+      json: EventSerializer.new(@event, options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -181,7 +181,7 @@ class EventsController < ApplicationController
       options[:is_collection] = true
 
       render(
-        json: EventSerializer.new(results, options).serialized_json,
+        json: EventSerializer.new(results, options).serializable_hash.to_json,
         status: :ok
       )
     else
@@ -274,7 +274,7 @@ class EventsController < ApplicationController
       options[:is_collection] = true
 
       render(
-        json: EventSerializer.new(results, options).serialized_json,
+        json: EventSerializer.new(results, options).serializable_hash.to_json,
         status: :ok
       )
     end

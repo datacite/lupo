@@ -86,7 +86,7 @@ class ContactsController < ApplicationController
           options[:params] = { current_ability: current_ability }
 
           render(
-            json: ContactSerializer.new(@contacts, options).serialized_json,
+            json: ContactSerializer.new(@contacts, options).serializable_hash.to_json,
             status: :ok
           )
         end
@@ -114,7 +114,7 @@ class ContactsController < ApplicationController
     options[:params] = { current_ability: current_ability }
 
     render(
-      json: ContactSerializer.new(@contact, options).serialized_json,
+      json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -130,7 +130,7 @@ class ContactsController < ApplicationController
       options[:params] = { current_ability: current_ability, detail: true }
 
       render(
-        json: ContactSerializer.new(@contact, options).serialized_json,
+        json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
         status: :created
       )
     else
@@ -148,7 +148,7 @@ class ContactsController < ApplicationController
       options[:params] = { current_ability: current_ability, detail: true }
 
       render(
-        json: ContactSerializer.new(@contact, options).serialized_json,
+        json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
         status: :ok
       )
     else

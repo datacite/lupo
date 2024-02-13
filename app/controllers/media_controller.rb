@@ -51,7 +51,7 @@ class MediaController < ApplicationController
     options[:is_collection] = true
 
     render(
-      json: MediaSerializer.new(@media, options).serialized_json,
+      json: MediaSerializer.new(@media, options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -62,7 +62,7 @@ class MediaController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: MediaSerializer.new(@media, options).serialized_json,
+      json: MediaSerializer.new(@media, options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -78,7 +78,7 @@ class MediaController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: MediaSerializer.new(@media, options).serialized_json,
+        json: MediaSerializer.new(@media, options).serializable_hash.to_json,
         status: :created
       )
     else
@@ -97,7 +97,7 @@ class MediaController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: MediaSerializer.new(@media, options).serialized_json,
+        json: MediaSerializer.new(@media, options).serializable_hash.to_json,
         status: :ok
       )
     else

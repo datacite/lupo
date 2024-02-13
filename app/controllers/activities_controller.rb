@@ -74,7 +74,7 @@ class ActivitiesController < ApplicationController
         }
 
         render(
-          json: ActivitySerializer.new(results, options).serialized_json,
+          json: ActivitySerializer.new(results, options).serializable_hash.to_json,
           status: :ok
         )
       else
@@ -115,7 +115,7 @@ class ActivitiesController < ApplicationController
         }
 
         render(
-          json: ActivitySerializer.new(results, options).serialized_json,
+          json: ActivitySerializer.new(results, options).serializable_hash.to_json,
           status: :ok
         )
       end
@@ -144,7 +144,7 @@ class ActivitiesController < ApplicationController
     }
 
     render(
-      json: ActivitySerializer.new(@activity, options).serialized_json,
+      json: ActivitySerializer.new(@activity, options).serializable_hash.to_json,
       status: :ok
     )
   end

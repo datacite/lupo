@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ResourceTypeSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   set_key_transform :dash
   set_type "resource-types"

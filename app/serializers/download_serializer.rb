@@ -2,7 +2,7 @@
 
 # TODO: this class is not used anywhere
 class DownloadSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   set_key_transform :camel_lower
   set_type :events

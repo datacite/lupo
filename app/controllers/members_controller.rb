@@ -100,7 +100,7 @@ class MembersController < ApplicationController
       options[:links] = nil
 
       render(
-        json: MemberSerializer.new(@members, options).serialized_json,
+        json: MemberSerializer.new(@members, options).serializable_hash.to_json,
         status: :ok
       )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -125,7 +125,7 @@ class MembersController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: MemberSerializer.new(@provider, options).serialized_json,
+      json: MemberSerializer.new(@provider, options).serializable_hash.to_json,
       status: :ok
     )
   end

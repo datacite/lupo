@@ -13,7 +13,7 @@ class ResourceTypesController < ApplicationController
     options[:is_collection] = true
 
     render(
-      json: ResourceTypeSerializer.new(@resource_types[:data], options).serialized_json,
+      json: ResourceTypeSerializer.new(@resource_types[:data], options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -26,7 +26,7 @@ class ResourceTypesController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: ResourceTypeSerializer.new(@resource_type[:data], options).serialized_json,
+      json: ResourceTypeSerializer.new(@resource_type[:data], options).serializable_hash.to_json,
       status: :ok
     )
   end

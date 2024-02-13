@@ -100,7 +100,7 @@ class PrefixesController < ApplicationController
       options[:is_collection] = true
 
       render(
-        json: PrefixSerializer.new(prefixes, options).serialized_json,
+        json: PrefixSerializer.new(prefixes, options).serializable_hash.to_json,
         status: :ok
       )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -125,7 +125,7 @@ class PrefixesController < ApplicationController
     options[:is_collection] = false
 
     render(
-      json: PrefixSerializer.new(@prefix, options).serialized_json,
+      json: PrefixSerializer.new(@prefix, options).serializable_hash.to_json,
       status: :ok
     )
   end
@@ -140,7 +140,7 @@ class PrefixesController < ApplicationController
       options[:is_collection] = false
 
       render(
-        json: PrefixSerializer.new(@prefix, options).serialized_json,
+        json: PrefixSerializer.new(@prefix, options).serializable_hash.to_json,
         status: :created,
         location: @prefix
       )
