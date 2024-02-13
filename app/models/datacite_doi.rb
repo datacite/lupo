@@ -14,7 +14,7 @@ class DataciteDoi < Doi
 
   def self.index_all_by_client(options = {})
     client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
-    #throw out id 0
+    # throw out id 0
     client_to_doi_count.delete(0)
 
 
@@ -27,7 +27,6 @@ class DataciteDoi < Doi
         batch_size: batch_size
       )
     end
-
   end
 
   def self.import_by_ids(options = {})
@@ -76,7 +75,7 @@ class DataciteDoi < Doi
       end
     batch_size = options[:batch_size] || 50
 
-    #Abort if client_id is blank
+    # Abort if client_id is blank
     if client_id.blank?
       Rails.logger.error "Missing client ID."
       exit
@@ -169,5 +168,4 @@ class DataciteDoi < Doi
       upload_to_elasticsearch(index, bulk_body)
     end
   end
-
 end

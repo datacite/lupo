@@ -810,7 +810,7 @@ class Client < ApplicationRecord
     csv.join("")
   end
 
-  def self.import_dois(client_id, options={})
+  def self.import_dois(client_id, options = {})
     if client_id.blank?
       Rails.logger.error "Missing client ID."
       exit
