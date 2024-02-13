@@ -810,13 +810,14 @@ class Client < ApplicationRecord
     csv.join("")
   end
 
-  def self.import_dois(client_id)
+  def self.import_dois(client_id, options={})
     if client_id.blank?
       Rails.logger.error "Missing client ID."
       exit
     end
 
-    DoiImportByClientJob.perform_later(client_id)
+    index = options[:index] || DataciteDoi.active_index
+    DoiImportByClientJob.perform_later(client_id, index: index)
   end
 
   # import all DOIs not indexed in Elasticsearch
