@@ -69,7 +69,7 @@ gem "rack-cors", "~> 1.0", require: "rack/cors"
 gem "rack-utf8_sanitizer", "~> 1.6"
 gem "rails", "~> 6.1.7"
 # gem "rake", "~> 12.0"
-gem "rake", "~> 13.1"
+gem 'rake', '13.0.6'
 gem "sentry-raven", "~> 2.9"
 gem "shoryuken", "~> 4.0"
 gem "simple_command"
