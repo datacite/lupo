@@ -16,8 +16,6 @@ module FastJsonapi
 
           next unless relationship_item&.include_relationship?(record, params)
 
-          included_objects = nil
-
           associated_objects = relationship_item.fetch_associated_object(record, params)
 
           if associated_objects.is_a?(Elasticsearch::Model::HashWrapper)
