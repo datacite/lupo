@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_04_145109) do
+ActiveRecord::Schema.define(version: 2024_02_14_123201) do
+
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -277,6 +276,7 @@ ActiveRecord::Schema.define(version: 2023_10_04_145109) do
     t.text "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
+    t.index ["dataset", "created"], name: "index_media_dataset_created"
     t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
     t.index ["url"], name: "index_media_on_url", length: 100
