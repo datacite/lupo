@@ -118,7 +118,7 @@ class DataciteDoiSerializer
     nil
   end
 
-  # attribute :doi, &:uid
+  attribute :doi, &:uid
 
   attribute :publisher do |object, params|
     # publisher accessor will now always return a publisher object, and indexed documents will store a "publisher_obj" attribute with the publisher object
