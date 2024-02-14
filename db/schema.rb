@@ -12,7 +12,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_04_145109) do
+ActiveRecord::Schema.define(version: 2024_02_14_083153) do
+
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -135,6 +136,9 @@ ActiveRecord::Schema.define(version: 2023_10_04_145109) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_contacts_deleted_at"
+    t.index ["email"], name: "index_contacts_email"
+    t.index ["uid"], name: "index_contacts_uid"
   end
 
   create_table "datacentre", charset: "utf8", force: :cascade do |t|
