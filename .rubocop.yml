@@ -74,6 +74,8 @@ Layout/EmptyLinesAroundAccessModifier:
 
 Layout/EmptyLinesAroundBlockBody:
   Enabled: true
+  Exclude:
+    - 'db/schema.rb'
 
 # In a regular class definition, no empty lines around the body.
 Layout/EmptyLinesAroundClassBody:
@@ -153,6 +155,7 @@ Style/FrozenStringLiteralComment:
     - 'activestorage/db/update_migrate/**/*.rb'
     - 'actionmailbox/db/migrate/**/*.rb'
     - 'actiontext/db/migrate/**/*.rb'
+    - 'db/schema.rb'
 
 Style/RedundantFreeze:
   Enabled: true
