@@ -41,7 +41,6 @@ WORKDIR /home/app/webapp
 RUN mkdir -p vendor/bundle && \
     chown -R app:app . && \
     chmod -R 755 . && \
-    # gem install rubygems-update -v 3.4.22 && \
     gem install rubygems-update -v 3.5.6 && \
     gem install bundler:2.5.6 && \
     /sbin/setuser app bundle config set --local path 'vendor/bundle' && \

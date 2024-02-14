@@ -66,6 +66,7 @@ class DataciteDoiSerializer
              if: Proc.new { |_object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
+
   belongs_to :provider,
              record_type: :providers,
              if: Proc.new { |_object, params| params && params[:detail] }
@@ -117,7 +118,7 @@ class DataciteDoiSerializer
     nil
   end
 
-  attribute :doi, &:uid
+  # attribute :doi, &:uid
 
   attribute :publisher do |object, params|
     # publisher accessor will now always return a publisher object, and indexed documents will store a "publisher_obj" attribute with the publisher object

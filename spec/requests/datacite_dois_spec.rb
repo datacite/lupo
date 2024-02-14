@@ -603,7 +603,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", 0, "attributes", "creators")).to eq([{ "name" => "Garza, Kristian J.", "nameType" => "Personal", "givenName" => "Kristian J.", "familyName" => "Garza", "affiliation" => [{ "name" => "Freie Universität Berlin", "affiliationIdentifier" => "https://ror.org/046ak2485", "affiliationIdentifierScheme" => "ROR" }], "nameIdentifiers" => [{ "schemeUri" => "https://orcid.org", "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }] }])
     end
 
-    xit "returns dois with re3data id", vcr: true do
+    it "returns dois with re3data id", vcr: true do
       get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -611,7 +611,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("included", 0, "attributes", "re3data")).to eq("https://doi.org/10.17616/r3xs37")
     end
 
-    xit "returns dois with re3data id as url", vcr: true do
+    it "returns dois with re3data id as url", vcr: true do
       get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
 
       expect(last_response.status).to eq(200)

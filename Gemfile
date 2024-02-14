@@ -32,9 +32,9 @@ gem "equivalent-xml", "~> 0.6.0"
 gem "facets", require: false
 gem "faraday", "~> 0.17.3"
 gem "faraday_middleware-aws-sigv4", "~> 0.3.0"
-# gem "fast_jsonapi", "~> 1.3"
-# add this to fix json serialization
-# https://github.com/jsonapi-serializer/jsonapi-serializer
+# IMPORTANT!!!
+# We have monkey patched this gem -> config/initializers/serialization_core.rb
+# Please check this before upgrading/downgrading versions
 gem "jsonapi-serializer", "~> 2.2"
 gem "flipper", "~> 0.17.0"
 gem "flipper-active_support_cache_store"
@@ -51,7 +51,6 @@ gem "iso8601", "~> 0.9.0"
 gem "jsonlint", "~> 0.3.0"
 gem "jwt"
 gem "kaminari", "~> 1.2"
-# gem "kt-paperclip", "~> 6.2", ">= 6.2.2"
 gem "kt-paperclip", "~> 7.2", ">= 7.2.2"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
@@ -79,7 +78,6 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
-# gem "mimemagic", "0.3.10"
 
 group :development, :test do
   gem "better_errors"
@@ -87,9 +85,7 @@ group :development, :test do
   gem "bullet", "~> 6.1"
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "rspec-benchmark", "~> 0.4.0"
-  # gem "rspec-graphql_matchers", "~> 1.1"
   gem "rspec-graphql_matchers", "~> 1.4"
-  # gem "rspec-rails", "~> 3.8", ">= 3.8.2"
   gem "rspec-rails", "~> 6.1", ">= 6.1.1"
   gem "rubocop", "~> 1.3", ">= 1.3.1"
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
@@ -110,17 +106,13 @@ group :test do
   gem "capybara"
   gem "database_cleaner"
   gem "elasticsearch-extensions", "~> 0.0.29"
-  # gem "factory_bot_rails", "~> 4.8", ">= 4.8.2"
   gem "factory_bot_rails", "~> 6.4", ">= 6.4.3"
-  # gem "faker", "~> 1.9"
   gem "faker", "~> 3.2", ">= 3.2.3"
   gem "hashdiff", [">= 1.0.0.beta1", "< 2.0.0"]
   gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
   gem "simplecov", "~> 0.17.1"
   gem "test-prof", "~> 0.10.2"
-  # gem "vcr", "~> 5.1"
   gem "vcr", "~> 6.1"
-  # gem "webmock", "~> 3.1"
   gem "webmock", "~> 3.18", ">= 3.18.1"
   gem "parallel_tests", "~> 3.12"
 end
