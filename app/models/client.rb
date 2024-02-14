@@ -815,9 +815,7 @@ class Client < ApplicationRecord
       Rails.logger.error "Missing client ID."
       exit
     end
-
-    index = options[:index] || DataciteDoi.active_index
-    DoiImportByClientJob.perform_later(client_id, index: index)
+    DoiImportByClientJob.perform_later(client_id)
   end
 
   # import all DOIs not indexed in Elasticsearch
