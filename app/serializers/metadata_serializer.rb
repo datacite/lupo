@@ -6,7 +6,6 @@ class MetadataSerializer
   set_key_transform :camel_lower
   set_type "metadata"
   set_id :uid
-  # cache_options enabled: true, cache_length: 24.hours
   cache_options store: Rails.cache, namespace: "jsonapi-serializer", expires_in: 24.hours
 
   attributes :version, :namespace, :xml, :created

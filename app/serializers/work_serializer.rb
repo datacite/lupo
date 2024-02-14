@@ -6,7 +6,6 @@ class WorkSerializer
   set_key_transform :dash
   set_type :works
   set_id :identifier
-  # cache_options enabled: true, cache_length: 24.hours
   cache_options store: Rails.cache, namespace: "jsonapi-serializer", expires_in: 24.hours
 
   attributes :doi,
