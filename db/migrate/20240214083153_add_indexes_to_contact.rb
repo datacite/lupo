@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddIndexesToContact < ActiveRecord::Migration[6.1]
   def change
     add_index :contacts, :uid, name: "index_contacts_uid"
