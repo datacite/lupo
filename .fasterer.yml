@@ -1,2 +1,4 @@
 exclude_paths:
   - spec/**/*.rb
+  - 'vendor/**/*.rb'
+  - 'db/schema.rb'
