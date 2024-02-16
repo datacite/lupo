@@ -1,0 +1,19 @@
+# Setting these up to all run on push rather than on commit.
+# Disabling all steps by default thus making this opt-in.
+# Feel free to enable and disable steps as you wish.
+
+PrePush:
+  Rubocop:
+    enabled: true
+    command: ["bundle", "exec", "rubocop"]
+    on_warn: fail
+    problem_on_unmodified_line: ignore
+  Reek:
+    enabled: true
+  BundleAudit:
+    enabled: true
+    command: ["bundle", "exec", "bundle-audit", "check", "--update"]
+  Brakeman:
+    enabled: true
+  Fasterer:
+    enabled: true
