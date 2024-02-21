@@ -30,11 +30,6 @@ COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
-# Add Runit script for shoryuken workers
-WORKDIR /home/app/webapp
-RUN mkdir /etc/service/shoryuken
-COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
-
 # Install Ruby gems
 COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
@@ -45,6 +40,11 @@ RUN mkdir -p vendor/bundle && \
     gem install bundler:2.4.20 && \
     /sbin/setuser app bundle config set --local path 'vendor/bundle' && \
     /sbin/setuser app bundle install
+
+# Add Runit script for shoryuken workers
+WORKDIR /home/app/webapp
+RUN mkdir /etc/service/shoryuken
+COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
 # Copy webapp folder
 COPY . /home/app/webapp/
