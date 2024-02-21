@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "faraday_middleware"
+# require "faraday_middleware"
 require "faraday_middleware/aws_sigv4"
 
 if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
