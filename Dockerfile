@@ -35,13 +35,6 @@ WORKDIR /home/app/webapp
 RUN mkdir /etc/service/shoryuken
 COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
-# Copy webapp folder
-COPY . /home/app/webapp/
-RUN mkdir -p tmp/pids && \
-    mkdir -p tmp/storage && \
-    chown -R app:app /home/app/webapp && \
-    chmod -R 755 /home/app/webapp
-
 # Install Ruby gems
 COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
@@ -52,6 +45,13 @@ RUN mkdir -p vendor/bundle && \
     gem install bundler:2.5.6 && \
     /sbin/setuser app bundle config set --local path 'vendor/bundle' && \
     /sbin/setuser app bundle install
+
+# Copy webapp folder
+COPY . /home/app/webapp/
+RUN mkdir -p tmp/pids && \
+    mkdir -p tmp/storage && \
+    chown -R app:app /home/app/webapp && \
+    chmod -R 755 /home/app/webapp
 
 # enable SSH
 RUN rm -f /etc/service/sshd/down && \
