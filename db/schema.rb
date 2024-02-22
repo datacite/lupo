@@ -84,8 +84,10 @@ ActiveRecord::Schema.define(version: 2024_02_15_091610) do
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
     t.integer "doi_estimate", default: 0, null: false
-    t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
+    t.index ["deleted_at"], name: "index_allocator_deleted_at"
     t.index ["organization_type"], name: "index_allocator_organization_type"
+    t.index ["role_name"], name: "index_allocator_role_name"
+    t.index ["ror_id"], name: "index_allocator_ror_id"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
