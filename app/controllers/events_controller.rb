@@ -45,8 +45,14 @@ class EventsController < ApplicationController
   end
 
   def update
-    @event = Event.where(uuid: params[:id]).first
-    exists = @event.present?
+    @event = Event.find_by(
+      subj_id: safe_params[:subj_id],
+      obj_id: safe_params[:obj_id],
+      source_id: safe_params[:source_id],
+      relation_type_id: safe_params[:relation_type_id]
+    )
+
+    http_status = @event.present? ? :ok : :created
 
     # create event if it doesn't exist already
     @event = Event.new(safe_params.except(:format)) if @event.blank?
@@ -57,14 +63,14 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: EventSerializer.new(@event, options).serialized_json,
-             status: exists ? :ok : :created
+      render json: EventSerializer.new(@event, options).serialized_json, status: http_status
     else
       logger.error @event.errors.inspect
-      errors =
-        @event.errors.full_messages.map do |message|
-          { status: 422, title: message }
-        end
+
+      errors = @event.errors.full_messages.map do |message|
+        { status: 422, title: message }
+      end
+
       render json: { errors: errors }, status: :unprocessable_entity
     end
   end
