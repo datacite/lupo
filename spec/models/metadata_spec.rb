@@ -18,7 +18,7 @@ describe Metadata, type: :model, vcr: true do
   end
 
   describe 'before_validation callbacks' do
-    let(:metadata) { Metadata.create(doi: doi) }
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
 
     it 'sets the namespace before validation' do
       metadata.valid?
@@ -32,7 +32,7 @@ describe Metadata, type: :model, vcr: true do
   end
 
   describe '#uid' do
-    let(:metadata) { Metadata.create(xml: xml, doi: doi) }
+    let(:metadata) { Metadata.create(xml: xml, doi: doi)}
 
     it 'generates a uid for the metadata' do
       expect(metadata.uid).not_to be_nil
@@ -40,7 +40,7 @@ describe Metadata, type: :model, vcr: true do
   end
 
   describe '#client_id' do
-    let(:metadata) { build(:metadata, doi: doi) }
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
 
     it 'returns the client ID' do
       expect(metadata.client_id).to eq(client.symbol.downcase)
@@ -48,11 +48,9 @@ describe Metadata, type: :model, vcr: true do
   end
 
   describe '#metadata_must_be_valid' do
-    let(:metadata) { Metadata.create(xml: xml, doi: doi) }
-
     context 'with invalid XML' do
       let(:xml) { 'invalid xml' }
-
+      let(:metadata) { build(:metadata, doi: doi) }
       it 'adds errors if XML is invalid' do
         metadata.valid?
         expect(metadata.errors[:xml]).not_to be_empty
@@ -61,6 +59,7 @@ describe Metadata, type: :model, vcr: true do
 
     context 'with valid XML' do
       let(:xml) { file_fixture('datacite.xml').read }
+      let(:metadata) { build(:metadata, doi: doi, xml: xml) }
 
       it 'does not add errors if XML is valid' do
         metadata.valid?
