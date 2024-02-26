@@ -154,9 +154,7 @@ describe DataManagementPlanType do
     it "returns all data_management_plans" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "organization", "name")).to eq(
-        "European Commission",
-      )
+      expect(response.dig("data", "organization", "name")).to eq("European Commission")
       expect(
         response.dig(
           "data",
@@ -288,9 +286,7 @@ describe DataManagementPlanType do
     it "returns all data_management_plans" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "organization", "name")).to eq(
-        "European Commission",
-      )
+      expect(response.dig("data", "organization", "name")).to eq("European Commission")
       expect(
         response.dig(
           "data",

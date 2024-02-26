@@ -124,8 +124,8 @@ module Crosscitable
 
       if from.present?
         send(
-          "read_" + from,
-          { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs),
+          "read_#{from}".to_sym,
+          **{ string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs),
         )
       else
         {}

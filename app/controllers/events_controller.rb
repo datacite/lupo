@@ -32,8 +32,10 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: EventSerializer.new(@event, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: EventSerializer.new(@event, options).serializable_hash.to_json,
+        status: exists ? :ok : :created
+      )
     else
       logger.error @event.errors.inspect
       errors =
@@ -57,8 +59,10 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: EventSerializer.new(@event, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: EventSerializer.new(@event, options).serializable_hash.to_json,
+        status: exists ? :ok : :created
+      )
     else
       logger.error @event.errors.inspect
       errors =
@@ -74,8 +78,10 @@ class EventsController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: EventSerializer.new(@event, options).serialized_json,
-           status: :ok
+    render(
+      json: EventSerializer.new(@event, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def index
@@ -174,8 +180,10 @@ class EventsController < ApplicationController
       }.compact
       options[:is_collection] = true
 
-      render json: EventSerializer.new(results, options).serialized_json,
-             status: :ok
+      render(
+        json: EventSerializer.new(results, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       sources =
         if total.positive?
@@ -265,8 +273,10 @@ class EventsController < ApplicationController
 
       options[:is_collection] = true
 
-      render json: EventSerializer.new(results, options).serialized_json,
-             status: :ok
+      render(
+        json: EventSerializer.new(results, options).serializable_hash.to_json,
+        status: :ok
+      )
     end
   end
 

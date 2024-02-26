@@ -2111,12 +2111,7 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
   end
 
   it "returns project resource types" do
-    response =
-      LupoSchema.execute(
-        query,
-        variables: { first: 15, cursor: nil }
-      ).
-        as_json
+    response = LupoSchema.execute(query, variables: { first: 15, cursor: nil }).as_json
 
     expect(response.dig("data", "works", "resourceTypes")).to eq(
       [{ "count" => 10, "id" => "project", "title" => "Project" }, { "count" => 5, "id" => "dataset", "title" => "Dataset" }]

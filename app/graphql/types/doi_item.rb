@@ -319,7 +319,7 @@ module DoiItem
   def other_related(**args)
     args[:ids] = get_other_related_ids(object.doi)
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -778,7 +778,7 @@ module DoiItem
   def references(**args)
     args[:ids] = object.reference_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -786,7 +786,7 @@ module DoiItem
   def citations(**args)
     args[:ids] = object.citation_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -794,7 +794,7 @@ module DoiItem
   def parts(**args)
     args[:ids] = object.part_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -802,7 +802,7 @@ module DoiItem
   def part_of(**args)
     args[:ids] = object.part_of_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -810,7 +810,7 @@ module DoiItem
   def versions(**args)
     args[:ids] = object.version_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -818,7 +818,7 @@ module DoiItem
   def version_of(**args)
     args[:ids] = object.version_of_ids
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end

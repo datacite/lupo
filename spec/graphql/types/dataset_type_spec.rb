@@ -36,7 +36,7 @@ describe DatasetType do
     end
 
     it "returns all datasets" do
-      response = LupoSchema.execute(query).as_json
+      response = LupoSchema.execute(query: query).as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(
@@ -177,12 +177,10 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "published")).to eq(
         [{ "count" => 1, "id" => "2011", "title" => "2011" }],
       )
-      # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois[2].uid)
       expect(
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
       expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq(
         [
           {
@@ -445,8 +443,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
-      #   expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
       expect(
         response.dig("data", "datasets", "nodes", 0, "citations", "totalCount"),
       ).to eq(2)
@@ -454,7 +450,6 @@ describe DatasetType do
         response.dig("data", "datasets", "nodes", 0, "citations", "nodes").
           length,
       ).to eq(2)
-      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end
 
@@ -520,12 +515,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "viewCount")).to be > 1
-      # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").length).to be >= 1
-      # expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").first.dig('yearMonth')).not_to be_nil
-      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
-      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
-      #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end
 
@@ -596,10 +585,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 0, "referenceCount")).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "totalCount")).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").length).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.uid}", "publicationYear"=>2011)
     end
   end
 
@@ -661,10 +646,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versionCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versions", "totalCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").length).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     end
   end
 
@@ -726,10 +707,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versionOfCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "totalCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").length).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
     end
   end
 
@@ -796,12 +773,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 0, "partCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 0, "parts", "totalCount")).to eq(1)
-      # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "nodes", 1, "parts", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
-      # expect(response.dig("data", "datasets", "nodes", 0, "parts", "pageInfo", "hasNextPage")).to be false
-      # expect(response.dig("data", "datasets", "nodes", 0, "parts", "nodes").length).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 0, "parts", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.uid}", "publicationYear"=>2011)
     end
   end
 
@@ -868,12 +839,6 @@ describe DatasetType do
         response.dig("data", "datasets", "pageInfo", "hasNextPage"),
       ).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOfCount")).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "totalCount")).to eq(1)
-      # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "nodes", 1, "partOf", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "pageInfo", "hasNextPage")).to be false
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").length).to eq(1)
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end
   end
 end
