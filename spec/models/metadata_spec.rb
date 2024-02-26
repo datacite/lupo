@@ -5,7 +5,7 @@ require "rails_helper"
 describe Metadata, type: :model, vcr: true do
   let(:provider) { create(:provider, symbol: "ADMIN") }
   let(:client) { create(:client, provider: provider) }
-  let(:doi) { create(:doi, client: client) }
+  let(:doi) { create(:doi, client: client, aasm_state: "findable") }
   let(:xml) { file_fixture('datacite.xml').read }
 
   context "validations" do
@@ -15,6 +15,14 @@ describe Metadata, type: :model, vcr: true do
 
   describe 'associations' do
     it { should belong_to(:doi).with_foreign_key(:dataset).inverse_of(:metadata) }
+  end
+
+  describe '#doi_id' do
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
+
+    it 'returns the DOI ID associated with the metadata' do
+      expect(metadata.doi_id).to eq(doi.doi)
+    end
   end
 
   describe 'before_validation callbacks' do
