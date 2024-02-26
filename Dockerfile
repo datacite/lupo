@@ -43,7 +43,6 @@ RUN mkdir -p tmp/pids && \
     chmod -R 755 /home/app/webapp
 
 # Install Ruby gems
-# COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
 RUN mkdir -p vendor/bundle && \
     chown -R app:app . && \
