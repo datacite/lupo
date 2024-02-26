@@ -266,7 +266,7 @@ class OrganizationType < BaseObject
   def publications(**args)
     args[:resource_type_id] = "Text"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -274,7 +274,7 @@ class OrganizationType < BaseObject
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -282,7 +282,7 @@ class OrganizationType < BaseObject
   def softwares(**args)
     args[:resource_type_id] = "Software"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -298,7 +298,7 @@ class OrganizationType < BaseObject
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -326,19 +326,19 @@ class OrganizationType < BaseObject
 
   def view_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     @r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     @r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     @r.response.aggregations.citation_count.value.to_i
   end
 
