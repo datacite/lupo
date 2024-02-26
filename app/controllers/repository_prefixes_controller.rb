@@ -91,10 +91,10 @@ class RepositoryPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = true
 
-      render json:
-               RepositoryPrefixSerializer.new(repository_prefixes, options).
-                 serialized_json,
-             status: :ok
+      render(
+        json: RepositoryPrefixSerializer.new(repository_prefixes, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
 
@@ -116,10 +116,10 @@ class RepositoryPrefixesController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json:
-             RepositoryPrefixSerializer.new(@client_prefix, options).
-               serialized_json,
-           status: :ok
+    render(
+      json: RepositoryPrefixSerializer.new(@client_prefix, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -131,10 +131,10 @@ class RepositoryPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json:
-               RepositoryPrefixSerializer.new(@client_prefix, options).
-                 serialized_json,
-             status: :created
+      render(
+        json: RepositoryPrefixSerializer.new(@client_prefix, options).serializable_hash.to_json,
+        status: :created
+      )
     else
       # Rails.logger.error @client_prefix.errors.inspect
       render json: serialize_errors(@client_prefix.errors, uid: @client_prefix.uid),

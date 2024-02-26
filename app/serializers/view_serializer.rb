@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class ViewSerializer
-  include FastJsonapi::ObjectSerializer
-  # include BatchLoaderHelper
+  include JSONAPI::Serializer
 
   set_key_transform :camel_lower
   set_type :events

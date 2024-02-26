@@ -136,18 +136,15 @@ class ProvidersController < ApplicationController
 
           fields = fields_from_params(params)
           if fields
-            render json:
-                     ProviderSerializer.new(
-                       @providers,
-                       options.merge(fields: fields),
-                     ).
-                       serialized_json,
-                   status: :ok
+            render(
+              json: ProviderSerializer.new(@providers, options.merge(fields: fields)).serializable_hash.to_json,
+              status: :ok
+            )
           else
-            render json:
-                     ProviderSerializer.new(@providers, options).
-                       serialized_json,
-                   status: :ok
+            render(
+              json: ProviderSerializer.new(@providers, options).serializable_hash.to_json,
+              status: :ok
+            )
           end
         end
         header = %w[
@@ -240,8 +237,10 @@ class ProvidersController < ApplicationController
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
 
-    render json: ProviderSerializer.new(@provider, options).serialized_json,
-           status: :ok
+    render(
+      json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -259,8 +258,10 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: ProviderSerializer.new(@provider, options).serialized_json,
-             status: :ok
+      render(
+        json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors, uid: @provider.uid),
@@ -275,8 +276,10 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: ProviderSerializer.new(@provider, options).serialized_json,
-             status: :ok
+      render(
+        json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors, uid: @provider.uid),

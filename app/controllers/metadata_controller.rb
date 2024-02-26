@@ -54,8 +54,10 @@ class MetadataController < ApplicationController
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: MetadataSerializer.new(@metadata, options).serialized_json,
-           status: :ok
+    render(
+      json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def show
@@ -63,8 +65,10 @@ class MetadataController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: MetadataSerializer.new(@metadata, options).serialized_json,
-           status: :ok
+    render(
+      json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -79,8 +83,10 @@ class MetadataController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json: MetadataSerializer.new(@metadata, options).serialized_json,
-             status: :created
+      render(
+        json: MetadataSerializer.new(@metadata, options).serializable_hash.to_json,
+        status: :created
+      )
     else
       Rails.logger.error @metadata.errors.inspect
       render json: serialize_errors(@metadata.errors),
