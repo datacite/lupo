@@ -58,7 +58,13 @@ describe WorkType do
             identifierType
             title
           }
-          publisher
+          publisher {
+            name
+            publisherIdentifier
+            publisherIdentifierScheme
+            schemeUri
+            lang
+          }
           bibtex
           xml
           schemaOrg
@@ -91,9 +97,13 @@ describe WorkType do
       expect(response.dig("data", "work", "id")).to eq(
         "https://handle.stage.datacite.org/#{work.doi.downcase}",
       )
-      expect(response.dig("data", "work", "publisher")).to eq(
-        "Dryad Digital Repository",
-      )
+      expect(response.dig("data", "work", "publisher")).to eq({
+        "name" => "Dryad Digital Repository",
+        "publisherIdentifier" => "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme" => "ROR",
+        "schemeUri" => "https://ror.org/",
+        "lang" => "en"
+      })
 
       bibtex =
         BibTeX.parse(response.dig("data", "work", "bibtex")).to_a(quotes: "").
@@ -335,8 +345,14 @@ describe WorkType do
           nodes {
             id
             doi
-            publisher
-            creators{
+            publisher {
+              name
+              publisherIdentifier
+              publisherIdentifierScheme
+              schemeUri
+              lang
+            }
+            creators {
               type
             }
           }
@@ -521,7 +537,13 @@ describe WorkType do
       ).to be nil
       expect(
         response.dig("data", "works", "nodes", 0, "publisher"),
-      ).to eq("Dryad Digital Repository")
+      ).to eq({
+        "name" => "Dryad Digital Repository",
+        "publisherIdentifier" => "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme" => "ROR",
+        "schemeUri" => "https://ror.org/",
+        "lang" => "en"
+      })
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
 
       response =
