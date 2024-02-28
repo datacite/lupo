@@ -82,7 +82,6 @@ describe User, type: :model, elasticsearch: true do
             role_id: "consortium_admin", provider_id: "datacite",
           )
         subject = User.new(token)
-        foo = subject.not_allowed_by_doi_and_user(doi: doi, user: subject)
         expect(
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false
