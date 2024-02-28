@@ -30,30 +30,6 @@ describe User, type: :model, elasticsearch: true do
     end
   end
 
-  # describe "decode_token Globus", vcr: true do
-  #   it "has name" do
-  #     payload = subject.decode_token(token)
-  #     expect(payload["name"]).to eq("Josiah Carberry")
-  #   end
-
-  #   it "empty token" do
-  #     payload = subject.decode_token("")
-  #     expect(payload).to eq(errors: "The token could not be decoded.")
-  #   end
-
-  #   it "invalid token" do
-  #     payload = subject.decode_token("abc")
-  #     expect(payload).to eq(errors: "The token could not be decoded.")
-  #   end
-
-  #   it "expired token" do
-  #     token = User.generate_token(exp: 0)
-  #     subject = User.new(token)
-  #     payload = subject.decode_token(token)
-  #     expect(payload).to eq(errors: "The token has expired.")
-  #   end
-  # end
-
   describe "decode_alb_token" do
     let(:token) { User.generate_alb_token }
 
@@ -106,6 +82,7 @@ describe User, type: :model, elasticsearch: true do
             role_id: "consortium_admin", provider_id: "datacite",
           )
         subject = User.new(token)
+        foo = subject.not_allowed_by_doi_and_user(doi: doi, user: subject)
         expect(
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false

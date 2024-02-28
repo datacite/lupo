@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "faraday_middleware"
+require "faraday"
 require "faraday_middleware/aws_sigv4"
 
 if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
@@ -24,12 +24,6 @@ if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
       f.adapter :excon
     end
 else
-  # config = {
-  #   host: ENV['ES_HOST'],
-  #   transport_options: {
-  #     request: { timeout: 30 }
-  #   }
-  # }
   Elasticsearch::Model.client =
     Elasticsearch::Client.new(
       host: ENV["ES_HOST"],

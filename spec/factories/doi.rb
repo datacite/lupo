@@ -18,6 +18,15 @@ FactoryBot.define do
         "ris": "DATA",
       }
     end
+    publisher_obj do
+      {
+        "name": "Dryad Digital Repository",
+        "publisherIdentifier": "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme": "ROR",
+        "schemeUri": "https://ror.org/",
+        "lang": "en",
+      }
+    end
     creators do
       [
         {
@@ -90,13 +99,6 @@ FactoryBot.define do
     descriptions do
       [{ "description": "Data from: A new malaria agent in African hominids." }]
     end
-    publisher { {
-      "name": "Dryad Digital Repository",
-      "publisherIdentifier": "https://ror.org/00x6h5n95",
-      "publisherIdentifierScheme": "ROR",
-      "schemeUri": "https://ror.org/",
-      "lang": "en"
-    } }
     subjects do
       [
         { "subject": "Phylogeny" },
