@@ -7,20 +7,13 @@ module ErrorSerializable
     def serialize_errors(errors, options = {})
       return nil if errors.nil?
 
-      arr =
-        Array.wrap(errors).reduce([]) do |sum, err|
-          source = err.keys.first
-
-          Array.wrap(err.values.first).each do |title|
-            sum <<
-              {
-                source: source,
-                uid: options[:uid],
-                title:
-                  title.is_a?(String) ? title.sub(/^./, &:upcase) : title.to_s,
-              }.compact
-          end
-
+      arr = errors.reduce([]) do |sum, err|
+          src = err.attribute
+          sum << {
+            source: err.attribute,
+            uid: options[:uid],
+            title: err.message,
+          }
           sum
         end
 
