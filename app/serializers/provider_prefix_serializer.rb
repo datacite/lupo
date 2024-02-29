@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ProviderPrefixSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
+
   set_key_transform :camel_lower
   set_type "provider-prefixes"
   set_id :uid

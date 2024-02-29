@@ -92,9 +92,7 @@ class ClientPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = true
 
-      render json:
-               ClientPrefixSerializer.new(client_prefixes, options).
-                 serialized_json,
+      render json: ClientPrefixSerializer.new(client_prefixes, options).serializable_hash.to_json,
              status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
@@ -117,9 +115,7 @@ class ClientPrefixesController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json:
-             ClientPrefixSerializer.new(@client_prefix, options).
-               serialized_json,
+    render json: ClientPrefixSerializer.new(@client_prefix, options).serializable_hash.to_json,
            status: :ok
   end
 
@@ -132,9 +128,7 @@ class ClientPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json:
-               ClientPrefixSerializer.new(@client_prefix, options).
-                 serialized_json,
+      render json: ClientPrefixSerializer.new(@client_prefix, options).serializable_hash.to_json,
              status: :created
     else
       # Rails.logger.error @client_prefix.errors.inspect

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class DataCenterSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
+
   set_key_transform :dash
   set_type "data-centers"
   set_id :uid

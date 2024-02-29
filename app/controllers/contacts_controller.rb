@@ -85,10 +85,10 @@ class ContactsController < ApplicationController
           options[:is_collection] = true
           options[:params] = { current_ability: current_ability }
 
-          render json:
-                    ContactSerializer.new(@contacts, options).
-                      serialized_json,
-                  status: :ok
+          render(
+            json: ContactSerializer.new(@contacts, options).serializable_hash.to_json,
+            status: :ok
+          )
         end
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -113,8 +113,10 @@ class ContactsController < ApplicationController
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
 
-    render json: ContactSerializer.new(@contact, options).serialized_json,
-           status: :ok
+    render(
+      json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -127,8 +129,10 @@ class ContactsController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: ContactSerializer.new(@contact, options).serialized_json,
-             status: :created
+      render(
+        json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
+        status: :created
+      )
     else
       # Rails.logger.error @contact.errors.inspect
       render json: serialize_errors(@contact.errors, uid: @contact.uid),
@@ -143,8 +147,10 @@ class ContactsController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: ContactSerializer.new(@contact, options).serialized_json,
-             status: :ok
+      render(
+        json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # Rails.logger.error @contact.errors.inspect
       render json: serialize_errors(@contact.errors, uid: @contact.uid),

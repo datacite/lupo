@@ -277,7 +277,7 @@ class RepositoryType < BaseObject
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(
-      dois(args),
+      dois(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -285,7 +285,7 @@ class RepositoryType < BaseObject
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
     ElasticsearchModelResponseConnection.new(
-      dois(args),
+      dois(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -293,7 +293,7 @@ class RepositoryType < BaseObject
   def publications(**args)
     args[:resource_type_id] = "Text"
     ElasticsearchModelResponseConnection.new(
-      dois(args),
+      dois(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -301,7 +301,7 @@ class RepositoryType < BaseObject
   def softwares(**args)
     args[:resource_type_id] = "Software"
     ElasticsearchModelResponseConnection.new(
-      dois(args),
+      dois(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -310,7 +310,7 @@ class RepositoryType < BaseObject
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
     ElasticsearchModelResponseConnection.new(
-      dois(args),
+      dois(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -332,19 +332,19 @@ class RepositoryType < BaseObject
 
   def view_count
     args = { first: 0 }
-    @r = dois(args) if @r.nil?
+    @r = dois(**args) if @r.nil?
     @r.response.aggregations.view_count.value.to_i
   end
 
   def download_count
     args = { first: 0 }
-    @r = dois(args) if @r.nil?
+    @r = dois(**args) if @r.nil?
     @r.response.aggregations.download_count.value.to_i
   end
 
   def citation_count
     args = { first: 0 }
-    @r = dois(args) if @r.nil?
+    @r = dois(**args) if @r.nil?
     @r.response.aggregations.citation_count.value.to_i
   end
 

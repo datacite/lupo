@@ -90,10 +90,10 @@ class ProviderPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = true
 
-      render json:
-               ProviderPrefixSerializer.new(provider_prefixes, options).
-                 serialized_json,
-             status: :ok
+      render(
+        json: ProviderPrefixSerializer.new(provider_prefixes, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
 
@@ -105,8 +105,11 @@ class ProviderPrefixesController < ApplicationController
           "reason",
         )
 
-      render json: { "errors" => { "title" => message } }.to_json,
-             status: :bad_request
+      render(
+        json: { "errors" => { "title" => message } }.to_json,
+        status: :bad_request
+      )
+
     end
   end
 
@@ -115,10 +118,10 @@ class ProviderPrefixesController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json:
-             ProviderPrefixSerializer.new(@provider_prefix, options).
-               serialized_json,
-           status: :ok
+    render(
+      json: ProviderPrefixSerializer.new(@provider_prefix, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -130,12 +133,11 @@ class ProviderPrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json:
-               ProviderPrefixSerializer.new(@provider_prefix, options).
-                 serialized_json,
-             status: :created
+      render(
+        json: ProviderPrefixSerializer.new(@provider_prefix, options).serializable_hash.to_json,
+        status: :created
+      )
     else
-      # Rails.logger.error @provider_prefix.errors.inspect
       render json: serialize_errors(@provider_prefix.errors),
              status: :unprocessable_entity
     end
@@ -155,7 +157,6 @@ class ProviderPrefixesController < ApplicationController
       Rails.logger.warn message
       head :no_content
     else
-      # Rails.logger.error @provider_prefix.errors.inspect
       render json: serialize_errors(@provider_prefix.errors, uid: @provider_prefix.uid),
              status: :unprocessable_entity
     end

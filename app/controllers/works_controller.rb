@@ -136,8 +136,10 @@ class WorksController < ApplicationController
       # Results to return are either our sample group dois or the regular hit results
       @dois = sample_dois || response.results
 
-      render json: WorkSerializer.new(@dois, options).serialized_json,
-             status: :ok
+      render(
+        json: WorkSerializer.new(@dois, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
@@ -158,7 +160,10 @@ class WorksController < ApplicationController
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability, detail: true }
 
-    render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
+    render(
+      json: WorkSerializer.new(@doi, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   protected
