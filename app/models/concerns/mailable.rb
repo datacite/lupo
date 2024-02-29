@@ -52,7 +52,7 @@ module Mailable
       responsible_id = (responsible_id || "admin").upcase
       text =
         User.format_message_text(
-          template: "users/welcome",
+          template: "users/welcome_text",
           title: title,
           contact_name: name,
           name: symbol,
@@ -105,7 +105,7 @@ module Mailable
       responsible_id ||= "ADMIN"
       text =
         User.format_message_text(
-          template: "users/delete",
+          template: "users/delete_text",
           title: title,
           contact_name: name,
           name: symbol,

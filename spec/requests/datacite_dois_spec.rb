@@ -227,7 +227,7 @@ describe DataciteDoisController, type: :request, vcr: true do
   end
 
   describe "GET /dois with nil publisher values", elasticsearch: true do
-    let!(:doi) { create(:doi, client: client, publisher: nil) }
+    let!(:doi) { create(:doi, client: client, publisher_obj: nil) }
 
     before do
       DataciteDoi.import

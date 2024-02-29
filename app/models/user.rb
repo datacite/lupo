@@ -164,7 +164,7 @@ class User
       end
     text =
       User.format_message_text(
-        template: "users/reset",
+        template: "users/reset_text",
         title: title,
         contact_name: user.name,
         name: user.symbol,

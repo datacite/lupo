@@ -46,7 +46,7 @@ describe "Mailable", type: :model, vcr: true do
   end
 
   it "format_message_text welcome" do
-    template = "users/welcome"
+    template = "users/welcome_text"
     url = ENV["BRACCO_URL"] + "?jwt=" + token
     reset_url = ENV["BRACCO_URL"] + "/reset"
     text =
@@ -113,23 +113,5 @@ describe "Mailable", type: :model, vcr: true do
       )
     expect(response[:status]).to eq(200)
     expect(response[:message]).to eq("Queued. Thank you.")
-  end
-
-  context "send_notification_to_slack" do
-    xit "succeeds" do
-      text = "Using system email #{client.system_email}."
-      options = { title: "TEST: new client account #{client.symbol} created." }
-      expect(Client.send_notification_to_slack(text, options)).to eq("ok")
-    end
-  end
-
-  context "send_notification_to_slack provider" do
-    xit "succeeds" do
-      text = "Using system email #{provider.system_email}."
-      options = {
-        title: "TEST: new provider account #{provider.symbol} created.",
-      }
-      expect(Client.send_notification_to_slack(text, options)).to eq("ok")
-    end
   end
 end
