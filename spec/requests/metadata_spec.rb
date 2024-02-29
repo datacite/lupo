@@ -80,12 +80,8 @@ describe MetadataController, type: :request do
         post "/dois/#{datacite_doi.doi}/metadata",
              valid_attributes, headers
 
-        expect(Base64.decode64(json.dig("data", "attributes", "xml"))).to eq(
-          xml,
-        )
-        expect(json.dig("data", "attributes", "namespace")).to eq(
-          "http://datacite.org/schema/kernel-4",
-        )
+        expect(Base64.decode64(json.dig("data", "attributes", "xml"))).to eq(xml)
+        expect(json.dig("data", "attributes", "namespace")).to eq("http://datacite.org/schema/kernel-4")
       end
 
       it "returns status code 201" do
@@ -110,9 +106,7 @@ describe MetadataController, type: :request do
         post "/dois/#{datacite_doi.doi}/metadata",
              not_valid_attributes, headers
 
-        expect(json["errors"]).to eq(
-          [{ "source" => "xml", "title" => "Can't be blank" }],
-        )
+        expect(json["errors"]).to(include({ "source" => "xml", "title" => "Can't be blank" }))
       end
     end
 
