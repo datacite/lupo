@@ -46,7 +46,7 @@ describe "Mailable", type: :model, vcr: true do
   end
 
   it "format_message_text welcome" do
-    template = "users/welcome.text.erb"
+    template = "users/welcome"
     url = ENV["BRACCO_URL"] + "?jwt=" + token
     reset_url = ENV["BRACCO_URL"] + "/reset"
     text =
@@ -63,7 +63,7 @@ describe "Mailable", type: :model, vcr: true do
   end
 
   it "format_message_html welcome" do
-    template = "users/welcome.html.erb"
+    template = "users/welcome"
     url = ENV["BRACCO_URL"] + "?jwt=" + token
     reset_url = ENV["BRACCO_URL"] + "/reset"
     html =

@@ -107,10 +107,8 @@ describe MetadataController, type: :request do
       end
 
       it "returns a validation failure message" do
-        debugger
         post "/dois/#{datacite_doi.doi}/metadata",
              not_valid_attributes, headers
-        debugger
 
         expect(json["errors"]).to eq(
           [{ "source" => "xml", "title" => "Can't be blank" }],

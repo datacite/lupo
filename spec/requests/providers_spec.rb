@@ -434,49 +434,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
           },
         }
       end
-
-      xit "creates a provider" do
-        post "/providers", params, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "systemEmail")).to eq(
-          "doe@joe.joe",
-        )
-        expect(json.dig("data", "attributes", "name")).to eq("Figshare")
-        expect(json.dig("data", "attributes", "memberType")).to eq(
-          "consortium_organization",
-        )
-        expect(
-          json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
-
-        sleep 1
-
-        get "/providers/#{
-              consortium.symbol.downcase
-            }?include=consortium-organizations",
-            nil, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("included", 0, "attributes", "systemEmail")).to eq(
-          "doe@joe.joe",
-        )
-        expect(json.dig("included", 0, "attributes", "name")).to eq("Figshare")
-        expect(json.dig("included", 0, "attributes", "memberType")).to eq(
-          "consortium_organization",
-        )
-        expect(
-          json.dig("included", 0, "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol)
-
-        # get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
-
-        # expect(last_response.status).to eq(200)
-
-        # get "/providers/#{consortium_lead.symbol.downcase}/organizations", nil, headers
-
-        # expect(last_response.status).to eq(200)
-      end
     end
 
     context "create provider not member_role consortium_organization" do
@@ -836,15 +793,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
           "HTTP_AUTHORIZATION" => "Basic " + credentials,
         }
       end
-
-      xit "creates a provider" do
-        post "/providers", params, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "systemEmail")).to eq(
-          "doe@joe.joe",
-        )
-      end
     end
 
     context "generate random symbol" do
@@ -935,10 +883,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq(
-          "source" => "system_email", "title" => "Can't be blank",
-          "uid" => "bl"
-        )
+        expect(json["errors"].first).to eq("source" => "system_email", "title" => "Can't be blank", "uid" => "bl")
       end
     end
 
@@ -962,10 +907,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(400)
       end
-
-      # it 'returns a validation failure message' do
-      #   expect(response["exception"]).to eq("#<JSON::ParserError: You need to provide a payload following the JSONAPI spec>")
-      # end
     end
   end
 
@@ -1095,19 +1036,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
           },
         }
       end
-
-      xit "updates the record" do
-        put "/providers/#{provider.symbol}",
-            params, consortium_organization_headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "displayName")).to eq(
-          "British Library",
-        )
-        expect(json.dig("data", "attributes", "globusUuid")).to eq(
-          "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
-        )
-      end
     end
 
     context "removes globus_uuid" do
@@ -1199,15 +1127,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
           "HTTP_ACCEPT" => "application/vnd.api+json",
           "HTTP_AUTHORIZATION" => "Basic " + credentials,
         }
-      end
-
-      xit "updates the record" do
-        put "/providers/#{provider.symbol}", params, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "systemEmail")).to eq(
-          "Pepe@mdm.cod",
-        )
       end
     end
 

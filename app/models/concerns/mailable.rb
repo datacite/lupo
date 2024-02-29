@@ -52,7 +52,7 @@ module Mailable
       responsible_id = (responsible_id || "admin").upcase
       text =
         User.format_message_text(
-          template: "users/welcome.text.erb",
+          template: "users/welcome",
           title: title,
           contact_name: name,
           name: symbol,
@@ -61,7 +61,7 @@ module Mailable
         )
       html =
         User.format_message_html(
-          template: "users/welcome.html.erb",
+          template: "users/welcome",
           title: title,
           contact_name: name,
           name: symbol,
@@ -105,14 +105,14 @@ module Mailable
       responsible_id ||= "ADMIN"
       text =
         User.format_message_text(
-          template: "users/delete.text.erb",
+          template: "users/delete",
           title: title,
           contact_name: name,
           name: symbol,
         )
       html =
         User.format_message_html(
-          template: "users/delete.html.erb",
+          template: "users/delete",
           title: title,
           contact_name: name,
           name: symbol,
@@ -172,6 +172,7 @@ module Mailable
           reset_url: reset_url,
         },
         template: template,
+        format: [:text],
         layout: false,
       )
     end
@@ -194,6 +195,7 @@ module Mailable
             reset_url: reset_url,
           },
           template: template,
+          format: [:html],
           layout: "application",
         )
 
