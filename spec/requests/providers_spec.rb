@@ -957,58 +957,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
     end
 
-    context "when updating as consortium" do
-      let(:consortium_credentials) do
-        User.encode_auth_param(username: consortium.symbol, password: "12345")
-      end
-      let(:consortium_headers) do
-        {
-          "HTTP_ACCEPT" => "application/vnd.api+json",
-          "HTTP_AUTHORIZATION" => "Basic " + consortium_credentials,
-        }
-      end
-      let(:params) do
-        {
-          "data" => {
-            "type" => "providers",
-            "attributes" => {
-              "name" => "British Library",
-              "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
-              "displayName" => "British Library",
-              "memberType" => "consortium_organization",
-              "website" => "https://www.bl.uk",
-              "region" => "Americas",
-              "systemEmail" => "Pepe@mdm.cod",
-              "country" => "GB",
-            },
-            "relationships": {
-              "consortium": {
-                "data": {
-                  "type": "providers", "id": consortium.symbol.downcase
-                },
-              },
-            },
-          },
-        }
-      end
-
-      xit "updates the record" do
-        put "/providers/#{provider.symbol}",
-            params, consortium_headers
-        puts consortium_headers
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "displayName")).to eq(
-          "British Library",
-        )
-        expect(json.dig("data", "attributes", "globusUuid")).to eq(
-          "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
-        )
-        expect(
-          json.dig("data", "relationships", "consortium", "data", "id"),
-        ).to eq(consortium.symbol.downcase)
-      end
-    end
-
     context "when updating as consortium_organization" do
       let(:consortium_organization_credentials) do
         User.encode_auth_param(username: provider.symbol, password: "12345")
