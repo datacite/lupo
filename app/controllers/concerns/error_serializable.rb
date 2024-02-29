@@ -22,7 +22,6 @@ module ErrorSerializable
   end
 
   private
-
   def capitalize_error_message(error)
     error.message.sub(/^./, &:upcase)
   end
