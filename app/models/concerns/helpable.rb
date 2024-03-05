@@ -75,8 +75,8 @@ module Helpable
             url +
             "."
         end
-
-        __elasticsearch__.index_document if success
+        ### Disabled as this should be picked up by the after_commit hook on the main DOI model
+        # __elasticsearch__.index_document if success
       elsif response.status == 404
         Rails.logger.info "[Handle] Error updating URL for DOI " + doi +
           ": not found"
