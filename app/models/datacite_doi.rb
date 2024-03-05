@@ -155,7 +155,18 @@ class DataciteDoi < Doi
       end
 
     # get database records from array of database ids
-    selected_dois = DataciteDoi.where(id: ids).includes(:client)
+    selected_dois = DataciteDoi.where(id: ids).includes(
+      :client,
+      :media,
+      :view_events,
+      :download_events,
+      :citation_events,
+      :reference_events,
+      :part_events,
+      :part_of_events,
+      :version_events,
+      :version_of_events
+    )
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
       bulk_body = dois.map do |doi|
         {

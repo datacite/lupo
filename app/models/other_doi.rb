@@ -118,6 +118,7 @@ class OtherDoi < Doi
 
     # get database records from array of database ids
     dois = OtherDoi.includes(
+      :client,
       :media,
       :view_events,
       :download_events,
