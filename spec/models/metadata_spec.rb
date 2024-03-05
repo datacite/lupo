@@ -46,8 +46,7 @@ describe Metadata, type: :model, vcr: true do
     subject { Metadata.create(xml: xml, doi: doi) }
 
     it "creates xml" do
-      # TODO:: Fix this last!!!
-      # expect(subject.xml).to eq(xml)
+      expect(subject.xml).to eq(xml)
     end
 
     it "valid model" do
