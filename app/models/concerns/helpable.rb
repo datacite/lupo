@@ -65,18 +65,12 @@ module Helpable
       # update minted column after first successful registration in handle system
 
       if [200, 201].include?(response.status)
-        success = true
-        if minted.blank?
-          success = update(minted: Time.zone.now, updated: Time.zone.now)
-        end
         unless Rails.env.test?
 
           Rails.logger.debug "[Handle] URL for DOI " + doi + " updated to " +
             url +
             "."
         end
-        ### Disabled as this should be picked up by the after_commit hook on the main DOI model
-        # __elasticsearch__.index_document if success
       elsif response.status == 404
         Rails.logger.info "[Handle] Error updating URL for DOI " + doi +
           ": not found"
