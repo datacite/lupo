@@ -63,7 +63,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       end
       source = source.split("}").last[0..-2] if line.present?
       source = schema_attributes(source) if source.present?
-      record.errors.add(source.to_sym).add(title)
+      record.errors.add(source.to_sym, title)
     end
   rescue Nokogiri::XML::SyntaxError => e
     line, column, _level, text = e.message.split(":", 4)
