@@ -53,7 +53,7 @@ class Metadata < ApplicationRecord
 
     # load XSD from bolognese gem
     kernel = namespace.to_s.split("/").last
-    filepath = File.join(Gem.loaded_specs['bolognese'].full_gem_path, "resources", kernel, "metadata.xsd")
+    filepath = File.join(Gem.loaded_specs["bolognese"].full_gem_path, "resources", kernel, "metadata.xsd")
     schema = Nokogiri::XML::Schema(File.open(filepath))
     err = schema.validate(doc).map(&:to_s).join(", ")
     errors.add(:xml, err) if err.present?
