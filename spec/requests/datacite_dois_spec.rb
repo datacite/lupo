@@ -2575,6 +2575,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "updates the record" do
         patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
+
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/8na3-9s47")
@@ -2934,9 +2935,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi with publisher param set to true" do
-        debugger
         post "/dois?publisher=true", valid_attributes, headers
-        debugger
 
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "doi")).to eq(doi)

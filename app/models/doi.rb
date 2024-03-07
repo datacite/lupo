@@ -145,7 +145,7 @@ class Doi < ApplicationRecord
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
-  before_validation :update_publisher, if: [ :will_save_change_to_publisher?, :publisher? ]
+  before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science

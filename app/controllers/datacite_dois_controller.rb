@@ -507,7 +507,7 @@ class DataciteDoisController < ApplicationController
       )
     else
       logger.info @doi.errors.messages
-      render json: serialize_errors(@doi.errors.messages, uid: @doi.uid), status: :ok
+      render json: serialize_errors(@doi.errors, uid: @doi.uid), status: :ok
     end
   end
 
@@ -623,7 +623,7 @@ class DataciteDoisController < ApplicationController
       )
     else
       # logger.error @doi.errors.messages
-      render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
+      render json: serialize_errors(@doi.errors, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
     end
