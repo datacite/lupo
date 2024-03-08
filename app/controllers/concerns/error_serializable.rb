@@ -4,9 +4,6 @@ module ErrorSerializable
   extend ActiveSupport::Concern
 
   included do
-    # the previous serialization method only returned the first error
-    # this implementation returns all
-    # this way the consumer can know everything that is wrong and not get information in a piecemeal manner
     def serialize_errors(errors, options = {})
       return nil if errors.nil?
 
