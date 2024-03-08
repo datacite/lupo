@@ -1372,7 +1372,7 @@ class QueryType < BaseObject
     doi = doi_from_url(id)
     fail ActiveRecord::RecordNotFound if doi.nil?
 
-    doi = DataciteDoi.where(doi: doi, aasm_state: "findable").first
+    doi = DataciteDoi.includes(:reference_events, :version_events, :version_of_events, :citation_events, :part_events, :part_of_events).where(doi: doi, aasm_state: "findable").first
     fail ActiveRecord::RecordNotFound if doi.nil?
 
     doi
