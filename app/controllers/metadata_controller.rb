@@ -7,7 +7,7 @@ class MetadataController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @doi = DataciteDoi.where(doi: params[:doi_id]).first
+    @doi = DataciteDoi.includes(:metadata).find_by(doi: params[:doi_id])
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     collection = @doi.metadata

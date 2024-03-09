@@ -3,9 +3,90 @@
 require "rails_helper"
 
 describe Metadata, type: :model, vcr: true do
+  let(:provider) { create(:provider, symbol: "ADMIN") }
+  let(:client) { create(:client, provider: provider) }
+  let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  let(:xml) { file_fixture("datacite.xml").read }
+
   context "validations" do
     it { should validate_presence_of(:xml) }
     it { should validate_presence_of(:namespace) }
+  end
+
+  describe "associations" do
+    it { should belong_to(:doi).with_foreign_key(:dataset).inverse_of(:metadata) }
+  end
+
+  describe "#doi_id" do
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
+
+    it "returns the DOI ID associated with the metadata" do
+      expect(metadata.doi_id).to eq(doi.doi)
+    end
+  end
+
+  describe "before_validation callbacks" do
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
+
+    it "sets the namespace before validation" do
+      metadata.valid?
+      expect(metadata.namespace).not_to be_nil
+    end
+
+    it "sets the metadata version before validation" do
+      metadata.valid?
+      expect(metadata.metadata_version).to eq(1)
+    end
+  end
+
+  describe "#uid" do
+    let(:metadata) { Metadata.create(xml: xml, doi: doi) }
+
+    it "generates a uid for the metadata" do
+      expect(metadata.uid).not_to be_nil
+    end
+  end
+
+  describe "#client_id" do
+    let(:metadata) { build(:metadata, doi: doi, xml: xml) }
+
+    it "returns the client ID" do
+      expect(metadata.client_id).to eq(client.symbol.downcase)
+    end
+  end
+
+  describe "#metadata_must_be_valid" do
+    context "with invalid XML" do
+      let(:xml) { "invalid xml" }
+      let(:metadata) { build(:metadata, doi: doi) }
+      it "adds errors if XML is invalid" do
+        metadata.valid?
+        expect(metadata.errors[:xml]).not_to be_empty
+      end
+    end
+
+    context "with valid XML" do
+      let(:xml) { file_fixture("datacite.xml").read }
+      let(:metadata) { build(:metadata, doi: doi, xml: xml) }
+
+      it "does not add errors if XML is valid" do
+        metadata.valid?
+        expect(metadata.errors[:xml]).to be_empty
+      end
+    end
+  end
+
+  describe "#doi_id=" do
+    let(:metadata) { build(:metadata) }
+
+    it "sets the dataset attribute with the DOI id" do
+      metadata.doi_id = doi.doi
+      expect(metadata.dataset).to eq(doi.id)
+    end
+
+    it "raises ActiveRecord::RecordNotFound if DOI is not found" do
+      expect { metadata.doi_id = "invalid_doi" }.to raise_error(ActiveRecord::RecordNotFound)
+    end
   end
 
   context "parses xml" do
