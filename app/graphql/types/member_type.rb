@@ -236,7 +236,7 @@ class MemberType < BaseObject
   def publications(**args)
     args[:resource_type_id] = "Text"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -244,7 +244,7 @@ class MemberType < BaseObject
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -252,7 +252,7 @@ class MemberType < BaseObject
   def softwares(**args)
     args[:resource_type_id] = "Software"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -261,14 +261,14 @@ class MemberType < BaseObject
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(
-      response(args),
+      response(**args),
       context: context, first: args[:first], after: args[:after],
     )
   end
@@ -313,7 +313,7 @@ class MemberType < BaseObject
 
   def view_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     if @r.results.total.positive?
       aggregate_count(@r.response.aggregations.views.buckets)
     else
@@ -323,7 +323,7 @@ class MemberType < BaseObject
 
   def download_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     if @r.results.total.positive?
       aggregate_count(@r.response.aggregations.downloads.buckets)
     else
@@ -333,7 +333,7 @@ class MemberType < BaseObject
 
   def citation_count
     args = { first: 0 }
-    @r = response(args) if @r.nil?
+    @r = response(**args) if @r.nil?
     if @r.results.total.positive?
       aggregate_count(@r.response.aggregations.citations.buckets)
     else

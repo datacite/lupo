@@ -99,8 +99,10 @@ class PrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = true
 
-      render json: PrefixSerializer.new(prefixes, options).serialized_json,
-             status: :ok
+      render(
+        json: PrefixSerializer.new(prefixes, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
 
@@ -122,8 +124,10 @@ class PrefixesController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: PrefixSerializer.new(@prefix, options).serialized_json,
-           status: :ok
+    render(
+      json: PrefixSerializer.new(@prefix, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -135,9 +139,11 @@ class PrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json: PrefixSerializer.new(@prefix, options).serialized_json,
-             status: :created,
-             location: @prefix
+      render(
+        json: PrefixSerializer.new(@prefix, options).serializable_hash.to_json,
+        status: :created,
+        location: @prefix
+      )
     else
       logger.error @prefix.errors.inspect
       render json: serialize_errors(@prefix.errors),

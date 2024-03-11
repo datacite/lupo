@@ -99,8 +99,10 @@ class MembersController < ApplicationController
       options[:is_collection] = true
       options[:links] = nil
 
-      render json: MemberSerializer.new(@members, options).serialized_json,
-             status: :ok
+      render(
+        json: MemberSerializer.new(@members, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
 
@@ -122,8 +124,10 @@ class MembersController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: MemberSerializer.new(@provider, options).serialized_json,
-           status: :ok
+    render(
+      json: MemberSerializer.new(@provider, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   protected
