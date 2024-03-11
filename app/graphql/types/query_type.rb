@@ -1374,5 +1374,7 @@ class QueryType < BaseObject
 
     result = ElasticsearchLoader.for(Doi).load(doi)
     fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 end
