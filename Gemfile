@@ -10,6 +10,7 @@ gem "audited", "~> 5.4", ">= 5.4.3"
 gem "aws-sdk-s3", require: false
 gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
+gem "base64", "~> 0.2.0"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
 gem "bolognese", "~> 2.2"
