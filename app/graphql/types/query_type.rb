@@ -1372,9 +1372,9 @@ class QueryType < BaseObject
     doi = doi_from_url(id)
     fail ActiveRecord::RecordNotFound if doi.nil?
 
-    doi = DataciteDoi.where(doi: doi, aasm_state: "findable").first
-    fail ActiveRecord::RecordNotFound if doi.nil?
+    result = ElasticsearchLoader.for(Doi).load(doi)
+    fail ActiveRecord::RecordNotFound if result.nil?
 
-    doi
+    result
   end
 end
