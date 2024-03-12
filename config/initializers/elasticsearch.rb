@@ -33,3 +33,15 @@ else
       password: ENV["ELASTIC_PASSWORD"],
     ) { |f| f.adapter :excon }
 end
+
+module Elasticsearch
+  class Client
+    alias original_verify_with_version_or_header verify_with_version_or_header
+
+    def verify_with_version_or_header(...)
+      original_verify_with_version_or_header(...)
+    rescue Elasticsearch::UnsupportedProductError => exception
+      warn("Ignoring elasticsearch complaint: #{exception.message}")
+    end
+  end
+end
