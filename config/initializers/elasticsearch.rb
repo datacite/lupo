@@ -34,6 +34,9 @@ else
     ) { |f| f.adapter :excon }
 end
 
+# Monkeypactch to ignore the Elasticsearch::UnsupportedProductError.
+# This error is raised because our gem version does not match the elasticsearch version in AWS OpenSearch.
+# As such, it should be safe to ignore the error.
 module Elasticsearch
   class Client
     alias original_verify_with_version_or_header verify_with_version_or_header
