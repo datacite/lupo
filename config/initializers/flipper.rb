@@ -24,6 +24,7 @@ Flipper.configure do |config|
     end
     Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)
   end
+  config.flipper.memoize = false
 end
 
 if Rails.env.development?
