@@ -69,34 +69,13 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
-    # include graphql
-    # config.paths.add Rails.root.join("app", "graphql", "types").to_s,
-    #                  eager_load: true
-    # config.paths.add Rails.root.join("app", "graphql", "mutations").to_s,
-    #                  eager_load: true
-    # config.paths.add Rails.root.join("app", "graphql", "connections").to_s,
-    #                  eager_load: true
-    # config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
-    #                  eager_load: true
-
-    # Allow middleware to be loaded. (compressed_requests)
+    # auto and eager load paths
+    config.autoload_lib(ignore: nil)
     config.eager_load_paths << Rails.root.join("app", "graphql", "types")
     config.eager_load_paths << Rails.root.join("app", "graphql", "mutations")
     config.eager_load_paths << Rails.root.join("app", "graphql", "connections")
     config.eager_load_paths << Rails.root.join("app", "graphql", "resolvers")
-    # config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    # config.autoload_paths += %W(#{config.root}/app/graphql/types)
-    # config.eager_load_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    # config.eager_load_paths += %W(#{config.root}/app/graphql/types)
 
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
-
-    # Only loads a smaller set of middleware suitable for API only apps.
-    # Middleware like session, flash, cookies can be added back manually.
-    # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
     # secret_key_base is not used by Rails API, as there are no sessions
