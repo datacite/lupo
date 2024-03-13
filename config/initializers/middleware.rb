@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "compressed_requests"
+require "./lib/middleware/compressed_requests"
 
 Rails.application.configure do
   config.middleware.insert_before Rack::Head, CompressedRequests
