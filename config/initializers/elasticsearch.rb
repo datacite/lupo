@@ -44,7 +44,8 @@ module Elasticsearch
     def verify_with_version_or_header(...)
       original_verify_with_version_or_header(...)
     rescue Elasticsearch::UnsupportedProductError => exception
-      warn("Ignoring elasticsearch complaint: #{exception.message}")
+      # let's ignore this it's adding a lot of noise to the logs
+      # warn("Ignoring elasticsearch complaint: #{exception.message}")
     end
   end
 end
