@@ -69,13 +69,26 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
-    # auto and eager load paths
-    config.autoload_lib(ignore: %w(tasks))
-    config.autoload_paths << Rails.root.join("app", "graphql", "types")
-    config.autoload_paths << Rails.root.join("app", "graphql", "mutations")
-    config.autoload_paths << Rails.root.join("app", "graphql", "connections")
-    config.autoload_paths << Rails.root.join("app", "graphql", "resolvers")
+    # include graphql
+    config.paths.add Rails.root.join("app", "graphql", "types").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "mutations").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "connections").to_s,
+                     eager_load: true
+    config.paths.add Rails.root.join("app", "graphql", "resolvers").to_s,
+                     eager_load: true
 
+    # Allow middleware to be loaded. (compressed_requests)
+    config.autoload_lib(ignore: nil)
+
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration should go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded.
+
+    # Only loads a smaller set of middleware suitable for API only apps.
+    # Middleware like session, flash, cookies can be added back manually.
+    # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
     # secret_key_base is not used by Rails API, as there are no sessions
