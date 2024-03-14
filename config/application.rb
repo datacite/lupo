@@ -70,11 +70,11 @@ module Lupo
     config.load_defaults 7.1
 
     # auto and eager load paths
-    config.autoload_lib(ignore: nil)
-    config.eager_load_paths << Rails.root.join("app", "graphql", "types")
-    config.eager_load_paths << Rails.root.join("app", "graphql", "mutations")
-    config.eager_load_paths << Rails.root.join("app", "graphql", "connections")
-    config.eager_load_paths << Rails.root.join("app", "graphql", "resolvers")
+    config.autoload_lib(ignore: %w(tasks))
+    config.autoload_paths << Rails.root.join("app", "graphql", "types")
+    config.autoload_paths << Rails.root.join("app", "graphql", "mutations")
+    config.autoload_paths << Rails.root.join("app", "graphql", "connections")
+    config.autoload_paths << Rails.root.join("app", "graphql", "resolvers")
 
     config.api_only = true
 
