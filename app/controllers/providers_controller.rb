@@ -347,7 +347,6 @@ class ProvidersController < ApplicationController
     end
 
     meta = {
-      # downloads: downloads,
       providers: providers,
       clients: clients,
       dois: dois,

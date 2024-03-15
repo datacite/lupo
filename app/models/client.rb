@@ -44,7 +44,7 @@ class Client < ApplicationRecord
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   alias_attribute :contact_email, :system_email
-  # attr_readonly :symbol
+  attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
   delegate :consortium_id, to: :provider, allow_nil: true
   delegate :salesforce_id, to: :provider, prefix: true, allow_nil: true

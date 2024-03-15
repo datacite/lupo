@@ -186,5 +186,13 @@ module Lupo
     }
 
     config.allowed_cors_origins = []
+
+    # https://blog.kiprosh.com/rails-7-1-raises-on-assignment-to-readonly-attributes
+    # in the provider, and client model we have the following code: `attr_readonly :symbol`
+    # in rails 7.1 the default is to raise an ActiveRecord::ReadonlyAttributeError.
+    # by adding in this config we can allow the old behaviour i.e. not persist the change on update.
+    # the ideal solution, would be to rework how we use safe_params.
+    # have different safe_params for update and create (this is the way).
+    config.active_record.raise_on_assign_to_attr_readonly = false
   end
 end

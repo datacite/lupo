@@ -63,7 +63,7 @@ class Provider < ApplicationRecord
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  # attr_readonly :symbol
+  attr_readonly :symbol
   attr_reader :from_salesforce
 
   delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
