@@ -24,7 +24,6 @@ services:
     image: memcached:1.4.31
     networks:
       - public
-    platform: linux/amd64
   mysql:
     command: --max_allowed_packet=50000000
     environment:
@@ -35,7 +34,6 @@ services:
       - "3309:3306"
     networks:
       - public
-    platform: linux/amd64
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     ports:
