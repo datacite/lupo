@@ -38,13 +38,15 @@ class DataciteDoi < Doi
       else
         inactive_index
       end
+
+    datacite_dois = DataciteDoi.select(:id).where(type: "DataciteDoi")
     from_id =
-      (options[:from_id] || DataciteDoi.where(type: "DataciteDoi").minimum(:id)).
+      (options[:from_id] || datacite_dois.minimum(:id)).
         to_i
     until_id =
       (
         options[:until_id] ||
-          DataciteDoi.where(type: "DataciteDoi").maximum(:id)
+          datacite_dois.maximum(:id)
       ).
         to_i
     batch_size = options[:batch_size] || 50
@@ -52,8 +54,7 @@ class DataciteDoi < Doi
 
     # TODO remove query for type once STI is enabled
     # SQS message size limit is 256 kB, up to 2 GB with S3
-    DataciteDoi.where(type: "DataciteDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: batch_size) do |dois|
+    datacite_dois.where(id: from_id..until_id).find_in_batches(batch_size: batch_size) do |dois|
       ids = dois.pluck(:id)
       DataciteDoiImportInBulkJob.perform_later(ids, index: index)
       count += ids.length
