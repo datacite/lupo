@@ -506,8 +506,7 @@ class DataciteDoisController < ApplicationController
         status: :ok
       )
     else
-      logger.info @doi.errors.messages
-      render json: serialize_errors(@doi.errors.messages, uid: @doi.uid), status: :ok
+      render json: serialize_errors(@doi.errors, uid: @doi.uid), status: :ok
     end
   end
 
@@ -538,7 +537,6 @@ class DataciteDoisController < ApplicationController
         location: @doi
       )
     else
-      logger.error @doi.errors.inspect
       render json: serialize_errors(@doi.errors, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
@@ -598,8 +596,7 @@ class DataciteDoisController < ApplicationController
         status: exists ? :ok : :created
       )
     else
-      logger.error @doi.errors.messages
-      render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
+      render json: serialize_errors(@doi.errors, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
     end
@@ -622,8 +619,7 @@ class DataciteDoisController < ApplicationController
         status: :ok
       )
     else
-      # logger.error @doi.errors.messages
-      render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
+      render json: serialize_errors(@doi.errors, uid: @doi.uid),
              include: @include,
              status: :unprocessable_entity
     end
@@ -639,7 +635,6 @@ class DataciteDoisController < ApplicationController
       if @doi.destroy
         head :no_content
       else
-        logger.error @doi.errors.inspect
         render json: serialize_errors(@doi.errors, uid: @doi.uid),
                status: :unprocessable_entity
       end

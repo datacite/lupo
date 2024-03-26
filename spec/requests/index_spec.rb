@@ -84,21 +84,6 @@ describe IndexController, type: :request do
       end
     end
 
-    # context "application/vnd.datacite.datacite+xml schema 3" do
-    #   let(:xml) { file_fixture('datacite_schema_3.xml').read }
-    #   let(:doi) { create(:doi, xml: xml, regenerate: false, aasm_state: "findable") }
-
-    #   it 'returns the Doi' do
-    #     get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" }
-
-    #     expect(last_response.status).to eq(200)
-    #     data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
-    #     expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-3")
-    #     expect(data.dig("publisher")).to eq("Dryad Digital Repository")
-    #     expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
-    #   end
-    # end
-
     context "application/vnd.datacite.datacite+xml not found" do
       it "returns error message" do
         get "/xxx",
@@ -337,9 +322,7 @@ describe IndexController, type: :request do
 
     context "unknown content type" do
       it "returns the Doi" do
-        get "/#{doi.doi}",
-            nil,
-            { "HTTP_ACCEPT" => "application/vnd.ms-excel" }
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.ms-excel" }
 
         expect(last_response.status).to eq(303)
         expect(last_response.headers["Location"]).to eq(doi.url)

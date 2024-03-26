@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
-  SUBJECTS_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/client/subjects.json"
+  SUBJECTS_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "client", "subjects.json")
   audited except: %i[
     system_email
     service_contact

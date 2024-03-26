@@ -6,6 +6,19 @@ class Metadata < ApplicationRecord
 
   include Cacheable
 
+  # added a getter and setter for the xml attribute utf-8 encoding was not working as expected and we had failing specs.
+  # the failing spec spec/models/metadata_spec.rb:48
+  # example 1: Céline was persisted as C\xC3\xA9line.
+  # example 2: PatiÃ±o was persisted as Pati\xC3\x83\xC2\xB1o
+  def xml=(value)
+    value = value&.force_encoding("UTF-8")
+    super(value)
+  end
+
+  def xml
+    super&.force_encoding("UTF-8")
+  end
+
   alias_attribute :created_at, :created
   alias_attribute :datacite_doi_id, :doi_id
 

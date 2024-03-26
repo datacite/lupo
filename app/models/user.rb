@@ -164,7 +164,7 @@ class User
       end
     text =
       User.format_message_text(
-        template: "users/reset.text.erb",
+        template: "users/reset_text",
         title: title,
         contact_name: user.name,
         name: user.symbol,
@@ -173,7 +173,7 @@ class User
       )
     html =
       User.format_message_html(
-        template: "users/reset.html.erb",
+        template: "users/reset",
         title: title,
         contact_name: user.name,
         name: user.symbol,

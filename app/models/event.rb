@@ -69,9 +69,9 @@ class Event < ApplicationRecord
   #     event.queue_event_job
   #   end
 
-  serialize :subj, JSON
-  serialize :obj, JSON
-  serialize :error_messages, JSON
+  serialize :subj, coder: JSON
+  serialize :obj, coder: JSON
+  serialize :error_messages, coder: JSON
 
   alias_attribute :created, :created_at
   alias_attribute :updated, :updated_at

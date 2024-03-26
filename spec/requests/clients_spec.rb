@@ -51,36 +51,6 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
-  # # Test suite for GET /clients
-  # describe 'GET /clients query' do
-  #   before { get "/clients?query=#{query}", headers: headers }
-  #
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(11)
-  #   end
-  #
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
-  # describe 'GET /clients?ids=', elasticsearch: true do
-  #   before do
-  #     sleep 1
-  #     get "/clients?ids=#{ids}", headers: headers
-  #   end
-
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(10)
-  #   end
-
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
-
   describe "GET /clients/:id" do
     context "when the record exists" do
       it "returns the client" do
@@ -367,90 +337,6 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "transfer repository" do
-      let!(:new_provider) do
-        create(:provider, symbol: "QUECHUA", password_input: "12345")
-      end
-      let!(:prefixes) { create_list(:prefix, 3) }
-      let!(:prefix) { prefixes.first }
-      let!(:provider_prefix_more) do
-        create(:provider_prefix, provider: provider, prefix: prefixes.last)
-      end
-      let!(:provider_prefix) do
-        create(:provider_prefix, provider: provider, prefix: prefix)
-      end
-      let!(:client_prefix) do
-        create(
-          :client_prefix,
-          client: client,
-          prefix: prefix,
-          provider_prefix_id: provider_prefix.uid,
-        )
-      end
-      let(:doi) { create_list(:doi, 10, client: client) }
-      let(:params) do
-        {
-          "data" => {
-            "type" => "clients",
-            "attributes" => {
-              "mode" => "transfer", "targetId" => new_provider.symbol
-            },
-          },
-        }
-      end
-
-      before do
-        ProviderPrefix.import
-        sleep 3
-      end
-
-      xit "updates the record" do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "name")).to eq("My data center")
-        expect(
-          json.dig("data", "relationships", "provider", "data", "id"),
-        ).to eq("quechua")
-        expect(
-          json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(client.prefixes.first.uid)
-
-        get "/providers/#{provider.symbol}"
-
-        expect(
-          json.dig("data", "relationships", "prefixes", "data").length,
-        ).to eq(1)
-        expect(
-          json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(prefixes.last.uid)
-
-        Provider.import
-        Client.import
-        sleep 2
-
-        get "/providers/#{new_provider.symbol}"
-        expect(
-          json.dig("data", "relationships", "prefixes", "data").first.dig("id"),
-        ).to eq(new_provider.prefixes.first.uid)
-
-        get "/prefixes/#{prefix.uid}"
-        expect(
-          json.dig("data", "relationships", "clients", "data").first.dig("id"),
-        ).to eq(client.uid)
-
-        ProviderPrefix.import
-
-        get "provider-prefixes?query=#{prefix.uid}"
-        expect(
-          json.dig("meta", "total"),
-        ).to eq(1)
-        expect(
-          json.dig("data").first.dig("relationships", "provider", "data", "id"),
-        ).to eq("quechua")
-      end
-    end
-
     context "invalid globus_uuid" do
       let(:params) do
         {
@@ -468,38 +354,6 @@ describe ClientsController, type: :request, elasticsearch: true do
           "source" => "globus_uuid", "title" => "Abc is not a valid UUID",
           "uid" => client.uid
         )
-      end
-    end
-
-    context "using basic auth", vcr: true do
-      let(:params) do
-        {
-          "data" => {
-            "type" => "clients",
-            "attributes" => { "name" => "Imperial College 2" },
-          },
-        }
-      end
-      let(:credentials) do
-        provider.encode_auth_param(
-          username: provider.uid, password: "12345",
-        )
-      end
-      let(:headers) do
-        {
-          "HTTP_ACCEPT" => "application/vnd.api+json",
-          "HTTP_AUTHORIZATION" => "Basic " + credentials,
-        }
-      end
-
-      xit "updates the record" do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "name")).to eq(
-          "Imperial College 2",
-        )
-        expect(json.dig("data", "attributes", "name")).not_to eq(client.name)
       end
     end
 
@@ -583,10 +437,5 @@ describe ClientsController, type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
     end
-
-    # it "transfered all DOIs" do
-    #   expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-    #   expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
-    # end
   end
 end

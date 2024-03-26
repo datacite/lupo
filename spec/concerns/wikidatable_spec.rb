@@ -68,44 +68,6 @@ describe "Person", vcr: true do
   subject { Person }
 
   context "wikidata_query" do
-    xit "employment" do
-      orcid = "0000-0003-1419-2405"
-      employments = subject.get_orcid(orcid: orcid, endpoint: "employments")
-      employment = subject.get_employments(employments)
-      response = subject.wikidata_query(employment)
-
-      expect(response).to eq(
-        [
-          {
-            "organization_id" => "https://grid.ac/institutes/grid.475826.a",
-            "organization_name" => "DataCite",
-            "role_title" => "Technical Director",
-            "start_date" => "2015-08-01T00:00:00Z",
-          },
-          {
-            "end_date" => "2017-05-01T00:00:00Z",
-            "organization_id" => "https://grid.ac/institutes/grid.10423.34",
-            "organization_name" => "Hannover Medical School",
-            "role_title" => "Clinical Fellow in Hematology and Oncology",
-            "start_date" => "2005-11-01T00:00:00Z",
-          },
-          {
-            "end_date" => "2015-07-01T00:00:00Z",
-            "organization_name" => "Public Library of Science",
-            "role_title" =>
-              "Technical lead article-level metrics project (contractor)",
-            "start_date" => "2012-04-01T00:00:00Z",
-          },
-          {
-            "end_date" => "2005-10-01T00:00:00Z",
-            "organization_name" => "Charité Universitätsmedizin Berlin",
-            "role_title" => "Resident in Internal Medicine",
-            "start_date" => "1998-09-01T00:00:00Z",
-          },
-        ],
-      )
-    end
-
     it "empty" do
       employment = nil
       response = subject.wikidata_query(employment)

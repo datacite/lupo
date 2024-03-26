@@ -126,7 +126,7 @@ class DataciteDoiSerializer
     publisher = object.try(:publisher_obj) || object.try(:publisher)
 
     if params&.dig(:publisher) == "true"
-      if !publisher.nil?
+      if publisher.present?
         publisher = publisher.respond_to?(:to_hash) ? publisher : { "name" => publisher }
       end
     else

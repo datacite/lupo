@@ -235,39 +235,6 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "when the request is valid provider_admin" do
-      xit "creates a contact" do
-        post "/contacts", params, headers
-
-        expect(last_response.status).to eq(201)
-        attributes = json.dig("data", "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to eq("bob@example.com")
-        expect(attributes["roleName"]).to eq(["voting"])
-
-        relationships = json.dig("data", "relationships")
-        expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
-
-        Contact.import
-        sleep 2
-
-        get "/contacts", nil, headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data").length).to eq(3)
-
-        attributes = json.dig("data", 1, "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to start_with("josiah")
-        expect(attributes["roleName"]).to eq(["billing"])
-
-        relationships = json.dig("data", 1, "relationships")
-        expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.uid,
-        )
-      end
-    end
-
     context "when the request is valid consortium_admin" do
       let(:params) do
         {
@@ -286,70 +253,6 @@ describe ContactsController, type: :request, elasticsearch: true do
             },
           },
         }
-      end
-
-      xit "creates a contact" do
-        post "/contacts", params, consortium_headers
-        puts last_response.body
-        expect(last_response.status).to eq(201)
-        attributes = json.dig("data", "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to eq("bob@example.com")
-        expect(attributes["roleName"]).to eq(["voting"])
-
-        relationships = json.dig("data", "relationships")
-        expect(relationships).to eq("provider" => { "data" => { "id" => consortium.uid, "type" => "providers" } })
-
-        Contact.import
-        sleep 2
-
-        get "/contacts", nil, consortium_headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data").length).to eq(3)
-
-        attributes = json.dig("data", 1, "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to start_with("josiah")
-        expect(attributes["roleName"]).to eq(["billing"])
-
-        relationships = json.dig("data", 1, "relationships")
-        expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.uid,
-        )
-      end
-    end
-
-    context "when the request is valid consortium_admin for provider" do
-      xit "creates a contact" do
-        post "/contacts", params, consortium_headers
-
-        expect(last_response.status).to eq(201)
-        attributes = json.dig("data", "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to eq("bob@example.com")
-        expect(attributes["roleName"]).to eq(["voting"])
-
-        relationships = json.dig("data", "relationships")
-        expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
-
-        Contact.import
-        sleep 2
-
-        get "/contacts", nil, consortium_headers
-
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data").length).to eq(3)
-
-        attributes = json.dig("data", 1, "attributes")
-        expect(attributes["name"]).to eq("Josiah Carberry")
-        expect(attributes["email"]).to start_with("josiah")
-        expect(attributes["roleName"]).to eq(["billing"])
-
-        relationships = json.dig("data", 1, "relationships")
-        expect(relationships.dig("provider", "data", "id")).to eq(
-          provider.uid,
-        )
       end
     end
 
