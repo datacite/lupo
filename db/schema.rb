@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema.define(version: 2024_02_29_195058) do
 
 ActiveRecord::Schema.define(version: 2024_02_29_195058) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
@@ -293,6 +294,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
+    t.index ["dataset", "created"], name: "index_metadata_dataset_created"
     t.index ["dataset", "metadata_version"], name: "dataset_version"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
