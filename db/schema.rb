@@ -278,6 +278,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.text "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
+    t.index ["dataset", "created"], name: "index_media_dataset_created"
     t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
     t.index ["url"], name: "index_media_on_url", length: 100

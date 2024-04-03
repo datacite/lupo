@@ -1875,7 +1875,7 @@ class Doi < ApplicationRecord
   end
 
   def current_media
-    media.order("media.created DESC").first
+    media.first
   end
 
   def resource_type
