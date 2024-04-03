@@ -73,8 +73,10 @@ class ActivitiesController < ApplicationController
           publisher: params[:publisher],
         }
 
-        render json: ActivitySerializer.new(results, options).serialized_json,
-               status: :ok
+        render(
+          json: ActivitySerializer.new(results, options).serializable_hash.to_json,
+          status: :ok
+        )
       else
         results = response.results
 
@@ -112,8 +114,10 @@ class ActivitiesController < ApplicationController
           publisher: params[:publisher],
         }
 
-        render json: ActivitySerializer.new(results, options).serialized_json,
-               status: :ok
+        render(
+          json: ActivitySerializer.new(results, options).serializable_hash.to_json,
+          status: :ok
+        )
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
@@ -139,8 +143,10 @@ class ActivitiesController < ApplicationController
       publisher: params[:publisher],
     }
 
-    render json: ActivitySerializer.new(@activity, options).serialized_json,
-           status: :ok
+    render(
+      json: ActivitySerializer.new(@activity, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   protected

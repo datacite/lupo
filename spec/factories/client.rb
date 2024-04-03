@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :client do
     provider
 
+    domains { "*" }
     system_email { "josiah@example.org" }
     service_contact do
       {

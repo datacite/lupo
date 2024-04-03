@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_14_083153) do
+
+ActiveRecord::Schema.define(version: 2024_02_29_195058) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -85,8 +84,10 @@ ActiveRecord::Schema.define(version: 2024_02_14_083153) do
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
     t.integer "doi_estimate", default: 0, null: false
-    t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
+    t.index ["deleted_at"], name: "index_allocator_deleted_at"
     t.index ["organization_type"], name: "index_allocator_organization_type"
+    t.index ["role_name"], name: "index_allocator_role_name"
+    t.index ["ror_id"], name: "index_allocator_ror_id"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
@@ -204,7 +205,6 @@ ActiveRecord::Schema.define(version: 2024_02_14_083153) do
     t.json "creators"
     t.json "contributors"
     t.json "titles"
-    t.text "publisher"
     t.integer "publication_year"
     t.json "types"
     t.json "descriptions"
