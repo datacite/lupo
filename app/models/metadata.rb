@@ -60,8 +60,10 @@ class Metadata < ApplicationRecord
   end
 
   def set_metadata_version
-    latest_metadata = Metadata.where(dataset: dataset).order(created: :desc).first
-    self.metadata_version = latest_metadata.present? ? latest_metadata.metadata_version + 1 : 0
+    current_metadata =
+      Metadata.where(dataset: dataset).order("created DESC").first
+    self.metadata_version =
+      current_metadata.present? ? current_metadata.metadata_version + 1 : 0
   end
 
   def set_namespace

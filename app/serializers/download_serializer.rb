@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+# TODO: this class is not used anywhere
 class DownloadSerializer
-  include FastJsonapi::ObjectSerializer
-  # include BatchLoaderHelper
+  include JSONAPI::Serializer
 
   set_key_transform :camel_lower
   set_type :events
@@ -18,10 +18,6 @@ class DownloadSerializer
              :license,
              :occurred_at,
              :timestamp
-
-  # has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :doi do |object|
-  #   load_doi(object)
-  # end
 
   attribute :timestamp, &:updated_at
 end

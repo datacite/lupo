@@ -203,17 +203,15 @@ class DataciteDoisController < ApplicationController
         # sparse fieldsets
         fields = fields_from_params(params)
         if fields
-          render json:
-                   DataciteDoiSerializer.new(
-                     results,
-                     options.merge(fields: fields),
-                   ).
-                     serialized_json,
-                 status: :ok
+          render(
+            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            status: :ok
+          )
         else
-          render json:
-                   DataciteDoiSerializer.new(results, options).serialized_json,
-                 status: :ok
+          render(
+            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            status: :ok
+          )
         end
       else
         if total.positive? && !disable_facets
@@ -228,22 +226,11 @@ class DataciteDoisController < ApplicationController
           prefixes = facet_by_key(response.aggregations.prefixes.buckets)
           schema_versions = facet_by_schema(response.aggregations.schema_versions.buckets)
           affiliations = facet_by_combined_key(response.aggregations.affiliations.buckets)
-          # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
           subjects = facet_by_key(response.aggregations.subjects.buckets)
-          fields_of_science = facet_by_fos(
-            response.aggregations.fields_of_science.subject.buckets,
-              )
+          fields_of_science = facet_by_fos(response.aggregations.fields_of_science.subject.buckets)
           certificates = facet_by_key(response.aggregations.certificates.buckets)
           licenses = facet_by_license(response.aggregations.licenses.buckets)
-          link_checks_status = facet_by_cumulative_year(
-            response.aggregations.link_checks_status.buckets,
-              )
-          # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-          # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-          # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-          # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-          # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
-
+          link_checks_status = facet_by_cumulative_year(response.aggregations.link_checks_status.buckets)
           citations = metric_facet_by_year(response.aggregations.citations.buckets)
           views = metric_facet_by_year(response.aggregations.views.buckets)
           downloads = metric_facet_by_year(response.aggregations.downloads.buckets)
@@ -291,13 +278,7 @@ class DataciteDoisController < ApplicationController
               certificates: certificates,
               licenses: licenses,
               "schemaVersions" => schema_versions,
-              # sources: sources,
               "linkChecksStatus" => link_checks_status,
-              # "linksChecked" => links_checked,
-              # "linksWithSchemaOrg" => links_with_schema_org,
-              # "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-              # "linkChecksDcIdentifier" => link_checks_dc_identifier,
-              # "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
               "fieldsOfScience" => fields_of_science,
               citations: citations,
@@ -368,18 +349,15 @@ class DataciteDoisController < ApplicationController
             # sparse fieldsets
             fields = fields_from_params(params)
             if fields
-              render json:
-                       DataciteDoiSerializer.new(
-                         results,
-                         options.merge(fields: fields),
-                       ).
-                         serialized_json,
-                     status: :ok
+              render(
+                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                status: :ok
+              )
             else
-              render json:
-                       DataciteDoiSerializer.new(results, options).
-                         serialized_json,
-                     status: :ok
+              render(
+                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                status: :ok
+              )
             end
           end
 
@@ -465,8 +443,10 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
         }
 
-        render json: DataciteDoiSerializer.new(doi, options).serialized_json,
-               status: :ok
+        render(
+          json: DataciteDoiSerializer.new(doi, options).serializable_hash.to_json,
+          status: :ok
+        )
       end
 
       # doi = response.records.first
@@ -521,8 +501,10 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher]
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :ok
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       logger.info @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid), status: :ok
@@ -550,9 +532,11 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher],
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :created,
-             location: @doi
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :created,
+        location: @doi
+      )
     else
       logger.error @doi.errors.inspect
       render json: serialize_errors(@doi.errors, uid: @doi.uid),
@@ -609,8 +593,10 @@ class DataciteDoisController < ApplicationController
         publisher: params[:publisher],
       }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: exists ? :ok : :created
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: exists ? :ok : :created
+      )
     else
       logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
@@ -631,8 +617,10 @@ class DataciteDoisController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: DataciteDoiSerializer.new(@doi, options).serialized_json,
-             status: :ok
+      render(
+        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages, uid: @doi.uid),
@@ -765,7 +753,6 @@ class DataciteDoisController < ApplicationController
       if params[:include].present?
         @include =
           params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-
         @include = @include & %i[client media]
       else
         @include = []

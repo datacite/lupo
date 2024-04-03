@@ -85,7 +85,6 @@ class Organization
   end
 
   def self.query(query, options = {})
-    # rows = options[:limit] || 20
     page = options[:offset] || 1
     types = options[:types]
     country = options[:country]
@@ -103,7 +102,7 @@ class Organization
       url += "&filter=country.country_code:#{country.upcase}"
     end
 
-    response = Maremma.get(url, host: true, skip_encoding: true)
+    response = Maremma.get(url, { host: true, skip_encoding: true })
 
     return {} if response.status != 200
 

@@ -50,8 +50,10 @@ class MediaController < ApplicationController
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: MediaSerializer.new(@media, options).serialized_json,
-           status: :ok
+    render(
+      json: MediaSerializer.new(@media, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def show
@@ -59,8 +61,10 @@ class MediaController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: MediaSerializer.new(@media, options).serialized_json,
-           status: :ok
+    render(
+      json: MediaSerializer.new(@media, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -73,8 +77,10 @@ class MediaController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json: MediaSerializer.new(@media, options).serialized_json,
-             status: :created
+      render(
+        json: MediaSerializer.new(@media, options).serializable_hash.to_json,
+        status: :created
+      )
     else
       Rails.logger.error @media.errors.inspect
       render json: serialize_errors(@media.errors),
@@ -90,8 +96,10 @@ class MediaController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
 
-      render json: MediaSerializer.new(@media, options).serialized_json,
-             status: :ok
+      render(
+        json: MediaSerializer.new(@media, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       Rails.logger.error @media.errors.inspect
       render json: serialize_errors(@media.errors),

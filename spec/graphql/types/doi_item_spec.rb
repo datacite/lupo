@@ -11,7 +11,7 @@ describe DoiItem do
     it { is_expected.to have_field(:creators).of_type("[Creator!]") }
     it { is_expected.to have_field(:titles).of_type("[Title!]") }
     it { is_expected.to have_field(:publicationYear).of_type("Int") }
-    it { is_expected.to have_field(:publisher).of_type("String") }
+    it { is_expected.to have_field(:publisher).of_type("Publisher") }
     it { is_expected.to have_field(:subjects).of_type("[Subject!]") }
     it { is_expected.to have_field(:fieldsOfScience).of_type("[FieldOfScience!]") }
     it { is_expected.to have_field(:fieldsOfScienceRepository).of_type("[FieldOfScience!]") }

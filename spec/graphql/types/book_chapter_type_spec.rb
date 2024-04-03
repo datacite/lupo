@@ -115,7 +115,6 @@ describe BookChapterType do
         [{ "count" => 3, "id" => "2011", "title" => "2011" }],
       )
       expect(response.dig("data", "bookChapters", "nodes").length).to eq(3)
-      # expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 end

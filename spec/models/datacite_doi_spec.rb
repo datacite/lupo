@@ -8,14 +8,6 @@ describe DataciteDoi, type: :model, vcr: true do
   describe "import_by_ids", elasticsearch: true do
     let(:provider) { create(:provider) }
     let(:client) { create(:client, provider: provider) }
-    let(:target) do
-      create(
-        :client,
-        provider: provider,
-        symbol: provider.symbol + ".TARGET",
-        name: "Target Client",
-      )
-    end
     let!(:dois) do
       create_list(
         :doi,

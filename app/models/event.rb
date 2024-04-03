@@ -714,7 +714,7 @@ class Event < ApplicationRecord
       next sum if prefix == "10.13039"
 
       # ignore DataCite DOIs
-      ra = cached_get_doi_ra(prefix).downcase
+      ra = cached_get_doi_ra(prefix)&.downcase
       next sum if ra.blank? || ra == "datacite"
 
       sum.push d
