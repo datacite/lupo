@@ -1154,7 +1154,6 @@ describe OrganizationType do
       expect(organization.fetch("identifiers").first).to eq(
         "identifier" => "grid.414279.d", "identifierType" => "grid",
       )
-
       expect(organization.dig("works", "totalCount")).to eq(0)
     end
   end

@@ -7,7 +7,7 @@ describe MediaController,
   let!(:provider) { create(:provider, symbol: "ADMIN") }
   let!(:prefix) { create(:prefix, uid: "10.14455") }
   let!(:client) { create(:client, provider: provider) }
-  let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi", doi: (prefix.uid + "/" + Faker::Internet.password(8)).downcase) }
+  let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi", doi: (prefix.uid + "/" + Faker::Internet.password(min_length: 8)).downcase) }
   let!(:medias) { create_list(:media, 5, doi: datacite_doi) }
   let!(:media) { create(:media, doi: datacite_doi) }
   let(:bearer) do
