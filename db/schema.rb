@@ -11,8 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2024_02_29_195058) do
-
-ActiveRecord::Schema.define(version: 2024_02_29_195058) do
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
