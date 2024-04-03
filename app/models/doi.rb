@@ -1867,7 +1867,7 @@ class Doi < ApplicationRecord
   end
 
   def current_metadata
-    metadata.order("metadata.created DESC").first
+    metadata.first
   end
 
   def metadata_version

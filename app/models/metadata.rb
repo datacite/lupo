@@ -74,7 +74,7 @@ class Metadata < ApplicationRecord
 
   def set_metadata_version
     current_metadata =
-      Metadata.where(dataset: dataset).order("metadata.created DESC").first
+      Metadata.where(dataset: dataset).order("created DESC").first
     self.metadata_version =
       current_metadata.present? ? current_metadata.metadata_version + 1 : 0
   end
