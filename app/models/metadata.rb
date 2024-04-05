@@ -28,10 +28,10 @@ class Metadata < ApplicationRecord
   end
 
   def doi_id=(value)
-    r = Doi.where(doi: value).first
-    fail ActiveRecord::RecordNotFound if r.blank?
+    r = Doi.find_by(doi: value)
+    raise ActiveRecord::RecordNotFound if r.blank?
 
-    write_attribute(:dataset, r.id)
+    self.dataset = r.id
   end
 
   def client_id
@@ -41,27 +41,27 @@ class Metadata < ApplicationRecord
   def client_id=(value); end
 
   def metadata_must_be_valid
-    return nil if doi&.draft?
-    return nil if xml.blank?
+    return if doi&.draft? || xml.blank?
 
     doc = Nokogiri.XML(xml, nil, "UTF-8", &:noblanks)
-    return nil if doc.blank?
+    return if doc.blank?
 
-    errors.add(:xml, "XML has no namespace.") && return if namespace.blank?
+    if namespace.blank?
+      errors.add(:xml, "XML has no namespace.")
+      return
+    end
 
     # load XSD from bolognese gem
     kernel = namespace.to_s.split("/").last
-    filepath =
-      Bundler.rubygems.find_name("bolognese").first.full_gem_path +
-      "/resources/#{kernel}/metadata.xsd"
-    schema = Nokogiri::XML.Schema(open(filepath))
-    err = schema.validate(doc).map(&:to_s).unwrap
+    filepath = File.join(Gem.loaded_specs["bolognese"].full_gem_path, "resources", kernel, "metadata.xsd")
+    schema = Nokogiri::XML::Schema(File.open(filepath))
+    err = schema.validate(doc).map(&:to_s).join(", ")
     errors.add(:xml, err) if err.present?
   end
 
   def set_metadata_version
     current_metadata =
-      Metadata.where(dataset: dataset).order("metadata.created DESC").first
+      Metadata.where(dataset: dataset).order("created DESC").first
     self.metadata_version =
       current_metadata.present? ? current_metadata.metadata_version + 1 : 0
   end

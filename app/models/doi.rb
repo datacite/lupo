@@ -1867,7 +1867,7 @@ class Doi < ApplicationRecord
   end
 
   def current_metadata
-    metadata.order("metadata.created DESC").first
+    metadata.first
   end
 
   def metadata_version
@@ -1875,7 +1875,7 @@ class Doi < ApplicationRecord
   end
 
   def current_media
-    media.order("media.created DESC").first
+    media.first
   end
 
   def resource_type

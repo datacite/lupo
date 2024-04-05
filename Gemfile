@@ -113,7 +113,7 @@ group :test do
   gem "faker", "~> 3.2", ">= 3.2.3"
   gem "hashdiff", [">= 1.0.0.beta1", "< 2.0.0"]
   gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
-  gem "simplecov", "~> 0.17.1"
+  gem "simplecov", "~> 0.22.0"
   gem "test-prof", "~> 0.10.2"
   gem "vcr", "~> 6.1"
   gem "webmock", "~> 3.18", ">= 3.18.1"

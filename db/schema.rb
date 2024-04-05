@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2024_02_29_195058) do
-
   create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -136,6 +135,9 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_contacts_deleted_at"
+    t.index ["email"], name: "index_contacts_email"
+    t.index ["uid"], name: "index_contacts_uid"
   end
 
   create_table "datacentre", charset: "utf8", force: :cascade do |t|
@@ -277,6 +279,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.text "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
+    t.index ["dataset", "created"], name: "index_media_dataset_created"
     t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
     t.index ["url"], name: "index_media_on_url", length: 100
@@ -290,6 +293,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
+    t.index ["dataset", "created"], name: "index_metadata_dataset_created"
     t.index ["dataset", "metadata_version"], name: "dataset_version"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
