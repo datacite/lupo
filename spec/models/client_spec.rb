@@ -70,19 +70,6 @@ describe Client, type: :model do
     end
   end
 
-  describe "to_jsonapi" do
-    xit "works" do
-      params = client.to_jsonapi
-      expect(params.dig("id")).to eq(client.symbol.downcase)
-      expect(params.dig("attributes", "symbol")).to eq(client.symbol)
-      expect(params.dig("attributes", "system_email")).to eq(
-        client.system_email,
-      )
-      expect(params.dig("attributes", "provider_id")).to eq(client.provider_id)
-      expect(params.dig("attributes", "is_active")).to be true
-    end
-  end
-
   describe "Client transfer" do
     let!(:prefixes) do
       create_list(:prefix, 10).each_with_index do |prefix, i|
