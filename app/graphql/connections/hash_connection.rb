@@ -121,7 +121,7 @@ class HashConnection
 
   # @return [Boolean] True if there are more items after this page
   def has_next_page
-    nodes.length < total_count # && !(nodes.length < first.to_i)
+    nodes&.length < total_count # && !(nodes.length < first.to_i)
   end
 
   # @return [Boolean] True if there were items before these items
