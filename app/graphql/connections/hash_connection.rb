@@ -139,7 +139,7 @@ class HashConnection
 
   # @return [String] The cursor of the last item in {nodes}
   def end_cursor
-    nodes.last && encode((after.to_i + 1).to_s)
+    nodes&.last && encode((after.to_i + 1).to_s)
   end
 
   # Return a cursor for this item.
