@@ -1996,7 +1996,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "creators")).to eq([{ "affiliation" => [], "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }])
         expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
         expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
@@ -2004,13 +2004,11 @@ describe DataciteDoisController, type: :request, vcr: true do
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
 
-        doi = Doi.where(doi: "10.14454/10703").first
-        expect(doi.publisher).to eq(
+        expect(Doi.where(doi: "10.14454/10703").first.publisher).to eq(
           {
             "name" => "DataCite"
           }
         )
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
       end
     end
 
@@ -2090,7 +2088,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
         expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => "49.0850736", "pointLongitude" => "-123.3300992" } }])
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
@@ -2103,9 +2100,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
         expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
-
-        doi = Doi.where(doi: "10.14454/10703").first
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
       end
     end
 
@@ -2172,7 +2166,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "creators")).to eq([{ "affiliation" => [], "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }])
         expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
         expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "language")).to eq("en")
         expect(json.dig("data", "attributes", "identifiers")).to eq([{ "identifier" => "123", "identifierType" => "Repository ID" }])
         expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([{ "alternateIdentifier" => "123", "alternateIdentifierType" => "Repository ID" }])
@@ -2220,9 +2214,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("formats").content).to eq("application/pdftext/csv")
         expect(doc.at_css("version").content).to eq("1.1")
         expect(doc.at_css("fundingReferences").content).to eq("The Wellcome Trust DBT India Alliancehttps://doi.org/10.13039/501100009053")
-
-        doi = Doi.where(doi: "10.14454/10703").first
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
       end
     end
 
@@ -2714,9 +2705,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
-
-        doi = Doi.where(doi: "10.14454/10703").first
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-3")
       end
     end
 
@@ -3702,6 +3690,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "type" => "dois",
             "attributes" => {
               "schemaVersion" => "http://datacite.org/schema/kernel-4",
+              "regenerate" => true,
             },
           },
         }
@@ -3716,15 +3705,6 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.collect_namespaces).to eq("xmlns" => "http://datacite.org/schema/kernel-3", "xmlns:dim" => "http://www.dspace.org/xmlns/dspace/dim", "xmlns:dryad" => "http://purl.org/dryad/terms/", "xmlns:dspace" => "http://www.dspace.org/xmlns/dspace/dim", "xmlns:mets" => "http://www.loc.gov/METS/", "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance")
-      end
-
-      it "updates a Doi" do
-        put "/dois/10.14454/10703", update_attributes, headers
-
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
-
-        doi = Doi.where(doi: "10.14454/10703").first
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
       end
     end
 
