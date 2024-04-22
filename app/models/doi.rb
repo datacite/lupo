@@ -2334,9 +2334,14 @@ class Doi < ApplicationRecord
   end
 
   def update_schema_version
-    if current_metadata.present? && current_metadata.valid?
-      self.schema_version = current_metadata.namespace
-    end
+    return nil if xml.blank?
+
+    doc = Nokogiri.XML(xml, nil, "UTF-8", &:noblanks)
+    ns =
+      doc.collect_namespaces.detect do |_k, v|
+        v.start_with?("http://datacite.org/schema/kernel")
+      end
+    self.schema_version = Array.wrap(ns).last
   end
 
   def update_publisher
