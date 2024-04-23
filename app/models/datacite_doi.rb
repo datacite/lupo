@@ -166,7 +166,9 @@ class DataciteDoi < Doi
       :part_events,
       :part_of_events,
       :version_events,
-      :version_of_events
+      :version_of_events,
+      :events,
+      :metadata
     )
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
       bulk_body = dois.map do |doi|

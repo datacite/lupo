@@ -20,6 +20,50 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+
+  describe "N+1 safety" do
+    describe '.import_in_bulk' do
+      let(:ids) { [1, 2, 3] }
+  
+      it 'should make only one db call' do
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch)
+  
+        # Test the maximum number of queries made by the method
+        expect {
+          DataciteDoi.import_in_bulk(ids)
+        }.not_to exceed_query_limit(1)
+      end
+    end
+
+    describe '.as_indexed_json' do
+      let(:client) { create(:client) }
+      let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+      it 'should make few db call' do
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch)
+        dois = DataciteDoi.where(id: doi.id).includes(
+          :client,
+          :media,
+          :view_events,
+          :download_events,
+          :citation_events,
+          :reference_events,
+          :part_events,
+          :part_of_events,
+          :version_events,
+          :version_of_events,
+          :metadata
+        )
+        
+  byebug
+        # Test the maximum number of queries made by the method
+        expect {
+          dois.first.as_indexed_json
+        }.not_to exceed_query_limit(0)
+      end
+    end
+  end
+
   describe "downloads" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
