@@ -429,7 +429,9 @@ describe DataciteDoisController, type: :request, vcr: true do
   describe "GET /dois with client-type filter", elasticsearch: true do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
+    let(:client_raid_registry) { create(:client, provider: provider, client_type: "raidRegistry") }
     let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" }) }
+    let!(:doi_raid_registry) { create(:doi, client: client_raid_registry, aasm_state: "findable", types: { "resourceTypeGeneral": "Other", "resourceType": "Project" }) }
     let!(:dois_other) { create_list(:doi, 5, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" }) }
 
     before do
@@ -437,7 +439,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       sleep 2
     end
 
-    it "filters by client_type when client-type is set", vcr: true do
+    it "filters by repository client_type when client-type is set", vcr: true do
       get "/dois?client-type=repository", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -451,6 +453,14 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["data"].size).to eq(1)
       expect(json.dig("data", 0, "id")).to eq(doi_igsn_id.uid)
       expect(json.dig("meta", "createdByMonth", 0, "title")).to eq(doi_igsn_id.created.to_time.strftime("%Y-%m"))
+    end
+
+    it "filters by raidRegistry client_type when client-type is set", vcr: true do
+      get "/dois?client-type=raidRegistry", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+      expect(json.dig("data", 0, "id")).to eq(doi_raid_registry.uid)
     end
   end
 

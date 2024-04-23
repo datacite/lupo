@@ -77,7 +77,8 @@ module Facetable
   CLIENT_TYPES = {
     "repository" => "Repository",
     "periodical" => "Periodical",
-    "igsnCatalog" => "IGSN ID Catalog"
+    "igsnCatalog" => "IGSN ID Catalog",
+    "raidRegistry" => "RAiD Registry",
   }.freeze
 
   OTHER = { "__other__" => "Other", "__missing__" => "Missing" }.freeze
