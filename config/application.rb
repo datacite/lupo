@@ -67,7 +67,7 @@ ENV["REALM"] ||= ENV["API_URL"]
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.1
 
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
@@ -80,11 +80,7 @@ module Lupo
                      eager_load: true
 
     # Allow middleware to be loaded. (compressed_requests)
-    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    config.autoload_paths += %W(#{config.root}/app/graphql/types)
-    config.eager_load_paths += %W(#{config.root}/lib #{config.root}/lib/middleware)
-    config.eager_load_paths += %W(#{config.root}/app/graphql/types)
-
+    config.autoload_lib(ignore: nil)
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -190,5 +186,13 @@ module Lupo
     }
 
     config.allowed_cors_origins = []
+
+    # https://blog.kiprosh.com/rails-7-1-raises-on-assignment-to-readonly-attributes
+    # in the provider, and client model we have the following code: `attr_readonly :symbol`
+    # in rails 7.1 the default is to raise an ActiveRecord::ReadonlyAttributeError.
+    # by adding in this config we can allow the old behaviour i.e. not persist the change on update.
+    # the ideal solution, would be to rework how we use safe_params.
+    # have different safe_params for update and create (this is the way).
+    config.active_record.raise_on_assign_to_attr_readonly = false
   end
 end

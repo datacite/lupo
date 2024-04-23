@@ -7,6 +7,7 @@ describe RepositoryType do
   before(:all) do
     @current_year = Date.today.year.to_s
   end
+
   describe "fields" do
     subject { described_class }
 
@@ -55,7 +56,6 @@ describe RepositoryType do
       )
     end
   end
-
 
   describe "query repositories" do
     before :all do
@@ -115,7 +115,6 @@ describe RepositoryType do
         }
         "
 
-      ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
         create(:prefix, uid: "10.17616")
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
@@ -128,6 +127,7 @@ describe RepositoryType do
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
         @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
+        ReferenceRepository.import(force: true)
         sleep 2
         @facet_response = LupoSchema.execute(@search_query).as_json
       end
@@ -348,12 +348,14 @@ describe RepositoryType do
           }
 
       }"
-      ReferenceRepository.import(force: true)
+
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3BW5R") do
         @ref_repo2 = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       end
 
+      ReferenceRepository.import(force: true)
       sleep 2
+
       response = LupoSchema.execute(id_query, variables: { id: @ref_repo2.re3doi }).as_json
       @repo = response.dig("data", "repository")
     end
@@ -475,13 +477,14 @@ describe RepositoryType do
     end
 
     before :all do
-      ReferenceRepository.import(force: true)
       VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
-        create(:prefix)
+        @prefix = create(:prefix)
         @client = create(:client)
         @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
-        sleep 2
       end
+
+      ReferenceRepository.import(force: true)
+      sleep 2
     end
 
     after :all do

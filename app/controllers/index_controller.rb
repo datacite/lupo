@@ -56,7 +56,7 @@ class IndexController < ApplicationController
     end
   rescue ActionController::UnknownFormat, ActionController::RoutingError
     # forward to URL registered in handle system for unrecognized format
-    redirect_to doi.url, status: :see_other
+    redirect_to doi.url, status: :see_other, allow_other_host: true
   end
 
   def routing_error

@@ -4,7 +4,8 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-  PUBLISHER_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/doi/publisher.json"
+  self.ignored_columns += [:publisher]
+  PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
   audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
@@ -144,7 +145,7 @@ class Doi < ApplicationRecord
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
-  before_validation :update_publisher, if: [ :will_save_change_to_publisher?, :publisher? ]
+  before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
@@ -1866,7 +1867,7 @@ class Doi < ApplicationRecord
   end
 
   def current_metadata
-    metadata.order("metadata.created DESC").first
+    metadata.first
   end
 
   def metadata_version
@@ -1874,7 +1875,7 @@ class Doi < ApplicationRecord
   end
 
   def current_media
-    media.order("media.created DESC").first
+    media.first
   end
 
   def resource_type

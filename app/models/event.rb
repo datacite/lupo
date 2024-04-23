@@ -69,9 +69,9 @@ class Event < ApplicationRecord
   #     event.queue_event_job
   #   end
 
-  serialize :subj, JSON
-  serialize :obj, JSON
-  serialize :error_messages, JSON
+  serialize :subj, coder: JSON
+  serialize :obj, coder: JSON
+  serialize :error_messages, coder: JSON
 
   alias_attribute :created, :created_at
   alias_attribute :updated, :updated_at
@@ -714,7 +714,7 @@ class Event < ApplicationRecord
       next sum if prefix == "10.13039"
 
       # ignore DataCite DOIs
-      ra = cached_get_doi_ra(prefix).downcase
+      ra = cached_get_doi_ra(prefix)&.downcase
       next sum if ra.blank? || ra == "datacite"
 
       sum.push d

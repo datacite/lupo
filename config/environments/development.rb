@@ -41,6 +41,7 @@ Rails.application.configure do
 
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
+  config.flipper.memoize = false
 
   # config.after_initialize do
   #   Bullet.enable = true
