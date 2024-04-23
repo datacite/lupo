@@ -14,10 +14,6 @@ class DataciteDoi < Doi
 
   def self.index_all_by_client(options = {})
     client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
-    # throw out id 0
-    client_to_doi_count.delete(0)
-
-
     index = options[:index] || self.inactive_index
     batch_size = options[:batch_size] || 2000
     client_to_doi_count.keys.each do |client_id|
