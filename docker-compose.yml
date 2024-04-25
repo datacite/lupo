@@ -5,7 +5,7 @@ services:
     env_file: .env
     environment:
       - ELASTIC_PASSWORD=changeme
-    image: ghcr.io/datacite/lupo
+    image: ghcr.io/datacite/lupo:main
     ports:
       - "8065:80"
       - "2265:22"
@@ -29,7 +29,7 @@ services:
     environment:
       MYSQL_DATABASE: datacite
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    image: mysql:5.7
+    image: mysql:8
     ports:
       - "3309:3306"
     networks:
