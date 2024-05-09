@@ -207,6 +207,7 @@ paths:
               - repository
               - periodical
               - igsnCatalog
+              - raidRegistry
         - in: query
           name: repository-type
           schema:
@@ -350,6 +351,7 @@ paths:
               - repository
               - periodical
               - igsnCatalog
+              - raidRegistry
         - in: query
           name: certificate
           schema:

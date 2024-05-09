@@ -117,7 +117,18 @@ class OtherDoi < Doi
     errors = 0
 
     # get database records from array of database ids
-    dois = OtherDoi.where(id: ids)
+    dois = OtherDoi.includes(
+      :client,
+      :media,
+      :view_events,
+      :download_events,
+      :citation_events,
+      :reference_events,
+      :part_events,
+      :part_of_events,
+      :version_events,
+      :version_of_events
+    ).where(id: ids)
 
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,

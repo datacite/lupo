@@ -91,7 +91,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
           new_doi = build(:doi, aasm_state: "findable")
           allow(new_doi).to receive(:send_import_message)
-          new_doi.save
+          new_doi.save!
 
           # Sleep for a short duration to ensure the asynchronous after_commit has completed
           sleep 1
@@ -316,25 +316,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         expect(subject).to have_state(:findable)
       end
     end
-
-    # context "no url" do
-    #   let(:provider)  { create(:provider, symbol: "ADMIN") }
-    #   let(:client)  { create(:client, provider: provider) }
-    #   let(:url) { "https://www.example.org" }
-    #   subject { build(:doi, client: client, url: nil, current_user: current_user) }
-
-    #   it "don't update state change" do
-    #     subject.publish
-    #     expect { subject.save }.not_to have_enqueued_job(HandleJob)
-    #     expect(subject).to have_state(:findable)
-    #   end
-
-    #   it "update url change" do
-    #     subject.publish
-    #     subject.url = url
-    #     expect { subject.save }.to have_enqueued_job(HandleJob)
-    #   end
-    # end
   end
 
   describe "descriptions" do
@@ -529,18 +510,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.save).to be false
       expect(doi.errors.details).to eq(dates: [{ error: "Date 2019-08-01 should be an object instead of a string." }])
     end
-
-    # it "invalid" do
-    #   doi.dates = [{ "date" => "08/01/2019" }]
-    #   expect(doi.save).to be false
-    #   expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 08/01/2019 is not a valid date in ISO8601 format."}])
-    # end
-
-    # it "invalid datetime" do
-    #   doi.dates = [{ "date" => "2019-08-01 20:28:15" }]
-    #   expect(doi.save).to be false
-    #   expect(doi.errors.details).to eq(:dates => [{:error=>"Date 2019-08-01 20:28:15 is not a valid date in ISO8601 format."}])
-    # end
   end
 
   describe "identifiers" do
@@ -1998,6 +1967,24 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
       expect(doi.primary_title).to eq([])
       expect(doi.as_indexed_json.dig("primary_title")).to eq([])
+    end
+  end
+
+  describe "update publisher" do
+    let(:doi) { create(:doi) }
+
+    it "with string key hash updates publisher" do
+      doi.update(publisher: { "name" => "Plazi.org taxonomic treatments database" })
+      expect(doi.publisher).to eq(
+        { "name" => "Plazi.org taxonomic treatments database" }
+      )
+    end
+
+    it "with symbol key hash updates publisher" do
+      doi.update(publisher: { name: "Plazi.org taxonomic treatments database" })
+      expect(doi.publisher).to eq(
+        { "name" => "Plazi.org taxonomic treatments database" }
+      )
     end
   end
 end

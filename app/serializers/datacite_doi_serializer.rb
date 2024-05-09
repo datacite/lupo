@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 class DataciteDoiSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   set_key_transform :camel_lower
   set_type :dois
   set_id :uid
+
   # don't cache dois, as works are cached using the doi model
 
   attributes :doi,
@@ -65,6 +66,7 @@ class DataciteDoiSerializer
              if: Proc.new { |_object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
+
   belongs_to :provider,
              record_type: :providers,
              if: Proc.new { |_object, params| params && params[:detail] }
@@ -124,7 +126,7 @@ class DataciteDoiSerializer
     publisher = object.try(:publisher_obj) || object.try(:publisher)
 
     if params&.dig(:publisher) == "true"
-      if !publisher.nil?
+      if publisher.present?
         publisher = publisher.respond_to?(:to_hash) ? publisher : { "name" => publisher }
       end
     else

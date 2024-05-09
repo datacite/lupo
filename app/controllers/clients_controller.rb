@@ -122,13 +122,15 @@ class ClientsController < ApplicationController
 
       fields = fields_from_params(params)
       if fields
-        render json:
-                 ClientSerializer.new(@clients, options.merge(fields: fields)).
-                   serialized_json,
-               status: :ok
+        render(
+          json: ClientSerializer.new(@clients, options.merge(fields: fields)).serializable_hash.to_json,
+          status: :ok
+        )
       else
-        render json: ClientSerializer.new(@clients, options).serialized_json,
-               status: :ok
+        render(
+          json: ClientSerializer.new(@clients, options).serializable_hash.to_json,
+          status: :ok
+        )
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
@@ -152,8 +154,10 @@ class ClientsController < ApplicationController
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
 
-    render json: ClientSerializer.new(@client, options).serialized_json,
-           status: :ok
+    render(
+      json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   def create
@@ -166,8 +170,10 @@ class ClientsController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      render json: ClientSerializer.new(@client, options).serialized_json,
-             status: :created
+      render(
+        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        status: :created
+      )
     else
       # Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors, uid: @client.uid),
@@ -185,11 +191,15 @@ class ClientsController < ApplicationController
       authorize! :transfer, @client
 
       @client.transfer(provider_target_id: safe_params[:target_id])
-      render json: ClientSerializer.new(@client, options).serialized_json,
-             status: :ok
+      render(
+        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        status: :ok
+      )
     elsif @client.update(safe_params)
-      render json: ClientSerializer.new(@client, options).serialized_json,
-             status: :ok
+      render(
+        json: ClientSerializer.new(@client, options).serializable_hash.to_json,
+        status: :ok
+      )
     else
       # Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors, uid: @client.uid),

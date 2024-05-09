@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Generate changelog
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Generate changelog
         uses: charmixer/auto-changelog-action@v1.1
@@ -29,7 +29,7 @@ jobs:
           git add CHANGELOG.md && git commit -m 'Updated CHANGELOG.md'
 
       - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: 'refs/heads/master'

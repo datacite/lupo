@@ -52,6 +52,12 @@ Note when using a fresh test database you will need to instantiate the test db w
 bundle exec rake db:create RAILS_ENV=test
 ```
 
+Note when accessing the console you will need to disable spring:
+
+```bash
+env DISABLE_SPRING=true bundle exec rails console
+```
+
 Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
 
 ### Note on Patches/Pull Requests

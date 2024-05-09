@@ -6,7 +6,7 @@ FactoryBot.define do
   factory :doi do
     client
 
-    doi { ("10.14454/" + Faker::Internet.password(8)).downcase }
+    doi { ("10.14454/" + Faker::Internet.password(min_length: 8)).downcase }
     url { Faker::Internet.url }
     types do
       {
@@ -16,6 +16,15 @@ FactoryBot.define do
         "citeproc": "dataset",
         "bibtex": "misc",
         "ris": "DATA",
+      }
+    end
+    publisher_obj do
+      {
+        "name": "Dryad Digital Repository",
+        "publisherIdentifier": "https://ror.org/00x6h5n95",
+        "publisherIdentifierScheme": "ROR",
+        "schemeUri": "https://ror.org/",
+        "lang": "en",
       }
     end
     creators do
@@ -90,13 +99,6 @@ FactoryBot.define do
     descriptions do
       [{ "description": "Data from: A new malaria agent in African hominids." }]
     end
-    publisher { {
-      "name": "Dryad Digital Repository",
-      "publisherIdentifier": "https://ror.org/00x6h5n95",
-      "publisherIdentifierScheme": "ROR",
-      "schemeUri": "https://ror.org/",
-      "lang": "en"
-    } }
     subjects do
       [
         { "subject": "Phylogeny" },
@@ -178,9 +180,9 @@ FactoryBot.define do
     source { "test" }
     type { "DataciteDoi" }
     regenerate { true }
-    created { Faker::Time.backward(14, :evening) }
-    minted { Faker::Time.backward(15, :evening) }
-    updated { Faker::Time.backward(5, :evening) }
+    created { Faker::Time.backward(days: 14, period: :evening) }
+    minted { Faker::Time.backward(days: 15, period: :evening) }
+    updated { Faker::Time.backward(days: 5, period: :evening) }
 
     initialize_with { DataciteDoi.where(doi: doi).first_or_initialize }
   end

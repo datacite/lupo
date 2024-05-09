@@ -87,8 +87,10 @@ class DataCentersController < ApplicationController
       options[:is_collection] = true
       options[:links] = nil
 
-      render json: DataCenterSerializer.new(@clients, options).serialized_json,
-             status: :ok
+      render(
+        json: DataCenterSerializer.new(@clients, options).serializable_hash.to_json,
+        status: :ok
+      )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
 
@@ -110,8 +112,10 @@ class DataCentersController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: DataCenterSerializer.new(@client, options).serialized_json,
-           status: :ok
+    render(
+      json: DataCenterSerializer.new(@client, options).serializable_hash.to_json,
+      status: :ok
+    )
   end
 
   protected

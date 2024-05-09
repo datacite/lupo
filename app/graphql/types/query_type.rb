@@ -282,11 +282,10 @@ class QueryType < BaseObject
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(
-      response(args), {
+      response(**args),
       context: context,
       first: args[:first],
-      after: args[:after]
-    })
+      after: args[:after])
   end
 
   field :work, WorkType, null: false do
@@ -328,7 +327,7 @@ class QueryType < BaseObject
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :dataset, DatasetType, null: false do
@@ -370,7 +369,7 @@ class QueryType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :publication, PublicationType, null: false do
@@ -412,7 +411,7 @@ class QueryType < BaseObject
 
   def audiovisuals(**args)
     args[:resource_type_id] = "Audiovisual"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -454,7 +453,7 @@ class QueryType < BaseObject
 
   def collections(**args)
     args[:resource_type_id] = "Collection"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :collection, CollectionType, null: false do
@@ -496,7 +495,7 @@ class QueryType < BaseObject
 
   def data_papers(**args)
     args[:resource_type_id] = "DataPaper"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :data_paper, DataPaperType, null: false do
@@ -536,7 +535,7 @@ class QueryType < BaseObject
 
   def events(**args)
     args[:resource_type_id] = "Event"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :event, EventType, null: false do
@@ -578,7 +577,7 @@ class QueryType < BaseObject
 
   def images(**args)
     args[:resource_type_id] = "Image"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :image, ImageType, null: false do
@@ -620,7 +619,7 @@ class QueryType < BaseObject
 
   def interactive_resources(**args)
     args[:resource_type_id] = "InteractiveResource"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -662,7 +661,7 @@ class QueryType < BaseObject
 
   def models(**args)
     args[:resource_type_id] = "Model"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :model, ModelType, null: false do
@@ -704,7 +703,7 @@ class QueryType < BaseObject
 
   def physical_objects(**args)
     args[:resource_type_id] = "PhysicalObject"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -747,7 +746,7 @@ class QueryType < BaseObject
 
   def services(**args)
     args[:resource_type_id] = "Service"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :service, ServiceType, null: false do
@@ -789,7 +788,7 @@ class QueryType < BaseObject
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :software, SoftwareType, null: false do
@@ -831,7 +830,7 @@ class QueryType < BaseObject
 
   def sounds(**args)
     args[:resource_type_id] = "Sound"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :sound, SoundType, null: false do
@@ -873,7 +872,7 @@ class QueryType < BaseObject
 
   def workflows(**args)
     args[:resource_type_id] = "Workflow"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :workflow, WorkflowType, null: false do
@@ -916,7 +915,7 @@ class QueryType < BaseObject
   def dissertations(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Dissertation,Thesis"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :dissertation, DissertationType, null: false do
@@ -959,7 +958,7 @@ class QueryType < BaseObject
   def data_management_plans(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Data Management Plan"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :data_management_plan, DataManagementPlanType, null: false do
@@ -1002,7 +1001,7 @@ class QueryType < BaseObject
   def preprints(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "PostedContent,Preprint"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :preprint, PreprintType, null: false do
@@ -1045,7 +1044,7 @@ class QueryType < BaseObject
   def peer_reviews(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "\"Peer review\""
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :peer_review, PeerReviewType, null: false do
@@ -1088,7 +1087,7 @@ class QueryType < BaseObject
   def conference_papers(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "\"Conference paper\""
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :conference_paper, ConferencePaperType, null: false do
@@ -1131,7 +1130,7 @@ class QueryType < BaseObject
   def book_chapters(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "BookChapter"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :book_chapter, BookChapterType, null: false do
@@ -1174,7 +1173,7 @@ class QueryType < BaseObject
   def books(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Book"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :book, BookType, null: false do
@@ -1217,7 +1216,7 @@ class QueryType < BaseObject
   def journal_articles(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "JournalArticle"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :journal_article, JournalArticleType, null: false do
@@ -1260,7 +1259,7 @@ class QueryType < BaseObject
   def instruments(**args)
     args[:resource_type_id] = "Other"
     args[:resource_type] = "Instrument"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :instrument, InstrumentType, null: false do
@@ -1302,7 +1301,7 @@ class QueryType < BaseObject
 
   def others(**args)
     args[:resource_type_id] = "Other"
-    ElasticsearchModelResponseConnection.new(response(args), context: context, first: args[:first], after: args[:after])
+    ElasticsearchModelResponseConnection.new(response(**args), context: context, first: args[:first], after: args[:after])
   end
 
   field :other, OtherType, null: false do
@@ -1373,7 +1372,7 @@ class QueryType < BaseObject
     doi = doi_from_url(id)
     fail ActiveRecord::RecordNotFound if doi.nil?
 
-    doi = DataciteDoi.where(doi: doi, aasm_state: "findable").first
+    doi = DataciteDoi.includes(:reference_events, :version_events, :version_of_events, :citation_events, :part_events, :part_of_events).where(doi: doi, aasm_state: "findable").first
     fail ActiveRecord::RecordNotFound if doi.nil?
 
     doi
