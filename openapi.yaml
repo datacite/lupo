@@ -577,6 +577,16 @@ paths:
               - '-created'
               - updated
               - '-updated'
+              - 'published'
+              - '-published'
+              - 'view-count'
+              - '-view-count'
+              - 'download-count'
+              - '-download-count'
+              - 'citation-count'
+              - '-citation-count'
+              - 'title'
+              - '-title'
         - in: query
           name: disable-facets
           description: Exclude facets from the response.
