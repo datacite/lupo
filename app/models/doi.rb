@@ -154,6 +154,7 @@ class Doi < ApplicationRecord
   before_validation :update_identifiers
   before_validation :update_types
   before_save :set_defaults, :save_metadata
+  before_save :update_schema_version
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   FIELD_OF_SCIENCE_SCHEME = "Fields of Science and Technology (FOS)"
@@ -2330,6 +2331,12 @@ class Doi < ApplicationRecord
       "bibtex" => Bolognese::Utils::CR_TO_BIB_TRANSLATIONS[res] || Bolognese::Utils::SO_TO_BIB_TRANSLATIONS[schema_org] || "misc",
       "ris" => Bolognese::Utils::CR_TO_RIS_TRANSLATIONS[res] || Bolognese::Utils::DC_TO_RIS_TRANSLATIONS[resgen] || "GEN",
     ).compact
+  end
+
+  def update_schema_version
+    if current_metadata.present? && current_metadata.valid?
+      self.schema_version = current_metadata.namespace
+    end
   end
 
   def update_publisher
