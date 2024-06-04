@@ -8,7 +8,7 @@ class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
 
-  # prepend_before_action :authenticate_user!
+  prepend_before_action :authenticate_user!
   before_action :set_include, only: %i[index show create update]
   before_action :set_raven_context, only: %i[create update validate]
 
