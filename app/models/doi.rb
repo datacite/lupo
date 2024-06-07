@@ -1833,7 +1833,6 @@ class Doi < ApplicationRecord
   # update URL in handle system for registered and findable state
   # providers europ, and DOI registration agencies do their own handle registration, so fetch url from handle system instead
   def update_url
-    puts "### doi.rb/update_url"
     return nil if current_user.nil? || !is_registered_or_findable?
 
     if %w(europ).include?(provider_id) || type == "OtherDoi"
