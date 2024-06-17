@@ -12,8 +12,7 @@ class CreateClaim < BaseMutation
     Rails.logger.error "RESOLVING CLAIM"
     if doi.blank? || context[:current_user].blank?
       Rails.logger.error "CLAIM IS NULL"
-      Rails.logger.error doi
-      Rails.logger.error context[:current_user]
+      Rails.logger.error context
       return { claim: nil, errors: [] }
     end
 
