@@ -10,6 +10,9 @@ class CreateClaim < BaseMutation
 
   def resolve(doi: nil, id: nil, source_id: nil)
     if doi.blank? || context[:current_user].blank?
+      logger.error("claim is null")
+      logger.error(doi)
+      logger.error(context[:current_user])
       return { claim: nil, errors: [] }
     end
 
