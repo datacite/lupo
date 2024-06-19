@@ -73,18 +73,14 @@ class ApplicationController < ActionController::API
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
 
-    if credentials.blank?
-      Rails.logger.error("current_user_check: credentials are blank")
-    end
-
     return false if credentials.blank?
+
     if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
-      Rails.logger.error("current_user_check: jwt failed verification")
       raise JWT::VerificationError
     end
 
     @current_user = User.new(credentials, type: type)
-    Rails.logger.error("current_user: #{@current_user.inspect}")
+
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 
     @current_user
