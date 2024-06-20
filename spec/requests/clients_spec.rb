@@ -126,6 +126,26 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
+      let(:raid_registry_client_id) { provider.symbol + ".RAID" }
+      let(:params_raid_registry) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => {
+              "symbol" => raid_registry_client_id,
+              "name" => "Imperial College",
+              "contactEmail" => "bob@example.com",
+              "clientType" => "raidRegistry",
+            },
+            "relationships": {
+              "provider": {
+                "data": { "type": "providers", "id": provider.uid },
+              },
+            },
+          },
+        }
+      end
+
       it "creates a client" do
         post "/clients", params, headers
 
@@ -166,6 +186,26 @@ describe ClientsController, type: :request, elasticsearch: true do
         expect(json["data"].size).to eq(2)
         expect(json.dig("meta", "clientTypes").find { |clientTypeAgg| clientTypeAgg["id"] == "igsnCatalog" }).to eq(
           { "count" => 1, "id" => "igsnCatalog", "title" => "IGSN ID Catalog" },
+        )
+      end
+
+      it "creates a client with raidRegistry client_type" do
+        post "/clients", params_raid_registry, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["clientType"]).to eq("raidRegistry")
+
+        Client.import
+        sleep 2
+
+        get "/clients", nil, headers
+
+        expect(json["data"].size).to eq(2)
+        raid_registry_client = json.dig("data").find { |client| client.dig("attributes", "clientType") == "raidRegistry" }
+        expect(raid_registry_client.dig("attributes", "symbol")).to eq(raid_registry_client_id)
+        expect(json.dig("meta", "clientTypes").find { |clientTypeAgg| clientTypeAgg["id"] == "raidRegistry" }).to eq(
+          { "count" => 1, "id" => "raidRegistry", "title" => "RAiD Registry" },
         )
       end
     end

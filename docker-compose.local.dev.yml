@@ -12,7 +12,7 @@ services:
     environment:
       MYSQL_DATABASE: datacite
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    image: mysql:5.7
+    image: mysql:8.0
     ports:
       - "3309:3306"
     networks:

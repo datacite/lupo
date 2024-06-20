@@ -72,12 +72,15 @@ class ApplicationController < ActionController::API
 
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
+
     return false if credentials.blank?
+
     if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
       raise JWT::VerificationError
     end
 
     @current_user = User.new(credentials, type: type)
+
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 
     @current_user

@@ -207,6 +207,7 @@ paths:
               - repository
               - periodical
               - igsnCatalog
+              - raidRegistry
         - in: query
           name: repository-type
           schema:
@@ -350,6 +351,7 @@ paths:
               - repository
               - periodical
               - igsnCatalog
+              - raidRegistry
         - in: query
           name: certificate
           schema:
@@ -575,6 +577,16 @@ paths:
               - '-created'
               - updated
               - '-updated'
+              - 'published'
+              - '-published'
+              - 'view-count'
+              - '-view-count'
+              - 'download-count'
+              - '-download-count'
+              - 'citation-count'
+              - '-citation-count'
+              - 'title'
+              - '-title'
         - in: query
           name: disable-facets
           description: Exclude facets from the response.
