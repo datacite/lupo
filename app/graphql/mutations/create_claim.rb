@@ -9,7 +9,12 @@ class CreateClaim < BaseMutation
   field :errors, [ErrorType], null: false
 
   def resolve(doi: nil, id: nil, source_id: nil)
+    Rails.logger.info("orcid_claim: inside the resolve method")
+
     if doi.blank? || context[:current_user].blank?
+      Rails.logger.info("orcid_claim: inside doi blank or current_user blank")
+      Rails.logger.info("orcid_claim: doi.blank? = #{doi.blank?}")
+      Rails.logger.info("orcid_claim: context[:current_user].blank? = #{context[:current_user].blank?}")
       return { claim: nil, errors: [] }
     end
 

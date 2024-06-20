@@ -71,7 +71,13 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
+    Rails.logger.info("orcid_claim: authenticate_user!")
+
     type, credentials = type_and_credentials_from_request_headers
+
+    Rails.logger.info("orcid_claim: type: #{type}")
+    Rails.logger.info("orcid_claim: credentials: #{credentials.inspect}")
+    Rails.logger.info("orcid_claim: credentials_blank?: #{credentials.blank?}")
 
     return false if credentials.blank?
 
@@ -80,6 +86,8 @@ class ApplicationController < ActionController::API
     end
 
     @current_user = User.new(credentials, type: type)
+
+    Rails.logger.info("orcid_claim: current_user: #{@current_user.inspect}")
 
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 
