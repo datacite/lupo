@@ -34,7 +34,7 @@ module Middleware
       rescue => err
         Rails.logger.err(err)
         Raven.capture_exception(err)
-        [406, {}, [{"status": 406, "title": err.message}.to_json]]
+        [406, {}, [{ "status": 406, "title": err.message }.to_json]]
       end
     end
 

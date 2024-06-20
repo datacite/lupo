@@ -102,7 +102,7 @@ class ApplicationController < ActionController::API
   def type_and_credentials_from_request_headers
     Rails.logger.info("orcid_claim: inside credentials read")
     request.headers.each do |key, value|
-      puts"#{key}: #{value}"
+      puts "#{key}: #{value}"
     end
     request.headers["Authorization"]&.split
   end
