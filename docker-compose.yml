@@ -4,7 +4,7 @@ services:
   web:
     env_file: .env
     environment:
-      - ELASTIC_PASSWORD=changeme
+      - ELASTIC_PASSWORD=AnUnsecurePassword123
     image: ghcr.io/datacite/lupo:main
     ports:
       - "8065:80"
@@ -35,23 +35,26 @@ services:
     networks:
       - public
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: opensearchproject/opensearch:latest 
     ports:
       - "9201:9200"
       - "9301:9300"
     environment:
       discovery.type: single-node
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-      ELASTIC_PASSWORD: changeme
-      xpack.security.enabled: "false"
-      http.cors.enabled: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: AnUnsecurePassword123
+      DISABLE_SECURITY_PLUGIN: true
+      http.cors.enabled: true
+      bootstrap.memory_lock: true
       http.cors.allow-origin: "*"
+      compatibility.override_main_response_version: true
+      logger.org.opensearch.discovery: "ERROR"
     volumes:
-      - data:/usr/share/elasticsearch/data
+      - data:/usr/share/opensearch/data
     networks:
       - public
     healthcheck:
-      test: curl -f http://elastic:changeme@elasticsearch:9200
+      test: curl -f http://admin:AnUnsecurePassword123@elasticsearch:9200
       interval: 10s
       timeout: 1s
 
