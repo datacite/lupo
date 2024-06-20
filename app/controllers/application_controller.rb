@@ -100,6 +100,8 @@ class ApplicationController < ActionController::API
 
   # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
   def type_and_credentials_from_request_headers
+    Rails.logger.info("orcid_claim: request.headers")
+    Rails.logger.info("orcid_claim: #{request.headers.inspect}")
     request.headers["Authorization"]&.split
   end
 
