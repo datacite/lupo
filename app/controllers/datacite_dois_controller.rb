@@ -75,6 +75,12 @@ class DataciteDoisController < ApplicationController
     # facets are enabled by default
     disable_facets = params[:disable_facets]
 
+    # registration agencies are disabled by default
+    exclude_registration_agencies = true
+    if params[:include_other_registration_agencies].present?
+      exclude_registration_agencies = false
+    end
+
     if params[:id].present?
       response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
@@ -84,7 +90,7 @@ class DataciteDoisController < ApplicationController
         DataciteDoi.query(
           params[:query],
           state: params[:state],
-          exclude_registration_agencies: true,
+          exclude_registration_agencies: exclude_registration_agencies,
           published: params[:published],
           created: params[:created],
           registered: params[:registered],
