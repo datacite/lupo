@@ -146,15 +146,7 @@ class User
       )
     url = ENV["BRACCO_URL"] + "?jwt=" + jwt
     reset_url = ENV["BRACCO_URL"] + "/reset"
-    title = if Rails.env.stage?
-      if ENV["ES_PREFIX"].present?
-        "DataCite Fabrica Stage"
-      else
-        "DataCite Fabrica Test"
-      end
-    else
-      "DataCite Fabrica"
-    end
+    title = ENV["BRACCO_TITLE"]
     subject = "#{title}: Password Reset Request"
     account_type =
       if user.instance_of?(Provider)
