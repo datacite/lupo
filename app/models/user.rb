@@ -146,7 +146,7 @@ class User
       )
     url = ENV["BRACCO_URL"] + "?jwt=" + jwt
     reset_url = ENV["BRACCO_URL"] + "/reset"
-    title = ENV["BRACCO_TITLE"] 
+    title = ENV["BRACCO_TITLE"]
     subject = "#{title}: Password Reset Request"
     account_type =
       if user.instance_of?(Provider)
