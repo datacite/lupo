@@ -41,6 +41,7 @@ ENV["CONCURRENCY"] ||= "25"
 ENV["API_URL"] ||= "https://api.stage.datacite.org"
 ENV["CDN_URL"] ||= "https://assets.datacite.org"
 ENV["BRACCO_URL"] ||= "https://doi.datacite.org"
+ENV["BRACCO_TITLE"] ||= "DataCite Fabrica"
 ENV["GITHUB_URL"] ||= "https://github.com/datacite/lupo"
 ENV["SEARCH_URL"] ||= "https://search.datacite.org/"
 ENV["VOLPINO_URL"] ||= "https://profiles.datacite.org/api"
@@ -63,6 +64,7 @@ ENV["MG_FROM"] ||= "support@datacite.org"
 ENV["MG_DOMAIN"] ||= "mg.datacite.org"
 ENV["HANDLES_MINTED"] ||= "10132"
 ENV["REALM"] ||= ENV["API_URL"]
+ENV["SQS_PREFIX"] || = ""
 
 module Lupo
   class Application < Rails::Application
@@ -171,13 +173,8 @@ module Lupo
     # set Active Job queueing backend
     config.active_job.queue_adapter = ENV["AWS_REGION"] ? :shoryuken : :inline
 
-    # use SQS based on environment, use "test" prefix for test system
-    if Rails.env.stage?
-      config.active_job.queue_name_prefix =
-        ENV["ES_PREFIX"].present? ? "stage" : "test"
-    else
-      config.active_job.queue_name_prefix = Rails.env
-    end
+    # use SQS based on environment or what has been defined
+    config.active_job.queue_name_prefix = ENV["SQS_PREFIX"].present? ? ENV["SQS_PREFIX"] : Rails.env
 
     config.generators { |g| g.fixture_replacement :factory_bot }
 
