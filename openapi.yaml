@@ -665,6 +665,7 @@ paths:
       tags:
         - dois
       summary: Update a doi.
+      description: PUT requests to the /dois endpoint will update a DOI record if it already exists and create a new record if the DOI name is not already taken.
       security:
         - BasicAuth: []
         - bearerAuth: []

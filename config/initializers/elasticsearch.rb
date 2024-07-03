@@ -3,8 +3,7 @@
 require "faraday"
 require "faraday_middleware/aws_sigv4"
 
-if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
-    ENV["ES_HOST"] == "elasticsearch.datacite.org"
+if ENV["ES_HOST"].end_with?(".datacite.org")
   Elasticsearch::Model.client =
     Elasticsearch::Client.new(
       host: ENV["ES_HOST"],

@@ -24,8 +24,8 @@ gem "departure", "~> 6.2"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "dotenv"
 gem "elasticsearch", "~> 7.17", ">= 7.17.10"
-gem "elasticsearch-model", "~> 7.1.1", ">= 7.1.1", require: "elasticsearch/model"
-gem "elasticsearch-rails", "~> 7.1.1", ">= 7.1.1"
+gem "elasticsearch-model", "~> 7.2.1", ">= 7.2.1", require: "elasticsearch/model"
+gem "elasticsearch-rails", "~> 7.2.1", ">= 7.2.1"
 gem "elasticsearch-transport", "~> 7.17", ">= 7.17.10"
 gem "equivalent-xml", "~> 0.6.0"
 gem "facets", require: false
@@ -119,4 +119,5 @@ group :test do
   gem "vcr", "~> 6.1"
   gem "webmock", "~> 3.18", ">= 3.18.1"
   gem "parallel_tests", "~> 3.12"
+  gem "rspec-sqlimit"
 end
