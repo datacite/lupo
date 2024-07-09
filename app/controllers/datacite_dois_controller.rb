@@ -4,6 +4,8 @@ require "uri"
 require "base64"
 require "pp"
 
+# add this line
+
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
