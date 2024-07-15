@@ -1060,7 +1060,6 @@ class Event < ApplicationRecord
 
   def self.events_involving(_doi, relation_types = ALL_RELATION_TYPES)
     Enumerator.new do |yielder|
-
       all_results = []
       page_number = 1
       page_size = 500

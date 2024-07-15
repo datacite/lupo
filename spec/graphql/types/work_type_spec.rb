@@ -2068,13 +2068,13 @@ describe WorkType do
 
     it "all_relations should include citations,parts,references,versions, and other relationships" do
       all_related = @response.dig("data", "work", "allRelated", "nodes")
-      all_related_ids = all_related.map{ |node| node["id"] }.sort.uniq
+      all_related_ids = all_related.map { |node| node["id"] }.sort.uniq
       all_works = (@response.dig("data", "work", "references", "nodes") |
-        @response.dig("data", "work", "citations", "nodes")|
+        @response.dig("data", "work", "citations", "nodes") |
         @response.dig("data", "work", "parts", "nodes") |
         @response.dig("data", "work", "versions", "nodes") |
         @response.dig("data", "work", "otherRelated", "nodes"))
-      all_work_ids = all_works.map{ |node| node["id"] }.sort.uniq
+      all_work_ids = all_works.map { |node| node["id"] }.sort.uniq
       expect(all_related_ids).to eq(all_work_ids)
       expect(@response.dig("data", "work", "allRelatedCount")).to eq(24)
       expect(@response.dig("data", "work", "allRelated", "nodes").length).to eq(24)
