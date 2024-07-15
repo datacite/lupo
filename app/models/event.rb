@@ -408,7 +408,9 @@ class Event < ApplicationRecord
       }
     )
 
-    response
+    hits = response["hits"]["hits"]
+    puts hits.inspect
+    hits
   end
 
   def self.import_by_id(options = {})
