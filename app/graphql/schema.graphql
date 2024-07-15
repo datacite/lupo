@@ -111,6 +111,16 @@ type Affiliation {
 
 type Audiovisual implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -446,6 +456,16 @@ type AudiovisualEdge {
 
 type Book implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -729,6 +749,16 @@ type Book implements DoiItem {
 }
 
 type BookChapter implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -1164,6 +1194,16 @@ type Claim {
 
 type Collection implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -1498,6 +1538,16 @@ type CollectionEdge {
 }
 
 type ConferencePaper implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -2126,6 +2176,16 @@ type DataCatalogEdge {
 
 type DataManagementPlan implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -2461,6 +2521,16 @@ type DataManagementPlanEdge {
 
 type DataPaper implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -2795,6 +2865,16 @@ type DataPaperEdge {
 }
 
 type Dataset implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -3249,6 +3329,16 @@ type Description {
 
 type Dissertation implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -3587,6 +3677,16 @@ Information about DOIs
 """
 interface DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -3921,6 +4021,16 @@ type Error {
 
 type Event implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -4233,6 +4343,16 @@ type EventConnectionWithTotal {
 }
 
 type EventData implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -4843,6 +4963,16 @@ type Identifier {
 
 type Image implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -5178,6 +5308,16 @@ type ImageEdge {
 
 type Instrument implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -5512,6 +5652,16 @@ type InstrumentEdge {
 }
 
 type InteractiveResource implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -5852,6 +6002,16 @@ Represents untyped JSON
 scalar JSON
 
 type JournalArticle implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -6484,6 +6644,16 @@ type MemberRole {
 
 type Model implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -7016,6 +7186,16 @@ type OrganizationEdge {
 
 type Other implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -7375,6 +7555,16 @@ type PageInfo {
 }
 
 type PeerReview implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -7848,6 +8038,16 @@ type PersonEdge {
 
 type PhysicalObject implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -8236,6 +8436,16 @@ type PrefixEdge {
 
 type Preprint implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -8570,6 +8780,16 @@ type PreprintEdge {
 }
 
 type Publication implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -9581,6 +9801,16 @@ type Rights {
 
 type Service implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -9916,6 +10146,16 @@ type ServiceEdge {
 }
 
 type Software implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -10282,6 +10522,16 @@ type SoftwareEdge {
 }
 
 type Sound implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
@@ -10829,6 +11079,16 @@ type User {
 
 type Work implements DoiItem {
   """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
+  """
   Metadata in bibtex format
   """
   bibtex: String!
@@ -11185,6 +11445,16 @@ interface WorkFacetsInterface {
 }
 
 type Workflow implements DoiItem {
+  """
+  All works related to this DOI.
+  """
+  allRelated(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, organizationId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs related to the resource via any relation
+  """
+  allRelatedCount: Int
+
   """
   Metadata in bibtex format
   """
