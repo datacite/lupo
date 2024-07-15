@@ -337,7 +337,7 @@ module DoiItem
   end
 
   def get_related_ids(_doi, _relation_types = Event::ALL_RELATION_TYPES)
-    Event.events_involving(_doi, relations_types: _relation_types).map do |e|
+    Event.events_involving(_doi, _relation_types).map do |e|
       e.doi
     end.flatten.uniq - [_doi.downcase, nil]
   end
