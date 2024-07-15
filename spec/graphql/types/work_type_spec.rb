@@ -1971,7 +1971,7 @@ describe WorkType do
       version_target_dois.each do |version_target_doi|
         create(:event_for_datacite_versions, {
           subj_id: "https://doi.org/#{doi.doi}",
-          obj_id: "https://doi.org/#{version_target_doi.doi}"
+          obj_id: "https://doi.org/#{version_target_doi.doi}",
         })
       end
     end
@@ -2031,6 +2031,12 @@ describe WorkType do
               id
             }
           }
+          allRelatedCount
+          allRelated{
+            nodes{
+              id
+            }
+          }
         }
       }"
     end
@@ -2058,6 +2064,20 @@ describe WorkType do
     it "other_relations should not include citations,parts,references" do
       expect(@response.dig("data", "work", "otherRelatedCount")).to eq(3)
       expect(@response.dig("data", "work", "otherRelated", "nodes").length).to eq(3)
+    end
+
+    it "all_relations should include citations,parts,references,versions, and other relationships" do
+      all_related = @response.dig("data", "work", "allRelated", "nodes")
+      all_related_ids = all_related.map{ |node| node["id"] }.sort.uniq
+      all_works = (@response.dig("data", "work", "references", "nodes") |
+        @response.dig("data", "work", "citations", "nodes")|
+        @response.dig("data", "work", "parts", "nodes") |
+        @response.dig("data", "work", "versions", "nodes") |
+        @response.dig("data", "work", "otherRelated", "nodes"))
+      all_work_ids = all_works.map{ |node| node["id"] }.sort.uniq
+      expect(all_related_ids).to eq(all_work_ids)
+      expect(@response.dig("data", "work", "allRelatedCount")).to eq(24)
+      expect(@response.dig("data", "work", "allRelated", "nodes").length).to eq(24)
     end
   end
 end
