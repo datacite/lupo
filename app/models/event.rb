@@ -368,6 +368,51 @@ class Event < ApplicationRecord
     end
   end
 
+  def self.bulk_gbif_delete(options={})
+    index = active_index
+
+    response = __elasticsearch__.client.search(
+      index: index,
+      body: {
+        from: 0,
+        size: 10,
+        sort: ["created_at"],
+        query: {
+          bool: {
+            must: [
+              {
+                match: {
+                  "subj.registrantId": "datacite.gbif.gbif"
+                }
+              },
+              {
+                match: {
+                  "relation_type_id": "references"
+                }
+              }
+            ],
+            must_not: [
+              {
+                terms: {
+                  source_doi: [
+                    "10.15468/QJGWBA",
+                    "10.35035/GDWQ-3V93",
+                    "10.15469/3XSWXB",
+                    "10.15469/UBP6QO",
+                    "10.35000/TEDB-QD70",
+                    "10.15469/2YMQOZ"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    )
+
+    response
+  end
+
   def self.import_by_id(options = {})
     return nil if options[:id].blank?
 
