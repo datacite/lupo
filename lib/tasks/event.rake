@@ -82,6 +82,11 @@ namespace :event do
     }
     Event.loop_through_events(options)
   end
+
+  desc "bulk delete gbif events"
+  task bulk_gbif_delete: :environment do
+    Event.bulk_gbif_delete
+  end
 end
 
 namespace :crossref do
