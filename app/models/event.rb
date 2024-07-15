@@ -366,7 +366,7 @@ class Event < ApplicationRecord
     end
   end
 
-  def self.bulk_gbif_delete(options={})
+  def self.bulk_gbif_delete
     index = active_index
 
     response = __elasticsearch__.client.search(
