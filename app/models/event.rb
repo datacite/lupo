@@ -123,6 +123,8 @@ class Event < ApplicationRecord
     is-described-by
   ].freeze
 
+  ALL_RELATION_TYPES = (RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES | CITATION_RELATION_TYPES | REFERENCE_RELATION_TYPES).uniq
+
   OTHER_RELATION_TYPES = (
     RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES
   ) - INCLUDED_RELATION_TYPES - PART_RELATION_TYPES
@@ -1056,13 +1058,44 @@ class Event < ApplicationRecord
     end
   end # overridden, use uuid instead of id
 
-  def self.events_involving(_doi, relation_types = OTHER_RELATION_TYPES)
-    self.query(
-      nil,
-      doi: _doi,
-      source_id: RELATED_SOURCE_IDS.join(","),
-      relation_type_id: relation_types.join(","),
-      page: { size: 500 }
-    ).results.results
+  def self.events_involving(_doi, relation_types = ALL_RELATION_TYPES)
+    Enumerator.new do |yielder|
+
+      all_results = []
+      page_number = 1
+      page_size = 500
+
+
+      initial_results = self.query(
+        nil,
+        doi: _doi,
+        source_id: RELATED_SOURCE_IDS.join(","),
+        relation_type_id: relation_types.join(","),
+        page: { size: page_size, number: page_number },
+      ).results
+
+      total_results = initial_results.total
+      total_pages = page_size > 0 ? (total_results.to_f / page_size).ceil : 0
+      all_results.concat(initial_results.results)
+      initial_results.results.each do |event|
+        yielder.yield(event)
+      end
+
+      # Explicitly Loop through remaining pages and concat to all_results
+      if total_pages > 1
+        (2..total_pages).each do |page_num|
+          results = self.query(
+            nil,
+            doi: _doi,
+            source_id: RELATED_SOURCE_IDS.join(","),
+            relation_type_id: relation_types.join(","),
+            page: { size: page_size, number: page_num },
+          ).results
+          results.results.each do |event|
+            yielder.yield(event)
+          end
+        end
+      end
+    end
   end
 end

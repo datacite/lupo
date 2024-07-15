@@ -317,7 +317,7 @@ module DoiItem
   end
 
   def other_related(**args)
-    args[:ids] = get_other_related_ids(object.doi)
+    args[:ids] = get_related_ids(object.doi, Event::OTHER_RELATION_TYPES)
     ElasticsearchModelResponseConnection.new(
       response(**args),
       context: context, first: args[:first], after: args[:after],
@@ -325,11 +325,11 @@ module DoiItem
   end
 
   def other_related_count
-    get_other_related_ids(object.doi).count
+    get_related_ids(object.doi, Event::OTHER_RELATION_TYPES).count
   end
 
-  def get_other_related_ids(_doi)
-    Event.events_involving(_doi).map do |e|
+  def get_related_ids(_doi, _relation_types=Event::ALL_RELATION_TYPES)
+    Event.events_involving(_doi, relations_types=_relation_types).map do |e|
       e.doi
     end.flatten.uniq - [_doi.downcase, nil]
   end
