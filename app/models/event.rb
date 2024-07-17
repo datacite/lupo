@@ -869,7 +869,7 @@ class Event < ApplicationRecord
 
         cursor = response.results.to_a.last[:sort]
 
-        Rails.logger.info "#{label} cursor: #{cursor}"
+        Rails.logger.info "#{label}: cursor: #{cursor}"
 
         ids = response.results.map(&:uuid).uniq
 
