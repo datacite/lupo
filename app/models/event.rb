@@ -854,12 +854,9 @@ class Event < ApplicationRecord
     label = options[:label] || ""
     job_name = options[:job_name] || ""
     query = options[:query].presence
+    delete_count = 0
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
-
-    Rails.logger.info("#{label}: #{response.results.total} events")
-
-    delete_count = 0
 
     if response.size.positive?
       while response.size.positive?
@@ -882,7 +879,7 @@ class Event < ApplicationRecord
       end
     end
 
-    Rails.logger.info("#{label}: #{delete_count} delete jobs queued")
+    Rails.logger.info("#{label}: #{delete_count} jobs queued")
     Rails.logger.info("#{label}: task completed")
   end
 
