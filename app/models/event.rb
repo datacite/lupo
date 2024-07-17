@@ -368,53 +368,6 @@ class Event < ApplicationRecord
     end
   end
 
-  def self.bulk_gbif_delete
-    index = active_index
-
-    response = __elasticsearch__.client.search(
-      index: index,
-      body: {
-        from: 0,
-        size: 10,
-        sort: ["created_at"],
-        query: {
-          bool: {
-            must: [
-              {
-                match: {
-                  "subj.registrantId": "datacite.gbif.gbif"
-                }
-              },
-              {
-                match: {
-                  "relation_type_id": "references"
-                }
-              }
-            ],
-            must_not: [
-              {
-                terms: {
-                  source_doi: [
-                    "10.15468/QJGWBA",
-                    "10.35035/GDWQ-3V93",
-                    "10.15469/3XSWXB",
-                    "10.15469/UBP6QO",
-                    "10.35000/TEDB-QD70",
-                    "10.15469/2YMQOZ"
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      }
-    )
-
-    hits = response["hits"]["hits"]
-    puts hits.inspect
-    hits
-  end
-
   def self.import_by_id(options = {})
     return nil if options[:id].blank?
 
@@ -888,7 +841,7 @@ class Event < ApplicationRecord
     end
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and fiter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
@@ -903,27 +856,34 @@ class Event < ApplicationRecord
     query = options[:query].presence
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
-    Rails.logger.info "#{label} #{response.results.total} events with #{label}."
 
-    # walk through results using cursor
-    if response.results.total.positive?
-      while response.results.length.positive?
-        response =
-          Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
-        break unless response.results.length.positive?
+    Rails.logger.info("#{label}: #{response.results.total} events")
 
-        Rails.logger.info "#{label} #{
-                            response.results.length
-                          } events starting with _id #{
-                            response.results.to_a.first[:_id]
-                          }."
+    delete_count = 0
+
+    if response.size.positive?
+      while response.size.positive?
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
+
+        break unless response.size.positive?
+
+        Rails.logger.info("#{label}: #{response.size} events starting with _id #{response.results.to_a.first[:_id]}")
+
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info "#{label} Cursor: #{cursor} "
+
+        Rails.logger.info "#{label} cursor: #{cursor}"
 
         ids = response.results.map(&:uuid).uniq
-        ids.each { |id| Object.const_get(job_name).perform_later(id, filter) }
+
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, filter)
+          delete_count += 1
+        end
       end
     end
+
+    Rails.logger.info("#{label}: #{delete_count} delete jobs queued")
+    Rails.logger.info("#{label}: task completed")
   end
 
   def metric_type
