@@ -6,7 +6,7 @@ class DeleteGbifEventsJob < ApplicationJob
   def perform(id, options = {})
     event = Event.find_by(uuid: id)
 
-    event.destroy if event.present?
+    event.destroy! if event.present?
   rescue => err
     Rails.logger.info("#{options[:label]}: event delete error: #{err.message}")
   end
