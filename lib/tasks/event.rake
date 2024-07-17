@@ -113,7 +113,7 @@ namespace :crossref_events do
   desc "checks that events subject node is congruent with relation_type and source. it labels it with an error if not"
   task check: :environment do
     from_id = (ENV["FROM_ID"] || Event.minimum(:id)).to_i
-    until_id = (ENV["UNTIL_crossref_citations_errorID"] || Event.maximum(:id)).to_i
+    until_id = (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i
     Event.subj_id_check(from_id: from_id, until_id: until_id)
   end
 
