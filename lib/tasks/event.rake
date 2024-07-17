@@ -82,10 +82,22 @@ namespace :event do
     }
     Event.loop_through_events(options)
   end
+end
 
-  desc "bulk delete gbif events"
-  task bulk_gbif_delete: :environment do
-    Event.bulk_gbif_delete
+namespace :gbif_events do
+  desc "delete gbif events"
+  task delete_gbif_events: :environment do
+    options = {
+      from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
+      filter: {},
+      query: "+subj.registrantId:datacite.datacite +relation_type_id:references -source_doi:(\"10.5061/DRYAD.47SD5E/1\" OR \"10.5061/DRYAD.47SD5E/3\")",
+      # query: "+subj.registrantId:datacite.gbif.gbif +relation_type_id:references -source_doi:(10.15468/QJGWBA OR 10.35035/GDWQ-3V93 OR 10.15469/3XSWXB OR 10.15469/UBP6QO OR 10.35000/TEDB-QD70 OR 10.15469/2YMQOZ)",
+      label: "gbif_event_cleanup_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}",
+      job_name: "DeleteGbifEventsJob"
+    }
+    # Event.loop_through_events(options)
+    Event.loop_through_events(options)
   end
 end
 
@@ -102,7 +114,7 @@ namespace :crossref_events do
   desc "checks that events subject node is congruent with relation_type and source. it labels it with an error if not"
   task check: :environment do
     from_id = (ENV["FROM_ID"] || Event.minimum(:id)).to_i
-    until_id = (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i
+    until_id = (ENV["UNTIL_crossref_citations_errorID"] || Event.maximum(:id)).to_i
     Event.subj_id_check(from_id: from_id, until_id: until_id)
   end
 
