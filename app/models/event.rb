@@ -839,7 +839,7 @@ class Event < ApplicationRecord
     end
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and fiter
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
