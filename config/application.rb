@@ -170,6 +170,9 @@ module Lupo
     # use batch loader
     config.middleware.use BatchLoader::Middleware
 
+    # add the client ip address to the datadog trace
+    config.middleware.use Middleware::DatadogIpMiddleware
+
     # set Active Job queueing backend
     config.active_job.queue_adapter = ENV["AWS_REGION"] ? :shoryuken : :inline
 
