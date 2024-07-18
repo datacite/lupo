@@ -75,8 +75,8 @@ FactoryBot.define do
     end
 
     factory :event_for_datacite_crossref do
-      source_id { "datacite_crossref" }
-      source_token { "datacite_crossref_123" }
+      source_id { "datacite-crossref" }
+      source_token { "datacite-crossref_123" }
       sequence(:subj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
