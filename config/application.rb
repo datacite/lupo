@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "boot"
+require "./lib/middleware/datadog_ip_middleware"
 
 require "rails"
 # Pick the frameworks you want:
