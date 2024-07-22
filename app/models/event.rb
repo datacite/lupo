@@ -873,7 +873,7 @@ class Event < ApplicationRecord
         ids = response.results.map(&:uuid).uniq
 
         ids.each do |id|
-          Object.const_get(job_name).perform_later(id, filter)
+          Object.const_get(job_name).perform_later(id, options)
           delete_count += 1
         end
       end
