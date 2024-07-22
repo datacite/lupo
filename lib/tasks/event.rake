@@ -102,7 +102,7 @@ namespace :gbif_events do
 
   desc "delete orphaned gbif_events"
   task delete_orphaned_gbif_events: :environment do
-    query = query = {
+    query = {
       query: {
         bool: {
           must: [
