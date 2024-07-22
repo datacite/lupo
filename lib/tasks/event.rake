@@ -88,6 +88,7 @@ namespace :gbif_events do
   desc "delete gbif events"
   task delete_gbif_events: :environment do
     options = {
+      size: 100,
       from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
       filter: {},
