@@ -4,7 +4,9 @@ class DeleteOrphanedGbifEventsJob < ApplicationJob
   queue_as :lupo_background
 
   def perform(env, query)
-    Rails.logger.info("index: #{env}")
+    label = "DeleteOrphanedGbifEventsJob_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}"
+
+    Rails.logger.info("#{label}: index_name: #{env}")
 
     # response = Event.delete_by_query(index: env, query: query)
 
