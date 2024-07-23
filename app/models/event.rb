@@ -854,7 +854,6 @@ class Event < ApplicationRecord
     label = options[:label] || ""
     job_name = options[:job_name] || ""
     query = options[:query].presence
-    delete_count = 0
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
 
@@ -874,12 +873,10 @@ class Event < ApplicationRecord
 
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, options)
-          delete_count += 1
         end
       end
     end
 
-    Rails.logger.info("#{label}: #{delete_count} jobs queued")
     Rails.logger.info("#{label}: task completed")
   end
 
