@@ -102,30 +102,7 @@ namespace :gbif_events do
 
   desc "delete orphaned gbif_events"
   task delete_orphaned_gbif_events: :environment do
-    query = {
-      query: {
-        bool: {
-          must: [
-            { match: { "subj.registrantId": "datacite.gbif.gbif" } },
-            { match: { relation_type_id: "references" } }
-          ],
-          must_not: [
-            {
-              terms: {
-                source_doi: [
-                  "10.15468/QJGWBA",
-                  "10.35035/GDWQ-3V93",
-                  "10.15469/3XSWXB",
-                  "10.15469/UBP6QO",
-                  "10.35000/TEDB-QD70",
-                  "10.15469/2YMQOZ"
-                ]
-              }
-            }
-          ]
-        }
-      }
-    }
+    query = "+subj.registrantId:datacite.gbif.gbif +relation_type_id:references -source_doi:(\"10.15468/QJGWBA\" OR \"10.35035/GDWQ-3V93\" OR \"10.15469/3XSWXB\" OR \"10.15469/UBP6QO\" OR \"10.35000/TEDB-QD70\" OR \"10.15469/2YMQOZ\")"
 
     DeleteOrphanedGbifEventsJob.perform_later(ENV["INDEX"], query)
   end
