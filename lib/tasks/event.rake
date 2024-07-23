@@ -108,7 +108,8 @@ namespace :gbif_events do
     Rails.logger.info("#{label}: index: #{index}")
     Rails.logger.info("#{label}: query: #{query}")
 
-    response = Event.delete_by_query(index: index, query: query)
+    # response = Event.delete_by_query(index: index, query: query)
+    # Rails.logger.info("#{label}: #{response.as_json}")
   end
 end
 
