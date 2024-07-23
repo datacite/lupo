@@ -8,10 +8,10 @@ class DeleteOrphanedGbifEventsJob < ApplicationJob
 
     Rails.logger.info("#{label}: index_name: #{env}")
 
-    # response = Event.delete_by_query(index: env, query: query)
+    response = Event.delete_by_query(index: env, query: query)
 
-    # Rails.logger.info(response.to_json)
+    Rails.logger.info(response.to_json)
   rescue => err
-    Rails.logger.info("#{options[:label]}: event delete error: #{err.message}")
+    Rails.logger.info("#{label}: #{err.message}")
   end
 end
