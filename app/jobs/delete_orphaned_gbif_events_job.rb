@@ -7,7 +7,7 @@ class DeleteOrphanedGbifEventsJob < ApplicationJob
     label = "DeleteOrphanedGbifEventsJob_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}"
 
     Rails.logger.info("#{label}: index_name: #{env}")
-    Rails.logger.info("#{label}: query: #{query}")
+    Rails.logger.info("#{label}: query: #{options[:query]}")
 
     # response = Event.delete_by_query(index: env, query: options[:query])
 
