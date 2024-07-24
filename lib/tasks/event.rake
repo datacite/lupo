@@ -84,6 +84,37 @@ namespace :event do
   end
 end
 
+namespace :gbif_events do
+  desc "delete gbif events"
+  task delete_gbif_events: :environment do
+    options = {
+      size: 100,
+      from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
+      filter: {},
+      query: "+subj.registrantId:datacite.gbif.gbif +relation_type_id:references -source_doi:(\"10.15468/QJGWBA\" OR \"10.35035/GDWQ-3V93\" OR \"10.15469/3XSWXB\" OR \"10.15469/UBP6QO\" OR \"10.35000/TEDB-QD70\" OR \"10.15469/2YMQOZ\")",
+      label: "gbif_event_cleanup_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}",
+      job_name: "DeleteGbifEventsJob"
+    }
+
+    Event.loop_through_events(options)
+  end
+
+  desc "delete orphaned gbif_events"
+  task delete_orphaned_gbif_events: :environment do
+    index = ENV["INDEX"]
+    query = "+subj.registrantId:datacite.gbif.gbif +relation_type_id:references -source_doi:(\"10.15468/QJGWBA\" OR \"10.35035/GDWQ-3V93\" OR \"10.15469/3XSWXB\" OR \"10.15469/UBP6QO\" OR \"10.35000/TEDB-QD70\" OR \"10.15469/2YMQOZ\")"
+    label = "DeleteOrphanedGbifEventsJob_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}"
+
+    Rails.logger.info("#{label}: index: #{index}")
+    Rails.logger.info("#{label}: query: #{query}")
+
+    response = Event.delete_by_query(index: index, query: query)
+
+    Rails.logger.info("#{label}: #{response.as_json}")
+  end
+end
+
 namespace :crossref do
   desc "Import crossref dois for all events"
   task import_doi: :environment do
