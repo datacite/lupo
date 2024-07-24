@@ -105,11 +105,13 @@ namespace :gbif_events do
     index = ENV["INDEX"]
     query = "+subj.registrantId:datacite.gbif.gbif +relation_type_id:references -source_doi:(\"10.15468/QJGWBA\" OR \"10.35035/GDWQ-3V93\" OR \"10.15469/3XSWXB\" OR \"10.15469/UBP6QO\" OR \"10.35000/TEDB-QD70\" OR \"10.15469/2YMQOZ\")"
     label = "DeleteOrphanedGbifEventsJob_#{Time.now.utc.strftime("%d%m%Y%H%M%S")}"
+
     Rails.logger.info("#{label}: index: #{index}")
     Rails.logger.info("#{label}: query: #{query}")
 
-    # response = Event.delete_by_query(index: index, query: query)
-    # Rails.logger.info("#{label}: #{response.as_json}")
+    response = Event.delete_by_query(index: index, query: query)
+
+    Rails.logger.info("#{label}: #{response.as_json}")
   end
 end
 
