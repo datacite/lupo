@@ -13,14 +13,13 @@ class DeleteGbifEventsJob < ApplicationJob
     end
 
     # delete event records from mysql
-    result = Events.where(id: ids).delete_all
-    Rails.logger.info("#{label}: #{result} event records deleted")
+    sql = ActiveRecord::Base.sanitize_sql_array(["DELETE FROM events WHERE id IN (?)", ids])
+    ActiveRecord::Base.connection.execute(sql)
 
     # delete event documents from elasticsearch
     bulk_payload = ids.map { |id| { delete: { _index: index, _id: id } } }
-    response = Event.__elasticsearch__.client.bulk(body: bulk_payload)
-    Rails.logger.info("#{label}: #{response}")
+    Event.__elasticsearch__.client.bulk(body: bulk_payload)
   rescue => err
-    Rails.logger.error("#{label}: #{are.message}")
+    Rails.logger.error("#{label}: #{err.message}")
   end
 end

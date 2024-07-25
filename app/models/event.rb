@@ -904,9 +904,7 @@ class Event < ApplicationRecord
 
         ids = response.results.map(&:_id).uniq
 
-        DeleteGbifEventsJob.perform_later(ids, options)
-
-        # Object.const_get(job_name).perform_later(ids, options)
+        Object.const_get(job_name).perform_later(ids, options)
       end
     end
 
