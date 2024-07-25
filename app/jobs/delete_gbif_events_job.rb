@@ -5,12 +5,7 @@ class DeleteGbifEventsJob < ApplicationJob
 
   def perform(ids, options = {})
     label = options[:label]
-    index = ENV["INDEX"]
-
-    if index.blank?
-      Rails.logger.error("#{label}: ENV['INDEX'] must be provided")
-      return
-    end
+    index = options[:index]
 
     # delete event records from mysql
     sql = ActiveRecord::Base.sanitize_sql_array(["DELETE FROM events WHERE id IN (?)", ids])

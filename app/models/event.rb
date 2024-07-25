@@ -887,11 +887,13 @@ class Event < ApplicationRecord
     label = options[:label] || ""
     job_name = options[:job_name] || ""
     query = options[:query].presence
+    delete_count = 0
+    max_delete_count = options[:max_delete_count]
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
 
     if response.size.positive?
-      while response.size.positive?
+      while response.size.positive? && delete_count < max_delete_count
         response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
 
         break unless response.size.positive?
@@ -905,6 +907,8 @@ class Event < ApplicationRecord
         ids = response.results.map(&:_id).uniq
 
         Object.const_get(job_name).perform_later(ids, options)
+
+        delete_count += response.size
       end
     end
 
