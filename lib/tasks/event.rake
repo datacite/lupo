@@ -102,7 +102,7 @@ namespace :gbif_events do
     end
 
     options = {
-      size: 2,
+      size: 1000,
       from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
       filter: {},
