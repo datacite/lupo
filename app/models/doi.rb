@@ -962,7 +962,7 @@ class Doi < ApplicationRecord
     minimum_should_match = 0
 
     filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
-    filter << { term: { resource_type_id: options[:resource_type_id].underscore.dasherize } } if options[:resource_type_id].present?
+    filter << { terms: { resource_type_id: options[:resource_type_id].split(",").map(&:underscore).map(&:dasherize } } if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
     if options[:provider_id].present?
       options[:provider_id].split(",").each { |id|
