@@ -841,7 +841,7 @@ class Event < ApplicationRecord
     end
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
@@ -856,27 +856,63 @@ class Event < ApplicationRecord
     query = options[:query].presence
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
-    Rails.logger.info "#{label} #{response.results.total} events with #{label}."
 
-    # walk through results using cursor
-    if response.results.total.positive?
-      while response.results.length.positive?
-        response =
-          Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
-        break unless response.results.length.positive?
+    if response.size.positive?
+      while response.size.positive?
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
 
-        Rails.logger.info "#{label} #{
-                            response.results.length
-                          } events starting with _id #{
-                            response.results.to_a.first[:_id]
-                          }."
+        break unless response.size.positive?
+
+        Rails.logger.info("#{label}: #{response.size} events starting with _id #{response.results.to_a.first[:_id]}")
+
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info "#{label} Cursor: #{cursor} "
+
+        Rails.logger.info "#{label}: cursor: #{cursor}"
 
         ids = response.results.map(&:uuid).uniq
-        ids.each { |id| Object.const_get(job_name).perform_later(id, filter) }
+
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, options)
+        end
       end
     end
+
+    Rails.logger.info("#{label}: task completed")
+  end
+
+  def self.loop_through_gbif_events(options)
+    size = (options[:size] || 1_000).to_i
+    cursor = options[:cursor] || []
+    filter = options[:filter] || {}
+    label = options[:label] || ""
+    job_name = options[:job_name] || ""
+    query = options[:query].presence
+    delete_count = 0
+    max_delete_count = options[:max_delete_count]
+
+    response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
+
+    if response.size.positive?
+      while response.size.positive? && delete_count < max_delete_count
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
+
+        break unless response.size.positive?
+
+        Rails.logger.info("#{label}: #{response.size} events starting with _id #{response.results.to_a.first[:_id]}")
+
+        cursor = response.results.to_a.last[:sort]
+
+        Rails.logger.info "#{label}: cursor: #{cursor}"
+
+        ids = response.results.map(&:_id).uniq
+
+        Object.const_get(job_name).perform_later(ids, options)
+
+        delete_count += response.size
+      end
+    end
+
+    Rails.logger.info("#{label}: task completed")
   end
 
   def metric_type
