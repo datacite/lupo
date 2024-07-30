@@ -101,8 +101,10 @@ namespace :gbif_events do
       exit
     end
 
+    size = ENV["SIZE"].present? ? ENV["SIZE"].to_i : 1000
+
     options = {
-      size: 1000,
+      size: size,
       from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
       filter: {},
