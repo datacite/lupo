@@ -177,6 +177,17 @@ describe ProvidersController, type: :request, elasticsearch: true do
         expect(json["meta"]).to eq("repositoryCount" => 0)
       end
     end
+
+    context "when included without permissions" do
+      it "does not return contact information" do
+        get "/providers/#{provider.symbol.downcase}?include=contacts",
+            nil
+
+        # Included attribute does not contain contacts
+        expect(json.dig("included")).to be_nil
+      end
+    end
+
   end
 
   describe "GET /providers/:id meta" do
