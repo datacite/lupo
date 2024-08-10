@@ -184,7 +184,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
             nil
 
         # Included attribute does not contain contacts
-        expect(json.dig("included")).to be_nil
+        expect(json.dig("included")).to eq([])
       end
     end
 
