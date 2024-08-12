@@ -187,7 +187,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
         expect(json.dig("included")).to eq([])
       end
     end
-
   end
 
   describe "GET /providers/:id meta" do
