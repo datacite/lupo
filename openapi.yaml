@@ -317,46 +317,46 @@ paths:
             type: string
         - in: query
           name: created
+          description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
-            description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
             pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: registered
+          description: Filter by the DOI date registered (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
-            description: Filter by the DOI date registered (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
-            pattern: ^\d{4}(,\d{4})*$
+            pattern: ^\d{4}(,\d{4})*$       
         - in: query
           name: published
+          description: Filter by the DOI date published (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
-            description: Filter by the DOI date published (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
             pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: provider-id
+          description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
           schema:
             type: string
-            description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
-            example: cern
+          example: cern
         - in: query
           name: client-id
+          description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
           schema:
             type: string
-            description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
-            example: datacite.blog
+          example: datacite.blog
         - in: query
           name: consortium-id
+          description: Filter by a specific DataCite consortium. Use commmas to include multiple consortia.
           schema:
             type: string
-            description: Filter by a specific DataCite consortium. Use commmas to include multiple consortia.
-            example: ardc
+          example: ardc
         - in: query
           name: prefix
+          description: Filter by a specific prefix. Use commmas to include multiple prefixes.
           schema:
             type: string
-            description: Filter by a specific prefix. Use commmas to include multiple prefixes.
-            example: 10.5438
+          example: 10.5438
         - in: query
           name: client-type
           schema:
@@ -440,9 +440,9 @@ paths:
             type: string  
         - in: query
           name: subject
+          description: Filter by the free text Subject. Use commmas to include multiple terms.
           schema:
             type: string
-            description: Filter by the free text Subject. Use commmas to include multiple terms.
         - in: query
           name: field-of-science
           schema:
@@ -602,6 +602,25 @@ paths:
               - media
         - in: query
           name: sort
+          description: >
+            Sort order:
+             * `relevance` - Relevance score descending 
+             * `name` - DOI name alphabetical ascending 
+             * `-name` - DOI name alphabetical descending
+             * `created` - Created date ascending
+             * `-created` - Created date descending
+             * `updated` - Updated date ascending
+             * `-updated` - Updated date descending
+             * `published` - Published date ascending
+             * `-published` - Published date descending
+             * `view-count` - viewCount ascending
+             * `-view-count` - viewCount descending
+             * `download-count` - downloadCount ascending
+             * `-download-count` - downloadCount descending
+             * `citation-count` - citationCount ascending
+             * `-citation-count` - citationCount descending
+             * `title` - first title alphabetical ascending
+             * `-title` - first title alphabetical descending
           schema:
             type: string
             enum:
@@ -622,25 +641,6 @@ paths:
               - '-citation-count'
               - 'title'
               - '-title'
-          description: >
-            Sort order:
-             * `relevance` - Relevance score descending 
-             * `name` - DOI name alphabetical ascending 
-             * `-name` - DOI name alphabetical descending
-             * `created` - Created date ascending
-             * `-created` - Created date descending
-             * `updated` - Updated date ascending
-             * `-updated` - Updated date descending
-             * `published` - Published date ascending
-             * `-published` - Published date descending
-             * `view-count` - viewCount ascending
-             * `-view-count` - viewCount descending
-             * `download-count` - downloadCount ascending
-             * `-download-count` - downloadCount descending
-             * `citation-count` - citationCount ascending
-             * `-citation-count` - citationCount descending
-             * `title` - first title alphabetical ascending
-             * `-title` - first title alphabetical descending
         - in: query
           name: disable-facets
           description: Exclude facets from the response.
@@ -672,6 +672,7 @@ paths:
             type: string
         - in: query
           name: source
+          description: The [system used to create the DOI](https://support.datacite.org/docs/api-get-doi#source).
           schema:
             type: string
             enum:
@@ -680,7 +681,6 @@ paths:
                 - fabricaForm
                 - fabrica
                 - ez
-            description: The [system used to create the DOI](https://support.datacite.org/docs/api-get-doi#source).
       responses:
         '200':
           description: A JSON array of dois.
