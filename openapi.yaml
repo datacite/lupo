@@ -202,12 +202,7 @@ paths:
         - in: query
           name: client-type
           schema:
-            type: string
-            enum:
-              - repository
-              - periodical
-              - igsnCatalog
-              - raidRegistry
+            $ref: '#/components/schemas/client-type'
         - in: query
           name: repository-type
           schema:
@@ -355,12 +350,7 @@ paths:
         - in: query
           name: client-type
           schema:
-            type: string
-            enum:
-              - repository
-              - periodical
-              - igsnCatalog
-              - raidRegistry
+            $ref: '#/components/schemas/client-type'
         - in: query
           name: certificate
           schema:
