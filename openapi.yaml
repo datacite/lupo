@@ -243,11 +243,10 @@ paths:
         - in: query
           name: state
           schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+            type: array
+            items:
+              $ref: '#/components/schemas/state'
+          description: Authentication is required to retrieve draft records.
       responses:
         '200':
           description: A JSON array of clients stats.
@@ -407,11 +406,7 @@ paths:
           schema:
             type: array
             items:
-              type: string
-              enum:
-                - findable
-                - registered
-                - draft
+              $ref: '#/components/schemas/state'
           explode: false
           style: form 
           examples:
@@ -1050,11 +1045,10 @@ paths:
         - in: query
           name: state
           schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+            type: array
+            items:
+              $ref: '#/components/schemas/state'
+          description: Authentication is required to retrieve draft records.
       responses:
         '200':
           description: A JSON array of providers stats.
@@ -2411,6 +2405,12 @@ components:
         - periodical
         - igsnCatalog
         - raidRegistry
+    state:
+      type: string
+      enum:
+        - findable
+        - registered
+        - draft
   parameters:
     clientIdParam:
       name: client-id
