@@ -475,7 +475,13 @@ paths:
               value: findable,registered
         - in: query
           name: affiliation
-          description: Set affiliation=true to see additional affiliation information such as the affiliation identifier that was added in Schema 4.3.
+          description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: publisher
+          description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
           schema:
             type: boolean
             example: true
