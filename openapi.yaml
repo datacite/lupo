@@ -313,6 +313,7 @@ paths:
       parameters:
         - in: query
           name: query
+          description: Search [DOI metadata fields](https://support.datacite.org/docs/api-queries#using-the-query-parameter) using OpenSearch query string syntax. 
           schema:
             type: string
         - in: query
