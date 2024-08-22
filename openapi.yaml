@@ -434,6 +434,7 @@ paths:
           name: schema-version
           schema:
             type: string
+          example: 4
         - in: query
           name: state
           description: Filter by the [DOI state(s)](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
