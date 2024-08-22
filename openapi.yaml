@@ -622,6 +622,25 @@ paths:
               - '-citation-count'
               - 'title'
               - '-title'
+          description: >
+            Sort order:
+             * `relevance` - Relevance score descending 
+             * `name` - DOI name alphabetical ascending 
+             * `-name` - DOI name alphabetical descending
+             * `created` - Created date ascending
+             * `-created` - Created date descending
+             * `updated` - Updated date ascending
+             * `-updated` - Updated date descending
+             * `published` - Published date ascending
+             * `-published` - Published date descending
+             * `view-count` - viewCount ascending
+             * `-view-count` - viewCount descending
+             * `download-count` - downloadCount ascending
+             * `-download-count` - downloadCount descending
+             * `citation-count` - citationCount ascending
+             * `-citation-count` - citationCount descending
+             * `title` - first title alphabetical ascending
+             * `-title` - first title alphabetical descending
         - in: query
           name: disable-facets
           description: Exclude facets from the response.
