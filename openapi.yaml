@@ -2450,7 +2450,7 @@ components:
       in: query
       schema:
         type: string
-securitySchemes:
+  securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
