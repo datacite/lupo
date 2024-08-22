@@ -318,15 +318,21 @@ paths:
         - in: query
           name: created
           schema:
-            type: integer
+            type: string
+            description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
+            pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: registered
           schema:
-            type: integer
+            type: string
+            description: Filter by the DOI date registered (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
+            pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: published
           schema:
-            type: integer
+            type: string
+            description: Filter by the DOI date published (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
+            pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: provider-id
           schema:
