@@ -46,13 +46,13 @@ paths:
       parameters:
         - in: query
           name: id
-          description: Find activity by an id.
+          description: Find activity by an ID.
           required: false
           schema:
             type: string
         - in: query
           name: ids
-          description: Find activities by array of activity ids
+          description: Find activities by array of activity IDs.
           required: false
           schema:
             type: array
@@ -82,7 +82,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: Activity ID
+          description: Activity ID.
           required: true
           schema:
             type: string
@@ -255,7 +255,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: Client ID
+        description: DataCite Repository account ID.
         required: true
         schema:
           type: string
@@ -1057,7 +1057,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: Provider ID
+        description: DataCite Direct Member, Consortium Organization, or Consortium account ID.
         required: true
         schema:
           type: string
@@ -2438,18 +2438,21 @@ components:
       in: query
       schema:
         type: integer
+      description: Page number for [pagination](https://support.datacite.org/docs/pagination).
     pageSizeParam:
       name: page[size]
       in: query
       schema:
         type: integer
-        minimum: 1
+        minimum: 0
         maximum: 1000
+      description: Page size between 0 and 1,000 for [pagination](https://support.datacite.org/docs/pagination).
     pageCursorParam:
       name: page[cursor]
       in: query
       schema:
         type: string
+      description: Use for [cursor-based pagination](https://support.datacite.org/docs/pagination#method-2-cursor).
   securitySchemes:
     BasicAuth:
       type: http
