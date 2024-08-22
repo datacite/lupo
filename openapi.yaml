@@ -202,6 +202,8 @@ paths:
             type: array
             items:
               $ref: '#/components/schemas/certificate'
+          explode: false
+          style: form
         - in: query
           $ref: '#/components/parameters/pageNumberParam'
         - in: query
@@ -319,6 +321,8 @@ paths:
             type: array
             items:
               $ref: '#/components/schemas/certificate'
+          explode: false
+          style: form
         - in: query
           name: affiliation-id
           description: Search creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
