@@ -435,13 +435,14 @@ paths:
           style: form
         - in: query
           name: resource-type
-          description: Filter by the free text resourceType.
+          description: Filter by the free text resourceType. Use commmas to include multiple values.
           schema:
             type: string  
         - in: query
           name: subject
           schema:
             type: string
+            description: Filter by the free text Subject. Use commmas to include multiple terms.
         - in: query
           name: field-of-science
           schema:
