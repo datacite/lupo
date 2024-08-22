@@ -556,7 +556,7 @@ paths:
             type: boolean
         - in: query
           name: random
-          description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
+          description: Retreive a random sample of DOIs. When true, the `page[number]` parameter is ignored.
           schema:
             type: boolean
         - in: query
@@ -623,12 +623,26 @@ paths:
             type: boolean
         - in: query
           name: detail
-          description: When set to true, will include the following attributes in the response - prefix, suffix, viewsOverTime, citationsOverTime, provider, references, citations. parts, partOf, versions, versionOf, xml, alternateIdentifiers.
+          description: >
+            When set to `true`, will include the following attributes in the response:
+             * `prefix`
+             * `suffix`
+             * `viewsOverTime`
+             * `citationsOverTime`
+             * `provider`
+             * `references`
+             * `citations`
+             * `parts`
+             * `partOf`
+             * `versions`
+             * `versionOf`
+             * `xml`
+             * `alternateIdentifiers`
           schema:
             type: boolean
         - in: query
           name: fields[dois]
-          description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
+          description: Only return the attributes specified. For example, `fields[dois]=titles,subjects` will only return titles and subjects.
           schema:
             type: string
         - in: query
