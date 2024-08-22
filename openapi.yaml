@@ -222,15 +222,9 @@ paths:
         - in: query
           name: certificate
           schema:
-            type: string
-            enum:
-              - CLARIN
-              - CoreTrustSeal
-              - DIN 31644
-              - DINI
-              - DSA
-              - RatSWD
-              - WDS
+            type: array
+            items:
+              $ref: '#/components/schemas/certificate'
         - in: query
           name: 'page[number]'
           schema:
@@ -370,15 +364,9 @@ paths:
         - in: query
           name: certificate
           schema:
-            type: string
-            enum:
-              - CLARIN
-              - CoreTrustSeal
-              - DIN 31644
-              - DINI
-              - DSA
-              - RatSWD
-              - WDS
+            type: array
+            items:
+              $ref: '#/components/schemas/certificate'
         - in: query
           name: affiliation-id
           description: Search creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
@@ -2495,7 +2483,24 @@ components:
       enum:
         - Personal
         - Organizational
-  securitySchemes:
+    certificate: 
+      type: string
+      enum:
+        - CLARIN
+        - CoreTrustSeal
+        - DIN 31644
+        - DINI
+        - DSA
+        - RatSWD
+        - WDS
+    client-type:
+      type: string
+      enum:
+        - repository
+        - periodical
+        - igsnCatalog
+        - raidRegistry
+securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
