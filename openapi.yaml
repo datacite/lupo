@@ -65,25 +65,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          description: Pagination - page number
-          required: false
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          required: false
-          description: Pagination - page size
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          required: false
-          description: 'Pagination - page cursor (used instead of page[number])'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
       responses:
         '200':
           description: A JSON API result of activities.
@@ -133,9 +119,9 @@ paths:
           schema:
             type: string
         - in: query
-          name: page[number]
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
+        - in: query
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -168,9 +154,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: software
           schema:
@@ -221,15 +205,9 @@ paths:
             items:
               $ref: '#/components/schemas/certificate'
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: include
           schema:
@@ -261,9 +239,7 @@ paths:
       summary: Return clients DOI production statistics.
       parameters:
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: state
           schema:
@@ -324,11 +300,7 @@ paths:
             type: string
             pattern: ^\d{4}(,\d{4})*$
         - in: query
-          name: provider-id
-          description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
-          schema:
-            type: string
-          example: cern
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: client-id
           description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
@@ -336,11 +308,7 @@ paths:
             type: string
           example: datacite.blog
         - in: query
-          name: consortium-id
-          description: Filter by a specific DataCite consortium. Use commmas to include multiple consortia.
-          schema:
-            type: string
-          example: ardc
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
           name: prefix
           description: Filter by a specific prefix. Use commmas to include multiple prefixes.
@@ -560,19 +528,11 @@ paths:
               - provider
               - resource-type
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: include
           schema:
@@ -826,19 +786,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: include
           schema:
@@ -989,21 +941,17 @@ paths:
           schema:
             type: integer
         - in: query
-          name: consortium-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: prefix-id
           schema:
             type: string
         - in: query
-          name: page[number]
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
+        - in: query
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -1036,9 +984,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: consortium-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
           name: region
           schema:
@@ -1088,15 +1034,9 @@ paths:
           schema:
             type: boolean
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -1195,15 +1135,9 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
       responses:
         '200':
           description: A JSON array of reports.
@@ -2490,6 +2424,38 @@ components:
         - periodical
         - igsnCatalog
         - raidRegistry
+  parameters:
+    providerIdParam:
+      name: provider-id
+      in: query
+      description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
+      schema:
+        type: string
+      example: cern
+    consortiumIdParam:
+      name: consortium-id
+      in: query
+      description: Filter by a specific DataCite consortium.
+      schema:
+        type: string
+      example: ardc
+    pageNumberParam:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+    pageSizeParam:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+    pageCursorParam:
+      name: page[cursor]
+      in: query
+      schema:
+        type: string
 securitySchemes:
     BasicAuth:
       type: http
