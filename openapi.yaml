@@ -337,18 +337,26 @@ paths:
           name: provider-id
           schema:
             type: string
+            description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
+            example: cern
         - in: query
           name: client-id
           schema:
             type: string
+            description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
+            example: datacite.blog
         - in: query
           name: consortium-id
           schema:
             type: string
+            description: Filter by a specific DataCite consortium. Use commmas to include multiple consortia.
+            example: ardc
         - in: query
           name: prefix
           schema:
             type: string
+            description: Filter by a specific prefix. Use commmas to include multiple prefixes.
+            example: 10.5438
         - in: query
           name: client-type
           schema:
