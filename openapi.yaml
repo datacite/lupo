@@ -381,17 +381,17 @@ paths:
               - WDS
         - in: query
           name: affiliation-id
-          description: Searches creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
+          description: Search creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
           schema:
             type: string
         - in: query
           name: funder-id
-          description: Searches fundingReferences.funderIdentifier for a Crossref Funder ID.
+          description: Search fundingReferences.funderIdentifier for a Crossref Funder ID.
           schema:
             type: string
         - in: query
           name: user-id
-          description: Searches creators.nameIdentifiers.nameIdentifier for an ORCID iD.
+          description: Search creators.nameIdentifiers.nameIdentifier for an ORCID iD.
           schema:
             type: string
         - in: query
@@ -503,62 +503,62 @@ paths:
               - 503
         - in: query
           name: has-citations
-          description: Searches the citationCount field for integer values greater than or equal to the inputted value. 
+          description: Search the citationCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-references
-          description: Searches the referenceCount field for integer values greater than or equal to the inputted value. 
+          description: Search the referenceCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-parts
-          description: Searches the partCount field for integer values greater than or equal to the inputted value. 
+          description: Search the partCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-part-of
-          description: Searches the partOfCount field for integer values greater than or equal to the inputted value. 
+          description: Search the partOfCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-versions
-          description: Searches the versionCount field for integer values greater than or equal to the inputted value. 
+          description: Search the versionCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-version-of
-          description: Searches the versionOfCount field for integer values greater than or equal to the inputted value. 
+          description: Search the versionOfCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-views
-          description: Searches the viewCount field for integer values greater than or equal to the inputted value. 
+          description: Search the viewCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-downloads
-          description: Searches the downloadCount field for integer values greater than or equal to the inputted value. 
+          description: Search the downloadCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-person
-          description: Returns DOIs where creators.nameIdentifiers.nameIdentifierScheme has at least one "ORCID" value. 
+          description: Return DOIs where creators.nameIdentifiers.nameIdentifierScheme has at least one "ORCID" value. 
           schema:
             type: boolean
         - in: query
           name: has-affiliation
-          description: Returns DOIs where either creators.affiliation.affiliationIdentifierScheme or contributors.affiliation.affiliationIdentifierScheme has at least one "ROR" value. 
+          description: Return DOIs where either creators.affiliation.affiliationIdentifierScheme or contributors.affiliation.affiliationIdentifierScheme has at least one "ROR" value. 
           schema:
             type: boolean
         - in: query
           name: has-organization
-          description: Returns DOIs where either creators.nameIdentifiers.nameIdentifierScheme or contributors.nameIdentifiers.nameIdentifierScheme has at least one "ROR" value. 
+          description: Return DOIs where either creators.nameIdentifiers.nameIdentifierScheme or contributors.nameIdentifiers.nameIdentifierScheme has at least one "ROR" value. 
           schema:
             type: boolean
         - in: query
           name: has-funder
-          description: Returns DOIs where fundingReferences.funderIdentifierType has at least one "Crossref Funder ID" value. 
+          description: Return DOIs where fundingReferences.funderIdentifierType has at least one "Crossref Funder ID" value. 
           schema:
             type: boolean
         - in: query
