@@ -894,15 +894,6 @@ paths:
           name: client-id
           schema:
             type: string
-        - in: query
-          name: state
-          description: Must be authenticated to view registered and draft DOIs.
-          schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
       responses:
         '200':
           description: A JSON array of prefixes stats.
