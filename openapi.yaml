@@ -111,9 +111,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: client-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/clientIdParam'
         - in: query
           name: prefix-id
           schema:
@@ -302,11 +300,7 @@ paths:
         - in: query
           $ref: '#/components/parameters/providerIdParam'
         - in: query
-          name: client-id
-          description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
-          schema:
-            type: string
-          example: datacite.blog
+          $ref: '#/components/parameters/clientIdParam'
         - in: query
           $ref: '#/components/parameters/consortiumIdParam'
         - in: query
@@ -891,9 +885,7 @@ paths:
       summary: Return prefixes DOI production statistics.
       parameters:
         - in: query
-          name: client-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/clientIdParam'
       responses:
         '200':
           description: A JSON array of prefixes stats.
@@ -2416,6 +2408,13 @@ components:
         - igsnCatalog
         - raidRegistry
   parameters:
+    clientIdParam:
+      name: client-id
+      in: query
+      description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
+      schema:
+        type: string
+      example: datacite.blog
     providerIdParam:
       name: provider-id
       in: query
