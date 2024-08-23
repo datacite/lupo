@@ -46,13 +46,13 @@ paths:
       parameters:
         - in: query
           name: id
-          description: Find activity by an id.
+          description: Find activity by an ID.
           required: false
           schema:
             type: string
         - in: query
           name: ids
-          description: Find activities by array of activity ids
+          description: Find activities by array of activity IDs.
           required: false
           schema:
             type: array
@@ -65,25 +65,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          description: Pagination - page number
-          required: false
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          required: false
-          description: Pagination - page size
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          required: false
-          description: 'Pagination - page cursor (used instead of page[number])'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
       responses:
         '200':
           description: A JSON API result of activities.
@@ -96,7 +82,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: Activity ID
+          description: Activity ID.
           required: true
           schema:
             type: string
@@ -125,17 +111,15 @@ paths:
           schema:
             type: integer
         - in: query
-          name: client-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/clientIdParam'
         - in: query
           name: prefix-id
           schema:
             type: string
         - in: query
-          name: page[number]
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
+        - in: query
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -168,9 +152,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: software
           schema:
@@ -202,12 +184,7 @@ paths:
         - in: query
           name: client-type
           schema:
-            type: string
-            enum:
-              - repository
-              - periodical
-              - igsnCatalog
-              - raidRegistry
+            $ref: '#/components/schemas/client-type'
         - in: query
           name: repository-type
           schema:
@@ -222,25 +199,15 @@ paths:
         - in: query
           name: certificate
           schema:
-            type: string
-            enum:
-              - CLARIN
-              - CoreTrustSeal
-              - DIN 31644
-              - DINI
-              - DSA
-              - RatSWD
-              - WDS
+            type: array
+            items:
+              $ref: '#/components/schemas/certificate'
+          explode: false
+          style: form
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: include
           schema:
@@ -272,17 +239,14 @@ paths:
       summary: Return clients DOI production statistics.
       parameters:
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: state
           schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+            type: array
+            items:
+              $ref: '#/components/schemas/state'
+          description: Authentication is required to retrieve draft records.
       responses:
         '200':
           description: A JSON array of clients stats.
@@ -291,7 +255,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: Client ID
+        description: DataCite Repository account ID.
         required: true
         schema:
           type: string
@@ -313,115 +277,114 @@ paths:
       parameters:
         - in: query
           name: query
+          description: Search [DOI metadata fields](https://support.datacite.org/docs/api-queries#using-the-query-parameter) using OpenSearch query string syntax. 
           schema:
             type: string
         - in: query
           name: created
+          description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
-            type: integer
+            type: string
+            pattern: ^\d{4}(,\d{4})*$
         - in: query
           name: registered
+          description: Filter by the DOI date registered (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
-            type: integer
+            type: string
+            pattern: ^\d{4}(,\d{4})*$       
         - in: query
           name: published
-          schema:
-            type: integer
-        - in: query
-          name: provider-id
+          description: Filter by the DOI date published (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
+            pattern: ^\d{4}(,\d{4})*$
         - in: query
-          name: client-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
-          name: consortium-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/clientIdParam'
+        - in: query
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
           name: prefix
+          description: Filter by a specific prefix. Use commmas to include multiple prefixes.
           schema:
             type: string
+          example: 10.5438
         - in: query
           name: client-type
           schema:
-            type: string
-            enum:
-              - repository
-              - periodical
-              - igsnCatalog
-              - raidRegistry
+            $ref: '#/components/schemas/client-type'
         - in: query
           name: certificate
           schema:
-            type: string
-            enum:
-              - CLARIN
-              - CoreTrustSeal
-              - DIN 31644
-              - DINI
-              - DSA
-              - RatSWD
-              - WDS
+            type: array
+            items:
+              $ref: '#/components/schemas/certificate'
+          explode: false
+          style: form
         - in: query
           name: affiliation-id
-          description: Searches creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
+          description: Search creators.affiliation.affiliationIdentifier and contributors.affiliation.affiliationIdentifier for a ROR ID.
           schema:
             type: string
         - in: query
           name: funder-id
-          description: Searches fundingReferences.funderIdentifier for a Crossref Funder ID.
+          description: Search fundingReferences.funderIdentifier for a Crossref Funder ID.
           schema:
             type: string
         - in: query
           name: user-id
-          description: Searches creators.nameIdentifiers.nameIdentifier for an ORCID iD.
+          description: Search creators.nameIdentifiers.nameIdentifier for an ORCID iD.
           schema:
             type: string
         - in: query
           name: resource-type-id
-          description: Filter by the resourceTypeGeneral.
+          description: Filter by the resourceTypeGeneral. Use commmas to include multiple values.
           schema:
-            type: string
-            enum:
-              - audiovisual
-              - book
-              - book-chapter
-              - collection
-              - computational-notebook
-              - conference-paper
-              - conference-proceeding
-              - data-paper
-              - dataset
-              - dissertation
-              - event
-              - image
-              - instrument
-              - interactive-resource
-              - journal
-              - journal-article
-              - model
-              - output-management-plan
-              - peer-review
-              - physical-object
-              - preprint
-              - report
-              - service
-              - software
-              - sound
-              - standard
-              - study-registration
-              - text
-              - workflow
-              - other
+            type: array
+            items:
+              type: string
+              enum:
+                - audiovisual
+                - book
+                - book-chapter
+                - collection
+                - computational-notebook
+                - conference-paper
+                - conference-proceeding
+                - data-paper
+                - dataset
+                - dissertation
+                - event
+                - image
+                - instrument
+                - interactive-resource
+                - journal
+                - journal-article
+                - model
+                - output-management-plan
+                - peer-review
+                - physical-object
+                - preprint
+                - report
+                - service
+                - software
+                - sound
+                - standard
+                - study-registration
+                - text
+                - workflow
+                - other
+          explode: false
+          style: form
         - in: query
           name: resource-type
-          description: Filter by the free text resourceType.
+          description: Filter by the free text resourceType. Use commmas to include multiple values.
           schema:
             type: string  
         - in: query
           name: subject
+          description: Filter by the free text Subject. Use commmas to include multiple terms.
           schema:
             type: string
         - in: query
@@ -436,17 +399,30 @@ paths:
           name: schema-version
           schema:
             type: string
+          example: 4
         - in: query
           name: state
+          description: Filter by the [DOI state(s)](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
           schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+            type: array
+            items:
+              $ref: '#/components/schemas/state'
+          explode: false
+          style: form 
+          examples:
+            findable:
+              value: findable
+            findable or registered:
+              value: findable,registered
         - in: query
           name: affiliation
-          description: Set affiliation=true to see additional affiliation information such as the affiliation identifier that was added in Schema 4.3.
+          description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+          schema:
+            type: boolean
+            example: true
+        - in: query
+          name: publisher
+          description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
           schema:
             type: boolean
             example: true
@@ -467,67 +443,67 @@ paths:
               - 503
         - in: query
           name: has-citations
-          description: Searches the citationCount field for integer values greater than or equal to the inputted value. 
+          description: Search the citationCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-references
-          description: Searches the referenceCount field for integer values greater than or equal to the inputted value. 
+          description: Search the referenceCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-parts
-          description: Searches the partCount field for integer values greater than or equal to the inputted value. 
+          description: Search the partCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-part-of
-          description: Searches the partOfCount field for integer values greater than or equal to the inputted value. 
+          description: Search the partOfCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-versions
-          description: Searches the versionCount field for integer values greater than or equal to the inputted value. 
+          description: Search the versionCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-version-of
-          description: Searches the versionOfCount field for integer values greater than or equal to the inputted value. 
+          description: Search the versionOfCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-views
-          description: Searches the viewCount field for integer values greater than or equal to the inputted value. 
+          description: Search the viewCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-downloads
-          description: Searches the downloadCount field for integer values greater than or equal to the inputted value. 
+          description: Search the downloadCount field for integer values greater than or equal to the inputted value. 
           schema:
             type: integer
         - in: query
           name: has-person
-          description: Returns DOIs where creators.nameIdentifiers.nameIdentifierScheme has at least one "ORCID" value. 
+          description: Return DOIs where creators.nameIdentifiers.nameIdentifierScheme has at least one "ORCID" value. 
           schema:
             type: boolean
         - in: query
           name: has-affiliation
-          description: Returns DOIs where either creators.affiliation.affiliationIdentifierScheme or contributors.affiliation.affiliationIdentifierScheme has at least one "ROR" value. 
+          description: Return DOIs where either creators.affiliation.affiliationIdentifierScheme or contributors.affiliation.affiliationIdentifierScheme has at least one "ROR" value. 
           schema:
             type: boolean
         - in: query
           name: has-organization
-          description: Returns DOIs where either creators.nameIdentifiers.nameIdentifierScheme or contributors.nameIdentifiers.nameIdentifierScheme has at least one "ROR" value. 
+          description: Return DOIs where either creators.nameIdentifiers.nameIdentifierScheme or contributors.nameIdentifiers.nameIdentifierScheme has at least one "ROR" value. 
           schema:
             type: boolean
         - in: query
           name: has-funder
-          description: Returns DOIs where fundingReferences.funderIdentifierType has at least one "Crossref Funder ID" value. 
+          description: Return DOIs where fundingReferences.funderIdentifierType has at least one "Crossref Funder ID" value. 
           schema:
             type: boolean
         - in: query
           name: random
-          description: Retreive a random sample of DOIs. When true, the page[number] parameter is ignored.
+          description: Retreive a random sample of DOIs. When true, the `page[number]` parameter is ignored.
           schema:
             type: boolean
         - in: query
@@ -545,19 +521,11 @@ paths:
               - provider
               - resource-type
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: include
           schema:
@@ -567,6 +535,25 @@ paths:
               - media
         - in: query
           name: sort
+          description: >
+            Sort order:
+             * `relevance` - Relevance score descending 
+             * `name` - DOI name alphabetical ascending 
+             * `-name` - DOI name alphabetical descending
+             * `created` - Created date ascending
+             * `-created` - Created date descending
+             * `updated` - Updated date ascending
+             * `-updated` - Updated date descending
+             * `published` - Published date ascending
+             * `-published` - Published date descending
+             * `view-count` - viewCount ascending
+             * `-view-count` - viewCount descending
+             * `download-count` - downloadCount ascending
+             * `-download-count` - downloadCount descending
+             * `citation-count` - citationCount ascending
+             * `-citation-count` - citationCount descending
+             * `title` - first title alphabetical ascending
+             * `-title` - first title alphabetical descending
           schema:
             type: string
             enum:
@@ -594,16 +581,31 @@ paths:
             type: boolean
         - in: query
           name: detail
-          description: When set to true, will include the following attributes in the response - prefix, suffix, viewsOverTime, citationsOverTime, provider, references, citations. parts, partOf, versions, versionOf, xml, alternateIdentifiers.
+          description: >
+            When set to `true`, will include the following attributes in the response:
+             * `prefix`
+             * `suffix`
+             * `viewsOverTime`
+             * `citationsOverTime`
+             * `provider`
+             * `references`
+             * `citations`
+             * `parts`
+             * `partOf`
+             * `versions`
+             * `versionOf`
+             * `xml`
+             * `alternateIdentifiers`
           schema:
             type: boolean
         - in: query
           name: fields[dois]
-          description: Only return the attributes specified. For example, "fields[dois]=titles,subjects" will only return titles and subjects.
+          description: Only return the attributes specified. For example, `fields[dois]=titles,subjects` will only return titles and subjects.
           schema:
             type: string
         - in: query
           name: source
+          description: The [system used to create the DOI](https://support.datacite.org/docs/api-get-doi#source).
           schema:
             type: string
             enum:
@@ -777,19 +779,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
-          name: 'page[cursor]'
-          schema:
-            type: string
+          $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: include
           schema:
@@ -890,18 +884,7 @@ paths:
       summary: Return prefixes DOI production statistics.
       parameters:
         - in: query
-          name: client-id
-          schema:
-            type: string
-        - in: query
-          name: state
-          description: Must be authenticated to view registered and draft DOIs.
-          schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+          $ref: '#/components/parameters/clientIdParam'
       responses:
         '200':
           description: A JSON array of prefixes stats.
@@ -940,21 +923,17 @@ paths:
           schema:
             type: integer
         - in: query
-          name: consortium-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
-          name: provider-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/providerIdParam'
         - in: query
           name: prefix-id
           schema:
             type: string
         - in: query
-          name: page[number]
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
+        - in: query
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -987,9 +966,7 @@ paths:
           schema:
             type: integer
         - in: query
-          name: consortium-id
-          schema:
-            type: string
+          $ref: '#/components/parameters/consortiumIdParam'
         - in: query
           name: region
           schema:
@@ -1005,7 +982,6 @@ paths:
             enum:
               - consortium_organization
               - direct_member
-              - governmentAgency
               - consortium
               - member_only
               - developer
@@ -1040,15 +1016,9 @@ paths:
           schema:
             type: boolean
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
         - in: query
           name: sort
           schema:
@@ -1075,11 +1045,10 @@ paths:
         - in: query
           name: state
           schema:
-            type: string
-            enum:
-              - findable
-              - registered
-              - draft
+            type: array
+            items:
+              $ref: '#/components/schemas/state'
+          description: Authentication is required to retrieve draft records.
       responses:
         '200':
           description: A JSON array of providers stats.
@@ -1088,7 +1057,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: Provider ID
+        description: DataCite Direct Member, Consortium Organization, or Consortium account ID.
         required: true
         schema:
           type: string
@@ -1147,15 +1116,9 @@ paths:
           schema:
             type: string
         - in: query
-          name: 'page[number]'
-          schema:
-            type: integer
+          $ref: '#/components/parameters/pageNumberParam'
         - in: query
-          name: 'page[size]'
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 1000
+          $ref: '#/components/parameters/pageSizeParam'
       responses:
         '200':
           description: A JSON array of reports.
@@ -2425,6 +2388,71 @@ components:
       enum:
         - Personal
         - Organizational
+    certificate: 
+      type: string
+      enum:
+        - CLARIN
+        - CoreTrustSeal
+        - DIN 31644
+        - DINI
+        - DSA
+        - RatSWD
+        - WDS
+    client-type:
+      type: string
+      enum:
+        - repository
+        - periodical
+        - igsnCatalog
+        - raidRegistry
+    state:
+      type: string
+      enum:
+        - findable
+        - registered
+        - draft
+  parameters:
+    clientIdParam:
+      name: client-id
+      in: query
+      description: Filter by a specific DataCite client (repository). Use commas to include multiple repositories.
+      schema:
+        type: string
+      example: datacite.blog
+    providerIdParam:
+      name: provider-id
+      in: query
+      description: Filter by a specific DataCite provider (Direct Member or Consortium Organization). Use commas to include multiple providers.
+      schema:
+        type: string
+      example: cern
+    consortiumIdParam:
+      name: consortium-id
+      in: query
+      description: Filter by a specific DataCite consortium.
+      schema:
+        type: string
+      example: ardc
+    pageNumberParam:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+      description: Page number for [pagination](https://support.datacite.org/docs/pagination).
+    pageSizeParam:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+      description: Page size between 0 and 1,000 for [pagination](https://support.datacite.org/docs/pagination).
+    pageCursorParam:
+      name: page[cursor]
+      in: query
+      schema:
+        type: string
+      description: Use for [cursor-based pagination](https://support.datacite.org/docs/pagination#method-2-cursor).
   securitySchemes:
     BasicAuth:
       type: http
