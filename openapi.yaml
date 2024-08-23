@@ -785,13 +785,6 @@ paths:
         - in: query
           $ref: '#/components/parameters/pageCursorParam'
         - in: query
-          name: include
-          schema:
-            type: string
-            enum:
-              - subj
-              - obj
-        - in: query
           name: sort
           schema:
             type: string
