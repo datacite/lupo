@@ -1288,8 +1288,8 @@ components:
                   type: object
     Doi:
       description: >-
-        Represents a single DOI and provides access to metadata attributes, further
-        schema specific information can be found at https://schema.datacite.org
+        Represents a single DOI and provides access to metadata attributes. More
+        information is available at https://schema.datacite.org.
       type: object
       properties:
         data:
@@ -1483,7 +1483,11 @@ components:
             doi:
               type: string
             event:
-              description: Can be set to trigger a DOI state change.
+              description: >
+                Can be set to trigger a [DOI state change](https://support.datacite.org/docs/updating-metadata-with-the-rest-api#changing-the-doi-state). When not set, a [Draft record](https://support.datacite.org/docs/doi-states#draft-record) is created.
+                  * `publish` - Create a DOI in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name) (or change an existing Draft record/Registered DOI to Findable state).
+                  * `register` - Create a DOI in [Registered state](https://support.datacite.org/docs/doi-states#registered-doi-name) (or change an existing Draft record to Registered state).
+                  * `hide` - Change a DOI from Findable to Registered state.
               type: string
               enum:
                 - publish
@@ -1495,6 +1499,7 @@ components:
             suffix:
               type: string
             identifiers:
+              description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
               type: array
               items:
                 type: object
@@ -1504,6 +1509,7 @@ components:
                   identifierType:
                     type: string
             alternateIdentifiers:
+              description: 'DataCite Metadata Schema: [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
               type: array
               items:
                 type: object
@@ -1657,6 +1663,7 @@ components:
       type: object
       properties:
         creators:
+            description: 'DataCite Metadata Schema: [Creator](https://datacite-metadata-schema.readthedocs.io/en/4/properties/creator/)'
             type: array
             items:
               type: object
@@ -1696,6 +1703,7 @@ components:
                 lang:
                   type: string
         titles:
+          description: 'DataCite Metadata Schema: [Title](https://datacite-metadata-schema.readthedocs.io/en/4/properties/title/)'
           type: array
           items:
             type: object
@@ -1707,6 +1715,7 @@ components:
               lang:
                 type: string
         publisher:
+          description: 'DataCite Metadata Schema: [Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
           type: object
           properties:
             name:
@@ -1740,8 +1749,10 @@ components:
             lastPage:
               type: string
         publicationYear:
+          description: 'DataCite Metadata Schema: [PublicationYear](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publicationyear/)'
           type: integer
         subjects:
+          description: 'DataCite Metadata Schema: [Subject](https://datacite-metadata-schema.readthedocs.io/en/4/properties/subject/)'
           type: array
           items:
             type: object
@@ -1759,6 +1770,7 @@ components:
               classificationCode:
                 type: string
         contributors:
+          description: 'DataCite Metadata Schema: [Contributor](https://datacite-metadata-schema.readthedocs.io/en/4/properties/contributor/)'
           type: array
           items:
             type: object
@@ -1800,6 +1812,7 @@ components:
               lang:
                 type: string
         dates:
+          description: 'DataCite Metadata Schema: [Date](https://datacite-metadata-schema.readthedocs.io/en/4/properties/date/)'
           type: array
           items:
             type: object
@@ -1823,6 +1836,7 @@ components:
               dateInformation:
                 type: string
         language:
+          description: 'DataCite Metadata Schema: [Language](https://datacite-metadata-schema.readthedocs.io/en/4/properties/language/)'
           type: string
         types:
           type: object
@@ -1830,6 +1844,7 @@ components:
             resourceTypeGeneral:
               $ref: '#/components/schemas/resourceTypeGeneral'
             resourceType:
+              description: 'DataCite Metadata Schema: [ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
               type: string
             schemaOrg:
               type: string
@@ -1840,6 +1855,7 @@ components:
             ris:
               type: string
         relatedIdentifiers:
+          description: 'DataCite Metadata Schema: [RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
           type: array
           items:
             type: object
@@ -1859,6 +1875,7 @@ components:
               schemeType:
                 type: string
         relatedItems:
+          description: 'DataCite Metadata Schema: [RelatedItem](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relateditem/)'
           type: array
           items:
             type: object
@@ -1941,16 +1958,20 @@ components:
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
         sizes:
+          description: 'DataCite Metadata Schema: [Size](https://datacite-metadata-schema.readthedocs.io/en/4/properties/size/)'
           type: array
           items:
             type: string
         formats:
+          description: 'DataCite Metadata Schema: [Format](https://datacite-metadata-schema.readthedocs.io/en/4/properties/format/)'
           type: array
           items:
             type: string
         version:
+          description: 'DataCite Metadata Schema: [Version](https://datacite-metadata-schema.readthedocs.io/en/4/properties/version/)'
           type: string
         rightsList:
+          description: 'DataCite Metadata Schema: [Rights](https://datacite-metadata-schema.readthedocs.io/en/4/properties/rights/)'
           type: array
           items:
             type: object
@@ -1968,6 +1989,7 @@ components:
               lang:
                 type: string
         descriptions:
+          description: 'DataCite Metadata Schema: [Description](https://datacite-metadata-schema.readthedocs.io/en/4/properties/description/)'
           type: array
           items:
             type: object
@@ -1986,6 +2008,7 @@ components:
               lang:
                 type: string
         geoLocations:
+          description: 'DataCite Metadata Schema: [GeoLocation](https://datacite-metadata-schema.readthedocs.io/en/4/properties/geolocation/)'
           type: array
           items:
             type: object
@@ -2011,6 +2034,7 @@ components:
               geoLocationPlace:
                 type: string
         fundingReferences:
+          description: 'DataCite Metadata Schema: [FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
           items:
             type: object
@@ -2037,27 +2061,36 @@ components:
       type: object
       properties:
         url:
+          description: The landing page URL of the DOI.
           type: string
         contentUrl:
+          description: An array of content URLs associated with the DOI.
           readOnly: true
           type: array
           items:
             type: string
         metadataVersion:
+          description: The version of the stored DataCite metadata, incremented once per update. 
           readOnly: true
           type: number
         schemaVersion:
+          description: The DataCite Metadata Schema version of the stored DOI metadata represented as a URL. When creating or updating a DOI, `schemaVersion` is not necessary unless modifying the DataCite Metadata Schema version.
           type: string
         source:
           readOnly: true
           type: string
         isActive:
+          description: '"true" if the DOI is in Findable state. Otherwise, "false".'
           readOnly: true
           type: boolean
         state:
+          description: The state of the DOI. Options are "findable", "registered", and "draft".
           readOnly: true
           type: string
+          oneOf:
+            - $ref: '#/components/schemas/state'
         reason:
+          description: Legacy attribute for EZID compatibility.
           readOnly: true
           type: string
     DoiPropertiesDates:
@@ -2291,6 +2324,7 @@ components:
         - IsCollectedBy
         - Collects
     resourceTypeGeneral:
+      description: 'DataCite Metadata Schema: [resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
       type: string
       enum:
         - Audiovisual
@@ -2324,6 +2358,7 @@ components:
         - Workflow
         - Other
     contributorType:
+      description: 'DataCite Metadata Schema: [contributorType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/contributorType/)'
       type: string
       enum:
         - ContactPerson
@@ -2348,6 +2383,7 @@ components:
         - WorkPackageLeader
         - Other
     relatedIdentifierType:
+      description: 'DataCite Metadata Schema: [relatedIdentifierType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relatedIdentifierType/)'
       type: string
       enum:
         - ARK
