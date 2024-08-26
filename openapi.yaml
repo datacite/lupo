@@ -607,13 +607,7 @@ paths:
           name: source
           description: The [system used to create the DOI](https://support.datacite.org/docs/api-get-doi#source).
           schema:
-            type: string
-            enum:
-                - mds
-                - api
-                - fabricaForm
-                - fabrica
-                - ez
+            $ref: '#/components/schemas/source'
       responses:
         '200':
           description: A JSON array of dois.
@@ -2089,15 +2083,17 @@ components:
           description: The DataCite Metadata Schema version of the stored DOI metadata represented as a URL. When creating or updating a DOI, `schemaVersion` is not necessary unless modifying the DataCite Metadata Schema version.
           type: string
         source:
-          readOnly: true
-          type: string
+          allOf:
+            - description: The system used to create the DOI.
+            - readOnly: true
+            - $ref: '#/components/schemas/source'
         isActive:
-          description: '"true" if the DOI is in Findable state. Otherwise, "false".'
+          description: '"true" if the DOI is in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name). Otherwise, "false".'
           readOnly: true
           type: boolean
         state:
           allOf:
-            - description: The state of the DOI. Options are "findable", "registered", and "draft".
+            - description: The [state of the DOI](https://support.datacite.org/docs/doi-states).
             - readOnly: true
             - $ref: '#/components/schemas/state'
         reason:
@@ -2451,6 +2447,14 @@ components:
         - findable
         - registered
         - draft
+    source:
+      type: string
+      enum:
+        - mds
+        - api
+        - fabricaForm
+        - fabrica
+        - ez
   parameters:
     clientIdParam:
       name: client-id
