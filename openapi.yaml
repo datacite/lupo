@@ -637,6 +637,10 @@ paths:
       responses:
         '201':
           description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Doi'
   '/dois/{id}':
     get:
       parameters:
@@ -680,6 +684,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Doi'
     delete:
       parameters:
       - name: id
@@ -1847,12 +1855,16 @@ components:
               description: 'DataCite Metadata Schema: [ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
               type: string
             schemaOrg:
+              readOnly: true
               type: string
             bibtex:
+              readOnly: true
               type: string
             citeproc:
+              readOnly: true
               type: string
             ris:
+              readOnly: true
               type: string
         relatedIdentifiers:
           description: 'DataCite Metadata Schema: [RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
