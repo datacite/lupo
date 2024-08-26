@@ -2088,12 +2088,12 @@ components:
             - readOnly: true
             - $ref: '#/components/schemas/source'
         isActive:
-          description: '"true" if the DOI is in Findable state. Otherwise, "false".'
+          description: '"true" if the DOI is in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name). Otherwise, "false".'
           readOnly: true
           type: boolean
         state:
           allOf:
-            - description: The state of the DOI. Options are "findable", "registered", and "draft".
+            - description: The [state of the DOI](https://support.datacite.org/docs/doi-states).
             - readOnly: true
             - $ref: '#/components/schemas/state'
         reason:
