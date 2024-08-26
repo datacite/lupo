@@ -1524,13 +1524,13 @@ components:
         - type: object
           properties:
             xml:
+              description: DataCite Metadata Schema XML encoded in Base64 format.
               type: string
         - $ref: '#/components/schemas/DoiPropertiesOther'
         - type: object
           properties:
             viewCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/viewCount'
             viewsOverTime:
               readOnly: true
               type: array
@@ -1542,8 +1542,7 @@ components:
                   total:
                     type: number
             downloadCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/downloadCount'
             downloadsOverTime:
               readOnly: true
               type: array
@@ -1555,11 +1554,9 @@ components:
                   total:
                     type: number
             referenceCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/referenceCount'
             citationCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/citationCount'
             citationsOverTime:
               readOnly: true
               type: array
@@ -1571,17 +1568,13 @@ components:
                   total:
                     type: number
             partCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/partCount'
             partOfCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/partOfCount'
             versionCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/versionCount'
             versionOfCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/versionOfCount'
             landingPage:
               readOnly: true
               description: 'Data describing the landing page, used by link checking.'
@@ -1634,29 +1627,21 @@ components:
         - type: object
           properties:
             viewCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/viewCount'
             downloadCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/downloadCount'
             referenceCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/referenceCount'
             citationCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/citationCount'
             partCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/partCount'
             partOfCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/partOfCount'
             versionCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/versionCount'
             versionOfCount:
-              readOnly: true
-              type: number
+              $ref: '#/components/schemas/versionOfCount'
         - $ref: '#/components/schemas/DoiPropertiesDates'
       required:
         - publisher
@@ -2455,6 +2440,38 @@ components:
         - fabricaForm
         - fabrica
         - ez
+    viewCount:
+      description: Total views, pulled from Event Data.
+      readOnly: true
+      type: number
+    downloadCount:
+      description: Total downloads, pulled from Event Data.
+      readOnly: true
+      type: number
+    referenceCount:
+      description: Total references, pulled from Event Data.
+      readOnly: true
+      type: number
+    citationCount:
+      description: Total citations, pulled from Event Data.
+      readOnly: true
+      type: number
+    partCount:
+      description: Total number of parts, pulled from Event Data.
+      readOnly: true
+      type: number
+    partOfCount:
+      description: Total number of parents, pulled from Event Data.
+      readOnly: true
+      type: number
+    versionCount:
+      description: Total number of versions, pulled from Event Data.
+      readOnly: true
+      type: number
+    versionOfCount:
+      description: Total number to which this DOI is a version, pulled from Event Data.
+      readOnly: true
+      type: number
   parameters:
     clientIdParam:
       name: client-id
