@@ -2084,10 +2084,9 @@ components:
           readOnly: true
           type: boolean
         state:
-          allOf:
-            - description: The state of the DOI. Options are "findable", "registered", and "draft".
-            - readOnly: true
-            - $ref: '#/components/schemas/state'
+          description: The state of the DOI. Options are "findable", "registered", and "draft".
+          readOnly: true
+          type: string
         reason:
           description: Legacy attribute for EZID compatibility.
           readOnly: true
