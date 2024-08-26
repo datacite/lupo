@@ -1849,16 +1849,12 @@ components:
               description: 'DataCite Metadata Schema: [ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
               type: string
             schemaOrg:
-              readOnly: true
               type: string
             bibtex:
-              readOnly: true
               type: string
             citeproc:
-              readOnly: true
               type: string
             ris:
-              readOnly: true
               type: string
         relatedIdentifiers:
           description: 'DataCite Metadata Schema: [RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
@@ -2088,12 +2084,12 @@ components:
             - readOnly: true
             - $ref: '#/components/schemas/source'
         isActive:
-          description: '"true" if the DOI is in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name). Otherwise, "false".'
+          description: '"true" if the DOI is in Findable state. Otherwise, "false".'
           readOnly: true
           type: boolean
         state:
           allOf:
-            - description: The [state of the DOI](https://support.datacite.org/docs/doi-states).
+            - description: The state of the DOI. Options are "findable", "registered", and "draft".
             - readOnly: true
             - $ref: '#/components/schemas/state'
         reason:
