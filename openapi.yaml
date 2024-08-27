@@ -282,7 +282,7 @@ paths:
             type: string
         - in: query
           name: created
-          description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
+          description: Filter by the DOI date created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
             pattern: ^\d{4}(,\d{4})*$
@@ -402,7 +402,7 @@ paths:
           example: 4
         - in: query
           name: state
-          description: Filter by the [DOI state(s)](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
+          description: Filter by the [DOI state](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
           schema:
             type: array
             items:
@@ -1492,6 +1492,7 @@ components:
         - type: object
           properties:
             doi:
+              description: The full DOI name.
               type: string
             event:
               description: >
@@ -1506,8 +1507,10 @@ components:
                 - hide
               writeOnly: true
             prefix:
+              description: The DOI prefix.
               type: string
             suffix:
+              description: The DOI suffix.
               type: string
             identifiers:
               description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
@@ -2098,12 +2101,15 @@ components:
       type: object
       properties:
         created:
+          description: The date the DOI record was created in the DataCite system.
           type: string
           readOnly: true
         registered:
+          description: The date the DOI was registered in the global handle server.
           type: string
           readOnly: true
         updated:
+          description: The date the DOI was last updated.
           type: string
           readOnly: true
     DoiDataObject:
