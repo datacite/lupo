@@ -313,9 +313,17 @@ paths:
             items:
               $ref: '#/components/schemas/state'
           description: Authentication is required to retrieve draft records.
+          explode: false
+          style: form
       responses:
         '200':
           description: A JSON array of clients stats.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotalsObject'
   '/clients/{id}':
     get:
       parameters:
@@ -1170,9 +1178,17 @@ paths:
             items:
               $ref: '#/components/schemas/state'
           description: Authentication is required to retrieve draft records.
+          explode: false
+          style: form
       responses:
         '200':
           description: A JSON array of providers stats.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotalsObject'
   '/providers/{id}':
     get:
       parameters:
@@ -2565,6 +2581,38 @@ components:
         - release
         - created-by
         - reporting-period
+    TotalsObject:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        count:
+          type: number
+        temporal:
+          type: object
+          properties:
+            this_month:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            this_year:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            last_year:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            two_years_ago:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetaObject'
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
