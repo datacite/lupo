@@ -949,7 +949,30 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Prefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Prefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          states:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            type: array
+                          clients: 
+                            type: array
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /prefixes/totals:
     get:
       tags:
@@ -1331,7 +1354,7 @@ components:
           type: string
         type:
           type: string
-          enum: [client]
+          enum: [clients]
         attributes:
           type: object
           properties:
@@ -1389,23 +1412,18 @@ components:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             consortium:
               type: object
               description: Returned only when the client is associated with a Consortium.
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             prefixes:
-              type: array
-              items:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    $ref: '#/components/schemas/DataObject'
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
       required:
         - id
         - attributes - name - symbol - contactEmail
@@ -1416,7 +1434,7 @@ components:
           type: string
         type:
           type: string
-          enum: [client-prefix]
+          enum: [client-prefixes]
         attributes:
           type: object
           properties:
@@ -1433,25 +1451,21 @@ components:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             provider:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             providerPrefix:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             prefix:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
       required:
         - id
@@ -1464,7 +1478,7 @@ components:
           example: 57690e72-b1be-4370-9f35-de6bec5f7b71
         type:
           type: string
-          enum: [activity]
+          enum: [activities]
         attributes:
           type: object
           properties:
@@ -1526,37 +1540,37 @@ components:
                     description: An array of references as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   citations:
                     type: object
                     description: An array of citations as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   parts:
                     description: An array of parts as dictionaries.
                     type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   partOf:
                     description: An array of parents as dictionaries.
                     type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   versions:
                     type: object
                     description: An array of versions as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   versionOf:
                     type: object
                     description: An array of objects to which this DOI is a version as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
           required:
             - type
       example:
@@ -2342,7 +2356,7 @@ components:
             type: string
           type:
             type: string
-    DoiDataArray:
+    DataArray:
       type: array
       items:
         $ref: '#/components/schemas/DataObject'
@@ -2388,6 +2402,7 @@ components:
               type: string
             type:
               type: string
+              enum: [events]
             attributes:
               type: object
               properties:
@@ -2424,11 +2439,41 @@ components:
     Prefix:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [prefixes]
+        attributes:
           type: object
           properties:
             prefix:
               type: string
+            createdAt: 
+              type: string
+        relationships:
+          type: object
+          properties:
+            clients:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            providers:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            clientPrefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            providerPrefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
       required:
         - prefix
     ProviderPrefix:
@@ -2438,7 +2483,7 @@ components:
           type: string
         type:
           type: string
-          enum: [provider-prefix]
+          enum: [provider-prefixes]
         attributes:
           type: object
           properties:
@@ -2455,30 +2500,22 @@ components:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             prefix:
               type: object
               properties:
                 data:
-                  type: object
                   $ref: '#/components/schemas/DataObject'
             clients:
-              type: array
-              items:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    $ref: '#/components/schemas/DataObject'
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
             clientPrefixes:
-              type: array
-              items:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    $ref: '#/components/schemas/DataObject'
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
       required:
         - id
     Provider:
@@ -2488,7 +2525,7 @@ components:
           type: string
         type:
           type: string
-          enum: [provider]
+          enum: [providers]
         attributes:
           type: object
           properties:
@@ -2567,24 +2604,18 @@ components:
               type: object
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/DataObject'
+                  $ref: '#/components/schemas/DataArray'
             prefixes:
               type: object
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/DataObject'
+                  $ref: '#/components/schemas/DataArray'
             contacts:
               type: object
               description: Returned only when authenticated with associated credentials.
               properties:
                 data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/DataObject'
+                  $ref: '#/components/schemas/DataArray'
             consortium:
               type: object
               description: Returned only when the provider a Consortium Organization.
@@ -2596,7 +2627,7 @@ components:
               description: Returned only when the provider is a Consortium.
               properties:
                 data:
-                  $ref: '#/components/schemas/DataObject'
+                  $ref: '#/components/schemas/DataArray'
 
       required:
         - id
