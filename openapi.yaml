@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: REST API (Testing)
+  title: REST API
   description: The REST API is used for all API interactions with DataCite services.
   contact:
     name: DataCite Support
