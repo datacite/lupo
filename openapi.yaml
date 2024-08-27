@@ -76,7 +76,18 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                  links:
+                    allOf:
+                    - $ref: '#/components/schemas/Links'
   '/activities/{id}':
     get:
       parameters:
@@ -95,7 +106,11 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Activity'
   /client-prefixes:
     get:
       tags:
@@ -261,7 +276,8 @@ paths:
                             allOf:
                             - $ref: '#/components/schemas/MetaArray'
                   links:
-                    $ref: '#/components/schemas/Links'
+                    allOf:
+                    - $ref: '#/components/schemas/Links'
   /clients/totals:
     get:
       tags:
@@ -1064,11 +1080,45 @@ paths:
               - '-created'
       responses:
         '200':
-          description: A JSON array of prefixes.
+          description: A JSON array of providers.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Provider'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          regions:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          memberTypes:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          organizationTypes:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          focusAreas:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          nonProfitStatuses:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          hasRequiredContacts:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray
+                  links:
+                    allOf:
+                    - $ref: '#/components/schemas/Links'
   /providers/totals:
     get:
       tags:
@@ -1103,7 +1153,11 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Provider'
   /reports:
     get:
       tags:
@@ -1298,31 +1352,28 @@ components:
       type: object
       description: Represents an activity for an event within DataCite systems.
       properties:
-        data:
+        id:
+          type: string
+          example: 0000-0000-0000-0000
+        type:
+          type: string
+        attributes:
           type: object
           properties:
-            id:
+            'prov:wasGeneratedBy':
               type: string
-              example: 0000-0000-0000-0000
-            type:
+            'prov:generatedAtTime':
               type: string
-            attributes:
+            'prov:wasDerivedFrom':
+              type: string
+            'prov:wasAttributedTo':
+              type: string
+            action:
+              type: string
+            version:
+              type: number
+            changes:
               type: object
-              properties:
-                'prov:wasGeneratedBy':
-                  type: string
-                'prov:generatedAtTime':
-                  type: string
-                'prov:wasDerivedFrom':
-                  type: string
-                'prov:wasAttributedTo':
-                  type: string
-                action:
-                  type: string
-                version:
-                  type: number
-                changes:
-                  type: object
     Doi:
       description: >-
         Represents a single DOI and provides access to metadata attributes. More
@@ -1527,7 +1578,8 @@ components:
                 - description: A histogram of downloads by publicationYear in the search by top 10 years with counts.
                 - $ref: '#/components/schemas/MetaArray'
         links:
-          $ref: '#/components/schemas/Links'
+          allOf:
+          - $ref: '#/components/schemas/Links'
       example:
         data:
           type: dois
@@ -2293,15 +2345,12 @@ components:
     Provider:
       type: object
       properties:
-        data:
-          type: object
-          properties:
-            id:
-              type: string
-            name:
-              type: string
-            symbol:
-              type: string
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
       required:
         - id
         - attributes - name - symbol
