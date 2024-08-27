@@ -1065,47 +1065,19 @@ paths:
         - in: query
           name: region
           schema:
-            type: string
-            enum:
-              - amer
-              - apac
-              - emea
+            $ref: '#/components/schemas/region'
         - in: query
           name: member-type
           schema:
-            type: string
-            enum:
-              - consortium_organization
-              - direct_member
-              - consortium
-              - member_only
-              - developer
+            $ref: '#/components/schemas/member-type'
         - in: query
           name: organization-type
           schema:
-            type: string
-            enum:
-              - academicInstitution
-              - governmentAgency
-              - nationalInstitution
-              - publisher
-              - professionalSociety
-              - researchInstitution
-              - serviceProvider
-              - internationalOrganization
-              - other
+            $ref: '#/components/schemas/organization-type'
         - in: query
           name: focus-area
           schema:
-            type: string
-            enum:
-              - naturalSciences
-              - engineeringAndTechnology
-              - medicalAndHealthSciences
-              - agriculturalSciences
-              - socialSciences
-              - humanities
-              - general
+            $ref: '#/components/schemas/focus-area'
         - in: query
           name: has-required-contacts
           schema:
@@ -1209,9 +1181,17 @@ paths:
               schema:
                 type: object
                 properties:
-                   data:
+                  data:
                     type: object
                     $ref: '#/components/schemas/Provider'
+                  meta:
+                    type: object
+                    properties:
+                      repositoryCount:
+                        type: number
+                      consortiumOrganizationCount:
+                        type: number
+                        description: Returned only when the provider is a Consortium.
   /reports:
     get:
       tags:
@@ -1413,7 +1393,7 @@ components:
                   $ref: '#/components/schemas/DataObject'
             consortium:
               type: object
-              description: Returned only when the client is associated with a Consrotium.
+              description: Returned only when the client is associated with a Consortium.
               properties:
                 data:
                   type: object
@@ -2506,18 +2486,131 @@ components:
       properties:
         id:
           type: string
-        name:
+        type:
           type: string
-        symbol:
-          type: string
+          enum: [provider]
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            displayName:
+              type: string
+            symbol:
+              type: string
+            website:
+              type: string
+            systemEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            groupEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            globusUuid:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            description:
+              type: string
+            region:
+              $ref: '#/components/schemas/region'
+            country:
+              type: string
+            logoUrl:
+              type: string
+            memberType:
+              $ref: '#/components/schemas/member-type'
+            organizationType:
+              $ref: '#/components/schemas/organization-type'
+            focusArea:
+              $ref: '#/components/schemas/focus-area'
+            nonProfitStatus:
+              type: string
+            isActive:
+              type: boolean
+            hasPassword:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+            joined:
+              type: string
+            twitterHandle:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            rorId:
+              type: string
+            technicalContact:
+              $ref: '#/components/schemas/Contact'
+            secondaryTechnicalContact:
+              $ref: '#/components/schemas/Contact'
+            billingContact:
+              $ref: '#/components/schemas/Contact'
+            secondaryBillingContact:
+              $ref: '#/components/schemas/Contact'
+            serviceeContact:
+              $ref: '#/components/schemas/Contact'
+            secondaryServiceContact:
+              $ref: '#/components/schemas/Contact'
+            votingContact:
+              $ref: '#/components/schemas/Contact'
+            hasRequiredContacts:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+            created:
+              type: string
+            updated:
+              type: string
+            doiEstimate:
+              type: number
+        relationships:
+          type: object
+          properties:
+            clients:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DataObject'
+            prefixes:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DataObject'
+            contacts:
+              type: object
+              description: Returned only when authenticated with associated credentials.
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DataObject'
+            consortium:
+              type: object
+              description: Returned only when the provider a Consortium Organization.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            consortiumOrganizations:
+              type: object
+              description: Returned only when the provider is a Consortium.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+
       required:
         - id
         - attributes - name - symbol
-      example:
-        id: bl
-        attributes:
-          name: British Library
-          symbol: BL
+    Contact:
+      type: object
+      description: Returned only when authenticated with associated credentials.
+      properties:
+        email:
+          type: string
+        familyName:
+          type: string
+        givenName:
+          type: string
     Report:
       type: object
       description: >-
@@ -2778,6 +2871,44 @@ components:
         - fabricaForm
         - fabrica
         - ez
+    region:
+      type: string
+      enum:
+        - AMER
+        - APAC
+        - EMEA
+    member-type:
+      type: string
+      enum:
+        - consortium_organization
+        - direct_member
+        - consortium
+        - member_only
+        - developer
+    organization-type:
+      type: string
+      enum:
+        - academicInstitution
+        - governmentAgency
+        - nationalInstitution
+        - publisher
+        - professionalSociety
+        - researchInstitution
+        - serviceProvider
+        - internationalOrganization
+        - other
+        - null
+    focus-area:
+      type: string
+      enum:
+        - naturalSciences
+        - engineeringAndTechnology
+        - medicalAndHealthSciences
+        - agriculturalSciences
+        - socialSciences
+        - humanities
+        - general
+        - null
     viewCount:
       description: Total views, pulled from Event Data.
       readOnly: true
