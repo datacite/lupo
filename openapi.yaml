@@ -2419,6 +2419,7 @@ components:
         - created-by
         - reporting-period
     relationType:
+      description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
       enum:
         - IsCitedBy
