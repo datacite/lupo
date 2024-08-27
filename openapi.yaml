@@ -150,7 +150,27 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/ClientPrefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClientPrefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            type: array
+                          clients: 
+                            type: array
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /clients:
     get:
       tags:
@@ -994,7 +1014,29 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/ProviderPrefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProviderPrefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          states:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /providers:
     get:
       tags:
@@ -1326,24 +1368,56 @@ components:
     ClientPrefix:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [client-prefix]
+        attributes:
           type: object
           properties:
-            id:
+            createdAt:
               type: string
-            type:
+              readOnly: true
+            updatedAt:
               type: string
-            attributes:
+              readOnly: true
+        relationships:
+          type: object
+          properties:
+            client:
               type: object
               properties:
-                created:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
+            provider:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
+            providerPrefix:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
+            prefix:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
       required:
         - id
+    PrefixRelationship:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
     Activity:
       type: object
       description: Represents an activity for an event within DataCite systems.
@@ -1353,6 +1427,7 @@ components:
           example: 57690e72-b1be-4370-9f35-de6bec5f7b71
         type:
           type: string
+          enum: [activity]
         attributes:
           type: object
           properties:
@@ -2234,7 +2309,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/DoiDataObject'
-    DoiMetaObject:
+    MetaObject:
       type: object
       properties:
         id:
@@ -2258,7 +2333,7 @@ components:
     MetaArray:
       type: array
       items:
-        $ref: '#/components/schemas/DoiMetaObject'
+        $ref: '#/components/schemas/MetaObject'
     Links:
       type: object
       properties:
@@ -2322,20 +2397,51 @@ components:
     ProviderPrefix:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [provider-prefix]
+        attributes:
           type: object
           properties:
-            id:
+            createdAt:
               type: string
-            attributes:
+              readOnly: true
+            updatedAt:
+              type: string
+              readOnly: true
+        relationships:
+          type: object
+          properties:
+            provider:
               type: object
               properties:
-                created:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
+            prefix:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/PrefixRelationship'
+            clients:
+              type: array
+              items:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/PrefixRelationship'
+            clientPrefixes:
+              type: array
+              items:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/PrefixRelationship'
       required:
         - id
     Provider:
