@@ -1350,7 +1350,7 @@ components:
       properties:
         id:
           type: string
-          example: 0000-0000-0000-0000
+          example: 57690e72-b1be-4370-9f35-de6bec5f7b71
         type:
           type: string
         attributes:
