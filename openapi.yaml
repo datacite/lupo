@@ -1335,6 +1335,7 @@ components:
           type: string
         type:
           type: string
+          enum: [client]
         attributes:
           type: object
           properties:
@@ -1342,14 +1343,36 @@ components:
               type: string
             symbol:
               type: string
-            contactName:
-              type: string
+            year:
+              type: number
             contactEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            alternateName:
               type: string
             description:
               type: string
+            language:
+              type: array
+              items:
+                type: string
+            clientType:
+              $ref: '#/components/schemas/client-type'
             domains:
               type: string
+            re3data:
+              type: string
+            opendoar:
+              type: string
+            issn:
+              type: object
+              properties:
+                issnl:
+                  type: string
+                print:
+                  type: string
+                electronic:
+                  type: string
             url:
               type: string
             created:
@@ -1358,13 +1381,38 @@ components:
             updated:
               type: string
               readOnly: true
+            isActive:
+              type: boolean
+            hasPassword:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+        relationships:
+          type: object
+          properties:
+            provider:
+              type: object
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/DataObject'
+            consortium:
+              type: object
+              description: Returned only when the client is associated with a Consrotium.
+              properties:
+                data:
+                  type: object
+                  $ref: '#/components/schemas/DataObject'
+            prefixes:
+              type: array
+              items:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/DataObject'
       required:
         - id
-        - attributes - name - symbol - contactName - contactEmail
-      example:
-        id: tib.pangaea
-        attributes:
-          name: Pangaea
+        - attributes - name - symbol - contactEmail
     ClientPrefix:
       type: object
       properties:
@@ -1390,34 +1438,27 @@ components:
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
             provider:
               type: object
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
             providerPrefix:
               type: object
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
             prefix:
               type: object
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
       required:
         - id
-    PrefixRelationship:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
     Activity:
       type: object
       description: Represents an activity for an event within DataCite systems.
@@ -1471,19 +1512,19 @@ components:
                     description: The DataCite client (repository) associated with the DOI.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   provider:
                     type: object
                     description: The DataCite provider (Direct Member or Consortium Organization) associated with the DOI.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   media:
                     type: object
                     description: Legacy attribute for media support.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   references:
                     type: object
                     description: An array of references as dictionaries.
@@ -1568,7 +1609,7 @@ components:
                     type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
             required:
               - type
         meta:
@@ -2298,7 +2339,7 @@ components:
           description: The date the DOI was last updated.
           type: string
           readOnly: true
-    DoiDataObject:
+    DataObject:
         type: object
         properties:
           id:
@@ -2308,7 +2349,7 @@ components:
     DoiDataArray:
       type: array
       items:
-        $ref: '#/components/schemas/DoiDataObject'
+        $ref: '#/components/schemas/DataObject'
     MetaObject:
       type: object
       properties:
@@ -2419,13 +2460,13 @@ components:
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
             prefix:
               type: object
               properties:
                 data:
                   type: object
-                  $ref: '#/components/schemas/PrefixRelationship'
+                  $ref: '#/components/schemas/DataObject'
             clients:
               type: array
               items:
@@ -2433,7 +2474,7 @@ components:
                 properties:
                   data:
                     type: object
-                    $ref: '#/components/schemas/PrefixRelationship'
+                    $ref: '#/components/schemas/DataObject'
             clientPrefixes:
               type: array
               items:
@@ -2441,7 +2482,7 @@ components:
                 properties:
                   data:
                     type: object
-                    $ref: '#/components/schemas/PrefixRelationship'
+                    $ref: '#/components/schemas/DataObject'
       required:
         - id
     Provider:
