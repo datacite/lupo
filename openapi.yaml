@@ -1311,46 +1311,55 @@ components:
                 properties:
                   client:
                     type: object
+                    description: The DataCite client (repository) associated with the DOI.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataObject'
                   provider:
                     type: object
+                    description: The DataCite provider (Direct Member or Consortium Organization) associated with the DOI.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataObject'
                   media:
                     type: object
+                    description: Legacy attribute for media support.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataObject'
                   references:
                     type: object
+                    description: An array of references as dictionaries.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
                   citations:
                     type: object
+                    description: An array of citations as dictionaries.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
                   parts:
+                    description: An array of parts as dictionaries.
                     type: object
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
                   partOf:
+                    description: An array of parents as dictionaries.
                     type: object
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
                   versions:
                     type: object
+                    description: An array of versions as dictionaries.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
                   versionOf:
                     type: object
+                    description: An array of objects to which this DOI is a version as dictionaries.
                     properties:
                       data:
                         $ref: '#/components/schemas/DoiDataArray'
