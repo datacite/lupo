@@ -87,7 +87,7 @@ paths:
                       - $ref: '#/components/schemas/MetaCore'
                   links:
                     allOf:
-                    - $ref: '#/components/schemas/Links'
+                      - $ref: '#/components/schemas/Links'
   '/activities/{id}':
     get:
       parameters:
@@ -277,7 +277,7 @@ paths:
                             - $ref: '#/components/schemas/MetaArray'
                   links:
                     allOf:
-                    - $ref: '#/components/schemas/Links'
+                      - $ref: '#/components/schemas/Links'
   /clients/totals:
     get:
       tags:
@@ -1118,7 +1118,7 @@ paths:
                             - $ref: '#/components/schemas/MetaArray'
                   links:
                     allOf:
-                    - $ref: '#/components/schemas/Links'
+                      - $ref: '#/components/schemas/Links'
   /providers/totals:
     get:
       tags:
