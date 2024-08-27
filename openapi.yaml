@@ -1511,7 +1511,7 @@ components:
                   identifierType:
                     type: string
             alternateIdentifiers:
-              description: 'DataCite Metadata Schema: [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
+              description: '[DataCite Metadata Schema: AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
               type: array
               items:
                 type: object
@@ -1650,7 +1650,7 @@ components:
       type: object
       properties:
         creators:
-            description: 'DataCite Metadata Schema: [Creator](https://datacite-metadata-schema.readthedocs.io/en/4/properties/creator/)'
+            description: '[DataCite Metadata Schema: Creator](https://datacite-metadata-schema.readthedocs.io/en/4/properties/creator/)'
             type: array
             items:
               type: object
@@ -1690,7 +1690,7 @@ components:
                 lang:
                   type: string
         titles:
-          description: 'DataCite Metadata Schema: [Title](https://datacite-metadata-schema.readthedocs.io/en/4/properties/title/)'
+          description: '[DataCite Metadata Schema: Title](https://datacite-metadata-schema.readthedocs.io/en/4/properties/title/)'
           type: array
           items:
             type: object
@@ -1702,7 +1702,7 @@ components:
               lang:
                 type: string
         publisher:
-          description: 'DataCite Metadata Schema: [Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
+          description: '[DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
           type: object
           properties:
             name:
@@ -1736,10 +1736,10 @@ components:
             lastPage:
               type: string
         publicationYear:
-          description: 'DataCite Metadata Schema: [PublicationYear](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publicationyear/)'
+          description: '[DataCite Metadata Schema: PublicationYear](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publicationyear/)'
           type: integer
         subjects:
-          description: 'DataCite Metadata Schema: [Subject](https://datacite-metadata-schema.readthedocs.io/en/4/properties/subject/)'
+          description: '[DataCite Metadata Schema: Subject](https://datacite-metadata-schema.readthedocs.io/en/4/properties/subject/)'
           type: array
           items:
             type: object
@@ -1757,7 +1757,7 @@ components:
               classificationCode:
                 type: string
         contributors:
-          description: 'DataCite Metadata Schema: [Contributor](https://datacite-metadata-schema.readthedocs.io/en/4/properties/contributor/)'
+          description: '[DataCite Metadata Schema: Contributor](https://datacite-metadata-schema.readthedocs.io/en/4/properties/contributor/)'
           type: array
           items:
             type: object
@@ -1799,7 +1799,7 @@ components:
               lang:
                 type: string
         dates:
-          description: 'DataCite Metadata Schema: [Date](https://datacite-metadata-schema.readthedocs.io/en/4/properties/date/)'
+          description: '[DataCite Metadata Schema: Date](https://datacite-metadata-schema.readthedocs.io/en/4/properties/date/)'
           type: array
           items:
             type: object
@@ -1823,7 +1823,7 @@ components:
               dateInformation:
                 type: string
         language:
-          description: 'DataCite Metadata Schema: [Language](https://datacite-metadata-schema.readthedocs.io/en/4/properties/language/)'
+          description: '[DataCite Metadata Schema: Language](https://datacite-metadata-schema.readthedocs.io/en/4/properties/language/)'
           type: string
         types:
           type: object
@@ -1831,7 +1831,7 @@ components:
             resourceTypeGeneral:
               $ref: '#/components/schemas/resourceTypeGeneral'
             resourceType:
-              description: 'DataCite Metadata Schema: [ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
+              description: '[DataCite Metadata Schema: ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
               type: string
             schemaOrg:
               readOnly: true
@@ -1846,7 +1846,7 @@ components:
               readOnly: true
               type: string
         relatedIdentifiers:
-          description: 'DataCite Metadata Schema: [RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
+          description: '[DataCite Metadata Schema: RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
           type: array
           items:
             type: object
@@ -1866,7 +1866,7 @@ components:
               schemeType:
                 type: string
         relatedItems:
-          description: 'DataCite Metadata Schema: [RelatedItem](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relateditem/)'
+          description: '[DataCite Metadata Schema: RelatedItem](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relateditem/)'
           type: array
           items:
             type: object
@@ -1949,20 +1949,20 @@ components:
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
         sizes:
-          description: 'DataCite Metadata Schema: [Size](https://datacite-metadata-schema.readthedocs.io/en/4/properties/size/)'
+          description: '[DataCite Metadata Schema: Size](https://datacite-metadata-schema.readthedocs.io/en/4/properties/size/)'
           type: array
           items:
             type: string
         formats:
-          description: 'DataCite Metadata Schema: [Format](https://datacite-metadata-schema.readthedocs.io/en/4/properties/format/)'
+          description: '[DataCite Metadata Schema: Format](https://datacite-metadata-schema.readthedocs.io/en/4/properties/format/)'
           type: array
           items:
             type: string
         version:
-          description: 'DataCite Metadata Schema: [Version](https://datacite-metadata-schema.readthedocs.io/en/4/properties/version/)'
+          description: '[DataCite Metadata Schema: Version](https://datacite-metadata-schema.readthedocs.io/en/4/properties/version/)'
           type: string
         rightsList:
-          description: 'DataCite Metadata Schema: [Rights](https://datacite-metadata-schema.readthedocs.io/en/4/properties/rights/)'
+          description: '[DataCite Metadata Schema: Rights](https://datacite-metadata-schema.readthedocs.io/en/4/properties/rights/)'
           type: array
           items:
             type: object
@@ -1980,7 +1980,7 @@ components:
               lang:
                 type: string
         descriptions:
-          description: 'DataCite Metadata Schema: [Description](https://datacite-metadata-schema.readthedocs.io/en/4/properties/description/)'
+          description: '[DataCite Metadata Schema: Description](https://datacite-metadata-schema.readthedocs.io/en/4/properties/description/)'
           type: array
           items:
             type: object
@@ -1999,7 +1999,7 @@ components:
               lang:
                 type: string
         geoLocations:
-          description: 'DataCite Metadata Schema: [GeoLocation](https://datacite-metadata-schema.readthedocs.io/en/4/properties/geolocation/)'
+          description: '[DataCite Metadata Schema: GeoLocation](https://datacite-metadata-schema.readthedocs.io/en/4/properties/geolocation/)'
           type: array
           items:
             type: object
@@ -2025,7 +2025,7 @@ components:
               geoLocationPlace:
                 type: string
         fundingReferences:
-          description: 'DataCite Metadata Schema: [FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
+          description: '[DataCite Metadata Schema: FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
           items:
             type: object
@@ -2316,7 +2316,7 @@ components:
         - IsCollectedBy
         - Collects
     resourceTypeGeneral:
-      description: 'DataCite Metadata Schema: [resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
+      description: '[DataCite Metadata Schema: resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
       type: string
       enum:
         - Audiovisual
@@ -2350,7 +2350,7 @@ components:
         - Workflow
         - Other
     contributorType:
-      description: 'DataCite Metadata Schema: [contributorType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/contributorType/)'
+      description: '[DataCite Metadata Schema: contributorType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/contributorType/)'
       type: string
       enum:
         - ContactPerson
@@ -2375,7 +2375,7 @@ components:
         - WorkPackageLeader
         - Other
     relatedIdentifierType:
-      description: 'DataCite Metadata Schema: [relatedIdentifierType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relatedIdentifierType/)'
+      description: '[DataCite Metadata Schema: relatedIdentifierType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relatedIdentifierType/)'
       type: string
       enum:
         - ARK
