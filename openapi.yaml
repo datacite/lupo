@@ -1511,6 +1511,7 @@ components:
               type: string
             suffix:
               description: The DOI suffix.
+              readOnly: true
               type: string
             identifiers:
               description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
