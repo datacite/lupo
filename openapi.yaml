@@ -1115,7 +1115,7 @@ paths:
                             - $ref: '#/components/schemas/MetaArray'
                           hasRequiredContacts:
                             allOf:
-                            - $ref: '#/components/schemas/MetaArray
+                            - $ref: '#/components/schemas/MetaArray'
                   links:
                     allOf:
                     - $ref: '#/components/schemas/Links'
