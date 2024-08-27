@@ -619,6 +619,10 @@ paths:
       tags:
         - dois
       summary: Add a new doi.
+      description: >
+        When creating a new DOI, you can either: 
+         * specify the full DOI name (prefix/suffix) in the `"doi"` attribute
+         * [randomly generate the suffix](https://support.datacite.org/docs/api-create-dois#auto-generate-a-suffix-or-specify-a-suffix) by including `"prefix"` and omitting `"doi"`
       security:
         - BasicAuth: []
         - bearerAuth: []
@@ -1418,47 +1422,86 @@ components:
           type: object
           properties:
             total:
+              description: Total results count.
               type: number
             totalPages:
+              description: Total pages count.
               type: number
             page:
+              description: Current page of the results.
               type: number
             states:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: Counts by DOI state.
+              - $ref: '#/components/schemas/DoiMetaArray'
             resourceTypes:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: resourceTypes in the search results with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             created:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: Histogram of the create date of the DOI record by top 10 years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             published:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: Histogram of publicationYear years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             registered:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: Histogram of the registered date of the DOI record by top 10 years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             providers:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 DataCite Members or Consortium Organizations with account IDs, titles, and counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             clients:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 repositories in the search results with account IDs, titles, and counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             affiliations:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 represented ROR affliations with ROR ID, research organization title, and counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             prefixes:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 prefixes in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             certificates:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: Repository certificates in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             licenses:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 rights with rights identifiers in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             schemaVersions:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The DataCite Metadata Schema versions represented in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             linkChecksStatus:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The status of the landing pages of DOIs in the search (when and if last checked) with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             subjects:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 subjects represented in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             fieldsOfScience:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: The top 10 Fields of Science and Technology (FOS) subjects in the search with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             citations:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: A histogram of citations by publicationYear in the search by top 10 years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             views:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: A histogram of views by publicationYear in the search by top 10 years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
             downloads:
-               $ref: '#/components/schemas/DoiMetaArray'
+              allOf:
+              - description: A histogram of downloads by publicationYear in the search by top 10 years with counts.
+              - $ref: '#/components/schemas/DoiMetaArray'
         links:
           type: object
           properties:
