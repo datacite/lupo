@@ -708,7 +708,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: The DOI to update.
         required: true
         schema:
           type: string
