@@ -669,10 +669,6 @@ paths:
       tags:
         - dois
       summary: Add a new doi.
-      description: >
-        When creating a new DOI, you can either: 
-         * specify the full DOI name (prefix/suffix) in the `"doi"` attribute
-         * [randomly generate the suffix](https://support.datacite.org/docs/api-create-dois#auto-generate-a-suffix-or-specify-a-suffix) by including `"prefix"` and omitting `"doi"`
       security:
         - BasicAuth: []
         - bearerAuth: []
