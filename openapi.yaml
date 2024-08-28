@@ -351,7 +351,7 @@ paths:
     get:
       tags:
         - dois
-      summary: Return a list of dois.
+      summary: Return a list of DOIs.
       parameters:
         - in: query
           name: query
@@ -688,7 +688,7 @@ paths:
             $ref: '#/components/schemas/source'
       responses:
         '200':
-          description: A JSON array of dois.
+          description: A JSON array of DOIs.
           content:
             application/vnd.api+json:
               schema:
@@ -696,7 +696,7 @@ paths:
     post:
       tags:
         - dois
-      summary: Add a new doi.
+      summary: Add a new DOI.
       security:
         - BasicAuth: []
         - bearerAuth: []
@@ -724,7 +724,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Return a doi.
+      summary: Return a DOI.
       responses:
         '200':
           description: A JSON object.
@@ -742,7 +742,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Update a doi.
+      summary: Update a DOI.
       description: PUT requests to the /dois endpoint will update a DOI record if it already exists and create a new record if the DOI name is not already taken.
       security:
         - BasicAuth: []
@@ -770,7 +770,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Delete a doi (for DOIs in draft state only).
+      summary: Delete a DOI (for DOIs in draft state only).
       security:
         - BasicAuth: []
         - bearerAuth: []
@@ -789,7 +789,7 @@ paths:
       tags:
         - dois
         - activities
-      summary: Return activity for a specific DOI.
+      summary: Return activities for a specific DOI.
       responses:
         '200':
           description: A JSON object.
