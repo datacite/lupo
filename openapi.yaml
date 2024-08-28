@@ -1358,6 +1358,34 @@ paths:
           description: No content
 components:
   schemas:
+    # core object types
+    Activity:
+      type: object
+      description: Represents an activity for an event within DataCite systems.
+      properties:
+        id:
+          type: string
+          example: 57690e72-b1be-4370-9f35-de6bec5f7b71
+        type:
+          type: string
+          enum: [activities]
+        attributes:
+          type: object
+          properties:
+            'prov:wasGeneratedBy':
+              type: string
+            'prov:generatedAtTime':
+              type: string
+            'prov:wasDerivedFrom':
+              type: string
+            'prov:wasAttributedTo':
+              type: string
+            action:
+              type: string
+            version:
+              type: number
+            changes:
+              type: object
     Client:
       type: object
       properties:
@@ -1480,33 +1508,6 @@ components:
                   $ref: '#/components/schemas/DataObject'
       required:
         - id
-    Activity:
-      type: object
-      description: Represents an activity for an event within DataCite systems.
-      properties:
-        id:
-          type: string
-          example: 57690e72-b1be-4370-9f35-de6bec5f7b71
-        type:
-          type: string
-          enum: [activities]
-        attributes:
-          type: object
-          properties:
-            'prov:wasGeneratedBy':
-              type: string
-            'prov:generatedAtTime':
-              type: string
-            'prov:wasDerivedFrom':
-              type: string
-            'prov:wasAttributedTo':
-              type: string
-            action:
-              type: string
-            version:
-              type: number
-            changes:
-              type: object
     Doi:
       description: >-
         Represents a single DOI and provides access to metadata attributes. More
@@ -2360,49 +2361,6 @@ components:
           description: The date the DOI was last updated.
           type: string
           readOnly: true
-    DataObject:
-        type: object
-        properties:
-          id:
-            type: string
-          type:
-            type: string
-    DataArray:
-      type: array
-      items:
-        $ref: '#/components/schemas/DataObject'
-    MetaObject:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        count:
-          type: number
-    MetaCore:
-      type: object
-      properties:
-        total:
-          description: Total results count.
-          type: number
-        totalPages:
-          description: Total pages count.
-          type: number
-        page:
-          description: Current page of the results.
-          type: number
-    MetaArray:
-      type: array
-      items:
-        $ref: '#/components/schemas/MetaObject'
-    Links:
-      type: object
-      properties:
-        self:
-          type: string
-        next:
-          type: string
     Event:
       type: object
       properties:
@@ -2586,19 +2544,19 @@ components:
             rorId:
               type: string
             technicalContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             secondaryTechnicalContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             billingContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             secondaryBillingContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             serviceeContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             secondaryServiceContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             votingContact:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/ProviderContact'
             hasRequiredContacts:
               description: Returned only when authenticated with associated credentials.
               type: boolean
@@ -2643,7 +2601,7 @@ components:
       required:
         - id
         - attributes - name - symbol
-    Contact:
+    ProviderContact:
       type: object
       description: Returned only when authenticated with associated credentials.
       properties:
@@ -2748,6 +2706,51 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MetaObject'
+    # object/array building blocks used across multiple object types
+    DataObject:
+        type: object
+        properties:
+          id:
+            type: string
+          type:
+            type: string
+    DataArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataObject'
+    MetaObject:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        count:
+          type: number
+    MetaArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/MetaObject'
+    MetaCore:
+      type: object
+      properties:
+        total:
+          description: Total results count.
+          type: number
+        totalPages:
+          description: Total pages count.
+          type: number
+        page:
+          description: Current page of the results.
+          type: number
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+        next:
+          type: string
+    # reusable enums
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
@@ -2951,6 +2954,7 @@ components:
         - humanities
         - general
         - null
+    # reusable numbers
     viewCount:
       description: Total views, pulled from Event Data.
       readOnly: true
