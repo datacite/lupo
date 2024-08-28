@@ -796,7 +796,18 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /events:
     get:
       summary: Return a list of events.
