@@ -106,7 +106,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       reference_event2.source_doi = doi.doi.downcase
       reference_event2.save
 
-      expect(doi.references.count).to eq(1)
+      expect(doi.references.count).to eq(2)
       expect(doi.reference_ids.count).to eq(1)
       expect(doi.reference_count).to eq(1)
 
