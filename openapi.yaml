@@ -2054,7 +2054,7 @@ components:
                 type: string
         publisher:
           description: >
-            '[DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
+            [DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)
             Set `publisher=true` to see additional publisher information such as the publisher identifier.
           oneOf:
             - type: object
