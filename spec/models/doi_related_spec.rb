@@ -83,10 +83,30 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:reference_events) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
+    let!(:reference_event) do
+      create(:event_for_crossref, {
+        subj_id: "https://doi.org/#{doi.doi}",
+        obj_id: "https://doi.org/#{target_doi.doi}",
+        relation_type_id: "references",
+        occurred_at: "2015-06-13T16:14:19Z",
+      })
+    end
+    let!(:reference_event2) do
+      create(:event_for_crossref, {
+        subj_id: "https://doi.org/#{target_doi.doi}",
+        obj_id: "https://doi.org/#{doi.doi}",
+        occurred_at: "2016-06-13T16:14:19Z",
+        relation_type_id: "is-referenced-by",
+      })
+    end
 
     it "has references" do
-      expect(doi.references.count).to eq(1)
+      # Some older events have downcased source_doi and target_doi
+      reference_event2.target_doi = target_doi.doi.downcase
+      reference_event2.source_doi = doi.doi.downcase
+      reference_event2.save
+
+      expect(doi.references.count).to eq(2)
       expect(doi.reference_ids.count).to eq(1)
       expect(doi.reference_count).to eq(1)
 
@@ -124,10 +144,24 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         occurred_at: "2016-06-13T16:14:19Z"
       })
     end
+    let!(:citation_event4) do
+      create(:event_for_datacite_crossref, {
+        subj_id: "https://doi.org/#{source_doi2.doi}",
+        obj_id: "https://doi.org/#{doi.doi}",
+        relation_type_id: "cites",
+        source_id: "crossref",
+        occurred_at: "2017-06-13T16:14:19Z"
+      })
+    end
 
     # removing duplicate dois in citation_ids, citation_count and citations_over_time (different relation_type_id)
     it "has citations" do
-      expect(doi.citations.count).to eq(3)
+      # Some older events have downcased source_doi and target_doi
+      citation_event4.source_doi = source_doi2.doi.downcase
+      citation_event4.target_doi = doi.doi.downcase
+      citation_event4.save
+
+      expect(doi.citations.count).to eq(4)
       expect(doi.citation_ids.count).to eq(2)
       expect(doi.citation_count).to eq(2)
       expect(doi.citations_over_time).to eq([{ "total" => 1, "year" => "2015" }, { "total" => 1, "year" => "2016" }])
