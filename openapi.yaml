@@ -1932,17 +1932,22 @@ components:
                 familyName:
                   type: string
                 affiliation:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      affiliationIdentifier:
-                        type: string
-                      affiliationIdentifierScheme:
-                        type: string
-                      name:
-                        type: string
-                      schemeUri:
+                  description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+                  oneOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          affiliationIdentifier:
+                            type: string
+                          affiliationIdentifierScheme:
+                            type: string
+                          name:
+                            type: string
+                          schemeUri:
+                            type: string
+                    - type: array
+                      items:
                         type: string
                 lang:
                   type: string
@@ -1959,19 +1964,23 @@ components:
               lang:
                 type: string
         publisher:
-          description: '[DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
-          type: object
-          properties:
-            name:
-              type: string
-            publisherIdentifier:
-              type: string
-            publisherIdentifierScheme:
-              type: string
-            schemeUri:
-              type: string
-            lang:
-              type: string
+          description: >
+            '[DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)'
+            Set `publisher=true` to see additional publisher information such as the publisher identifier.
+          oneOf:
+            - type: object
+              properties:
+                name:
+                  type: string
+                publisherIdentifier:
+                  type: string
+                publisherIdentifierScheme:
+                  type: string
+                schemeUri:
+                  type: string
+                lang:
+                  type: string
+            - type: string
         container:
           readOnly: true
           type: object
@@ -2039,18 +2048,23 @@ components:
               familyName:
                 type: string
               affiliation:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    affiliationIdentifier:
-                      type: string
-                    affiliationIdentifierScheme:
-                      type: string
-                    name:
-                      type: string
-                    schemeUri:
-                      type: string
+                  description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+                  oneOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          affiliationIdentifier:
+                            type: string
+                          affiliationIdentifierScheme:
+                            type: string
+                          name:
+                            type: string
+                          schemeUri:
+                            type: string
+                    - type: array
+                      items:
+                        type: string
               contributorType:
                 $ref: '#/components/schemas/contributorType'
               lang:
