@@ -1273,11 +1273,11 @@ class Doi < ApplicationRecord
   end
 
   def reference_ids
-    reference_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    reference_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def reference_count
-    reference_events.pluck(:target_doi).uniq.length
+    reference_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
   end
 
   def indexed_references
@@ -1285,18 +1285,18 @@ class Doi < ApplicationRecord
   end
 
   def citation_ids
-    citation_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    citation_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   # remove duplicate citing source dois
   def citation_count
-    citation_events.pluck(:source_doi).uniq.length
+    citation_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
   end
 
   # remove duplicate citing source dois,
   # then show distribution by year
   def citations_over_time
-    citation_events.pluck(:occurred_at, :source_doi).uniq { |v| v[1] }.
+    citation_events.pluck(:occurred_at, :source_doi).map { |v| [v[0], v[1].downcase] }.sort_by { |v| v[0] }.uniq { |v| v[1] }.
       group_by { |v| v[0].utc.iso8601[0..3] }.
       map { |k, v| { "year" => k, "total" => v.length } }.
       sort_by { |h| h["year"] }
@@ -1307,11 +1307,11 @@ class Doi < ApplicationRecord
   end
 
   def part_ids
-    part_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    part_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def part_count
-    part_events.pluck(:target_doi).uniq.length
+    part_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
   end
 
   def indexed_parts
@@ -1319,11 +1319,11 @@ class Doi < ApplicationRecord
   end
 
   def part_of_ids
-    part_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    part_of_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   def part_of_count
-    part_of_events.pluck(:source_doi).uniq.length
+    part_of_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
   end
 
   def indexed_part_of
@@ -1331,11 +1331,11 @@ class Doi < ApplicationRecord
   end
 
   def version_ids
-    version_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    version_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def version_count
-    version_events.pluck(:target_doi).uniq.length
+    version_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
   end
 
   def indexed_versions
@@ -1343,11 +1343,11 @@ class Doi < ApplicationRecord
   end
 
   def version_of_ids
-    version_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    version_of_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   def version_of_count
-    version_of_events.pluck(:source_doi).uniq.length
+    version_of_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
   end
 
   def indexed_version_of
@@ -1361,11 +1361,11 @@ class Doi < ApplicationRecord
   def other_relation_ids
     other_relation_events.map do |e|
       e.doi
-    end.flatten.uniq - [doi.downcase]
+    end.flatten.compact.map(&:downcase).uniq - [doi.downcase]
   end
 
   def other_relation_count
-    other_relation_ids.length
+    other_relation_ids.compact.map(&:downcase).length
   end
 
   def xml_encoded
