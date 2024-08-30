@@ -692,7 +692,116 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Dois'
+                description: >-
+                  Represents a list of DOIs and provides access to metadata attributes, further
+                  schema specific information can be found at https://schema.datacite.org
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DoiListItem'
+                  meta:
+                    allOf:
+                    - $ref: '#/components/schemas/MetaCore'
+                    - type: object
+                      properties:
+                        states:
+                          allOf:
+                          - description: Counts by DOI state.
+                          - $ref: '#/components/schemas/MetaArray'
+                        resourceTypes:
+                          allOf:
+                          - description: resourceTypes in the search results with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        created:
+                          allOf:
+                          - description: Histogram of the create date of the DOI record by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        published:
+                          allOf:
+                          - description: Histogram of publicationYear years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        registered:
+                          allOf:
+                          - description: Histogram of the registered date of the DOI record by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        providers:
+                          allOf:
+                          - description: The top 10 DataCite Members or Consortium Organizations with account IDs, titles, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        clients:
+                          allOf:
+                          - description: The top 10 repositories in the search results with account IDs, titles, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        affiliations:
+                          allOf:
+                          - description: The top 10 represented ROR affliations with ROR ID, research organization title, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        prefixes:
+                          allOf:
+                          - description: The top 10 prefixes in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        certificates:
+                          allOf:
+                          - description: Repository certificates in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        licenses:
+                          allOf:
+                          - description: The top 10 rights with rights identifiers in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        schemaVersions:
+                          allOf:
+                          - description: The DataCite Metadata Schema versions represented in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        linkChecksStatus:
+                          allOf:
+                          - description: The status of the landing pages of DOIs in the search (when and if last checked) with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        subjects:
+                          allOf:
+                          - description: The top 10 subjects represented in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        fieldsOfScience:
+                          allOf:
+                          - description: The top 10 Fields of Science and Technology (FOS) subjects in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        citations:
+                          allOf:
+                          - description: A histogram of citations by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        views:
+                          allOf:
+                          - description: A histogram of views by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        downloads:
+                          allOf:
+                          - description: A histogram of downloads by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                    - $ref: '#/components/schemas/Links'
+                example:
+                  data:
+                    type: dois
+                    attributes:
+                      doi: 10.5438/0014
+                      prefix: "10.5438"
+                      suffix: "0014"
+                      identifiers:
+                        - identifier: 'https://doi.org/10.5438/0014'
+                          identifierType: DOI
+                      creators:
+                        - name: DataCite Metadata Working Group
+                      titles:
+                        - title: >-
+                            DataCite Metadata Schema Documentation for the Publication and
+                            Citation of Research Data v4.1
+                      publisher: DataCite
+                      publicationYear: 2017
+                      types:
+                        resourceTypeGeneral: Text
+                      url: https://schema.datacite.org/meta/kernel-4.1/      
     post:
       tags:
         - dois
@@ -705,14 +814,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiDetailItem'
       responses:
         '201':
           description: Created
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiDetailItem'
   '/dois/{id}':
     get:
       parameters:
@@ -731,7 +840,7 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiDetailItem'
     put:
       parameters:
       - name: id
@@ -752,14 +861,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiDetailItem'
       responses:
         '200':
           description: OK
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiDetailItem'
     delete:
       parameters:
       - name: id
@@ -1508,7 +1617,7 @@ components:
                   $ref: '#/components/schemas/DataObject'
       required:
         - id
-    Doi:
+    DoiDetailItem:
       description: >-
         Represents a single DOI and provides access to metadata attributes. More
         information is available at https://schema.datacite.org.
@@ -1524,7 +1633,138 @@ components:
               type: string
               enum: [dois]
             attributes:
-                $ref: '#/components/schemas/DoiAttributes'
+                allOf:
+                  - type: object
+                    properties:
+                      doi:
+                        description: The full DOI name.
+                        type: string
+                      event:
+                        description: >
+                          Can be set to trigger a [DOI state change](https://support.datacite.org/docs/updating-metadata-with-the-rest-api#changing-the-doi-state). When not set, a [Draft record](https://support.datacite.org/docs/doi-states#draft-record) is created.
+                            * `publish` - Create a DOI in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name) (or change an existing Draft record/Registered DOI to Findable state).
+                            * `register` - Create a DOI in [Registered state](https://support.datacite.org/docs/doi-states#registered-doi-name) (or change an existing Draft record to Registered state).
+                            * `hide` - Change a DOI from Findable to Registered state.
+                        type: string
+                        enum:
+                          - publish
+                          - register
+                          - hide
+                        writeOnly: true
+                      prefix:
+                        description: The DOI prefix.
+                        type: string
+                      suffix:
+                        description: The DOI suffix.
+                        readOnly: true
+                        type: string
+                      identifiers:
+                        description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            identifier:
+                              type: string
+                            identifierType:
+                              type: string
+                      alternateIdentifiers:
+                        description: '[DataCite Metadata Schema: AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            alternateIdentifierType:
+                              type: string
+                            alternateIdentifier:
+                              type: string
+                  - $ref: '#/components/schemas/DoiPropertiesMetadata'
+                  - type: object
+                    properties:
+                      xml:
+                        description: DataCite Metadata Schema XML encoded in Base64 format.
+                        type: string
+                  - $ref: '#/components/schemas/DoiPropertiesOther'
+                  - type: object
+                    properties:
+                      viewCount:
+                        $ref: '#/components/schemas/viewCount'
+                      viewsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      downloadCount:
+                        $ref: '#/components/schemas/downloadCount'
+                      downloadsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      referenceCount:
+                        $ref: '#/components/schemas/referenceCount'
+                      citationCount:
+                        $ref: '#/components/schemas/citationCount'
+                      citationsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      partCount:
+                        $ref: '#/components/schemas/partCount'
+                      partOfCount:
+                        $ref: '#/components/schemas/partOfCount'
+                      versionCount:
+                        $ref: '#/components/schemas/versionCount'
+                      versionOfCount:
+                        $ref: '#/components/schemas/versionOfCount'
+                      landingPage:
+                        readOnly: true
+                        description: 'Data describing the landing page, used by link checking.'
+                        type: object
+                        properties:
+                          checked:
+                            type: string
+                          url:
+                            type: string
+                          contentType:
+                            type: string
+                          error:
+                            type: string
+                          redirectCount:
+                            type: number
+                          redirectUrls:
+                            type: array
+                            items:
+                              type: string
+                          downloadLatency:
+                            type: number
+                          hasSchemaOrg:
+                            type: boolean
+                          schemaOrgid:
+                            type: string
+                          dcIdentifier:
+                            type: string
+                          citationDoi:
+                            type: string
+                          bodyhasPid:
+                            type: boolean
+                  - $ref: '#/components/schemas/DoiPropertiesDates'
             relationships:
                 type: object
                 readOnly: true
@@ -1606,307 +1846,63 @@ components:
             types:
               resourceTypeGeneral: Text
             url: https://schema.datacite.org/meta/kernel-4.1/
-    Dois:
-      description: >-
-        Represents a list of DOIs and provides access to metadata attributes, further
-        schema specific information can be found at https://schema.datacite.org
+    DoiListItem:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              type:
-                type: string
-                enum: [dois]
-              attributes:
-                  $ref: '#/components/schemas/DoisAttributes'
-              relationships:
-                type: object
-                properties:
-                  client:
-                    type: object
-                    properties:
-                      data:
-                        $ref: '#/components/schemas/DataObject'
-            required:
-              - type
-        meta:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [dois]
+        attributes:
           allOf:
-          - $ref: '#/components/schemas/MetaCore'
-          - type: object
-            properties:
-              states:
-                allOf:
-                - description: Counts by DOI state.
-                - $ref: '#/components/schemas/MetaArray'
-              resourceTypes:
-                allOf:
-                - description: resourceTypes in the search results with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              created:
-                allOf:
-                - description: Histogram of the create date of the DOI record by top 10 years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              published:
-                allOf:
-                - description: Histogram of publicationYear years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              registered:
-                allOf:
-                - description: Histogram of the registered date of the DOI record by top 10 years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              providers:
-                allOf:
-                - description: The top 10 DataCite Members or Consortium Organizations with account IDs, titles, and counts.
-                - $ref: '#/components/schemas/MetaArray'
-              clients:
-                allOf:
-                - description: The top 10 repositories in the search results with account IDs, titles, and counts.
-                - $ref: '#/components/schemas/MetaArray'
-              affiliations:
-                allOf:
-                - description: The top 10 represented ROR affliations with ROR ID, research organization title, and counts.
-                - $ref: '#/components/schemas/MetaArray'
-              prefixes:
-                allOf:
-                - description: The top 10 prefixes in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              certificates:
-                allOf:
-                - description: Repository certificates in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              licenses:
-                allOf:
-                - description: The top 10 rights with rights identifiers in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              schemaVersions:
-                allOf:
-                - description: The DataCite Metadata Schema versions represented in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              linkChecksStatus:
-                allOf:
-                - description: The status of the landing pages of DOIs in the search (when and if last checked) with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              subjects:
-                allOf:
-                - description: The top 10 subjects represented in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              fieldsOfScience:
-                allOf:
-                - description: The top 10 Fields of Science and Technology (FOS) subjects in the search with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              citations:
-                allOf:
-                - description: A histogram of citations by publicationYear in the search by top 10 years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              views:
-                allOf:
-                - description: A histogram of views by publicationYear in the search by top 10 years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-              downloads:
-                allOf:
-                - description: A histogram of downloads by publicationYear in the search by top 10 years with counts.
-                - $ref: '#/components/schemas/MetaArray'
-        links:
-          allOf:
-          - $ref: '#/components/schemas/Links'
-      example:
-        data:
-          type: dois
-          attributes:
-            doi: 10.5438/0014
-            prefix: "10.5438"
-            suffix: "0014"
-            identifiers:
-              - identifier: 'https://doi.org/10.5438/0014'
-                identifierType: DOI
-            creators:
-              - name: DataCite Metadata Working Group
-            titles:
-              - title: >-
-                  DataCite Metadata Schema Documentation for the Publication and
-                  Citation of Research Data v4.1
-            publisher: DataCite
-            publicationYear: 2017
-            types:
-              resourceTypeGeneral: Text
-            url: https://schema.datacite.org/meta/kernel-4.1/       
-    DoiAttributes: # Extended attributes for Doi model, used in /dois{id} response.
-      allOf:
-        - type: object
-          properties:
-            doi:
-              description: The full DOI name.
-              type: string
-            event:
-              description: >
-                Can be set to trigger a [DOI state change](https://support.datacite.org/docs/updating-metadata-with-the-rest-api#changing-the-doi-state). When not set, a [Draft record](https://support.datacite.org/docs/doi-states#draft-record) is created.
-                  * `publish` - Create a DOI in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name) (or change an existing Draft record/Registered DOI to Findable state).
-                  * `register` - Create a DOI in [Registered state](https://support.datacite.org/docs/doi-states#registered-doi-name) (or change an existing Draft record to Registered state).
-                  * `hide` - Change a DOI from Findable to Registered state.
-              type: string
-              enum:
-                - publish
-                - register
-                - hide
-              writeOnly: true
-            prefix:
-              description: The DOI prefix.
-              type: string
-            suffix:
-              description: The DOI suffix.
-              readOnly: true
-              type: string
-            identifiers:
-              description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
-              type: array
-              items:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                  identifierType:
-                    type: string
-            alternateIdentifiers:
-              description: '[DataCite Metadata Schema: AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
-              type: array
-              items:
-                type: object
-                properties:
-                  alternateIdentifierType:
-                    type: string
-                  alternateIdentifier:
-                    type: string
-        - $ref: '#/components/schemas/DoiPropertiesMetadata'
-        - type: object
-          properties:
-            xml:
-              description: DataCite Metadata Schema XML encoded in Base64 format.
-              type: string
-        - $ref: '#/components/schemas/DoiPropertiesOther'
-        - type: object
-          properties:
-            viewCount:
-              $ref: '#/components/schemas/viewCount'
-            viewsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            downloadCount:
-              $ref: '#/components/schemas/downloadCount'
-            downloadsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            referenceCount:
-              $ref: '#/components/schemas/referenceCount'
-            citationCount:
-              $ref: '#/components/schemas/citationCount'
-            citationsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            partCount:
-              $ref: '#/components/schemas/partCount'
-            partOfCount:
-              $ref: '#/components/schemas/partOfCount'
-            versionCount:
-              $ref: '#/components/schemas/versionCount'
-            versionOfCount:
-              $ref: '#/components/schemas/versionOfCount'
-            landingPage:
-              readOnly: true
-              description: 'Data describing the landing page, used by link checking.'
-              type: object
+            - type: object
               properties:
-                checked:
+                doi:
                   type: string
-                url:
-                  type: string
-                contentType:
-                  type: string
-                error:
-                  type: string
-                redirectCount:
-                  type: number
-                redirectUrls:
+                identifiers:
                   type: array
                   items:
-                    type: string
-                downloadLatency:
-                  type: number
-                hasSchemaOrg:
-                  type: boolean
-                schemaOrgid:
-                  type: string
-                dcIdentifier:
-                  type: string
-                citationDoi:
-                  type: string
-                bodyhasPid:
-                  type: boolean
-        - $ref: '#/components/schemas/DoiPropertiesDates'
-    DoisAttributes: # Doi attributes used in /dois list response.
-      allOf:
-        - type: object
+                    type: object
+                    properties:
+                      identifier:
+                        type: string
+                      identifierType:
+                        type: string
+            - $ref: '#/components/schemas/DoiPropertiesMetadata'
+            - $ref: '#/components/schemas/DoiPropertiesOther'
+            - type: object
+              properties:
+                viewCount:
+                  $ref: '#/components/schemas/viewCount'
+                downloadCount:
+                  $ref: '#/components/schemas/downloadCount'
+                referenceCount:
+                  $ref: '#/components/schemas/referenceCount'
+                citationCount:
+                  $ref: '#/components/schemas/citationCount'
+                partCount:
+                  $ref: '#/components/schemas/partCount'
+                partOfCount:
+                  $ref: '#/components/schemas/partOfCount'
+                versionCount:
+                  $ref: '#/components/schemas/versionCount'
+                versionOfCount:
+                  $ref: '#/components/schemas/versionOfCount'
+            - $ref: '#/components/schemas/DoiPropertiesDates'
+          required:
+            - publisher
+            - publicationYear   
+        relationships:
+          type: object
           properties:
-            doi:
-              type: string
-            identifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                  identifierType:
-                    type: string
-        - $ref: '#/components/schemas/DoiPropertiesMetadata'
-        - $ref: '#/components/schemas/DoiPropertiesOther'
-        - type: object
-          properties:
-            viewCount:
-              $ref: '#/components/schemas/viewCount'
-            downloadCount:
-              $ref: '#/components/schemas/downloadCount'
-            referenceCount:
-              $ref: '#/components/schemas/referenceCount'
-            citationCount:
-              $ref: '#/components/schemas/citationCount'
-            partCount:
-              $ref: '#/components/schemas/partCount'
-            partOfCount:
-              $ref: '#/components/schemas/partOfCount'
-            versionCount:
-              $ref: '#/components/schemas/versionCount'
-            versionOfCount:
-              $ref: '#/components/schemas/versionOfCount'
-        - $ref: '#/components/schemas/DoiPropertiesDates'
+            client:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
       required:
-        - publisher
-        - publicationYear   
+        - type
     DoiPropertiesMetadata:
       type: object
       properties:
