@@ -1441,7 +1441,7 @@ paths:
             RFC3339
           schema:
             type: string
-            format: dateTime
+            format: date-time
         - in: query
           name: created-by
           description: Name of the organization producing the report.
@@ -2777,6 +2777,7 @@ components:
               items:
                 type: string
             exceptions:
+              readOnly: true
               type: array
               items:
                 type: object
