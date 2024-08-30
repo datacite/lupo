@@ -929,28 +929,63 @@ paths:
       parameters:
         - in: query
           name: query
+          description: Query for any event information.
           schema:
             type: string
         - in: query
           name: subj-id
+          description: The identifier for the event subject expressed as URL.
           schema:
             type: string
+          example: https://doi.org/10.14454/g8e5-6293
         - in: query
           name: obj-id
+          description: The identifier for the event object expressed as URL.
           schema:
             type: string
+          example: https://doi.org/10.14454/g8e5-6293
         - in: query
           name: doi
+          description: The subj-id or obj-id of the event expressed as DOI.
           schema:
             type: string
-        - in: query
-          name: orcid
-          schema:
-            type: string
+          example: 10.14454/g8e5-629
         - in: query
           name: prefix
+          description: The DOI prefix of the subj-id or obj-id of the event.
           schema:
             type: string
+          example: 10.14454
+        - in: query
+          name: orcid
+          description: The subj-id or obj-id of the event expressed as an ORCID iD.
+          schema:
+            type: string
+          example: 0000-0002-4684-9769
+        - in: query
+          name: year-month
+          description: The year and month in which the event occurred in the format YYYY-MM.
+          schema:
+            type: string
+          example: 2018-08
+        - in: query
+          name: source-id
+          description: The [source of the event](https://support.datacite.org/docs/eventdata-guide#source-id). Use commas to include multiple sources.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/source-id'
+          explode: false
+          style: form
+        - in: query
+          name: relation-type-id
+          description: The relation type of the event. See [Linking events](https://support.datacite.org/docs/eventdata-guide#linking-events) and [Usage events](https://support.datacite.org/docs/eventdata-guide#usage-events) documentation for definitions. Use commas to include multiple relation types.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/relation-type-id'
+          explode: false
+          style: form
         - in: query
           name: subtype
           schema:
@@ -960,27 +995,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: source-id
-          schema:
-            type: string
-        - in: query
           name: registrant-id
           schema:
             type: string
         - in: query
-          name: relation-type-id
-          schema:
-            type: string
-        - in: query
-          name: issn
-          schema:
-            type: string
-        - in: query
           name: publication-year
-          schema:
-            type: string
-        - in: query
-          name: year-month
           schema:
             type: string
         - in: query
@@ -991,21 +1010,59 @@ paths:
           $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: sort
+          description: Sort order. By default, all events are sorted in ascending chronological order (using the last updated timestamp).
           schema:
             type: string
             enum:
               - relevance
-              - name
-              - '-name'
+              - obj-id
+              - '-obj-id'
+              - total
+              - '-total'
               - created
               - '-created'
+              - updated
+              - '-updated'
       responses:
         '200':
           description: A JSON array of events.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  meta:
+                      type: object
+                      properties:
+                        total:
+                          description: Total results count.
+                          type: number
+                        total-pages:
+                          description: Total pages count.
+                          type: number
+                        page:
+                          description: Current page of the results.
+                          type: number
+                        sources:
+                          $ref: '#/components/schemas/MetaArray'
+                        occurred:
+                          $ref: '#/components/schemas/MetaArray'
+                        prefixes:
+                          $ref: '#/components/schemas/MetaArray'
+                        citation-types:
+                          $ref: '#/components/schemas/MetaArray'
+                        relation-types:
+                          $ref: '#/components/schemas/MetaArray'
+                        registrants:
+                          $ref: '#/components/schemas/MetaArray'
+                        
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
       tags:
         - events
   '/events/{id}':
@@ -1023,11 +1080,15 @@ paths:
       security: []
       responses:
         '200':
-          description: A JSON array of events.
+          description: A JSON object.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Event'
   /heartbeat:
     get:
       tags:
@@ -2379,47 +2440,53 @@ components:
     Event:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [events]
+        attributes:
           type: object
           properties:
-            id:
+            subj-id:
               type: string
-            type:
+            obj-id:
               type: string
-              enum: [events]
-            attributes:
+            source-id:
+              $ref: '#/components/schemas/source-id'
+            relation-type-id:
+              $ref: '#/components/schemas/relation-type-id'
+            total:
+              type: number
+            message-action:
+              type: string
+              enum:
+                - create
+                - add
+            source-token:
+              type: string
+            license:
+              type: string
+            occured-at:
+              type: string
+            timestamp:
+              type: string
+            relationships:
               type: object
               properties:
-                subjId:
-                  type: string
-                objId:
-                  type: string
-                messageAction:
-                  type: string
-                  enum:
-                    - create
-                    - delete
-                relationTypeId:
-                  type: string
-                sourceToken:
-                  type: string
-                sourceId:
-                  type: string
-                total:
-                  type: number
-                license:
-                  type: string
-                occuredAt:
-                  type: string
-                timestamp:
-                  type: string
                 subj:
                   type: object
+                  properties:
+                    data: 
+                      $ref: '#/components/schemas/DataObject'
                 obj:
                   type: object
+                  properties:
+                    data: 
+                      $ref: '#/components/schemas/DataObject'
       required:
-        - id
-        - attributes - subjId - sourceToken - sourceId
+          - id
+          - attributes - subj-id - source-token - source-id
     Prefix:
       type: object
       properties:
@@ -2969,6 +3036,70 @@ components:
         - humanities
         - general
         - null
+    source-id:
+      type: string
+      enum:
+        - datacite-usage
+        - datacite-related
+        - datacite-crossref
+        - datacite-kisti
+        - datacite-op
+        - datacite-medra
+        - datacite-istic
+        - datacite-funder
+        - datacite-orcid-auto-update
+        - datacite-url
+        - crossref
+    relation-type-id:
+      type: string
+      enum:
+        - is-cited-by
+        - cites
+        - is-supplement-to
+        - is-supplemented-by
+        - is-continued-by
+        - continues
+        - is-described-by
+        - describes
+        - has-metadata
+        - is-metadata-for
+        - has-version
+        - is-version-of
+        - is-new-version-of
+        - is-previous-version-of
+        - is-part-of
+        - has-part
+        - is-published-in
+        - is-referenced-by
+        - references
+        - is-documented-by
+        - documents
+        - is-compiled-by
+        - compiles
+        - is-variant-form-of
+        - is-original-form-of
+        - is-identical-to
+        - is-reviewed-by
+        - reviews
+        - is-derived-from
+        - is-source-of
+        - is-required-by
+        - requires
+        - is-obsoleted-by
+        - obsoletes
+        - is-collected-by
+        - collects
+        - is-authored-by
+        - is-authored-at
+        - is-funded-by
+        - total-dataset-investigations-regular
+        - unique-dataset-investigations-regular
+        - total-dataset-requests-regular
+        - unique-dataset-requests-regular
+        - total-dataset-investigations-machine
+        - unique-dataset-investigations-machine
+        - total-dataset-requests-machine
+        - unique-dataset-requests-machine
     # reusable numbers
     viewCount:
       description: Total views, pulled from Event Data.
