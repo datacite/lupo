@@ -1457,7 +1457,24 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Report'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Report'
+                  meta:
+                      type: object
+                      properties:
+                        total:
+                          description: Total results count.
+                          type: number
+                        total-pages:
+                          description: Total pages count.
+                          type: number
+                        page:
+                          description: Current page of the results.
+                          type: number
     post:
       tags:
         - reports
@@ -1492,7 +1509,11 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Report'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Report'
     put:
       parameters:
       - name: id
@@ -2701,12 +2722,12 @@ components:
         Describes the formatting needs for the COUNTER Dataset Report. Response
         may include the Report_Header (optional), Report_Datasets (usage stats).
       properties:
-        data:
+        id:
+          type: string
+          example: 003fadc1-daab-4d1e-97d1-96004c1ff529
+        report-header:
           type: object
           properties:
-            id:
-              type: string
-              example: 0000-0000-0000-0000
             report-name:
               type: string
               description: The long name of the report.
@@ -2721,6 +2742,10 @@ components:
               type: string
               description: The release or version of the report.
               example: RD1
+            created-by:
+              type: string
+              description: Name of the organization producing the report.
+              example: DataONE
             created:
               type: string
               format: dateTime
@@ -2728,29 +2753,61 @@ components:
                 Time the report was prepared. Format as defined by date-time -
                 RFC3339
               example: '2016-09-08T22:47:31Z'
-            created-by:
-              type: string
-              description: Name of the organization producing the report.
-              example: DataONE
+            reporting-period:
+              description: Time the report was prepared.
+              type: object
+              properties:
+                end-date:
+                  type: string
+                begin-date:
+                  type: string
             report-filters:
-              type: string
               description: >-
                 Zero or more report filters used for this report. Typically
                 reflect filters provided on the Request. Filters limit the data
                 to be reported on.
+              type: array
+              items:
+                type: string
             report-attributes:
-              type: string
               description: >-
                 Zero or more additional attributes applied to the report.
                 Attributes inform the level of detail in the report.
-            reporting-period:
-              type: string
-              description: Time the report was prepared.
-            report-datasets:
-              type: string
-              description: >-
-                Defines the output for the Report_Datasets being returned in a
-                Dataset Report. Collection of datasets from the report.
+              type: array
+              items:
+                type: string
+            exceptions:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  data:
+                    type: string
+                  message:
+                    type: string
+                  help-url:
+                    type: string
+                  severity:
+                    type: string
+        report-datasets:
+          description: >-
+            Defines the output for the Report_Datasets being returned in a
+            Dataset Report. Collection of datasets from the report.
+          type: array
+          items:
+            type: object
+        report-subsets:
+          type: array
+          items:
+            type: object
+            properties:
+              gzip:
+                type: string
+              checksum:
+                type: string
+            
       required:
         - report-datasets
         - report-id
