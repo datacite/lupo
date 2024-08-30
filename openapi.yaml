@@ -493,17 +493,9 @@ paths:
             findable or registered:
               value: findable,registered
         - in: query
-          name: affiliation
-          description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
-          schema:
-            type: boolean
-            example: true
+          $ref: '#/components/parameters/affiliationParam'
         - in: query
-          name: publisher
-          description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
-          schema:
-            type: boolean
-            example: true
+          $ref: '#/components/parameters/publisherParam'
         - in: query
           name: link-check-status
           schema:
@@ -809,6 +801,11 @@ paths:
       security:
         - BasicAuth: []
         - bearerAuth: []
+      parameters:
+        - in: query
+          $ref: '#/components/parameters/affiliationParam'
+        - in: query
+          $ref: '#/components/parameters/publisherParam'
       requestBody:
         required: true
         content:
@@ -831,6 +828,10 @@ paths:
         required: true
         schema:
           type: string
+      - in: query
+        $ref: '#/components/parameters/affiliationParam'
+      - in: query
+        $ref: '#/components/parameters/publisherParam'
       tags:
         - dois
       summary: Return a DOI.
@@ -849,6 +850,10 @@ paths:
         required: true
         schema:
           type: string
+      - in: query
+        $ref: '#/components/parameters/affiliationParam'
+      - in: query
+        $ref: '#/components/parameters/publisherParam'
       tags:
         - dois
       summary: Update a DOI.
@@ -3019,6 +3024,20 @@ components:
       schema:
         type: string
       example: ardc
+    publisherParam:
+      name: publisher
+      in: query
+      description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
+      schema:
+        type: boolean
+        example: true
+    affiliationParam:
+      name: affiliation
+      in: query
+      description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+      schema:
+        type: boolean
+        example: true
     pageNumberParam:
       name: page[number]
       in: query
