@@ -1296,7 +1296,7 @@ class Doi < ApplicationRecord
   # remove duplicate citing source dois,
   # then show distribution by year
   def citations_over_time
-    citation_events.map { |event| [event.occurred_at, event.source_doi.downcase] }.sort_by { |v| v[0] }.uniq { |v| v[1] }.
+    citation_events.pluck(:occurred_at, :source_doi).map { |v| [v[0], v[1].downcase] }.sort_by { |v| v[0] }.uniq { |v| v[1] }.
       group_by { |v| v[0].utc.iso8601[0..3] }.
       map { |k, v| { "year" => k, "total" => v.length } }.
       sort_by { |h| h["year"] }
