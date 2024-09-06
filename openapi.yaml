@@ -76,7 +76,18 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   '/activities/{id}':
     get:
       parameters:
@@ -95,7 +106,11 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Activity'
   /client-prefixes:
     get:
       tags:
@@ -135,7 +150,27 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/ClientPrefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ClientPrefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            type: array
+                          clients: 
+                            type: array
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /clients:
     get:
       tags:
@@ -231,7 +266,38 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Client'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Client'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          software:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          certificates:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          repository_types:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          clientTypes:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /clients/totals:
     get:
       tags:
@@ -247,9 +313,17 @@ paths:
             items:
               $ref: '#/components/schemas/state'
           description: Authentication is required to retrieve draft records.
+          explode: false
+          style: form
       responses:
         '200':
           description: A JSON array of clients stats.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotalsObject'
   '/clients/{id}':
     get:
       parameters:
@@ -268,12 +342,16 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Client'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Client'
   /dois:
     get:
       tags:
         - dois
-      summary: Return a list of dois.
+      summary: Return a list of DOIs.
       parameters:
         - in: query
           name: query
@@ -282,7 +360,7 @@ paths:
             type: string
         - in: query
           name: created
-          description: Filter by the DOI date(s) created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
+          description: Filter by the DOI date created (yyyy). Use commas to filter by multiple years (yyyy,yyyy).
           schema:
             type: string
             pattern: ^\d{4}(,\d{4})*$
@@ -402,7 +480,7 @@ paths:
           example: 4
         - in: query
           name: state
-          description: Filter by the [DOI state(s)](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
+          description: Filter by the [DOI state](https://support.datacite.org/docs/doi-states). Authentication is required to retrieve registered DOIs and draft records.
           schema:
             type: array
             items:
@@ -415,17 +493,9 @@ paths:
             findable or registered:
               value: findable,registered
         - in: query
-          name: affiliation
-          description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
-          schema:
-            type: boolean
-            example: true
+          $ref: '#/components/parameters/affiliationParam'
         - in: query
-          name: publisher
-          description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
-          schema:
-            type: boolean
-            example: true
+          $ref: '#/components/parameters/publisherParam'
         - in: query
           name: link-check-status
           schema:
@@ -607,36 +677,148 @@ paths:
           name: source
           description: The [system used to create the DOI](https://support.datacite.org/docs/api-get-doi#source).
           schema:
-            type: string
-            enum:
-                - mds
-                - api
-                - fabricaForm
-                - fabrica
-                - ez
+            $ref: '#/components/schemas/source'
       responses:
         '200':
-          description: A JSON array of dois.
+          description: A JSON array of DOIs.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Dois'
+                description: >-
+                  Represents a list of DOIs and provides access to metadata attributes, further
+                  schema specific information can be found at https://schema.datacite.org
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DoiListItem'
+                  meta:
+                    allOf:
+                    - $ref: '#/components/schemas/MetaCore'
+                    - type: object
+                      properties:
+                        states:
+                          allOf:
+                          - description: Counts by DOI state.
+                          - $ref: '#/components/schemas/MetaArray'
+                        resourceTypes:
+                          allOf:
+                          - description: resourceTypes in the search results with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        created:
+                          allOf:
+                          - description: Histogram of the create date of the DOI record by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        published:
+                          allOf:
+                          - description: Histogram of publicationYear years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        registered:
+                          allOf:
+                          - description: Histogram of the registered date of the DOI record by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        providers:
+                          allOf:
+                          - description: The top 10 DataCite Members or Consortium Organizations with account IDs, titles, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        clients:
+                          allOf:
+                          - description: The top 10 repositories in the search results with account IDs, titles, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        affiliations:
+                          allOf:
+                          - description: The top 10 represented ROR affliations with ROR ID, research organization title, and counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        prefixes:
+                          allOf:
+                          - description: The top 10 prefixes in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        certificates:
+                          allOf:
+                          - description: Repository certificates in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        licenses:
+                          allOf:
+                          - description: The top 10 rights with rights identifiers in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        schemaVersions:
+                          allOf:
+                          - description: The DataCite Metadata Schema versions represented in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        linkChecksStatus:
+                          allOf:
+                          - description: The status of the landing pages of DOIs in the search (when and if last checked) with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        subjects:
+                          allOf:
+                          - description: The top 10 subjects represented in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        fieldsOfScience:
+                          allOf:
+                          - description: The top 10 Fields of Science and Technology (FOS) subjects in the search with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        citations:
+                          allOf:
+                          - description: A histogram of citations by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        views:
+                          allOf:
+                          - description: A histogram of views by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                        downloads:
+                          allOf:
+                          - description: A histogram of downloads by publicationYear in the search by top 10 years with counts.
+                          - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                    - $ref: '#/components/schemas/Links'
+                example:
+                  data:
+                    type: dois
+                    attributes:
+                      doi: 10.5438/0014
+                      prefix: "10.5438"
+                      suffix: "0014"
+                      identifiers:
+                        - identifier: 'https://doi.org/10.5438/0014'
+                          identifierType: DOI
+                      creators:
+                        - name: DataCite Metadata Working Group
+                      titles:
+                        - title: >-
+                            DataCite Metadata Schema Documentation for the Publication and
+                            Citation of Research Data v4.1
+                      publisher: DataCite
+                      publicationYear: 2017
+                      types:
+                        resourceTypeGeneral: Text
+                      url: https://schema.datacite.org/meta/kernel-4.1/      
     post:
       tags:
         - dois
-      summary: Add a new doi.
+      summary: Add a new DOI.
       security:
         - BasicAuth: []
         - bearerAuth: []
+      parameters:
+        - in: query
+          $ref: '#/components/parameters/affiliationParam'
+        - in: query
+          $ref: '#/components/parameters/publisherParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiDetailItem'
       responses:
         '201':
           description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiDetailItem'
   '/dois/{id}':
     get:
       parameters:
@@ -646,27 +828,35 @@ paths:
         required: true
         schema:
           type: string
+      - in: query
+        $ref: '#/components/parameters/affiliationParam'
+      - in: query
+        $ref: '#/components/parameters/publisherParam'
       tags:
         - dois
-      summary: Return a doi.
+      summary: Return a DOI.
       responses:
         '200':
           description: A JSON object.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Doi'
+                $ref: '#/components/schemas/DoiDetailItem'
     put:
       parameters:
       - name: id
         in: path
-        description: DOI
+        description: The DOI to update.
         required: true
         schema:
           type: string
+      - in: query
+        $ref: '#/components/parameters/affiliationParam'
+      - in: query
+        $ref: '#/components/parameters/publisherParam'
       tags:
         - dois
-      summary: Update a doi.
+      summary: Update a DOI.
       description: PUT requests to the /dois endpoint will update a DOI record if it already exists and create a new record if the DOI name is not already taken.
       security:
         - BasicAuth: []
@@ -676,10 +866,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Doi'
+              $ref: '#/components/schemas/DoiDetailItem'
       responses:
         '200':
           description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiDetailItem'
     delete:
       parameters:
       - name: id
@@ -690,7 +884,7 @@ paths:
           type: string
       tags:
         - dois
-      summary: Delete a doi (for DOIs in draft state only).
+      summary: Delete a DOI (for DOIs in draft state only).
       security:
         - BasicAuth: []
         - bearerAuth: []
@@ -709,14 +903,25 @@ paths:
       tags:
         - dois
         - activities
-      summary: Return activity for a specific DOI.
+      summary: Return activities for a specific DOI.
       responses:
         '200':
           description: A JSON object.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Activity'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /events:
     get:
       summary: Return a list of events.
@@ -724,28 +929,63 @@ paths:
       parameters:
         - in: query
           name: query
+          description: Query for any event information.
           schema:
             type: string
         - in: query
           name: subj-id
+          description: The identifier for the event subject expressed as URL.
           schema:
             type: string
+          example: https://doi.org/10.14454/g8e5-6293
         - in: query
           name: obj-id
+          description: The identifier for the event object expressed as URL.
           schema:
             type: string
+          example: https://doi.org/10.14454/g8e5-6293
         - in: query
           name: doi
+          description: The subj-id or obj-id of the event expressed as DOI.
           schema:
             type: string
-        - in: query
-          name: orcid
-          schema:
-            type: string
+          example: 10.14454/g8e5-629
         - in: query
           name: prefix
+          description: The DOI prefix of the subj-id or obj-id of the event.
           schema:
             type: string
+          example: 10.14454
+        - in: query
+          name: orcid
+          description: The subj-id or obj-id of the event expressed as an ORCID iD.
+          schema:
+            type: string
+          example: 0000-0002-4684-9769
+        - in: query
+          name: year-month
+          description: The year and month in which the event occurred in the format YYYY-MM.
+          schema:
+            type: string
+          example: 2018-08
+        - in: query
+          name: source-id
+          description: The [source of the event](https://support.datacite.org/docs/eventdata-guide#source-id). Use commas to include multiple sources.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/source-id'
+          explode: false
+          style: form
+        - in: query
+          name: relation-type-id
+          description: The relation type of the event. See [Linking events](https://support.datacite.org/docs/eventdata-guide#linking-events) and [Usage events](https://support.datacite.org/docs/eventdata-guide#usage-events) documentation for definitions. Use commas to include multiple relation types.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/relation-type-id'
+          explode: false
+          style: form
         - in: query
           name: subtype
           schema:
@@ -755,27 +995,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: source-id
-          schema:
-            type: string
-        - in: query
           name: registrant-id
           schema:
             type: string
         - in: query
-          name: relation-type-id
-          schema:
-            type: string
-        - in: query
-          name: issn
-          schema:
-            type: string
-        - in: query
           name: publication-year
-          schema:
-            type: string
-        - in: query
-          name: year-month
           schema:
             type: string
         - in: query
@@ -786,21 +1010,59 @@ paths:
           $ref: '#/components/parameters/pageCursorParam'
         - in: query
           name: sort
+          description: Sort order. By default, all events are sorted in ascending chronological order (using the last updated timestamp).
           schema:
             type: string
             enum:
               - relevance
-              - name
-              - '-name'
+              - obj-id
+              - '-obj-id'
+              - total
+              - '-total'
               - created
               - '-created'
+              - updated
+              - '-updated'
       responses:
         '200':
           description: A JSON array of events.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  meta:
+                      type: object
+                      properties:
+                        total:
+                          description: Total results count.
+                          type: number
+                        total-pages:
+                          description: Total pages count.
+                          type: number
+                        page:
+                          description: Current page of the results.
+                          type: number
+                        sources:
+                          $ref: '#/components/schemas/MetaArray'
+                        occurred:
+                          $ref: '#/components/schemas/MetaArray'
+                        prefixes:
+                          $ref: '#/components/schemas/MetaArray'
+                        citation-types:
+                          $ref: '#/components/schemas/MetaArray'
+                        relation-types:
+                          $ref: '#/components/schemas/MetaArray'
+                        registrants:
+                          $ref: '#/components/schemas/MetaArray'
+                        
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
       tags:
         - events
   '/events/{id}':
@@ -818,11 +1080,15 @@ paths:
       security: []
       responses:
         '200':
-          description: A JSON array of events.
+          description: A JSON object.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Event'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Event'
   /heartbeat:
     get:
       tags:
@@ -869,7 +1135,30 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Prefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Prefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          states:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            type: array
+                          clients: 
+                            type: array
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /prefixes/totals:
     get:
       tags:
@@ -881,6 +1170,8 @@ paths:
       responses:
         '200':
           description: A JSON array of prefixes stats.
+        '204':
+          description: No content; must include the client-id parameter.
   '/prefixes/{id}':
     get:
       tags:
@@ -942,7 +1233,29 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/ProviderPrefix'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProviderPrefix'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          states:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          providers:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /providers:
     get:
       tags:
@@ -963,47 +1276,19 @@ paths:
         - in: query
           name: region
           schema:
-            type: string
-            enum:
-              - amer
-              - apac
-              - emea
+            $ref: '#/components/schemas/region'
         - in: query
           name: member-type
           schema:
-            type: string
-            enum:
-              - consortium_organization
-              - direct_member
-              - consortium
-              - member_only
-              - developer
+            $ref: '#/components/schemas/member-type'
         - in: query
           name: organization-type
           schema:
-            type: string
-            enum:
-              - academicInstitution
-              - governmentAgency
-              - nationalInstitution
-              - publisher
-              - professionalSociety
-              - researchInstitution
-              - serviceProvider
-              - internationalOrganization
-              - other
+            $ref: '#/components/schemas/organization-type'
         - in: query
           name: focus-area
           schema:
-            type: string
-            enum:
-              - naturalSciences
-              - engineeringAndTechnology
-              - medicalAndHealthSciences
-              - agriculturalSciences
-              - socialSciences
-              - humanities
-              - general
+            $ref: '#/components/schemas/focus-area'
         - in: query
           name: has-required-contacts
           schema:
@@ -1024,11 +1309,45 @@ paths:
               - '-created'
       responses:
         '200':
-          description: A JSON array of prefixes.
+          description: A JSON array of providers.
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Provider'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                      - type: object 
+                        properties:
+                          years:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          regions:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          memberTypes:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          organizationTypes:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          focusAreas:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          nonProfitStatuses:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                          hasRequiredContacts:
+                            allOf:
+                            - $ref: '#/components/schemas/MetaArray'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /providers/totals:
     get:
       tags:
@@ -1042,9 +1361,17 @@ paths:
             items:
               $ref: '#/components/schemas/state'
           description: Authentication is required to retrieve draft records.
+          explode: false
+          style: form
       responses:
         '200':
           description: A JSON array of providers stats.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotalsObject'
   '/providers/{id}':
     get:
       parameters:
@@ -1063,7 +1390,19 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Provider'
+                  meta:
+                    type: object
+                    properties:
+                      repositoryCount:
+                        type: number
+                      consortiumOrganizationCount:
+                        type: number
+                        description: Returned only when the provider is a Consortium.
   /reports:
     get:
       tags:
@@ -1102,7 +1441,7 @@ paths:
             RFC3339
           schema:
             type: string
-            format: dateTime
+            format: date-time
         - in: query
           name: created-by
           description: Name of the organization producing the report.
@@ -1118,7 +1457,24 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Report'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Report'
+                  meta:
+                      type: object
+                      properties:
+                        total:
+                          description: Total results count.
+                          type: number
+                        total-pages:
+                          description: Total pages count.
+                          type: number
+                        page:
+                          description: Current page of the results.
+                          type: number
     post:
       tags:
         - reports
@@ -1153,7 +1509,11 @@ paths:
           content:
             application/vnd.api+json:
               schema:
-                $ref: '#/components/schemas/Report'
+                type: object
+                properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Report'
     put:
       parameters:
       - name: id
@@ -1196,100 +1556,160 @@ paths:
           description: No content
 components:
   schemas:
-    Client:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            id:
-              type: string
-            type:
-              type: string
-            attributes:
-              type: object
-              properties:
-                name:
-                  type: string
-                symbol:
-                  type: string
-                contactName:
-                  type: string
-                contactEmail:
-                  type: string
-                description:
-                  type: string
-                domains:
-                  type: string
-                url:
-                  type: string
-                created:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
-      required:
-        - id
-        - attributes - name - symbol - contactName - contactEmail
-      example:
-        id: tib.pangaea
-        attributes:
-          name: Pangaea
-    ClientPrefix:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            id:
-              type: string
-            type:
-              type: string
-            attributes:
-              type: object
-              properties:
-                created:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
-      required:
-        - id
+    # core object types
     Activity:
       type: object
       description: Represents an activity for an event within DataCite systems.
       properties:
-        data:
+        id:
+          type: string
+          example: 57690e72-b1be-4370-9f35-de6bec5f7b71
+        type:
+          type: string
+          enum: [activities]
+        attributes:
           type: object
           properties:
-            id:
+            'prov:wasGeneratedBy':
               type: string
-              example: 0000-0000-0000-0000
-            type:
+            'prov:generatedAtTime':
               type: string
-            attributes:
+            'prov:wasDerivedFrom':
+              type: string
+            'prov:wasAttributedTo':
+              type: string
+            action:
+              type: string
+            version:
+              type: number
+            changes:
+              type: object
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [clients]
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            symbol:
+              type: string
+            year:
+              type: number
+            contactEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            alternateName:
+              type: string
+            description:
+              type: string
+            language:
+              type: array
+              items:
+                type: string
+            clientType:
+              $ref: '#/components/schemas/client-type'
+            domains:
+              type: string
+            re3data:
+              type: string
+            opendoar:
+              type: string
+            issn:
               type: object
               properties:
-                'prov:wasGeneratedBy':
+                issnl:
                   type: string
-                'prov:generatedAtTime':
+                print:
                   type: string
-                'prov:wasDerivedFrom':
+                electronic:
                   type: string
-                'prov:wasAttributedTo':
-                  type: string
-                action:
-                  type: string
-                version:
-                  type: number
-                changes:
-                  type: object
-    Doi:
+            url:
+              type: string
+            created:
+              type: string
+              readOnly: true
+            updated:
+              type: string
+              readOnly: true
+            isActive:
+              type: boolean
+            hasPassword:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+        relationships:
+          type: object
+          properties:
+            provider:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            consortium:
+              type: object
+              description: Returned only when the client is associated with a Consortium.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            prefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+      required:
+        - id
+        - attributes - name - symbol - contactEmail
+    ClientPrefix:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [client-prefixes]
+        attributes:
+          type: object
+          properties:
+            createdAt:
+              type: string
+              readOnly: true
+            updatedAt:
+              type: string
+              readOnly: true
+        relationships:
+          type: object
+          properties:
+            client:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            provider:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            providerPrefix:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            prefix:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+      required:
+        - id
+    DoiDetailItem:
       description: >-
-        Represents a single DOI and provides access to metadata attributes, further
-        schema specific information can be found at https://schema.datacite.org
+        Represents a single DOI and provides access to metadata attributes. More
+        information is available at https://schema.datacite.org.
       type: object
       properties:
         data:
@@ -1302,56 +1722,196 @@ components:
               type: string
               enum: [dois]
             attributes:
-                $ref: '#/components/schemas/DoiAttributes'
+                allOf:
+                  - type: object
+                    properties:
+                      doi:
+                        description: The full DOI name.
+                        type: string
+                      event:
+                        description: >
+                          Can be set to trigger a [DOI state change](https://support.datacite.org/docs/updating-metadata-with-the-rest-api#changing-the-doi-state). When not set, a [Draft record](https://support.datacite.org/docs/doi-states#draft-record) is created.
+                            * `publish` - Create a DOI in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name) (or change an existing Draft record/Registered DOI to Findable state).
+                            * `register` - Create a DOI in [Registered state](https://support.datacite.org/docs/doi-states#registered-doi-name) (or change an existing Draft record to Registered state).
+                            * `hide` - Change a DOI from Findable to Registered state.
+                        type: string
+                        enum:
+                          - publish
+                          - register
+                          - hide
+                        writeOnly: true
+                      prefix:
+                        description: The DOI prefix.
+                        type: string
+                      suffix:
+                        description: The DOI suffix.
+                        readOnly: true
+                        type: string
+                      identifiers:
+                        description: Equivalent to the [AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/) property in the DataCite Metadata Schema. For more information, see [What is the "identifiers" attribute in the REST API?](https://support.datacite.org/docs/what-is-the-identifiers-attribute-in-the-rest-api)
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            identifier:
+                              type: string
+                            identifierType:
+                              type: string
+                      alternateIdentifiers:
+                        description: '[DataCite Metadata Schema: AlternateIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/alternateidentifier/)'
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            alternateIdentifierType:
+                              type: string
+                            alternateIdentifier:
+                              type: string
+                  - $ref: '#/components/schemas/DoiPropertiesMetadata'
+                  - type: object
+                    properties:
+                      xml:
+                        description: DataCite Metadata Schema XML encoded in Base64 format.
+                        type: string
+                  - $ref: '#/components/schemas/DoiPropertiesOther'
+                  - type: object
+                    properties:
+                      viewCount:
+                        $ref: '#/components/schemas/viewCount'
+                      viewsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      downloadCount:
+                        $ref: '#/components/schemas/downloadCount'
+                      downloadsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      referenceCount:
+                        $ref: '#/components/schemas/referenceCount'
+                      citationCount:
+                        $ref: '#/components/schemas/citationCount'
+                      citationsOverTime:
+                        readOnly: true
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            yearMonth:
+                              type: string
+                            total:
+                              type: number
+                      partCount:
+                        $ref: '#/components/schemas/partCount'
+                      partOfCount:
+                        $ref: '#/components/schemas/partOfCount'
+                      versionCount:
+                        $ref: '#/components/schemas/versionCount'
+                      versionOfCount:
+                        $ref: '#/components/schemas/versionOfCount'
+                      landingPage:
+                        readOnly: true
+                        description: 'Data describing the landing page, used by link checking.'
+                        type: object
+                        properties:
+                          checked:
+                            type: string
+                          url:
+                            type: string
+                          contentType:
+                            type: string
+                          error:
+                            type: string
+                          redirectCount:
+                            type: number
+                          redirectUrls:
+                            type: array
+                            items:
+                              type: string
+                          downloadLatency:
+                            type: number
+                          hasSchemaOrg:
+                            type: boolean
+                          schemaOrgid:
+                            type: string
+                          dcIdentifier:
+                            type: string
+                          citationDoi:
+                            type: string
+                          bodyhasPid:
+                            type: boolean
+                  - $ref: '#/components/schemas/DoiPropertiesDates'
             relationships:
                 type: object
                 readOnly: true
                 properties:
                   client:
                     type: object
+                    description: The DataCite client (repository) associated with the DOI.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   provider:
                     type: object
+                    description: The DataCite provider (Direct Member or Consortium Organization) associated with the DOI.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   media:
                     type: object
+                    description: Legacy attribute for media support.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataObject'
+                        $ref: '#/components/schemas/DataObject'
                   references:
                     type: object
+                    description: An array of references as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   citations:
                     type: object
+                    description: An array of citations as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   parts:
+                    description: An array of parts as dictionaries.
                     type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   partOf:
+                    description: An array of parents as dictionaries.
                     type: object
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   versions:
                     type: object
+                    description: An array of versions as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
                   versionOf:
                     type: object
+                    description: An array of objects to which this DOI is a version as dictionaries.
                     properties:
                       data:
-                        $ref: '#/components/schemas/DoiDataArray'
+                        $ref: '#/components/schemas/DataArray'
           required:
             - type
       example:
@@ -1375,288 +1935,68 @@ components:
             types:
               resourceTypeGeneral: Text
             url: https://schema.datacite.org/meta/kernel-4.1/
-    Dois:
-      description: >-
-        Represents a list of DOIs and provides access to metadata attributes, further
-        schema specific information can be found at https://schema.datacite.org
+    DoiListItem:
       type: object
       properties:
-        data:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              type:
-                type: string
-                enum: [dois]
-              attributes:
-                  $ref: '#/components/schemas/DoisAttributes'
-              relationships:
-                type: object
-                properties:
-                  client:
-                    type: object
-                    properties:
-                      data:
-                        $ref: '#/components/schemas/DoiDataObject'
-            required:
-              - type
-        meta:
-          type: object
-          properties:
-            total:
-              type: number
-            totalPages:
-              type: number
-            page:
-              type: number
-            states:
-               $ref: '#/components/schemas/DoiMetaArray'
-            resourceTypes:
-               $ref: '#/components/schemas/DoiMetaArray'
-            created:
-               $ref: '#/components/schemas/DoiMetaArray'
-            published:
-               $ref: '#/components/schemas/DoiMetaArray'
-            registered:
-               $ref: '#/components/schemas/DoiMetaArray'
-            providers:
-               $ref: '#/components/schemas/DoiMetaArray'
-            clients:
-               $ref: '#/components/schemas/DoiMetaArray'
-            affiliations:
-               $ref: '#/components/schemas/DoiMetaArray'
-            prefixes:
-               $ref: '#/components/schemas/DoiMetaArray'
-            certificates:
-               $ref: '#/components/schemas/DoiMetaArray'
-            licenses:
-               $ref: '#/components/schemas/DoiMetaArray'
-            schemaVersions:
-               $ref: '#/components/schemas/DoiMetaArray'
-            linkChecksStatus:
-               $ref: '#/components/schemas/DoiMetaArray'
-            subjects:
-               $ref: '#/components/schemas/DoiMetaArray'
-            fieldsOfScience:
-               $ref: '#/components/schemas/DoiMetaArray'
-            citations:
-               $ref: '#/components/schemas/DoiMetaArray'
-            views:
-               $ref: '#/components/schemas/DoiMetaArray'
-            downloads:
-               $ref: '#/components/schemas/DoiMetaArray'
-        links:
-          type: object
-          properties:
-            self:
-              type: string
-            next:
-              type: string
-      example:
-        data:
-          type: dois
-          attributes:
-            doi: 10.5438/0014
-            prefix: "10.5438"
-            suffix: "0014"
-            identifiers:
-              - identifier: 'https://doi.org/10.5438/0014'
-                identifierType: DOI
-            creators:
-              - name: DataCite Metadata Working Group
-            titles:
-              - title: >-
-                  DataCite Metadata Schema Documentation for the Publication and
-                  Citation of Research Data v4.1
-            publisher: DataCite
-            publicationYear: 2017
-            types:
-              resourceTypeGeneral: Text
-            url: https://schema.datacite.org/meta/kernel-4.1/       
-    DoiAttributes: # Extended attributes for Doi model, used in /dois{id} response.
-      allOf:
-        - type: object
-          properties:
-            doi:
-              type: string
-            event:
-              description: Can be set to trigger a DOI state change.
-              type: string
-              enum:
-                - publish
-                - register
-                - hide
-              writeOnly: true
-            prefix:
-              type: string
-            suffix:
-              type: string
-            identifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                  identifierType:
-                    type: string
-            alternateIdentifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  alternateIdentifierType:
-                    type: string
-                  alternateIdentifier:
-                    type: string
-        - $ref: '#/components/schemas/DoiPropertiesMetadata'
-        - type: object
-          properties:
-            xml:
-              type: string
-        - $ref: '#/components/schemas/DoiPropertiesOther'
-        - type: object
-          properties:
-            viewCount:
-              readOnly: true
-              type: number
-            viewsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            downloadCount:
-              readOnly: true
-              type: number
-            downloadsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            referenceCount:
-              readOnly: true
-              type: number
-            citationCount:
-              readOnly: true
-              type: number
-            citationsOverTime:
-              readOnly: true
-              type: array
-              items:
-                type: object
-                properties:
-                  yearMonth:
-                    type: string
-                  total:
-                    type: number
-            partCount:
-              readOnly: true
-              type: number
-            partOfCount:
-              readOnly: true
-              type: number
-            versionCount:
-              readOnly: true
-              type: number
-            versionOfCount:
-              readOnly: true
-              type: number
-            landingPage:
-              readOnly: true
-              description: 'Data describing the landing page, used by link checking.'
-              type: object
+        id:
+          type: string
+        type:
+          type: string
+          enum: [dois]
+        attributes:
+          allOf:
+            - type: object
               properties:
-                checked:
+                doi:
                   type: string
-                url:
-                  type: string
-                contentType:
-                  type: string
-                error:
-                  type: string
-                redirectCount:
-                  type: number
-                redirectUrls:
+                identifiers:
                   type: array
                   items:
-                    type: string
-                downloadLatency:
-                  type: number
-                hasSchemaOrg:
-                  type: boolean
-                schemaOrgid:
-                  type: string
-                dcIdentifier:
-                  type: string
-                citationDoi:
-                  type: string
-                bodyhasPid:
-                  type: boolean
-        - $ref: '#/components/schemas/DoiPropertiesDates'
-    DoisAttributes: # Doi attributes used in /dois list response.
-      allOf:
-        - type: object
+                    type: object
+                    properties:
+                      identifier:
+                        type: string
+                      identifierType:
+                        type: string
+            - $ref: '#/components/schemas/DoiPropertiesMetadata'
+            - $ref: '#/components/schemas/DoiPropertiesOther'
+            - type: object
+              properties:
+                viewCount:
+                  $ref: '#/components/schemas/viewCount'
+                downloadCount:
+                  $ref: '#/components/schemas/downloadCount'
+                referenceCount:
+                  $ref: '#/components/schemas/referenceCount'
+                citationCount:
+                  $ref: '#/components/schemas/citationCount'
+                partCount:
+                  $ref: '#/components/schemas/partCount'
+                partOfCount:
+                  $ref: '#/components/schemas/partOfCount'
+                versionCount:
+                  $ref: '#/components/schemas/versionCount'
+                versionOfCount:
+                  $ref: '#/components/schemas/versionOfCount'
+            - $ref: '#/components/schemas/DoiPropertiesDates'
+          required:
+            - publisher
+            - publicationYear   
+        relationships:
+          type: object
           properties:
-            doi:
-              type: string
-            identifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                  identifierType:
-                    type: string
-        - $ref: '#/components/schemas/DoiPropertiesMetadata'
-        - $ref: '#/components/schemas/DoiPropertiesOther'
-        - type: object
-          properties:
-            viewCount:
-              readOnly: true
-              type: number
-            downloadCount:
-              readOnly: true
-              type: number
-            referenceCount:
-              readOnly: true
-              type: number
-            citationCount:
-              readOnly: true
-              type: number
-            partCount:
-              readOnly: true
-              type: number
-            partOfCount:
-              readOnly: true
-              type: number
-            versionCount:
-              readOnly: true
-              type: number
-            versionOfCount:
-              readOnly: true
-              type: number
-        - $ref: '#/components/schemas/DoiPropertiesDates'
+            client:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
       required:
-        - publisher
-        - publicationYear   
+        - type
     DoiPropertiesMetadata:
       type: object
       properties:
         creators:
+            description: '[DataCite Metadata Schema: Creator](https://datacite-metadata-schema.readthedocs.io/en/4/properties/creator/)'
             type: array
             items:
               type: object
@@ -1681,21 +2021,27 @@ components:
                 familyName:
                   type: string
                 affiliation:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      affiliationIdentifier:
-                        type: string
-                      affiliationIdentifierScheme:
-                        type: string
-                      name:
-                        type: string
-                      schemeUri:
+                  description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+                  oneOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          affiliationIdentifier:
+                            type: string
+                          affiliationIdentifierScheme:
+                            type: string
+                          name:
+                            type: string
+                          schemeUri:
+                            type: string
+                    - type: array
+                      items:
                         type: string
                 lang:
                   type: string
         titles:
+          description: '[DataCite Metadata Schema: Title](https://datacite-metadata-schema.readthedocs.io/en/4/properties/title/)'
           type: array
           items:
             type: object
@@ -1707,18 +2053,23 @@ components:
               lang:
                 type: string
         publisher:
-          type: object
-          properties:
-            name:
-              type: string
-            publisherIdentifier:
-              type: string
-            publisherIdentifierScheme:
-              type: string
-            schemeUri:
-              type: string
-            lang:
-              type: string
+          description: >
+            [DataCite Metadata Schema: Publisher](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publisher/)
+            Set `publisher=true` to see additional publisher information such as the publisher identifier.
+          oneOf:
+            - type: object
+              properties:
+                name:
+                  type: string
+                publisherIdentifier:
+                  type: string
+                publisherIdentifierScheme:
+                  type: string
+                schemeUri:
+                  type: string
+                lang:
+                  type: string
+            - type: string
         container:
           readOnly: true
           type: object
@@ -1740,8 +2091,10 @@ components:
             lastPage:
               type: string
         publicationYear:
+          description: '[DataCite Metadata Schema: PublicationYear](https://datacite-metadata-schema.readthedocs.io/en/4/properties/publicationyear/)'
           type: integer
         subjects:
+          description: '[DataCite Metadata Schema: Subject](https://datacite-metadata-schema.readthedocs.io/en/4/properties/subject/)'
           type: array
           items:
             type: object
@@ -1759,6 +2112,7 @@ components:
               classificationCode:
                 type: string
         contributors:
+          description: '[DataCite Metadata Schema: Contributor](https://datacite-metadata-schema.readthedocs.io/en/4/properties/contributor/)'
           type: array
           items:
             type: object
@@ -1783,23 +2137,29 @@ components:
               familyName:
                 type: string
               affiliation:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    affiliationIdentifier:
-                      type: string
-                    affiliationIdentifierScheme:
-                      type: string
-                    name:
-                      type: string
-                    schemeUri:
-                      type: string
+                  description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+                  oneOf:
+                    - type: array
+                      items:
+                        type: object
+                        properties:
+                          affiliationIdentifier:
+                            type: string
+                          affiliationIdentifierScheme:
+                            type: string
+                          name:
+                            type: string
+                          schemeUri:
+                            type: string
+                    - type: array
+                      items:
+                        type: string
               contributorType:
                 $ref: '#/components/schemas/contributorType'
               lang:
                 type: string
         dates:
+          description: '[DataCite Metadata Schema: Date](https://datacite-metadata-schema.readthedocs.io/en/4/properties/date/)'
           type: array
           items:
             type: object
@@ -1823,6 +2183,7 @@ components:
               dateInformation:
                 type: string
         language:
+          description: '[DataCite Metadata Schema: Language](https://datacite-metadata-schema.readthedocs.io/en/4/properties/language/)'
           type: string
         types:
           type: object
@@ -1830,16 +2191,22 @@ components:
             resourceTypeGeneral:
               $ref: '#/components/schemas/resourceTypeGeneral'
             resourceType:
+              description: '[DataCite Metadata Schema: ResourceType](https://datacite-metadata-schema.readthedocs.io/en/4/properties/resourcetype/)'
               type: string
             schemaOrg:
+              readOnly: true
               type: string
             bibtex:
+              readOnly: true
               type: string
             citeproc:
+              readOnly: true
               type: string
             ris:
+              readOnly: true
               type: string
         relatedIdentifiers:
+          description: '[DataCite Metadata Schema: RelatedIdentifier](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relatedidentifier/)'
           type: array
           items:
             type: object
@@ -1859,6 +2226,7 @@ components:
               schemeType:
                 type: string
         relatedItems:
+          description: '[DataCite Metadata Schema: RelatedItem](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relateditem/)'
           type: array
           items:
             type: object
@@ -1941,16 +2309,20 @@ components:
                     contributorType:
                       $ref: '#/components/schemas/contributorType'
         sizes:
+          description: '[DataCite Metadata Schema: Size](https://datacite-metadata-schema.readthedocs.io/en/4/properties/size/)'
           type: array
           items:
             type: string
         formats:
+          description: '[DataCite Metadata Schema: Format](https://datacite-metadata-schema.readthedocs.io/en/4/properties/format/)'
           type: array
           items:
             type: string
         version:
+          description: '[DataCite Metadata Schema: Version](https://datacite-metadata-schema.readthedocs.io/en/4/properties/version/)'
           type: string
         rightsList:
+          description: '[DataCite Metadata Schema: Rights](https://datacite-metadata-schema.readthedocs.io/en/4/properties/rights/)'
           type: array
           items:
             type: object
@@ -1968,6 +2340,7 @@ components:
               lang:
                 type: string
         descriptions:
+          description: '[DataCite Metadata Schema: Description](https://datacite-metadata-schema.readthedocs.io/en/4/properties/description/)'
           type: array
           items:
             type: object
@@ -1986,6 +2359,7 @@ components:
               lang:
                 type: string
         geoLocations:
+          description: '[DataCite Metadata Schema: GeoLocation](https://datacite-metadata-schema.readthedocs.io/en/4/properties/geolocation/)'
           type: array
           items:
             type: object
@@ -2011,6 +2385,7 @@ components:
               geoLocationPlace:
                 type: string
         fundingReferences:
+          description: '[DataCite Metadata Schema: FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
           items:
             type: object
@@ -2037,169 +2412,322 @@ components:
       type: object
       properties:
         url:
+          description: The landing page URL of the DOI.
           type: string
         contentUrl:
+          description: An array of content URLs associated with the DOI.
           readOnly: true
           type: array
           items:
             type: string
         metadataVersion:
+          description: The version of the stored DataCite metadata, incremented once per update. 
           readOnly: true
           type: number
         schemaVersion:
+          description: The DataCite Metadata Schema version of the stored DOI metadata represented as a URL. When creating or updating a DOI, `schemaVersion` is not necessary unless modifying the DataCite Metadata Schema version.
           type: string
         source:
-          readOnly: true
-          type: string
+          allOf:
+            - description: The system used to create the DOI.
+            - readOnly: true
+            - $ref: '#/components/schemas/source'
         isActive:
+          description: '"true" if the DOI is in [Findable state](https://support.datacite.org/docs/doi-states#findable-doi-name). Otherwise, "false".'
           readOnly: true
           type: boolean
         state:
-          readOnly: true
-          type: string
+          allOf:
+            - description: The [state of the DOI](https://support.datacite.org/docs/doi-states).
+            - readOnly: true
+            - $ref: '#/components/schemas/state'
         reason:
+          description: Legacy attribute for EZID compatibility.
           readOnly: true
           type: string
     DoiPropertiesDates:
       type: object
       properties:
         created:
+          description: The date the DOI record was created in the DataCite system.
           type: string
           readOnly: true
         registered:
+          description: The date the DOI was registered in the global handle server.
           type: string
           readOnly: true
         updated:
+          description: The date the DOI was last updated.
           type: string
           readOnly: true
-    DoiDataObject:
-        type: object
-        properties:
-          id:
-            type: string
-          type:
-            type: string
-    DoiDataArray:
-      type: array
-      items:
-        $ref: '#/components/schemas/DoiDataObject'
-    DoiMetaObject:
+    Event:
       type: object
       properties:
         id:
           type: string
         type:
           type: string
-        count:
-          type: number
-    DoiMetaArray:
-      type: array
-      items:
-        $ref: '#/components/schemas/DoiMetaObject'
-    Event:
-      type: object
-      properties:
-        data:
+          enum: [events]
+        attributes:
           type: object
           properties:
-            id:
+            subj-id:
               type: string
-            type:
+            obj-id:
               type: string
-            attributes:
+            source-id:
+              $ref: '#/components/schemas/source-id'
+            relation-type-id:
+              $ref: '#/components/schemas/relation-type-id'
+            total:
+              type: number
+            message-action:
+              type: string
+              enum:
+                - create
+                - add
+            source-token:
+              type: string
+            license:
+              type: string
+            occured-at:
+              type: string
+            timestamp:
+              type: string
+            relationships:
               type: object
               properties:
-                subjId:
-                  type: string
-                objId:
-                  type: string
-                messageAction:
-                  type: string
-                  enum:
-                    - create
-                    - delete
-                relationTypeId:
-                  type: string
-                sourceToken:
-                  type: string
-                sourceId:
-                  type: string
-                total:
-                  type: number
-                license:
-                  type: string
-                occuredAt:
-                  type: string
-                timestamp:
-                  type: string
                 subj:
                   type: object
+                  properties:
+                    data: 
+                      $ref: '#/components/schemas/DataObject'
                 obj:
                   type: object
+                  properties:
+                    data: 
+                      $ref: '#/components/schemas/DataObject'
       required:
-        - id
-        - attributes - subjId - sourceToken - sourceId
+          - id
+          - attributes - subj-id - source-token - source-id
     Prefix:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [prefixes]
+        attributes:
           type: object
           properties:
             prefix:
               type: string
+            createdAt: 
+              type: string
+        relationships:
+          type: object
+          properties:
+            clients:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            providers:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            clientPrefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            providerPrefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
       required:
         - prefix
     ProviderPrefix:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [provider-prefixes]
+        attributes:
           type: object
           properties:
-            id:
+            createdAt:
               type: string
-            attributes:
+              readOnly: true
+            updatedAt:
+              type: string
+              readOnly: true
+        relationships:
+          type: object
+          properties:
+            provider:
               type: object
               properties:
-                created:
-                  type: string
-                  readOnly: true
-                updated:
-                  type: string
-                  readOnly: true
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            prefix:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            clients:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            clientPrefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
       required:
         - id
     Provider:
       type: object
       properties:
-        data:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [providers]
+        attributes:
           type: object
           properties:
-            id:
-              type: string
             name:
+              type: string
+            displayName:
               type: string
             symbol:
               type: string
+            website:
+              type: string
+            systemEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            groupEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            globusUuid:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            description:
+              type: string
+            region:
+              $ref: '#/components/schemas/region'
+            country:
+              type: string
+            logoUrl:
+              type: string
+            memberType:
+              $ref: '#/components/schemas/member-type'
+            organizationType:
+              $ref: '#/components/schemas/organization-type'
+            focusArea:
+              $ref: '#/components/schemas/focus-area'
+            nonProfitStatus:
+              type: string
+            isActive:
+              type: boolean
+            hasPassword:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+            joined:
+              type: string
+            twitterHandle:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            rorId:
+              type: string
+            technicalContact:
+              $ref: '#/components/schemas/ProviderContact'
+            secondaryTechnicalContact:
+              $ref: '#/components/schemas/ProviderContact'
+            billingContact:
+              $ref: '#/components/schemas/ProviderContact'
+            secondaryBillingContact:
+              $ref: '#/components/schemas/ProviderContact'
+            serviceContact:
+              $ref: '#/components/schemas/ProviderContact'
+            secondaryServiceContact:
+              $ref: '#/components/schemas/ProviderContact'
+            votingContact:
+              $ref: '#/components/schemas/ProviderContact'
+            hasRequiredContacts:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
+            created:
+              type: string
+            updated:
+              type: string
+            doiEstimate:
+              type: number
+        relationships:
+          type: object
+          properties:
+            clients:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            prefixes:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            contacts:
+              type: object
+              description: Returned only when authenticated with associated credentials.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+            consortium:
+              type: object
+              description: Returned only when the provider is a Consortium Organization.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataObject'
+            consortiumOrganizations:
+              type: object
+              description: Returned only when the provider is a Consortium.
+              properties:
+                data:
+                  $ref: '#/components/schemas/DataArray'
+
       required:
         - id
         - attributes - name - symbol
-      example:
-        id: bl
-        attributes:
-          name: British Library
-          symbol: BL
+    ProviderContact:
+      type: object
+      description: Returned only when authenticated with associated credentials.
+      properties:
+        email:
+          type: string
+        familyName:
+          type: string
+        givenName:
+          type: string
     Report:
       type: object
       description: >-
         Describes the formatting needs for the COUNTER Dataset Report. Response
         may include the Report_Header (optional), Report_Datasets (usage stats).
       properties:
-        data:
+        id:
+          type: string
+          example: 003fadc1-daab-4d1e-97d1-96004c1ff529
+        report-header:
           type: object
           properties:
-            id:
-              type: string
-              example: 0000-0000-0000-0000
             report-name:
               type: string
               description: The long name of the report.
@@ -2214,6 +2742,10 @@ components:
               type: string
               description: The release or version of the report.
               example: RD1
+            created-by:
+              type: string
+              description: Name of the organization producing the report.
+              example: DataONE
             created:
               type: string
               format: dateTime
@@ -2221,29 +2753,62 @@ components:
                 Time the report was prepared. Format as defined by date-time -
                 RFC3339
               example: '2016-09-08T22:47:31Z'
-            created-by:
-              type: string
-              description: Name of the organization producing the report.
-              example: DataONE
+            reporting-period:
+              description: Time the report was prepared.
+              type: object
+              properties:
+                end-date:
+                  type: string
+                begin-date:
+                  type: string
             report-filters:
-              type: string
               description: >-
                 Zero or more report filters used for this report. Typically
                 reflect filters provided on the Request. Filters limit the data
                 to be reported on.
+              type: array
+              items:
+                type: string
             report-attributes:
-              type: string
               description: >-
                 Zero or more additional attributes applied to the report.
                 Attributes inform the level of detail in the report.
-            reporting-period:
-              type: string
-              description: Time the report was prepared.
-            report-datasets:
-              type: string
-              description: >-
-                Defines the output for the Report_Datasets being returned in a
-                Dataset Report. Collection of datasets from the report.
+              type: array
+              items:
+                type: string
+            exceptions:
+              readOnly: true
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  data:
+                    type: string
+                  message:
+                    type: string
+                  help-url:
+                    type: string
+                  severity:
+                    type: string
+        report-datasets:
+          description: >-
+            Defines the output for the Report_Datasets being returned in a
+            Dataset Report. Collection of datasets from the report.
+          type: array
+          items:
+            type: object
+        report-subsets:
+          type: array
+          items:
+            type: object
+            properties:
+              gzip:
+                type: string
+              checksum:
+                type: string
+            
       required:
         - report-datasets
         - report-id
@@ -2251,7 +2816,85 @@ components:
         - release
         - created-by
         - reporting-period
+    TotalsObject:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        count:
+          type: number
+        temporal:
+          type: object
+          properties:
+            this_month:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            this_year:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            last_year:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+            two_years_ago:
+              type: array
+              items:
+                $ref: '#/components/schemas/MetaObject'
+        states:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetaObject'
+    # object/array building blocks used across multiple object types
+    DataObject:
+        type: object
+        properties:
+          id:
+            type: string
+          type:
+            type: string
+    DataArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataObject'
+    MetaObject:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        count:
+          type: number
+    MetaArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/MetaObject'
+    MetaCore:
+      type: object
+      properties:
+        total:
+          description: Total results count.
+          type: number
+        totalPages:
+          description: Total pages count.
+          type: number
+        page:
+          description: Current page of the results.
+          type: number
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+        next:
+          type: string
+    # reusable enums
     relationType:
+      description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
       enum:
         - IsCitedBy
@@ -2291,6 +2934,7 @@ components:
         - IsCollectedBy
         - Collects
     resourceTypeGeneral:
+      description: '[DataCite Metadata Schema: resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
       type: string
       enum:
         - Audiovisual
@@ -2324,6 +2968,7 @@ components:
         - Workflow
         - Other
     contributorType:
+      description: '[DataCite Metadata Schema: contributorType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/contributorType/)'
       type: string
       enum:
         - ContactPerson
@@ -2348,6 +2993,7 @@ components:
         - WorkPackageLeader
         - Other
     relatedIdentifierType:
+      description: '[DataCite Metadata Schema: relatedIdentifierType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relatedIdentifierType/)'
       type: string
       enum:
         - ARK
@@ -2404,6 +3050,149 @@ components:
         - findable
         - registered
         - draft
+    source:
+      type: string
+      enum:
+        - mds
+        - api
+        - fabricaForm
+        - fabrica
+        - ez
+    region:
+      type: string
+      enum:
+        - AMER
+        - APAC
+        - EMEA
+    member-type:
+      type: string
+      enum:
+        - consortium_organization
+        - direct_member
+        - consortium
+        - member_only
+        - developer
+    organization-type:
+      type: string
+      enum:
+        - academicInstitution
+        - governmentAgency
+        - nationalInstitution
+        - publisher
+        - professionalSociety
+        - researchInstitution
+        - serviceProvider
+        - internationalOrganization
+        - other
+        - null
+    focus-area:
+      type: string
+      enum:
+        - naturalSciences
+        - engineeringAndTechnology
+        - medicalAndHealthSciences
+        - agriculturalSciences
+        - socialSciences
+        - humanities
+        - general
+        - null
+    source-id:
+      type: string
+      enum:
+        - datacite-usage
+        - datacite-related
+        - datacite-crossref
+        - datacite-kisti
+        - datacite-op
+        - datacite-medra
+        - datacite-istic
+        - datacite-funder
+        - datacite-orcid-auto-update
+        - datacite-url
+        - crossref
+    relation-type-id:
+      type: string
+      enum:
+        - is-cited-by
+        - cites
+        - is-supplement-to
+        - is-supplemented-by
+        - is-continued-by
+        - continues
+        - is-described-by
+        - describes
+        - has-metadata
+        - is-metadata-for
+        - has-version
+        - is-version-of
+        - is-new-version-of
+        - is-previous-version-of
+        - is-part-of
+        - has-part
+        - is-published-in
+        - is-referenced-by
+        - references
+        - is-documented-by
+        - documents
+        - is-compiled-by
+        - compiles
+        - is-variant-form-of
+        - is-original-form-of
+        - is-identical-to
+        - is-reviewed-by
+        - reviews
+        - is-derived-from
+        - is-source-of
+        - is-required-by
+        - requires
+        - is-obsoleted-by
+        - obsoletes
+        - is-collected-by
+        - collects
+        - is-authored-by
+        - is-authored-at
+        - is-funded-by
+        - total-dataset-investigations-regular
+        - unique-dataset-investigations-regular
+        - total-dataset-requests-regular
+        - unique-dataset-requests-regular
+        - total-dataset-investigations-machine
+        - unique-dataset-investigations-machine
+        - total-dataset-requests-machine
+        - unique-dataset-requests-machine
+    # reusable numbers
+    viewCount:
+      description: Total views, pulled from Event Data.
+      readOnly: true
+      type: number
+    downloadCount:
+      description: Total downloads, pulled from Event Data.
+      readOnly: true
+      type: number
+    referenceCount:
+      description: Total references, pulled from Event Data.
+      readOnly: true
+      type: number
+    citationCount:
+      description: Total citations, pulled from Event Data.
+      readOnly: true
+      type: number
+    partCount:
+      description: Total number of parts, pulled from Event Data.
+      readOnly: true
+      type: number
+    partOfCount:
+      description: Total number of parents, pulled from Event Data.
+      readOnly: true
+      type: number
+    versionCount:
+      description: Total number of versions, pulled from Event Data.
+      readOnly: true
+      type: number
+    versionOfCount:
+      description: Total number to which this DOI is a version, pulled from Event Data.
+      readOnly: true
+      type: number
   parameters:
     clientIdParam:
       name: client-id
@@ -2426,6 +3215,20 @@ components:
       schema:
         type: string
       example: ardc
+    publisherParam:
+      name: publisher
+      in: query
+      description: Set `publisher=true` to see additional publisher information such as the publisher identifier.
+      schema:
+        type: boolean
+        example: true
+    affiliationParam:
+      name: affiliation
+      in: query
+      description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+      schema:
+        type: boolean
+        example: true
     pageNumberParam:
       name: page[number]
       in: query
