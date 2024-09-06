@@ -2656,7 +2656,7 @@ components:
               $ref: '#/components/schemas/ProviderContact'
             secondaryBillingContact:
               $ref: '#/components/schemas/ProviderContact'
-            serviceeContact:
+            serviceContact:
               $ref: '#/components/schemas/ProviderContact'
             secondaryServiceContact:
               $ref: '#/components/schemas/ProviderContact'
@@ -2692,7 +2692,7 @@ components:
                   $ref: '#/components/schemas/DataArray'
             consortium:
               type: object
-              description: Returned only when the provider a Consortium Organization.
+              description: Returned only when the provider is a Consortium Organization.
               properties:
                 data:
                   $ref: '#/components/schemas/DataObject'
