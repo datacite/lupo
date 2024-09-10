@@ -108,5 +108,5 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
         run: |
-          bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
+          bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec -o "--fail-fast"
           echo $?

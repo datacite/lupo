@@ -8,5 +8,6 @@ jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
   parallel-test:
+    needs: lint
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
