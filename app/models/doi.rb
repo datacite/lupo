@@ -1277,7 +1277,7 @@ class Doi < ApplicationRecord
   end
 
   def reference_count
-    reference_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
+    reference_ids.length
   end
 
   def indexed_references
@@ -1290,7 +1290,7 @@ class Doi < ApplicationRecord
 
   # remove duplicate citing source dois
   def citation_count
-    citation_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
+    citation_ids.length
   end
 
   # remove duplicate citing source dois,
@@ -1311,7 +1311,7 @@ class Doi < ApplicationRecord
   end
 
   def part_count
-    part_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
+    part_ids.length
   end
 
   def indexed_parts
@@ -1323,7 +1323,7 @@ class Doi < ApplicationRecord
   end
 
   def part_of_count
-    part_of_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
+    part_of_ids.length
   end
 
   def indexed_part_of
@@ -1335,7 +1335,7 @@ class Doi < ApplicationRecord
   end
 
   def version_count
-    version_events.pluck(:target_doi).compact.map(&:downcase).uniq.length
+    version_ids.length
   end
 
   def indexed_versions
@@ -1347,7 +1347,7 @@ class Doi < ApplicationRecord
   end
 
   def version_of_count
-    version_of_events.pluck(:source_doi).compact.map(&:downcase).uniq.length
+    version_of_ids.length
   end
 
   def indexed_version_of
