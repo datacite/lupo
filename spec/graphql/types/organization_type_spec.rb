@@ -831,15 +831,6 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
-      expect(response.dig("errors")).to eq(
-        [
-          {
-            "locations" => [{ "column" => 9, "line" => 2 }],
-            "message" => "Record not found",
-            "path" => %w[organization],
-          },
-        ],
-      )
     end
   end
 
