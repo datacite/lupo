@@ -67,6 +67,12 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each, :monitor_factories) do |example|
+    ActiveSupport::Notifications.subscribe("factory_bot.run_factory") do |name, start, finish, id, payload|
+      $stderr.puts "FactoryBot: #{payload[:strategy]}(:#{payload[:name]}) at #{start}"
+    end
+  end
+
   config.before(:suite) do
     puts("Clearing_cache")
     Rails.cache.clear
@@ -77,6 +83,12 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
+    # Checking if :skip_prefix_pool parameter is set in metadata
+    if example.metadata[:skip_prefix_pool]
+      # Skip the prefix pool setup
+      next
+    end
+
     prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size].to_i : ENV["PREFIX_POOL_SIZE"].to_i
     if prefix_pool_size <= 0
       @prefix_pool = []
