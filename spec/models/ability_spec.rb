@@ -29,7 +29,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
   let(:metadata) { build_stubbed(:metadata, xml: xml, doi: doi) }
 
   before(:all) do
-    @consortium = create( :provider,
+    @consortium = create(:provider,
       role_name: "ROLE_CONSORTIUM")
     @provider = create(:provider,
       consortium: @consortium,
@@ -97,7 +97,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a client admin" do
-
       before(:all) do
         @token = User.generate_token(
           role_id: "client_admin",
