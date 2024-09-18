@@ -39,7 +39,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     subject { Ability.new(user) }
 
     context "when is a user" do
-
       let(:token) { User.generate_token(role_id: "user") }
 
       it { is_expected.to be_able_to(:read, user) }
@@ -53,14 +52,14 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:read_contact_information, provider)
       end
 
-      it "can not read/create/update/destroy the contact"do
+      it "can not read/create/update/destroy the contact" do
         is_expected.not_to be_able_to(:read, contact)
         is_expected.not_to be_able_to(:create, contact)
         is_expected.not_to be_able_to(:update, contact)
         is_expected.not_to be_able_to(:destroy, contact)
       end
 
-      it "can not read/create/update/destroy/transfer/read_contact_information/read_analytics the client"do
+      it "can not read/create/update/destroy/transfer/read_contact_information/read_analytics the client" do
         is_expected.not_to be_able_to(:read, client)
         is_expected.not_to be_able_to(:create, client)
         is_expected.not_to be_able_to(:update, client)
@@ -77,7 +76,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:destroy, prefix)
       end
 
-      it "can read but not transfer/create/update/destroy the doi"do
+      it "can read but not transfer/create/update/destroy the doi" do
         is_expected.to be_able_to(:read, doi)
         is_expected.not_to be_able_to(:transfer, doi)
         is_expected.not_to be_able_to(:create, doi)
@@ -87,7 +86,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a client admin" do
-
       let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
       let(:provider) do
         create(
@@ -162,7 +160,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a client admin inactive" do
-
       let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
       let(:provider) do
         create(
@@ -177,7 +174,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
           provider: provider,
           is_active: false
         })
-
       end
       let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
       let(:token) do
@@ -225,7 +221,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:destroy, prefix)
       end
 
-      it "can read but not create/update/destroy the client prefix"do
+      it "can read but not create/update/destroy the client prefix" do
         is_expected.to be_able_to(:read, client_prefix)
         is_expected.not_to be_able_to(:create, client_prefix)
         is_expected.not_to be_able_to(:update, client_prefix)
@@ -242,7 +238,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a client user" do
-
       let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
       let(:provider) do
         create(
@@ -262,11 +257,11 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         })
       end
 
-      it "can read the user"do
+      it "can read the user" do
         is_expected.to be_able_to(:read, user)
       end
 
-      it "can read, but not create/update/destroy/read_billing_information/read_contact_information the provider"do
+      it "can read, but not create/update/destroy/read_billing_information/read_contact_information the provider" do
         is_expected.to be_able_to(:read, provider)
         is_expected.not_to be_able_to(:create, provider)
         is_expected.not_to be_able_to(:update, provider)
@@ -275,7 +270,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:read_contact_information, provider)
       end
 
-      it "can not read/create/update/destroy a contact"do
+      it "can not read/create/update/destroy a contact" do
         is_expected.not_to be_able_to(:read, contact)
         is_expected.not_to be_able_to(:create, contact)
         is_expected.not_to be_able_to(:update, contact)
@@ -316,7 +311,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a provider admin" do
-
       let(:token) do
         User.generate_token(
           role_id: "provider_admin", provider_id: provider.symbol.downcase,
@@ -413,7 +407,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.to be_able_to(:destroy, consortium_contact)
       end
 
-      it "can read/create/update/destroy the provider"do
+      it "can read/create/update/destroy the provider" do
         is_expected.to be_able_to(:read, provider)
         is_expected.to be_able_to(:create, provider)
         is_expected.to be_able_to(:update, provider)
@@ -444,7 +438,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.to be_able_to(:destroy, provider_prefix)
       end
 
-      it 'can read/transfer but not create/update/destroy the doi' do
+      it "can read/transfer but not create/update/destroy the doi" do
         is_expected.to be_able_to(:read, doi)
         is_expected.to be_able_to(:transfer, doi)
         is_expected.not_to be_able_to(:create, doi)
@@ -516,7 +510,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a staff admin" do
-
       let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
       let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
       let!(:prefix) { create(:prefix, uid: "10.14454") }
@@ -535,7 +528,7 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.to be_able_to(:read, user)
       end
 
-      it 'can read/create/update/destroy/transfer/read_billing_information/read_contact_information the provider' do
+      it "can read/create/update/destroy/transfer/read_billing_information/read_contact_information the provider" do
         is_expected.to be_able_to(:read, provider)
         is_expected.to be_able_to(:create, provider)
         is_expected.to be_able_to(:update, provider)
@@ -571,7 +564,6 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a staff user" do
-
       let(:token) { User.generate_token(role_id: "staff_user") }
 
       it "can read the user" do
