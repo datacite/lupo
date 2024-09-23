@@ -13,6 +13,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
   let(:doi) { create(:doi, client: client, doi: "10.14454/4K3M-NYVG") }
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
+
   describe "content_negotation", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: ENV["MDS_USERNAME"], password: ENV["MDS_PASSWORD"]) }
