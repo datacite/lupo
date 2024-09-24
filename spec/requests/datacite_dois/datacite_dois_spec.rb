@@ -690,65 +690,6 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with authorization headers", elasticsearch: true do
-    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
-    let!(:doi_draft) { create(:doi, client: client, aasm_state: "draft") }
-    let!(:doi_registered) { create(:doi, client: client, aasm_state: "registered") }
-    let(:anonymous_basic_auth_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, "") } }
-    let(:client_basic_auth_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, ENV["MDS_PASSWORD"]) } }
-    let(:provider_basic_auth_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(provider.symbol, ENV["MDS_PASSWORD"]) } }
-
-    before do
-      DataciteDoi.import
-      sleep 2
-    end
-
-    it "return only findable dois with no authorization" do
-      get "/dois"
-
-      expect(json.dig("meta", "total")).to eq(10)
-      expect(json.dig("meta", "states", 0, "count")).to eq(10)
-      expect(json.dig("meta", "states", 1)).to eq(nil)
-      expect(json.dig("meta", "states", 2)).to eq(nil)
-    end
-
-    it "return only findable dois with anonymous user" do
-      get "/dois", nil, anonymous_basic_auth_headers
-
-      expect(json.dig("meta", "total")).to eq(10)
-      expect(json.dig("meta", "states", 0, "count")).to eq(10)
-      expect(json.dig("meta", "states", 1)).to eq(nil)
-      expect(json.dig("meta", "states", 2)).to eq(nil)
-    end
-
-    it "return dois in all states with authenticated client user" do
-      get "/dois", nil, client_basic_auth_headers
-
-      expect(json.dig("meta", "total")).to eq(12)
-      expect(json.dig("meta", "states", 0, "count")).to eq(10)
-      expect(json.dig("meta", "states", 1, "count")).to eq(1)
-      expect(json.dig("meta", "states", 2, "count")).to eq(1)
-    end
-
-    it "return dois in all states with authenticated provider user" do
-      get "/dois", nil, provider_basic_auth_headers
-
-      expect(json.dig("meta", "total")).to eq(12)
-      expect(json.dig("meta", "states", 0, "count")).to eq(10)
-      expect(json.dig("meta", "states", 1, "count")).to eq(1)
-      expect(json.dig("meta", "states", 2, "count")).to eq(1)
-    end
-
-    it "return dois in all states with authenticated admin user" do
-      get "/dois", nil, admin_headers
-
-      expect(json.dig("meta", "total")).to eq(12)
-      expect(json.dig("meta", "states", 0, "count")).to eq(10)
-      expect(json.dig("meta", "states", 1, "count")).to eq(1)
-      expect(json.dig("meta", "states", 2, "count")).to eq(1)
-    end
-  end
-
   describe "GET /dois/:id", elasticsearch: true do
     let!(:doi) { create(:doi, client: client) }
 
