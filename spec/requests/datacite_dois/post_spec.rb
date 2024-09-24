@@ -2411,6 +2411,4 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
   end
-
-
 end

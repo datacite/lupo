@@ -75,5 +75,4 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "states", 2, "count")).to eq(1)
     end
   end
-
 end
