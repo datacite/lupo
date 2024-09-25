@@ -26,3 +26,6 @@ production:
 
 stage:
   <<: *defaults
+
+uat:
+  <<: *defaults
