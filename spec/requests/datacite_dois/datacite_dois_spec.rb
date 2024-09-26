@@ -273,7 +273,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/:id with nil publisher values", elasticsearch: false , prefix_pool_size: 1 do
+  describe "GET /dois/:id with nil publisher values", elasticsearch: false, prefix_pool_size: 1 do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
     before do
