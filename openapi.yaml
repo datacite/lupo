@@ -2818,7 +2818,7 @@ components:
                 example: '2010'
               platform:
                 type: string
-                description: Name of the platform
+                description: Name of the platform.
                 example: DataONE
               data-type:
                 type: string
@@ -2826,11 +2826,11 @@ components:
                 example: dataset
               publisher:
                 type: string
-                description: Name of publisher of the dataset
+                description: Name of publisher of the dataset.
                 example: DataONE
               dataset-id:
                 type: array
-                description: The identifier for the report dataset
+                description: The identifier for the report dataset.
                 items:
                   type: object
                   properties:
@@ -2874,7 +2874,7 @@ components:
                           access-method:
                             type: string
                             description: >-
-                              Identifies if the usage activity was 'Regular' usage - a user doing research on a content site, or if the usage activity was 'Machine' - for the purpose of retrieving content for Text and Data Mining (TDM)
+                              Identifies if the usage activity was 'Regular' usage - a user doing research on a content site, or if the usage activity was 'Machine' - for the purpose of retrieving content for Text and Data Mining (TDM).
                             example: regular
                             enum:
                               - regular
@@ -2924,7 +2924,7 @@ components:
                         - isni
                     value:
                       type: string
-                      description: Value of the contributor identifier
+                      description: Value of the contributor identifier.
                       example: Cassandra Lopez
         report-subsets:
           type: array
