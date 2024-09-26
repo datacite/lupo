@@ -3,6 +3,15 @@
 require "rails_helper"
 include Passwordable
 
+def import_doi_index
+  DataciteDoi.import
+  DataciteDoi.__elasticsearch__.refresh_index!
+end
+
+def clear_doi_index
+  DataciteDoi.__elasticsearch__.client.delete_by_query(index: DataciteDoi.index_name, body: { query: { match_all: {} } })
+end
+
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
@@ -426,7 +435,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with client-type filter", elasticsearch: true do
+  describe "GET /dois with client-type filter", elasticsearch: false, prefix_pool_size: 3 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
     let(:client_raid_registry) { create(:client, provider: provider, client_type: "raidRegistry") }
@@ -435,9 +444,13 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois_other) { create_list(:doi, 5, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" }) }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
     end
+
+    after do
+      clear_doi_index
+    end
+
 
     it "filters by repository client_type when client-type is set", vcr: true do
       get "/dois?client-type=repository", nil, headers
