@@ -5,12 +5,14 @@ include Passwordable
 
 def import_doi_index
   DataciteDoi.import
-  DataciteDoi.__elasticsearch__.refresh_index!
+  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
 end
 
 def clear_doi_index
   DataciteDoi.__elasticsearch__.client.delete_by_query(index: DataciteDoi.index_name, body: { query: { match_all: {} } })
+  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
 end
+
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -26,13 +28,17 @@ describe DataciteDoisController, type: :request, vcr: true do
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
-  describe "GET /dois", elasticsearch: true do
+
+  describe "GET /dois", prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      clear_doi_index
+      import_doi_index
       @dois = DataciteDoi.query(nil, page: { cursor: [], size: 10 }).results.to_a
+    end
+
+    after do
     end
 
     it "returns dois" do
@@ -235,12 +241,15 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with nil publisher values", elasticsearch: true do
+  describe "GET /dois with nil publisher values", elsasticsearch: true, prefix_pool_size: 1 do
     let!(:doi) { create(:doi, client: client, publisher_obj: nil) }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      clear_doi_index
+      import_doi_index
+    end
+
+    after do
     end
 
     it "returns nil publisher when publisher param is not set" do
@@ -264,12 +273,15 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/:id with nil publisher values", elasticsearch: true do
+  describe "GET /dois/:id with nil publisher values", elasticsearch: false , prefix_pool_size: 1 do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
+    end
+
+    after do
+      clear_doi_index
     end
 
     it "returns nil publisher when publisher param is not set" do
@@ -287,7 +299,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with publisher values", elasticsearch: true do
+  describe "GET /dois with publisher values", elasticsearch: false, prefix_pool_size: 1 do
     let!(:dryad_publisher_dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
     let!(:datacite_publisher_doi) { create(:doi, client: client, aasm_state: "findable", publisher:
         {
@@ -301,8 +313,10 @@ describe DataciteDoisController, type: :request, vcr: true do
     }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
+    end
+    after do
+      clear_doi_index
     end
 
     it "returns publisher hashes when publisher param is set to true" do
@@ -409,7 +423,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/:id with publisher values", elasticsearch: true do
+  describe "GET /dois/:id with publisher values", prefix_pool_size: 1 do
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
     it "returns publisher hash when publisher param is set to true" do
@@ -435,7 +449,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with client-type filter", elasticsearch: false, prefix_pool_size: 3 do
+  describe "GET /dois with client-type filter", prefix_pool_size: 3 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
     let(:client_raid_registry) { create(:client, provider: provider, client_type: "raidRegistry") }
@@ -446,7 +460,6 @@ describe DataciteDoisController, type: :request, vcr: true do
     before do
       import_doi_index
     end
-
     after do
       clear_doi_index
     end
@@ -477,13 +490,16 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with resource-type-id filter", elasticsearch: true do
+  describe "GET /dois with resource-type-id filter", elasticsearch: false, prefix_pool_size: 1 do
     let!(:instrument_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "Instrument" }) }
     let!(:study_registration_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "StudyRegistration" }) }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
+    end
+
+    after do
+      clear_doi_index
     end
 
     it "filters for Instrument dois when resource-type-id is set to instrument", vcr: true do
@@ -550,8 +566,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
     end
 
     it "returns dois with short orcid id", vcr: true do
@@ -677,8 +692,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
     end
 
     it "returns dois in ascending title sort order" do
@@ -707,8 +721,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
     end
 
     context "when the record exists" do
@@ -824,8 +837,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      sleep 3
+      import_doi_index
     end
 
     it "filter for dissertations" do
@@ -843,8 +855,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      sleep 3
+      import_doi_index
     end
 
     it "filter for instruments" do
@@ -862,8 +873,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      sleep 3
+      import_doi_index
     end
 
     it "filter for interactive resources" do
@@ -893,8 +903,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Fake", "resourceType" => "Presentation" }, client: client) }
 
     before do
-      DataciteDoi.import
-      sleep 3
+      import_doi_index
     end
 
     it "filter for fake resources returns no results" do
@@ -916,8 +925,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let!(:doi) { create(:doi, client: client) }
 
       before do
-        DataciteDoi.import
-        sleep 2
+        import_doi_index
       end
 
       it "fetches the record" do
@@ -1324,8 +1332,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     before do
-      DataciteDoi.import
-      sleep 2
+      import_doi_index
     end
 
     context "anonymous get" do
@@ -1401,8 +1408,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
       before do
-        DataciteDoi.import
-        sleep 2
+        import_doi_index
       end
 
       it "returns url" do
@@ -1417,8 +1423,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
 
       before do
-        DataciteDoi.import
-        sleep 2
+        import_doi_index
       end
 
       it "returns url" do
@@ -1433,8 +1438,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let!(:datacite_doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish", type: "DataciteDoi") }
 
       before do
-        DataciteDoi.import
-        sleep 2
+        import_doi_index
       end
 
       it "returns not found" do
@@ -1449,8 +1453,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       let!(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521") }
 
       before do
-        DataciteDoi.import
-        sleep 2
+        import_doi_index
       end
 
       it "returns not found" do
