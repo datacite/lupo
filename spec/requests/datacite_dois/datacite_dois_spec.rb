@@ -458,10 +458,8 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois_other) { create_list(:doi, 5, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" }) }
 
     before do
-      import_doi_index
-    end
-    after do
       clear_doi_index
+      import_doi_index
     end
 
 
