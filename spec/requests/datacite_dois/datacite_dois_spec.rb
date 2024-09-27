@@ -38,9 +38,6 @@ describe DataciteDoisController, type: :request, vcr: true do
       @dois = DataciteDoi.query(nil, page: { cursor: [], size: 10 }).results.to_a
     end
 
-    after do
-    end
-
     it "returns dois" do
       get "/dois", nil, headers
 
@@ -249,9 +246,6 @@ describe DataciteDoisController, type: :request, vcr: true do
       import_doi_index
     end
 
-    after do
-    end
-
     it "returns nil publisher when publisher param is not set" do
       get "/dois", nil, headers
 
@@ -277,11 +271,8 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:doi) { create(:doi, client: client, publisher: nil) }
 
     before do
-      import_doi_index
-    end
-
-    after do
       clear_doi_index
+      import_doi_index
     end
 
     it "returns nil publisher when publisher param is not set" do
@@ -313,10 +304,8 @@ describe DataciteDoisController, type: :request, vcr: true do
     }
 
     before do
-      import_doi_index
-    end
-    after do
       clear_doi_index
+      import_doi_index
     end
 
     it "returns publisher hashes when publisher param is set to true" do
@@ -493,11 +482,8 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:study_registration_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "StudyRegistration" }) }
 
     before do
-      import_doi_index
-    end
-
-    after do
       clear_doi_index
+      import_doi_index
     end
 
     it "filters for Instrument dois when resource-type-id is set to instrument", vcr: true do
