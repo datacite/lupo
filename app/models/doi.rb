@@ -1955,7 +1955,7 @@ class Doi < ApplicationRecord
     Array.wrap(contributors).each do |c|
       errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
       if schema_version == "http://datacite.org/schema/kernel-4"
-        errors.add(:contributors, "Contributor type #{c['contributorType']} is not supported in schema 4.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor WorkPackageLeader).include?(c["contributorType"])
+        errors.add(:contributors, "Contributor type #{c['contributorType']} is not supported in schema 4.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor Translator WorkPackageLeader).include?(c["contributorType"])
       end
     end
   end
