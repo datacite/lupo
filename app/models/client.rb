@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
-  SUBJECTS_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/client/subjects.json"
+  SUBJECTS_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "client", "subjects.json")
   audited except: %i[
     system_email
     service_contact
@@ -77,7 +77,7 @@ class Client < ApplicationRecord
                          in: %w[ROLE_DATACENTRE],
                          message: "Role %s is not included in the list"
   validates_inclusion_of :client_type,
-                         in: %w[repository periodical igsnCatalog],
+                         in: %w[repository periodical igsnCatalog raidRegistry],
                          message: "Client type %s is not included in the list"
   validates_associated :provider
   validate :check_id, on: :create

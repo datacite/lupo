@@ -146,15 +146,7 @@ class User
       )
     url = ENV["BRACCO_URL"] + "?jwt=" + jwt
     reset_url = ENV["BRACCO_URL"] + "/reset"
-    title = if Rails.env.stage?
-      if ENV["ES_PREFIX"].present?
-        "DataCite Fabrica Stage"
-      else
-        "DataCite Fabrica Test"
-      end
-    else
-      "DataCite Fabrica"
-    end
+    title = ENV["BRACCO_TITLE"]
     subject = "#{title}: Password Reset Request"
     account_type =
       if user.instance_of?(Provider)
@@ -164,7 +156,7 @@ class User
       end
     text =
       User.format_message_text(
-        template: "users/reset.text.erb",
+        template: "users/reset_text",
         title: title,
         contact_name: user.name,
         name: user.symbol,
@@ -173,7 +165,7 @@ class User
       )
     html =
       User.format_message_html(
-        template: "users/reset.html.erb",
+        template: "users/reset",
         title: title,
         contact_name: user.name,
         name: user.symbol,

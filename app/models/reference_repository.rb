@@ -3,7 +3,6 @@
 class ReferenceRepository < ApplicationRecord
   include Indexable
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
   include Hashid::Rails
   hashid_config alphabet: "abcdefghijklmnopqrstuvwxyz" \
     "1234567890"

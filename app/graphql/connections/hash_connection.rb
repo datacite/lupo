@@ -121,7 +121,7 @@ class HashConnection
 
   # @return [Boolean] True if there are more items after this page
   def has_next_page
-    nodes.length < total_count # && !(nodes.length < first.to_i)
+    nodes&.length < total_count # && !(nodes.length < first.to_i)
   end
 
   # @return [Boolean] True if there were items before these items
@@ -139,7 +139,7 @@ class HashConnection
 
   # @return [String] The cursor of the last item in {nodes}
   def end_cursor
-    nodes.last && encode((after.to_i + 1).to_s)
+    nodes&.last && encode((after.to_i + 1).to_s)
   end
 
   # Return a cursor for this item.

@@ -1,5 +1,4 @@
 FROM phusion/passenger-full:2.5.1
-LABEL maintainer="kgarza@datacite.org"
 
 # Set correct environment variables.
 ENV HOME /home/app

@@ -52,7 +52,7 @@ jobs:
           git add test/services/client-api/_lupo.auto.tfvars
           git commit -m "Adding lupo git variables for tag ${{ inputs.image_tag }}"
       - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           repository: 'datacite/mastino'

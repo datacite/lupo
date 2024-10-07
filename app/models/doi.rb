@@ -5,7 +5,7 @@ require "benchmark"
 
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
-  PUBLISHER_JSON_SCHEMA = "#{Rails.root}/app/models/schemas/doi/publisher.json"
+  PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
   audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
@@ -145,7 +145,7 @@ class Doi < ApplicationRecord
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
-  before_validation :update_publisher, if: [ :will_save_change_to_publisher?, :publisher? ]
+  before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
@@ -962,7 +962,12 @@ class Doi < ApplicationRecord
     minimum_should_match = 0
 
     filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
-    filter << { term: { resource_type_id: options[:resource_type_id].underscore.dasherize } } if options[:resource_type_id].present?
+    if options[:resource_type_id].present?
+      resource_type_ids = options[:resource_type_id]
+                            .split(",")
+                            .map { |id| id.strip.underscore.dasherize }
+      filter << { terms: { resource_type_id: resource_type_ids } }
+    end
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
     if options[:provider_id].present?
       options[:provider_id].split(",").each { |id|
@@ -1268,11 +1273,11 @@ class Doi < ApplicationRecord
   end
 
   def reference_ids
-    reference_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    reference_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def reference_count
-    reference_events.pluck(:target_doi).uniq.length
+    reference_ids.length
   end
 
   def indexed_references
@@ -1280,18 +1285,18 @@ class Doi < ApplicationRecord
   end
 
   def citation_ids
-    citation_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    citation_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   # remove duplicate citing source dois
   def citation_count
-    citation_events.pluck(:source_doi).uniq.length
+    citation_ids.length
   end
 
   # remove duplicate citing source dois,
   # then show distribution by year
   def citations_over_time
-    citation_events.pluck(:occurred_at, :source_doi).uniq { |v| v[1] }.
+    citation_events.pluck(:occurred_at, :source_doi).map { |v| [v[0], v[1]&.downcase] }.sort_by { |v| v[0] }.uniq { |v| v[1] }.
       group_by { |v| v[0].utc.iso8601[0..3] }.
       map { |k, v| { "year" => k, "total" => v.length } }.
       sort_by { |h| h["year"] }
@@ -1302,11 +1307,11 @@ class Doi < ApplicationRecord
   end
 
   def part_ids
-    part_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    part_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def part_count
-    part_events.pluck(:target_doi).uniq.length
+    part_ids.length
   end
 
   def indexed_parts
@@ -1314,11 +1319,11 @@ class Doi < ApplicationRecord
   end
 
   def part_of_ids
-    part_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    part_of_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   def part_of_count
-    part_of_events.pluck(:source_doi).uniq.length
+    part_of_ids.length
   end
 
   def indexed_part_of
@@ -1326,11 +1331,11 @@ class Doi < ApplicationRecord
   end
 
   def version_ids
-    version_events.pluck(:target_doi).compact.uniq.map(&:downcase)
+    version_events.pluck(:target_doi).compact.map(&:downcase).uniq
   end
 
   def version_count
-    version_events.pluck(:target_doi).uniq.length
+    version_ids.length
   end
 
   def indexed_versions
@@ -1338,11 +1343,11 @@ class Doi < ApplicationRecord
   end
 
   def version_of_ids
-    version_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
+    version_of_events.pluck(:source_doi).compact.map(&:downcase).uniq
   end
 
   def version_of_count
-    version_of_events.pluck(:source_doi).uniq.length
+    version_of_ids.length
   end
 
   def indexed_version_of
@@ -1356,11 +1361,11 @@ class Doi < ApplicationRecord
   def other_relation_ids
     other_relation_events.map do |e|
       e.doi
-    end.flatten.uniq - [doi.downcase]
+    end.flatten.compact.map(&:downcase).uniq - [doi.downcase]
   end
 
   def other_relation_count
-    other_relation_ids.length
+    other_relation_ids.compact.map(&:downcase).length
   end
 
   def xml_encoded
@@ -1867,7 +1872,7 @@ class Doi < ApplicationRecord
   end
 
   def current_metadata
-    metadata.order("metadata.created DESC").first
+    metadata.first
   end
 
   def metadata_version
@@ -1875,7 +1880,7 @@ class Doi < ApplicationRecord
   end
 
   def current_media
-    media.order("media.created DESC").first
+    media.first
   end
 
   def resource_type

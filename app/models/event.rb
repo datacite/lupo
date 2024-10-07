@@ -69,9 +69,9 @@ class Event < ApplicationRecord
   #     event.queue_event_job
   #   end
 
-  serialize :subj, JSON
-  serialize :obj, JSON
-  serialize :error_messages, JSON
+  serialize :subj, coder: JSON
+  serialize :obj, coder: JSON
+  serialize :error_messages, coder: JSON
 
   alias_attribute :created, :created_at
   alias_attribute :updated, :updated_at
@@ -122,6 +122,8 @@ class Event < ApplicationRecord
     describes
     is-described-by
   ].freeze
+
+  ALL_RELATION_TYPES = (RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES | CITATION_RELATION_TYPES | REFERENCE_RELATION_TYPES).uniq
 
   OTHER_RELATION_TYPES = (
     RELATIONS_RELATION_TYPES | NEW_RELATION_TYPES
@@ -714,7 +716,7 @@ class Event < ApplicationRecord
       next sum if prefix == "10.13039"
 
       # ignore DataCite DOIs
-      ra = cached_get_doi_ra(prefix).downcase
+      ra = cached_get_doi_ra(prefix)&.downcase
       next sum if ra.blank? || ra == "datacite"
 
       sum.push d
@@ -839,7 +841,7 @@ class Event < ApplicationRecord
     end
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
@@ -854,27 +856,63 @@ class Event < ApplicationRecord
     query = options[:query].presence
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
-    Rails.logger.info "#{label} #{response.results.total} events with #{label}."
 
-    # walk through results using cursor
-    if response.results.total.positive?
-      while response.results.length.positive?
-        response =
-          Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
-        break unless response.results.length.positive?
+    if response.size.positive?
+      while response.size.positive?
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
 
-        Rails.logger.info "#{label} #{
-                            response.results.length
-                          } events starting with _id #{
-                            response.results.to_a.first[:_id]
-                          }."
+        break unless response.size.positive?
+
+        Rails.logger.info("#{label}: #{response.size} events starting with _id #{response.results.to_a.first[:_id]}")
+
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info "#{label} Cursor: #{cursor} "
+
+        Rails.logger.info "#{label}: cursor: #{cursor}"
 
         ids = response.results.map(&:uuid).uniq
-        ids.each { |id| Object.const_get(job_name).perform_later(id, filter) }
+
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, options)
+        end
       end
     end
+
+    Rails.logger.info("#{label}: task completed")
+  end
+
+  def self.loop_through_gbif_events(options)
+    size = (options[:size] || 1_000).to_i
+    cursor = options[:cursor] || []
+    filter = options[:filter] || {}
+    label = options[:label] || ""
+    job_name = options[:job_name] || ""
+    query = options[:query].presence
+    delete_count = 0
+    max_delete_count = options[:max_delete_count]
+
+    response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
+
+    if response.size.positive?
+      while response.size.positive? && delete_count < max_delete_count
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
+
+        break unless response.size.positive?
+
+        Rails.logger.info("#{label}: #{response.size} events starting with _id #{response.results.to_a.first[:_id]}")
+
+        cursor = response.results.to_a.last[:sort]
+
+        Rails.logger.info "#{label}: cursor: #{cursor}"
+
+        ids = response.results.map(&:_id).uniq
+
+        Object.const_get(job_name).perform_later(ids, options)
+
+        delete_count += response.size
+      end
+    end
+
+    Rails.logger.info("#{label}: task completed")
   end
 
   def metric_type
@@ -1056,13 +1094,43 @@ class Event < ApplicationRecord
     end
   end # overridden, use uuid instead of id
 
-  def self.events_involving(_doi, relation_types = OTHER_RELATION_TYPES)
-    self.query(
-      nil,
-      doi: _doi,
-      source_id: RELATED_SOURCE_IDS.join(","),
-      relation_type_id: relation_types.join(","),
-      page: { size: 500 }
-    ).results.results
+  def self.events_involving(_doi, relation_types = ALL_RELATION_TYPES)
+    Enumerator.new do |yielder|
+      all_results = []
+      page_number = 1
+      page_size = 500
+
+
+      initial_results = self.query(
+        nil,
+        doi: _doi,
+        source_id: RELATED_SOURCE_IDS.join(","),
+        relation_type_id: relation_types.join(","),
+        page: { size: page_size, number: page_number },
+      ).results
+
+      total_results = initial_results.total
+      total_pages = page_size > 0 ? (total_results.to_f / page_size).ceil : 0
+      all_results.concat(initial_results.results)
+      initial_results.results.each do |event|
+        yielder.yield(event)
+      end
+
+      # Explicitly Loop through remaining pages and concat to all_results
+      if total_pages > 1
+        (2..total_pages).each do |page_num|
+          results = self.query(
+            nil,
+            doi: _doi,
+            source_id: RELATED_SOURCE_IDS.join(","),
+            relation_type_id: relation_types.join(","),
+            page: { size: page_size, number: page_num },
+          ).results
+          results.results.each do |event|
+            yielder.yield(event)
+          end
+        end
+      end
+    end
   end
 end

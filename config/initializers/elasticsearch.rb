@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require "faraday_middleware"
+require "faraday"
 require "faraday_middleware/aws_sigv4"
 
-if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
-    ENV["ES_HOST"] == "elasticsearch.datacite.org"
+if ENV["ES_HOST"].end_with?(".datacite.org")
   Elasticsearch::Model.client =
     Elasticsearch::Client.new(
       host: ENV["ES_HOST"],
@@ -24,12 +23,6 @@ if ENV["ES_HOST"] == "elasticsearch.test.datacite.org" ||
       f.adapter :excon
     end
 else
-  # config = {
-  #   host: ENV['ES_HOST'],
-  #   transport_options: {
-  #     request: { timeout: 30 }
-  #   }
-  # }
   Elasticsearch::Model.client =
     Elasticsearch::Client.new(
       host: ENV["ES_HOST"],
@@ -38,4 +31,20 @@ else
       user: "elastic",
       password: ENV["ELASTIC_PASSWORD"],
     ) { |f| f.adapter :excon }
+end
+
+# Monkeypactch to ignore the Elasticsearch::UnsupportedProductError.
+# This error is raised because our gem version does not match the elasticsearch version in AWS OpenSearch.
+# As such, it should be safe to ignore the error.
+module Elasticsearch
+  class Client
+    alias original_verify_with_version_or_header verify_with_version_or_header
+
+    def verify_with_version_or_header(...)
+      original_verify_with_version_or_header(...)
+    rescue Elasticsearch::UnsupportedProductError
+      # let's ignore this it's adding a lot of noise to the logs
+      # warn("Ignoring elasticsearch complaint: #{exception.message}")
+    end
+  end
 end

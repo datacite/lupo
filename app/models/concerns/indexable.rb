@@ -32,11 +32,11 @@ module Indexable
       elsif instance_of?(Event)
         OtherDoiJob.perform_later(dois_to_import)
       # ignore if record was created via Salesforce API
-      elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
+      elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
+      elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_client_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["ES_PREFIX"] == "stage")
+      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
@@ -105,12 +105,7 @@ module Indexable
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options = {})
       sqs = Aws::SQS::Client.new
-      queue_name_prefix =
-        if Rails.env.stage?
-          ENV["ES_PREFIX"].present? ? "stage" : "test"
-        else
-          Rails.env
-        end
+      queue_name_prefix = ENV["SQS_PREFIX"].present? ? ENV["SQS_PREFIX"] : Rails.env
       queue_url =
         sqs.get_queue_url(queue_name: "#{queue_name_prefix}_#{options[:queue_name]}").queue_url
       options[:shoryuken_class] ||= "DoiImportWorker"
