@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:3.0.7
+FROM phusion/passenger-ruby31:3.0.7
 
 # Set correct environment variables.
 ENV HOME /home/app
