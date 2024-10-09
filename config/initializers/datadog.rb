@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "ddtrace"
+require "datadog"
 
 Datadog.configure do |c|
   # Global
@@ -10,8 +10,10 @@ Datadog.configure do |c|
   c.env = Rails.env
 
   # Tracing settings
-  c.tracing.enabled = Rails.env.production?
-  c.tracing.analytics.enabled = true
+
+  # Enable tracing for production and staging envs
+  c.tracing.enabled = Rails.env.production? || Rails.env.stage?
+
   # We disable automatic log injection because it doesn't play nice with our formatter
   c.tracing.log_injection = false
 
@@ -19,4 +21,7 @@ Datadog.configure do |c|
   c.tracing.instrument :rails
   c.tracing.instrument :elasticsearch
   c.tracing.instrument :shoryuken
+
+  # Profiling setup
+  c.profiling.enabled = Rails.env.stage?
 end

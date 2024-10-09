@@ -13,7 +13,7 @@ class LupoSchema < GraphQL::Schema
   # custom connection wrapper for external REST APIs
   connections.add(Hash, HashConnection)
 
-  use GraphQL::Tracing::DataDogTracing, service: "graphql"
+  # use GraphQL::Tracing::DataDogTracing, service: "graphql"
   use ApolloFederation::Tracing
   use GraphQL::Batch
   use GraphQL::Cache

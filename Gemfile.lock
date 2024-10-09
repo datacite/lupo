@@ -217,15 +217,12 @@ GEM
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
-    datadog-ci (0.6.0)
-      msgpack
-    date (3.3.4)
-    ddtrace (1.19.0)
-      datadog-ci (~> 0.6.0)
+    datadog (2.3.0)
       debase-ruby_core_source (= 3.3.1)
-      libdatadog (~> 5.0.0.1.0)
+      libdatadog (~> 11.0.0.1.0)
       libddwaf (~> 1.14.0.0.0)
       msgpack
+    date (3.3.4)
     debase-ruby_core_source (3.3.1)
     debug_inspector (1.1.0)
     departure (6.7.0)
@@ -418,9 +415,9 @@ GEM
       mime-types
       terrapin (>= 0.6.0, < 2.0)
     latex-decode (0.4.0)
-    libdatadog (5.0.0.1.0)
-    libdatadog (5.0.0.1.0-aarch64-linux)
-    libdatadog (5.0.0.1.0-x86_64-linux)
+    libdatadog (11.0.0.1.0)
+    libdatadog (11.0.0.1.0-aarch64-linux)
+    libdatadog (11.0.0.1.0-x86_64-linux)
     libddwaf (1.14.0.0.0-aarch64-linux)
       ffi (~> 1.0)
     libddwaf (1.14.0.0.0-arm64-darwin)
@@ -802,7 +799,7 @@ DEPENDENCIES
   dalli (~> 3.2, >= 3.2.8)
   database_cleaner
   database_cleaner-active_record (~> 2.1)
-  ddtrace
+  datadog
   departure (~> 6.2)
   diffy (~> 3.2, >= 3.2.1)
   dotenv
