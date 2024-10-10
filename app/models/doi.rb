@@ -944,6 +944,7 @@ class Doi < ApplicationRecord
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
       query = query.gsub(/(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/, 'publisher_obj.\2')
+      query = query.gsub(/schemaVersion/, "schema_version")
       query = query.gsub("/", "\\/")
     end
 
