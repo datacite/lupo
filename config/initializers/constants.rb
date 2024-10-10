@@ -55,6 +55,7 @@ REGIONS = {
 
 RESOURCE_TYPES_GENERAL = {
   "Audiovisual" => "Audiovisual",
+  "Award" => "Award",
   "Book" => "Book",
   "BookChapter" => "Book Chapter",
   "Collection" => "Collection",
