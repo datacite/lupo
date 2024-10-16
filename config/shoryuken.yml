@@ -3,6 +3,7 @@ delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
   - [lupo, 8]
+  - [lupo_doi_registration, 8]
   - [lupo_import, 8]
   - [lupo_import_other_doi, 8]
   - [lupo_transfer, 4]
