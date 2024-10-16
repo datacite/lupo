@@ -8,7 +8,7 @@ module Indexable
   included do
     after_commit on: %i[create update] do
       # use index_document instead of update_document to also update virtual attributes
-      unless %w[Prefix ProviderPrefix ClientPrefix Doi].include?(self.class.name)
+      if not %w[Prefix ProviderPrefix ClientPrefix Doi].include?(self.class.name)
         IndexJob.perform_later(self)
       elsif instance_of?(Doi)
         IndexJobDoiRegistration.perform_later(self)
