@@ -8,8 +8,10 @@ module Indexable
   included do
     after_commit on: %i[create update] do
       # use index_document instead of update_document to also update virtual attributes
-      unless %w[Prefix ProviderPrefix ClientPrefix].include?(self.class.name)
+      if not %w[Prefix ProviderPrefix ClientPrefix Doi].include?(self.class.name)
         IndexJob.perform_later(self)
+      elsif instance_of?(Doi)
+        IndexJobDoiRegistration.perform_later(self)
       else
         __elasticsearch__.index_document
         # This is due to the order of indexing, we want to always ensure
