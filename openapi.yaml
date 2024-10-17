@@ -2173,6 +2173,7 @@ components:
                   - Available
                   - Copyrighted
                   - Collected
+                  - Coverage
                   - Created
                   - Issued
                   - Submitted
@@ -3055,11 +3056,14 @@ components:
         - Obsoletes
         - IsCollectedBy
         - Collects
+        - IsTranslationOf
+        - HasTranslation
     resourceTypeGeneral:
       description: '[DataCite Metadata Schema: resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
       type: string
       enum:
         - Audiovisual
+        - Award
         - Book
         - BookChapter
         - Collection
@@ -3080,6 +3084,7 @@ components:
         - PeerReview
         - PhysicalObject
         - Preprint
+        - Project
         - Report
         - Service
         - Software
@@ -3112,6 +3117,7 @@ components:
         - RightsHolder
         - Sponsor
         - Supervisor
+        - Translator
         - WorkPackageLeader
         - Other
     relatedIdentifierType:
@@ -3121,6 +3127,7 @@ components:
         - ARK
         - arXiv
         - bibcode
+        - CSTR
         - DOI
         - EAN13
         - EISSN
@@ -3133,6 +3140,7 @@ components:
         - LSID
         - PMID
         - PURL
+        - RRID
         - UPC
         - URL
         - URN
