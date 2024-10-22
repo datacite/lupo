@@ -1208,6 +1208,27 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
               },
            ],
           },
+          {
+            "contributorType" => "Translator",
+            "familyName" => "Doe",
+            "givenName" => "Jane",
+            "name" => "Doe, Jane",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-0800-1234",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "Example Translation Services",
+                "affiliationIdentifier" => "https://ror.org/013meh9876",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
         ]
       )
       expect(subject).to be_valid
@@ -1215,6 +1236,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "https://orcid.org/0000-0003-3484-6875",
           "https://orcid.org/0000-0003-3484-0000",
+          "https://orcid.org/0000-0003-0800-1234",  # Contributor: Jane Doe (Translator)
         ]
       )
     end
