@@ -2009,4 +2009,53 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       )
     end
   end
+
+  describe "check schema 4.6 changes" do
+    let(:doi) { FactoryBot.create(:doi,
+      types: {
+        "resourceTypeGeneral": "Award",
+        "resourceType": "Grant"
+      },
+      creators: [{
+        "nameType": "Personal",
+        "name": "Doe, John",
+        "givenName": "John",
+        "familyName": "Doe",
+        "contributorType": "Translator"
+      }],
+      related_identifiers: [
+        {
+          "relatedIdentifier": "RRID:SCR_123456",
+          "relatedIdentifierType": "RRID",
+          "relationType": "HasTranslation"
+        }
+      ],
+      dates: [
+        { "date": "2011-10-23", "dateType": "Issued" },
+        { "date": "2020-03-15", "dateType": "Coverage" }
+      ]
+    )}
+
+    it "saves and returns new resourceTypeGeneral values" do
+      expect(doi.types["resourceTypeGeneral"]).to eq("Award")
+      expect(doi.types["resourceType"]).to eq("Grant")
+    end
+
+    it "saves and returns new contributorType value" do
+      expect(doi.creators.first["contributorType"]).to eq("Translator")
+    end
+
+    it "saves and returns new relatedIdentifierType value" do
+      expect(doi.related_identifiers.first["relatedIdentifierType"]).to eq("RRID")
+    end
+
+    it "saves and returns new relationType value" do
+      expect(doi.related_identifiers.first["relationType"]).to eq("HasTranslation")
+    end
+
+    it "saves and returns new dateType value" do
+      coverage_date = doi.dates.find { |d| d["dateType"] == "Coverage" }
+      expect(coverage_date["date"]).to eq("2020-03-15")
+    end
+  end
 end
