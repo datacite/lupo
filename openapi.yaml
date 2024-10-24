@@ -2133,23 +2133,19 @@ components:
               familyName:
                 type: string
               affiliation:
-                  description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
-                  oneOf:
-                    - type: array
-                      items:
-                        type: object
-                        properties:
-                          affiliationIdentifier:
-                            type: string
-                          affiliationIdentifierScheme:
-                            type: string
-                          name:
-                            type: string
-                          schemeUri:
-                            type: string
-                    - type: array
-                      items:
-                        type: string
+                description: Set `affiliation=true` to see additional affiliation information such as the affiliation identifier.
+                type: array
+                items:
+                  type: object
+                  properties:
+                    affiliationIdentifier:
+                      type: string
+                    affiliationIdentifierScheme:
+                      type: string
+                    name:
+                      type: string
+                    schemeUri:
+                      type: string
               contributorType:
                 $ref: '#/components/schemas/contributorType'
               lang:
