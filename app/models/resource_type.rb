@@ -33,6 +33,7 @@ class ResourceType
   def self.get_data(_options = {})
     [
       { "id" => "audiovisual", "title" => "Audiovisual" },
+      { "id" => "award", "title" => "Award" },
       { "id" => "book", "title" => "Book" },
       { "id" => "book-chapter", "title" => "BookChapter" },
       { "id" => "collection", "title" => "Collection" },
@@ -53,6 +54,7 @@ class ResourceType
       { "id" => "peer-review", "title" => "PeerReview" },
       { "id" => "physical-object", "title" => "PhysicalObject" },
       { "id" => "preprint", "title" => "Preprint" },
+      { "id" => "project", "title" => "Project" },
       { "id" => "report", "title" => "Report" },
       { "id" => "service", "title" => "Service" },
       { "id" => "software", "title" => "Software" },

@@ -1215,6 +1215,27 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
               },
            ],
           },
+          {
+            "contributorType" => "Translator",
+            "familyName" => "Doe",
+            "givenName" => "Jane",
+            "name" => "Doe, Jane",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-0800-1234",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "Example Translation Services",
+                "affiliationIdentifier" => "https://ror.org/013meh9876",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
         ]
       )
       expect(subject).to be_valid
@@ -1222,6 +1243,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "https://orcid.org/0000-0003-3484-6875",
           "https://orcid.org/0000-0003-3484-0000",
+          "https://orcid.org/0000-0003-0800-1234",  # Contributor: Jane Doe (Translator)
         ]
       )
     end
@@ -1992,6 +2014,55 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.publisher).to eq(
         { "name" => "Plazi.org taxonomic treatments database" }
       )
+    end
+  end
+
+  describe "check schema 4.6 changes" do
+    let(:doi) { FactoryBot.create(:doi,
+      types: {
+        "resourceTypeGeneral": "Award",
+        "resourceType": "Grant"
+      },
+      creators: [{
+        "nameType": "Personal",
+        "name": "Doe, John",
+        "givenName": "John",
+        "familyName": "Doe",
+        "contributorType": "Translator"
+      }],
+      related_identifiers: [
+        {
+          "relatedIdentifier": "RRID:SCR_123456",
+          "relatedIdentifierType": "RRID",
+          "relationType": "HasTranslation"
+        }
+      ],
+      dates: [
+        { "date": "2011-10-23", "dateType": "Issued" },
+        { "date": "2020-03-15", "dateType": "Coverage" }
+      ]
+    )}
+
+    it "saves and returns new resourceTypeGeneral values" do
+      expect(doi.types["resourceTypeGeneral"]).to eq("Award")
+      expect(doi.types["resourceType"]).to eq("Grant")
+    end
+
+    it "saves and returns new contributorType value" do
+      expect(doi.creators.first["contributorType"]).to eq("Translator")
+    end
+
+    it "saves and returns new relatedIdentifierType value" do
+      expect(doi.related_identifiers.first["relatedIdentifierType"]).to eq("RRID")
+    end
+
+    it "saves and returns new relationType value" do
+      expect(doi.related_identifiers.first["relationType"]).to eq("HasTranslation")
+    end
+
+    it "saves and returns new dateType value" do
+      coverage_date = doi.dates.find { |d| d["dateType"] == "Coverage" }
+      expect(coverage_date["date"]).to eq("2020-03-15")
     end
   end
 end
