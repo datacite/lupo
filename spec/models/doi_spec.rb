@@ -84,6 +84,13 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
         expect(new_doi).not_to receive(:send_import_message)
       end
+
+      it "does not send import message when environment variable EXCLUDE_PREFIXES_FROM_DATA_IMPORT is set to prefix of doi" do
+        ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] = "10.18730"
+        new_doi = create(:doi, doi: "10.18730/nvb5=", aasm_state: "findable")
+
+        expect(new_doi).not_to receive(:send_import_message)
+      end
     end
 
     context "On Create event" do

@@ -8,8 +8,10 @@ module Indexable
   included do
     after_commit on: %i[create update] do
       # use index_document instead of update_document to also update virtual attributes
-      unless %w[Prefix ProviderPrefix ClientPrefix].include?(self.class.name)
+      if not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
         IndexJob.perform_later(self)
+      elsif instance_of?(DataciteDoi)
+        IndexJobDoiRegistration.perform_later(self)
       else
         __elasticsearch__.index_document
         # This is due to the order of indexing, we want to always ensure
@@ -24,7 +26,7 @@ module Indexable
         if aasm_state == "findable"
           changed_attributes = saved_changes
           relevant_changes = changed_attributes.keys & %w[related_identifiers creators funding_references aasm_state]
-          if relevant_changes.any? || (created == updated)
+          if (relevant_changes.any? || (created == updated)) && !ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"].to_s.split(",").include?(prefix)
             send_import_message(to_jsonapi)
             Rails.logger.info "[Event Data Import Message] State: #{aasm_state} Params: #{to_jsonapi} message sent to Event Data service."
           end
