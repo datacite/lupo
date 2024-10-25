@@ -40,7 +40,15 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     kernel = get_valid_kernel(record.schema_version)
     return false if kernel.blank?
 
-    invalid_schemas = %w[http://datacite.org/schema/kernel-2.1 http://datacite.org/schema/kernel-2.2]
+    invalid_schemas = %w[
+      http://datacite.org/schema/kernel-2.1 
+      http://datacite.org/schema/kernel-2.2
+      http://datacite.org/schema/kernel-3.0
+      http://datacite.org/schema/kernel-3.1
+      http://datacite.org/schema/kernel-3
+    ]
+
+    puts("GOT HERE!!! - CHECKING FOR INVALID SCHEMA")
 
     if record.new_record? && invalid_schemas.include?(record.schema_version)
       record.errors.add(:xml, "DOI #{record.uid}: Schema #{record.schema_version} is no longer supported")
