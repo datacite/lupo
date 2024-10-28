@@ -1024,6 +1024,78 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    context "when the xml request uses unsupported metadata version - kernel-3" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns3.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
+    context "when the xml request uses unsupported metadata version - kernel-3.0" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns30.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3.0 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
+    context "when the xml request uses unsupported metadata version - kernel-3.1" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns31.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3.1 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
     context "when the request uses schema 4.0" do
       let(:xml) { Base64.strict_encode64(file_fixture("schema_4.0.xml").read) }
       let(:valid_attributes) do
