@@ -47,6 +47,8 @@ RSpec.describe ResourceType, type: :model do
           { "id" => "standard", "title" => "Standard" },
           { "id" => "text", "title" => "Text" },
           { "id" => "workflow", "title" => "Workflow" },
+          { "id" => "award", "title" => "Award" },
+          { "id" => "project", "title" => "Project" },
           { "id" => "other", "title" => "Other" })
       end
     end
