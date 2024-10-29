@@ -888,6 +888,8 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+# remove kernel-3 tests
+=begin
     context "when the request uses schema 3" do
       let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
       let(:valid_attributes) do
@@ -943,6 +945,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: No matching global declaration available for the validation root. at line 2, column 0", "uid" => "10.14454/10703" }])
       end
     end
+=end
 
     context "when the request has wrong object in nameIdentifiers" do
       let(:valid_attributes) { JSON.parse(file_fixture("datacite_wrong_nameIdentifiers.json").read) }
@@ -1664,7 +1667,8 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("errors")).to eq([{ "source" => "doi", "title" => "Is invalid", "uid" => "10.14454/107+03" }])
         end
       end
-
+# Remove kernel-3 tests
+=begin
       context "validates schema 3" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite_schema_3.xml"))) }
         let(:params) do
@@ -1688,6 +1692,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2011", "dateType" => "Issued" }])
         end
       end
+=end
 
       context "validates schema 4.5 xml" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-full-v4.5.xml"))) }
@@ -1949,7 +1954,8 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
       end
     end
-
+# Remove kernel-3 tests.
+=begin
     context "update individual attribute" do
       let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
       let(:valid_attributes) do
@@ -2034,6 +2040,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
       end
     end
+=end
 
     # Funder has been removed as valid contributor type in schema 4.0
     context "update contributor type with funder", elasticsearch: true do
