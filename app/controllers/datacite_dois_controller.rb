@@ -50,7 +50,7 @@ class DataciteDoisController < ApplicationController
       when "relevance"
         { "_score": { "order": "desc" } }
       else
-        { updated: { order: "desc" } }
+        { "_score": { "order": "desc" } }
       end
 
     page = page_from_params(params)
