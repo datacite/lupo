@@ -41,7 +41,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     return false if kernel.blank?
 
     invalid_schemas = %w[
-      http://datacite.org/schema/kernel-2.1 
+      http://datacite.org/schema/kernel-2.1
       http://datacite.org/schema/kernel-2.2
       http://datacite.org/schema/kernel-3.0
       http://datacite.org/schema/kernel-3.1
