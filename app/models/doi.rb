@@ -2518,7 +2518,7 @@ class Doi < ApplicationRecord
 
     def update_publisher_from_string
       self.publisher_obj = { name: publisher_before_type_cast }
-     end
+    end
 
     def reset_publishers
       self.publisher_obj = nil
