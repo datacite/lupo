@@ -4,7 +4,7 @@ module Doi::GraphqlQuery
   class Builder
     include Modelable
 
-    DEFAULT_CURSOR = ["Infinity", 0]
+    DEFAULT_CURSOR = [0, ""]
     DEFAULT_PAGE_SIZE = 0
     DEFAULT_FACET_COUNT = 10
 
@@ -29,7 +29,7 @@ module Doi::GraphqlQuery
     end
 
     def sort
-      [{ _score: "desc", uid: "asc" }]
+      [{ created: "asc", uid: "asc" }]
     end
 
     def query_fields
@@ -47,16 +47,16 @@ module Doi::GraphqlQuery
 
     def cursor
       tmp_cursor = @options.dig(:page, :cursor)
-      if tmp_cursor.blank?
+      if tmp_cursor.nil?
         return DEFAULT_CURSOR
       end
 
       if tmp_cursor.is_a?(Array)
-        tmp_score, uid = tmp_cursor
+        timestamp, uid = tmp_cursor
       elsif tmp_cursor.is_a?(String)
-        tmp_score, uid = tmp_cursor.split(",")
+        timestamp, uid = tmp_cursor.split(",")
       end
-      [tmp_score.to_f, uid.to_s]
+      [timestamp.to_i, uid.to_s]
     end
 
     def search_after
