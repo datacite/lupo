@@ -132,7 +132,7 @@ GEM
     bigdecimal (3.1.6)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bolognese (2.2.0)
+    bolognese (2.3.0)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -768,6 +768,7 @@ GEM
 
 PLATFORMS
   aarch64-linux
+  arm64-darwin-23
   universal-darwin-21
   x86_64-darwin-20
   x86_64-linux
@@ -785,7 +786,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   better_errors
   binding_of_caller
-  bolognese (~> 2.2)
+  bolognese (~> 2.3)
   bootsnap (~> 1.4, >= 1.4.4)
   brakeman (~> 6.1, >= 6.1.2)
   bullet (~> 7.1, >= 7.1.6)
