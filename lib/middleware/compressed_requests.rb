@@ -31,10 +31,10 @@ module Middleware
       begin
         status, headers, response = @app.call(env)
         [status, headers, response]
-      rescue => err
+      rescue => errß
         Raven.capture_exception(err)
         Rails.logger.error(err.inspect)
-        [500, {}, [{"status": 400, "title": err.message}.to_json]]
+        [500, {}, [{ "status": 400, "title": err.message }.to_json]]
       end
     end
 
