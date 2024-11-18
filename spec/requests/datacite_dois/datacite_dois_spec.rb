@@ -445,7 +445,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json.dig("data", "attributes", "agency")).to eq()
+      expect(json.dig("data", "attributes", "agency")).to eq("datacite")
     end
   end
 
