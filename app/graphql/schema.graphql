@@ -409,6 +409,7 @@ The connection type for Audiovisual.
 type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -1048,6 +1049,7 @@ The connection type for BookChapter.
 type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -1099,6 +1101,7 @@ The connection type for Book.
 type BookConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -1492,6 +1495,7 @@ The connection type for Collection.
 type CollectionConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -1837,6 +1841,7 @@ The connection type for ConferencePaper.
 type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -2474,6 +2479,7 @@ The connection type for DataManagementPlan.
 type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -2819,6 +2825,7 @@ The connection type for DataPaper.
 type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -3185,6 +3192,7 @@ The connection type for Dataset.
 type DatasetConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
   datasetConnectionCount: Int!
 
@@ -3627,6 +3635,7 @@ The connection type for Dissertation.
 type DissertationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -5261,6 +5270,7 @@ The connection type for Image.
 type ImageConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -5606,6 +5616,7 @@ The connection type for Instrument.
 type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -5951,6 +5962,7 @@ The connection type for InteractiveResource.
 type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -6301,6 +6313,7 @@ The connection type for JournalArticle.
 type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -6942,6 +6955,7 @@ The connection type for Model.
 type ModelConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -7484,6 +7498,7 @@ The connection type for Other.
 type OtherConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -7854,6 +7869,7 @@ The connection type for PeerReview.
 type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -8336,6 +8352,7 @@ The connection type for PhysicalObject.
 type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -8734,6 +8751,7 @@ The connection type for Preprint.
 type PreprintConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -9079,6 +9097,7 @@ The connection type for Publication.
 type PublicationConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
   datasetConnectionCount: Int!
 
@@ -9246,7 +9265,7 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  works(after: String, clientType: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -10099,6 +10118,7 @@ The connection type for Service.
 type ServiceConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -10470,6 +10490,7 @@ The connection type for Software.
 type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
   datasetConnectionCount: Int!
 
@@ -10821,6 +10842,7 @@ The connection type for Sound.
 type SoundConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -11377,6 +11399,7 @@ The connection type for Work.
 type WorkConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """
@@ -11429,6 +11452,7 @@ type WorkEdge {
 interface WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
   fieldsOfScience: [Facet!]
   fieldsOfScienceCombined: [Facet!]
@@ -11744,6 +11768,7 @@ The connection type for Workflow.
 type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   affiliations: [Facet!]
   authors: [Facet!]
+  clientTypes: [Facet!]
   creatorsAndContributors: [Facet!]
 
   """

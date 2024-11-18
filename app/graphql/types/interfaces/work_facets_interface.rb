@@ -19,6 +19,7 @@ module Interfaces::WorkFacetsInterface
   field :fields_of_science_repository, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
   field :languages, [FacetType], null: true, cache: true
+  field :client_types, [FacetType], null: true, cache: true
   field :person_to_work_types_multilevel, [MultiFacetType], null: true, cache: true
 
   def person_to_work_types_multilevel
@@ -136,6 +137,14 @@ module Interfaces::WorkFacetsInterface
   def languages
     if object.aggregations.languages
       facet_by_language(object.aggregations.languages.buckets)
+    else
+      []
+    end
+  end
+
+  def client_types
+    if object.aggregations.client_types
+      facet_by_client_type(object.aggregations.client_types.buckets)
     else
       []
     end
