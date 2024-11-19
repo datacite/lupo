@@ -28,14 +28,8 @@ module Middleware
         env["rack.input"] = StringIO.new(extracted)
       end
 
-      begin
-        status, headers, response = @app.call(env)
-        [status, headers, response]
-      rescue => err
-        Raven.capture_exception(err)
-        Rails.logger.error(err.inspect)
-        [500, {}, [{ "status": 400, "title": err.message }.to_json]]
-      end
+      status, headers, response = @app.call(env)
+      [status, headers, response]
     end
 
     def decode(input, content_encoding)
