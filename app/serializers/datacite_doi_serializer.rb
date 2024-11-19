@@ -18,6 +18,7 @@ class DataciteDoiSerializer
              :titles,
              :publisher,
              :container,
+             :agency,
              :publication_year,
              :subjects,
              :contributors,
