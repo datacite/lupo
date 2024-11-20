@@ -56,33 +56,32 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     end
   end
 
-describe "filters" do
+  describe "filters" do
+    context "with basic filters" do
+        it "handles DOI ids" do
+          options = { ids: "10.5438/0012,10.5438/0013" }
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { terms: { doi: ["10.5438/0012", "10.5438/0013"].map(&:upcase) } }
+          )
+        end
 
-  context "with basic filters" do
-      it "handles DOI ids" do
-        options = { ids: "10.5438/0012,10.5438/0013" }
-        builder = described_class.new(query, options)
-        expect(builder.filters).to include(
-          { terms: { doi: ["10.5438/0012", "10.5438/0013"].map(&:upcase) } }
-        )
-      end
+        it "handles resource type" do
+          options = { resource_type: "dataset,text" }
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { terms: { "types.resourceType": ["dataset", "text"] } }
+          )
+        end
 
-      it "handles resource type" do
-        options = { resource_type: "dataset,text" }
-        builder = described_class.new(query, options)
-        expect(builder.filters).to include(
-          { terms: { "types.resourceType": ["dataset", "text"] } }
-        )
-      end
-
-      it "handles language" do
-        options = { language: "en,de" }
-        builder = described_class.new(query, options)
-        expect(builder.filters).to include(
-          { terms: { language: ["en", "de"].map(&:downcase) } }
-        )
-      end
-  end
+        it "handles language" do
+          options = { language: "en,de" }
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { terms: { language: ["en", "de"].map(&:downcase) } }
+          )
+        end
+    end
 
     context "with date range filters" do
       it "handles publication year range" do
@@ -222,6 +221,21 @@ describe "filters" do
   end
 
  describe "sorting" do
+   let(:builder) { described_class.new(query, options) }
+
+   context "with no sort options" do
+     it "uses default sort" do
+       expect(builder.sort).to eq(described_class::DEFAULT_SORT)
+     end
+   end
+
+   context "with sort options" do
+     let(:options) { { sort: "relevance" } }
+     it "ignores any sort options and returns the default" do
+       expect(builder.sort).to eq(described_class::DEFAULT_SORT)
+
+     end
+   end
 
  end
 
