@@ -438,6 +438,24 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois/:id with agency values", prefix_pool_size: 1 do
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+    it "returns agency values when flag is set" do
+      get "/dois/#{doi.doi}?include_other_registration_agencies=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", "attributes", "agency")).to eq("datacite")
+    end
+
+    it "does not returns agency values when flag isn't set" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", "attributes")).to_not have_key("agency")
+    end
+  end
+
   describe "GET /dois with client-type filter", prefix_pool_size: 3 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }

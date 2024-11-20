@@ -203,6 +203,7 @@ class DataciteDoisController < ApplicationController
           detail: params[:detail],
           affiliation: params[:affiliation],
           publisher: params[:publisher],
+          include_other_registration_agencies: params[:include_other_registration_agencies],
           is_collection: options[:is_collection],
         }
 
@@ -349,6 +350,7 @@ class DataciteDoisController < ApplicationController
               composite: params[:composite],
               affiliation: params[:affiliation],
               publisher: params[:publisher],
+              include_other_registration_agencies: params[:include_other_registration_agencies],
               is_collection: options[:is_collection],
             }
 
@@ -447,6 +449,7 @@ class DataciteDoisController < ApplicationController
           composite: nil,
           affiliation: params[:affiliation],
           publisher: params[:publisher],
+          include_other_registration_agencies: params[:include_other_registration_agencies],
         }
 
         render(
@@ -504,7 +507,8 @@ class DataciteDoisController < ApplicationController
       options[:params] = {
         current_ability: current_ability,
         affiliation: params[:affiliation],
-        publisher: params[:publisher]
+        publisher: params[:publisher],
+        include_other_registration_agencies: params[:include_other_registration_agencies],
       }
 
       render(
@@ -535,6 +539,7 @@ class DataciteDoisController < ApplicationController
         detail: true,
         affiliation: params[:affiliation],
         publisher: params[:publisher],
+        include_other_registration_agencies: params[:include_other_registration_agencies],
       }
 
       render(
@@ -595,6 +600,7 @@ class DataciteDoisController < ApplicationController
         detail: true,
         affiliation: params[:affiliation],
         publisher: params[:publisher],
+        include_other_registration_agencies: params[:include_other_registration_agencies],
       }
 
       render(
