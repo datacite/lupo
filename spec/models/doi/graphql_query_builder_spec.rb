@@ -66,6 +66,15 @@ RSpec.describe Doi::GraphqlQuery::Builder do
           )
         end
 
+        it "handles resource_type_id" do
+          options = { resource_type_id: "Journal_Article" }
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { term: { resource_type_id: "journal-article" } }
+          )
+
+        end
+
         it "handles resource type" do
           options = { resource_type: "dataset,text" }
           builder = described_class.new(query, options)
@@ -74,11 +83,36 @@ RSpec.describe Doi::GraphqlQuery::Builder do
           )
         end
 
+
+        it "handles agency" do
+          options = {agency: "crossref"}
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { terms: { agency: ["crossref"].map(&:downcase) } }
+          )
+        end
+
+        it "handles prefix" do
+          options = {prefix: "10.5438"}
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { terms: { prefix: ["10.5438"].map(&:downcase) } }
+          )
+        end
+
         it "handles language" do
           options = { language: "en,de" }
           builder = described_class.new(query, options)
           expect(builder.filters).to include(
             { terms: { language: ["en", "de"].map(&:downcase) } }
+          )
+        end
+
+        it "handles uid" do
+          options = { uid: "10.5438/0012" }
+          builder = described_class.new(query, options)
+          expect(builder.filters).to include(
+            { term: { uid: "10.5438/0012" } }
           )
         end
     end
@@ -102,11 +136,11 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     end
 
     context "with count-based filters" do
-      it "handles view count threshold" do
-        options = { has_views: "10" }
+      it "handles reference count threshold" do
+        options = { has_references: "5" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { range: { view_count: { gte: 10 } } }
+          { range: { reference_count: { gte: 5 } } }
         )
       end
 
@@ -115,6 +149,54 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
           { range: { citation_count: { gte: 5 } } }
+        )
+      end
+
+      it "handles part count threshold" do
+        options = { has_parts: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { part_count: { gte: 10 } } }
+        )
+      end
+
+      it "handles part of count threshold" do
+        options = { has_part_of: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { part_of_count: { gte: 10 } } }
+        )
+      end
+
+      it "handles version count threshold" do
+        options = { has_versions: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { version_count: { gte: 10 } } }
+        )
+      end
+
+      it "handles version of count threshold" do
+        options = { has_version_of: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { version_of_count: { gte: 10 } } }
+        )
+      end
+
+      it "handles view count threshold" do
+        options = { has_views: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { view_count: { gte: 10 } } }
+        )
+      end
+
+      it "handles download count threshold" do
+        options = { has_downloads: "10" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { download_count: { gte: 10 } } }
         )
       end
     end
@@ -177,11 +259,11 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         )
       end
 
-        it "handles user ORCID" do
-          expect(described_class.new(query, { user_id: "https://orcid.org/0000-0003-1419-2405" }).filters).to include(
-            { terms: { "creators.nameIdentifiers.nameIdentifier" => ["https://orcid.org/0000-0003-1419-2405"] } }
-          )
-        end
+      it "handles user ORCID" do
+        expect(described_class.new(query, { user_id: "https://orcid.org/0000-0003-1419-2405" }).filters).to include(
+          { terms: { "creators.nameIdentifiers.nameIdentifier" => ["https://orcid.org/0000-0003-1419-2405"] } }
+        )
+      end
     end
 
     context "with multiple filters" do
@@ -218,6 +300,9 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         expect(builder.filters).to be_empty
       end
     end
+
+
+
   end
 
  describe "sorting" do
@@ -236,7 +321,6 @@ RSpec.describe Doi::GraphqlQuery::Builder do
 
      end
    end
-
  end
 
 end
