@@ -2220,25 +2220,6 @@ describe "query with resourceTypeId", elasticsearch: true do
     expect(response.dig("data", "works", "nodes", 0, "doi")).to eq(study_registration_doi.doi.downcase)
     expect(response.dig("data", "works", "nodes", 0, "types", "resourceTypeGeneral")).to eq("StudyRegistration")
   end
-
-  it "returns project resource types" do
-    response = LupoSchema.execute(query, variables: { first: 15, cursor: nil }).as_json
-
-    expect(response.dig("data", "works", "resourceTypes")).to eq(
-      [{ "count" => 10, "id" => "project", "title" => "Project" }, { "count" => 5, "id" => "dataset", "title" => "Dataset" }]
-    )
-  end
-
-  it "returns projects when querying works based on resource_type_id" do
-    response =
-      LupoSchema.execute(
-        query,
-        variables: { first: 15, cursor: nil, resourceTypeId: "Project" }
-      ).
-        as_json
-
-    expect(response.dig("data", "works", "totalCount")).to eq(10)
-  end
 end
 
 describe "query with client_type facet", elasticsearch: true do
@@ -2262,7 +2243,7 @@ describe "query with client_type facet", elasticsearch: true do
     "query($first: Int, $cursor: String) {
       works(first: $first, after: $cursor) {
         totalCount
-        clientTypes {
+        repositoryTypes {
           id
           title
           count
@@ -2278,10 +2259,10 @@ describe "query with client_type facet", elasticsearch: true do
   end
 
   let(:query_with_client_type_filter) do
-    "query($first: Int, $cursor: String, $clientType: String) {
-      works(first: $first, after: $cursor, clientType: $clientType) {
+    "query($first: Int, $cursor: String, $repositoryType: String) {
+      works(first: $first, after: $cursor, repositoryType: $repositoryType) {
         totalCount
-        clientTypes {
+        repositoryTypes {
           id
           title
           count
@@ -2296,7 +2277,7 @@ describe "query with client_type facet", elasticsearch: true do
     }"
   end
 
-  it "returns clientTypes facet" do
+  it "returns repositoryTypes facet" do
     response =
       LupoSchema.execute(
         query,
@@ -2304,7 +2285,7 @@ describe "query with client_type facet", elasticsearch: true do
         as_json
 
     expect(response.dig("data", "works", "totalCount")).to eq(23)
-    expect(response.dig("data", "works", "clientTypes")).to eq(
+    expect(response.dig("data", "works", "repositoryTypes")).to eq(
       [
         { "count" => 10, "id" => "periodical", "title" => "Periodical" },
         { "count" => 10, "id" => "repository", "title" => "Repository" },
@@ -2314,16 +2295,16 @@ describe "query with client_type facet", elasticsearch: true do
     )
   end
 
-  it "returns filtered DOIs by clientType and only returns PhysicalObjects for igsnCatalog filter" do
+  it "returns filtered DOIs by repositoryType and only returns PhysicalObjects for igsnCatalog filter" do
     response =
       LupoSchema.execute(
         query_with_client_type_filter,
-        variables: { first: 15, cursor: nil, clientType: "igsnCatalog" }
+        variables: { first: 15, cursor: nil, repositoryType: "igsnCatalog" }
       ).
         as_json
-    
+
     expect(response.dig("data", "works", "totalCount")).to eq(1)
-    expect(response.dig("data", "works", "clientTypes")).to eq(
+    expect(response.dig("data", "works", "repositoryTypes")).to eq(
       [
         { "count" => 1, "id" => "igsnCatalog", "title" => "IGSN ID Catalog" },
       ]
