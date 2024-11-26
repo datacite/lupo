@@ -175,6 +175,8 @@ module Doi::GraphqlQuery
       filter << { terms: { "client.certificate" => options[:certificate].split(",") } } if options[:certificate].present?
       filter << { terms: { "creators.nameIdentifiers.nameIdentifier" => options[:user_id].split(",").collect { |id| "https://orcid.org/#{orcid_from_url(id)}" } } } if options[:user_id].present?
       filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } } if options[:has_person].present?
+      filter << { term: { "client.client_type" =>  options[:client_type] } } if options[:client_type]
+      filter << { term: { "types.resourceTypeGeneral" => "PhysicalObject" } } if options[:client_type] == "igsnCatalog"
 
       filter
     end
@@ -407,6 +409,13 @@ module Doi::GraphqlQuery
           download_count: { sum: { field: "download_count" } },
           citation_count: { sum: { field: "citation_count" } },
           content_url_count: { value_count: { field: "content_url" } },
+          client_types: {
+            terms: {
+              field: "client.client_type",
+              size: facet_count,
+              min_doc_count: 1
+            }
+          }
         }
       end
     end

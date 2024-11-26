@@ -256,6 +256,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :resource_type_id, String, required: false
@@ -303,6 +304,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -345,6 +347,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -387,6 +390,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -429,6 +433,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -471,6 +476,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -513,6 +519,7 @@ class QueryType < BaseObject
     argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -553,6 +560,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -595,6 +603,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -637,6 +646,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -679,6 +689,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -721,6 +732,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -764,6 +776,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -806,6 +819,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -848,6 +862,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -890,6 +905,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -933,6 +949,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -976,6 +993,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1019,6 +1037,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1062,6 +1081,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1105,6 +1125,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1148,6 +1169,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1191,6 +1213,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1234,6 +1257,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1277,6 +1301,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
+    argument :repository_type, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :license, String, required: false
@@ -1337,6 +1362,7 @@ class QueryType < BaseObject
       ids: args[:ids],
       user_id: args[:user_id],
       client_id: args[:repository_id],
+      client_type: args[:repository_type],
       provider_id: args[:member_id],
       funder_id: args[:funder_id],
       resource_type_id: args[:resource_type_id],
