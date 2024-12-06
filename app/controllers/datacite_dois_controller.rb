@@ -136,6 +136,7 @@ class DataciteDoisController < ApplicationController
           source: params[:source],
           scroll_id: params[:scroll_id],
           disable_facets: disable_facets,
+          facets: params[:facets],
           page: page,
           sort: sort,
           random: params[:random],
@@ -221,47 +222,43 @@ class DataciteDoisController < ApplicationController
           )
         end
       else
-        if total.positive? && !disable_facets
-          states = facet_by_key(response.aggregations.states.buckets)
-          resource_types = facet_by_combined_key(response.aggregations.resource_types.buckets)
-          published = facet_by_range(response.aggregations.published.buckets)
-          created = facet_by_key_as_string(response.aggregations.created.buckets)
-          created_by_month = response.aggregations.created_by_month ? facet_by_key_as_string(response.aggregations.created_by_month.buckets) : nil
-          registered = facet_by_key_as_string(response.aggregations.registered.buckets)
-          providers = facet_by_combined_key(response.aggregations.providers.buckets)
-          clients = facet_by_combined_key(response.aggregations.clients.buckets)
-          prefixes = facet_by_key(response.aggregations.prefixes.buckets)
-          schema_versions = facet_by_schema(response.aggregations.schema_versions.buckets)
-          affiliations = facet_by_combined_key(response.aggregations.affiliations.buckets)
-          subjects = facet_by_key(response.aggregations.subjects.buckets)
-          fields_of_science = facet_by_fos(response.aggregations.fields_of_science.subject.buckets)
-          certificates = facet_by_key(response.aggregations.certificates.buckets)
-          licenses = facet_by_license(response.aggregations.licenses.buckets)
-          link_checks_status = facet_by_cumulative_year(response.aggregations.link_checks_status.buckets)
-          citations = metric_facet_by_year(response.aggregations.citations.buckets)
-          views = metric_facet_by_year(response.aggregations.views.buckets)
-          downloads = metric_facet_by_year(response.aggregations.downloads.buckets)
-        else
-          states = nil
-          resource_types = nil
-          published = nil
-          created = nil
-          registered = nil
-          providers = nil
-          clients = nil
-          prefixes = nil
-          schema_versions = nil
-          affiliations = nil
-          subjects = nil
-          fields_of_science = nil
-          certificates = nil
-          licenses = nil
-          link_checks_status = nil
-          citations = nil
-          views = nil
-          downloads = nil
-        end
+        facets_to_facet_methods = {
+          states: :facet_by_key,
+          resource_types: :facet_by_combined_key,
+          created: :facet_by_key_as_string,
+          created_by_month: :facet_by_key_as_string,
+          published: :facet_by_range,
+          registered: :facet_by_key_as_string,
+          providers: :facet_by_combined_key,
+          clients: :facet_by_combined_key,
+          client_types: :facet_by_client_type,
+          affiliations: :facet_by_combined_key,
+          prefixes: :facet_by_key,
+          certificates: :facet_by_key,
+          licenses: :facet_by_license,
+          schema_versions: :facet_by_schema,
+          link_checks_status: :facet_by_cumulative_year,
+          creators_and_contributors: :facet_by_creators_and_contributors,
+          subjects: :facet_by_key,
+          fields_of_science: :facet_by_fos,
+          languages: :facet_by_language,
+          registration_agencies: :facet_by_registration_agency,
+          citations: :metric_facet_by_year,
+          views: :metric_facet_by_year,
+          downloads: :metric_facet_by_year
+        }
 
+        facets_to_bucket_path = {
+          fields_of_science: [:subject, :buckets]
+        }
+
+        aggregations = response.aggregations
+        facets = facets_to_facet_methods.map do |facet, method|
+          if aggregations.dig(facet)
+            buckets = facets_to_bucket_path.dig(facet) ? aggregations.dig(facet, *facets_to_bucket_path[facet]) : aggregations.dig(facet).buckets
+            [facet.to_s.camelize(:lower), send(method, buckets)]
+          end
+        end.compact.to_h
         respond_to do |format|
           format.json do
             options = {}
@@ -271,27 +268,8 @@ class DataciteDoisController < ApplicationController
               page:
                 if page[:cursor].nil? && page[:number].present?
                   page[:number]
-                end,
-              states: states,
-              "resourceTypes" => resource_types,
-              created: created,
-              createdByMonth: created_by_month,
-              published: published,
-              registered: registered,
-              providers: providers,
-              clients: clients,
-              affiliations: affiliations,
-              prefixes: prefixes,
-              certificates: certificates,
-              licenses: licenses,
-              "schemaVersions" => schema_versions,
-              "linkChecksStatus" => link_checks_status,
-              subjects: subjects,
-              "fieldsOfScience" => fields_of_science,
-              citations: citations,
-              views: views,
-              downloads: downloads,
-            }.compact
+                end
+              }.merge(facets).compact
 
             options[:links] = {
               self: request.original_url,
@@ -325,6 +303,7 @@ class DataciteDoisController < ApplicationController
                       "has-affiliation" => params[:has_affiliation],
                       "has-funder" => params[:has_funder],
                       "disable-facets" => params[:disable_facets],
+                      "facets" => params[:facets],
                       detail: params[:detail],
                       composite: params[:composite],
                       affiliation: params[:affiliation],
