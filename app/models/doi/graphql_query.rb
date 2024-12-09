@@ -125,30 +125,16 @@ module Doi::GraphqlQuery
 
       filter = []
       filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
+      filter << { terms: { uid: [options[:uid]] } } if options[:uid].present?
       filter << { terms: { resource_type_id: [options[:resource_type_id].underscore.dasherize] } } if options[:resource_type_id].present?
       filter << { terms: { "types.resourceType": options[:resource_type].split(",") } } if options[:resource_type].present?
       filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
       filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
       filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
-      filter << { terms: { uid: [options[:uid]] } } if options[:uid].present?
       filter << { range: { created: { gte: "#{options[:created].split(',').min}||/y", lte: "#{options[:created].split(',').max}||/y", format: "yyyy" } } } if options[:created].present?
       filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
       filter << { terms: { schema_version: ["http://datacite.org/schema/kernel-#{options[:schema_version]}"] } } if options[:schema_version].present?
       filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
-      if options[:pid_entity].present?
-        filter << { terms: { "subjects.subjectScheme": ["PidEntity"] } }
-        filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
-      end
-      if options[:field_of_science].present?
-        filter << { terms: { "subjects.subjectScheme": ["Fields of Science and Technology (FOS)"] } }
-        filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
-      end
-      if options[:field_of_science_repository].present?
-        filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
-      end
-      if options[:field_of_science_combined].present?
-        filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
-      end
       filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
       filter << { terms: { source: [options[:source]] } } if options[:source].present?
       filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
@@ -170,14 +156,27 @@ module Doi::GraphqlQuery
       filter << { terms: { aasm_state: options[:state].to_s.split(",") } } if options[:state].present?
       filter << { range: { registered: { gte: "#{options[:registered].split(',').min}||/y", lte: "#{options[:registered].split(',').max}||/y", format: "yyyy" } } } if options[:registered].present?
       filter << { terms: { consortium_id: [options[:consortium_id].downcase] } } if options[:consortium_id].present?
-      # TODO align PID parsing
-      filter << { terms: { "client.re3data_id": [doi_from_url(options[:re3data_id])] } } if options[:re3data_id].present?
+      filter << { terms: { "client.re3data_id": [doi_from_url(options[:re3data_id])] } } if options[:re3data_id].present? # TODO align PID parsing
       filter << { terms: { "client.opendoar_id": [options[:opendoar_id]] } } if options[:opendoar_id].present?
       filter << { terms: { "client.certificate" => options[:certificate].split(",") } } if options[:certificate].present?
       filter << { terms: { "creators.nameIdentifiers.nameIdentifier" => options[:user_id].split(",").collect { |id| "https://orcid.org/#{orcid_from_url(id)}" } } } if options[:user_id].present?
       filter << { terms: { "creators.nameIdentifiers.nameIdentifierScheme": ["ORCID"] } } if options[:has_person].present?
       filter << { terms: { "client.client_type": [options[:client_type]] } } if options[:client_type]
       filter << { terms: { "types.resourceTypeGeneral": ["PhysicalObject"] } } if options[:client_type] == "igsnCatalog"
+      if options[:pid_entity].present?
+        filter << { terms: { "subjects.subjectScheme": ["PidEntity"] } }
+        filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
+      end
+      if options[:field_of_science].present?
+        filter << { terms: { "subjects.subjectScheme": ["Fields of Science and Technology (FOS)"] } }
+        filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+      end
+      if options[:field_of_science_repository].present?
+        filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+      end
+      if options[:field_of_science_combined].present?
+        filter << { terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
+      end
 
       filter
     end
