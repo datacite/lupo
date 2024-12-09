@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+  web:
+    container_name: lupo_web
+    platform: linux/amd64
+    env_file: .env
+    environment:
+      - ELASTIC_PASSWORD=AnUnsecurePassword123
+    image: ghcr.io/datacite/lupo:main
+    ports:
+      - "8065:80"
+      - "2265:22"
+    volumes:
+      - ./app:/home/app/webapp/app
+      - ./config:/home/app/webapp/config
+      - ./db:/home/app/webapp/db
+      - ./lib:/home/app/webapp/lib
+      - ./spec:/home/app/webapp/spec
+      - ./storage:/home/app/webapp/storage
+    networks:
+      - localstack_network
+    depends_on:
+      - elasticsearch
+
+  memcached:
+    container_name: lupo_memcached
+    image: memcached:1.6.32
+    ports:
+      - "11211:11211"
+    networks:
+      - localstack_network
+
+  mysql:
+    container_name: lupo_mysql
+    command: --max_allowed_packet=50000000
+    environment:
+      MYSQL_DATABASE: datacite
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    image: mysql:8.0
+    ports:
+      - "3309:3306"
+    networks:
+      - localstack_network
+
+  elasticsearch:
+    container_name: lupo_opensearch
+    image: opensearchproject/opensearch:2
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    environment:
+      discovery.type: single-node
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: AnUnsecurePassword123
+      DISABLE_SECURITY_PLUGIN: true
+      http.cors.enabled: true
+      bootstrap.memory_lock: true
+      http.cors.allow-origin: "*"
+      compatibility.override_main_response_version: true
+      logger.org.opensearch.discovery: "ERROR"
+    volumes:
+      - data:/usr/share/opensearch/data
+    networks:
+      - localstack_network
+    healthcheck:
+      test: curl -f http://admin:AnUnsecurePassword123@elasticsearch:9200
+      interval: 10s
+      timeout: 1s
+
+volumes:
+  data:
+    driver: local
+
+networks:
+  localstack_network:
+    external: true
