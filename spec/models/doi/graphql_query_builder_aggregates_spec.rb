@@ -206,4 +206,58 @@ RSpec.describe Doi::GraphqlQuery::Builder do
       expect(builder.aggregations.keys).to match_array(expected_keys)
     end
   end
+
+  describe "include aggregations" do
+    it "includes all aggregations by default" do
+      expected_keys = described_class.all_aggregation_keys
+      options = {}
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array(expected_keys)
+    end
+
+    it "includes all aggregations when :all symbol provided" do
+      expected_keys = described_class.all_aggregation_keys
+      options = { include_aggregations: :all }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array(expected_keys)
+    end
+
+    it "includes all aggregations when 'all' string provided" do
+      expected_keys = described_class.all_aggregation_keys
+      options = { include_aggregations: 'all' }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array(expected_keys)
+    end
+
+    it "returns empty hash when :none provided" do
+      options = { include_aggregations: :none }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations).to eq({})
+    end
+
+    it "returns empty hash when 'none' string provided" do
+      options = { include_aggregations: 'none' }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations).to eq({})
+    end
+
+    it "includes only specified aggregations when array of symbols provided" do
+      options = { include_aggregations: [:clients, :languages] }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array([:clients, :languages])
+    end
+
+    it "ignores invalid aggregation keys" do
+      options = { include_aggregations: [:clients, :invalid_key, :languages] }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array([:clients, :languages])
+    end
+
+    it "includes all aggregations when :all is included in array" do
+      expected_keys = described_class.all_aggregation_keys
+      options = { include_aggregations: [:clients, :all, :languages] }
+      builder = described_class.new(query, options)
+      expect(builder.aggregations.keys).to match_array(expected_keys)
+    end
+  end
 end
