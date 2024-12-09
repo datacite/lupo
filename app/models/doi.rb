@@ -801,13 +801,10 @@ class Doi < ApplicationRecord
   end
 
   def self.query_aggregations(disable_facets: false, facets: nil)
-    requested_facets = facets.respond_to?(:split) ? facets.split(",").map(&:strip).map(&:underscore).map(&:to_sym).uniq : default_doi_query_facets
+    return {} if disable_facets
 
-    if disable_facets
-      {}
-    else
-      requested_facets.map { |facet| [facet, all_doi_aggregations.dig(facet)] }.to_h.compact
-    end
+    requested_facets = facets.respond_to?(:split) ? facets.split(",").map(&:strip).map(&:underscore).map(&:to_sym).uniq : default_doi_query_facets
+    requested_facets.index_with { |facet| all_doi_aggregations.dig(facet) }.compact
   end
 
   def self.provider_aggregations
