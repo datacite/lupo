@@ -229,10 +229,10 @@ module Doi::GraphqlQuery
 
     def requested_aggs
       included_aggs = @options[:include_aggregations] || :all
-      ## if included agg is a string, split it on commas
-      if included_aggs.is_a?(String)
-        included_aggs = included_aggs.split(",")
-      end
+           ## if included agg is a string, split it on commas
+            if included_aggs.is_a?(String)
+              included_aggs = included_aggs.split(",").map(&:strip)
+            end
       return {} if included_aggs == :none || included_aggs == 'none'
       Array.wrap(included_aggs).map(&:to_sym)
     end
@@ -258,7 +258,6 @@ module Doi::GraphqlQuery
       AGGREGATION_DEFINITIONS.keys
     end
 
-    private
 
     AGGREGATION_DEFINITIONS = {
       resource_types: {
