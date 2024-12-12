@@ -7,6 +7,7 @@ module Doi::GraphqlQuery
     DEFAULT_CURSOR = [0, ""]
     DEFAULT_PAGE_SIZE = 0
     DEFAULT_FACET_COUNT = 10
+    DEFAULT_SORT = [{ created: "asc", uid: "asc" }]
 
     def initialize(query, options)
       @query = query
@@ -29,7 +30,7 @@ module Doi::GraphqlQuery
     end
 
     def sort
-      [{ created: "asc", uid: "asc" }]
+      DEFAULT_SORT
     end
 
     def query_fields

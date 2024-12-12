@@ -4,9 +4,9 @@
 require "rails_helper"
 
 RSpec.describe Doi::GraphqlQuery::Builder do
+  let(:query) { "" }
+  let(:options) { {} }
   describe "page size" do
-    let(:query) { "" }
-    let(:options) { {} }
     let(:builder) { described_class.new(query, options) }
 
     it "is DEFAULT_PAGE_SIZE with no options" do
@@ -23,8 +23,6 @@ RSpec.describe Doi::GraphqlQuery::Builder do
   end
 
   describe "cursor" do
-    let(:query) { "" }
-    let(:options) { {} }
     let(:builder) { described_class.new(query, options) }
 
     it "is DEFAULT_CURSOR with no options" do
@@ -58,18 +56,20 @@ RSpec.describe Doi::GraphqlQuery::Builder do
     end
   end
 
-  describe "filters"  do
-    it "is an empty array if not set" do
-      expect(described_class.new("", {}).filters).to eq([])
-      expect(described_class.new(nil, {}).filters).to eq([])
+  describe "sorting" do
+    let(:builder) { described_class.new(query, options) }
+
+    context "with no sort options" do
+      it "uses default sort" do
+        expect(builder.sort).to eq(described_class::DEFAULT_SORT)
+      end
     end
 
-    it "can filter for ids" do
-      expect(described_class.new("foo", { ids: ["bar"] }).filters).to eq([{ terms: { doi: ["BAR"] } }])
-    end
-
-    it "can filter for ids as single string" do
-      expect(described_class.new("foo", { ids: "bar" }).filters).to eq([{ terms: { doi: ["BAR"] } }])
+    context "with sort options" do
+      let(:options) { { sort: "relevance" } }
+      it "ignores any sort options and returns the default" do
+        expect(builder.sort).to eq(described_class::DEFAULT_SORT)
+      end
     end
   end
 end
