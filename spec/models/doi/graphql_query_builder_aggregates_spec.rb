@@ -58,7 +58,7 @@ RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_poo
 
     it "includes all aggregations when 'all' string provided" do
       expected_keys = described_class.all_aggregation_keys
-      options = { include_aggregations: 'all' }
+      options = { include_aggregations: "all" }
       builder = described_class.new(query, options)
       expect(builder.aggregations.keys).to match_array(expected_keys)
     end
@@ -70,7 +70,7 @@ RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_poo
     end
 
     it "returns empty hash when 'none' string provided" do
-      options = { include_aggregations: 'none' }
+      options = { include_aggregations: "none" }
       builder = described_class.new(query, options)
       expect(builder.aggregations).to eq({})
     end
@@ -82,7 +82,7 @@ RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_poo
     end
 
     it "returns empty hash when empty string provided" do
-      options = { include_aggregations: '' }
+      options = { include_aggregations: "" }
       builder = described_class.new(query, options)
       expect(builder.aggregations).to eq({})
     end
@@ -100,19 +100,19 @@ RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_poo
     end
 
     it "includes only specified aggregations when array of strings provided" do
-      options = { include_aggregations: ['clients', 'languages'] }
+      options = { include_aggregations: ["clients", "languages"] }
       builder = described_class.new(query, options)
       expect(builder.aggregations.keys).to match_array([:clients, :languages])
     end
 
     it "includes only specified aggregations when comma separated string provided" do
-      options = { include_aggregations: 'clients,languages' }
+      options = { include_aggregations: "clients,languages" }
       builder = described_class.new(query, options)
       expect(builder.aggregations.keys).to match_array([:clients, :languages])
     end
 
     it "includes only specified aggregations when comma separated string provided with spaces" do
-      options = { include_aggregations: 'clients, languages' }
+      options = { include_aggregations: "clients, languages" }
       builder = described_class.new(query, options)
       expect(builder.aggregations.keys).to match_array([:clients, :languages])
     end
