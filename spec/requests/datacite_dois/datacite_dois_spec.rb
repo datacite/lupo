@@ -13,6 +13,26 @@ def clear_doi_index
   DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
 end
 
+DEFAULT_DOIS_FACETS = [
+  "states",
+  "resourceTypes",
+  "created",
+  "published",
+  "registered",
+  "providers",
+  "clients",
+  "affiliations",
+  "prefixes",
+  "certificates",
+  "licenses",
+  "schemaVersions",
+  "linkChecksStatus",
+  "subjects",
+  "fieldsOfScience",
+  "citations",
+  "views",
+  "downloads"
+]
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -235,6 +255,69 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+    end
+
+    it "returns default facets" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+
+      expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
+    end
+
+    it "returns default facets when disable-facets is set to false" do
+      get "/dois?disable-facets=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+
+      expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
+    end
+
+    it "returns no facets when disable-facets is set to true" do
+      get "/dois?disable-facets=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      expect(json.dig("meta").length).to eq(3)
+      DEFAULT_DOIS_FACETS.each do |facet|
+        expect(json.dig("meta", facet)).to eq(nil)
+      end
+    end
+
+    it "returns no facets when facets is empty" do
+      get "/dois?facets=", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      expect(json.dig("meta").length).to eq(3)
+      DEFAULT_DOIS_FACETS.each do |facet|
+        expect(json.dig("meta", facet)).to eq(nil)
+      end
+    end
+
+    it "returns specified facets when facets is set" do
+      get "/dois?facets=client_types,registrationAgencies, clients,languages,creators_and_contributors,made_up_facet", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      expect(json.dig("meta").length).to eq(8)
+      expect(json.dig("meta", "states")).to eq(nil)
+      expect(json.dig("meta", "clientTypes")).to be_truthy
+      expect(json.dig("meta", "registrationAgencies")).to be_truthy
+      expect(json.dig("meta", "clients")).to be_truthy
+      expect(json.dig("meta", "languages")).to be_truthy
+      expect(json.dig("meta", "creatorsAndContributors")).to be_truthy
+      expect(json.dig("meta", "madeUpFacet")).to eq(nil)
+      expect(json.dig("meta", "made_up_facet")).to eq(nil)
     end
   end
 

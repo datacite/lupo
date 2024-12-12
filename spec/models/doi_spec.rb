@@ -1929,6 +1929,91 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe "query_aggregations" do
+    default_aggregations = Doi.default_doi_query_facets
+
+    it "returns default aggregations when disable_facets and facets are not set" do
+      aggregations = Doi.query_aggregations
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns default aggregations when disable_facets is set to false" do
+      aggregations = Doi.query_aggregations(disable_facets: false)
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns blank aggregations when disable_facets is true" do
+      aggregations = Doi.query_aggregations(disable_facets: true)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns blank aggregations when disable_facets is true string" do
+      aggregations = Doi.query_aggregations(disable_facets: "true")
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns default aggregations when disable_facets is false" do
+      aggregations = Doi.query_aggregations(disable_facets: false)
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns default aggregations when disable_facets is false string" do
+      aggregations = Doi.query_aggregations(disable_facets: "false")
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns selected aggregations when facets is a string" do
+      facets_string = "creators_and_contributors, registrationAgencies,made_up_facet,states,registration_agencies"
+      aggregations = Doi.query_aggregations(facets: facets_string)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets is a blank string" do
+      facets_string = ""
+      aggregations = Doi.query_aggregations(facets: facets_string)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns selected aggregations when facets is an array of symbols" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets is a blank array" do
+      facets_array = []
+      aggregations = Doi.query_aggregations(facets: facets_array)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns selected aggregations when facets are an array of symbols and disable_facets is false" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array, disable_facets: false)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets are an array of symbols and disable_facets is true" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array, disable_facets: true)
+
+      expect(aggregations).to eq({})
+    end
+  end
+
   describe "formats" do
     content_url = [
       "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/1dgp-0rkbx6ahe?v=1.2",
