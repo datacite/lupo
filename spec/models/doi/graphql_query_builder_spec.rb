@@ -69,9 +69,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
       let(:options) { { sort: "relevance" } }
       it "ignores any sort options and returns the default" do
         expect(builder.sort).to eq(described_class::DEFAULT_SORT)
-
       end
     end
   end
-
 end

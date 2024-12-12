@@ -30,7 +30,7 @@ module Doi::GraphqlQuery
     end
 
     def sort
-       DEFAULT_SORT
+      DEFAULT_SORT
     end
 
     def query_fields

@@ -10,115 +10,112 @@ RSpec.describe Doi::GraphqlQuery::Builder do
 
   describe "filters" do
     context "with basic filters" do
-        it "handles DOI ids" do
-          options = { ids: "10.5438/0012,10.5438/0013" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { doi: ["10.5438/0012", "10.5438/0013"].map(&:upcase) } }
-          )
-        end
+      it "handles DOI ids" do
+        options = { ids: "10.5438/0012,10.5438/0013" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { doi: ["10.5438/0012", "10.5438/0013"].map(&:upcase) } }
+        )
+      end
 
-        it "handles resource_type_id" do
-          options = { resource_type_id: "Journal_Article" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { term: { resource_type_id: "journal-article" } }
-          )
+      it "handles resource_type_id" do
+        options = { resource_type_id: "Journal_Article" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { term: { resource_type_id: "journal-article" } }
+        )
+      end
 
-        end
-
-        it "handles resource type" do
-          options = { resource_type: "dataset,text" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { "types.resourceType": ["dataset", "text"] } }
-          )
-        end
+      it "handles resource type" do
+        options = { resource_type: "dataset,text" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { "types.resourceType": ["dataset", "text"] } }
+        )
+      end
 
 
-        it "handles agency" do
-          options = {agency: "crossref"}
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { agency: ["crossref"].map(&:downcase) } }
-          )
-        end
+      it "handles agency" do
+        options = { agency: "crossref" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { agency: ["crossref"].map(&:downcase) } }
+        )
+      end
 
-        it "handles prefix" do
-          options = {prefix: "10.5438"}
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { prefix: ["10.5438"].map(&:downcase) } }
-          )
-        end
+      it "handles prefix" do
+        options = { prefix: "10.5438" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { prefix: ["10.5438"].map(&:downcase) } }
+        )
+      end
 
-        it "handles language" do
-          options = { language: "en,de" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { language: ["en", "de"].map(&:downcase) } }
-          )
-        end
+      it "handles language" do
+        options = { language: "en,de" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { language: ["en", "de"].map(&:downcase) } }
+        )
+      end
 
-        it "handles uid" do
-          options = { uid: "10.5438/0012" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { term: { uid: "10.5438/0012" } }
-          )
-        end
+      it "handles uid" do
+        options = { uid: "10.5438/0012" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { term: { uid: "10.5438/0012" } }
+        )
+      end
 
-        it "handles state" do
-          options = { state: "findable,registered" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { aasm_state: ["findable", "registered"] } }
-          )
-        end
+      it "handles state" do
+        options = { state: "findable,registered" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { aasm_state: ["findable", "registered"] } }
+        )
+      end
 
-        it "handles consortium_id" do
-          options = { consortium_id: "dc" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { term: { consortium_id: { :case_insensitive => true, :value => "dc" } } }
-          )
-        end
+      it "handles consortium_id" do
+        options = { consortium_id: "dc" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { term: { consortium_id: { case_insensitive: true, value: "dc" } } }
+        )
+      end
 
-        it "handles registered" do
-          options = { registered: "2021,2023" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { range: { registered: { gte: "2021||/y", lte: "2023||/y", format: "yyyy" } } }
-          )
-        end
-
+      it "handles registered" do
+        options = { registered: "2021,2023" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { registered: { gte: "2021||/y", lte: "2023||/y", format: "yyyy" } } }
+        )
+      end
     end
 
     context "filters based on client metadata" do
-        it "handles re3data_id" do
-          options = { re3data_id: "10.17616/r31njmjx" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { term: { "client.re3data_id" => "10.17616/r31njmjx" } }
-          )
-        end
+      it "handles re3data_id" do
+        options = { re3data_id: "10.17616/r31njmjx" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { term: { "client.re3data_id" => "10.17616/r31njmjx" } }
+        )
+      end
 
-        it "handles opendoar_id" do
-          options = { opendoar_id: "123456" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { term: { "client.opendoar_id" => "123456" } }
-          )
-        end
+      it "handles opendoar_id" do
+        options = { opendoar_id: "123456" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { term: { "client.opendoar_id" => "123456" } }
+        )
+      end
 
-        it "handles certificates" do
-          options = { certificate: "CoreTrustSeal,WDS" }
-          builder = described_class.new(query, options)
-          expect(builder.filters).to include(
-            { terms: { "client.certificate" => ["CoreTrustSeal", "WDS"] } }
-          )
-        end
-
+      it "handles certificates" do
+        options = { certificate: "CoreTrustSeal,WDS" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { "client.certificate" => ["CoreTrustSeal", "WDS"] } }
+        )
+      end
     end
 
     context "with date range filters" do
@@ -304,8 +301,5 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         expect(builder.filters).to be_empty
       end
     end
-
-
-
   end
 end
