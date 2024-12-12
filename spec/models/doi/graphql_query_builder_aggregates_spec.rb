@@ -2,14 +2,14 @@
 
 require "rails_helper"
 
-RSpec.describe Doi::GraphqlQuery::Builder do
+RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_pool: true do
   let(:query) { "" }
   let(:options) { {} }
 
   describe "aggregations" do
     it "by default all aggregations are enabled" do
       builder = described_class.new(query, options)
-      expect(builder.aggregations).to eq(described_class::AGGREGATION_DEFINITIONS)
+      expect(builder.aggregations).to eq(described_class.all_aggregations)
     end
 
     it "has keys for all aggregates" do

@@ -3,7 +3,7 @@
 
 require "rails_helper"
 
-RSpec.describe Doi::Indexer::RelatedDoiIndexer do
+RSpec.describe Doi::Indexer::RelatedDoiIndexer , elasticsearch: false, skip_prefix_pool: true do
   describe "related_dois with different input" do
     let(:good_related_identifier) do
       {
