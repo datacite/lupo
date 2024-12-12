@@ -674,10 +674,9 @@ class Doi < ApplicationRecord
     }
   end
 
-  def self.all_doi_aggregations
-    {
-      # number of resourceTypeGeneral increased from 16 to 28 in schema 4.4
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 30, min_doc_count: 1 } },
+  DOI_AGGREGATION_DEFINITIONS = {
+      # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
       states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
       published: {
         date_histogram: {
@@ -775,7 +774,6 @@ class Doi < ApplicationRecord
         },
       },
     }
-  end
 
   def self.default_doi_query_facets
     [
@@ -801,10 +799,17 @@ class Doi < ApplicationRecord
   end
 
   def self.query_aggregations(disable_facets: false, facets: nil)
-    return {} if disable_facets
+    return {} if disable_facets.to_s == "true"
 
-    requested_facets = facets.respond_to?(:split) ? facets.split(",").map(&:strip).map(&:underscore).map(&:to_sym).uniq : default_doi_query_facets
-    requested_facets.index_with { |facet| all_doi_aggregations.dig(facet) }.compact
+    selected_facets = if facets.is_a?(String)
+      facets.split(",").map(&:strip).map(&:underscore).map(&:to_sym)
+    else
+      Array.wrap(facets).map(&:to_sym)
+    end.uniq
+
+    selected_facets = default_doi_query_facets if facets.nil?
+
+    DOI_AGGREGATION_DEFINITIONS.slice(*selected_facets)
   end
 
   def self.provider_aggregations

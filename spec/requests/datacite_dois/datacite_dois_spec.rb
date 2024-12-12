@@ -13,6 +13,26 @@ def clear_doi_index
   DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
 end
 
+DEFAULT_DOIS_FACETS = [
+  "states",
+  "resourceTypes",
+  "created",
+  "published",
+  "registered",
+  "providers",
+  "clients",
+  "affiliations",
+  "prefixes",
+  "certificates",
+  "licenses",
+  "schemaVersions",
+  "linkChecksStatus",
+  "subjects",
+  "fieldsOfScience",
+  "citations",
+  "views",
+  "downloads"
+]
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -244,39 +264,43 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["data"].size).to eq(10)
       expect(json.dig("meta", "total")).to eq(10)
 
-      expect(json.dig("meta").length).to eq(21)
-      expect(json.dig("meta", "states")).to be_truthy
-      expect(json.dig("meta", "resourceTypes")).to be_truthy
-      expect(json.dig("meta", "created")).to be_truthy
-      expect(json.dig("meta", "published")).to be_truthy
-      expect(json.dig("meta", "registered")).to be_truthy
-      expect(json.dig("meta", "providers")).to be_truthy
-      expect(json.dig("meta", "clients")).to be_truthy
-      expect(json.dig("meta", "affiliations")).to be_truthy
-      expect(json.dig("meta", "prefixes")).to be_truthy
-      expect(json.dig("meta", "certificates")).to be_truthy
-      expect(json.dig("meta", "licenses")).to be_truthy
-      expect(json.dig("meta", "schemaVersions")).to be_truthy
-      expect(json.dig("meta", "linkChecksStatus")).to be_truthy
-      expect(json.dig("meta", "subjects")).to be_truthy
-      expect(json.dig("meta", "fieldsOfScience")).to be_truthy
-      expect(json.dig("meta", "citations")).to be_truthy
-      expect(json.dig("meta", "views")).to be_truthy
-      expect(json.dig("meta", "downloads")).to be_truthy
-
-      expect(json.dig("meta", "clientTypes")).to eq(nil)
-      expect(json.dig("meta", "languages")).to eq(nil)
-      expect(json.dig("meta", "creatorsAndContributors")).to eq(nil)
+      expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
     end
 
-    it "returns no facets when disable-facets is set" do
+    it "returns default facets when disable-facets is set to false" do
+      get "/dois?disable-facets=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+
+      expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
+    end
+
+    it "returns no facets when disable-facets is set to true" do
       get "/dois?disable-facets=true", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
       expect(json.dig("meta", "total")).to eq(10)
       expect(json.dig("meta").length).to eq(3)
-      expect(json.dig("meta", "states")).to eq(nil)
+      DEFAULT_DOIS_FACETS.each do |facet|
+        expect(json.dig("meta", facet)).to eq(nil)
+      end
+    end
+
+    it "returns no facets when facets is empty" do
+      get "/dois?facets=", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(10)
+      expect(json.dig("meta", "total")).to eq(10)
+      expect(json.dig("meta").length).to eq(3)
+      DEFAULT_DOIS_FACETS.each do |facet|
+        expect(json.dig("meta", facet)).to eq(nil)
+      end
     end
 
     it "returns specified facets when facets is set" do
