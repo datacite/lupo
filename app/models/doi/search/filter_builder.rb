@@ -64,28 +64,27 @@ class Doi
       end
 
       private
+        def build_pid_entity_filter
+          [
+            { terms: { "subjects.subjectScheme": ["PidEntity"] } },
+            { terms: { "subjects.subject": @options[:pid_entity].split(",").map(&:humanize) } }
+          ]
+        end
 
-      def build_pid_entity_filter
-        [
-          { terms: { "subjects.subjectScheme": ["PidEntity"] } },
-          { terms: { "subjects.subject": @options[:pid_entity].split(",").map(&:humanize) } }
-        ]
-      end
+        def build_field_of_science_filter
+          [
+            { terms: { "subjects.subjectScheme": ["Fields of Science and Technology (FOS)"] } },
+            { terms: { "subjects.subject": @options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+          ]
+        end
 
-      def build_field_of_science_filter
-        [
-          { terms: { "subjects.subjectScheme": ["Fields of Science and Technology (FOS)"] } },
-          { terms: { "subjects.subject": @options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
-        ]
-      end
+        def build_field_of_science_repository_filter
+          { terms: { "fields_of_science_repository": @options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
+        end
 
-      def build_field_of_science_repository_filter
-        { terms: { "fields_of_science_repository": @options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
-      end
-
-      def build_field_of_science_combined_filter
-        { terms: { "fields_of_science_combined": @options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
-      end
+        def build_field_of_science_combined_filter
+          { terms: { "fields_of_science_combined": @options[:field_of_science_combined].split(",").map { |s| s.humanize } } }
+        end
     end
   end
 end
