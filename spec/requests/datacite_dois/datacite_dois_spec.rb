@@ -34,6 +34,12 @@ DEFAULT_DOIS_FACETS = [
   "downloads"
 ]
 
+DEFAULT_META_FIELDS = [
+  "total",
+  "totalPages",
+  "page",
+]
+
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
@@ -265,7 +271,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
 
       expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
-      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + DEFAULT_META_FIELDS)
     end
 
     it "returns default facets when disable-facets is set to false" do
@@ -276,7 +282,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
 
       expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
-      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + ["total", "totalPages", "page"])
+      expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + DEFAULT_META_FIELDS)
     end
 
     it "returns no facets when disable-facets is set to true" do
@@ -318,6 +324,16 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "creatorsAndContributors")).to be_truthy
       expect(json.dig("meta", "madeUpFacet")).to eq(nil)
       expect(json.dig("meta", "made_up_facet")).to eq(nil)
+    end
+
+    it "returns no facets when the result set is empty" do
+      get "/dois?query=creators.name:foo", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(0)
+      expect(json.dig("meta", "total")).to eq(0)
+      expect(json.dig("meta").length).to eq(3)
+      expect(json.dig("meta").keys).to match_array(DEFAULT_META_FIELDS)
     end
   end
 
