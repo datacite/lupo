@@ -6,10 +6,13 @@ module Doi::Search
 
     def initialize(options)
       @options = options
+      @facet_count = (@options[:facet_count] || DEFAULT_FACET_COUNT).to_i
+      @selected_aggs = selected_aggs
     end
 
     def build
-      aggs = selected_aggs
+      return {} if @facet_count == 0
+      aggs = @selected_aggs
       facet_sizes.each do |key, size|
         aggs[key][:terms][:size] = size.to_i if aggs[key]&.dig(:terms)
       end
@@ -17,15 +20,14 @@ module Doi::Search
     end
 
     def facet_sizes
-      facet_count = (@options[:facet_count] || DEFAULT_FACET_COUNT).to_i
       custom_sizes = (@options[:facet_sizes] || {}).select do |key, value|
-        selected_aggs.key?(key.to_sym) && value.to_i.positive?
+        @selected_aggs.key?(key.to_sym) && value.to_i.positive?
       end.transform_keys(&:to_sym)
 
-      if facet_count != DEFAULT_FACET_COUNT && facet_count.positive?
+      if @facet_count != DEFAULT_FACET_COUNT && @facet_count.positive?
         # Create a hash with facet_count for all selected aggregations that have terms
-        default_sizes = selected_aggs.each_with_object({}) do |(key, agg), hash|
-          hash[key] = facet_count if agg&.dig(:terms)
+        default_sizes = @selected_aggs.each_with_object({}) do |(key, agg), hash|
+          hash[key] = @facet_count if agg&.dig(:terms)
         end
 
         # Let custom sizes override the defaults
