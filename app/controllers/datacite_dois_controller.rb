@@ -253,12 +253,14 @@ class DataciteDoisController < ApplicationController
         }
 
         aggregations = response.aggregations
-        facets = facets_to_facet_methods.map do |facet, method|
-          if aggregations.dig(facet)
-            buckets = facets_to_bucket_path.dig(facet) ? aggregations.dig(facet, *facets_to_bucket_path[facet]) : aggregations.dig(facet).buckets
-            [facet.to_s.camelize(:lower), send(method, buckets)]
-          end
-        end.compact.to_h
+        facets = total == 0 ? {} :
+          facets_to_facet_methods.map do |facet, method|
+            if aggregations.dig(facet)
+              buckets = facets_to_bucket_path.dig(facet) ? aggregations.dig(facet, *facets_to_bucket_path[facet]) : aggregations.dig(facet).buckets
+              [facet.to_s.camelize(:lower), send(method, buckets)]
+            end
+          end.compact.to_h
+
         respond_to do |format|
           format.json do
             options = {}
