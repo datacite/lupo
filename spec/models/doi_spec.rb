@@ -1215,6 +1215,27 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
               },
            ],
           },
+          {
+            "contributorType" => "Translator",
+            "familyName" => "Doe",
+            "givenName" => "Jane",
+            "name" => "Doe, Jane",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-0800-1234",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+            "nameType" => "Personal",
+            "affiliation" => [
+              {
+                "name" => "Example Translation Services",
+                "affiliationIdentifier" => "https://ror.org/013meh9876",
+                "affiliationIdentifierScheme" => "ROR",
+              },
+           ],
+          },
         ]
       )
       expect(subject).to be_valid
@@ -1222,6 +1243,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         [
           "https://orcid.org/0000-0003-3484-6875",
           "https://orcid.org/0000-0003-3484-0000",
+          "https://orcid.org/0000-0003-0800-1234",  # Contributor: Jane Doe (Translator)
         ]
       )
     end
@@ -1907,6 +1929,91 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
+  describe "query_aggregations" do
+    default_aggregations = Doi.default_doi_query_facets
+
+    it "returns default aggregations when disable_facets and facets are not set" do
+      aggregations = Doi.query_aggregations
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns default aggregations when disable_facets is set to false" do
+      aggregations = Doi.query_aggregations(disable_facets: false)
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns blank aggregations when disable_facets is true" do
+      aggregations = Doi.query_aggregations(disable_facets: true)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns blank aggregations when disable_facets is true string" do
+      aggregations = Doi.query_aggregations(disable_facets: "true")
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns default aggregations when disable_facets is false" do
+      aggregations = Doi.query_aggregations(disable_facets: false)
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns default aggregations when disable_facets is false string" do
+      aggregations = Doi.query_aggregations(disable_facets: "false")
+
+      expect(aggregations.keys).to match_array(default_aggregations)
+    end
+
+    it "returns selected aggregations when facets is a string" do
+      facets_string = "creators_and_contributors, registrationAgencies,made_up_facet,states,registration_agencies"
+      aggregations = Doi.query_aggregations(facets: facets_string)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets is a blank string" do
+      facets_string = ""
+      aggregations = Doi.query_aggregations(facets: facets_string)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns selected aggregations when facets is an array of symbols" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets is a blank array" do
+      facets_array = []
+      aggregations = Doi.query_aggregations(facets: facets_array)
+
+      expect(aggregations).to eq({})
+    end
+
+    it "returns selected aggregations when facets are an array of symbols and disable_facets is false" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array, disable_facets: false)
+      expected_aggregations = [:creators_and_contributors, :registration_agencies, :states]
+
+      expect(aggregations.keys).to match_array(expected_aggregations)
+    end
+
+    it "returns blank aggregations when facets are an array of symbols and disable_facets is true" do
+      facets_array = [:creators_and_contributors, :registration_agencies, :states, :made_up_facet, :registration_agencies]
+      aggregations = Doi.query_aggregations(facets: facets_array, disable_facets: true)
+
+      expect(aggregations).to eq({})
+    end
+  end
+
   describe "formats" do
     content_url = [
       "https://redivis.com/datasets/rt7m-4ndqm48zf/tables/1dgp-0rkbx6ahe?v=1.2",
@@ -1992,6 +2099,55 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       expect(doi.publisher).to eq(
         { "name" => "Plazi.org taxonomic treatments database" }
       )
+    end
+  end
+
+  describe "check schema 4.6 changes" do
+    let(:doi) { FactoryBot.create(:doi,
+      types: {
+        "resourceTypeGeneral": "Award",
+        "resourceType": "Grant"
+      },
+      creators: [{
+        "nameType": "Personal",
+        "name": "Doe, John",
+        "givenName": "John",
+        "familyName": "Doe",
+        "contributorType": "Translator"
+      }],
+      related_identifiers: [
+        {
+          "relatedIdentifier": "RRID:SCR_123456",
+          "relatedIdentifierType": "RRID",
+          "relationType": "HasTranslation"
+        }
+      ],
+      dates: [
+        { "date": "2011-10-23", "dateType": "Issued" },
+        { "date": "2020-03-15", "dateType": "Coverage" }
+      ]
+    )}
+
+    it "saves and returns new resourceTypeGeneral values" do
+      expect(doi.types["resourceTypeGeneral"]).to eq("Award")
+      expect(doi.types["resourceType"]).to eq("Grant")
+    end
+
+    it "saves and returns new contributorType value" do
+      expect(doi.creators.first["contributorType"]).to eq("Translator")
+    end
+
+    it "saves and returns new relatedIdentifierType value" do
+      expect(doi.related_identifiers.first["relatedIdentifierType"]).to eq("RRID")
+    end
+
+    it "saves and returns new relationType value" do
+      expect(doi.related_identifiers.first["relationType"]).to eq("HasTranslation")
+    end
+
+    it "saves and returns new dateType value" do
+      coverage_date = doi.dates.find { |d| d["dateType"] == "Coverage" }
+      expect(coverage_date["date"]).to eq("2020-03-15")
     end
   end
 end

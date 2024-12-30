@@ -436,6 +436,7 @@ type AudiovisualConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -1075,6 +1076,7 @@ type BookChapterConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -1126,6 +1128,7 @@ type BookConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -1519,6 +1522,7 @@ type CollectionConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -1864,6 +1868,7 @@ type ConferencePaperConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -2501,6 +2506,7 @@ type DataManagementPlanConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -2846,6 +2852,7 @@ type DataPaperConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -3217,6 +3224,7 @@ type DatasetConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
 }
@@ -3654,6 +3662,7 @@ type DissertationConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -5288,6 +5297,7 @@ type ImageConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -5633,6 +5643,7 @@ type InstrumentConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -5978,6 +5989,7 @@ type InteractiveResourceConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -6328,6 +6340,7 @@ type JournalArticleConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -6969,6 +6982,7 @@ type ModelConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -7511,6 +7525,7 @@ type OtherConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -7881,6 +7896,7 @@ type PeerReviewConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -8363,6 +8379,7 @@ type PhysicalObjectConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -8761,6 +8778,7 @@ type PreprintConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -9111,6 +9129,7 @@ type PublicationConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
 }
@@ -9165,66 +9184,66 @@ type Query {
   actor(id: ID!): ActorItem!
   actors(after: String, first: Int = 25, query: String): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
+  audiovisuals(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
-  bookChapters(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
-  books(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookConnectionWithTotal!
+  bookChapters(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): BookChapterConnectionWithTotal!
+  books(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): BookConnectionWithTotal!
   collection(id: ID!): Collection!
-  collections(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
+  collections(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
-  conferencePapers(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
+  conferencePapers(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(after: String, certified: String, disciplinary: String, first: Int = 25, open: String, pid: String, query: String, software: String, subject: String): DataCatalogConnectionWithTotal!
   dataManagementPlan(id: ID!): DataManagementPlan!
-  dataManagementPlans(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataManagementPlanConnectionWithTotal!
+  dataManagementPlans(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): DataManagementPlanConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
-  dataPapers(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
+  dataPapers(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
-  datasets(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
+  datasets(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
-  dissertations(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
+  dissertations(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): DissertationConnectionWithTotal!
   event(id: ID!): Event!
-  events(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): EventConnectionWithTotal!
+  events(after: String, facetCount: Int = 10, fieldOfScience: String, first: Int = 25, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(after: String, first: Int = 25, query: String): FunderConnectionWithTotal!
   image(id: ID!): Image!
-  images(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
+  images(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
-  instruments(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
+  instruments(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
+  interactiveResources(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
-  journalArticles(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
+  journalArticles(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): JournalArticleConnectionWithTotal!
   me: Me
   member(id: ID!): Member!
   members(after: String, first: Int = 25, query: String, year: String): MemberConnectionWithTotal!
   model(id: ID!): Model!
-  models(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
+  models(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): ModelConnectionWithTotal!
   organization(crossrefFunderId: ID, gridId: ID, id: ID): Organization!
   organizations(after: String, country: String, query: String, types: String): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
-  others(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
+  others(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
-  peerReviews(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
+  peerReviews(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): PeerReviewConnectionWithTotal!
   people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal!
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
+  physicalObjects(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(after: String, first: Int = 25, query: String): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
-  preprints(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
+  preprints(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
-  publications(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
+  publications(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): PublicationConnectionWithTotal!
   repositories(after: String, certificate: String, first: Int = 25, hasPid: String, isCertified: String, isDisciplinary: String, isOpen: String, query: String, repositoryType: String, software: String, subject: String, subjectId: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
-  services(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
+  services(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): ServiceConnectionWithTotal!
   software(id: ID!): Software!
-  softwares(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
+  softwares(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
-  sounds(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
+  sounds(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): SoundConnectionWithTotal!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -9245,8 +9264,8 @@ type Query {
   ): UsageReportConnectionWithTotal!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
-  workflows(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  workflows(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, userId: String): WorkflowConnectionWithTotal!
+  works(after: String, facetCount: Int = 10, fieldOfScience: String, fieldOfScienceCombined: String, fieldOfScienceRepository: String, first: Int = 25, funderId: String, hasAffiliation: Boolean, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasMember: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, repositoryType: String, resourceType: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -10127,6 +10146,7 @@ type ServiceConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -10502,6 +10522,7 @@ type SoftwareConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
 }
@@ -10848,6 +10869,7 @@ type SoundConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -11404,6 +11426,7 @@ type WorkConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   resourceTypes: [Facet!]
   totalContentUrl: Int
   totalCount: Int!
@@ -11441,6 +11464,7 @@ interface WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 
@@ -11771,6 +11795,7 @@ type WorkflowConnectionWithTotal implements WorkFacetsInterface {
   published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
+  repositoryTypes: [Facet!]
   totalCount: Int!
 }
 

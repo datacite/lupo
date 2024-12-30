@@ -2221,3 +2221,93 @@ describe "query with resourceTypeId", elasticsearch: true do
     expect(response.dig("data", "works", "nodes", 0, "types", "resourceTypeGeneral")).to eq("StudyRegistration")
   end
 end
+
+describe "query with client_type facet", elasticsearch: true do
+  let(:provider) { create(:provider) }
+  let(:client_repository) { create(:client, provider: provider, client_type: "repository") }
+  let(:client_periodical) { create(:client, provider: provider, client_type: "periodical") }
+  let(:client_igsn_id_catalog) { create(:client, provider: provider, client_type: "igsnCatalog") }
+  let(:client_raid_registry) { create(:client, provider: provider, client_type: "raidRegistry") }
+  let!(:dois_repository) { create_list(:doi, 10, client: client_repository, aasm_state: "findable", version_info: "testtag") }
+  let!(:dois_periodical) { create_list(:doi, 10, client: client_periodical, aasm_state: "findable", version_info: "testtag") }
+  let!(:doi_igsn_id) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "PhysicalObject" }) }
+  let!(:doi_igsn_id_dataset) { create(:doi, client: client_igsn_id_catalog, aasm_state: "findable", types: { "resourceTypeGeneral": "Dataset" }) }
+  let!(:doi_raid_registry) { create(:doi, client: client_raid_registry, aasm_state: "findable") }
+
+  before do
+    Doi.import
+    sleep 2
+  end
+
+  let(:query) do
+    "query($first: Int, $cursor: String) {
+      works(first: $first, after: $cursor) {
+        totalCount
+        repositoryTypes {
+          id
+          title
+          count
+        }
+        nodes {
+          doi
+          types {
+            resourceTypeGeneral
+          }
+        }
+      }
+    }"
+  end
+
+  let(:query_with_client_type_filter) do
+    "query($first: Int, $cursor: String, $repositoryType: String) {
+      works(first: $first, after: $cursor, repositoryType: $repositoryType) {
+        totalCount
+        repositoryTypes {
+          id
+          title
+          count
+        }
+        nodes {
+          doi
+          types {
+            resourceTypeGeneral
+          }
+        }
+      }
+    }"
+  end
+
+  it "returns repositoryTypes facet" do
+    response =
+      LupoSchema.execute(
+        query,
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "totalCount")).to eq(23)
+    expect(response.dig("data", "works", "repositoryTypes")).to eq(
+      [
+        { "count" => 10, "id" => "periodical", "title" => "Periodical" },
+        { "count" => 10, "id" => "repository", "title" => "Repository" },
+        { "count" => 2, "id" => "igsnCatalog", "title" => "IGSN ID Catalog" },
+        { "count" => 1, "id" => "raidRegistry", "title" => "RAiD Registry" },
+      ]
+    )
+  end
+
+  it "returns filtered DOIs by repositoryType and only returns PhysicalObjects for igsnCatalog filter" do
+    response =
+      LupoSchema.execute(
+        query_with_client_type_filter,
+        variables: { first: 15, cursor: nil, repositoryType: "igsnCatalog" }
+      ).
+        as_json
+
+    expect(response.dig("data", "works", "totalCount")).to eq(1)
+    expect(response.dig("data", "works", "repositoryTypes")).to eq(
+      [
+        { "count" => 1, "id" => "igsnCatalog", "title" => "IGSN ID Catalog" },
+      ]
+    )
+  end
+end

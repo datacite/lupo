@@ -674,82 +674,142 @@ class Doi < ApplicationRecord
     }
   end
 
+  DOI_AGGREGATION_DEFINITIONS = {
+      # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
+      states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
+      published: {
+        date_histogram: {
+          field: "publication_year",
+          interval: "year",
+          format: "year",
+          order: {
+            _key: "desc",
+          },
+          min_doc_count: 1,
+        },
+      },
+      registration_agencies: { terms: { field: "agency", size: 10, min_doc_count: 1 } },
+      created: { date_histogram: { field: "created", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      registered: { date_histogram: { field: "registered", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+                    aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
+      client_types: {
+        terms: {
+          field: "client.client_type",
+          size: 4,
+          min_doc_count: 1
+        }
+      },
+      affiliations: { terms: { field: "affiliation_id_and_name", size: 10, min_doc_count: 1 } },
+      prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
+      schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
+      link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
+      subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
+      pid_entities: {
+        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+        aggs: {
+          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+                              include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        },
+      },
+      fields_of_science: {
+        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+        aggs: {
+          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+                              include: "FOS:.*" } },
+        },
+      },
+      licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
+      languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
+      certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
+      creators_and_contributors: {
+        terms: {
+          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          size: 10,
+          min_doc_count: 1,
+          include: "https?://orcid.org/.*"
+        },
+        aggs: {
+          creators_and_contributors: {
+            top_hits: {
+              _source: {
+                includes: [
+                  "creators_and_contributors.name",
+                  "creators_and_contributors.nameIdentifiers.nameIdentifier"
+                ]
+              },
+              size: 1
+            }
+          },
+          "work_types": {
+            "terms": {
+              "field": "resource_type_id_and_name",
+              "min_doc_count": 1
+            }
+          }
+        }
+      },
+      views: {
+        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "view_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+      downloads: {
+        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "download_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+      citations: {
+        date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "citation_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+    }
 
-  def self.query_aggregations(disable_facets: false)
-    if !disable_facets
-      {
-        # number of resourceTypeGeneral increased from 16 to 28 in schema 4.4
-        resource_types: { terms: { field: "resource_type_id_and_name", size: 30, min_doc_count: 1 } },
-        states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
-        published: {
-          date_histogram: {
-            field: "publication_year",
-            interval: "year",
-            format: "year",
-            order: {
-              _key: "desc",
-            },
-            min_doc_count: 1,
-          },
-        },
-        registration_agencies: { terms: { field: "agency", size: 10, min_doc_count: 1 } },
-        created: { date_histogram: { field: "created", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-        registered: { date_histogram: { field: "registered", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-                      aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-        providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
-        clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
-        affiliations: { terms: { field: "affiliation_id_and_name", size: 10, min_doc_count: 1 } },
-        prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
-        schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
-        link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
-        # link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
-        # link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
-        # link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
-        # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
-        # links_checked: { value_count: { field: "landing_page.checked" } },
-        # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-        subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
-        pid_entities: {
-          filter: { term: { "subjects.subjectScheme": "PidEntity" } },
-          aggs: {
-            subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                                include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
-          },
-        },
-        fields_of_science: {
-          filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-          aggs: {
-            subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                                include: "FOS:.*" } },
-          },
-        },
-        licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
-        languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
-        certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
-        views: {
-          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-          aggs: {
-            metric_count: { sum: { field: "view_count" } },
-            bucket_truncate: { bucket_sort: { size: 10 } },
-          },
-        },
-        downloads: {
-          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-          aggs: {
-            metric_count: { sum: { field: "download_count" } },
-            bucket_truncate: { bucket_sort: { size: 10 } },
-          },
-        },
-        citations: {
-          date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
-          aggs: {
-            metric_count: { sum: { field: "citation_count" } },
-            bucket_truncate: { bucket_sort: { size: 10 } },
-          },
-        },
-      }
-    end
+  def self.default_doi_query_facets
+    [
+      :resource_types,
+      :states,
+      :published,
+      :created,
+      :registered,
+      :providers,
+      :clients,
+      :affiliations,
+      :prefixes,
+      :schema_versions,
+      :link_checks_status,
+      :subjects,
+      :fields_of_science,
+      :licenses,
+      :certificates,
+      :views,
+      :downloads,
+      :citations
+    ]
+  end
+
+  def self.query_aggregations(disable_facets: false, facets: nil)
+    return {} if disable_facets.to_s == "true"
+
+    selected_facets = if facets.is_a?(String)
+      facets.split(",").map(&:strip).map(&:underscore).map(&:to_sym)
+    else
+      Array.wrap(facets).map(&:to_sym)
+    end.uniq
+
+    selected_facets = default_doi_query_facets if facets.nil?
+
+    DOI_AGGREGATION_DEFINITIONS.slice(*selected_facets)
   end
 
   def self.provider_aggregations
@@ -820,7 +880,7 @@ class Doi < ApplicationRecord
           must: must,
         },
       },
-      aggregations: query_aggregations(disable_facets: options[:disable_facets]),
+      aggregations: query_aggregations(disable_facets: options[:disable_facets], facets: options[:facets]),
     )
   end
 
@@ -902,9 +962,9 @@ class Doi < ApplicationRecord
     elsif options[:totals_agg] == "prefix"
       prefix_aggregations
     elsif options[:client_type] == "igsnCatalog"
-      query_aggregations(disable_facets: options[:disable_facets]).merge(self.igsn_id_catalog_aggregations)
+      query_aggregations(disable_facets: options[:disable_facets], facets: options[:facets]).merge(self.igsn_id_catalog_aggregations)
     else
-      query_aggregations(disable_facets: options[:disable_facets])
+      query_aggregations(disable_facets: options[:disable_facets], facets: options[:facets])
     end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
@@ -1961,7 +2021,7 @@ class Doi < ApplicationRecord
     Array.wrap(contributors).each do |c|
       errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
       if schema_version == "http://datacite.org/schema/kernel-4"
-        errors.add(:contributors, "Contributor type #{c['contributorType']} is not supported in schema 4.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor WorkPackageLeader).include?(c["contributorType"])
+        errors.add(:contributors, "Contributor type #{c['contributorType']} is not supported in schema 4.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor Translator WorkPackageLeader).include?(c["contributorType"])
       end
     end
   end

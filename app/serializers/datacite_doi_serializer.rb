@@ -65,6 +65,9 @@ class DataciteDoiSerializer
              :citations_over_time,
              if: Proc.new { |_object, params| params && params[:detail] }
 
+  attributes :agency,
+             if: Proc.new { |_object, params| params && params[:include_other_registration_agencies] }
+
   belongs_to :client, record_type: :clients
 
   belongs_to :provider,
