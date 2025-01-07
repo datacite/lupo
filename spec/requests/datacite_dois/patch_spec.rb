@@ -748,7 +748,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([])
     end
   end
-  
+
   context "when a doi has values in xml" do
     let(:valid_attributes) do
       {
