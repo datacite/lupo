@@ -283,7 +283,7 @@ class ParamsSanitizer
     add_random_id
 
     # replace DOI, but otherwise don't touch the XML
-    if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
+    if meta["from"] == "datacite" && !params_have_metadata_attributes?
       xml = replace_doi(xml, doi: @params[:doi] || meta["doi"])
     elsif xml.present? || params_have_metadata_attributes?
       regenerate = true
