@@ -715,4 +715,64 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
   end
+
+  context "when a doi has values in xml" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "subjects" => [],
+            "identifiers" => [],
+          },
+        },
+      }
+    end
+
+    it "the xml and doi record contain the values" do
+      xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+      expect(xml.dig("subjects")).not_to eq(nil)
+      expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
+      expect(doi.subjects).not_to eq(nil)
+      expect(doi.identifiers).not_to eq(nil)
+    end
+
+    it "the values are removed when blank values are sent in json" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+      expect(xml.dig("subjects")).to eq(nil)
+      expect(xml.dig("alternateIdentifiers")).to eq(nil)
+      expect(json.dig("data", "attributes", "subjects")).to eq([])
+      expect(json.dig("data", "attributes", "identifiers")).to eq([])
+      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([])
+    end
+  end
+
+  context "when a doi has values in xml" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "subjects" => nil,
+          },
+        },
+      }
+    end
+
+    it "the xml and doi record contain the values" do
+      xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+      expect(xml.dig("subjects")).not_to eq(nil)
+      expect(doi.subjects).not_to eq(nil)
+    end
+
+    it "the values are removed when null values are sent in json" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+      expect(xml.dig("subjects")).to eq(nil)
+      expect(json.dig("data", "attributes", "subjects")).to eq([])
+    end
+  end
 end

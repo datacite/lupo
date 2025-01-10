@@ -283,10 +283,9 @@ class ParamsSanitizer
     add_random_id
 
     # replace DOI, but otherwise don't touch the XML
-    # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
-    if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
+    if meta["from"] == "datacite" && !params_have_metadata_attributes? && !@params[:schemaVersion].present?
       xml = replace_doi(xml, doi: @params[:doi] || meta["doi"])
-    elsif xml.present? || Array.wrap(read_attrs.first).present?
+    elsif xml.present? || params_have_metadata_attributes? || @params[:schemaVersion].present?
       regenerate = true
     end
 
@@ -339,31 +338,31 @@ class ParamsSanitizer
     )
   end
 
-  def  read_attrs
+  def params_have_metadata_attributes?
     [
-      @params[:creators],
-      @params[:contributors],
-      @params[:titles],
-      @params[:publisher],
-      @params[:publicationYear],
-      @params[:types],
-      @params[:descriptions],
-      @params[:container],
-      @params[:sizes],
-      @params[:formats],
-      @params[:version],
-      @params[:language],
-      @params[:dates],
-      @params[:identifiers],
-      @params[:relatedIdentifiers],
-      @params[:relatedItems],
-      @params[:fundingReferences],
-      @params[:geoLocations],
-      @params[:rightsList],
-      @params[:subjects],
-      @params[:contentUrl],
-      @params[:schemaVersion],
-    ].compact
+      :creators,
+      :contributors,
+      :titles,
+      :publisher,
+      :publicationYear,
+      :types,
+      :descriptions,
+      :container,
+      :sizes,
+      :formats,
+      :version,
+      :language,
+      :dates,
+      :identifiers,
+      :alternateIdentifiers,
+      :relatedIdentifiers,
+      :relatedItems,
+      :fundingReferences,
+      :geoLocations,
+      :rightsList,
+      :subjects,
+      :contentUrl,
+    ].any? { |key| @params.has_key?(key) }
   end
 
   def get_params
