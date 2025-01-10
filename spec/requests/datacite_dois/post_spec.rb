@@ -888,62 +888,6 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
-    context "when the request uses schema 3" do
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish",
-            },
-          },
-        }
-      end
-
-      it "creates a Doi" do
-        post "/dois", valid_attributes, headers
-
-        expect(last_response.status).to eq(201)
-        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
-        expect(json.dig("data", "attributes", "source")).to eq("test")
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
-        expect(json.dig("data", "attributes", "state")).to eq("findable")
-      end
-    end
-
-    context "when the request creates schema 3 with funder contributor type" do
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "xml" => xml,
-              "contributors" => [{ "contributorType" => "Funder", "name" => "Wellcome Trust", "nameType" => "Organizational" }],
-              "source" => "test",
-              "event" => "publish",
-            },
-          },
-        }
-      end
-
-      it "creates a Doi" do
-        post "/dois", valid_attributes, headers
-
-        expect(last_response.status).to eq(422)
-        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: No matching global declaration available for the validation root. at line 2, column 0", "uid" => "10.14454/10703" }])
-      end
-    end
-
     context "when the request has wrong object in nameIdentifiers" do
       let(:valid_attributes) { JSON.parse(file_fixture("datacite_wrong_nameIdentifiers.json").read) }
 
@@ -1021,6 +965,78 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         expect(last_response.status).to eq(422)
         expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-2.2 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
+    context "when the xml request uses unsupported metadata version - kernel-3" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns3.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
+    context "when the xml request uses unsupported metadata version - kernel-3.0" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns30.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3.0 is no longer supported", "uid" => "10.14454/10703" }])
+      end
+    end
+
+    context "when the xml request uses unsupported metadata version - kernel-3.1" do
+      let(:xml) { Base64.strict_encode64(file_fixture("ns31.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "returns an error that schema is no longer supported" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch("errors", nil)).to eq([{ "source" => "xml", "title" => "DOI 10.14454/10703: Schema http://datacite.org/schema/kernel-3.1 is no longer supported", "uid" => "10.14454/10703" }])
       end
     end
 
@@ -1593,30 +1609,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
       end
 
-      context "validates schema 3" do
-        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite_schema_3.xml"))) }
-        let(:params) do
-          {
-            "data" => {
-              "type" => "dois",
-              "attributes" => {
-                "doi" => "10.14454/10703",
-                "xml" => xml,
-              },
-            },
-          }
-        end
-
-        it "validates a Doi" do
-          post "/dois/validate", params, headers
-
-          expect(last_response.status).to eq(200)
-          expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-          expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
-          expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2011", "dateType" => "Issued" }])
-        end
-      end
-
       context "validates schema 4.5 xml" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("datacite-example-full-v4.5.xml"))) }
         let(:params) do
@@ -1875,91 +1867,6 @@ describe DataciteDoisController, type: :request, vcr: true do
           expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
           expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2016-12-20", "dateType" => "Issued" }, { "date" => "2016-12-20", "dateType" => "Created" }, { "date" => "2016-12-20", "dateType" => "Updated" }])
         end
-      end
-    end
-
-    context "update individual attribute" do
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish",
-            },
-          },
-        }
-      end
-      let(:update_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "schemaVersion" => "http://datacite.org/schema/kernel-4",
-              "regenerate" => true,
-            },
-          },
-        }
-      end
-
-      it "creates a Doi" do
-        post "/dois", valid_attributes, headers
-
-        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
-
-        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
-        expect(doc.collect_namespaces).to eq("xmlns" => "http://datacite.org/schema/kernel-3", "xmlns:dim" => "http://www.dspace.org/xmlns/dspace/dim", "xmlns:dryad" => "http://purl.org/dryad/terms/", "xmlns:dspace" => "http://www.dspace.org/xmlns/dspace/dim", "xmlns:mets" => "http://www.loc.gov/METS/", "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance")
-      end
-    end
-
-    context "mds doi" do
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite_schema_3.xml").read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "should_validate" => "true",
-              "source" => "mds",
-              "event" => "publish",
-            },
-          },
-        }
-      end
-
-      let(:update_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "should_validate" => "true",
-              "xml" => xml,
-              "source" => "mds",
-              "event" => "show",
-            },
-          },
-        }
-      end
-
-      it "add metadata" do
-        put "/dois/10.14454/10703", update_attributes, headers
-
-        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
-
-        put "/dois/10.14454/10703", valid_attributes, headers
-
-        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-3")
-        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Data from: A new malaria agent in African hominids." }])
       end
     end
 
