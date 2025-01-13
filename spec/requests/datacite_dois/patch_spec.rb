@@ -864,10 +864,10 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
       expect(xml.dig("alternateIdentifiers")).to eq(
-        "alternateIdentifier" => 
+        "alternateIdentifier" =>
           [
-            {"__content__"=>"identifier", "alternateIdentifierType"=>"identifierType"},
-            {"__content__"=>"identifier_2", "alternateIdentifierType"=>"identifierType_2"}
+            { "__content__" => "identifier", "alternateIdentifierType" => "identifierType" },
+            { "__content__" => "identifier_2", "alternateIdentifierType" => "identifierType_2" }
           ]
       )
       expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
