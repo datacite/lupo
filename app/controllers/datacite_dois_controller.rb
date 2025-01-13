@@ -760,21 +760,21 @@ class DataciteDoisController < ApplicationController
           !params.dig(:data, :attributes)&.key?(:identifiers) &&
           params.dig(:data, :attributes)&.key?(:alternateIdentifiers)
 
-          alternate_identifiers = params.dig(:data, :attributes, :alternateIdentifiers)
+        alternate_identifiers = params.dig(:data, :attributes, :alternateIdentifiers)
 
-          params[:data][:attributes][:identifiers] =
-            alternate_identifiers.nil? ? nil :
-              Array.wrap(alternate_identifiers).map do |a|
-                if a.respond_to?(:fetch)
-                  {
-                    identifier: a.fetch(:alternateIdentifier),
-                    identifierType: a.fetch(:alternateIdentifierType),
-                  }
-                else
-                  a
-                end
+        params[:data][:attributes][:identifiers] =
+          alternate_identifiers.nil? ? nil :
+            Array.wrap(alternate_identifiers).map do |a|
+              if a.respond_to?(:fetch)
+                {
+                  identifier: a.fetch(:alternateIdentifier),
+                  identifierType: a.fetch(:alternateIdentifierType),
+                }
+              else
+                a
               end
-        end
+            end
+      end
 
       ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])
       ParamsSanitizer.sanitize_nameIdentifiers(params[:contributors])

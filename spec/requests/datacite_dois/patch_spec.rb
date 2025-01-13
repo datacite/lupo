@@ -903,13 +903,13 @@ describe DataciteDoisController, type: :request, vcr: true do
           },
         }
       end
-  
+
       it "the xml and doi record contain the values" do
         xml = Maremma.from_xml(doi.xml).fetch("resource", {})
         expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
         expect(doi.identifiers).not_to eq(nil)
       end
-  
+
       it "the values are the same when no values are sent in json" do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
