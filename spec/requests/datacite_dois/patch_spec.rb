@@ -870,14 +870,14 @@ describe DataciteDoisController, type: :request, vcr: true do
             { "__content__" => "identifier_2", "alternateIdentifierType" => "identifierType_2" }
           ]
       )
-      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
+      expect(json.dig("data", "attributes", "identifiers")).to eq([
         {
-          "alternateIdentifier" => "identifier",
-          "alternateIdentifierType" => "identifierType"
+          "identifier" => "identifier",
+          "identifierType" => "identifierType"
         },
         {
-          "alternateIdentifier" => "identifier_2",
-          "alternateIdentifierType" => "identifierType_2"
+          "identifier" => "identifier_2",
+          "identifierType" => "identifierType_2"
         }
       ])
       expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
@@ -890,6 +890,48 @@ describe DataciteDoisController, type: :request, vcr: true do
           "alternateIdentifierType" => "identifierType_2"
         }
       ])
+    end
+
+    context "when a doi has alternateIdentifier/identifier values" do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "subjects" => nil,
+            },
+          },
+        }
+      end
+  
+      it "the xml and doi record contain the values" do
+        xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+        expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
+        expect(doi.identifiers).not_to eq(nil)
+      end
+  
+      it "the values are the same when no values are sent in json" do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+        expect(xml.dig("alternateIdentifiers")).to eq(
+          "alternateIdentifier" => {
+            "__content__" => "pk-1234", "alternateIdentifierType" => "publisher ID"
+          }
+        )
+        expect(json.dig("data", "attributes", "identifiers")).to eq([
+          {
+            "identifier" => "pk-1234",
+            "identifierType" => "publisher ID"
+          },
+        ])
+        expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
+          {
+            "alternateIdentifier" => "pk-1234",
+            "alternateIdentifierType" => "publisher ID"
+          },
+        ])
+      end
     end
   end
 end
