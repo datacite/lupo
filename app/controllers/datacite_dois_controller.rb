@@ -757,16 +757,19 @@ class DataciteDoisController < ApplicationController
       # alternateIdentifiers as alias for identifiers
       # easier before strong_parameters are checked
       if params.dig(:data, :attributes).present? &&
-          params.dig(:data, :attributes, :identifiers).blank? &&
-          !params.dig(:data, :attributes, :alternateIdentifiers).blank?
+         !params.dig(:data, :attributes)&.key?(:identifiers) &&
+         params.dig(:data, :attributes)&.key?(:alternateIdentifiers)
+
+        alternate_identifiers = params.dig(:data, :attributes, :alternateIdentifiers)
+
         params[:data][:attributes][:identifiers] =
-          Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).
-            map do |a|
-            {
-              identifier: a[:alternateIdentifier],
-              identifierType: a[:alternateIdentifierType],
-            }
-          end
+          alternate_identifiers.nil? ? nil :
+            Array.wrap(alternate_identifiers).map do |a|
+              {
+                identifier: a.fetch(:alternateIdentifier),
+                identifierType: a.fetch(:alternateIdentifierType),
+              }
+            end
       end
 
       ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])

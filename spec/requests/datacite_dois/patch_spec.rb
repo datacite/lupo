@@ -775,4 +775,121 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "subjects")).to eq([])
     end
   end
+
+  context "when a doi has alternateIdentifier/identifier values" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "alternateIdentifiers" => nil,
+          },
+        },
+      }
+    end
+
+    it "the xml and doi record contain the values" do
+      xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
+      expect(doi.identifiers).not_to eq(nil)
+    end
+
+    it "the values are removed when nil values are sent in json" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).to eq(nil)
+      expect(json.dig("data", "attributes", "identifiers")).to eq([])
+      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([])
+    end
+  end
+
+  context "when a doi has alternateIdentifier/identifier values" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "alternateIdentifiers" => [],
+          },
+        },
+      }
+    end
+
+    it "the xml and doi record contain the values" do
+      xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
+      expect(doi.identifiers).not_to eq(nil)
+    end
+
+    it "the values are removed when blank values are sent in json" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).to eq(nil)
+      expect(json.dig("data", "attributes", "identifiers")).to eq([])
+      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([])
+    end
+  end
+
+  context "when a doi has alternateIdentifier/identifier values" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "alternateIdentifiers" => [
+              {
+                "alternateIdentifier" => "identifier",
+                "alternateIdentifierType" => "identifierType",
+              },
+              {
+                "alternateIdentifier" => "identifier_2",
+                "alternateIdentifierType" => "identifierType_2",
+              },
+            ],
+          },
+        },
+      }
+    end
+
+    it "the xml and doi record contain the values" do
+      xml = Maremma.from_xml(doi.xml).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).not_to eq(nil)
+      expect(doi.identifiers).not_to eq(nil)
+    end
+
+    it "the values are changed when new values are sent in json" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
+      expect(xml.dig("alternateIdentifiers")).to eq(
+        "alternateIdentifier" => 
+          [
+            {"__content__"=>"identifier", "alternateIdentifierType"=>"identifierType"},
+            {"__content__"=>"identifier_2", "alternateIdentifierType"=>"identifierType_2"}
+          ]
+      )
+      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
+        {
+          "alternateIdentifier" => "identifier",
+          "alternateIdentifierType" => "identifierType"
+        },
+        {
+          "alternateIdentifier" => "identifier_2",
+          "alternateIdentifierType" => "identifierType_2"
+        }
+      ])
+      expect(json.dig("data", "attributes", "alternateIdentifiers")).to eq([
+        {
+          "alternateIdentifier" => "identifier",
+          "alternateIdentifierType" => "identifierType"
+        },
+        {
+          "alternateIdentifier" => "identifier_2",
+          "alternateIdentifierType" => "identifierType_2"
+        }
+      ])
+    end
+  end
 end
