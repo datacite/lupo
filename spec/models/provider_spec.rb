@@ -97,6 +97,8 @@ describe Provider, type: :model do
 
     it "with logo" do
       pp Paperclip.options
+      output = `which identify`
+      puts "OUTPUT: #{output}"
       subject.logo =
         "data:image/png;base64," +
         Base64.strict_encode64(file_fixture("bl.png").read)
