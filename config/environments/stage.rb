@@ -76,6 +76,7 @@ Rails.application.configure do
     },
     bucket: ENV["AWS_S3_BUCKET"],
   }
+  Paperclip.options[:command_path] = "/usr/bin/"
 
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer

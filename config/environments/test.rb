@@ -55,4 +55,6 @@ Rails.application.configure do
   #   Bullet.counter_cache_enable = false
   # end
   config.log_level = :ERROR
+
+  Paperclip.options[:command_path] = "/usr/bin/"
 end

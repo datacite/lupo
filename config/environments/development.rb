@@ -44,6 +44,8 @@ Rails.application.configure do
   config.flipper.memoize = false
 
   config.hosts << "lupo_web"
+
+  Paperclip.options[:command_path] = "/usr/bin/"
 end
 
 BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]
