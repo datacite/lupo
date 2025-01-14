@@ -44,6 +44,7 @@ Rails.application.configure do
     },
     bucket: ENV["AWS_S3_BUCKET"],
   }
+  Paperclip.options[:image_magick_path] = "/usr/bin/"
   Paperclip.options[:command_path] = "/usr/bin/"
 
   require "flipper/middleware/memoizer"

@@ -44,7 +44,8 @@ Rails.application.configure do
   config.flipper.memoize = false
 
   config.hosts << "lupo_web"
-
+  
+  Paperclip.options[:image_magick_path] = "/usr/bin/"
   Paperclip.options[:command_path] = "/usr/bin/"
 end
 

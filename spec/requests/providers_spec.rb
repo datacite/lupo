@@ -304,6 +304,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
 
       it "creates a provider" do
         post "/providers", params, headers
+        pp Paperclip.options
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("British Library")

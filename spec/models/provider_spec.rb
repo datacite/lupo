@@ -96,6 +96,7 @@ describe Provider, type: :model do
     subject { build(:provider) }
 
     it "with logo" do
+      pp Paperclip.options
       subject.logo =
         "data:image/png;base64," +
         Base64.strict_encode64(file_fixture("bl.png").read)
