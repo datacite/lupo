@@ -1630,7 +1630,7 @@ describe DataciteDoisController, type: :request, vcr: true do
   describe "GET /dois search with license values", prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
     let!(:dois_missing_license) do
-      create_list(:doi,3, client: client, aasm_state: "findable",
+      create_list(:doi, 3, client: client, aasm_state: "findable",
                   rights_list: [{ "rightsIdentifier" => "" }]
       )
     end
