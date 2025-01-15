@@ -1626,4 +1626,26 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["errors"]).to eq([{ "status" => "401", "title" => "Bad credentials." }])
     end
   end
+
+  describe "GET /dois search with license values", prefix_pool_size: 1 do
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:dois_missing_license) do
+      create_list(:doi,3, client: client, aasm_state: "findable",
+                  rights_list: [{ "rightsIdentifier" => "" }]
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns license values with missing when flag is set" do
+      get "/dois?facets=licenses_with_missing", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "licensesWithMissing")).to be_truthy
+      expect(json.dig("meta", "licensesWithMissing", 1, "id")).to eq("__missing__")
+    end
+  end
 end

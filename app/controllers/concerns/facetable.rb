@@ -241,6 +241,15 @@ module Facetable
       end
     end
 
+    def facet_by_license_and_other(aggregate)
+      if aggregate
+        arr = facet_by_license(aggregate.buckets)
+        add_other(arr, aggregate.sum_other_doc_count)
+      else
+        []
+      end
+    end
+
     def facet_by_schema(arr)
       arr.map do |hsh|
         id = hsh["key"].split("-").last
@@ -539,18 +548,6 @@ module Facetable
         inner = facet_by_combined_key(creator_hash.dig("work_types", "buckets"))
         hsh.merge("inner" => inner)
       end
-    end
-
-    def add_other(arr, other_count)
-      if other_count > 0
-        arr << {
-          "id" => "__other__",
-          "title" => OTHER["__other__"],
-          "count" => other_count,
-        }
-      end
-
-      arr
     end
 
     def add_other(arr, other_count)
