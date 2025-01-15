@@ -723,6 +723,7 @@ class Doi < ApplicationRecord
         },
       },
       licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
+      licenses_with_missing: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
       languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
       creators_and_contributors: {

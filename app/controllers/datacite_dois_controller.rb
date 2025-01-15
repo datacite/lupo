@@ -236,6 +236,7 @@ class DataciteDoisController < ApplicationController
           prefixes: :facet_by_key,
           certificates: :facet_by_key,
           licenses: :facet_by_license,
+          licenses_with_missing: :facet_by_license_and_other,
           schema_versions: :facet_by_schema,
           link_checks_status: :facet_by_cumulative_year,
           creators_and_contributors: :facet_by_creators_and_contributors,
@@ -249,7 +250,8 @@ class DataciteDoisController < ApplicationController
         }
 
         facets_to_bucket_path = {
-          fields_of_science: [:subject, :buckets]
+          fields_of_science: [:subject, :buckets],
+          licenses_with_missing: [],
         }
 
         aggregations = response.aggregations
