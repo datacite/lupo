@@ -1648,4 +1648,66 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "licensesWithMissing", 1, "id")).to eq("__missing__")
     end
   end
+
+  describe "GET /dois search with author values", prefix_pool_size: 1 do
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:dois_with_creators) do
+      create_list(:doi, 3, client: client, aasm_state: "findable",
+        creators: [
+          {
+            "contributorType" => "Editor",
+            "name" => "TEST CREATOR 1",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6874",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          },
+          {
+            "contributorType" => "Editor",
+            "name" => "TEST CREATOR 2",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ]
+      )
+    end
+    let!(:dois_with_contributors) do
+      create_list(:doi, 3, client: client, aasm_state: "findable",
+        contributors: [
+          {
+            "contributorType" => "Editor",
+            "name" => "TEST CONTRIBUTOR",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6876",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ]
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns author values" do
+      get "/dois?facets=authors", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "authors")).to be_truthy
+      expect(json.dig("meta", "authors").length()).to eq(3)
+    end
+  end
 end
