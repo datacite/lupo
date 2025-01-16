@@ -1655,7 +1655,6 @@ describe DataciteDoisController, type: :request, vcr: true do
       create_list(:doi, 3, client: client, aasm_state: "findable",
         creators: [
           {
-            "contributorType" => "Editor",
             "name" => "TEST CREATOR 1",
             "nameIdentifiers" => [
               {
@@ -1666,7 +1665,6 @@ describe DataciteDoisController, type: :request, vcr: true do
             ],
           },
           {
-            "contributorType" => "Editor",
             "name" => "TEST CREATOR 2",
             "nameIdentifiers" => [
               {
