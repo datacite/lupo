@@ -1165,7 +1165,7 @@ class Doi < ApplicationRecord
       },
     }
 
-    if options[:random].present?
+    if options[:random].present? and options[:random].to_s.downcase == "true"  # .present? will always be true even if "false" is the value, because strings are truthy
       es_query["function_score"] = function_score
       # Don't do any sorting for random results
       sort = nil
