@@ -239,6 +239,7 @@ class DataciteDoisController < ApplicationController
           licenses_with_missing: :facet_by_license_and_other,
           schema_versions: :facet_by_schema,
           link_checks_status: :facet_by_cumulative_year,
+          authors: :facet_by_authors,
           creators_and_contributors: :facet_by_creators_and_contributors,
           subjects: :facet_by_key,
           fields_of_science: :facet_by_fos,

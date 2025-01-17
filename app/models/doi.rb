@@ -726,6 +726,24 @@ class Doi < ApplicationRecord
       licenses_with_missing: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
       languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
+      authors: {
+        terms: {
+          field: "creators.nameIdentifiers.nameIdentifier",
+          size: 10,
+          min_doc_count: 1,
+          include: "https?://orcid.org/.*"
+        },
+        aggs: {
+          authors: {
+            top_hits: {
+              _source: {
+                includes: [ "creators.name", "creators.nameIdentifiers.nameIdentifier"]
+              },
+              size: 1
+            }
+          }
+        }
+      },
       creators_and_contributors: {
         terms: {
           field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
