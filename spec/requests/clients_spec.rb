@@ -127,7 +127,7 @@ describe ClientsController, type: :request, elasticsearch: true do
           },
         }
       end
-      
+
       let(:raid_registry_client_id) { provider.symbol + ".RAID" }
       let(:params_raid_registry) do
         {
