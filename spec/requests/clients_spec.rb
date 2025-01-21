@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+include Passwordable
 
 describe ClientsController, type: :request, elasticsearch: true do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
+  let(:provider_member_only) { create(:provider, role_name: "ROLE_MEMBER", symbol: "YYYY", password: encrypt_password_sha256(ENV["MDS_PASSWORD"])) }
   let!(:client) { create(:client, provider: provider) }
   let(:params) do
     {
@@ -228,6 +230,26 @@ describe ClientsController, type: :request, elasticsearch: true do
         }
       end
 
+      let(:provider_member_only_basic_auth_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(provider_member_only.symbol, ENV["MDS_PASSWORD"]) } }
+      let(:params_member_only) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => {
+              "symbol" => provider_member_only.symbol + ".IMPERIAL",
+              "name" => "Imperial College",
+              "contactEmail" => "bob@example.com",
+              "clientType" => "repository",
+            },
+            "relationships": {
+              "provider": {
+                "data": { "type": "providers", "id": provider_member_only.uid },
+              },
+            },
+          },
+        }
+      end
+
       it "returns status code 422" do
         post "/clients", params, headers
 
@@ -246,6 +268,12 @@ describe ClientsController, type: :request, elasticsearch: true do
             },
           ],
         )
+      end
+
+      it "returns status code 422" do
+        post "/clients", params_member_only, provider_member_only_basic_auth_headers
+
+        expect(last_response.status).to eq(403)
       end
     end
   end

@@ -72,6 +72,9 @@ class Ability
       can %i[manage], Contact, provider_id: user.provider_id
       can %i[manage], ProviderPrefix, provider_id: user.provider_id
       can %i[manage read_contact_information], Client, provider_id: user.provider_id
+      cannot %i[manage read_contact_information], Client do |client|
+        client.provider.role_name.in?(["ROLE_MEMBER"])
+      end
       cannot %i[transfer], Client
       can %i[manage], ClientPrefix # , :client_id => user.provider_id
 

@@ -178,6 +178,7 @@ module Authenticable
         "ROLE_DEV" => "staff_admin",
         "ROLE_DATACENTRE" => "client_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
+        "ROLE_MEMBER" => "provider_admin",
         "ROLE_CONSORTIUM" => "consortium_admin",
         "ROLE_CONSORTIUM_ORGANIZATION" => "provider_admin",
         "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
