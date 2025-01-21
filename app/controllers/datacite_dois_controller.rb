@@ -413,6 +413,9 @@ class DataciteDoisController < ApplicationController
           doi.aasm_state != "findable" &&
             not_allowed_by_doi_and_user(doi: doi, user: current_user)
         )
+      Rails.logger.info("[EventImportWorker (1): doi blank: #{doi.blank?}")
+      Rails.logger.info("[EventImportWorker (2): doi aasm_state: #{doi&.aasm_state}")
+      Rails.logger.info("[EventImportWorker (3): doi current_user: #{current_user&.inspect}")
       fail ActiveRecord::RecordNotFound
     end
 
@@ -420,6 +423,7 @@ class DataciteDoisController < ApplicationController
       format.json do
         # doi = response.results.first
         if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+          Rails.logger.info("[EventImportWorker (4): doi not_allowed_by_doi_and_user: false")
           fail ActiveRecord::RecordNotFound
         end
 
@@ -443,6 +447,7 @@ class DataciteDoisController < ApplicationController
 
       # doi = response.records.first
       if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+        Rails.logger.info("[EventImportWorker (5): doi not_allowed_by_doi_and_user: false")
         fail ActiveRecord::RecordNotFound
       end
 
