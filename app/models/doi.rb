@@ -1165,7 +1165,7 @@ class Doi < ApplicationRecord
       },
     }
 
-    if options[:random].present? and options[:random].to_s.downcase == "true"  # .present? will always be true even if "false" is the value, because strings are truthy
+    if options[:random].present? && options[:random].to_s.downcase == "true"  # .present? will always be true even if "false" is the value, because strings are truthy
       # Random results and cursor pagination are incompatible (https://github.com/datacite/lupo/issues/838), throw an error if attempted
       if options.fetch(:page, {}).key?(:cursor)
         fail ActionController::BadRequest, "Cursor-based pagination and random sampling are mutually exclusive, please choose one or the other."
