@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://handle.test.datacite.org/api/handles/10.14454/10703
+    body:
+      encoding: UTF-8
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://ferry-cruickshank.test/hilda"}}]'
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Date:
+      - Mon, 27 Jan 2025 17:52:08 GMT
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="node0fhw90cn7db5z1y2nkjmdv0x0s146",
+        nonce="W7l+qVK7ZF5ZXLLrl4mjSw==", error="Identity not verified"
+    body:
+      encoding: ASCII-8BIT
+      string: ''
+  recorded_at: Mon, 27 Jan 2025 17:52:08 GMT
+recorded_with: VCR 6.2.0
