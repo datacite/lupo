@@ -1161,7 +1161,7 @@ class Doi < ApplicationRecord
         bool: bool_query,
       },
       random_score: {
-        "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}",
+        "seed": "random_#{rand(1...100000)}",
       },
     }
 
