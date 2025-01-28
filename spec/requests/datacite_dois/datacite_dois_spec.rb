@@ -187,6 +187,42 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("links", "next")).to be_nil
     end
 
+    it "returns an error when cursor and random are used together" do
+      get "/dois?page[cursor]=1&page[size]=4&random=true", nil, headers
+
+      expect(last_response.status).to eq(400)
+      expect(json["errors"].first["title"]).to eq("Cursor-based pagination and random sampling are mutually exclusive, please choose one or the other.")
+    end
+
+    it "returns dois with random query" do
+      # Set specific seed
+      srand(1234)
+      get "/dois?random=true&page[size]=1", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+      first_doi = json.dig("data", 0, "id")
+
+      # Change the seed
+      srand(5678)
+      get "/dois?random=true&page[size]=1", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", 0, "id")).not_to eq(first_doi)
+    end
+
+    it "ignores random query when value is different from true" do
+      srand(1234)
+      get "/dois?random=false&page[size]=1", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+      first_doi = json.dig("data", 0, "id")
+
+      # Change the seed
+      srand(5678)
+      get "/dois?random=false&page[size]=1", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", 0, "id")).to eq(first_doi)
+    end
+
     it "returns dois with version query", vcr: true do
       get "/dois?query=version:testtag", nil, headers
 

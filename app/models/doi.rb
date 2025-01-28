@@ -1179,11 +1179,15 @@ class Doi < ApplicationRecord
         bool: bool_query,
       },
       random_score: {
-        "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}",
+        "seed": "random_#{rand(1...100000)}",
       },
     }
 
-    if options[:random].present?
+    if options[:random].present? && options[:random].to_s.downcase == "true"  # .present? will always be true even if "false" is the value, because strings are truthy
+      # Random results and cursor pagination are incompatible (https://github.com/datacite/lupo/issues/838), throw an error if attempted
+      if options.fetch(:page, {}).key?(:cursor)
+        fail ActionController::BadRequest, "Cursor-based pagination and random sampling are mutually exclusive, please choose one or the other."
+      end
       es_query["function_score"] = function_score
       # Don't do any sorting for random results
       sort = nil
