@@ -142,18 +142,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
       end
     end
-
-    context "text/csv" do
-      it "returns status code 200" do
-        get "/providers/",
-            nil,
-            {
-              "HTTP_ACCEPT" => "text/csv", "Authorization" => "Bearer " + token
-            }
-
-        expect(last_response.status).to eq(200)
-      end
-    end
   end
 
   describe "GET /providers/:id with contacts" do

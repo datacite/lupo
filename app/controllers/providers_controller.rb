@@ -147,60 +147,6 @@ class ProvidersController < ApplicationController
             )
           end
         end
-        header = %w[
-          accountName
-          fabricaAccountId
-          year
-          is_active
-          accountDescription
-          accountWebsite
-          region
-          country
-          logo_url
-          focusArea
-          organisation_type
-          accountType
-          generalContactEmail
-          groupEmail
-          technicalContactEmail
-          technicalContactGivenName
-          technicalContactFamilyName
-          secondaryTechnicalContactEmail
-          secondaryTechnicalContactGivenName
-          secondaryTechnicalContactFamilyName
-          serviceContactEmail
-          serviceContactGivenName
-          serviceContactFamilyName
-          secondaryServiceContactEmail
-          secondaryServiceContactGivenName
-          secondaryServiceContactFamilyName
-          votingContactEmail
-          votingContactGivenName
-          votingContactFamilyName
-          billingStreet
-          billingPostalCode
-          billingCity
-          department
-          billingOrganization
-          billingState
-          billingCountry
-          billingContactEmail
-          billingContactGivenName
-          billingontactFamilyName
-          secondaryBillingContactEmail
-          secondaryBillingContactGivenName
-          secondaryBillingContactFamilyName
-          twitter
-          ror_id
-          member_type
-          joined
-          created
-          updated
-          deleted_at
-        ]
-        format.csv do
-          render request.format.to_sym => response.records.to_a, header: header
-        end
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
       Raven.capture_exception(e)
