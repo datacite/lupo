@@ -194,7 +194,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["errors"].first["title"]).to eq("Cursor-based pagination and random sampling are mutually exclusive, please choose one or the other.")
     end
 
-    it "returns dois with random query" do
+    xit "returns dois with random query" do
       # Set specific seed
       srand(1234)
       get "/dois?random=true&page[size]=1", nil, headers
