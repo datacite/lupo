@@ -247,12 +247,29 @@ class DataciteDoisController < ApplicationController
           registration_agencies: :facet_by_registration_agency,
           citations: :metric_facet_by_year,
           views: :metric_facet_by_year,
-          downloads: :metric_facet_by_year
+          downloads: :metric_facet_by_year,
+          citation_count: :metric_value,
+          view_count: :metric_value,
+          download_count: :metric_value,
+          content_url_count: :metric_value,
+          open_licenses: :facet_by_combined_key,
+          open_licenses_count: :metric_doc_count,
         }
 
         facets_to_bucket_path = {
           fields_of_science: [:subject, :buckets],
           licenses_with_missing: [],
+          citation_count: [],
+          view_count: [],
+          download_count: [],
+          content_url_count: [],
+          open_licenses: [:resource_types, :buckets],
+        }
+
+        # For facets that aren't in response.aggregations,
+        # define the path to the arguments to be sent to the method
+        facets_to_argument_path = {
+          open_licenses_count: [:open_licenses],
         }
 
         aggregations = response.aggregations
@@ -261,6 +278,9 @@ class DataciteDoisController < ApplicationController
             if aggregations.dig(facet)
               buckets = facets_to_bucket_path.dig(facet) ? aggregations.dig(facet, *facets_to_bucket_path[facet]) : aggregations.dig(facet).buckets
               [facet.to_s.camelize(:lower), send(method, buckets)]
+            elsif facets_to_argument_path.key?(facet) && aggregations.dig(*facets_to_argument_path[facet])
+              argument = aggregations.dig(*facets_to_argument_path[facet])
+              [facet.to_s.camelize(:lower), send(method, argument)]
             end
           end.compact.to_h
 

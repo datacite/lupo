@@ -561,5 +561,14 @@ module Facetable
 
       arr
     end
+
+
+    def metric_value(aggregate)
+      aggregate.value.to_i
+    end
+
+    def metric_doc_count(aggregate)
+      aggregate.doc_count.to_i
+    end
   end
 end

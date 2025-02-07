@@ -677,6 +677,27 @@ class Doi < ApplicationRecord
   DOI_AGGREGATION_DEFINITIONS = {
       # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
       resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
+      open_licenses: {
+        filter: { terms: {
+          "rights_list.rightsIdentifier": [
+            "cc-by-1.0",
+            "cc-by-2.0",
+            "cc-by-2.5",
+            "cc-by-3.0",
+            "cc-by-3.0-at",
+            "cc-by-3.0-us",
+            "cc-by-4.0",
+            "cc-pddc",
+            "cc0-1.0",
+            "cc-pdm-1.0"
+          ]
+        } },
+        aggs: {
+          resource_types: {
+            terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 }
+          }
+        }
+      },
       states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
       published: {
         date_histogram: {
@@ -725,7 +746,11 @@ class Doi < ApplicationRecord
       licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
       licenses_with_missing: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
       languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
+      citation_count: { sum: { field: "citation_count" } },
+      view_count: { sum: { field: "view_count" } },
+      download_count: { sum: { field: "download_count" } },
       certificates: { terms: { field: "client.certificate", size: 10, min_doc_count: 1 } },
+      content_url_count: { value_count: { field: "content_url" } },
       authors: {
         terms: {
           field: "creators.nameIdentifiers.nameIdentifier",
