@@ -1744,4 +1744,96 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "authors").length()).to eq(3)
     end
   end
+
+  describe "GET /dois search with count values", prefix_pool_size: 1 do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+    let!(:ref_target_dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
+    let!(:reference_events) do
+      ref_target_dois.each do |ref_target_doi|
+        create(:event_for_crossref, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{ref_target_doi.doi}",
+          relation_type_id: "references"
+        })
+      end
+    end
+    let!(:citation_target_dois) { create_list(:doi, 7, client: client, aasm_state: "findable") }
+    let!(:citation_events) do
+      citation_target_dois.each do |citation_target_doi|
+        create(:event_for_datacite_crossref, {
+          subj_id: "https://doi.org/#{doi.doi}",
+          obj_id: "https://doi.org/#{citation_target_doi.doi}",
+          relation_type_id: "is-referenced-by"
+        })
+      end
+    end
+
+
+    let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
+
+    let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns citationCount, viewCount, and downloadCount in the facets" do
+      get "/dois?facets=citation_count,view_count,download_count", nil, headers
+
+      expect(last_response.status).to eq(200)
+
+      expect(json.dig("meta", "citationCount")).to be_a(Integer)
+      expect(json.dig("meta", "viewCount")).to be_a(Integer)
+      expect(json.dig("meta", "downloadCount")).to be_a(Integer)
+
+      expect(json.dig("meta", "citationCount")).to eq(12)
+      expect(json.dig("meta", "viewCount")).to eq(75)
+      expect(json.dig("meta", "downloadCount")).to eq(30)
+    end
+  end
+
+  describe "GET /dois search with open resource values", prefix_pool_size: 2, elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
+    let!(:dois_other_license) do
+      create_list(:doi, 3, client: client, aasm_state: "findable",
+                  rights_list: [{ "rightsIdentifier" => "cc-by-2.0" }]
+      )
+    end
+    let!(:dois_closed_license) do
+      create_list(:doi, 3, client: client, aasm_state: "findable",
+                  rights_list: [{ "rightsIdentifier" => "closed" }]
+      )
+    end
+
+    let!(:work) do
+      create(
+        :doi,
+        doi: "10.1038/nature12373",
+        agency: "crossref",
+        aasm_state: "findable",
+        titles: [{ "title" => "Nanometre-scale thermometry in a living cell" }],
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns contentUrlCount, openLicenses, and openLicensesCount in the facets" do
+      get "/dois?facets=content_url_count,open_licenses,open_licenses_count", nil, headers
+
+      expect(last_response.status).to eq(200)
+
+      expect(json.dig("meta", "contentUrlCount")).to be_a(Integer)
+      expect(json.dig("meta", "openLicensesCount")).to be_a(Integer)
+
+      expect(json.dig("meta", "contentUrlCount")).to eq(0)
+      expect(json.dig("meta", "openLicenses", 0, "count")).to eq(13)
+      expect(json.dig("meta", "openLicensesCount")).to eq(13)
+    end
+  end
 end
