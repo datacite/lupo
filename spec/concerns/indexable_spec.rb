@@ -253,7 +253,6 @@ describe "Indexable class methods", elasticsearch: true do
           expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
           expect(arg.class.name).to eq("OtherDoi")
         end
-        # event.source_doi = other_doi.doi
         event.doi_for_source.touch
       end
     end
@@ -283,7 +282,6 @@ describe "Indexable class methods", elasticsearch: true do
           expect(arg.__elasticsearch__.index_name).to eq("dois-test")
           expect(arg.class.name).to eq("Doi")
         end
-        # event.source_doi = doi.doi
         event.doi_for_source.touch
       end
     end
