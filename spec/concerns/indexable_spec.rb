@@ -218,4 +218,72 @@ describe "Indexable class methods", elasticsearch: true do
       end
     end
   end
+
+  describe "after_commit callback when touched", elasticsearch: true, vcr: true do
+    context "when agency is not datacite" do
+      let!(:other_doi) { create(:other_doi, agency: "crossref") }
+      let!(:event) { create(:event, obj_id: other_doi.doi, source_doi: other_doi.doi) }
+
+      it "performs IndexBackgroundJob with OtherDoi when touched as Doi" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
+          expect(arg.class.name).to eq("OtherDoi")
+        end
+        Doi.find(other_doi.id).touch
+      end
+
+      it "performs IndexBackgroundJob with OtherDoi when touched as DataciteDoi" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
+          expect(arg.class.name).to eq("OtherDoi")
+        end
+        DataciteDoi.find(other_doi.id).touch
+      end
+
+      it "performs IndexBackgroundJob with OtherDoi when touched as OtherDoi" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
+          expect(arg.class.name).to eq("OtherDoi")
+        end
+        other_doi.touch
+      end
+
+      it "the index_name of the object passed to IndexBackgroundJob is dois-other when related event doi_for_source is touched" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
+          expect(arg.class.name).to eq("OtherDoi")
+        end
+        event.doi_for_source.touch
+      end
+    end
+
+    context "when agency is datacite" do
+      let!(:doi) { create(:doi, agency: "datacite") }
+      let!(:event) { create(:event, obj_id: doi.doi, source_doi: doi.doi) }
+
+      it "performs IndexJobDoiRegistration when touched as DataciteDoi" do
+        expect(IndexJobDoiRegistration).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-test")
+          expect(arg.class.name).to eq("DataciteDoi")
+        end
+        doi.touch
+      end
+
+      it "performs IndexJob when touched as Doi" do
+        expect(IndexJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-test")
+          expect(arg.class.name).to eq("Doi")
+        end
+        Doi.find(doi.id).touch
+      end
+
+      it "the index_name of the object passed to IndexJob is dois when related event doi_for_source is touched" do
+        expect(IndexJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("dois-test")
+          expect(arg.class.name).to eq("Doi")
+        end
+        event.doi_for_source.touch
+      end
+    end
+  end
 end

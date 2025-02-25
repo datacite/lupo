@@ -187,3 +187,11 @@ FactoryBot.define do
     initialize_with { DataciteDoi.where(doi: doi).first_or_initialize }
   end
 end
+
+FactoryBot.define do
+  factory :other_doi, parent: :doi do
+    agency { "crossref" }
+    type { "OtherDoi" }
+    initialize_with { OtherDoi.where(doi: doi).first_or_initialize }
+  end
+end

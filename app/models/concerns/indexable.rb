@@ -8,7 +8,10 @@ module Indexable
   included do
     after_commit on: %i[create update] do
       # use index_document instead of update_document to also update virtual attributes
-      if not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
+      if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
+        other_doi = OtherDoi.find_by(id: self.id)
+        IndexBackgroundJob.perform_later(other_doi) if other_doi
+      elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
         IndexJob.perform_later(self)
       elsif instance_of?(DataciteDoi)
         IndexJobDoiRegistration.perform_later(self)
@@ -40,15 +43,6 @@ module Indexable
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
-      end
-    end
-
-    after_touch do
-      # prefixes need to be reindexed sooner
-      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-        __elasticsearch__.index_document
-      else
-        IndexBackgroundJob.perform_later(self)
       end
     end
 
