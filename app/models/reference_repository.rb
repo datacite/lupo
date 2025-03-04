@@ -258,11 +258,6 @@ class ReferenceRepository < ApplicationRecord
       )
     end
 
-    def where(ids, options = {})
-      response = find_by_id(ids, options)
-      response.respond_to?(:results) ? response.results.first : response
-    end
-
     def query_fields
       %w[
         uid^10

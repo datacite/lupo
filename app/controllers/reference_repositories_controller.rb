@@ -57,7 +57,7 @@ class ReferenceRepositoriesController < ApplicationController
           facet_by_key(response.aggregations.repository_types.buckets)
         end
 
-      @repository = response.results
+      repositories = response.results
 
       options = {}
       options[:meta] = {
@@ -74,7 +74,7 @@ class ReferenceRepositoriesController < ApplicationController
       options[:links] = {
         self: request.original_url,
         next:
-          if @repository.blank? || page[:number] == total_pages
+          if repositories.blank? || page[:number] == total_pages
             nil
           else
             request.base_url + "/reference-repositories?" +
@@ -94,7 +94,7 @@ class ReferenceRepositoriesController < ApplicationController
       options[:params] = { current_ability: current_ability }
 
       render(
-        json: ReferenceRepositorySerializer.new(@repository, options).serializable_hash.to_json,
+        json: ReferenceRepositorySerializer.new(repositories, options).serializable_hash.to_json,
         status: :ok
       )
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
@@ -127,7 +127,8 @@ class ReferenceRepositoriesController < ApplicationController
 
   protected
     def set_repository
-      @repository = ReferenceRepository.where(params[:id])
+      response = ReferenceRepository.find_by_id(params[:id])
+      @repository = response.respond_to?(:results) ? response.results.first : response
       fail ActiveRecord::RecordNotFound if @repository.blank?
     end
 end
