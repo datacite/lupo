@@ -38,7 +38,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
   before :all do
     VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
       create(:prefix, uid: "10.17616")
-      create(:reference_repository, re3doi:  "10.17616/R3BW5R")
+      @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       create(:reference_repository, re3doi:  "10.17616/r3vg6n")
       create(:reference_repository, re3doi:  "10.17616/r37m1j")
       create(:reference_repository, re3doi:  "10.17616/R3003X")
@@ -73,7 +73,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
   describe "GET /reference-repositories/:id" do
     context "when the record exists" do
       it "returns the repository" do
-        get "/reference-repositories/pvl6ce", nil, headers
+        get "/reference-repositories/#{@ref_repo.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("UCLA Social Science Data Archive Dataverse")
