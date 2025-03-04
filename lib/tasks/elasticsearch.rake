@@ -13,6 +13,9 @@ namespace :elasticsearch do
     Rake::Task["client:create_index"].invoke
     Rake::Task["client:create_alias"].invoke
 
+    Rake::Task["repository:create_index"].invoke
+    Rake::Task["repository:create_alias"].invoke
+
     Rake::Task["prefix:create_index"].invoke
     Rake::Task["prefix:create_alias"].invoke
 
@@ -44,6 +47,7 @@ namespace :elasticsearch do
 
     Rake::Task["provider:delete_index"].invoke
     Rake::Task["client:delete_index"].invoke
+    Rake::Task["repository:delete_index"].invoke
     Rake::Task["prefix:delete_index"].invoke
     Rake::Task["provider_prefix:delete_index"].invoke
     Rake::Task["client_prefix:delete_index"].invoke

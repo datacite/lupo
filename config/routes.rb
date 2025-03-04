@@ -192,6 +192,8 @@ Rails.application.routes.draw do
     resources :activities
   end
 
+  resources :reference_repositories, path: "reference-repositories", only: %i[index show], constraints: { id: /.+/ }
+
   resources :client_prefixes, path: "client-prefixes"
   resources :datacite_dois, path: "dois", constraints: { id: /.+/ } do
     resources :metadata
