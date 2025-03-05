@@ -220,7 +220,7 @@ class ReferenceRepository < ApplicationRecord
               size: facet_count,
               min_doc_count: 1
             },
-      },
+          },
         }
       end
     end
@@ -254,6 +254,7 @@ class ReferenceRepository < ApplicationRecord
             query: ids.join(" OR ")
           }
         },
+        aggregations: query_aggregations,
       )
     end
 
