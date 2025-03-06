@@ -11,6 +11,8 @@ module Indexable
       if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
         other_doi = OtherDoi.find_by(id: self.id)
         IndexBackgroundJob.perform_later(other_doi) if other_doi
+      elsif ["Event", "Activity"].include?(self.class.name)
+        IndexBackgroundJob.perform_later(self)
       elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
         IndexJob.perform_later(self)
       elsif instance_of?(DataciteDoi)
