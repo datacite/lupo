@@ -69,7 +69,7 @@ module Facetable
     "mit" => "MIT",
     "mpl-2.0" => "MPL-2.0",
     "ogl-canada-2.0" => "OGL-Canada-2.0",
-    "__missing__" => "Missing",
+    "__missing__" => "Unknown",
   }.freeze
 
   LOWER_BOUND_YEAR = 2_010
