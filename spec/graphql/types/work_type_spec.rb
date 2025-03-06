@@ -1639,7 +1639,7 @@ describe WorkType do
         [{ "count" => 5, "id" => "ror.org/5", "title" => "5" }, { "count" => 4, "id" => "ror.org/4", "title" => "4" }, { "count" => 3, "id" => "__missing__", "title" => "Missing" }, { "count" => 3, "id" => "ror.org/3", "title" => "3" }, { "count" => 2, "id" => "ror.org/2", "title" => "2" }, { "count" => 2, "id" => "__other__", "title" => "Other" }]
       )
       expect(response.dig("data", "works", "licenses")).to eq(
-        [{ "count" => 5, "id" => "cc-by-1.0", "title" => "CC-BY-1.0" }, { "count" => 4, "id" => "cc-by-2.0", "title" => "CC-BY-2.0" }, { "count" => 3, "id" => "__missing__", "title" => "Missing" }, { "count" => 3, "id" => "cc-by-2.5", "title" => "CC-BY-2.5" }, { "count" => 2, "id" => "cc-by-3.0", "title" => "CC-BY-3.0" }, { "count" => 2, "id" => "__other__", "title" => "Other" }]
+        [{ "count" => 5, "id" => "cc-by-1.0", "title" => "CC-BY-1.0" }, { "count" => 4, "id" => "cc-by-2.0", "title" => "CC-BY-2.0" }, { "count" => 3, "id" => "__missing__", "title" => "Unknown" }, { "count" => 3, "id" => "cc-by-2.5", "title" => "CC-BY-2.5" }, { "count" => 2, "id" => "cc-by-3.0", "title" => "CC-BY-3.0" }, { "count" => 2, "id" => "__other__", "title" => "Other" }]
       )
     end
   end
