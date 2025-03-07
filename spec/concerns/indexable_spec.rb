@@ -286,4 +286,35 @@ describe "Indexable class methods", elasticsearch: true do
       end
     end
   end
+
+  describe "after_commit callback", elasticsearch: true, vcr: true do
+    context "when event is committed" do
+      let!(:doi) { create(:doi) }
+      let!(:event) { create(:event) }
+
+      it "performs IndexBackgroundJob with Event when event saved" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("events-test")
+          expect(arg.class.name).to eq("Event")
+          expect(arg.id).to eq(event.id)
+        end
+        event.save
+      end
+      it "performs IndexBackgroundJob with Event when event created" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("events-test")
+          expect(arg.class.name).to eq("Event")
+        end
+        create(:event)
+      end
+      it "performs IndexBackgroundJob with Activity when doi saved" do
+        expect(IndexBackgroundJob).to receive(:perform_later) do |arg|
+          expect(arg.__elasticsearch__.index_name).to eq("activities-test")
+          expect(arg.class.name).to eq("Activity")
+        end
+        doi.publication_year = 2017
+        doi.save
+      end
+    end
+  end
 end

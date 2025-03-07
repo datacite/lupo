@@ -1,0 +1,54 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://doi.org/ra/10.1371
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 06 Mar 2025 19:30:48 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Vary:
+      - Origin, accept-encoding
+      Permissions-Policy:
+      - interest-cohort=(),browsing-topics=()
+      Content-Encoding:
+      - gzip
+      Cf-Cache-Status:
+      - DYNAMIC
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=1xWyk%2FNVGE7ZcNAbbXm3krW2%2BV6y%2B2prM2BWobhI6W5ZG2aMlaVCUA3Ef5k4OeXnqjYyXQljG%2FXgEop8KSCHUcIteKCJc%2BCMd%2F8Z9bF%2FVPq6CzSm%2BjiYXBQ%3D"}],"group":"cf-nel","max_age":604800}'
+      Nel:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 91c4450cfd5c432b-EWR
+      Alt-Svc:
+      - h3=":443"; ma=86400
+      Server-Timing:
+      - cfL4;desc="?proto=TCP&rtt=16008&min_rtt=12767&rtt_var=7103&sent=4&recv=6&lost=0&retrans=0&sent_bytes=2781&recv_bytes=862&delivery_rate=226834&cwnd=251&unsent_bytes=0&cid=24372fda810034f0&ts=73&x=0"
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAA4vmUlCoBmIFBSUXf08lKwUlQwM9Q2NzQyUdiGiQI0jQuSi/uLgoNU0JKFjLFQsAfpIZsjYAAAA=
+  recorded_at: Thu, 06 Mar 2025 19:30:48 GMT
+recorded_with: VCR 6.2.0
