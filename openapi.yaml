@@ -1537,23 +1537,6 @@ paths:
       responses:
         '200':
           description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Report
-        required: true
-        schema:
-          type: string
-      tags:
-        - reports
-      summary: Delete a report.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
 components:
   schemas:
     # core object types
