@@ -716,6 +716,11 @@ class Doi < ApplicationRecord
       registered: { date_histogram: { field: "registered", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
                     aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
+      funders: {
+        aggs: { funders: { top_hits: { _source: { includes: ["funding_references.funderName", "funding_references.funderIdentifier"] }, size: 1 } } },
+        terms: {
+          field: "funding_references.funderIdentifier", min_doc_count: 1, size: 10, },
+      },
       clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
       client_types: {
         terms: {

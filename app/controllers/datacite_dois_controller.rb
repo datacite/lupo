@@ -254,6 +254,7 @@ class DataciteDoisController < ApplicationController
           content_url_count: :metric_value,
           open_licenses: :facet_by_combined_key,
           open_licenses_count: :metric_doc_count,
+          funders: :facet_by_funders
         }
 
         facets_to_bucket_path = {

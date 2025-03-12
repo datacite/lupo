@@ -1745,6 +1745,49 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois search with funders", prefix_pool_size: 11 do
+    let!(:dois_funder_1) do
+      create_list(:doi, 5, aasm_state: "findable",
+        funding_references: [
+          { "funderName": "Fake Funders R Us: We're just in the way and should be skipped" },
+          {
+            "schemeUri": "https://ror.org",
+            "funderName": "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France",
+            "funderIdentifier": "https://ror.org/04tqhj682",
+            "funderIdentifierType": "ROR"
+          }
+        ]
+      )
+    end
+
+    let!(:dois_funder_2) do
+      create_list(:doi, 5, aasm_state: "findable",
+        funding_references: [
+          { "funderName": "Fake Funders R Us: We're just in the way and should be skipped" },
+          {
+            "schemeUri": "https://ror.org",
+            "funderName": "The French ministry of the Army, the French ministry of Ecological Transition,  the French Office for Biodiversity (OFB), the French Development Agency (AFD) and Météo France",
+            "funderIdentifier": "https://ror.org/04tqhj683",
+            "funderIdentifierType": "ROR"
+          }
+        ]
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns funder values" do
+      get "/dois?facets=funders", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "funders")).to be_truthy
+      expect(json.dig("meta", "funders").length()).to eq(2)
+    end
+  end
+
   describe "GET /dois search with count values", prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
