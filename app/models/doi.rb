@@ -719,7 +719,7 @@ class Doi < ApplicationRecord
       funders: {
         aggs: { funders: { top_hits: { _source: { includes: ["funding_references.funderName", "funding_references.funderIdentifier"] }, size: 1 } } },
         terms: {
-          field: "funding_references.funderIdentifier", min_doc_count: 1, size: 10, },
+          field: "funding_references.funderIdentifier", min_doc_count: 1, size: 200, },
       },
       clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
       client_types: {
