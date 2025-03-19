@@ -19,7 +19,6 @@ gem "countries", "~> 2.1", ">= 2.1.2"
 gem "country_select", "~> 3.1"
 gem "crawler_detect"
 gem "dalli", "~> 3.2", ">= 3.2.8"
-gem "datadog", require: "datadog/auto_instrument"
 gem "departure", "~> 6.2"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "dotenv"
@@ -77,6 +76,10 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
+
+group :production, :stage do
+  gem "datadog", require: "datadog/auto_instrument"
+end
 
 group :development, :test do
   gem "better_errors"
