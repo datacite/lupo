@@ -16,7 +16,6 @@ gem "bolognese", "~> 2.3.2"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "countries", "~> 2.1", ">= 2.1.2"
-gem "country_select", "~> 3.1"
 gem "crawler_detect"
 gem "dalli", "~> 3.2", ">= 3.2.8"
 gem "datadog", require: "datadog/auto_instrument"
@@ -86,11 +85,6 @@ group :development, :test do
   gem "rspec-benchmark", "~> 0.4.0"
   gem "rspec-graphql_matchers", "~> 1.4"
   gem "rspec-rails", "~> 6.1", ">= 6.1.1"
-  gem "rubocop", "~> 1.3", ">= 1.3.1"
-  gem "rubocop-performance", "~> 1.5", ">= 1.5.1"
-  gem "rubocop-rails", "~> 2.8", ">= 2.8.1"
-  gem "rubocop-packaging", "~> 0.5.1"
-  gem "rubocop-rspec", "~> 2.0", require: false
 end
 
 group :development do
@@ -103,6 +97,11 @@ group :development do
   gem "spring", "~> 4.1", ">= 4.1.3"
   gem "spring-commands-rspec"
   gem "spring-watcher-listen", "~> 2.1"
+  gem "rubocop", "~> 1.3", ">= 1.3.1", require: false
+  gem "rubocop-performance", "~> 1.5", ">= 1.5.1", require: false
+  gem "rubocop-rails", "~> 2.8", ">= 2.8.1", require: false
+  gem "rubocop-packaging", "~> 0.5.1", require: false
+  gem "rubocop-rspec", "~> 2.0", require: false
 end
 
 group :test do
