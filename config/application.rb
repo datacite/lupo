@@ -133,7 +133,7 @@ module Lupo
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
       }
-    end
+    end if defined?(Datadog::Tracing)
 
     # configure caching
     config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], { namespace: ENV["APPLICATION"] }
