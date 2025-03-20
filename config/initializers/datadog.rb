@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "datadog"
-
 Datadog.configure do |c|
   # Global
   c.agent.host = "datadog.local"
@@ -21,7 +19,8 @@ Datadog.configure do |c|
   c.tracing.instrument :rails
   c.tracing.instrument :elasticsearch
   c.tracing.instrument :shoryuken
+  c.tracing.instrument :graphql, enabled: false, with_deprecated_tracers: true
 
   # Profiling setup
   c.profiling.enabled = Rails.env.stage?
-end
+end if defined?(Datadog)
