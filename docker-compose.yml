@@ -1,5 +1,6 @@
 services:
   web:
+    profiles: [ app ]
     env_file: .env
     environment:
       - ELASTIC_PASSWORD=AnUnsecurePassword123
@@ -18,10 +19,12 @@ services:
       - public
     depends_on:
       - elasticsearch
+
   memcached:
     image: memcached:1.4.31
     networks:
       - public
+
   mysql:
     command: --max_allowed_packet=50000000
     environment:
@@ -32,8 +35,9 @@ services:
       - "3309:3306"
     networks:
       - public
+
   elasticsearch:
-    image: opensearchproject/opensearch:2 
+    image: opensearchproject/opensearch:2
     ports:
       - "9201:9200"
       - "9301:9300"

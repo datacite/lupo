@@ -14,11 +14,13 @@ Using Docker.
 docker run -p 8065:80 datacite/lupo
 ```
 
-or
+or using with docker compose `app` profile
 
 ```bash
-docker-compose up
+docker compose --profile app up
 ```
+
+Without specifying the `app` profile just the core infrastructure parts will start i.e. mysql, opensearch etc
 
 If you want to build the docker image locally (instead of pulling it from docker hub)
  and use docker compose for development you can use
