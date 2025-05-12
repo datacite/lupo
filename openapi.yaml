@@ -2409,7 +2409,6 @@ components:
           type: string
         contentUrl:
           description: An array of content URLs associated with the DOI.
-          readOnly: true
           type: array
           items:
             type: string
