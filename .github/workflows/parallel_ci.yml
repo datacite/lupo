@@ -89,6 +89,13 @@ jobs:
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Sync time
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ntpdate
+          sudo ntpdate pool.ntp.org
+
       - name: Set up Ruby 3.1.6
         uses: ruby/setup-ruby@v1
         with:
