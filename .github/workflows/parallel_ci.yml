@@ -123,6 +123,10 @@ jobs:
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.minio.ports[9000] }}
+          AWS_ACCESS_KEY_ID_S3: minioadmin
+          AWS_SECRET_ACCESS_KEY_S3: minioadmin
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
