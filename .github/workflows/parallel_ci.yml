@@ -59,6 +59,21 @@ jobs:
           logger.org.opensearch.discovery: "ERROR"
         ports:
           - 9200
+      minio:
+        # TODO: Replace with official image
+        # We're using third party image as github does not support using docker commands
+        # This means we can't start up minio how we want.
+        # See https://stackoverflow.com/questions/64031598/creating-a-minios3-container-inside-a-github-actions-yml-file
+        # Unofficial for test runner seems acceptable.
+
+        image: lazybit/minio
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        options: --name=minio --health-cmd "curl http://localhost:9000/minio/health/live"
+
     env:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: datacite
