@@ -22,6 +22,9 @@ require "aasm/rspec"
 require "strip_attributes/matchers"
 require "rspec-benchmark"
 
+ENV["METADATA_STORAGE_BUCKET_NAME" ] = ENV["METADATA_STORAGE_BUCKET_NAME"] + "-test#{ENV["TEST_ENV_NUMBER"]}"
+
+
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
 
