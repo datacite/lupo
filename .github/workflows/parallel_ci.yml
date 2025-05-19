@@ -65,6 +65,9 @@ jobs:
         # See https://stackoverflow.com/questions/64031598/creating-a-minios3-container-inside-a-github-actions-yml-file
 
         image: ghcr.io/datacite/minio:latest
+        credentials:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
         ports:
           - 9000:9000
         env:
