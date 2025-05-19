@@ -60,13 +60,11 @@ jobs:
         ports:
           - 9200
       minio:
-        # TODO: Replace with official image
-        # We're using third party image as github does not support using docker commands
+        # We're using our own built image as github does not support using docker commands
         # This means we can't start up minio how we want.
         # See https://stackoverflow.com/questions/64031598/creating-a-minios3-container-inside-a-github-actions-yml-file
-        # Unofficial for test runner seems acceptable.
 
-        image: lazybit/minio
+        image: ghcr.io/datacite/minio:latest
         ports:
           - 9000:9000
         env:
