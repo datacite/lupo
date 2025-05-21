@@ -1713,7 +1713,7 @@ class Doi < ApplicationRecord
   def titles=(value)
     write_attribute(:titles, Array.wrap(value))
   end
-  
+
   def formats=(value)
     write_attribute(:formats, Array.wrap(value))
   end
