@@ -1733,6 +1733,10 @@ class Doi < ApplicationRecord
     write_attribute(:doi, value.upcase) if value.present?
   end
 
+  def titles=(value)
+    write_attribute(:titles, Array.wrap(value))
+  end
+  
   def formats=(value)
     write_attribute(:formats, Array.wrap(value))
   end
