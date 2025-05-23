@@ -2074,11 +2074,11 @@ class Doi < ApplicationRecord
     Array.wrap(contributors).each do |c|
       errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
 
-      if c['name'].nil?
+      if c["name"].nil?
         errors.add(:contributors, "A contributor is missing a required element: name.")
       else
         if schema_version == "http://datacite.org/schema/kernel-4"
-          if c['contributorType'].nil? || c['contributorType'].blank?
+          if c["contributorType"].nil? || c["contributorType"].blank?
             errors.add(:contributors, "Contributor '#{c['name']}' is missing a required element: contributor type.")
           else
             errors.add(:contributors, "Contributor '#{c['name']}' has a contributor type that is not supported in schema 4: '#{c['contributorType']}'.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor Translator WorkPackageLeader).include?(c["contributorType"])
