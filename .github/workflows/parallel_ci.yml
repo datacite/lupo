@@ -59,21 +59,14 @@ jobs:
           logger.org.opensearch.discovery: "ERROR"
         ports:
           - 9200
-      minio:
-        # We're using our own built image as github does not support using docker commands
-        # This means we can't start up minio how we want.
-        # See https://stackoverflow.com/questions/64031598/creating-a-minios3-container-inside-a-github-actions-yml-file
-
-        image: ghcr.io/datacite/minio:latest
-        credentials:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      localstack:
+        image: localstack/localstack
         ports:
-          - 9000:9000
+          - "4566:4566"  # LocalStack edge port
         env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-        options: --name=minio --health-cmd "curl http://localhost:9000/minio/health/live"
+          SERVICES: s3   # Only start S3
+          AWS_ACCESS_KEY_ID: s3accesskeyid
+          AWS_SECRET_ACCESS_KEY: s3accesskeypass
 
     env:
       MYSQL_HOST: "127.0.0.1"
@@ -132,9 +125,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.minio.ports[9000] }}
-          AWS_ACCESS_KEY_ID_S3: minioadmin
-          AWS_SECRET_ACCESS_KEY_S3: minioadmin
+          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.localstack.ports[4566] }}
+          AWS_ACCESS_KEY_ID_S3: s3accesskeyid
+          AWS_SECRET_ACCESS_KEY_S3: s3accesskeypass
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
