@@ -6,7 +6,7 @@ services:
     networks:
       - public
     ports:
-      - "11211:11211"  # Expose the memcached port for external access
+      - "11211:11211" # Expose the memcached port for external access
   mysql:
     command: --max_allowed_packet=50000000
     environment:
@@ -40,6 +40,20 @@ services:
       test: curl -f http://admin:AnUnsecurePassword123@elasticsearch:9200
       interval: 10s
       timeout: 1s
+
+  minio:
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - public
+    volumes:
+      - data:/user/share/minio/data
 
 volumes:
   data:
