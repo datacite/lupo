@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+
 def import_index(index_class)
   index_class.import
   index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
@@ -9,6 +10,15 @@ end
 def clear_index(index_class)
   index_class.__elasticsearch__.client.delete_by_query(index: index_class.index_name, body: { query: { match_all: {} } })
   index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
+end
+
+def reset_indices
+      clear_index(DataciteDoi)
+      clear_index(Client)
+      clear_index(Provider)
+      import_index(Provider)
+      import_index(Client)
+      import_index(DataciteDoi)
 end
 
 describe RepositoriesController, type: :request, elasticsearch: true do
@@ -153,7 +163,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /repositories/totals", elasticsearch: false , prefix_pool_size: 2 do
+  describe "GET /repositories/totals", elasticsearch: false, prefix_pool_size: 2 do
     let(:client) { create(:client) }
     let!(:datacite_dois) do
       create_list(
@@ -164,10 +174,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     before do
-      clear_index(DataciteDoi)
-      clear_index(Client)
-      import_index(DataciteDoi)
-      import_index(Client)
+      reset_indices
     end
 
     it "returns repositories" do
@@ -182,7 +189,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /repositories/:id meta" do
+  describe "GET /repositories/:id meta", elasticsearch: false, prefix_pool_size: 2 do
     let(:provider) { create(:provider) }
     let(:client) { create(:client) }
     # Do not need to create a client_prefix since the prefix is auto-assigned at repository creation.
@@ -196,11 +203,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     before do
-      DataciteDoi.import
-      Provider.import
-      Client.import
-      ClientPrefix.import
-      sleep 3
+      reset_indices
     end
 
     it "returns repository" do
@@ -212,7 +215,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /repositories/:id/stats" do
+  describe "GET /repositories/:id/stats", elasticsearch: false, prefix_pool_size: 2 do
     let(:provider) { create(:provider) }
     let(:client) { create(:client) }
     let!(:datacite_dois) do
@@ -224,10 +227,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     end
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      reset_indices
     end
 
     it "returns repository" do
