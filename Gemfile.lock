@@ -195,9 +195,6 @@ GEM
       money (~> 6.9)
       sixarm_ruby_unaccent (~> 1.1)
       unicode_utils (~> 1.4)
-    country_select (3.1.1)
-      countries (~> 2.0)
-      sort_alphabetical (~> 1.0)
     crack (0.4.5)
       rexml
     crass (1.0.6)
@@ -694,8 +691,6 @@ GEM
       unf (~> 0.1.4)
     sixarm_ruby_unaccent (1.2.0)
     slack-notifier (2.4.0)
-    sort_alphabetical (1.1.0)
-      unicode_utils (>= 1.2.2)
     sparql (3.2.5)
       builder (~> 3.2)
       ebnf (~> 2.2, >= 2.3.1)
@@ -795,7 +790,6 @@ DEPENDENCIES
   cancancan (~> 3.0)
   capybara
   countries (~> 2.1, >= 2.1.2)
-  country_select (~> 3.1)
   crawler_detect
   dalli (~> 3.2, >= 3.2.8)
   database_cleaner
