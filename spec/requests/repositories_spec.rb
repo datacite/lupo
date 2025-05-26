@@ -13,12 +13,12 @@ def clear_index(index_class)
 end
 
 def reset_indices
-      clear_index(DataciteDoi)
-      clear_index(Client)
-      clear_index(Provider)
-      import_index(Provider)
-      import_index(Client)
-      import_index(DataciteDoi)
+  clear_index(DataciteDoi)
+  clear_index(Client)
+  clear_index(Provider)
+  import_index(Provider)
+  import_index(Client)
+  import_index(DataciteDoi)
 end
 
 describe RepositoriesController, type: :request, elasticsearch: true do
