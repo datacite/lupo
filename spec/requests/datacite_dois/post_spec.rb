@@ -1870,7 +1870,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
-    # Funder has been removed as valid contributor type in schema 4.0
+    # Invalid contributor type in schema 4.0
     context "update contributor type with funder", elasticsearch: true do
       let(:update_attributes) do
         {
@@ -1883,11 +1883,74 @@ describe DataciteDoisController, type: :request, vcr: true do
         }
       end
 
-      it "updates the Doi" do
+      it "does not update the Doi" do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "contributors", "title" => "Contributor type Funder is not supported in schema 4.", "uid" => "10.14454/4k3m-nyvg" }])
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' has a contributor type that is not supported in schema 4: '*'./)
+      end
+    end
+
+    # Missing contributor type.
+    context "update contributor type with funder", elasticsearch: true do
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "contributors" => [{ "contributorType" => "", "name" => "Wellcome Trust", "nameType" => "Organizational" }],
+            },
+          },
+        }
+      end
+
+      it "does not update the Doi" do
+        patch "/dois/#{doi.doi}", update_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
+      end
+    end
+
+    # Missing contributor type.
+    context "update contributor type with funder", elasticsearch: true do
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "contributors" => [{ "contributorType" => nil, "name" => "Wellcome Trust", "nameType" => "Organizational" }],
+            },
+          },
+        }
+      end
+
+      it "does not update the Doi" do
+        patch "/dois/#{doi.doi}", update_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
+      end
+    end
+
+    # Missing contributor type.
+    context "update contributor type with funder", elasticsearch: true do
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "contributors" => [{ "name" => "Wellcome Trust", "nameType" => "Organizational" }],
+            },
+          },
+        }
+      end
+
+      it "does not update the Doi" do
+        patch "/dois/#{doi.doi}", update_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
       end
     end
 
