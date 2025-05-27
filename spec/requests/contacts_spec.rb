@@ -387,7 +387,6 @@ describe ContactsController, type: :request, elasticsearch: true do
 
       it "updates the record" do
         put "/contacts/#{contact.uid}", params, headers
-        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "givenName")).to be_nil
         expect(json.dig("data", "attributes", "familyName")).to be_nil

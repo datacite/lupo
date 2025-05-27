@@ -165,7 +165,6 @@ describe ExportsController, type: :request do
     it "returns repositories with dois not indexed", vcr: false do
       get "/export/check-indexed-dois",
           nil, admin_headers
-      puts last_response.body
       expect(last_response.status).to eq(202)
       csv = last_response.body.lines
       expect(csv.length).to eq(1)
