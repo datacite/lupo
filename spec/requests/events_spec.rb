@@ -466,7 +466,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     it "not registered" do
       post uri, params, headers
-      puts json
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
       expect(json.dig("data", "id")).to be_present
@@ -1001,7 +1000,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
       it "JSON" do
         get uri, nil, headers
-        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "relationTypeId")).to eq(
           "is-referenced-by",

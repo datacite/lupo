@@ -3,6 +3,16 @@
 require "rails_helper"
 include Passwordable
 
+def import_doi_index
+  DataciteDoi.import
+  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
+end
+
+def clear_doi_index
+  DataciteDoi.__elasticsearch__.client.delete_by_query(index: DataciteDoi.index_name, body: { query: { match_all: {} } })
+  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
+end
+
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
@@ -18,7 +28,7 @@ describe DataciteDoisController, type: :request, vcr: true do
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
-  describe "GET /dois with authorization headers", elasticsearch: true do
+  describe "GET /dois with authorization headers", elasticsearch: false, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
     let!(:doi_draft) { create(:doi, client: client, aasm_state: "draft") }
     let!(:doi_registered) { create(:doi, client: client, aasm_state: "registered") }
@@ -28,8 +38,8 @@ describe DataciteDoisController, type: :request, vcr: true do
     let(:provider_member_only_basic_auth_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(provider_member_only.symbol, ENV["MDS_PASSWORD"]) } }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      clear_doi_index
+      import_doi_index
     end
 
     it "return only findable dois with no authorization" do

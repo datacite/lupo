@@ -589,7 +589,6 @@ describe PersonType do
   #     response =
   #       LupoSchema.execute(query, context: { current_user: current_user }).
   #         as_json
-  #     puts response
 
   #     expect(response.dig("data", "updateUserProfile", "user", "uid")).to eq(
   #       "d140d44e-af70-43ec-a90b-49878a954487",
