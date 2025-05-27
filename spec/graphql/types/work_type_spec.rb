@@ -1113,7 +1113,6 @@ describe WorkType do
         ],
         contributors: [
           {
-            "name" => "Ross, Cody",
             "givenName" => "Cody",
             "familyName" => "Ross",
             "contributorType" => "Editor",
@@ -1125,7 +1124,6 @@ describe WorkType do
               }
           },
           {
-            "name" => "Kristian Garza",
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor",
@@ -1207,12 +1205,12 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "contributors")).to eq(
         [
           { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "name" => "Ross, Cody",
+          "name" => nil,
           "givenName" => "Cody",
           "familyName" => "Ross",
           "contributorType" => "Editor" },
           { "id" => "https://orcid.org/0000-0003-3484-6875",
-            "name" => "Kristian Garza",
+            "name" => nil,
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor" }

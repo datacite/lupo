@@ -1887,7 +1887,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"][0]["title"]).to match(/Contributor '.*' has a contributor type that is not supported in schema 4: '*'./)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' has a contributor type that is not supported in schema 4: '*'./)
       end
     end
 
@@ -1908,7 +1908,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"][0]["title"]).to match(/Contributor '.*' is missing a required element: contributor type./)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
       end
     end
 
@@ -1929,7 +1929,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"][0]["title"]).to match(/Contributor '.*' is missing a required element: contributor type./)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
       end
     end
 
@@ -1950,7 +1950,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"][0]["title"]).to match(/Contributor '.*' is missing a required element: contributor type./)
+        expect(json["errors"][0]["title"]).to match(/Contributor '{.*}' is missing a required element: contributor type./)
       end
     end
 
