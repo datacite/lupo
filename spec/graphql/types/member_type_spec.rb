@@ -2,26 +2,38 @@
 
 require "rails_helper"
 def import_index(index_class)
-  index_class.import
-  index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
+  # Ensure index exists with proper mappings
+  unless index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
+    index_class.__elasticsearch__.create_index!
+  end
+
+  # Import with wait_for option to ensure completion
+  index_class.import(refresh: true)
 end
 
 def clear_index(index_class)
-  index_class.__elasticsearch__.client.delete_by_query(index: index_class.index_name, body: { query: { match_all: {} } })
-  index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
+  if index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
+    # Delete and recreate index to ensure clean state
+    index_class.__elasticsearch__.delete_index!
+    index_class.__elasticsearch__.create_index!
+  end
 end
 
 def reset_indices
-  clear_index(Provider)
-  clear_index(Client)
-  clear_index(DataciteDoi)
-  clear_index(ReferenceRepository)
-  clear_index(ProviderPrefix)
-  import_index(ProviderPrefix)
-  import_index(ReferenceRepository)
-  import_index(DataciteDoi)
-  import_index(Client)
-  import_index(Provider)
+  # Define order based on dependencies
+  index_classes = [
+    ProviderPrefix,
+    ReferenceRepository,
+    DataciteDoi,
+    Client,
+    Provider
+  ]
+
+  # Clear all indices first
+  index_classes.each { |klass| clear_index(klass) }
+
+  # Then import all with proper mappings
+  index_classes.each { |klass| import_index(klass) }
 end
 
 describe MemberType do
