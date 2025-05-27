@@ -306,7 +306,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
       it "JSON" do
         post uri, params, headers
-        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).to eq(event.uuid)
@@ -455,7 +454,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
     it "not registered" do
       post uri, params, headers
-      puts json
       expect(last_response.status).to eq(201)
       expect(json["errors"]).to be_nil
       expect(json.dig("data", "id")).to be_present
@@ -1046,7 +1044,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
   #   context "as admin user" do
   #     it "JSON" do
   #       delete uri, nil, headers
-  #       puts last_response.body
   #       expect(last_response.status).to eq(204)
   #       expect(last_response.body).to be_blank
   #     end
@@ -1099,7 +1096,6 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
 
   #     it "JSON" do
   #       delete uri, nil, headers
-  #       puts last_response.body
   #       expect(last_response.status).to eq(404)
   #       expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
   #       expect(json["data"]).to be_nil
