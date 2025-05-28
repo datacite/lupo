@@ -31,6 +31,6 @@ RSpec.configure do |config|
 
   # This is to clean up beteween tests metadata documents stored in the objectstore i.e. minio
   config.after(:suite) do
-    # clean_bucket
+    clean_bucket
   end
 end
