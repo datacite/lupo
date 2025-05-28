@@ -18,7 +18,9 @@ class Metadata < ApplicationRecord
   belongs_to :doi, foreign_key: :dataset, inverse_of: :metadata
   delegate :client, to: :doi
 
-  before_validation :set_metadata_version, :set_namespace
+  before_validation :set_namespace
+  # We can figure out a new metadata version after it's been validated
+  after_validation :set_metadata_version
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   before_create :upload_xml_to_s3
@@ -37,7 +39,7 @@ class Metadata < ApplicationRecord
   def xml
     # We check if the value is already set to object_key i.e. externally stored
     # This helps avoid unnecessary calls to S3
-    if super == object_key
+    if super == object_key && !object_key.nil?
 
       bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
       object = Aws::S3::Object.new(bucket_name, object_key)
@@ -57,7 +59,12 @@ class Metadata < ApplicationRecord
   end
 
   def doi_id
-    doi.doi
+    # Don't try and access nil doi object
+    # Can occur for example when building the metadata object and the relation
+    # hasn't yet been setup
+    unless doi.nil?
+      doi.doi
+    end
   end
 
   def doi_id=(value)
@@ -132,6 +139,9 @@ class Metadata < ApplicationRecord
 
   # This is so we can store unique metadata files in external storage.
   def object_key
-    Base64.urlsafe_encode64(doi_id + "_version_" + metadata_version.to_s, padding: false)
+    # If we don't have a DOI then best to not try and build a key
+    unless doi_id.nil?
+      Base64.urlsafe_encode64(doi_id + "_version_" + metadata_version.to_s, padding: false)
+    end
   end
 end
