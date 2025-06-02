@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crossref_result xmlns="http://www.crossref.org/qrschema/3.0" version="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.crossref.org/qrschema/3.0 http://www.crossref.org/schemas/crossref_query_output3.0.xsd">
+  <query_result>
+    <head>
+      <doi_batch_id>none</doi_batch_id>
+    </head>
+    <body>
+      <query status="resolved">
+        <doi type="book_title">10.2973/odp.proc.ir.180.2000</doi>
+        <crm-item name="publisher-name" type="string">International Ocean Discovery Program (IODP)</crm-item>
+        <crm-item name="prefix-name" type="string">International Ocean Discovery Program Texas</crm-item>
+        <crm-item name="member-id" type="number">1029</crm-item>
+        <crm-item name="citation-id" type="number">23807285</crm-item>
+        <crm-item name="book-id" type="number">284099</crm-item>
+        <crm-item name="series-id" type="number">283327</crm-item>
+        <crm-item name="deposit-timestamp" type="number">20061017201744</crm-item>
+        <crm-item name="owner-prefix" type="string">10.2973</crm-item>
+        <crm-item name="last-update" type="date">2009-02-02T21:19:43Z</crm-item>
+        <crm-item name="created" type="date">2006-10-17T19:50:37Z</crm-item>
+        <crm-item name="citedby-count" type="number">21</crm-item>
+        <doi_record>
+          <crossref xmlns="http://www.crossref.org/xschema/1.0" xsi:schemaLocation="http://www.crossref.org/xschema/1.0 http://doi.crossref.org/schemas/unixref1.0.xsd">
+            <book book_type="monograph">
+              <book_metadata language="en">
+                <contributors>
+                  <person_name sequence="first" contributor_role="editor">
+                    <given_name>B.</given_name>
+                    <surname>Taylor</surname>
+                  </person_name>
+                  <person_name sequence="additional" contributor_role="editor">
+                    <given_name>P.</given_name>
+                    <surname>Huchon</surname>
+                  </person_name>
+                  <person_name sequence="additional" contributor_role="editor">
+                    <given_name>A.</given_name>
+                    <surname>Klaus</surname>
+                  </person_name>
+                  <organization sequence="additional" contributor_role="editor">et al.</organization>
+                </contributors>
+                <titles>
+                  <title>Proceedings of the Ocean Drilling Program, 180 Initial Reports</title>
+                </titles>
+                <series_metadata>
+                  <titles>
+                    <title>Proceedings of the Ocean Drilling Program</title>
+                  </titles>
+                </series_metadata>
+                <volume>180</volume>
+                <publication_date media_type="online">
+                  <month>02</month>
+                  <day>04</day>
+                  <year>2000</year>
+                </publication_date>
+                <publisher>
+                  <publisher_name>Ocean Drilling Program</publisher_name>
+                </publisher>
+                <doi_data>
+                 <doi>10.2973/odp.proc.ir.180.2000</doi>
+                  <resource>http://www-odp.tamu.edu/publications/180_IR/180TOC.HTM</resource>
+                </doi_data>
+              </book_metadata>
+            </book>
+          </crossref>
+        </doi_record>
+      </query>
+    </body>
+  </query_result>
+</crossref_result>
