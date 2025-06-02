@@ -2443,7 +2443,7 @@ describe DataciteDoisController, type: :request, vcr: true do
               "nameIdentifiers" => []
             }
           ]
-        );          
+        )
         expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("schemaOrg" => "Book", "citeproc" => "book", "bibtex" => "book", "ris" => "BOOK", "resourceTypeGeneral" => "Book", "resourceType" => "Book")
