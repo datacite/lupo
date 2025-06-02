@@ -2380,5 +2380,78 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "state")).to eq("findable")
       end
     end
+
+    context "when the request is valid - crossref xml" do
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite-crossref.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10704",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "creates a Doi from valid crossref xml - testing contributors" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10704")
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Proceedings of the Ocean Drilling Program, 180 Initial Reports" }])
+
+        expect(json.dig("data", "attributes", "contributors")).to eq(
+          [
+            {
+              "nameType" => "Personal",
+              "name" => "Taylor, B.",
+              "givenName" => "B.",
+              "familyName" => "Taylor",
+              "contributorType" => "Editor",
+              "affiliation" => [],
+              "nameIdentifiers" => []
+            },
+            {
+              "nameType" => "Personal",
+              "name" => "Huchon, P.",
+              "givenName" => "P.",
+              "familyName" => "Huchon",
+              "contributorType" => "Editor",
+              "affiliation" => [],
+              "nameIdentifiers" => []
+            },
+            {
+              "nameType" => "Personal",
+              "name" => "Klaus, A.",
+              "givenName" => "A.",
+              "familyName" => "Klaus",
+              "contributorType" => "Editor",
+              "affiliation" => [],
+              "nameIdentifiers" => []
+            },
+            {
+              "nameType" => "Organizational",
+              "name" => "et al.",
+              "contributorType" => "Editor",
+              "affiliation" => [],
+              "nameIdentifiers" => []
+            }
+          ]
+        );          
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "source")).to eq("test")
+        expect(json.dig("data", "attributes", "types")).to eq("schemaOrg" => "Book", "citeproc" => "book", "bibtex" => "book", "ris" => "BOOK", "resourceTypeGeneral" => "Book", "resourceType" => "Book")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10704")
+      end
+    end
   end
 end
