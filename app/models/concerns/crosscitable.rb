@@ -131,8 +131,10 @@ module Crosscitable
         {}
       end
 
+      # this line is changing the schema 3 to schema 4
       xml = datacite_xml
 
+      write_attribute(:schema_version, "http://datacite.org/schema/kernel-4")
       write_attribute(:xml, xml)
     end
 
