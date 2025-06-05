@@ -100,25 +100,9 @@ module Indexable
     end
 
     # shoryuken_class is needed for the consumer to process the message
-    # we use the AWS SQS client directly as there is no consumer in this app
+    # SQS interaction is handled by SqsMessageService
     def send_message(body, options = {})
-      sqs = Aws::SQS::Client.new
-      queue_name_prefix = ENV["SQS_PREFIX"].present? ? ENV["SQS_PREFIX"] : Rails.env
-      queue_url =
-        sqs.get_queue_url(queue_name: "#{queue_name_prefix}_#{options[:queue_name]}").queue_url
-      options[:shoryuken_class] ||= "DoiImportWorker"
-
-      options = {
-        queue_url: queue_url,
-        message_attributes: {
-          "shoryuken_class" => {
-            string_value: options[:shoryuken_class], data_type: "String"
-          },
-        },
-        message_body: body.to_json,
-      }
-
-      sqs.send_message(options)
+      SqsMessageService.call(body, options)
     end
 
     def ror_from_url(url)
