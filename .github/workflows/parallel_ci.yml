@@ -14,12 +14,7 @@ on:
         required: true
       MDS_PASSWORD:
         required: true
-      AWS_REGION:
-        required: true
-      AWS_ACCESS_KEY_ID:
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        required: true
+
 jobs:
   parallel-test:
     runs-on: ubuntu-latest
@@ -71,7 +66,6 @@ jobs:
       JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
       MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
       MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby 3.1.6
@@ -106,8 +100,6 @@ jobs:
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: "AnUnsecurePassword123"
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
