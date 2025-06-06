@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SqsMessageService
-  def self.call(body, options = {})
+  def self.enqueue(body, options = {})
     sqs = Aws::SQS::Client.new # Assumes Aws.config is set globally
 
     queue_name_prefix = ENV["SQS_PREFIX"].present? ? ENV["SQS_PREFIX"] : Rails.env

@@ -102,7 +102,7 @@ module Indexable
     # shoryuken_class is needed for the consumer to process the message
     # SQS interaction is handled by SqsMessageService
     def send_message(body, options = {})
-      SqsMessageService.call(body, options)
+      SqsMessageService.enqueue(body, options)
     end
 
     def ror_from_url(url)
