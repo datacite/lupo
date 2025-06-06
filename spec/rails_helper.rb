@@ -118,7 +118,7 @@ VCR.configure do |c|
       "300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}",
     )
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
-  sqs_host = "sqs.#{ENV['AWS_REGION']}.amazonaws.com"
+  sqs_host = "sqs.#{Aws.config[:region]}.amazonaws.com"
 
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock
