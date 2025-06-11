@@ -62,9 +62,7 @@ class Metadata < ApplicationRecord
     # Don't try and access nil doi object
     # Can occur for example when building the metadata object and the relation
     # hasn't yet been setup
-    unless doi.nil?
-      doi.doi
-    end
+    doi&.doi
   end
 
   def doi_id=(value)
