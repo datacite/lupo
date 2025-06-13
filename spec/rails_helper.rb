@@ -62,13 +62,13 @@ SimpleCov.start
 require "openssl"
 
 # Generate dummy JWT keys for testing if not already set
-unless ENV["JWT_PRIVATE_KEY"].present? && ENV["JWT_PUBLIC_KEY"].present?
+if ENV["JWT_PRIVATE_KEY"].nil? || ENV["JWT_PUBLIC_KEY"].nil?
   # Generate a new RSA key pair
   key = OpenSSL::PKey::RSA.new(2048)
 
   # Set private and public keys as environment variables
-  ENV["JWT_PRIVATE_KEY"] ||= key.to_s
-  ENV["JWT_PUBLIC_KEY"] ||= key.public_key.to_s
+  ENV["JWT_PRIVATE_KEY"] = key.to_s
+  ENV["JWT_PUBLIC_KEY"] = key.public_key.to_s
 end
 
 require File.expand_path("../config/environment", __dir__)
