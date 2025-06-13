@@ -55,11 +55,11 @@ jobs:
         ports:
           - 9200
     env:
-      # MYSQL_HOST: "127.0.0.1"
+      MYSQL_HOST: "127.0.0.1"
       MYSQL_DATABASE: datacite
       MYSQL_USER: root
-      # ES_HOST: "localhost:9200"
-      # ELASTIC_PASSWORD: "AnUnsecurePassword123"
+      ES_HOST: "localhost:9200"
+      ELASTIC_PASSWORD: "AnUnsecurePassword123"
       # SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
       # SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
       # JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
