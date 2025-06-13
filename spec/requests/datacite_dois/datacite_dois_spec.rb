@@ -1562,7 +1562,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["dois"].first).to eq("10.14454/3mfp-6m52")
     end
   end
-  
+
   describe "GET /dois/DOI/get-url", vcr: true, elasticsearch: true do
     context "it works" do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
