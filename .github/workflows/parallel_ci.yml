@@ -44,9 +44,8 @@ jobs:
     env:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: root
-      MYSQL_DATABASE: ${{ job.services.mysql.env.MYSQL_DATABASE }}
-      ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
-      ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
+      # ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
+      # ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby 3.1.6
@@ -64,10 +63,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
       - name: Install
-        env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
-          CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+        # env:
+          # MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          # CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          # CI_NODE_INDEX: ${{ matrix.ci_node_index }}
         run: |
           cp .env.build .env
           gem install rubygems-update -v 3.4.22
@@ -78,6 +77,7 @@ jobs:
       - name: Test
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
+          MYSQL_DATABASE: ${{ job.services.mysql.env.MYSQL_DATABASE }}
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
