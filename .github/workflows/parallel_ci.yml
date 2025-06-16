@@ -8,8 +8,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-          # set N-1 indexes for parallel jobs
-          # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        # set N-1 indexes for parallel jobs
+        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
         ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
         # Set N number of parallel jobs you want to run
         # Remember to update ci_node_index above to 0..N-1
@@ -44,8 +44,6 @@ jobs:
     env:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: root
-      # ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
-      # ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby 3.1.6
