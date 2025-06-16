@@ -1,19 +1,6 @@
 name: Parallel CI
 on:
   workflow_call:
-    # secrets:
-      # SECRET_KEY_BASE:
-      #   required: true
-      # SESSION_ENCRYPTED_COOKIE_SALT:
-      #   required: true
-      # JWT_PRIVATE_KEY:
-      #   required: true
-      # JWT_PUBLIC_KEY:
-      #   required: true
-      # MDS_USERNAME:
-      #   required: true
-      # MDS_PASSWORD:
-      #   required: true
 
 jobs:
   parallel-test:
@@ -56,16 +43,10 @@ jobs:
           - 9200
     env:
       MYSQL_HOST: "127.0.0.1"
-      MYSQL_DATABASE: datacite
       MYSQL_USER: root
-      ES_HOST: "localhost:9200"
-      ELASTIC_PASSWORD: "AnUnsecurePassword123"
-      # SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-      # SESSION_ENCRYPTED_COOKIE_SALT: ${{ secrets.SESSION_ENCRYPTED_COOKIE_SALT }}
-      # JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-      # JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
-      # MDS_USERNAME: ${{ secrets.MDS_USERNAME }}
-      # MDS_PASSWORD: ${{ secrets.MDS_PASSWORD }}
+      MYSQL_DATABASE: ${{ job.services.mysql.env.MYSQL_DATABASE }}
+      ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
+      ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby 3.1.6
@@ -98,7 +79,7 @@ jobs:
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
-          ELASTIC_PASSWORD: "AnUnsecurePassword123"
+          ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
