@@ -181,8 +181,6 @@ namespace :datacite_crossref do
   end
 end
 
-
-
 namespace :datacite_medra do
   desc "Import medra dois for all events"
   task import_doi: :environment do
