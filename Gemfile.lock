@@ -757,7 +757,7 @@ GEM
     unicode-types (1.8.0)
     unicode_utils (1.4.0)
     uniform_notifier (1.16.0)
-    uri (0.13.0)
+    uri (0.13.2)
     uri_template (0.7.0)
     uuid (2.3.9)
       macaddr (~> 1.0)
