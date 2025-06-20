@@ -129,7 +129,7 @@ class OtherDoi < Doi
       :version_events,
       :version_of_events,
       :metadata
-    ).where(id: ids)
+    ).where(id: ids, type: "OtherDoi")
 
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,
