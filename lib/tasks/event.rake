@@ -220,3 +220,34 @@ namespace :datacite_orcid_auto_update do
     Event.update_datacite_orcid_auto_update(cursor: cursor, refresh: ENV["REFRESH"], size: ENV["SIZE"])
   end
 end
+
+namespace :nifs_events do
+  desc "Import nifs events with date format YYYY-MM-DD"
+  task import: :environment do
+    if ENV["START_DATE"].blank?
+      puts("You must provide a START_DATE environment variable")
+      exit
+    end
+
+    start_date = Date.parse(ENV["START_DATE"]).beginning_of_day
+    end_date = start_date.end_of_day
+
+    puts("Fetching NIFS events from #{start_date} to #{end_date}")
+
+    dois = DataciteDoi.where(datacentre: 34780, created_at: start_date..end_date)
+
+    if dois.size.zero?
+      puts("No NIFS DOIs found for the specified date range")
+      exit
+    end
+
+    puts("Found #{dois.size} NIFS DOIs found for processing")
+
+    dois.each do |doi|
+      puts("send_import_message for #{doi.to_jsonapi}")
+      # send_import_message(doi.to_jsonapi)
+    end
+
+    puts("Finished importing NIFS events")
+  end
+end
