@@ -222,7 +222,7 @@ namespace :datacite_orcid_auto_update do
 end
 
 namespace :nifs_events do
-  desc "Import nifs events with date format YYYY-MM-DD"
+  desc "Import nifs events with date format YYYY-MM-DD and MAX_COUNT with default 5000"
   task import: :environment do
     if ENV["START_DATE"].blank?
       puts("You must provide a START_DATE environment variable")
@@ -231,23 +231,29 @@ namespace :nifs_events do
 
     start_date = Date.parse(ENV["START_DATE"]).beginning_of_day
     end_date = start_date.end_of_day
+    max_count = ENV["MAX_COUNT"].present? ? ENV["MAX_COUNT"].to_i : 5000
 
-    puts("Fetching NIFS events from #{start_date} to #{end_date}")
+    puts("Fetching NIFS #{max_count} events from #{start_date} to #{end_date}")
 
-    dois = DataciteDoi.where(datacentre: 34780, created_at: start_date..end_date)
+    count = 0
 
-    if dois.size.zero?
-      puts("No NIFS DOIs found for the specified date range")
+    DataciteDoi.where(datacentre: 34780, created_at: start_date..end_date).find_in_batches(batch_size: 1000) do |dois|
+      dois.each do |doi|
+        count += 1
+        puts("Processing DOI: #{doi.to_jsonapi}")
+      end
+
+      if count >= max_count
+        puts("Reached maximum count of #{max_count} NIFS DOIs")
+        break
+      end
+    end
+
+    if count.zero?
+      puts("No NIFS DOIs found from #{start_date} to #{end_date}")
       exit
     end
 
-    puts("Found #{dois.size} NIFS DOIs found for processing")
-
-    dois.each do |doi|
-      puts("send_import_message for #{doi.to_jsonapi}")
-      # send_import_message(doi.to_jsonapi)
-    end
-
-    puts("Finished importing NIFS events")
+    puts("#{count} NIFS DOIs processed")
   end
 end
