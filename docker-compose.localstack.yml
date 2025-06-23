@@ -20,6 +20,8 @@ services:
       - ./storage:/home/app/webapp/storage
     networks:
       - localstack_network
+    dns:
+      - 10.0.2.20
     depends_on:
       - elasticsearch
 
@@ -30,6 +32,8 @@ services:
       - "11211:11211"
     networks:
       - localstack_network
+    dns:
+      - 10.0.2.20
 
   mysql:
     container_name: lupo_mysql
@@ -42,6 +46,8 @@ services:
       - "3309:3306"
     networks:
       - localstack_network
+    dns:
+      - 10.0.2.20
 
   elasticsearch:
     container_name: lupo_opensearch
@@ -63,6 +69,8 @@ services:
       - data:/usr/share/opensearch/data
     networks:
       - localstack_network
+    dns:
+      - 10.0.2.20
     healthcheck:
       test: curl -f http://admin:AnUnsecurePassword123@elasticsearch:9200
       interval: 10s
