@@ -224,33 +224,100 @@ end
 namespace :nifs_events do
   desc "Import nifs events with START_DATE format YYYY-MM-DD"
   task import: :environment do
-    if ENV["START_DATE"].blank?
-      puts("You must provide a START_DATE environment variable")
+    puts("Start importing NIFS events")
+
+    puts("Connecting to S3 to fetch nifs_events_import.json")
+    s3 = Aws::S3::Resource.new
+    obj = s3.bucket("events-processing").object("nifs_events_import.json")
+
+    if !obj.exists?
+      puts("No nifs_events_import.json file found in S3")
       exit
     end
 
-    start_date = Date.parse(ENV["START_DATE"]).beginning_of_day
-    end_date = start_date.end_of_day
-    count = DataciteDoi
-      .where(datacentre: 34780, created_at: start_date..end_date)
-      .count
+    puts("nifs_events_import.json file found in S3, reading content")
+    json_content = obj.get.body.read
 
-    puts("Start processing #{count} NIFS DOIs from #{start_date} to #{end_date}")
+    puts("Parsing JSON content")
+    data = JSON.parse(json_content)
+
+    if data["process_date"].blank?
+      puts("You must provide a process_date in the JSON file")
+      exit
+    end
+
+    process_date_start = Time.parse(data["process_date"])
+    puts("Process start date: #{process_date_start}")
+
+    process_date_end = process_date_start.end_of_day
+    puts("Process end date: #{process_date_end}")
+
+    if ["end_date"].blank?
+      puts("You must provide an end_date in the JSON file")
+      exit
+    end
+
+    end_date = Time.parse(data["end_date"])
+    puts("End date: #{end_date}")
+
+    if process_date_start > end_date
+      puts("Process start date exceeds the end date. Please disable the NIFS import lambda.")
+      exit
+    end
+
+    count = 0
+    max_count = 1000
 
     DataciteDoi
-      .where(datacentre: 34780, created_at: start_date..end_date)
-      .find_in_batches(batch_size: 1000) do |dois|
+      .where(datacentre: 34780, created_at: process_date_start..process_date_end)
+      .find_in_batches(batch_size: 100) do |dois|
       dois.each do |doi|
+        count += 1
+        data["process_date"] = doi.created_at
         puts("Processing DOI: #{doi.to_jsonapi}")
         # send_import_message(doi.to_jsonapi)
       end
+
+      break if count >= max_count
     end
 
-    if count.zero?
-      puts("No NIFS DOIs found from #{start_date} to #{end_date}")
-      exit
+    if count < max_count
+      data["process_date"] = (process_date_start + 1.day).beginning_of_day
     end
 
-    puts("#{count} NIFS DOIs processed")
+    puts("Write updated nifs_events_import.json to S3")
+    obj.put(body: data.to_json, content_type: "application/json")
+
+    puts("NIFS events import completed. Processed #{count} DOIs.")
+
+    # if ENV["START_DATE"].blank?
+    #   puts("You must provide a START_DATE environment variable")
+    #   exit
+    # end
+
+    # start_date = Date.parse(ENV["START_DATE"]).beginning_of_day
+    # end_date = start_date.end_of_day
+
+    # count = DataciteDoi
+    #   .where(datacentre: 34780, created_at: start_date..end_date)
+    #   .count
+
+    # if count.zero?
+    #   puts("No NIFS DOIs found from #{start_date} to #{end_date}")
+    #   exit
+    # end
+
+    # puts("Start processing #{count} NIFS DOIs from #{start_date} to #{end_date}")
+
+    # DataciteDoi
+    #   .where(datacentre: 34780, created_at: start_date..end_date)
+    #   .find_in_batches(batch_size: 1000) do |dois|
+    #   dois.each do |doi|
+    #     puts("Processing DOI: #{doi.to_jsonapi}")
+    #     # send_import_message(doi.to_jsonapi)
+    #   end
+    # end
+
+    # puts("#{count} NIFS DOIs processed")
   end
 end
