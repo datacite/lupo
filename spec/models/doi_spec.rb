@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Doi, type: :model, vcr: true, elasticsearch: true do
+describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1 do
   it_behaves_like "an STI class"
 
   describe "validations" do
@@ -1554,7 +1554,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
-  describe "transfer", elasticsearch: true do
+  describe "transfer", elasticsearch: true, prefix_pool_size: 3 do
     let(:provider) { create(:provider) }
     let(:client) { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
@@ -1852,7 +1852,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     end
   end
 
-  describe "stats_query", elasticsearch: true do
+  describe "stats_query", elasticsearch: true, prefix_pool_size: 3 do
     subject { Doi }
 
     before do
