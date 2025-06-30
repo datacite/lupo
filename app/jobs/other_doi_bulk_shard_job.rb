@@ -9,4 +9,4 @@ class OtherDoiBulkShardJob < ApplicationJob
       OtherDoiImportInBulkJob.perform_later(batch_ids, index: index)
     end
   end
-end 
+end
