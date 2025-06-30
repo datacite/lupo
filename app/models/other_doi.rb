@@ -87,21 +87,19 @@ class OtherDoi < Doi
       (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).
         to_i
     until_id =
-      (
-        options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)
-      ).
+      (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).
         to_i
+    shard_size = options[:shard_size] || 10_000
+    batch_size = options[:batch_size] || 50
+    return 0 if from_id.nil? || until_id.nil?
     count = 0
-
-    # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "OtherDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 50) do |dois|
-      ids = dois.pluck(:id)
-      OtherDoiImportInBulkJob.perform_later(ids, index: index)
-      count += ids.length
+    (from_id..until_id).step(shard_size) do |start_id|
+      end_id = [start_id + shard_size - 1, until_id].min
+      OtherDoiBulkShardJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
+      count += 1
+      Rails.logger.info "Queued OtherDoiBulkShardJob for Other DOIs with IDs \\#{start_id}-\\#{end_id}"
     end
-
-    Rails.logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
+    Rails.logger.info "Queued ALL OtherDoiss with IDs \\#{from_id}-\\#{until_id} in shards of size \\#{shard_size}."
     count
   end
 
