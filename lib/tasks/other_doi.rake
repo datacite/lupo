@@ -62,7 +62,7 @@ namespace :other_doi do
     until_id = (ENV["UNTIL_ID"] || OtherDoi.maximum(:id)).to_i
     shard_size = ENV["SHARD_SIZE"]&.to_i || 10_000
     batch_size = ENV["BATCH_SIZE"]&.to_i || 50
-    selected_index = ENV["INDEX"] || OtherDois.inactive_index
+    selected_index = ENV["INDEX"] || OtherDoi.inactive_index
     puts OtherDoi.import_by_ids(
       from_id: from_id,
       until_id: until_id,
