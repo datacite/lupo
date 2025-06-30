@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ClientPrefix, type: :model, elasticsearch: true do
+describe ClientPrefix, type: :model, elasticsearch: false, prefix_pool_size: 3 do
   context "Prefix assigned from the pool on repository creation" do
     let(:provider) { create(:provider) }
     let(:client) { create(:client, provider: provider) }
