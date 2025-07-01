@@ -8,6 +8,7 @@ services:
     environment:
       - ELASTIC_PASSWORD=AnUnsecurePassword123
       - NIFS_EVENTS_IMPORT_FILE=lib/tmp/nifs_events_import.json
+      - NIFS_EVENTS_IMPORT_BATCH_SIZE=5000
     image: ghcr.io/datacite/lupo:main
     ports:
       - "8065:80"

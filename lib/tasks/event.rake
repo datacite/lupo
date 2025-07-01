@@ -269,7 +269,8 @@ namespace :nifs_events do
     end
 
     count = 0
-    max_count = 10000
+    max_count = (ENV["NIFS_EVENTS_IMPORT_BATCH_SIZE"] || 5000).to_i
+    puts("Max process count: #{max_count}")
 
     DataciteDoi
       .where(datacentre: 34780, created_at: process_date_start..process_date_end)
@@ -288,7 +289,7 @@ namespace :nifs_events do
       data["process_date"] = (process_date_start + 1.day).beginning_of_day
     end
 
-    puts("Update import file")
+    puts("Updating import file")
     File.open(file_path, "w") do |f|
       f.write(JSON.pretty_generate(data))
     end
