@@ -220,3 +220,42 @@ namespace :datacite_orcid_auto_update do
     Event.update_datacite_orcid_auto_update(cursor: cursor, refresh: ENV["REFRESH"], size: ENV["SIZE"])
   end
 end
+
+namespace :nifs_events do
+  desc "Import nifs events with START_DATE format YYYY-MM-DD"
+  task import: :environment do
+    puts("Start importing NIFS events")
+    puts("Reading environment variables")
+
+    if ENV["START_DATE"].blank?
+      puts("ERROR: START_DATE environment variable not set")
+      exit
+    end
+
+    start_date = Time.parse(ENV["START_DATE"]).beginning_of_day.utc
+    puts("Start date: #{start_date}")
+
+    if ENV["END_DATE"].blank?
+      puts("ERROR: END_DATE environment variable not set")
+      exit
+    end
+
+    end_date = Time.parse(ENV["END_DATE"]).end_of_day.utc
+    puts("End date: #{end_date}")
+
+    count = 0
+
+    DataciteDoi
+      .where(datacentre: 34780, created_at: start_date..end_date)
+      .find_in_batches(batch_size: 100) do |dois|
+      dois.each do |doi|
+        count += 1
+        puts("Processing DOI: #{doi.to_jsonapi}")
+        # send_import_message(doi.to_jsonapi)
+      end
+    end
+
+    puts("Processed #{count} NIFS DOIs")
+    puts("Done importing NIFS events")
+  end
+end
