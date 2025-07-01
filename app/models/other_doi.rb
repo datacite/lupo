@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+ frozen_string_literal: true
 
 class OtherDoi < Doi
   include Elasticsearch::Model
@@ -75,20 +75,12 @@ class OtherDoi < Doi
 
   # TODO remove query for type once STI is enabled
   def self.import_by_ids(options = {})
-    index =
-      if Rails.env.test?
-        index_name
-      elsif options[:index].present?
-        options[:index]
-      else
-        inactive_index
-      end
-    from_id =
-      (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).
-        to_i
-    until_id =
-      (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).
-        to_i
+    index = options[:index] || inactive_index
+    if Rails.env.test?
+      index = index_name
+    end
+    from_id  = (options[:from_id]  || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
+    until_id = (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
     shard_size = options[:shard_size] || 10_000
     batch_size = options[:batch_size] || 50
     return 0 if from_id.nil? || until_id.nil?
@@ -97,9 +89,9 @@ class OtherDoi < Doi
       end_id = [start_id + shard_size - 1, until_id].min
       OtherDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
       count += 1
-      Rails.logger.info "Queued OtherDoiBatchEnqueueJob for Other DOIs with IDs \\#{start_id}-\\#{end_id}"
+      Rails.logger.info "Queued batch (#{count}) of OtherDoiBatchEnqueueJob for Other DOIs with IDs #{start_id}-#{end_id}"
     end
-    Rails.logger.info "Queued ALL OtherDois with IDs \\#{from_id}-\\#{until_id} in batches of size \\#{shard_size}."
+    Rails.logger.info "Queued ALL OtherDois with IDs #{from_id}-#{until_id} in batches of size #{shard_size}."
     count
   end
 
