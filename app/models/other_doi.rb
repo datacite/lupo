@@ -95,11 +95,11 @@ class OtherDoi < Doi
     count = 0
     (from_id..until_id).step(shard_size) do |start_id|
       end_id = [start_id + shard_size - 1, until_id].min
-      OtherDoiBulkShardJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
+      OtherDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
       count += 1
-      Rails.logger.info "Queued OtherDoiBulkShardJob for Other DOIs with IDs \\#{start_id}-\\#{end_id}"
+      Rails.logger.info "Queued OtherDoiBatchEnqueueJob for Other DOIs with IDs \\#{start_id}-\\#{end_id}"
     end
-    Rails.logger.info "Queued ALL OtherDoiss with IDs \\#{from_id}-\\#{until_id} in shards of size \\#{shard_size}."
+    Rails.logger.info "Queued ALL OtherDois with IDs \\#{from_id}-\\#{until_id} in batches of size \\#{shard_size}."
     count
   end
 
@@ -121,7 +121,7 @@ class OtherDoi < Doi
       end
     end
 
-    if errors > 1
+    if errors > 0
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
                           number_of_dois
                          } Other DOIs."
