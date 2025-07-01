@@ -227,73 +227,29 @@ namespace :nifs_events do
   desc "Import nifs events with START_DATE format YYYY-MM-DD"
   task import: :environment do
     puts("Start importing NIFS events")
+    puts("Reading environment variables")
 
-    puts("Reading import file")
-    file_path = ENV["NIFS_EVENTS_IMPORT_FILE"]
+    puts("Missing START_DATE environment variable") if ENV["START_DATE"].blank?
+    start_date = Time.parse(start_date).beginning_of_day if start_date.present?
+    puts("Start date: #{start_date}")
 
-    if file_path.blank?
-      puts("You must provide a NIFS_EVENTS_IMPORT_FILE environment variable")
-      exit
-    end
-
-    unless File.exist?(file_path)
-      puts("No import file found at #{file_path}")
-      exit
-    end
-
-    puts("Parsing import file")
-    data = JSON.parse(File.read(file_path))
-
-    if data["process_date"].blank?
-      puts("You must provide a process_date in the import file")
-      exit
-    end
-
-    process_date_start = Time.parse(data["process_date"])
-    puts("Process start date: #{process_date_start}")
-
-    process_date_end = process_date_start.end_of_day
-    puts("Process end date: #{process_date_end}")
-
-    if ["end_date"].blank?
-      puts("You must provide an end_date in the import file")
-      exit
-    end
-
-    end_date = Time.parse(data["end_date"])
+    puts("Missing END_DATE environment variable") if ENV["END_DATE"].blank?
+    end_date = Time.parse(end_date).end_of_day if end_date.present?
     puts("End date: #{end_date}")
 
-    if process_date_start > end_date
-      puts("Process start date exceeds the end date. Disable CRON task.")
-      exit
-    end
-
     count = 0
-    max_count = (ENV["NIFS_EVENTS_IMPORT_BATCH_SIZE"] || 5000).to_i
-    puts("Max process count: #{max_count}")
 
     DataciteDoi
-      .where(datacentre: 34780, created_at: process_date_start..process_date_end)
+      .where(datacentre: 34780, created_at: start_date..end_date)
       .find_in_batches(batch_size: 100) do |dois|
       dois.each do |doi|
         count += 1
-        data["process_date"] = doi.created_at
         puts("Processing DOI: #{doi.to_jsonapi}")
         # send_import_message(doi.to_jsonapi)
       end
-
-      break if count >= max_count
     end
 
-    if count < max_count
-      data["process_date"] = (process_date_start + 1.day).beginning_of_day
-    end
-
-    puts("Updating import file")
-    File.open(file_path, "w") do |f|
-      f.write(JSON.pretty_generate(data))
-    end
-
-    puts("NIFS events import completed. Processed #{count} DOIs.")
+    puts("Processed #{count} NIFS DOIs")
+    puts("Done importing NIFS events")
   end
 end
