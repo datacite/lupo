@@ -146,14 +146,21 @@ namespace :nifs_dois do
       "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}",
       { page: { size: 1, cursor: [] } })
 
+    if response.results.total.zero?
+      puts("No NIFS DOIs found for the specified date range.")
+      exit
+    end
+
+    cursor = []
+
     while response.results.results.length.positive?
-      response = Doi.query(query, { page: { size: size, cursor: cursor } })
-      break if response.results.results.length <= 0
+      response = Doi.query(query, { page: { size: 1000, cursor: cursor } })
+      break if response.results.results.length.zero?
 
       cursor = response.results.to_a.last[:sort]
-      uids = response.results.results.map(&:uid)
-      puts(uids)
-      dois = DataciteDoi.where(uid: uids)
+      search_dois = response.results.results.map(&:doi)
+      puts(search_dois)
+      dois = DataciteDoi.where(doi: search_dois)
 
       dois.each do |doi|
         puts(doi.to_jsonapi)
