@@ -85,11 +85,24 @@ class OtherDoi < Doi
     batch_size = options[:batch_size] || 50
     return 0 if from_id.nil? || until_id.nil?
     count = 0
-    (from_id..until_id).step(shard_size) do |start_id|
-      end_id = [start_id + shard_size - 1, until_id].min
-      OtherDoiBatchEnqueueJob.perform_now(start_id, end_id, batch_size: batch_size, index: index)
-      count += 1
-      Rails.logger.info "Queued batch (#{count}) of OtherDoiBatchEnqueueJob for Other DOIs with IDs #{start_id}-#{end_id}"
+    while from_id <= until_id
+      ids = OtherDoi.where(type: "OtherDoi")
+                    .where("id >= ? AND id <= ?", from_id, until_id)
+                    .order(:id)
+                    .limit(shard_size)
+                    .pluck(:id)
+      break if ids.empty?
+
+      ids.each_slice(batch_size) do |batch_ids|
+        OtherDoiImportInBulkJob.perform_later(batch_ids, index: index)
+      end
+
+      # Add a log for this batch
+      Rails.logger.info "Queued OtherDois with IDs #{ids.first}-#{ids.last} in batches of size #{batch_size}."
+
+      from_id = ids.last + 1
+      count += ids.size
+      # Optional: log progress
     end
     Rails.logger.info "Queued ALL OtherDois with IDs #{from_id}-#{until_id} in batches of size #{shard_size}."
     count
