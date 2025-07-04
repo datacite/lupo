@@ -156,7 +156,7 @@ class DataciteDoi < Doi
       end
 
     # get database records from array of database ids
-    selected_dois = DataciteDoi.where(id: ids).includes(
+    selected_dois = DataciteDoi.where(id: ids, type: "DataciteDoi").includes(
       :client,
       :media,
       :view_events,

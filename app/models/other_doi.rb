@@ -75,76 +75,33 @@ class OtherDoi < Doi
 
   # TODO remove query for type once STI is enabled
   def self.import_by_ids(options = {})
-    index =
-      if Rails.env.test?
-        index_name
-      elsif options[:index].present?
-        options[:index]
-      else
-        inactive_index
-      end
-    from_id =
-      (options[:from_id] || OtherDoi.where(type: "OtherDoi").minimum(:id)).
-        to_i
-    until_id =
-      (
-        options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)
-      ).
-        to_i
-    count = 0
-
-    # TODO remove query for type once STI is enabled
-    DataciteDoi.where(type: "OtherDoi").where(id: from_id..until_id).
-      find_in_batches(batch_size: 50) do |dois|
-      ids = dois.pluck(:id)
-      OtherDoiImportInBulkJob.perform_later(ids, index: index)
-      count += ids.length
+    index = options[:index] || inactive_index
+    if Rails.env.test?
+      index = index_name
     end
-
-    Rails.logger.info "Queued importing for Other DOIs with IDs #{from_id}-#{until_id}."
+    from_id  = (options[:from_id]  || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
+    until_id = (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
+    shard_size = options[:shard_size] || 10_000
+    batch_size = options[:batch_size] || 50
+    return 0 if from_id.nil? || until_id.nil?
+    count = 0
+    (from_id..until_id).step(shard_size) do |start_id|
+      end_id = [start_id + shard_size - 1, until_id].min
+      OtherDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
+      count += 1
+      Rails.logger.info "Queued batch (#{count}) of OtherDoiBatchEnqueueJob for Other DOIs with IDs #{start_id}-#{end_id}"
+    end
+    Rails.logger.info "Queued ALL OtherDois with IDs #{from_id}-#{until_id} in batches of size #{shard_size}."
     count
   end
 
-  def self.import_in_bulk(ids, options = {})
-    index =
-      if Rails.env.test?
-        index_name
-      elsif options[:index].present?
-        options[:index]
-      else
-        inactive_index
-      end
+  def self.upload_to_elasticsearch(index, bulk_body)
+    number_of_dois = bulk_body.length
     errors = 0
-
-    # get database records from array of database ids
-    dois = OtherDoi.includes(
-      :client,
-      :media,
-      :view_events,
-      :download_events,
-      :citation_events,
-      :reference_events,
-      :part_events,
-      :part_of_events,
-      :version_events,
-      :version_of_events,
-      :metadata
-    ).where(id: ids)
-
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,
-                                                type:
-                                                  OtherDoi.document_type,
-                                                body:
-                                                  dois.map { |doi|
-                                                    {
-                                                      index: {
-                                                        _id: doi.id,
-                                                        data:
-                                                          doi.as_indexed_json,
-                                                      },
-                                                    }
-                                                  }
+                                             type: OtherDoi.document_type,
+                                             body: bulk_body
 
     # report errors
     if response["errors"]
@@ -156,24 +113,63 @@ class OtherDoi < Doi
       end
     end
 
-    if errors > 1
+    if errors > 0
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{
-                           dois.length
+                          number_of_dois
                          } Other DOIs."
-    elsif dois.length > 0
-      Rails.logger.debug "[Elasticsearch] Imported #{
-                          dois.length
-                        } Other DOIs."
+    elsif number_of_dois > 0
+      Rails.logger.debug "[Elasticsearch] Imported #{number_of_dois} Other DOIs."
     end
 
-    count
+    number_of_dois
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
     Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e
 
-    Rails.logger.error "[Elasticsearch] Error #{e.class} with message #{
-                   e.message
-                 } importing Other DOIs."
+    Rails.logger.error "[Elasticsearch] Error #{e.class} with message #{e.message} importing Other DOIs."
+  end
+
+  def self.import_in_bulk(ids, options = {})
+    # Get optional parameters
+    batch_size = options[:batch_size] || 50
+    # default batch_size is 50 here in order to avoid creating a bulk request
+    # to elasticsearch that is too large
+    # With this the number of ids can be very large.
+
+    index =
+      if Rails.env.test?
+        index_name
+      elsif options[:index].present?
+        options[:index]
+      else
+        inactive_index
+      end
+
+    # get database records from array of database ids
+    selected_dois = OtherDoi.where(id: ids, type: "OtherDoi").includes(
+      :client,
+      :media,
+      :view_events,
+      :download_events,
+      :citation_events,
+      :reference_events,
+      :part_events,
+      :part_of_events,
+      :version_events,
+      :version_of_events,
+      :metadata
+    )
+    selected_dois.find_in_batches(batch_size: batch_size) do |dois|
+      bulk_body = dois.map do |doi|
+        {
+          index: {
+            _id: doi.id,
+            data: doi.as_indexed_json,
+          },
+        }
+      end
+      upload_to_elasticsearch(index, bulk_body)
+    end
   end
 end
