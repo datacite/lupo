@@ -8,3 +8,9 @@ queues:
   - [lupo_import_other_doi, 8]
   - [lupo_transfer, 4]
   - [lupo_background, 2]
+
+groups:
+  batch_enqueue_group:
+    concurrency: 1
+    queues:
+      - lupo_queue_batches_other_doi
