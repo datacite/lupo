@@ -128,7 +128,6 @@ class OtherDoi < Doi
       :part_of_events,
       :version_events,
       :version_of_events,
-      :events,
       :metadata
     ).where(id: ids)
 

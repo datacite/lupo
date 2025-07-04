@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Client, type: :model do
+describe Client, type: :model, prefix_pool_size: 3 do
   let!(:provider) { create(:provider) }
   let!(:client) { create(:client, provider: provider) }
 

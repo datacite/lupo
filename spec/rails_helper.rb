@@ -4,9 +4,72 @@ ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
 ENV["PREFIX_POOL_SIZE"] = "20"
 
+# Set reasonable default environment variables for testing if not already set
+ENV["TEST_ENV_NUMBER"] ||= "" # For parallel tests, often set by CI, default to empty
+ENV["ES_PREFIX"] ||= "" # ElasticSearch index prefix
+ENV["API_KEY"] ||= "test_api_key" # Placeholder for general API key
+ENV["SESSION_ENCRYPTED_COOKIE_SALT"] ||= "a_strong_secret_key_for_testing_purposes"
+ENV["VOLPINO_URL"] ||= "http://localhost:3000/api" # Placeholder for Volpino service
+ENV["HANDLE_USERNAME"] ||= "test_handle_user"
+ENV["HANDLE_URL"] ||= "https://handle.test.datacite.org"
+ENV["HANDLE_PASSWORD"] ||= "test_handle_password"
+ENV["BRACCO_URL"] ||= "http://doi.datacite.org"
+ENV["BRACCO_TITLE"] ||= "DataCite Fabrica Test"
+ENV["MAILGUN_API_KEY"] ||= "test_mailgun_api_key"
+ENV["MG_FROM"] ||= "support@example.com"
+ENV["MG_DOMAIN"] ||= "mg.example.com"
+ENV["SLACK_WEBHOOK_URL"] ||= "" # Keep empty if not sending Slack notifications in tests
+ENV["MDS_USERNAME"] ||= "DATACITE.TESTUSER"
+ENV["MDS_PASSWORD"] ||= "test_mds_password"
+ENV["ADMIN_USERNAME"] ||= "DATACITE.TESTADMIN"
+ENV["ADMIN_PASSWORD"] ||= "test_admin_password"
+ENV["PRIVATE_IP"] ||= "127.0.0.1" # Placeholder for local testing
+ENV["ES_HOST"] ||= "elasticsearch:9200" # Assuming a local or test Elasticsearch instance
+ENV["VCR_MODE"] ||= "once"
+ENV["VCR"] ||= "once"
+ENV["AWS_REGION"] ||= "us-east-1" # Placeholder if SQS is used, even if mocked
+ENV["SQS_PREFIX"] ||= ""
+ENV["APPLICATION"] ||= "client-api"
+ENV["HOSTNAME"] ||= "lupo"
+ENV["MEMCACHE_SERVERS"] ||= "memcached:11211"
+ENV["SITE_TITLE"] ||= "DataCite REST API"
+ENV["LOG_LEVEL"] ||= "info"
+ENV["CONCURRENCY"] ||= "25"
+ENV["API_URL"] ||= "http://localhost:4000"
+ENV["CDN_URL"] ||= "http://localhost:9000"
+ENV["GITHUB_URL"] ||= "https://github.com/datacite/lupo"
+ENV["SEARCH_URL"] ||= "http://localhost:5000"
+ENV["RE3DATA_URL"] ||= "https://www.re3data.org/api/beta"
+ENV["CITEPROC_URL"] ||= "https://citation.crosscite.org/format"
+ENV["MYSQL_DATABASE"] ||= "lupo_test"
+ENV["MYSQL_USER"] ||= "root"
+ENV["MYSQL_PASSWORD"] ||= ""
+ENV["MYSQL_HOST"] ||= "mysql"
+ENV["MYSQL_PORT"] ||= "3306"
+ENV["ES_REQUEST_TIMEOUT"] ||= "120"
+ENV["ES_NAME"] ||= "elasticsearch"
+ENV["ES_SCHEME"] ||= "http"
+ENV["ES_PORT"] ||= "80"
+ENV["TRUSTED_IP"] ||= "10.0.40.1"
+ENV["HANDLES_MINTED"] ||= "10132"
+ENV["REALM"] ||= "http://localhost:4000"
+ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
+
 # set up Code Climate
 require "simplecov"
 SimpleCov.start
+
+require "openssl"
+
+# Generate dummy JWT keys for testing if not already set
+if ENV["JWT_PRIVATE_KEY"].nil? || ENV["JWT_PUBLIC_KEY"].nil?
+  # Generate a new RSA key pair
+  key = OpenSSL::PKey::RSA.new(2048)
+
+  # Set private and public keys as environment variables
+  ENV["JWT_PRIVATE_KEY"] = key.to_s
+  ENV["JWT_PUBLIC_KEY"] = key.public_key.to_s
+end
 
 require File.expand_path("../config/environment", __dir__)
 
@@ -121,7 +184,7 @@ VCR.configure do |c|
       "300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}",
     )
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
-  sqs_host = "sqs.#{ENV['AWS_REGION']}.amazonaws.com"
+  sqs_host = "sqs.#{Aws.config[:region]}.amazonaws.com"
 
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock

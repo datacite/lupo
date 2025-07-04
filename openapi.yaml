@@ -1537,23 +1537,6 @@ paths:
       responses:
         '200':
           description: OK
-    delete:
-      parameters:
-      - name: id
-        in: path
-        description: Report
-        required: true
-        schema:
-          type: string
-      tags:
-        - reports
-      summary: Delete a report.
-      security:
-        - BasicAuth: []
-        - bearerAuth: []
-      responses:
-        '204':
-          description: No content
 components:
   schemas:
     # core object types
@@ -2409,7 +2392,6 @@ components:
           type: string
         contentUrl:
           description: An array of content URLs associated with the DOI.
-          readOnly: true
           type: array
           items:
             type: string
