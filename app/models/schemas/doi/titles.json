@@ -1,0 +1,13 @@
+{
+  "type": "array",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "items": {
+    "type": "object",
+    "properties": {
+      "title": { "type": "string" },
+      "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
+      "lang": { "type": "string" }
+    },
+    "additionalProperties": false
+  }
+}

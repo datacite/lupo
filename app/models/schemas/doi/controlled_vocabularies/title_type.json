@@ -1,0 +1,13 @@
+{
+  "type": ["string", "null"],
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": ["AlternativeTitle", "Subtitle", "TranslatedTitle", "Other"]
+    },
+    {
+      "type": "null"
+    }
+  ]
+}
