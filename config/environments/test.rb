@@ -106,5 +106,4 @@ Rails.application.configure do
   ENV["HANDLES_MINTED"] ||= "10132"
   ENV["REALM"] ||= "http://localhost:4000"
   ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
-
 end
