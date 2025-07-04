@@ -7,7 +7,7 @@ gem "active_model_serializers", "~> 0.10.0"
 gem "activerecord_json_validator", "~> 2.1", ">= 2.1.5"
 gem "apollo-federation", "1.1.3"
 gem "audited", "~> 5.4", ">= 5.4.3"
-gem "aws-sdk-s3", require: false
+gem "aws-sdk-s3"
 gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
