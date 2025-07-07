@@ -151,6 +151,8 @@ namespace :nifs_dois do
       exit
     end
 
+    puts("#{response.results.total} NIFS DOIs will be processed for event creation")
+
     cursor = []
 
     while response.results.results.length.positive?
@@ -167,7 +169,5 @@ namespace :nifs_dois do
         # send_import_message(doi.to_jsonapi)
       end
     end
-
-    puts("#{response.results.total} NIFS DOIs processed for event creation")
   end
 end
