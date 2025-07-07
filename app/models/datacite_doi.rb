@@ -30,37 +30,24 @@ class DataciteDoi < Doi
   end
 
   def self.import_by_ids(options = {})
-    index =
-      if Rails.env.test?
-        index_name
-      elsif options[:index].present?
-        options[:index]
-      else
-        inactive_index
-      end
-
-    datacite_dois = DataciteDoi.select(:id).where(type: "DataciteDoi")
-    from_id =
-      (options[:from_id] || datacite_dois.minimum(:id)).
-        to_i
-    until_id =
-      (
-        options[:until_id] ||
-          datacite_dois.maximum(:id)
-      ).
-        to_i
-    batch_size = options[:batch_size] || 50
-    count = 0
-
-    # TODO remove query for type once STI is enabled
-    # SQS message size limit is 256 kB, up to 2 GB with S3
-    datacite_dois.where(id: from_id..until_id).find_in_batches(batch_size: batch_size) do |dois|
-      ids = dois.pluck(:id)
-      DataciteDoiImportInBulkJob.perform_later(ids, index: index)
-      count += ids.length
+    index = options[:index] || inactive_index
+    if Rails.env.test?
+      index = index_name
     end
-
-    Rails.logger.info "Queued importing for DataCite DOIs with IDs #{from_id}-#{until_id}."
+    datacite_dois = DataciteDoi.select(:id).where(type: "DataciteDoi")
+    from_id = (options[:from_id] || datacite_dois.minimum(:id)). to_i
+    until_id = (options[:until_id] || datacite_dois.maximum(:id)). to_i
+    shard_size = options[:shard_size] || 10_000
+    batch_size = options[:batch_size] || 50
+    return 0 if from_id.nil? || until_id.nil?
+    count = 0
+    (from_id..until_id).step(shard_size) do |start_id|
+      end_id = [start_id + shard_size - 1, until_id].min
+      DataciteDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
+      count += 1
+      Rails.logger.info "Queued batch (#{count}) of DataciteDoiBatchEnqueueJob for DataciteDois with IDs #{start_id}-#{end_id}"
+    end
+    Rails.logger.info "Queued ALL DataciteDois with IDs #{from_id}-#{until_id} in batches of size #{shard_size}."
     count
   end
 
