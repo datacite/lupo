@@ -163,8 +163,7 @@ namespace :nifs_dois do
       dois = DataciteDoi.where(doi: search_dois)
 
       dois.each do |doi|
-        puts(doi.to_jsonapi)
-        send_import_message(doi.to_jsonapi) if ENV["ENABLE_NIFS_EVENT_IMPORT"]
+        send_import_message(doi.to_jsonapi)
       end
     end
 
