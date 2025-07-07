@@ -7,7 +7,7 @@ class SqsMessageService
     queue_name_prefix = ENV["SQS_PREFIX"].present? ? ENV["SQS_PREFIX"] : Rails.env
     target_queue_name = "#{queue_name_prefix}_#{options[:queue_name]}"
 
-    effective_queue_url = if Aws.config[:stub_responses]
+    effective_queue_url = if Aws.config[:sqs][:stub_responses]
       # If stubbing is active, always construct a well-formed dummy URL.
       # The actual result of sqs.get_queue_url is unreliable when stubbed (returns "String").
       dummy_url = "https://sqs.#{Aws.config[:region]}.amazonaws.com/000000000000/#{target_queue_name}"
