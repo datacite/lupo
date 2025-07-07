@@ -142,9 +142,8 @@ namespace :nifs_dois do
     end_date = Time.parse(ENV["END_DATE"]).to_date
     puts("End date: #{end_date}")
 
-    response = Doi.query(
-      "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}",
-      { page: { size: 1, cursor: [] } })
+    query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    response = Doi.query(query, { page: { size: 1, cursor: [] } })
 
     if response.results.total.zero?
       puts("No NIFS DOIs found for the specified date range.")
@@ -161,13 +160,14 @@ namespace :nifs_dois do
 
       cursor = response.results.to_a.last[:sort]
       search_dois = response.results.results.map(&:doi)
-      puts(search_dois)
       dois = DataciteDoi.where(doi: search_dois)
 
       dois.each do |doi|
         puts(doi.to_jsonapi)
-        # send_import_message(doi.to_jsonapi)
+        send_import_message(doi.to_jsonapi) if ENV["ENABLE_NIFS_EVENT_IMPORT"]
       end
     end
+
+    puts("Rake task completed.")
   end
 end
