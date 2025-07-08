@@ -60,7 +60,16 @@ namespace :other_doi do
   task import: :environment do
     from_id = (ENV["FROM_ID"] || OtherDoi.minimum(:id)).to_i
     until_id = (ENV["UNTIL_ID"] || OtherDoi.maximum(:id)).to_i
-    puts OtherDoi.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"] || OtherDoi.inactive_index)
+    shard_size = ENV["SHARD_SIZE"]&.to_i || 10_000
+    batch_size = ENV["BATCH_SIZE"]&.to_i || 50
+    selected_index = ENV["INDEX"] || OtherDoi.inactive_index
+    puts OtherDoi.import_by_ids(
+      from_id: from_id,
+      until_id: until_id,
+      index: selected_index,
+      shard_size: shard_size,
+      batch_size: batch_size
+    )
   end
 
   desc "Import one other DOI"

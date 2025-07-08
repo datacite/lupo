@@ -119,3 +119,54 @@ namespace :datacite_doi do
     puts DataciteDoi.index_one(doi_id: ENV["DOI"])
   end
 end
+
+namespace :nifs_dois do
+  desc "Process nifs events"
+  task process_events: :environment do
+    puts("Start importing NIFS events")
+    puts("Reading environment variables")
+
+    if ENV["START_DATE"].blank?
+      puts("ERROR: START_DATE environment variable not set")
+      exit
+    end
+
+    start_date = Time.parse(ENV["START_DATE"]).to_date
+    puts("Start date: #{start_date}")
+
+    if ENV["END_DATE"].blank?
+      puts("ERROR: END_DATE environment variable not set")
+      exit
+    end
+
+    end_date = Time.parse(ENV["END_DATE"]).to_date
+    puts("End date: #{end_date}")
+
+    query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    response = Doi.query(query, { page: { size: 1, cursor: [] } })
+
+    if response.results.total.zero?
+      puts("No NIFS DOIs found for the specified date range.")
+      exit
+    end
+
+    puts("#{response.results.total} NIFS DOIs will be processed for event creation")
+
+    cursor = []
+
+    while response.results.results.length.positive?
+      response = Doi.query(query, { page: { size: 1000, cursor: cursor } })
+      break if response.results.results.length.zero?
+
+      cursor = response.results.to_a.last[:sort]
+      search_dois = response.results.results.map(&:doi)
+      dois = DataciteDoi.where(doi: search_dois)
+
+      dois.each do |doi|
+        send_import_message(doi.to_jsonapi)
+      end
+    end
+
+    puts("Rake task completed.")
+  end
+end
