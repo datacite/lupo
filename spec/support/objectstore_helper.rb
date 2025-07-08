@@ -26,11 +26,14 @@ end
 
 RSpec.configure do |config|
   config.before(:suite) do
-    create_bucket
+    unless ENV["METADATA_STORAGE_BUCKET_NAME"].blank?
+      create_bucket
+    end
   end
 
-  # This is to clean up beteween tests metadata documents stored in the objectstore i.e. minio
   config.after(:suite) do
-    clean_bucket
+    unless ENV["METADATA_STORAGE_BUCKET_NAME"].blank?
+      clean_bucket
+    end
   end
 end

@@ -23,7 +23,7 @@ class Metadata < ApplicationRecord
   after_validation :set_metadata_version
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
-  before_create :upload_xml_to_s3
+  before_create :upload_xml_to_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
 
   def xml=(value)
     # The encoding is forced here to UTF8
