@@ -562,7 +562,7 @@ class DataciteDoisController < ApplicationController
   def update
     @doi = DataciteDoi.where(doi: params[:id]).first
     exists = @doi.present?
-    validate = true
+    should_validate = true
 
     # capture username and password for reuse in the handle system
 
@@ -574,7 +574,7 @@ class DataciteDoisController < ApplicationController
 
         authorize! :transfer, @doi
         @doi.assign_attributes(sanitized_params.slice(:client_id))
-        validate = false
+        should_validate = false
       else
         authorize! :update, @doi
         if sanitized_params[:schema_version].blank?
@@ -598,7 +598,7 @@ class DataciteDoisController < ApplicationController
       authorize! :new, @doi
     end
 
-    if @doi.save(validate: validate)
+    if @doi.save(validate: should_validate)
       options = {}
       options[:include] = @include
       options[:is_collection] = false

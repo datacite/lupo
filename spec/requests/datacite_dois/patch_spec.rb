@@ -658,7 +658,6 @@ describe DataciteDoisController, type: :request, vcr: true do
     context "when we transfer a DOI as staff" do
       let(:doi) { create(:doi, doi: "10.14454/119495", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered") }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV["MDS_PASSWORD"]) }
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -690,7 +689,6 @@ describe DataciteDoisController, type: :request, vcr: true do
     context "when we transfer a DOI as staff and the client has non-matching domains" do
       let(:doi) { create(:doi, doi: "10.14454/119495", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered") }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV["MDS_PASSWORD"], domains: "datacite.org") }
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -726,7 +724,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         d
       end
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV["MDS_PASSWORD"]) }
-      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
           "data" => {
