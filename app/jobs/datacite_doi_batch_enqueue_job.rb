@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class DataciteDoiBatchEnqueueJob < ApplicationJob
-  queue_as :lupo_import
+  queue_as :lupo_queue_batches_datacite_doi
 
   def perform(start_id, end_id, batch_size: 50, index: nil)
     ids = DataciteDoi.where(type: "DataciteDoi", id: start_id..end_id).pluck(:id)
