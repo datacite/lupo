@@ -687,6 +687,74 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    context "when we transfer a DOI as staff and the client has non-matching domains" do
+      let(:doi) { create(:doi, doi: "10.14454/119495", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered") }
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV["MDS_PASSWORD"], domains: "datacite.org") }
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "mode" => "transfer",
+            },
+            "relationships" => {
+              "client" => {
+                "data" => {
+                  "type" => "clients",
+                  "id" => new_client.symbol.downcase,
+                },
+              },
+            },
+          },
+        }
+      end
+
+      it "updates the client id" do
+        put "/dois/#{doi.doi}", valid_attributes, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "relationships", "client", "data", "id")).to eq(new_client.symbol.downcase)
+      end
+    end
+
+    context "when we transfer a DOI as staff and the DOI has a schema version that is not supported" do
+      let(:doi) do
+        d = build(:doi, doi: "10.14454/119495", schema_version: "http://datacite.org/schema/kernel-3", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered")
+        d.save(validate: false)
+        d
+      end
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV["MDS_PASSWORD"]) }
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "mode" => "transfer",
+            },
+            "relationships" => {
+              "client" => {
+                "data" => {
+                  "type" => "clients",
+                  "id" => new_client.symbol.downcase,
+                },
+              },
+            },
+          },
+        }
+      end
+
+      it "updates the client id" do
+        put "/dois/#{doi.doi}", valid_attributes, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi.doi)
+        expect(json.dig("data", "relationships", "client", "data", "id")).to eq(new_client.symbol.downcase)
+      end
+    end
+
     context "when the resource_type_general changes" do
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:types) { { "resourceTypeGeneral" => "DataPaper", "resourceType" => "BlogPosting" } }
