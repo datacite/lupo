@@ -90,19 +90,19 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       import_index(Client)
     end
 
-    # it "returns repositories" do
-    #   get "/repositories", nil, headers
+    it "returns repositories", trunk_db_before: true do
+      get "/repositories", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json["data"].size).to eq(4)
-    #   expect(json.dig("meta", "total")).to eq(4)
-    #   expect(json.dig("meta", "providers").length).to eq(4)
-    #   expect(json.dig("meta", "providers").first).to eq(
-    #     "count" => 1,
-    #     "id" => provider.uid,
-    #     "title" => "My provider",
-    #   )
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(4)
+      expect(json.dig("meta", "total")).to eq(4)
+      expect(json.dig("meta", "providers").length).to eq(4)
+      expect(json.dig("meta", "providers").first).to eq(
+        "count" => 1,
+        "id" => provider.uid,
+        "title" => "My provider",
+      )
+    end
   end
 
   describe "GET /repositories/:id" do
