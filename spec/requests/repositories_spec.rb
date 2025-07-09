@@ -86,8 +86,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     let!(:clients) { create_list(:client, 3) }
 
     before do
-      clear_index(Client)
-      import_index(Client)
+      reset_indices
     end
 
     it "returns repositories" do
