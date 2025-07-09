@@ -163,7 +163,7 @@ namespace :nifs_dois do
       dois = DataciteDoi.where(doi: search_dois)
 
       dois.each do |doi|
-        send_import_message(doi.to_jsonapi)
+        doi.send_import_message(doi.to_jsonapi)
       end
     end
 
