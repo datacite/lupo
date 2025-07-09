@@ -9,6 +9,10 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation, { pre_count: true }
   end
 
+  config.before(:each, trunk_db_before: true) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   config.before(:each) { DatabaseCleaner.start }
 
   config.after(:each) { DatabaseCleaner.clean }
