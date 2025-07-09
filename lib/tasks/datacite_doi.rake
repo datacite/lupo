@@ -142,7 +142,8 @@ namespace :nifs_dois do
     end_date = Time.parse(ENV["END_DATE"]).to_date
     puts("End date: #{end_date}")
 
-    query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    # query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    query = "client.id:figshare.dud AND created:[#{start_date} TO #{end_date}}"
     response = Doi.query(query, { page: { size: 1, cursor: [] } })
 
     if response.results.total.zero?
@@ -163,7 +164,8 @@ namespace :nifs_dois do
       dois = DataciteDoi.where(doi: search_dois)
 
       dois.each do |doi|
-        send_import_message(doi.to_jsonapi)
+        puts(doi.to_jsonapi)
+        # send_import_message(doi.to_jsonapi)
       end
     end
 
