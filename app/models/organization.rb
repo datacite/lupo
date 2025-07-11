@@ -4,6 +4,8 @@ class Organization
   # include helper module for working with Wikidata
   include Wikidatable
 
+  ROR_API_BASE_URL = "https://api.ror.org/v1/organizations"
+
   MEMBER_ROLES = {
     "ROLE_CONSORTIUM" => "consortium",
     "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
@@ -16,7 +18,7 @@ class Organization
     ror_id = ror_id_from_url(id)
     return {} if ror_id.blank?
 
-    url = "https://api.ror.org/organizations/#{ror_id}"
+    url = "#{ROR_API_BASE_URL}/#{ror_id}"
     response = Maremma.get(url, host: true, skip_encoding: true)
 
     return {} if response.status != 200
@@ -39,7 +41,7 @@ class Organization
     grid_id = grid_id_from_url(id)
     return {} if grid_id.blank?
 
-    url = "https://api.ror.org/organizations?query=\"#{grid_id}\""
+    url = "#{ROR_API_BASE_URL}?query=\"#{grid_id}\""
     response = Maremma.get(url, host: true, skip_encoding: true)
 
     message = response.body.dig("data", "items", 0) || {}
@@ -62,10 +64,7 @@ class Organization
     crossref_funder_id = crossref_funder_id_from_url(id)
     return {} if crossref_funder_id.blank?
 
-    url =
-      "https://api.ror.org/organizations?query=\"#{
-        crossref_funder_id.split('/', 2).last
-      }\""
+    url = "#{ROR_API_BASE_URL}?query=\"#{crossref_funder_id.split('/', 2).last}\""
     response = Maremma.get(url, host: true, skip_encoding: true)
 
     message = response.body.dig("data", "items", 0) || {}
@@ -89,7 +88,7 @@ class Organization
     types = options[:types]
     country = options[:country]
 
-    url = "https://api.ror.org/organizations?page=#{page}"
+    url = "#{ROR_API_BASE_URL}?page=#{page}"
     url += "&query=#{query}" if query.present?
     if types.present? && country.present?
       url +=

@@ -52,6 +52,51 @@ http_interactions:
         BioSignals"],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
         Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
         0004 0398 7680"]},"GRID":{"preferred":"grid.487335.e","all":"grid.487335.e"}}}'
-    http_version: null
   recorded_at: Tue, 01 Sep 2020 13:32:00 GMT
-recorded_with: VCR 5.1.0
+- request:
+    method: get
+    uri: https://api.ror.org/v1/organizations/ror.org/02q0ygf45
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Jul 2025 10:43:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1122'
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Vary:
+      - Cookie, Origin
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, PUT, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.7
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"https://ror.org/02q0ygf45","name":"OBS Medical (United Kingdom)","email_address":null,"ip_addresses":[],"established":2000,"types":["Company"],"relationships":[],"addresses":[{"lat":51.67109,"lng":-1.28278,"state":null,"state_code":null,"city":"Abingdon","geonames_city":{"id":2657780,"city":"Abingdon","geonames_admin1":{"name":"England","id":null,"ascii_name":null,"code":"GB.ENG"},"geonames_admin2":{"name":null,"id":null,"ascii_name":null,"code":null},"license":{"attribution":"Data
+        from geonames.org under a CC-BY 3.0 license","license":"http://creativecommons.org/licenses/by/3.0/"},"nuts_level1":{"name":null,"code":null},"nuts_level2":{"name":null,"code":null},"nuts_level3":{"name":null,"code":null}},"postcode":null,"primary":false,"line":null,"country_geonames_id":null}],"links":["http://www.obsmedical.com/"],"aliases":["Oxford
+        BioSignals"],"acronyms":[],"status":"active","wikipedia_url":null,"labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0398 7680"]},"GRID":{"preferred":"grid.487335.e","all":"grid.487335.e"}}}'
+  recorded_at: Fri, 11 Jul 2025 10:43:07 GMT
+recorded_with: VCR 6.2.0
