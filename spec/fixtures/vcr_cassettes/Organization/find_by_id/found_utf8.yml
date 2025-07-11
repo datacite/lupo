@@ -42,6 +42,48 @@ http_interactions:
       encoding: ASCII-8BIT
       string: !binary |-
         eyJpZCI6Imh0dHBzOi8vcm9yLm9yZy8wMnRybjZwOTUiLCJuYW1lIjoiQ29taXNpw7NuIFNlY3RvcmlhbCBkZSBJbnZlc3RpZ2FjacOzbiBDaWVudMOtZmljYSIsImVtYWlsX2FkZHJlc3MiOm51bGwsImlwX2FkZHJlc3NlcyI6W10sImVzdGFibGlzaGVkIjoxOTkwLCJ0eXBlcyI6WyJHb3Zlcm5tZW50Il0sInJlbGF0aW9uc2hpcHMiOltdLCJhZGRyZXNzZXMiOlt7ImxhdCI6LTM0LjkwNTMwMSwibG5nIjotNTYuMTczNTQ1LCJzdGF0ZSI6bnVsbCwic3RhdGVfY29kZSI6bnVsbCwiY2l0eSI6Ik1vbnRldmlkZW8iLCJnZW9uYW1lc19jaXR5Ijp7ImlkIjozNDQxNTc1LCJjaXR5IjoiTW9udGV2aWRlbyIsImdlb25hbWVzX2FkbWluMSI6eyJuYW1lIjoiTW9udGV2aWRlbyIsImlkIjozNDQxNTcyLCJhc2NpaV9uYW1lIjoiTW9udGV2aWRlbyIsImNvZGUiOiJVWS4xMCJ9LCJnZW9uYW1lc19hZG1pbjIiOnsibmFtZSI6Ik11bmljaXBpbyBCIiwiaWQiOjExODIwODQ2LCJhc2NpaV9uYW1lIjoiTXVuaWNpcGlvIEIiLCJjb2RlIjoiVVkuMTAuMDIifSwibGljZW5zZSI6eyJhdHRyaWJ1dGlvbiI6IkRhdGEgZnJvbSBnZW9uYW1lcy5vcmcgdW5kZXIgYSBDQy1CWSAzLjAgbGljZW5zZSIsImxpY2Vuc2UiOiJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS8zLjAvIn0sIm51dHNfbGV2ZWwxIjp7Im5hbWUiOm51bGwsImNvZGUiOm51bGx9LCJudXRzX2xldmVsMiI6eyJuYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibnV0c19sZXZlbDMiOnsibmFtZSI6bnVsbCwiY29kZSI6bnVsbH19LCJwb3N0Y29kZSI6bnVsbCwicHJpbWFyeSI6ZmFsc2UsImxpbmUiOm51bGwsImNvdW50cnlfZ2VvbmFtZXNfaWQiOjM0Mzk3MDV9XSwibGlua3MiOlsiaHR0cDovL3d3dy5jc2ljLmVkdS51eS8iXSwiYWxpYXNlcyI6W10sImFjcm9ueW1zIjpbIkNTSUMiXSwic3RhdHVzIjoiYWN0aXZlIiwid2lraXBlZGlhX3VybCI6IiIsImxhYmVscyI6W10sImNvdW50cnkiOnsiY291bnRyeV9uYW1lIjoiVXJ1Z3VheSIsImNvdW50cnlfY29kZSI6IlVZIn0sImV4dGVybmFsX2lkcyI6eyJGdW5kUmVmIjp7InByZWZlcnJlZCI6bnVsbCwiYWxsIjpbIjUwMTEwMDAwNjA0OSJdfSwiR1JJRCI6eyJwcmVmZXJyZWQiOiJncmlkLjQ2NzI4NS5hIiwiYWxsIjoiZ3JpZC40NjcyODUuYSJ9fX0=
-    http_version: null
   recorded_at: Mon, 01 Nov 2021 16:58:04 GMT
-recorded_with: VCR 5.1.0
+- request:
+    method: get
+    uri: https://api.ror.org/v1/organizations/ror.org/02trn6p95
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Jul 2025 08:28:53 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1147'
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Vary:
+      - Cookie, Origin
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, PUT, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.7
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Imh0dHBzOi8vcm9yLm9yZy8wMnRybjZwOTUiLCJuYW1lIjoiQ29taXNpw7NuIFNlY3RvcmlhbCBkZSBJbnZlc3RpZ2FjacOzbiBDaWVudMOtZmljYSIsImVtYWlsX2FkZHJlc3MiOm51bGwsImlwX2FkZHJlc3NlcyI6W10sImVzdGFibGlzaGVkIjoxOTkwLCJ0eXBlcyI6WyJHb3Zlcm5tZW50IiwiRnVuZGVyIl0sInJlbGF0aW9uc2hpcHMiOltdLCJhZGRyZXNzZXMiOlt7ImxhdCI6LTM0LjkwMzI4LCJsbmciOi01Ni4xODgxNiwic3RhdGUiOm51bGwsInN0YXRlX2NvZGUiOm51bGwsImNpdHkiOiJNb250ZXZpZGVvIiwiZ2VvbmFtZXNfY2l0eSI6eyJpZCI6MzQ0MTU3NSwiY2l0eSI6Ik1vbnRldmlkZW8iLCJnZW9uYW1lc19hZG1pbjEiOnsibmFtZSI6Ik1vbnRldmlkZW8gRGVwYXJ0bWVudCIsImlkIjpudWxsLCJhc2NpaV9uYW1lIjpudWxsLCJjb2RlIjoiVVkuTU8ifSwiZ2VvbmFtZXNfYWRtaW4yIjp7Im5hbWUiOm51bGwsImlkIjpudWxsLCJhc2NpaV9uYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibGljZW5zZSI6eyJhdHRyaWJ1dGlvbiI6IkRhdGEgZnJvbSBnZW9uYW1lcy5vcmcgdW5kZXIgYSBDQy1CWSAzLjAgbGljZW5zZSIsImxpY2Vuc2UiOiJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS8zLjAvIn0sIm51dHNfbGV2ZWwxIjp7Im5hbWUiOm51bGwsImNvZGUiOm51bGx9LCJudXRzX2xldmVsMiI6eyJuYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibnV0c19sZXZlbDMiOnsibmFtZSI6bnVsbCwiY29kZSI6bnVsbH19LCJwb3N0Y29kZSI6bnVsbCwicHJpbWFyeSI6ZmFsc2UsImxpbmUiOm51bGwsImNvdW50cnlfZ2VvbmFtZXNfaWQiOm51bGx9XSwibGlua3MiOlsiaHR0cDovL3d3dy5jc2ljLmVkdS51eS8iXSwiYWxpYXNlcyI6W10sImFjcm9ueW1zIjpbIkNTSUMiXSwic3RhdHVzIjoiYWN0aXZlIiwid2lraXBlZGlhX3VybCI6bnVsbCwibGFiZWxzIjpbXSwiY291bnRyeSI6eyJjb3VudHJ5X25hbWUiOiJVcnVndWF5IiwiY291bnRyeV9jb2RlIjoiVVkifSwiZXh0ZXJuYWxfaWRzIjp7IkZ1bmRSZWYiOnsicHJlZmVycmVkIjpudWxsLCJhbGwiOlsiNTAxMTAwMDA2MDQ5Il19LCJHUklEIjp7InByZWZlcnJlZCI6ImdyaWQuNDY3Mjg1LmEiLCJhbGwiOiJncmlkLjQ2NzI4NS5hIn19fQ==
+  recorded_at: Fri, 11 Jul 2025 08:28:53 GMT
+recorded_with: VCR 6.2.0

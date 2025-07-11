@@ -54,7 +54,6 @@ http_interactions:
         Lincoln","iso639":"es"}],"country":{"country_name":"United States","country_code":"US"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
         0004 0420 5871"]},"FundRef":{"preferred":null,"all":["100007032"]},"OrgRef":{"preferred":null,"all":["833671"]},"Wikidata":{"preferred":null,"all":["Q4570781"]},"GRID":{"preferred":"grid.417434.1","all":"grid.417434.1"}}}],"meta":{"types":[{"id":"education","title":"Education","count":1}],"countries":[{"id":"us","title":"United
         States of America","count":1}]}}'
-    http_version: null
   recorded_at: Wed, 02 Sep 2020 18:19:10 GMT
 - request:
     method: get
@@ -123,6 +122,53 @@ http_interactions:
         0004 0420 5871","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$15FB9168-3DA8-4694-9F03-4B4849B270E5","rank":"normal","references":[{"hash":"f20e7cc1dc95f8af90470df9ddea266baf12be00","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"39f2d847bb7bcfcba055cff1323f108b7bc3af66","datavalue":{"value":"10.6084/M9.FIGSHARE.4539889","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]},{"hash":"c336cb6387a408bdcc68f4d0782ceceec714b5c1","snaks":{"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}]},"snaks-order":["P2427"]}]}],"P3500":[{"mainsnak":{"snaktype":"value","property":"P3500","hash":"2b85f40008cd961ec18d06981ff6c5a75b02f419","datavalue":{"value":"4558","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$3D0F778C-7BB9-4049-AD22-686B97F1D126","rank":"normal","references":[{"hash":"45e8fa2e37c421b7e5970029041dbdeac9824284","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"5f5ddd9d0bd8e6d4682296b4699cb39e94c9c9b5","datavalue":{"value":"10.5281/ZENODO.758080","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]}]}],"P571":[{"mainsnak":{"snaktype":"value","property":"P571","hash":"afd5d2e7b82cccc0ab6365248893029cdffb8be3","datavalue":{"value":{"time":"+1854-01-01T00:00:00Z","timezone":0,"before":0,"after":0,"precision":9,"calendarmodel":"http://www.wikidata.org/entity/Q1985727"},"type":"time"},"datatype":"time"},"type":"statement","id":"Q4570781$21A751CE-D91C-4226-B700-E789F817CED6","rank":"normal","references":[{"hash":"8f6d2b4a0e3da23aca841c5dfe6b7ed894bd315a","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"c4cc8cf0417b27e19c135f9b4312453d668ab641","datavalue":{"value":{"entity-type":"item","numeric-id":191769,"id":"Q191769"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P131":[{"mainsnak":{"snaktype":"value","property":"P131","hash":"b32e0c98f6c646eb7883f976dfbb72bee2929917","datavalue":{"value":{"entity-type":"item","numeric-id":27840,"id":"Q27840"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$DFD17CAA-B6B3-4789-947A-563941DC73AA","rank":"normal","references":[{"hash":"fa278ebfc458360e5aed63d5058cca83c46134f1","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"e4f6d9441d0600513c4533c672b5ab472dc73694","datavalue":{"value":{"entity-type":"item","numeric-id":328,"id":"Q328"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P3153":[{"mainsnak":{"snaktype":"value","property":"P3153","hash":"1edbccfd7d86159735e927c50d957a6e8ada342c","datavalue":{"value":"100007032","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$1664B2BD-BC48-4868-A40D-FFFE918922F2","rank":"normal","references":[{"hash":"f20e7cc1dc95f8af90470df9ddea266baf12be00","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"39f2d847bb7bcfcba055cff1323f108b7bc3af66","datavalue":{"value":"10.6084/M9.FIGSHARE.4539889","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]},{"hash":"c336cb6387a408bdcc68f4d0782ceceec714b5c1","snaks":{"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}]},"snaks-order":["P2427"]}]}],"P3876":[{"mainsnak":{"snaktype":"value","property":"P3876","hash":"4001004c1311eb0a78d72cb60cc929ff551bd0cc","datavalue":{"value":{"entity-type":"item","numeric-id":9754785,"id":"Q9754785"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$D7C956B1-DF38-4591-8436-78B2AAF64438","rank":"normal"}],"P1889":[{"mainsnak":{"snaktype":"value","property":"P1889","hash":"f49e6b3683c1095ee717cbe6637811f064081205","datavalue":{"value":{"entity-type":"item","numeric-id":25205678,"id":"Q25205678"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$7eca1eda-43ac-bb54-7a7e-ebfe9932e883","rank":"normal"}],"P2427":[{"mainsnak":{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$ED79A2C6-06E5-4032-A518-2C12A0386E7D","rank":"normal","references":[{"hash":"40fdc7f3ce7f6771a8f285a1267bfc3f3de154d9","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"858e5db66e8139829fa8f88e7e16ea6af5213e4b","datavalue":{"value":{"entity-type":"item","numeric-id":53869345,"id":"Q53869345"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]},{"hash":"a1914c8952a5bc482eafeb26be4fda504fe701f9","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"31f77799b27e462a188007d80e9cae011a037bca","datavalue":{"value":{"entity-type":"item","numeric-id":53705036,"id":"Q53705036"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P4195":[{"mainsnak":{"snaktype":"value","property":"P4195","hash":"377da8de51159c01202815ee732408fda70fded9","datavalue":{"value":{"entity-type":"item","numeric-id":8591254,"id":"Q8591254"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$903A84A8-87B0-4DF5-89E8-47399FB788DA","rank":"normal"}],"P1417":[{"mainsnak":{"snaktype":"value","property":"P1417","hash":"d7991d384f060ffcfbaecd9bd3727cbfe83f4c2b","datavalue":{"value":"topic/Lincoln-University-Pennsylvania-United-states","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$7B397790-5D99-4CDC-9799-07EDEA48AD5A","rank":"normal"}],"P18":[{"mainsnak":{"snaktype":"value","property":"P18","hash":"f20962a027c4a984155a85edff28abf92bd515a5","datavalue":{"value":"Amos
         Hall Lincoln U PA.JPG","type":"string"},"datatype":"commonsMedia"},"type":"statement","id":"Q4570781$6E61BE1F-FDCE-45E7-958F-85A8BB143696","rank":"normal","references":[{"hash":"dc85bc3510a8d5dcad6ba09f5cae3a43701aada2","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"390e3b73e7cd926978cab220968d0e3451cfb814","datavalue":{"value":{"entity-type":"item","numeric-id":199698,"id":"Q199698"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}],"P4656":[{"snaktype":"value","property":"P4656","hash":"5bc9b659b9ce7bb6ed6283dad16f79623ed7c32c","datavalue":{"value":"https://uk.wikipedia.org/w/index.php?title=\u0423\u043d\u0456\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442_\u041b\u0456\u043d\u043a\u043e\u043b\u044c\u043d\u0430&oldid=21600655","type":"string"},"datatype":"url"}]},"snaks-order":["P143","P4656"]}]}],"P6366":[{"mainsnak":{"snaktype":"value","property":"P6366","hash":"8f51016879ee7a56c4de177720afd82d29177292","datavalue":{"value":"33821262","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$489DE985-FEC1-4351-B2B6-D47D2A28A2AE","rank":"normal","references":[{"hash":"dfbedb134ffd3d8aba7ccc1774267c8148aa2a39","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"2995ad06d424d751f036cb92149fada89fe252d9","datavalue":{"value":{"entity-type":"item","numeric-id":60683589,"id":"Q60683589"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}],"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}],"P813":[{"snaktype":"value","property":"P813","hash":"74c664545729bbe3e2b6db4bfa3d58ebdeb8e9f0","datavalue":{"value":{"time":"+2019-01-19T00:00:00Z","timezone":0,"before":0,"after":0,"precision":11,"calendarmodel":"http://www.wikidata.org/entity/Q1985727"},"type":"time"},"datatype":"time"}]},"snaks-order":["P248","P2427","P813"]}]}],"P6375":[{"mainsnak":{"snaktype":"value","property":"P6375","hash":"1b17e3b0c69d209ee0168cf1f423d2abbc9724c0","datavalue":{"value":{"text":"1570
         Baltimore Pike, Lincoln University, PA, 19352-0999","language":"en"},"type":"monolingualtext"},"datatype":"monolingualtext"},"type":"statement","id":"Q4570781$711689B5-19FD-469E-B24A-9539CFFCC03D","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P6782":[{"mainsnak":{"snaktype":"value","property":"P6782","hash":"eb3574290432313bf17d2b6cc9d470fd4e154cbf","datavalue":{"value":"0521rfb23","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$7F92D09E-A30B-4351-88B5-3EC4948A493B","rank":"normal"}],"P5008":[{"mainsnak":{"snaktype":"value","property":"P5008","hash":"c6c648b0590b7d5c185e9db5318f24d428d5e9a5","datavalue":{"value":{"entity-type":"item","numeric-id":15304953,"id":"Q15304953"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$203D2406-5848-46CB-8AAC-AE7E56E08009","rank":"normal"}]}}},"success":1}'
-    http_version: null
   recorded_at: Wed, 02 Sep 2020 18:19:11 GMT
-recorded_with: VCR 5.1.0
+- request:
+    method: get
+    uri: https://api.ror.org/v1/organizations?query=%22grid.417434.1%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Jul 2025 08:27:58 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1617'
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Vary:
+      - Cookie, Origin
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.7
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":1,"time_taken":7,"items":[{"id":"https://ror.org/0521rfb23","name":"Lincoln
+        University - Pennsylvania","email_address":null,"ip_addresses":[],"established":1854,"types":["Education","Funder"],"relationships":[],"addresses":[{"lat":39.78539,"lng":-75.97883,"state":null,"state_code":null,"city":"Oxford","geonames_city":{"id":4560185,"city":"Oxford","geonames_admin1":{"name":"Pennsylvania","id":null,"ascii_name":null,"code":"US.PA"},"geonames_admin2":{"name":null,"id":null,"ascii_name":null,"code":null},"license":{"attribution":"Data
+        from geonames.org under a CC-BY 3.0 license","license":"http://creativecommons.org/licenses/by/3.0/"},"nuts_level1":{"name":null,"code":null},"nuts_level2":{"name":null,"code":null},"nuts_level3":{"name":null,"code":null}},"postcode":null,"primary":false,"line":null,"country_geonames_id":null}],"links":["http://www.lincoln.edu/"],"aliases":["Ashmun
+        Institute"],"acronyms":["LU"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)","labels":[{"label":"Universidad
+        Lincoln","iso639":"es"}],"country":{"country_name":"United States","country_code":"US"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0420 5871"]},"FundRef":{"preferred":null,"all":["100007032"]},"Wikidata":{"preferred":null,"all":["Q4570781"]},"GRID":{"preferred":"grid.417434.1","all":"grid.417434.1"}}}],"meta":{"types":[{"id":"education","title":"Education","count":1},{"id":"funder","title":"Funder","count":1}],"countries":[{"id":"us","title":"United
+        States","count":1}],"statuses":[{"id":"active","title":"active","count":1}]}}'
+  recorded_at: Fri, 11 Jul 2025 08:27:58 GMT
+recorded_with: VCR 6.2.0
