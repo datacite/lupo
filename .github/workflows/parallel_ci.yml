@@ -41,11 +41,27 @@ jobs:
           logger.org.opensearch.discovery: "ERROR"
         ports:
           - 9200
+      localstack:
+        image: localstack/localstack
+        ports:
+          - "4566:4566"  # LocalStack edge port
+        env:
+          SERVICES: s3   # Only start S3
+          AWS_ACCESS_KEY_ID: s3accesskeyid
+          AWS_SECRET_ACCESS_KEY: s3accesskeypass
+
     env:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: root
     steps:
       - uses: actions/checkout@v4
+
+      - name: Sync time
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ntpdate
+          sudo ntpdate pool.ntp.org
+
       - name: Set up Ruby 3.1.6
         uses: ruby/setup-ruby@v1
         with:
@@ -82,6 +98,10 @@ jobs:
           ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
           ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.localstack.ports[4566] }}
+          AWS_ACCESS_KEY_ID_S3: s3accesskeyid
+          AWS_SECRET_ACCESS_KEY_S3: s3accesskeypass
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
