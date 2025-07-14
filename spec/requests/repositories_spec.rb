@@ -90,7 +90,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
       import_index(Client)
     end
 
-    it "returns repositories" do
+    it "returns repositories", trunk_db_before: true do
       get "/repositories", nil, headers
 
       expect(last_response.status).to eq(200)
