@@ -139,8 +139,10 @@ module Lupo
     # configure caching
     config.cache_store = :mem_cache_store, ENV["MEMCACHE_SERVERS"], {
       namespace: ENV["APPLICATION"],
-      pool_size: (ENV["CONCURRENCY"] || 10).to_i + 10,
-      pool_timeout: (ENV["MEMCACHE_POOL_TIMEOUT"] || 5).to_i
+      pool: {
+        size: (ENV["CONCURRENCY"] || 10).to_i,
+        timeout: (ENV["MEMCACHE_POOL_TIMEOUT"] || 5).to_i
+      }
     }
 
     # raise error with unpermitted parameters
