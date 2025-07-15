@@ -2,7 +2,7 @@ mysql: &mysql
   adapter: mysql2
 
 defaults: &defaults
-  pool: <%= ENV['CONCURRENCY'].to_i + 5 %>
+  pool: <%= ENV['CONCURRENCY'].to_i + 10 %>
   timeout: 5000
   wait_timeout: 1800
   encoding: utf8mb4
