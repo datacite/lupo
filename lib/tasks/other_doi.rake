@@ -16,6 +16,11 @@ namespace :other_doi do
     puts OtherDoi.upgrade_index(index: ENV["INDEX"])
   end
 
+  desc "Set refresh interval for other dois"
+  task set_refresh_interval: :environment do
+    puts OtherDoi.set_refresh_interval(interval: ENV["INTERVAL"])
+  end
+
   desc "Create alias for other dois"
   task create_alias: :environment do
     puts OtherDoi.create_alias(alias: ENV["ALIAS"], index: ENV["INDEX"])
