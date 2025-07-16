@@ -1145,6 +1145,33 @@ module Indexable
       ret
     end
 
+    # Set the refresh interval for a given index
+    def set_refresh_interval(index_name, refresh_interval)
+      client = Elasticsearch::Model.client
+      index_to_update = index_name.nil? ? self.inactive_index : index_name
+
+      # Check if the index exists
+      unless client.indices.exists index: index_to_update
+        return "Index '#{index_to_update}' not found."
+      end
+
+      # Update the index settings
+      response = client.indices.put_settings(
+        index: index_to_update,
+        body: {
+          index: {
+            refresh_interval: refresh_interval,
+          },
+        },
+      )
+
+      if response.to_h["acknowledged"]
+        "Successfully updated refresh interval for index '#{index_to_update}' to '#{refresh_interval}'."
+      else
+        "Failed to update refresh interval for index '#{index_to_update}'."
+      end
+    end
+
     # create index template
     def create_template
       alias_name = index_name
