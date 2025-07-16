@@ -14,6 +14,7 @@ namespace :other_doi do
   desc "Upgrade index for other dois"
   task upgrade_index: :environment do
     puts OtherDoi.upgrade_index(index: ENV["INDEX"])
+    puts OtherDoi.set_refresh_interval(interval: ENV["INTERVAL"])
   end
 
   desc "Set refresh interval for other dois"
