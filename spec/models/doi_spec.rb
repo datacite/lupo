@@ -386,11 +386,39 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(doi.language).to eq("prq-PE")
     end
 
+    # CURRENT BEHAVIOR:
+    # This DOI with invalid language saves, but resets language = null only when the state of the doi is 'draft'.
+    # If the state is 'registered'/'findable' this will not save and reports an error of 'Language X s not a valid value of the atomic type 'xs:language''
+    # when the xml is validated against the schema.
     it "fails xs:language regex" do
       doi.language = "Borgesian"
+      doi.state = "draft"
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
       expect(doi.language).to be_nil
+    end
+
+    it "fails xs:language regex" do
+      doi.language = "Borgesian"
+      doi.state = "draft"
+      doi.event = "publish"
+      expect(doi.save).to be false
+      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
+    end
+
+    it "fails xs:language regex" do
+      doi.language = "Borgesian"
+      doi.state = "registered"
+      expect(doi.save).to be false
+      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
+    end
+
+    it "fails xs:language regex" do
+      doi.language = "Borgesian"
+      doi.state = "findable"
+      doi.event = "publish"
+      expect(doi.save).to be false
+      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
     end
 
     it "nil" do

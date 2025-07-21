@@ -149,7 +149,6 @@ class Doi < ApplicationRecord
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_field_of_science
-  before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
@@ -2423,14 +2422,25 @@ class Doi < ApplicationRecord
   end
 
   def update_language
-    lang = language.to_s.split("-").first
+    raw_value = read_attribute(:language)
+    return nil if raw_value.nil?
+
+    lang = raw_value.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
-    self.language =
-      if entry.present? && entry.alpha2.present?
-        entry.alpha2
-      elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
-        language
+    if entry.present? && entry.alpha2.present?
+      entry.alpha2
+    elsif raw_value.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
+      raw_value
+    else
+      # Draft DOI is saved but language is set to nil in the DB.
+      # Findable/Registered DOI will report an error when the xml is validated against the schema.
+      if self.state == 'draft'
+        write_attribute(:language, nil)
+        nil
+      else
+        raw_value
       end
+    end
   end
 
   def update_field_of_science
@@ -2635,6 +2645,16 @@ class Doi < ApplicationRecord
       "Project"
     else
       types.to_h["resourceTypeGeneral"]
+    end
+  end
+
+  def language
+    raw_value = read_attribute(:language)
+
+    if !raw_value.nil?
+      update_language
+    else
+      nil
     end
   end
 
