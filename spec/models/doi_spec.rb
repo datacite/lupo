@@ -403,14 +403,14 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       doi.state = "draft"
       doi.event = "publish"
       expect(doi.save).to be false
-      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
+      expect(doi.errors.details[:language][0][:error]).to match(/^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/)
     end
 
     it "fails xs:language regex" do
       doi.language = "Borgesian"
       doi.state = "registered"
       expect(doi.save).to be false
-      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
+      expect(doi.errors.details[:language][0][:error]).to match(/^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/)
     end
 
     it "fails xs:language regex" do
@@ -418,7 +418,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       doi.state = "findable"
       doi.event = "publish"
       expect(doi.save).to be false
-      expect(doi.errors.details[:language][0][:error]).to match /^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/
+      expect(doi.errors.details[:language][0][:error]).to match(/^.*'Borgesian' is not a valid value of the atomic type 'xs:language'.*$/)
     end
 
     it "nil" do

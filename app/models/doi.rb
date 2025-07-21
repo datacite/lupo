@@ -2434,7 +2434,7 @@ class Doi < ApplicationRecord
     else
       # Draft DOI is saved but language is set to nil in the DB.
       # Findable/Registered DOI will report an error when the xml is validated against the schema.
-      if self.state == 'draft'
+      if self.state == "draft"
         write_attribute(:language, nil)
         nil
       else
