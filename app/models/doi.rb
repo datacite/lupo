@@ -150,7 +150,7 @@ class Doi < ApplicationRecord
   before_validation :update_agency
   before_validation :update_field_of_science
   before_validation :update_language, if: :language?
-  before_validation :update_rights_list, if: :rights_list?
+  # before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
   before_save :set_defaults, :save_metadata
@@ -359,6 +359,14 @@ class Doi < ApplicationRecord
         geoLocationPlace: { type: :keyword },
       }
       indexes :rights_list, type: :object, properties: {
+        rights: { type: :keyword },
+        rightsUri: { type: :keyword },
+        rightsIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+        rightsIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        lang: { type: :keyword },
+      }
+      indexes :rights_list_norm, type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
         rightsIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
@@ -635,6 +643,7 @@ class Doi < ApplicationRecord
       "dates" => dates,
       "geo_locations" => Array.wrap(geo_locations),
       "rights_list" => Array.wrap(rights_list),
+      "rights_list_norm" => Array.wrap(update_rights_list),
       "container" => container,
       "content_url" => content_url,
       "version_info" => version_info,
@@ -748,8 +757,8 @@ class Doi < ApplicationRecord
                               include: "FOS:.*" } },
         },
       },
-      licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
-      licenses_with_missing: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
+      licenses: { terms: { field: "rights_list_norm.rightsIdentifier", size: 10, min_doc_count: 1 } },
+      licenses_with_missing: { terms: { field: "rights_list_norm.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
       languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
       citation_count: { sum: { field: "citation_count" } },
       view_count: { sum: { field: "view_count" } },
@@ -2446,7 +2455,8 @@ class Doi < ApplicationRecord
   end
 
   def update_rights_list
-    self.rights_list = Array.wrap(rights_list).map do |r|
+    return nil if rights_list.nil?
+    Array.wrap(rights_list).map do |r|
       if r.blank?
         nil
       elsif r.is_a?(String)
