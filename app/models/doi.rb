@@ -150,7 +150,6 @@ class Doi < ApplicationRecord
   before_validation :update_agency
   before_validation :update_field_of_science
   before_validation :update_language, if: :language?
-  # before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
   before_save :set_defaults, :save_metadata
