@@ -162,7 +162,7 @@ namespace :nifs_dois do
       search_dois = response.results.results.map(&:doi)
       dois = DataciteDoi.where(doi: search_dois)
 
-      dois.each do |doi|
+      Parallel.each(dois, in_threads: 10) do |doi|
         doi.send_import_message(doi.to_jsonapi)
       end
     end

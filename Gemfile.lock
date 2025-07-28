@@ -519,7 +519,7 @@ GEM
       time
       uri
     optimist (3.0.1)
-    parallel (1.22.1)
+    parallel (1.27.0)
     parallel_tests (3.13.0)
       parallel
     parser (3.3.0.5)
@@ -857,6 +857,7 @@ DEPENDENCIES
   nokogiri (>= 1.11.2)
   oj (>= 2.8.3)
   oj_mimic_json (~> 1.0, >= 1.0.1)
+  parallel (~> 1.27)
   parallel_tests (~> 3.12)
   premailer (~> 1.11, >= 1.11.1)
   pwqgen.rb (~> 0.1.0)
