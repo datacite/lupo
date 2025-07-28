@@ -75,6 +75,7 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
+gem "parallel", "~> 1.27"
 
 group :production, :stage do
   gem "datadog", require: "datadog/auto_instrument"
