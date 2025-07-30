@@ -143,7 +143,11 @@ namespace :nifs_dois do
     puts("End date: #{end_date}")
 
     query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    puts("NIFS query: #{query}")
+
     response = Doi.query(query, { page: { size: 1, cursor: [] } })
+
+    puts(response.inspect)
 
     if response.results.total.zero?
       puts("No NIFS DOIs found for the specified date range.")
