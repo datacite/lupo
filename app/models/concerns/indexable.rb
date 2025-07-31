@@ -1146,7 +1146,7 @@ module Indexable
     end
 
     # Set the refresh interval for a given index
-    def set_refresh_interval(index_name, refresh_interval="120s")
+    def set_refresh_interval(index_name, refresh_interval = "120s")
       client = Elasticsearch::Model.client
       index_to_update = index_name.nil? ? self.inactive_index : index_name
 
