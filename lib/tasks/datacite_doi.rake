@@ -14,6 +14,12 @@ namespace :datacite_doi do
   desc "Upgrade index for datacite dois"
   task upgrade_index: :environment do
     puts DataciteDoi.upgrade_index(index: ENV["INDEX"])
+    puts DataciteDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
+  end
+
+  desc "Set refresh interval for datacite dois"
+  task set_refresh_interval: :environment do
+    puts DataciteDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
   end
 
   desc "Create alias for datacite dois"
