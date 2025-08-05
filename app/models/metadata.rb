@@ -142,4 +142,26 @@ class Metadata < ApplicationRecord
       Base64.urlsafe_encode64(doi_id + "_version_" + metadata_version.to_s, padding: false)
     end
   end
+
+  def migrate_xml_to_s3!
+    original_xml = read_attribute(:xml)
+    return unless ENV["METADATA_STORAGE_BUCKET_NAME"].present?
+    return if original_xml.nil? || original_xml == object_key
+
+    upload_xml_to_s3
+    save!(validate: false)
+  end
+
+  def self.migrate_xml(from_id, until_id)
+    (from_id..until_id).each do |id|
+      MigrateMetadataXmlJob.perform_later(id)
+    end
+
+    "Queued converting #{(from_id..until_id).to_a.length} metadata conversions."
+  end
+
+  def self.migrate_xml_by_id(id)
+    metadata = Metadata.find_by(id: id)
+    metadata&.migrate_xml_to_s3!
+  end
 end
