@@ -205,6 +205,12 @@ class ParamsSanitizer
           ],
         },
         :geoLocationPlace,
+        {
+          geoLocationPolygon: {
+            polygonPoint: %i[pointLongitude pointLatitude],
+            inPolygonPoint: %i[pointLongitude pointLatitude]
+          }
+        },
       ],
     },
     :container,

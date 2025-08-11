@@ -153,6 +153,7 @@ class Doi < ApplicationRecord
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
+  before_validation :update_geo_locations
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -2476,6 +2477,26 @@ class Doi < ApplicationRecord
     ).compact
   end
 
+   def update_geo_locations
+    return nil if geo_locations.nil?
+
+    self.geo_locations = Array.wrap(geo_locations).map do | gl |
+      if gl.is_a?(Hash)
+        gl.map do | key, value |
+          if key == "geoLocationPolygon"
+            [ key, update_geoLocationPolygon(value) ]
+          elsif key == "geoLocationPoint" || key == "geoLocationBox"
+            [ key, update_geoPoints(value) ]
+          else
+            [ key, value ]
+          end
+        end.to_h
+      else
+        gl
+      end
+    end.compact
+  end
+
   def update_publisher
     case publisher_before_type_cast
     when Hash
@@ -2660,5 +2681,55 @@ class Doi < ApplicationRecord
 
     def reset_publishers
       self.publisher_obj = nil
+    end
+
+    # GeoLocation helpers.
+
+    def convert_number_string(str)
+      if str.include?('.')
+        str.to_f 
+      else
+        str.to_i
+      end
+    end
+
+    def is_valid_decimal?(str)
+      !!Float(str.gsub(/\.\s*$/, ''), exception: false)
+    end
+
+    def update_geoPoint(point)
+      if point.is_a?(String) && is_valid_decimal?(point)
+        return convert_number_string(point)
+      else 
+        return point
+      end
+    end
+
+    def update_geoLocationPolygon(value)
+      if value.is_a?(Array)
+        value.map do | value |
+          if value.is_a?(Hash)
+            value.map do | key, value |
+              if key == "polygonPoint" || key == "inPolygonPoint"
+                [ key, update_geoPoints(value) ]
+              else
+                [ key, value ]
+              end
+            end.to_h
+          else
+            value
+          end
+        end
+      else
+        value
+      end
+    end
+
+    def update_geoPoints(value)
+      if value.is_a?(Hash)
+        value.transform_values { | value | update_geoPoint(value) }
+      else
+        value
+      end
     end
 end
