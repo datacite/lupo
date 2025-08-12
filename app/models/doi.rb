@@ -2478,23 +2478,23 @@ class Doi < ApplicationRecord
   end
 
    def update_geo_locations
-    return nil if geo_locations.nil?
+     return nil if geo_locations.nil?
 
-    self.geo_locations = Array.wrap(geo_locations).map do | gl |
-      if gl.is_a?(Hash)
-        gl.map do | key, value |
-          if key == "geoLocationPolygon"
-            [ key, update_geoLocationPolygon(value) ]
-          elsif key == "geoLocationPoint" || key == "geoLocationBox"
-            [ key, update_geoPoints(value) ]
-          else
-            [ key, value ]
-          end
-        end.to_h
-      else
-        gl
-      end
-    end.compact
+     self.geo_locations = Array.wrap(geo_locations).map do | gl |
+       if gl.is_a?(Hash)
+         gl.map do | key, value |
+           if key == "geoLocationPolygon"
+             [ key, update_geoLocationPolygon(value) ]
+           elsif key == "geoLocationPoint" || key == "geoLocationBox"
+             [ key, update_geoPoints(value) ]
+           else
+             [ key, value ]
+           end
+         end.to_h
+       else
+         gl
+       end
+     end.compact
   end
 
   def update_publisher
@@ -2686,48 +2686,48 @@ class Doi < ApplicationRecord
     # GeoLocation helpers.
 
     def convert_number_string(str)
-      if str.include?('.')
-        str.to_f 
+      if str.include?(".")
+        str.to_f
       else
         str.to_i
       end
     end
 
     def is_valid_decimal?(str)
-      !!Float(str.gsub(/\.\s*$/, ''), exception: false)
+      !!Float(str.gsub(/\.\s*$/, ""), exception: false)
     end
 
     def update_geoPoint(point)
       if point.is_a?(String) && is_valid_decimal?(point)
-        return convert_number_string(point)
-      else 
-        return point
-      end
-    end
-
-    def update_geoLocationPolygon(value)
-      if value.is_a?(Array)
-        value.map do | value |
-          if value.is_a?(Hash)
-            value.map do | key, value |
-              if key == "polygonPoint" || key == "inPolygonPoint"
-                [ key, update_geoPoints(value) ]
-              else
-                [ key, value ]
-              end
-            end.to_h
-          else
-            value
-          end
-        end
+        convert_number_string(point)
       else
-        value
+        point
       end
     end
 
     def update_geoPoints(value)
       if value.is_a?(Hash)
-        value.transform_values { | value | update_geoPoint(value) }
+        value.transform_values { | value1 | update_geoPoint(value1) }
+      else
+        value
+      end
+    end
+
+    def update_geoLocationPolygon(value)
+      if value.is_a?(Array)
+        value.map do | value1|
+          if value1.is_a?(Hash)
+            value1.map do | key, value2 |
+              if key == "polygonPoint" || key == "inPolygonPoint"
+                [ key, update_geoPoints(value2) ]
+              else
+                [ key, value2 ]
+              end
+            end.to_h
+          else
+            value1
+          end
+        end
       else
         value
       end
