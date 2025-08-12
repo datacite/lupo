@@ -19,3 +19,4 @@ jobs:
     - name: Run RuboCop
       # Temporarily don't run rubocop - bug?
       # run: bundle exec rubocop --parallel
+      run: echo "Rubocop has been temporarily disabled!"
