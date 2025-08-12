@@ -297,7 +297,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
         expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
-        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => "49.0850736", "pointLongitude" => "-123.3300992" } }])
+        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } }])
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
