@@ -104,7 +104,7 @@ group :development do
   gem "spring", "~> 4.1", ">= 4.1.3"
   gem "spring-commands-rspec"
   gem "spring-watcher-listen", "~> 2.1"
-  gem "rubocop", "~> 1.3", ">= 1.3.1", require: false
+  gem "rubocop", "~> 1.79.2", require: false
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1", require: false
   gem "rubocop-rails", "~> 2.8", ">= 2.8.1", require: false
   gem "rubocop-packaging", "~> 0.5.1", require: false

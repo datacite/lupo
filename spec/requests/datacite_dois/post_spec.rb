@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require 'pp'
+require "pp"
 include Passwordable
 
 describe DataciteDoisController, type: :request, vcr: true do
@@ -2528,8 +2528,8 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
         expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
-        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ 
-          "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } 
+        expect(json.dig("data", "attributes", "geoLocations")).to eq([{
+          "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 }
         }])
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
@@ -2547,7 +2547,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
-  
+
     context "when the request is valid with valid geoLocation properties - geoLocationPlace" do
       let(:valid_attributes) do
         {
@@ -2590,7 +2590,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "creates a Doi - with geoLocation properties - geoLocationPlace" do
         post "/dois", valid_attributes, headers
-   
+
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -2671,7 +2671,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                         "northBoundLatitude" => 60.2312,
                         "southBoundLatitude" => "-40",
                         "westBoundLongitude" => "-123.0"
-                    } 
+                    }
                }],
               "source" => "test",
               "event" => "publish",
@@ -2714,7 +2714,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
         expect(json.dig("data", "attributes", "geoLocations")).to eq([
           {
-            "geoLocationBox" => { 
+            "geoLocationBox" => {
                         "eastBoundLongitude" => +123.0,
                         "northBoundLatitude" => 60.2312,
                         "southBoundLatitude" => -40,
@@ -2769,12 +2769,12 @@ describe DataciteDoisController, type: :request, vcr: true do
               "geoLocations" => [
               {
                   "geoLocationPolygon" => [
-                    #   {
-                    #       "inPolygonPoint" => {
-                    #           "pointLongitude" => -91.9133621,
-                    #           "pointLatitude" => 40.9157628
-                    #       }
-                    #   },
+                      #   {
+                      #       "inPolygonPoint" => {
+                      #           "pointLongitude" => -91.9133621,
+                      #           "pointLatitude" => 40.9157628
+                      #       }
+                      #   },
                       {
                           "polygonPoint" => {
                               "pointLongitude" => -90.9026199,
@@ -2917,7 +2917,5 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("geoLocations").content).to eq("43.5507063-90.902619943.4550805-95.890412937.9811922-96.022248837.7730685-90.507112140.7661566-85.739045743.5507063-90.9026199")
       end
     end
-
   end
-
 end

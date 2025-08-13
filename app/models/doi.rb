@@ -2477,25 +2477,25 @@ class Doi < ApplicationRecord
     ).compact
   end
 
-   def update_geo_locations
-     return nil if geo_locations.nil?
+  def update_geo_locations
+    return nil if geo_locations.nil?
 
-     self.geo_locations = Array.wrap(geo_locations).map do | gl |
-       if gl.is_a?(Hash)
-         gl.map do | key, value |
-           if key == "geoLocationPolygon"
-             [ key, update_geoLocationPolygon(value) ]
-           elsif key == "geoLocationPoint" || key == "geoLocationBox"
-             [ key, update_geoPoints(value) ]
-           else
-             [ key, value ]
-           end
-         end.to_h
-       else
-         gl
-       end
-     end.compact
-  end
+    self.geo_locations = Array.wrap(geo_locations).map do | gl |
+      if gl.is_a?(Hash)
+        gl.map do | key, value |
+          if key == "geoLocationPolygon"
+            [ key, update_geoLocationPolygon(value) ]
+          elsif key == "geoLocationPoint" || key == "geoLocationBox"
+            [ key, update_geoPoints(value) ]
+          else
+            [ key, value ]
+          end
+        end.to_h
+      else
+        gl
+      end
+    end.compact
+ end
 
   def update_publisher
     case publisher_before_type_cast
@@ -2707,9 +2707,9 @@ class Doi < ApplicationRecord
 
     def update_geoPoints(value)
       if value.is_a?(Hash)
-        value.map do | key, value1 |
-          [ key, update_geoPoint(value1) ]
-        end.to_h
+        value.transform_values do |value1|
+          update_geoPoint(value1)
+        end
       else
         value
       end
