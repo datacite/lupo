@@ -2542,6 +2542,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        # Needs some attention - are the point values supposed to be separated by spaces or commas?
         expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
       end
     end
@@ -2732,6 +2733,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        # Needs some attention - are the point values supposed to be separated by spaces or commas?
         expect(doc.at_css("geoLocations").content).to eq("-123.0+123.-4060.2312")
       end
     end
@@ -2767,6 +2769,12 @@ describe DataciteDoisController, type: :request, vcr: true do
               "geoLocations" => [
               {
                   "geoLocationPolygon" => [
+                    #   {
+                    #       "inPolygonPoint" => {
+                    #           "pointLongitude" => -91.9133621,
+                    #           "pointLatitude" => 40.9157628
+                    #       }
+                    #   },
                       {
                           "polygonPoint" => {
                               "pointLongitude" => -90.9026199,
@@ -2817,6 +2825,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
+
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
         expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
@@ -2848,6 +2857,12 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "geoLocations")).to eq([
           {
               "geoLocationPolygon" => [
+                  # {
+                  #     "inPolygonPoint" => {
+                  #         "pointLongitude" => -91.9133621,
+                  #         "pointLatitude" => 40.9157628
+                  #     }
+                  # },
                   {
                       "polygonPoint" => {
                           "pointLongitude" => -90.9026199,
@@ -2898,6 +2913,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        # Needs some attention - are the point values supposed to be separated by spaces or commas?
         expect(doc.at_css("geoLocations").content).to eq("43.5507063-90.902619943.4550805-95.890412937.9811922-96.022248837.7730685-90.507112140.7661566-85.739045743.5507063-90.9026199")
       end
     end

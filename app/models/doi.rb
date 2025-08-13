@@ -2707,7 +2707,9 @@ class Doi < ApplicationRecord
 
     def update_geoPoints(value)
       if value.is_a?(Hash)
-        value.transform_values { | value1 | update_geoPoint(value1) }
+        value.map do | key, value1 |
+          [ key, update_geoPoint(value1) ]
+        end.to_h
       else
         value
       end
