@@ -652,20 +652,22 @@ paths:
         - in: query
           name: detail
           description: >
-            When set to `true`, will include the following attributes in the response:
-             * `prefix`
-             * `suffix`
-             * `viewsOverTime`
-             * `citationsOverTime`
-             * `provider`
-             * `references`
-             * `citations`
-             * `parts`
-             * `partOf`
-             * `versions`
-             * `versionOf`
-             * `xml`
-             * `alternateIdentifiers`
+            When set to `true`, will include the following in the response:
+             * attributes:
+               * `prefix`
+               * `suffix`
+               * `viewsOverTime`
+               * `citationsOverTime`
+               * `references`
+               * `citations`
+               * `parts`
+               * `partOf`
+               * `versions`
+               * `versionOf`
+               * `xml`
+               * `alternateIdentifiers`
+            * relationships:
+               * `provider`
           schema:
             type: boolean
         - in: query
