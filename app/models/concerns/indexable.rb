@@ -1094,98 +1094,6 @@ module Indexable
 
         "Switched active index to #{index_name}."
       end
-
-      # TODO switch to DataCiteDoi index
-      # if self.name == "Doi"
-      #   datacite_index_name = DataciteDoi.index_name + "_v1"
-      #   datacite_alternate_index_name = DataciteDoi.index_name + "_v2"
-      #   other_index_name = OtherDoi.index_name + "_v1"
-      #   other_alternate_index_name = OtherDoi.index_name + "_v2"
-
-      #   if client.indices.exists_alias?(name: alias_name, index: [datacite_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: datacite_index_name, alias: alias_name } },
-      #         { add:    { index: datacite_alternate_index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for alias #{alias_name} to #{datacite_alternate_index_name}."
-      #   elsif client.indices.exists_alias?(name: alias_name, index: [datacite_alternate_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: datacite_alternate_index_name, alias: alias_name } },
-      #         { add:    { index: datacite_index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index  for alias #{alias_name} to #{datacite_index_name}."
-      #   end
-
-      #   if client.indices.exists_alias?(name: alias_name, index: [other_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: other_index_name, alias: alias_name } },
-      #         { add:    { index: other_alternate_index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for alias #{alias_name} to #{other_alternate_index_name}."
-      #   elsif client.indices.exists_alias?(name: alias_name, index: [other_alternate_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: other_alternate_index_name, alias: alias_name } },
-      #         { add:    { index: other_index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for alias #{alias_name} to #{other_index_name}."
-      #   end
-      # elsif self.name == "DataciteDoi" || self.name == "OtherDoi"
-      #   if client.indices.exists_alias?(name: alias_name, index: [index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: index_name, alias: alias_name } },
-      #         { remove: { index: index_name, alias: Doi.index_name } },
-      #         { add:    { index: alternate_index_name, alias: alias_name } },
-      #         { add:    { index: alternate_index_name, alias: Doi.index_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for aliases #{alias_name} and #{Doi.index_name} to #{alternate_index_name}."
-      #   elsif client.indices.exists_alias?(name: alias_name, index: [alternate_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: alternate_index_name, alias: alias_name } },
-      #         { remove: { index: alternate_index_name, alias: Doi.index_name } },
-      #         { add:    { index: index_name, alias: alias_name } },
-      #         { add:    { index: index_name, alias: Doi.index_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for aliases #{alias_name} and #{Doi.index_name} to #{index_name}."
-      #   end
-      # else
-      #   if client.indices.exists_alias?(name: alias_name, index: [index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: index_name, alias: alias_name } },
-      #         { add:    { index: alternate_index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for alias #{alias_name} to #{alternate_index_name}."
-      #   elsif client.indices.exists_alias?(name: alias_name, index: [alternate_index_name])
-      #     client.indices.update_aliases body: {
-      #       actions: [
-      #         { remove: { index: alternate_index_name, alias: alias_name } },
-      #         { add:    { index: index_name, alias: alias_name } }
-      #       ]
-      #     }
-
-      #     "Switched active index for alias #{alias_name} to #{index_name}."
-      #   end
-      # end
     end
 
     # Return the active index, i.e. the index that is aliased
@@ -1235,6 +1143,33 @@ module Indexable
       end
 
       ret
+    end
+
+    # Set the refresh interval for a given index
+    def set_refresh_interval(index_name, refresh_interval = "120s")
+      client = Elasticsearch::Model.client
+      index_to_update = index_name.nil? ? self.inactive_index : index_name
+
+      # Check if the index exists
+      unless client.indices.exists index: index_to_update
+        return "Index '#{index_to_update}' not found."
+      end
+
+      # Update the index settings
+      response = client.indices.put_settings(
+        index: index_to_update,
+        body: {
+          index: {
+            refresh_interval: refresh_interval,
+          },
+        },
+      )
+
+      if response.to_h["acknowledged"]
+        "Successfully updated refresh interval for index '#{index_to_update}' to '#{refresh_interval}'."
+      else
+        "Failed to update refresh interval for index '#{index_to_update}'."
+      end
     end
 
     # create index template
