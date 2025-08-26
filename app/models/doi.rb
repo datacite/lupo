@@ -2480,22 +2480,26 @@ class Doi < ApplicationRecord
   def update_geo_locations
     return nil if geo_locations.nil?
 
-    self.geo_locations = Array.wrap(geo_locations).map do | gl |
+    self.geo_locations = Array.wrap(geo_locations).each do | gl |
       if gl.is_a?(Hash)
-        gl.map do | key, value |
+        gl.each_key do | key |
           if key == "geoLocationPolygon"
-            [ key, update_geoLocationPolygon(value) ]
-          elsif key == "geoLocationPoint" || key == "geoLocationBox"
-            [ key, update_geoPoints(value) ]
+            gl[key] = update_geoLocationPolygon(gl[key])
+          elsif key == "geoLocationPoint"
+            gl[key] = update_geoPoints(gl[key])
+          elsif key == "geoLocationBox"
+            gl[key] = update_geoPoints(gl[key])
+          elsif key == "geoLocationPlace"
+            gl[key] = gl[key]
           else
-            [ key, value ]
+            gl[key] = gl[key]
           end
-        end.to_h
+        end
       else
         gl
       end
     end.compact
- end
+  end
 
   def update_publisher
     case publisher_before_type_cast
@@ -2715,23 +2719,21 @@ class Doi < ApplicationRecord
       end
     end
 
-    def update_geoLocationPolygon(value)
-      if value.is_a?(Array)
-        value.map do | value1|
-          if value1.is_a?(Hash)
-            value1.map do | key, value2 |
-              if key == "polygonPoint" || key == "inPolygonPoint"
-                [ key, update_geoPoints(value2) ]
-              else
-                [ key, value2 ]
-              end
-            end.to_h
-          else
-            value1
+    def update_geoLocationPolygon(glp)
+      Array.wrap(glp).each do | glpp |
+        if glpp.is_a?(Hash)
+          glpp.each_key do | key |
+            if key == "polygonPoint"
+              glpp[key] = update_geoPoints(glpp[key])
+            elsif key == "inPolygonPoint"
+              glpp[key] = update_geoPoints(glpp[key])
+            else
+              glpp[key] = glpp[key]
+            end
           end
+        else
+          glpp
         end
-      else
-        value
-      end
+      end.compact
     end
 end
