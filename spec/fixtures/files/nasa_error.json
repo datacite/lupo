@@ -31,9 +31,11 @@
           "familyName":"Ramasubramanian"
         }
   		],
-  		"titles":{
+  		"titles": [ 
+        {
   			"title":"Tropical Cyclone Satellite Imagery and Wind Speed Dataset"
-  		},
+        }
+      ],
   		"publisher": "Radiant MLHub",
   		"publicationYear": 2020,
   		"types":{
