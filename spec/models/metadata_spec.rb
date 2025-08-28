@@ -14,7 +14,7 @@ describe Metadata, type: :model, vcr: true do
   end
 
   describe "clean up" do
-    it "When destroy is run on metadata, remote object is deleted too" do
+    it("When destroy is run on metadata, remote object is deleted too", if: ENV["METADATA_STORAGE_BUCKET_NAME"].present?) do
       metadata = Metadata.create(xml: xml, doi: doi)
 
       saved_xml = metadata.fetch_xml_from_s3
