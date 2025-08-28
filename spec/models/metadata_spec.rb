@@ -13,6 +13,18 @@ describe Metadata, type: :model, vcr: true do
     it { should validate_presence_of(:namespace) }
   end
 
+  describe "clean up" do
+    it "When destroy is run on metadata, remote object is deleted too" do
+      metadata = Metadata.create(xml: xml, doi: doi)
+
+      saved_xml = metadata.fetch_xml_from_s3
+      expect(saved_xml).not_to eq(nil)
+      metadata.destroy
+      saved_xml = metadata.fetch_xml_from_s3
+      expect(saved_xml).to eq(nil)
+    end
+  end
+
   describe "associations" do
     it { should belong_to(:doi).with_foreign_key(:dataset).inverse_of(:metadata) }
   end

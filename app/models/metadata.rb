@@ -24,6 +24,7 @@ class Metadata < ApplicationRecord
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   before_create :upload_xml_to_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
+  after_destroy_commit :delete_xml_on_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
 
   def xml=(value)
     # The encoding is forced here to UTF8
@@ -115,6 +116,17 @@ class Metadata < ApplicationRecord
     self.namespace = Array.wrap(ns).last
   end
 
+  def fetch_xml_from_s3
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+    object = Aws::S3::Object.new(bucket_name, object_key)
+
+    if object.exists?
+      object.get.body.read
+    else
+      nil
+    end
+  end
+
   def upload_xml_to_s3
     bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
 
@@ -133,6 +145,15 @@ class Metadata < ApplicationRecord
     # This is to prevent a partial storage in db without associated metadata
     # It most likely means a new request needs to be made.
     raise "Failed to upload XML to S3: #{e.message}"
+  end
+
+  def delete_xml_on_s3
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+
+    object = Aws::S3::Object.new(bucket_name, object_key)
+    if object.exists?
+      object.delete
+    end
   end
 
   # This is so we can store unique metadata files in external storage.
