@@ -117,6 +117,10 @@ class Metadata < ApplicationRecord
   end
 
   def fetch_xml_from_s3
+    if not ENV["METADATA_STORAGE_BUCKET_NAME"].present?
+      return nil
+    end
+
     bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
     object = Aws::S3::Object.new(bucket_name, object_key)
 
