@@ -178,11 +178,12 @@ class Metadata < ApplicationRecord
   end
 
   def self.migrate_xml(from_id, until_id)
-    (from_id..until_id).each do |id|
+    id_range = (from_id..until_id)
+    Parallel.each(id_range, in_threads: 10) do |id|
       MigrateMetadataXmlJob.perform_later(id)
     end
 
-    "Queued converting #{(from_id..until_id).to_a.length} metadata conversions."
+    "Queued converting #{id_range.to_a.length} metadata conversions."
   end
 
   def self.migrate_xml_by_id(id)
