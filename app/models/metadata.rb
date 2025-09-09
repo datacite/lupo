@@ -24,6 +24,7 @@ class Metadata < ApplicationRecord
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   before_create :upload_xml_to_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
+  after_destroy_commit :delete_xml_on_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
 
   def xml=(value)
     # The encoding is forced here to UTF8
@@ -115,6 +116,21 @@ class Metadata < ApplicationRecord
     self.namespace = Array.wrap(ns).last
   end
 
+  def fetch_xml_from_s3
+    if not ENV["METADATA_STORAGE_BUCKET_NAME"].present?
+      return nil
+    end
+
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+    object = Aws::S3::Object.new(bucket_name, object_key)
+
+    if object.exists?
+      object.get.body.read
+    else
+      nil
+    end
+  end
+
   def upload_xml_to_s3
     bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
 
@@ -135,11 +151,43 @@ class Metadata < ApplicationRecord
     raise "Failed to upload XML to S3: #{e.message}"
   end
 
+  def delete_xml_on_s3
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+
+    object = Aws::S3::Object.new(bucket_name, object_key)
+    if object.exists?
+      object.delete
+    end
+  end
+
   # This is so we can store unique metadata files in external storage.
   def object_key
     # If we don't have a DOI then best to not try and build a key
     unless doi_id.nil?
       Base64.urlsafe_encode64(doi_id + "_version_" + metadata_version.to_s, padding: false)
     end
+  end
+
+  def migrate_xml_to_s3!
+    original_xml = read_attribute(:xml)
+    return unless ENV["METADATA_STORAGE_BUCKET_NAME"].present?
+    return if original_xml.nil? || original_xml == object_key
+
+    upload_xml_to_s3
+    save!(validate: false)
+  end
+
+  def self.migrate_xml(from_id, until_id)
+    id_range = (from_id..until_id)
+    Parallel.each(id_range, in_threads: 10) do |id|
+      MigrateMetadataXmlJob.perform_later(id)
+    end
+
+    "Queued converting #{id_range.to_a.length} metadata conversions."
+  end
+
+  def self.migrate_xml_by_id(id)
+    metadata = Metadata.find_by(id: id)
+    metadata&.migrate_xml_to_s3!
   end
 end

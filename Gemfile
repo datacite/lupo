@@ -12,7 +12,7 @@ gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
-gem "bolognese", "~> 2.3.5"
+gem "bolognese", "~> 2.3.6"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "countries", "~> 2.1", ">= 2.1.2"
@@ -75,6 +75,7 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
+gem "parallel", "~> 1.27"
 
 group :production, :stage do
   gem "datadog", require: "datadog/auto_instrument"
