@@ -506,7 +506,6 @@ describe DataciteDoisController, type: :request do
           post "/dois", valid_attributes, headers
         end
 
-=begin
         expect(json.dig("data", "attributes", "geoLocations")).to eq([
           {
               "geoLocationPlace" => "New York, NY",
@@ -566,7 +565,6 @@ describe DataciteDoisController, type: :request do
               ]
           }
         ])
-=end
       end
     end
     
