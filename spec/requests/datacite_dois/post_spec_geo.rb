@@ -511,13 +511,13 @@ describe DataciteDoisController, type: :request do
               "geoLocationPlace" => "New York, NY",
               "geoLocationPoint" => {
                   "pointLatitude" => 31.233,
-                  "pointLongitude" => "-67.302"
+                  "pointLongitude" => -67.302
               },
               "geoLocationBox" => {
-                  "eastBoundLongitude" => "+123.",
+                  "eastBoundLongitude" => 123.0,
                   "northBoundLatitude" => 60.2312,
-                  "southBoundLatitude" => "-40",
-                  "westBoundLongitude" => "-123.0"
+                  "southBoundLatitude" => -40,
+                  "westBoundLongitude" => -123.0
               },
               "geoLocationPolygon" => [
                   {
