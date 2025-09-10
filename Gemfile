@@ -13,8 +13,7 @@ gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
 # gem "bolognese", "~> 2.3.5"
-##gem "bolognese", path: "./vendor/gems/bolognese"
-# gem "bolognese", path: "./app/gems/bolognese"
+## gem "bolognese", path: "./vendor/gems/bolognese"
 gem 'bolognese', git: 'https://github.com/datacite/bolognese.git', branch: 'pb88-geolocation'
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
