@@ -506,6 +506,8 @@ describe DataciteDoisController, type: :request do
           post "/dois", valid_attributes, headers
         end
 
+        expect(last_response.status).to eq(201)
+
         expect(json.dig("data", "attributes", "geoLocations")).to eq([
           {
               "geoLocationPlace" => "New York, NY",
