@@ -24,6 +24,7 @@ class Metadata < ApplicationRecord
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   before_create :upload_xml_to_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
+  after_destroy_commit :delete_xml_on_s3, if: -> { ENV["METADATA_STORAGE_BUCKET_NAME"].present? }
 
   def xml=(value)
     # The encoding is forced here to UTF8
@@ -115,6 +116,21 @@ class Metadata < ApplicationRecord
     self.namespace = Array.wrap(ns).last
   end
 
+  def fetch_xml_from_s3
+    if not ENV["METADATA_STORAGE_BUCKET_NAME"].present?
+      return nil
+    end
+
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+    object = Aws::S3::Object.new(bucket_name, object_key)
+
+    if object.exists?
+      object.get.body.read
+    else
+      nil
+    end
+  end
+
   def upload_xml_to_s3
     bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
 
@@ -135,6 +151,15 @@ class Metadata < ApplicationRecord
     raise "Failed to upload XML to S3: #{e.message}"
   end
 
+  def delete_xml_on_s3
+    bucket_name = ENV["METADATA_STORAGE_BUCKET_NAME"]
+
+    object = Aws::S3::Object.new(bucket_name, object_key)
+    if object.exists?
+      object.delete
+    end
+  end
+
   # This is so we can store unique metadata files in external storage.
   def object_key
     # If we don't have a DOI then best to not try and build a key
@@ -153,11 +178,12 @@ class Metadata < ApplicationRecord
   end
 
   def self.migrate_xml(from_id, until_id)
-    (from_id..until_id).each do |id|
+    id_range = (from_id..until_id)
+    Parallel.each(id_range, in_threads: 10) do |id|
       MigrateMetadataXmlJob.perform_later(id)
     end
 
-    "Queued converting #{(from_id..until_id).to_a.length} metadata conversions."
+    "Queued converting #{id_range.to_a.length} metadata conversions."
   end
 
   def self.migrate_xml_by_id(id)
