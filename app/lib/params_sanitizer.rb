@@ -204,13 +204,13 @@ class ParamsSanitizer
             northBoundLatitude
           ],
         },
-        :geoLocationPlace,
         {
-          geoLocationPolygon: {
-            polygonPoint: %i[pointLongitude pointLatitude],
-            inPolygonPoint: %i[pointLongitude pointLatitude]
-          }
-        },
+          geoLocationPolygon: [
+            { polygonPoint: %i[pointLongitude pointLatitude] },
+            { inPolygonPoint: %i[pointLongitude pointLatitude]  },
+          ],
+        },     
+        :geoLocationPlace,
       ],
     },
     :container,
