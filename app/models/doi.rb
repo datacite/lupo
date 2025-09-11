@@ -183,9 +183,9 @@ class Doi < ApplicationRecord
     },
   } do
     mapping dynamic: "false" do
-      indexes :id,                             type: :keyword
+      indexes :id,                             type: :keyword, normalizer: "keyword_lowercase"
       indexes :uid,                            type: :keyword, normalizer: "keyword_lowercase"
-      indexes :doi,                            type: :keyword
+      indexes :doi,                            type: :keyword, normalizer: "keyword_lowercase"
       indexes :identifier,                     type: :keyword
       indexes :url,                            type: :text, fields: { keyword: { type: "keyword" } }
       indexes :creators,                       type: :object, properties: {
