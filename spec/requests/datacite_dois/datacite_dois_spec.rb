@@ -1879,4 +1879,54 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "openLicensesCount")).to eq(13)
     end
   end
+
+  describe "GET /dois/query=doi:... - CASE INSENSITIVE", vcr: true, elasticsearch: true do
+    context "it works" do
+      let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
+
+      before do
+        import_doi_index
+      end
+
+      it "returns DOI LOWERCASE" do
+        get "/dois?query=doi:10.5438/fj3w-0shd", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+
+      it "returns DOI UPPERCASE" do
+        get "/dois?query=doi:10.5438/FJ3W-0SHD", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+
+      it "returns DOI MIXED CASE" do
+        get "/dois?query=doi:10.5438/Fj3W-0sHd", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+    end
+  end
+
+  describe "GET /dois/query=id:... - CASE INSENSITIVE", vcr: true, elasticsearch: true do
+    context "it works" do
+      let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
+
+      before do
+        import_doi_index
+      end
+
+      it "returns DOI LOWERCASE" do
+        get "/dois?query=id:10.5438/fj3w-0shd", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+
+      it "returns DOI UPPERCASE" do
+        get "/dois?query=id:10.5438/FJ3W-0SHD", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+
+      it "returns DOI MIXED CASE" do
+        get "/dois?query=id:10.5438/Fj3W-0sHd", nil, headers
+        expect(last_response.status).to eq(200)
+      end
+    end
+  end
 end

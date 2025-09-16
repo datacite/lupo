@@ -11,7 +11,12 @@ queues:
   - [lupo_support, 1]
 
 groups:
-  batch_enqueue_group:
+  batch_enqueue_other_group:
     concurrency: 1
     queues:
       - lupo_queue_batches_other_doi
+  batch_enqueue_datacite_group:
+    concurrency: 1
+    queues:
+      - lupo_queue_batches_datacite_doi
+
