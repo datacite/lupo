@@ -17,6 +17,4 @@ jobs:
         ruby-version: 3.1.6
         bundler-cache: true
     - name: Run RuboCop
-      # Temporarily don't run rubocop - bug?
-      # run: bundle exec rubocop --parallel
-      run: echo "Rubocop has been temporarily disabled!"
+      run: bundle exec rubocop --parallel

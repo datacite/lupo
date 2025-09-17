@@ -209,7 +209,7 @@ class ParamsSanitizer
             { polygonPoint: %i[pointLongitude pointLatitude] },
             { inPolygonPoint: %i[pointLongitude pointLatitude]  },
           ],
-        },     
+        },
         :geoLocationPlace,
       ],
     },

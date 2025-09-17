@@ -2,11 +2,9 @@
 
 require "rails_helper"
 require "pp"
-require "byebug"
 include Passwordable
 
 describe DataciteDoisController, type: :request do
-
   before(:all) do
     VCR.turn_off!
     WebMock.allow_net_connect!
@@ -26,7 +24,6 @@ describe DataciteDoisController, type: :request do
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
   describe "POST /dois" do
-
     context "when the request is valid with valid geoLocation properties - geoLocationPlace - json" do
       let(:valid_attributes) do
         {
@@ -148,7 +145,7 @@ describe DataciteDoisController, type: :request do
               ],
               "geoLocations" => [
                 {
-                  "geoLocationPoint" => 
+                  "geoLocationPoint" =>
                     {
                       "pointLatitude" => "49.0850736",
                       "pointLongitude" => "-123.3300992"
@@ -166,7 +163,7 @@ describe DataciteDoisController, type: :request do
         VCR.turned_off do
           post "/dois", valid_attributes, headers
         end
-        
+
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
@@ -316,7 +313,7 @@ describe DataciteDoisController, type: :request do
       end
     end
 
-    context "when the request is valid with valid geoLocation properties - geoLocationPolygon - no inPolygonPoint - json" do
+    context "when a request is valid" do
 =begin
       let(:valid_attributes) do
         {
@@ -400,14 +397,13 @@ describe DataciteDoisController, type: :request do
         }
       end
 =end
-
       let(:valid_attributes) do
         {
             "data" => {
                 "type" => "dois",
                 "attributes" => {
                     "doi" => "10.14454/00000002",
-                    "url" => "https://example.org",                            
+                    "url" => "https://example.org",
                     "creators" => [{ "familyName" => "Vogt", "givenName" => "Sarah", "nameIdentifiers" => [], "name" => "Vogt, Sarah", "Sarah" => "Personal" }],
 
                     "titles" => [{ "title" => "Test Title" }],
@@ -501,13 +497,12 @@ describe DataciteDoisController, type: :request do
         }
       end
 
-      it "creates a Doi - with geoLocation properties - geoLocationPolygon - with inPolygonPoint - json" do
+      it "creates a Doi - with valid geoLocation properties - geoLocationPolygon with an inPolygonPoint - json" do
         VCR.turned_off do
-          post "/dois", valid_attributes, headers
+          post "/dois", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
         end
 
         expect(last_response.status).to eq(201)
-
         expect(json.dig("data", "attributes", "geoLocations")).to eq([
           {
               "geoLocationPlace" => "New York, NY",
@@ -569,7 +564,7 @@ describe DataciteDoisController, type: :request do
         ])
       end
     end
-    
+
     context "when the request is valid with valid geoLocation properties - geoLocationPolygon" do
       let(:valid_attributes) do
         {
@@ -580,7 +575,7 @@ describe DataciteDoisController, type: :request do
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHJlc291cmNlIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtNCIgeHNpOnNjaGVtYUxvY2F0aW9uPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtNCBodHRwOi8vc2NoZW1hLmRhdGFjaXRlLm9yZy9tZXRhL2tlcm5lbC00L21ldGFkYXRhLnhzZCI+CiAgPGlkZW50aWZpZXIgaWRlbnRpZmllclR5cGU9IkRPSSI+MTAuMTQ0NTQvNDlRNi1HSjk1PC9pZGVudGlmaWVyPgogIDxjcmVhdG9ycz4KICAgIDxjcmVhdG9yPgogICAgICA8Y3JlYXRvck5hbWU+U2FyYWggVm9ndDwvY3JlYXRvck5hbWU+CiAgICA8L2NyZWF0b3I+CiAgPC9jcmVhdG9ycz4KICA8dGl0bGVzPgogICAgPHRpdGxlPlRlc3QgVGl0bGU8L3RpdGxlPgogIDwvdGl0bGVzPgogIDxwdWJsaXNoZXIgcHVibGlzaGVySWRlbnRpZmllcj0iaHR0cHM6Ly9yb3Iub3JnLzA0NzQyNm0yOCIgcHVibGlzaGVySWRlbnRpZmllclNjaGVtZT0iUk9SIiBzY2hlbWVVUkk9Imh0dHBzOi8vcm9yLm9yZyI+VW5pdmVyc2l0eSBvZiBJbGxpbm9pcyBVcmJhbmEtQ2hhbXBhaWduPC9wdWJsaXNoZXI+CiAgPHB1YmxpY2F0aW9uWWVhcj4yMDI1PC9wdWJsaWNhdGlvblllYXI+CiAgPHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJEYXRhc2V0Ii8+CiAgPGNvbnRyaWJ1dG9ycz4KICAgIDxjb250cmlidXRvciBjb250cmlidXRvclR5cGU9IkRhdGFDdXJhdG9yIj4KICAgICAgPGNvbnRyaWJ1dG9yTmFtZT5ibGFoIHVuaXZlcnNpdHk8L2NvbnRyaWJ1dG9yTmFtZT4KICAgICAgPG5hbWVJZGVudGlmaWVyIG5hbWVJZGVudGlmaWVyU2NoZW1lPSIiIHNjaGVtZVVSST0iIi8+CiAgICAgIDxhZmZpbGlhdGlvbi8+CiAgICA8L2NvbnRyaWJ1dG9yPgogIDwvY29udHJpYnV0b3JzPgogIDxsYW5ndWFnZT5mcmVuY2g8L2xhbmd1YWdlPgogIDxzaXplcy8+CiAgPGZvcm1hdHMvPgogIDx2ZXJzaW9uLz4KICA8Z2VvTG9jYXRpb25zPgogICAgPGdlb0xvY2F0aW9uPgogICAgICA8Z2VvTG9jYXRpb25QbGFjZT5OZXcgWW9yaywgTlk8L2dlb0xvY2F0aW9uUGxhY2U+CiAgICAgIDxnZW9Mb2NhdGlvblBvaW50PgogICAgICAgIDxwb2ludExhdGl0dWRlPjMxLjIzMzwvcG9pbnRMYXRpdHVkZT4KICAgICAgICA8cG9pbnRMb25naXR1ZGU+LTY3LjMwMjwvcG9pbnRMb25naXR1ZGU+CiAgICAgIDwvZ2VvTG9jYXRpb25Qb2ludD4KICAgICAgPGdlb0xvY2F0aW9uQm94PgogICAgICAgIDx3ZXN0Qm91bmRMb25naXR1ZGU+LTEyMy4wPC93ZXN0Qm91bmRMb25naXR1ZGU+CiAgICAgICAgPGVhc3RCb3VuZExvbmdpdHVkZT4rMTIzLjwvZWFzdEJvdW5kTG9uZ2l0dWRlPgogICAgICAgIDxzb3V0aEJvdW5kTGF0aXR1ZGU+LTQwPC9zb3V0aEJvdW5kTGF0aXR1ZGU+CiAgICAgICAgPG5vcnRoQm91bmRMYXRpdHVkZT42MC4yMzEyPC9ub3J0aEJvdW5kTGF0aXR1ZGU+CiAgICAgIDwvZ2VvTG9jYXRpb25Cb3g+CiAgICAgIDxnZW9Mb2NhdGlvblBvbHlnb24+CiAgICAgICAgPHBvbHlnb25Qb2ludD4KICAgICAgICAgIDxwb2ludExhdGl0dWRlPjQyLjQ5MzUyNjU8L3BvaW50TGF0aXR1ZGU+CiAgICAgICAgICA8cG9pbnRMb25naXR1ZGU+LTg3LjgxMjY2NDwvcG9pbnRMb25naXR1ZGU+CiAgICAgICAgPC9wb2x5Z29uUG9pbnQ+CiAgICAgICAgPHBvbHlnb25Qb2ludD4KICAgICAgICAgIDxwb2ludExhdGl0dWRlPjQyLjQ5NzU3Njc8L3BvaW50TGF0aXR1ZGU+CiAgICAgICAgICA8cG9pbnRMb25naXR1ZGU+LTg4LjU4NzIwMDE8L3BvaW50TG9uZ2l0dWRlPgogICAgICAgIDwvcG9seWdvblBvaW50PgogICAgICAgIDxwb2x5Z29uUG9pbnQ+CiAgICAgICAgICA8cG9pbnRMYXRpdHVkZT40MS41NTUwMDIzPC9wb2ludExhdGl0dWRlPgogICAgICAgICAgPHBvaW50TG9uZ2l0dWRlPi04OC42OTE1NzAzPC9wb2ludExvbmdpdHVkZT4KICAgICAgICA8L3BvbHlnb25Qb2ludD4KICAgICAgICA8cG9seWdvblBvaW50PgogICAgICAgICAgPHBvaW50TGF0aXR1ZGU+NDEuNDYyNDQ2NzwvcG9pbnRMYXRpdHVkZT4KICAgICAgICAgIDxwb2ludExvbmdpdHVkZT4tODcuNTI3MDE5NTwvcG9pbnRMb25naXR1ZGU+CiAgICAgICAgPC9wb2x5Z29uUG9pbnQ+CiAgICAgICAgPHBvbHlnb25Qb2ludD4KICAgICAgICAgIDxwb2ludExhdGl0dWRlPjQxLjQ2MjQ0Njc5PC9wb2ludExhdGl0dWRlPgogICAgICAgICAgPHBvaW50TG9uZ2l0dWRlPi04Ny41MTA1NDwvcG9pbnRMb25naXR1ZGU+CiAgICAgICAgPC9wb2x5Z29uUG9pbnQ+CiAgICAgICAgPHBvbHlnb25Qb2ludD4KICAgICAgICAgIDxwb2ludExhdGl0dWRlPjQyLjIwMTIxNzY8L3BvaW50TGF0aXR1ZGU+CiAgICAgICAgICA8cG9pbnRMb25naXR1ZGU+LTg3LjgxMjY2NDwvcG9pbnRMb25naXR1ZGU+CiAgICAgICAgPC9wb2x5Z29uUG9pbnQ+CiAgICAgICAgPGluUG9seWdvblBvaW50PgogICAgICAgICAgPHBvaW50TGF0aXR1ZGU+NDIuMjE5NTI2NzwvcG9pbnRMYXRpdHVkZT4KICAgICAgICAgIDxwb2ludExvbmdpdHVkZT4tODguMjk2MDYyNDwvcG9pbnRMb25naXR1ZGU+CiAgICAgICAgPC9pblBvbHlnb25Qb2ludD4KICAgICAgPC9nZW9Mb2NhdGlvblBvbHlnb24+CiAgICA8L2dlb0xvY2F0aW9uPgogIDwvZ2VvTG9jYXRpb25zPgo8L3Jlc291cmNlPgo="
             }
-          } 
+          }
         }
       end
 
@@ -593,17 +588,17 @@ describe DataciteDoisController, type: :request do
       end
 
 
-        # doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
-        # str = Base64.decode64(json.dig("data", "attributes", "xml"))
-        # puts "XXXX STR:"
-        # puts str
-        # expect(doc.at_css("identifier").content).to eq("10.14454/10703")
-        # expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
-        # expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
-        # expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
-        # expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
-        # expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
-        # expect(doc.at_css("geoLocations").content).to eq("42.4935265-87.81266442.4975767-88.587200141.5550023-88.691570341.4624467-87.527019541.46244679-87.5105442.4935265-87.812664")
+      # doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+      # str = Base64.decode64(json.dig("data", "attributes", "xml"))
+      # puts "XXXX STR:"
+      # puts str
+      # expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+      # expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
+      # expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
+      # expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
+      # expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
+      # expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+      # expect(doc.at_css("geoLocations").content).to eq("42.4935265-87.81266442.4975767-88.587200141.5550023-88.691570341.4624467-87.527019541.46244679-87.5105442.4935265-87.812664")
     end
   end
 end

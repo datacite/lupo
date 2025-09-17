@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/datacite/bolognese.git
-  revision: 847eb674a55339b2a60d0c40e0b27edd20229052
+  revision: 51fe2f0d42660ebebdcd4b2d558cc472f143fdd7
   branch: pb88-geolocation
   specs:
-    bolognese (2.3.7)
+    bolognese (2.3.6)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -542,7 +542,7 @@ GEM
       addressable
       css_parser (>= 1.6.0)
       htmlentities (>= 4.0.0)
-    prism (1.4.0)
+    prism (1.5.1)
     promise.rb (0.7.4)
     psych (5.2.6)
       date
@@ -624,7 +624,7 @@ GEM
       parser (~> 3.3.0)
       rainbow (>= 2.0, < 4.0)
       rexml (~> 3.1)
-    regexp_parser (2.11.2)
+    regexp_parser (2.11.3)
     reline (0.4.3)
       io-console (~> 0.5)
     request_store (1.5.1)

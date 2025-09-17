@@ -2,7 +2,6 @@
 
 require "uri"
 require "base64"
-require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
@@ -526,15 +525,9 @@ class DataciteDoisController < ApplicationController
   end
 
   def create
-    puts "GOT HERE - LUPO - DEF CREATE - PARAMS"
-    # params
-    puts request.raw_post
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
 
     @doi = DataciteDoi.new(sanitized_params)
-
-    puts "GOT HERE - LUPO, DEF CREATE"
-    puts sanitized_params
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
@@ -781,9 +774,6 @@ class DataciteDoisController < ApplicationController
 
   private
     def safe_params
-      puts "GOT HERE - LUPO - SAFE_PARAMS"
-      puts params
-
       if params[:data].blank?
         fail JSON::ParserError,
              "You need to provide a payload following the JSONAPI spec"
@@ -830,8 +820,6 @@ class DataciteDoisController < ApplicationController
     end
 
     def sanitized_params
-      puts "GOT HERE - LUPO - SANITIZED_PARAMS"
-      puts params
       ParamsSanitizer.new(safe_params.to_h).cleanse
     end
 
