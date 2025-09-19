@@ -2,7 +2,7 @@
 
 class AppSettings
   # Use a constant to avoid magic strings scattered in your code
-  INDEX_SYNC_KEY = "INDEX_SYNC_ENABLED".freeze
+  INDEX_SYNC_KEY = "INDEX_SYNC_ENABLED"
 
   # Define all methods on the class itself for easy access
   class << self
