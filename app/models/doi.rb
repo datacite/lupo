@@ -2491,6 +2491,14 @@ class Doi < ApplicationRecord
     read_attribute("publisher_obj")
   end
 
+  def index_sync_enabled?
+    self.__class__.index_sync_enabled?
+  end
+
+  def self.index_sync_enabled?
+    Rails.cache.read("INDEX_SYNC_ENABLED") == true
+  end
+
   def self.repair_landing_page(id: nil)
     if id.blank?
       Rails.logger.error "[Error] No id provided."
