@@ -11,10 +11,10 @@ class IndexBackgroundJob < ApplicationJob
   end
 
   def index_sync_enabled?(obj)
-      if Rails.env.test?
-        return false
-      end
-      obj.respond_to?(:index_sync_enabled?) && obj.index_sync_enabled?
+    if Rails.env.test?
+      return false
+    end
+    obj.respond_to?(:index_sync_enabled?) && obj.index_sync_enabled?
   end
 
   def perform(obj)
@@ -24,6 +24,5 @@ class IndexBackgroundJob < ApplicationJob
       response2 = obj.__elasticsearch__.index_document(index: obj.inactive_index)
       Rails.logger.error "[Elasticsearch] Error #{response2.inspect}" unless %w(created updated).include?(response2["result"])
     end
-
   end
 end
