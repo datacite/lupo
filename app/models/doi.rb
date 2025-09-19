@@ -2496,7 +2496,7 @@ class Doi < ApplicationRecord
   end
 
   def self.index_sync_enabled?
-    Rails.cache.read("INDEX_SYNC_ENABLED") == true
+    AppSettings.index_sync_enabled?
   end
 
   def self.repair_landing_page(id: nil)
