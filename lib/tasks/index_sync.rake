@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :index_sync do
   desc "Enables index syncing by setting the cache flag to true"
   task enable: :environment do
