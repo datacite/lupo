@@ -3,12 +3,7 @@
 require "rails_helper"
 include Passwordable
 
-describe DataciteDoisController, type: :request do
-  before(:each) do
-    VCR.turn_off!
-    WebMock.allow_net_connect!
-  end
-
+describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer } }
