@@ -18,8 +18,7 @@ describe DataciteDoisController, type: :request do
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer } }
 
   describe "PATCH /dois/:id" do
-
-    context 'update geoLocationPoint' do
+    context "update geoLocationPoint" do
       let(:geo_locations) { [
         {
           "geoLocationPoint" => {
@@ -55,13 +54,13 @@ describe DataciteDoisController, type: :request do
         }
       end
 
-      it 'updates the Doi' do
+      it "updates the Doi" do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'geoLocations')).to eq(geo_locations_numeric)
+        expect(json.dig("data", "attributes", "geoLocations")).to eq(geo_locations_numeric)
 
-        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("geoLocations", "geoLocation").to_s + "\n").to eq(
           <<~HEREDOC
             <geoLocations>
@@ -76,13 +75,13 @@ describe DataciteDoisController, type: :request do
         )
       end
 
-      it 'updates the Doi' do
+      it "updates the Doi" do
         patch "/dois/#{doi.doi}", update_attributes_numeric, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'geoLocations')).to eq(geo_locations_numeric)
+        expect(json.dig("data", "attributes", "geoLocations")).to eq(geo_locations_numeric)
 
-        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("geoLocations", "geoLocation").to_s + "\n").to eq(
           <<~HEREDOC
             <geoLocations>
