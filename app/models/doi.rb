@@ -358,6 +358,7 @@ class Doi < ApplicationRecord
         geoLocationPoint: { type: :object },
         geoLocationBox: { type: :object },
         geoLocationPlace: { type: :keyword },
+        geoLocationPolygon:  { type: :object },
       }
       indexes :rights_list, type: :object, properties: {
         rights: { type: :keyword },
