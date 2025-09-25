@@ -734,46 +734,399 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
-    # TODO needs updating
-    # context 'update geoLocationPoint' do
-    #   let(:geo_locations) { [
-    #     {
-    #       "geoLocationPoint" => {
-    #         "pointLatitude" => "49.0850736",
-    #         "pointLongitude" => "-123.3300992"
-    #       }
-    #     }] }
-    #   let(:update_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "geoLocations" => geo_locations
-    #         }
-    #       }
-    #     }
-    #   end
+    context "when the request is valid an array of valid geoLocation properties - json:" do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+                "doi" => "10.14454/00000002",
+                "url" => "https://example.org",
+                "creators" => [{ "familyName" => "Vogt", "givenName" => "Sarah", "nameIdentifiers" => [], "name" => "Vogt, Sarah", "Sarah" => "Personal" }],
 
-    #   it 'updates the Doi' do
-    #     patch "/dois/#{doi.doi}", update_attributes, headers
+                "titles" => [{ "title" => "Test Title" }],
+                "publisher" => {
+                    "name" => "University of Illinois Urbana-Champaign",
+                    "lang" => "en",
+                    "publisherIdentifier" => "https://ror.org/047426m28",
+                    "publisherIdentifierScheme" => "ROR",
+                    "schemeUri" => "https://ror.org"
+                },
+                "publicationYear" => 2025,
+                "subjects" => [],
+                "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Vogt", "givenName" => "Sarah", "nameIdentifiers" => [], "name" => "Vogt, Sarah", "nameType" => "Personal" }],
+                "alternateIdentifiers" => [],
+                "dates" => [],
+                "language" => "french",
+                "types" => {
+                    "resourceTypeGeneral" => "Dataset"
+                },
+                "relatedIdentifiers" => [],
+                "sizes" => [],
+                "formats" => [],
+                "rightsList" => [],
+                "descriptions" => [],
+                "geoLocations" => [
+                  {
+                    "geoLocationPlace" => "Palm Desert, CA",
+                    "geoLocationPoint" => {
+                        "pointLatitude" => 31.233,
+                        "pointLongitude" => "-67.302"
+                    },
+                    "geoLocationBox" => {
+                        "eastBoundLongitude" => "+123.",
+                        "northBoundLatitude" => 60.2312,
+                        "southBoundLatitude" => "-40",
+                        "westBoundLongitude" => "-123.0"
+                    },
+                    "geoLocationPolygon" => [
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4935265,
+                              "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4975767,
+                              "pointLongitude" => -88.5872001
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.5550023,
+                              "pointLongitude" => -88.6915703
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.4624467,
+                              "pointLongitude" => -87.5270195
+                          }
+                      },
+                                              {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.46244679,
+                              "pointLongitude" => -87.51054
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                            "pointLatitude" => 42.4935265,
+                            "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "inPolygonPoint" => {
+                              "pointLatitude" => 42.2195267,
+                              "pointLongitude" => -88.2960624
+                          }
+                      }
+                    ]
+                  },
+                  {
+                    "geoLocationPlace" => "Henrietta, NY",
+                    "geoLocationPoint" => {
+                        "pointLatitude" => 31.233,
+                        "pointLongitude" => "-67.302"
+                    },
+                    "geoLocationBox" => {
+                        "eastBoundLongitude" => "+123.",
+                        "northBoundLatitude" => 60.2312,
+                        "southBoundLatitude" => "-40",
+                        "westBoundLongitude" => "-123.0"
+                    },
+                    "geoLocationPolygon" => [
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4935265,
+                              "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4975767,
+                              "pointLongitude" => -88.5872001
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.5550023,
+                              "pointLongitude" => -88.6915703
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.4624467,
+                              "pointLongitude" => -87.5270195
+                          }
+                      },
+                                              {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.46244679,
+                              "pointLongitude" => -87.51054
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                            "pointLatitude" => 42.4935265,
+                            "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "inPolygonPoint" => {
+                              "pointLatitude" => 42.2195267,
+                              "pointLongitude" => -88.2960624
+                          }
+                      }
+                    ]
+                  },
+                  {
+                    "geoLocationPlace" => "Elgin, IL",
+                    "geoLocationPoint" => {
+                        "pointLatitude" => 31.233,
+                        "pointLongitude" => "-67.302"
+                    },
+                    "geoLocationBox" => {
+                        "eastBoundLongitude" => "+123.",
+                        "northBoundLatitude" => 60.2312,
+                        "southBoundLatitude" => "-40",
+                        "westBoundLongitude" => "-123.0"
+                    },
+                    "geoLocationPolygon" => [
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4935265,
+                              "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 42.4975767,
+                              "pointLongitude" => -88.5872001
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.5550023,
+                              "pointLongitude" => -88.6915703
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.4624467,
+                              "pointLongitude" => -87.5270195
+                          }
+                      },
+                                              {
+                          "polygonPoint" => {
+                              "pointLatitude" => 41.46244679,
+                              "pointLongitude" => -87.51054
+                          }
+                      },
+                      {
+                          "polygonPoint" => {
+                            "pointLatitude" => 42.4935265,
+                            "pointLongitude" => -87.812664
+                          }
+                      },
+                      {
+                          "inPolygonPoint" => {
+                              "pointLatitude" => 42.2195267,
+                              "pointLongitude" => -88.2960624
+                          }
+                      }
+                    ]
+                  }
+                ],
+                "fundingReferences" => [],
+                "relatedItems" => [],
+                "schemaVersion" => "http://datacite.org/schema/kernel-4",
+                "source" => "test",
+                "event" => "publish"
+            }
+          }
+        }
+      end
 
-    #     expect(last_response.status).to eq(200)
-    #     expect(json.dig('data', 'attributes', 'geoLocations')).to eq(geo_locations)
+      it "creates a Doi" do
+        post "/dois", valid_attributes.to_json, { "HTTP_ACCEPT" => "application/vnd.api+json", "CONTENT_TYPE" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
-    #     doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
-    #     expect(doc.at_css("geoLocations", "geoLocation").to_s + "\n").to eq(
-    #       <<~HEREDOC
-    #         <geoLocations>
-    #           <geoLocation>
-    #             <geoLocationPoint>
-    #               <pointLatitude>49.0850736</pointLatitude>
-    #               <pointLongitude>-123.3300992</pointLongitude>
-    #             </geoLocationPoint>
-    #           </geoLocation>
-    #         </geoLocations>
-    #       HEREDOC
-    #     )
-    #   end
-    # end
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "geoLocations")).to eq([
+          {
+            "geoLocationPlace" => "Palm Desert, CA",
+            "geoLocationPoint" => {
+                "pointLatitude" => 31.233,
+                "pointLongitude" => -67.302
+            },
+            "geoLocationBox" => {
+                "eastBoundLongitude" => 123.0,
+                "northBoundLatitude" => 60.2312,
+                "southBoundLatitude" => -40,
+                "westBoundLongitude" => -123.0
+            },
+            "geoLocationPolygon" => [
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4975767,
+                      "pointLongitude" => -88.5872001
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.5550023,
+                      "pointLongitude" => -88.6915703
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.4624467,
+                      "pointLongitude" => -87.5270195
+                  }
+              },
+                                      {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.46244679,
+                      "pointLongitude" => -87.51054
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "inPolygonPoint" => {
+                      "pointLatitude" => 42.2195267,
+                      "pointLongitude" => -88.2960624
+                  }
+              }
+            ]
+          },
+          {
+            "geoLocationPlace" => "Henrietta, NY",
+            "geoLocationPoint" => {
+                "pointLatitude" => 31.233,
+                "pointLongitude" => -67.302
+            },
+            "geoLocationBox" => {
+                "eastBoundLongitude" => 123.0,
+                "northBoundLatitude" => 60.2312,
+                "southBoundLatitude" => -40,
+                "westBoundLongitude" => -123.0
+            },
+            "geoLocationPolygon" => [
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4975767,
+                      "pointLongitude" => -88.5872001
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.5550023,
+                      "pointLongitude" => -88.6915703
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.4624467,
+                      "pointLongitude" => -87.5270195
+                  }
+              },
+                                      {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.46244679,
+                      "pointLongitude" => -87.51054
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "inPolygonPoint" => {
+                      "pointLatitude" => 42.2195267,
+                      "pointLongitude" => -88.2960624
+                  }
+              }
+            ]
+          },
+          {
+            "geoLocationPlace" => "Elgin, IL",
+            "geoLocationPoint" => {
+                "pointLatitude" => 31.233,
+                "pointLongitude" => -67.302
+            },
+            "geoLocationBox" => {
+                "eastBoundLongitude" => 123.0,
+                "northBoundLatitude" => 60.2312,
+                "southBoundLatitude" => -40,
+                "westBoundLongitude" => -123.0
+            },
+            "geoLocationPolygon" => [
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4975767,
+                      "pointLongitude" => -88.5872001
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.5550023,
+                      "pointLongitude" => -88.6915703
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.4624467,
+                      "pointLongitude" => -87.5270195
+                  }
+              },
+                                      {
+                  "polygonPoint" => {
+                      "pointLatitude" => 41.46244679,
+                      "pointLongitude" => -87.51054
+                  }
+              },
+              {
+                  "polygonPoint" => {
+                      "pointLatitude" => 42.4935265,
+                      "pointLongitude" => -87.812664
+                  }
+              },
+              {
+                  "inPolygonPoint" => {
+                      "pointLatitude" => 42.2195267,
+                      "pointLongitude" => -88.2960624
+                  }
+              }
+            ]
+          }
+        ])
+      end
+    end
   end
 end
