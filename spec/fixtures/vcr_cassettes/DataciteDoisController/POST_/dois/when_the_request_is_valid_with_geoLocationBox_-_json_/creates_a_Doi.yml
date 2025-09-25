@@ -23,16 +23,16 @@ http_interactions:
       message: Unauthorized
     headers:
       Date:
-      - Tue, 23 Sep 2025 16:26:18 GMT
+      - Thu, 25 Sep 2025 18:35:18 GMT
       Content-Length:
       - '0'
       Connection:
       - keep-alive
       Www-Authenticate:
-      - Basic realm="handle", Handle sessionId="node0sz2cp9dpiej6hfyybk3v64b7176",
-        nonce="Grmmb/e6dSol3wmV1n9obw==", error="Identity not verified"
+      - Basic realm="handle", Handle sessionId="node01p1msscohniiy1ex03x5070wbo180",
+        nonce="Qy8VJL+3Pnqdj/CFFLFaQA==", error="Identity not verified"
     body:
       encoding: ASCII-8BIT
       string: ''
-  recorded_at: Tue, 23 Sep 2025 16:26:18 GMT
+  recorded_at: Thu, 25 Sep 2025 18:35:19 GMT
 recorded_with: VCR 6.2.0
