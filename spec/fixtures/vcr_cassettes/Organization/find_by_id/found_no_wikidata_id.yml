@@ -2,58 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.ror.org/organizations/ror.org/02q0ygf45
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '422'
-      Connection:
-      - keep-alive
-      Date:
-      - Tue, 01 Sep 2020 12:48:03 GMT
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      Allow:
-      - GET, HEAD, OPTIONS
-      X-Powered-By:
-      - Phusion Passenger 6.0.5
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.5
-      Vary:
-      - Cookie,Origin
-      X-Cache:
-      - Miss from cloudfront
-      Via:
-      - 1.1 dc81a30f5f4fc309ae9445723779b894.cloudfront.net (CloudFront)
-      X-Amz-Cf-Pop:
-      - DUS51-C1
-      X-Amz-Cf-Id:
-      - d5fb0dTugXVup4Ie-vPLZpMCc-w5kLMh48lqOyo9EH3w56dYu0RM-w==
-    body:
-      encoding: ASCII-8BIT
-      string: '{"id":"https://ror.org/02q0ygf45","name":"OBS Medical (United Kingdom)","types":["Company"],"links":["http://www.obsmedical.com/"],"aliases":["Oxford
-        BioSignals"],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
-        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
-        0004 0398 7680"]},"GRID":{"preferred":"grid.487335.e","all":"grid.487335.e"}}}'
-  recorded_at: Tue, 01 Sep 2020 12:48:03 GMT
-- request:
-    method: get
-    uri: https://api.ror.org/v1/organizations/ror.org/02q0ygf45
+    uri: https://api.ror.org/v2/organizations/ror.org/02q0ygf45
     body:
       encoding: US-ASCII
       string: ''
@@ -70,31 +19,41 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 11 Jul 2025 08:29:05 GMT
+      - Thu, 25 Sep 2025 09:34:05 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '1122'
+      - '895'
       Connection:
       - keep-alive
-      Status:
-      - 200 OK
-      Vary:
-      - Cookie, Origin
-      X-Frame-Options:
-      - SAMEORIGIN
+      X-Amzn-Requestid:
+      - 455aaa49-4912-49f3-8935-0a478e0b03f5
       Allow:
       - GET, PUT, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '895'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - Rc7mMEl9DoEEnzA=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
       X-Powered-By:
       - Phusion Passenger 6.0.7
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Thu, 25 Sep 2025 09:34:05 GMT
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"https://ror.org/02q0ygf45","name":"OBS Medical (United Kingdom)","email_address":null,"ip_addresses":[],"established":2000,"types":["Company"],"relationships":[],"addresses":[{"lat":51.67109,"lng":-1.28278,"state":null,"state_code":null,"city":"Abingdon","geonames_city":{"id":2657780,"city":"Abingdon","geonames_admin1":{"name":"England","id":null,"ascii_name":null,"code":"GB.ENG"},"geonames_admin2":{"name":null,"id":null,"ascii_name":null,"code":null},"license":{"attribution":"Data
-        from geonames.org under a CC-BY 3.0 license","license":"http://creativecommons.org/licenses/by/3.0/"},"nuts_level1":{"name":null,"code":null},"nuts_level2":{"name":null,"code":null},"nuts_level3":{"name":null,"code":null}},"postcode":null,"primary":false,"line":null,"country_geonames_id":null}],"links":["http://www.obsmedical.com/"],"aliases":["Oxford
-        BioSignals"],"acronyms":[],"status":"active","wikipedia_url":null,"labels":[],"country":{"country_name":"United
-        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
-        0004 0398 7680"]},"GRID":{"preferred":"grid.487335.e","all":"grid.487335.e"}}}'
-  recorded_at: Fri, 11 Jul 2025 08:29:05 GMT
+      string: '{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2000,"external_ids":[{"all":["grid.487335.e"],"preferred":"grid.487335.e","type":"grid"},{"all":["0000
+        0004 0398 7680"],"preferred":null,"type":"isni"}],"id":"https://ror.org/02q0ygf45","links":[{"type":"website","value":"http://www.obsmedical.com/"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.67109,"lng":-1.28278,"name":"Abingdon"},"geonames_id":2657780}],"names":[{"lang":null,"types":["ror_display","label"],"value":"OBS
+        Medical (United Kingdom)"},{"lang":null,"types":["alias"],"value":"Oxford
+        BioSignals"}],"relationships":[],"status":"active","types":["company"]}'
+  recorded_at: Thu, 25 Sep 2025 09:34:05 GMT
 recorded_with: VCR 6.2.0
