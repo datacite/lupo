@@ -214,6 +214,15 @@ namespace :client do
   task delete_client_dois: :environment do
     # eg. CLIENT_ID='DATACITE.TEST' START_DATE=2025-09-01 END_DATE=2025-09-30 bin/rake client:delete_client_dois
 
+    puts "======================================"
+    puts " You are running this in: #{Rails.env.upcase}"
+    puts "======================================"
+
+    puts "Do you want to continue? (yes/no)"
+
+    answer = $stdin.gets.chomp
+    abort unless answer.downcase == "yes"
+
     client_id  = ENV["CLIENT_ID"]
     start_date = ENV["START_DATE"]
     end_date   = ENV["END_DATE"]
