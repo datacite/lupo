@@ -133,9 +133,11 @@ class Organization
   end
 
   def self.parse_message(message)
+    geonames = message.dig("locations", 0, "geonames_details")
+
     country = {
-      id: message.dig("country", "country_code"),
-      name: message.dig("country", "country_name"),
+      id: geonames&.dig("country_code")&.upcase,
+      name: geonames&.dig("country_name"),
     }.compact
 
     labels =
