@@ -209,4 +209,54 @@ namespace :client do
       puts "Client prefix for client #{target.symbol} and prefix #{prefix} created."
     end
   end
+
+  desc "Delete client DOIs within a given date range"
+  task delete_client_dois: :environment do
+    # eg. CLIENT_ID='DATACITE.TEST' START_DATE=2025-09-01 END_DATE=2025-09-30 bin/rake client:delete_client_dois
+
+    puts "======================================"
+    puts " You are running this in: #{Rails.env.upcase}"
+    puts "======================================"
+
+    puts "Do you want to continue? (yes/no)"
+
+    answer = $stdin.gets.chomp
+    abort unless answer.downcase == "yes"
+
+    client_id  = ENV["CLIENT_ID"]
+    start_date = ENV["START_DATE"]
+    end_date   = ENV["END_DATE"]
+
+    abort "ENV['CLIENT_ID'] is required." if client_id.blank?
+    abort "ENV['START_DATE'] and ENV['END_DATE'] are required." if start_date.blank? || end_date.blank?
+
+    begin
+      client = Client.find_by!(symbol: client_id)
+    rescue ActiveRecord::RecordNotFound
+      abort "Client not found for client ID #{client_id}."
+    end
+
+    begin
+      start_date = Date.parse(start_date).beginning_of_day
+      end_date   = Date.parse(end_date).end_of_day
+    rescue ArgumentError => e
+      abort "Invalid date provided: #{e.message}"
+    end
+
+    dois = client.dois.where(created_at: start_date..end_date)
+    total = dois.count
+
+    puts "Found #{total} DOIs for client #{client.symbol} between #{start_date} and #{end_date}."
+
+    deleted = 0
+    dois.find_in_batches(batch_size: 1000) do |batch|
+      batch.each do |doi|
+        doi.destroy
+        deleted += 1
+      end
+      puts "Deleted #{deleted}/#{total} DOIs"
+    end
+
+    puts "Deleted #{deleted} DOIs for client #{client.symbol}."
+  end
 end
