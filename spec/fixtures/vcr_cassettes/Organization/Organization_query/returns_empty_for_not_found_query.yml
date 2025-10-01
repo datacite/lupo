@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/v2/organizations?page=1&query=xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 26 Sep 2025 11:45:42 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '114'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 142acf03-32a4-4145-a7c3-8a90b69e5aaa
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '114'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - Rgh0DH9RDoEEVBw=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
+      X-Powered-By:
+      - Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Fri, 26 Sep 2025 11:45:42 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":0,"time_taken":2,"items":[],"meta":{"types":[],"countries":[],"continents":[],"statuses":[]}}'
+  recorded_at: Fri, 26 Sep 2025 11:45:42 GMT
+recorded_with: VCR 6.2.0

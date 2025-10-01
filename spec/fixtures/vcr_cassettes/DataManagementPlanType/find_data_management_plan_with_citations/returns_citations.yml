@@ -8,196 +8,45 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
-      message: ''
+      message: OK
     headers:
       Date:
-      - Tue, 06 Oct 2020 15:39:48 GMT
+      - Sun, 28 Sep 2025 15:26:41 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
       - keep-alive
-      Set-Cookie:
-      - __cfduid=d568a9d7294654e8ae48f9fec855dd63c1601998788; expires=Thu, 05-Nov-20
-        15:39:48 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
-      Cf-Cache-Status:
-      - DYNAMIC
-      Cf-Request-Id:
-      - 05a02aaf390000d6b5119a0200000001
-      Expect-Ct:
-      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
       Server:
       - cloudflare
-      Cf-Ray:
-      - 5de07a2b8d62d6b5-FRA
-      Alt-Svc:
-      - h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400
-    body:
-      encoding: ASCII-8BIT
-      string: |-
-        [
-          {
-            "DOI": "10.14454",
-            "RA": "DataCite"
-          }
-        ]
-    http_version: null
-  recorded_at: Tue, 06 Oct 2020 15:39:48 GMT
-- request:
-    method: get
-    uri: https://doi.org/ra/10.14454
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: ''
-    headers:
-      Date:
-      - Tue, 06 Oct 2020 15:39:48 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Set-Cookie:
-      - __cfduid=ded066c4450a30fce4c78dcec0f90ffda1601998788; expires=Thu, 05-Nov-20
-        15:39:48 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Vary:
+      - Origin, accept-encoding
+      Permissions-Policy:
+      - interest-cohort=(),browsing-topics=()
+      Content-Encoding:
+      - gzip
       Cf-Cache-Status:
       - DYNAMIC
-      Cf-Request-Id:
-      - 05a02ab0f300001f518a3fc200000001
-      Expect-Ct:
-      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Nel:
+      - '{"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}'
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
-      Server:
-      - cloudflare
+      Report-To:
+      - '{"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=i2Vw3Vm5IDAN%2FBgmTP%2FgaRxyD%2FGt%2FOl9QYrB43CXj6AJ%2F54sPdDW%2BI8J7%2BpYY2xNXRlSDeCfgU77fLBBoMuBClENmJ4u8g%3D%3D"}]}'
       Cf-Ray:
-      - 5de07a2e5fae1f51-FRA
+      - 986442b2c8f4a6ad-BOM
       Alt-Svc:
-      - h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400
+      - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
-      string: |-
-        [
-          {
-            "DOI": "10.14454",
-            "RA": "DataCite"
-          }
-        ]
-    http_version: null
-  recorded_at: Tue, 06 Oct 2020 15:39:49 GMT
-- request:
-    method: get
-    uri: https://doi.org/ra/10.14454
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: ''
-    headers:
-      Date:
-      - Tue, 06 Oct 2020 15:39:49 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Set-Cookie:
-      - __cfduid=d83e4cf7aba99f16d669268fee502e84e1601998789; expires=Thu, 05-Nov-20
-        15:39:49 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
-      Cf-Cache-Status:
-      - DYNAMIC
-      Cf-Request-Id:
-      - 05a02ab30100002bca37a41200000001
-      Expect-Ct:
-      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - 5de07a3199ab2bca-FRA
-      Alt-Svc:
-      - h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400
-    body:
-      encoding: ASCII-8BIT
-      string: |-
-        [
-          {
-            "DOI": "10.14454",
-            "RA": "DataCite"
-          }
-        ]
-    http_version: null
-  recorded_at: Tue, 06 Oct 2020 15:39:49 GMT
-- request:
-    method: get
-    uri: https://doi.org/ra/10.14454
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: ''
-    headers:
-      Date:
-      - Tue, 06 Oct 2020 15:39:49 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Set-Cookie:
-      - __cfduid=def803e20fb3d192af9add84048588aee1601998789; expires=Thu, 05-Nov-20
-        15:39:49 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
-      Cf-Cache-Status:
-      - DYNAMIC
-      Cf-Request-Id:
-      - 05a02ab5000000c27c0d8c9200000001
-      Expect-Ct:
-      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
-      Server:
-      - cloudflare
-      Cf-Ray:
-      - 5de07a34ca64c27c-FRA
-      Alt-Svc:
-      - h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400
-    body:
-      encoding: ASCII-8BIT
-      string: |-
-        [
-          {
-            "DOI": "10.14454",
-            "RA": "DataCite"
-          }
-        ]
-    http_version: null
-  recorded_at: Tue, 06 Oct 2020 15:39:50 GMT
-recorded_with: VCR 5.1.0
+      string: !binary |-
+        H4sIAAAAAAAAA4vmUlCoBmIFBSUXf08lKwUlQwM9QxMTUxMlHYhwkCNI1CWxJNE5syRVCShYyxULAOwjuKo3AAAA
+  recorded_at: Sun, 28 Sep 2025 15:26:40 GMT
+recorded_with: VCR 6.2.0

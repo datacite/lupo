@@ -2,50 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.ror.org/organizations/ror.org/02trn6p95
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Mon, 01 Nov 2021 16:58:11 GMT
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '1169'
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      Vary:
-      - Cookie, Origin
-      X-Frame-Options:
-      - SAMEORIGIN
-      Allow:
-      - GET, HEAD, OPTIONS
-      X-Powered-By:
-      - Phusion Passenger(R) 6.0.10
-      Server:
-      - nginx/1.18.0 + Phusion Passenger(R) 6.0.10
-    body:
-      encoding: ASCII-8BIT
-      string: !binary |-
-        eyJpZCI6Imh0dHBzOi8vcm9yLm9yZy8wMnRybjZwOTUiLCJuYW1lIjoiQ29taXNpw7NuIFNlY3RvcmlhbCBkZSBJbnZlc3RpZ2FjacOzbiBDaWVudMOtZmljYSIsImVtYWlsX2FkZHJlc3MiOm51bGwsImlwX2FkZHJlc3NlcyI6W10sImVzdGFibGlzaGVkIjoxOTkwLCJ0eXBlcyI6WyJHb3Zlcm5tZW50Il0sInJlbGF0aW9uc2hpcHMiOltdLCJhZGRyZXNzZXMiOlt7ImxhdCI6LTM0LjkwNTMwMSwibG5nIjotNTYuMTczNTQ1LCJzdGF0ZSI6bnVsbCwic3RhdGVfY29kZSI6bnVsbCwiY2l0eSI6Ik1vbnRldmlkZW8iLCJnZW9uYW1lc19jaXR5Ijp7ImlkIjozNDQxNTc1LCJjaXR5IjoiTW9udGV2aWRlbyIsImdlb25hbWVzX2FkbWluMSI6eyJuYW1lIjoiTW9udGV2aWRlbyIsImlkIjozNDQxNTcyLCJhc2NpaV9uYW1lIjoiTW9udGV2aWRlbyIsImNvZGUiOiJVWS4xMCJ9LCJnZW9uYW1lc19hZG1pbjIiOnsibmFtZSI6Ik11bmljaXBpbyBCIiwiaWQiOjExODIwODQ2LCJhc2NpaV9uYW1lIjoiTXVuaWNpcGlvIEIiLCJjb2RlIjoiVVkuMTAuMDIifSwibGljZW5zZSI6eyJhdHRyaWJ1dGlvbiI6IkRhdGEgZnJvbSBnZW9uYW1lcy5vcmcgdW5kZXIgYSBDQy1CWSAzLjAgbGljZW5zZSIsImxpY2Vuc2UiOiJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS8zLjAvIn0sIm51dHNfbGV2ZWwxIjp7Im5hbWUiOm51bGwsImNvZGUiOm51bGx9LCJudXRzX2xldmVsMiI6eyJuYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibnV0c19sZXZlbDMiOnsibmFtZSI6bnVsbCwiY29kZSI6bnVsbH19LCJwb3N0Y29kZSI6bnVsbCwicHJpbWFyeSI6ZmFsc2UsImxpbmUiOm51bGwsImNvdW50cnlfZ2VvbmFtZXNfaWQiOjM0Mzk3MDV9XSwibGlua3MiOlsiaHR0cDovL3d3dy5jc2ljLmVkdS51eS8iXSwiYWxpYXNlcyI6W10sImFjcm9ueW1zIjpbIkNTSUMiXSwic3RhdHVzIjoiYWN0aXZlIiwid2lraXBlZGlhX3VybCI6IiIsImxhYmVscyI6W10sImNvdW50cnkiOnsiY291bnRyeV9uYW1lIjoiVXJ1Z3VheSIsImNvdW50cnlfY29kZSI6IlVZIn0sImV4dGVybmFsX2lkcyI6eyJGdW5kUmVmIjp7InByZWZlcnJlZCI6bnVsbCwiYWxsIjpbIjUwMTEwMDAwNjA0OSJdfSwiR1JJRCI6eyJwcmVmZXJyZWQiOiJncmlkLjQ2NzI4NS5hIiwiYWxsIjoiZ3JpZC40NjcyODUuYSJ9fX0=
-  recorded_at: Mon, 01 Nov 2021 16:58:04 GMT
-- request:
-    method: get
-    uri: https://api.ror.org/v1/organizations/ror.org/02trn6p95
+    uri: https://api.ror.org/v2/organizations/ror.org/02trn6p95
     body:
       encoding: US-ASCII
       string: ''
@@ -62,28 +19,38 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 11 Jul 2025 08:28:53 GMT
+      - Thu, 25 Sep 2025 09:34:03 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '1147'
+      - '927'
       Connection:
       - keep-alive
-      Status:
-      - 200 OK
-      Vary:
-      - Cookie, Origin
-      X-Frame-Options:
-      - SAMEORIGIN
+      X-Amzn-Requestid:
+      - c2cf5bac-bba0-4229-8399-f34779a6aeed
       Allow:
       - GET, PUT, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '927'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - Rc7l2GipDoEEpRg=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
       X-Powered-By:
       - Phusion Passenger 6.0.7
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Thu, 25 Sep 2025 09:34:03 GMT
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6Imh0dHBzOi8vcm9yLm9yZy8wMnRybjZwOTUiLCJuYW1lIjoiQ29taXNpw7NuIFNlY3RvcmlhbCBkZSBJbnZlc3RpZ2FjacOzbiBDaWVudMOtZmljYSIsImVtYWlsX2FkZHJlc3MiOm51bGwsImlwX2FkZHJlc3NlcyI6W10sImVzdGFibGlzaGVkIjoxOTkwLCJ0eXBlcyI6WyJHb3Zlcm5tZW50IiwiRnVuZGVyIl0sInJlbGF0aW9uc2hpcHMiOltdLCJhZGRyZXNzZXMiOlt7ImxhdCI6LTM0LjkwMzI4LCJsbmciOi01Ni4xODgxNiwic3RhdGUiOm51bGwsInN0YXRlX2NvZGUiOm51bGwsImNpdHkiOiJNb250ZXZpZGVvIiwiZ2VvbmFtZXNfY2l0eSI6eyJpZCI6MzQ0MTU3NSwiY2l0eSI6Ik1vbnRldmlkZW8iLCJnZW9uYW1lc19hZG1pbjEiOnsibmFtZSI6Ik1vbnRldmlkZW8gRGVwYXJ0bWVudCIsImlkIjpudWxsLCJhc2NpaV9uYW1lIjpudWxsLCJjb2RlIjoiVVkuTU8ifSwiZ2VvbmFtZXNfYWRtaW4yIjp7Im5hbWUiOm51bGwsImlkIjpudWxsLCJhc2NpaV9uYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibGljZW5zZSI6eyJhdHRyaWJ1dGlvbiI6IkRhdGEgZnJvbSBnZW9uYW1lcy5vcmcgdW5kZXIgYSBDQy1CWSAzLjAgbGljZW5zZSIsImxpY2Vuc2UiOiJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS8zLjAvIn0sIm51dHNfbGV2ZWwxIjp7Im5hbWUiOm51bGwsImNvZGUiOm51bGx9LCJudXRzX2xldmVsMiI6eyJuYW1lIjpudWxsLCJjb2RlIjpudWxsfSwibnV0c19sZXZlbDMiOnsibmFtZSI6bnVsbCwiY29kZSI6bnVsbH19LCJwb3N0Y29kZSI6bnVsbCwicHJpbWFyeSI6ZmFsc2UsImxpbmUiOm51bGwsImNvdW50cnlfZ2VvbmFtZXNfaWQiOm51bGx9XSwibGlua3MiOlsiaHR0cDovL3d3dy5jc2ljLmVkdS51eS8iXSwiYWxpYXNlcyI6W10sImFjcm9ueW1zIjpbIkNTSUMiXSwic3RhdHVzIjoiYWN0aXZlIiwid2lraXBlZGlhX3VybCI6bnVsbCwibGFiZWxzIjpbXSwiY291bnRyeSI6eyJjb3VudHJ5X25hbWUiOiJVcnVndWF5IiwiY291bnRyeV9jb2RlIjoiVVkifSwiZXh0ZXJuYWxfaWRzIjp7IkZ1bmRSZWYiOnsicHJlZmVycmVkIjpudWxsLCJhbGwiOlsiNTAxMTAwMDA2MDQ5Il19LCJHUklEIjp7InByZWZlcnJlZCI6ImdyaWQuNDY3Mjg1LmEiLCJhbGwiOiJncmlkLjQ2NzI4NS5hIn19fQ==
-  recorded_at: Fri, 11 Jul 2025 08:28:53 GMT
+        eyJhZG1pbiI6eyJjcmVhdGVkIjp7ImRhdGUiOiIyMDE4LTExLTE0Iiwic2NoZW1hX3ZlcnNpb24iOiIxLjAifSwibGFzdF9tb2RpZmllZCI6eyJkYXRlIjoiMjAyNC0xMi0xMSIsInNjaGVtYV92ZXJzaW9uIjoiMi4xIn19LCJkb21haW5zIjpbXSwiZXN0YWJsaXNoZWQiOjE5OTAsImV4dGVybmFsX2lkcyI6W3siYWxsIjpbIjUwMTEwMDAwNjA0OSJdLCJwcmVmZXJyZWQiOm51bGwsInR5cGUiOiJmdW5kcmVmIn0seyJhbGwiOlsiZ3JpZC40NjcyODUuYSJdLCJwcmVmZXJyZWQiOiJncmlkLjQ2NzI4NS5hIiwidHlwZSI6ImdyaWQifV0sImlkIjoiaHR0cHM6Ly9yb3Iub3JnLzAydHJuNnA5NSIsImxpbmtzIjpbeyJ0eXBlIjoid2Vic2l0ZSIsInZhbHVlIjoiaHR0cDovL3d3dy5jc2ljLmVkdS51eS8ifV0sImxvY2F0aW9ucyI6W3siZ2VvbmFtZXNfZGV0YWlscyI6eyJjb250aW5lbnRfY29kZSI6IlNBIiwiY29udGluZW50X25hbWUiOiJTb3V0aCBBbWVyaWNhIiwiY291bnRyeV9jb2RlIjoiVVkiLCJjb3VudHJ5X25hbWUiOiJVcnVndWF5IiwiY291bnRyeV9zdWJkaXZpc2lvbl9jb2RlIjoiTU8iLCJjb3VudHJ5X3N1YmRpdmlzaW9uX25hbWUiOiJNb250ZXZpZGVvIERlcGFydG1lbnQiLCJsYXQiOi0zNC45MDMyOCwibG5nIjotNTYuMTg4MTYsIm5hbWUiOiJNb250ZXZpZGVvIn0sImdlb25hbWVzX2lkIjozNDQxNTc1fV0sIm5hbWVzIjpbeyJsYW5nIjpudWxsLCJ0eXBlcyI6WyJhY3JvbnltIl0sInZhbHVlIjoiQ1NJQyJ9LHsibGFuZyI6ImVzIiwidHlwZXMiOlsicm9yX2Rpc3BsYXkiLCJsYWJlbCJdLCJ2YWx1ZSI6IkNvbWlzacOzbiBTZWN0b3JpYWwgZGUgSW52ZXN0aWdhY2nDs24gQ2llbnTDrWZpY2EifV0sInJlbGF0aW9uc2hpcHMiOltdLCJzdGF0dXMiOiJhY3RpdmUiLCJ0eXBlcyI6WyJmdW5kZXIiLCJnb3Zlcm5tZW50Il19
+  recorded_at: Thu, 25 Sep 2025 09:34:03 GMT
 recorded_with: VCR 6.2.0

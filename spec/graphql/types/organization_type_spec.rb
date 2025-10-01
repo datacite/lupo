@@ -393,8 +393,8 @@ describe OrganizationType do
       )
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1_209)
       expect(response.dig("data", "organization", "geolocation")).to eq(
-        "pointLatitude" => 52.205277777778,
-        "pointLongitude" => 0.11722222222222,
+        "pointLatitude" => 52.205355979757925,
+        "pointLongitude" => 0.11315726963968827,
       )
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(
@@ -542,8 +542,8 @@ describe OrganizationType do
       )
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1_209)
       expect(response.dig("data", "organization", "geolocation")).to eq(
-        "pointLatitude" => 52.205277777778,
-        "pointLongitude" => 0.11722222222222,
+        "pointLatitude" => 52.205355979757925,
+        "pointLongitude" => 0.11315726963968827,
       )
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(
@@ -860,12 +860,12 @@ describe OrganizationType do
     it "returns organization information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "organizations", "totalCount")).to eq(114_882)
+      expect(response.dig("data", "organizations", "totalCount")).to eq(116756)
       expect(response.dig("data", "organizations", "years").first).to eq(
-        "count" => 80_248, "id" => "2017", "title" => "2017",
+        "count" => 80248, "id" => "2017", "title" => "2017",
       )
       expect(response.dig("data", "organizations", "years").last).to eq(
-        "count" => 17063, "id" => "2021", "title" => "2021",
+        "count" => 18937, "id" => "2021", "title" => "2021",
       )
     end
   end
@@ -954,7 +954,7 @@ describe OrganizationType do
 
     it "returns organization information" do
       response = LupoSchema.execute(query).as_json
-      expect(response.dig("data", "organizations", "totalCount")).to eq(12_418)
+      expect(response.dig("data", "organizations", "totalCount")).to eq(12684)
       expect(
         response.dig("data", "organizations", "pageInfo", "endCursor"),
       ).to eq("Mg")
@@ -964,20 +964,20 @@ describe OrganizationType do
 
       expect(response.dig("data", "organizations", "types").length).to eq(9)
       expect(response.dig("data", "organizations", "types").first).to eq(
-        "count" => 10_993, "id" => "education", "title" => "Education",
+        "count" => 11152, "id" => "education", "title" => "education",
       )
       expect(response.dig("data", "organizations", "countries").length).to eq(
         10,
       )
       expect(response.dig("data", "organizations", "countries").first).to eq(
-        "count" => 1_880, "id" => "us", "title" => "United States of America",
+        "count" => 1886, "id" => "us", "title" => "United States of America",
       )
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
 
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
-      expect(organization.fetch("types")).to eq(%w[Education Funder])
+      expect(organization.fetch("types")).to eq(%w[education funder])
       expect(organization.fetch("country")).to eq(
         "id" => "GB", "name" => "United Kingdom",
       )
@@ -1046,7 +1046,7 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "totalCount")).to eq(13)
       expect(response.dig("data", "organizations", "types").length).to eq(8)
       expect(response.dig("data", "organizations", "types").first).to eq(
-        "count" => 4, "id" => "education", "title" => "Education",
+        "count" => 4, "id" => "education", "title" => "education",
       )
       expect(response.dig("data", "organizations", "countries").length).to eq(3)
       expect(response.dig("data", "organizations", "countries").first).to eq(
@@ -1055,21 +1055,21 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "nodes").length).to eq(13)
       organization = response.dig("data", "organizations", "nodes", 0)
 
-      expect(organization.fetch("id")).to eq("https://ror.org/042a1e381")
-      expect(organization.fetch("name")).to eq("Clemenshospital Münster")
-      expect(organization.fetch("types")).to eq(%w[Healthcare])
+      expect(organization.fetch("id")).to eq("https://ror.org/00pv45a02")
+      expect(organization.fetch("name")).to eq("FH Münster")
+      expect(organization.fetch("types")).to eq(%w[education])
       expect(organization.fetch("country")).to eq(
         "id" => "DE", "name" => "Germany",
       )
-      expect(organization.fetch("alternateName")).to eq(%w[])
+      expect(organization.fetch("alternateName")).to eq(["FH Muenster", "FH Muenster University of Applied Sciences", "FH Münster University of Applied Sciences", "Fachhochschule Muenster", "Muenster University of Applied Sciences", "Münster University of Applied Sciences"])
       expect(organization.fetch("url")).to eq(
-        %w[https://www.clemenshospital.de/ch],
+        %w[https://www.fh-muenster.de],
       )
-      expect(organization.fetch("wikipediaUrl")).to be_nil
+      expect(organization.fetch("wikipediaUrl")).to eq("https://en.wikipedia.org/wiki/Fachhochschule_M%C3%BCnster")
 
-      expect(organization.fetch("identifiers").length).to eq(2)
+      expect(organization.fetch("identifiers").length).to eq(3)
       expect(organization.fetch("identifiers").last).to eq(
-        "identifier" => "0000000405598961", "identifierType" => "isni",
+        "identifier" => "0000000094775237", "identifierType" => "isni",
       )
     end
   end
@@ -1122,7 +1122,7 @@ describe OrganizationType do
     it "returns organization information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "organizations", "totalCount")).to eq(263)
+      expect(response.dig("data", "organizations", "totalCount")).to eq(265)
       expect(
         response.dig("data", "organizations", "pageInfo", "endCursor"),
       ).to eq("Mg")
@@ -1132,26 +1132,26 @@ describe OrganizationType do
 
       expect(response.dig("data", "organizations", "types").length).to eq(3)
       expect(response.dig("data", "organizations", "types").first).to eq(
-        "count" => 263, "id" => "government", "title" => "Government",
+        "count" => 265, "id" => "government", "title" => "government",
       )
       expect(response.dig("data", "organizations", "countries").length).to eq(1)
       expect(response.dig("data", "organizations", "countries").first).to eq(
-        "count" => 263, "id" => "de", "title" => "Germany",
+        "count" => 265, "id" => "de", "title" => "Germany",
       )
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
-      expect(organization.fetch("id")).to eq("https://ror.org/007s7nj58")
+      expect(organization.fetch("id")).to eq("https://ror.org/03kdvpr29")
       expect(organization.fetch("name")).to eq(
-        "State Government of North Rhine Westphalia",
+        "Federal Institute of Hydrology",
       )
-      expect(organization.fetch("types")).to eq(%w[Government])
+      expect(organization.fetch("types")).to eq(%w[government])
       expect(organization.fetch("country")).to eq(
         "id" => "DE", "name" => "Germany",
       )
-      expect(organization.fetch("alternateName")).to eq(%w[])
+      expect(organization.fetch("alternateName")).to eq(["BFG"])
       expect(organization.fetch("identifiers").length).to eq(2)
       expect(organization.fetch("identifiers").first).to eq(
-        "identifier" => "Q1761666", "identifierType" => "wikidata",
+        "identifier" => "grid.425106.4", "identifierType" => "grid",
       )
       expect(organization.dig("works", "totalCount")).to eq(0)
     end

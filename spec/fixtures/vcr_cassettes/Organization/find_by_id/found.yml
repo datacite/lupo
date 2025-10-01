@@ -2,126 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.ror.org/organizations/ror.org/0521rfb23
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '678'
-      Connection:
-      - keep-alive
-      Date:
-      - Sat, 29 Aug 2020 17:31:58 GMT
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      Allow:
-      - GET, HEAD, OPTIONS
-      X-Powered-By:
-      - Phusion Passenger 6.0.5
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.5
-      Vary:
-      - Cookie,Origin
-      X-Cache:
-      - Miss from cloudfront
-      Via:
-      - 1.1 3e9b9356decf1aa720af0bc92acc0586.cloudfront.net (CloudFront)
-      X-Amz-Cf-Pop:
-      - DUS51-C1
-      X-Amz-Cf-Id:
-      - mP8i0qjPd8WQxTFbLrYwIuQeRD2nuc1rQRRatBjibkAEJevjeQPrsw==
-    body:
-      encoding: ASCII-8BIT
-      string: '{"id":"https://ror.org/0521rfb23","name":"Lincoln University - Pennsylvania","types":["Education"],"links":["http://www.lincoln.edu/"],"aliases":["Ashmun
-        Institute"],"acronyms":["LU"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)","labels":[{"label":"Universidad
-        Lincoln","iso639":"es"}],"country":{"country_name":"United States","country_code":"US"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
-        0004 0420 5871"]},"FundRef":{"preferred":null,"all":["100007032"]},"OrgRef":{"preferred":null,"all":["833671"]},"Wikidata":{"preferred":null,"all":["Q4570781"]},"GRID":{"preferred":"grid.417434.1","all":"grid.417434.1"}}}'
-  recorded_at: Sat, 29 Aug 2020 17:31:58 GMT
-- request:
-    method: get
-    uri: https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q4570781&languages=en&props=labels%7Cdescriptions%7Cclaims
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Sat, 29 Aug 2020 17:31:58 GMT
-      Server:
-      - mw1361.eqiad.wmnet
-      X-Content-Type-Options:
-      - nosniff
-      P3p:
-      - CP="See https://www.wikidata.org/wiki/Special:CentralAutoLogin/P3P for more
-        info."
-      X-Frame-Options:
-      - DENY
-      Content-Disposition:
-      - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
-      Cache-Control:
-      - private, must-revalidate, max-age=0
-      X-Request-Id:
-      - 2d609255-3605-47e5-ad84-f192c60959f4
-      Content-Type:
-      - application/json; charset=utf-8
-      Age:
-      - '0'
-      X-Cache:
-      - cp3058 miss, cp3054 pass
-      X-Cache-Status:
-      - pass
-      Server-Timing:
-      - cache;desc="pass"
-      Strict-Transport-Security:
-      - max-age=106384710; includeSubDomains; preload
-      Set-Cookie:
-      - WMF-Last-Access=29-Aug-2020;Path=/;HttpOnly;secure;Expires=Wed, 30 Sep 2020
-        12:00:00 GMT, WMF-Last-Access-Global=29-Aug-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Wed,
-        30 Sep 2020 12:00:00 GMT, GeoIP=DE:NW:M__nster:51.99:7.61:v4; Path=/; secure;
-        Domain=.wikidata.org
-      X-Client-Ip:
-      - 87.155.5.120
-      Accept-Ranges:
-      - bytes
-      Connection:
-      - keep-alive
-    body:
-      encoding: ASCII-8BIT
-      string: '{"entities":{"Q4570781":{"type":"item","id":"Q4570781","labels":{"en":{"language":"en","value":"Lincoln
-        University"}},"descriptions":{"en":{"language":"en","value":"university in
-        Pennsylvania"}},"claims":{"P373":[{"mainsnak":{"snaktype":"value","property":"P373","hash":"ac4118ab62ad098b4063eebfdf68b1a6bb1cd38c","datavalue":{"value":"Lincoln
-        University (Pennsylvania)","type":"string"},"datatype":"string"},"type":"statement","id":"q4570781$3152A276-082E-438D-A5C0-8EC9BE0DB6B5","rank":"normal","references":[{"hash":"fa278ebfc458360e5aed63d5058cca83c46134f1","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"e4f6d9441d0600513c4533c672b5ab472dc73694","datavalue":{"value":{"entity-type":"item","numeric-id":328,"id":"Q328"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P31":[{"mainsnak":{"snaktype":"value","property":"P31","hash":"482db304b57e4b3a7a5b3a6e2256db7c639c49b0","datavalue":{"value":{"entity-type":"item","numeric-id":3918,"id":"Q3918"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"q4570781$b8e9ebd9-4891-a9fa-0825-3408de1443b7","rank":"normal"},{"mainsnak":{"snaktype":"value","property":"P31","hash":"ce29ffcb5c333150df535203e0ae864ae27b88b5","datavalue":{"value":{"entity-type":"item","numeric-id":1620945,"id":"Q1620945"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$FDADE638-6877-4208-BE42-029E92EDB95A","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P31","hash":"f86cd0813c2de2adf2f7ff53830e2169f779851a","datavalue":{"value":{"entity-type":"item","numeric-id":23002039,"id":"Q23002039"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$C9111815-CDE7-4323-8C05-CFC7832B2020","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P625":[{"mainsnak":{"snaktype":"value","property":"P625","hash":"0576230c382126bec34af9bf333e9abb1ec58756","datavalue":{"value":{"latitude":39.808333333333,"longitude":-75.927777777778,"altitude":null,"precision":null,"globe":"http://www.wikidata.org/entity/Q2"},"type":"globecoordinate"},"datatype":"globe-coordinate"},"type":"statement","id":"q4570781$67F48F10-42EC-40FB-9EDD-38FE3B3C4F00","rank":"normal"}],"P910":[{"mainsnak":{"snaktype":"value","property":"P910","hash":"2c0dc3a7d73bda9fa354d286c992bfc6d8b0a316","datavalue":{"value":{"entity-type":"item","numeric-id":10225880,"id":"Q10225880"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$BAF35E21-DB6B-43E2-97AD-3F0B3A214E10","rank":"normal"}],"P646":[{"mainsnak":{"snaktype":"value","property":"P646","hash":"5afed479161b80e0cbaec7a825c988185e5e3c42","datavalue":{"value":"/m/03fmfs","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$E834D9B4-593E-4F17-B31B-53DF71F870AD","rank":"normal","references":[{"hash":"2b00cb481cddcac7623114367489b5c194901c4a","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"a94b740202b097dd33355e0e6c00e54b9395e5e0","datavalue":{"value":{"entity-type":"item","numeric-id":15241312,"id":"Q15241312"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}],"P577":[{"snaktype":"value","property":"P577","hash":"fde79ecb015112d2f29229ccc1ec514ed3e71fa2","datavalue":{"value":{"time":"+2013-10-28T00:00:00Z","timezone":0,"before":0,"after":0,"precision":11,"calendarmodel":"http://www.wikidata.org/entity/Q1985727"},"type":"time"},"datatype":"time"}]},"snaks-order":["P248","P577"]}]}],"P1566":[{"mainsnak":{"snaktype":"value","property":"P1566","hash":"33794b7810918a44f1ed5722ffddda91fbea0570","datavalue":{"value":"4559217","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$75493575-3194-4300-B38D-3A5C419D662F","rank":"normal","references":[{"hash":"88694a0f4d1486770c269f7db16a1982f74da69d","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"1b3ef912a2bd61e18dd43abd184337eb010b2e96","datavalue":{"value":{"entity-type":"item","numeric-id":830106,"id":"Q830106"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P1771":[{"mainsnak":{"snaktype":"value","property":"P1771","hash":"d5b169af7b7ba0edf1b9b648bfb85f14fead0678","datavalue":{"value":"213598","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$987EC74D-AB29-4812-B8EE-84EC278BACC2","rank":"normal","references":[{"hash":"cfc3fc925ddc31f71c67244753346f9fca7ab7d7","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"a94b740202b097dd33355e0e6c00e54b9395e5e0","datavalue":{"value":{"entity-type":"item","numeric-id":15241312,"id":"Q15241312"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P17":[{"mainsnak":{"snaktype":"value","property":"P17","hash":"be4c6eafa2984964f04be85667263f5642ba1a72","datavalue":{"value":{"entity-type":"item","numeric-id":30,"id":"Q30"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$B853FDD8-4CA4-4AB4-AF94-BB3AE15EBAC7","rank":"normal","references":[{"hash":"c456dc5cd2117249948c288206ff3f8b1bf574f0","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"e17507043402fe54ae6c4d65cc51f46cec987de9","datavalue":{"value":{"entity-type":"item","numeric-id":8449,"id":"Q8449"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P281":[{"mainsnak":{"snaktype":"value","property":"P281","hash":"8a32c2349c71c00afae0350a5819d4b370671333","datavalue":{"value":"19352-0999","type":"string"},"datatype":"string"},"type":"statement","id":"Q4570781$40B188BA-49E6-427F-9E0D-3E09419E7AB9","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P856":[{"mainsnak":{"snaktype":"value","property":"P856","hash":"96858bd578cb120fe961f2f317f671c2735daad2","datavalue":{"value":"http://www.lincoln.edu","type":"string"},"datatype":"url"},"type":"statement","qualifiers":{"P407":[{"snaktype":"value","property":"P407","hash":"daf1c4fcb58181b02dff9cc89deb084004ddae4b","datavalue":{"value":{"entity-type":"item","numeric-id":1860,"id":"Q1860"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"qualifiers-order":["P407"],"id":"Q4570781$A8E7E915-181C-423A-9C0F-4B4CA6F059E8","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P138":[{"mainsnak":{"snaktype":"value","property":"P138","hash":"56c8d7a15875e1f980765cc144cb834f59c4fa39","datavalue":{"value":{"entity-type":"item","numeric-id":91,"id":"Q91"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$07961679-45ec-83c1-3405-d32513f7a601","rank":"normal"}],"P2643":[{"mainsnak":{"snaktype":"value","property":"P2643","hash":"3e548e99637010f6640ff754ccc6390de4e4f918","datavalue":{"value":{"entity-type":"item","numeric-id":23335494,"id":"Q23335494"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$7B5B8BF0-D179-47C3-BB60-075331563592","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P2643","hash":"eed29ce0f5a46fd7e6c75784bb54b0d3ce4b2677","datavalue":{"value":{"entity-type":"item","numeric-id":23623483,"id":"Q23623483"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$1F4ADDD0-44FE-4D79-92E7-C968E7AA9297","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P2643","hash":"0e91da6981c663351c4348fab0c7208eb57f1a26","datavalue":{"value":{"entity-type":"item","numeric-id":23662483,"id":"Q23662483"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$196F632A-1397-4B91-A7A2-2F8CACC84541","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P2643","hash":"8dae2be5765ca6b771392f6982d4a6ca3857430f","datavalue":{"value":{"entity-type":"item","numeric-id":23622825,"id":"Q23622825"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$AE4F6ED1-CB29-4BB1-A06C-346408B95FA1","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P2643","hash":"256fce7d3b66bdea61d5b421a22d13f0dcf4e84e","datavalue":{"value":{"entity-type":"item","numeric-id":23662426,"id":"Q23662426"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$E5CA7D40-36CF-4189-89CA-8585C134A349","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]},{"mainsnak":{"snaktype":"value","property":"P2643","hash":"8ef64480aa19ab73856e1e4f1db90863e90f38bd","datavalue":{"value":{"entity-type":"item","numeric-id":23662765,"id":"Q23662765"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$4EA7CCE0-1541-4806-AD93-13A598FDF6F5","rank":"normal","references":[{"hash":"0c1a8ae6ad3b8fb4f373c533150355a20f759090","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"46652cd7969b7b2eb09c38cb36bf2d2effe4ae5a","datavalue":{"value":{"entity-type":"item","numeric-id":4223026,"id":"Q4223026"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P213":[{"mainsnak":{"snaktype":"value","property":"P213","hash":"b972214c5d938ccf3b6ee4090524bf9bcb1df87c","datavalue":{"value":"0000
-        0004 0420 5871","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$15FB9168-3DA8-4694-9F03-4B4849B270E5","rank":"normal","references":[{"hash":"f20e7cc1dc95f8af90470df9ddea266baf12be00","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"39f2d847bb7bcfcba055cff1323f108b7bc3af66","datavalue":{"value":"10.6084/M9.FIGSHARE.4539889","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]},{"hash":"c336cb6387a408bdcc68f4d0782ceceec714b5c1","snaks":{"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}]},"snaks-order":["P2427"]}]}],"P3500":[{"mainsnak":{"snaktype":"value","property":"P3500","hash":"2b85f40008cd961ec18d06981ff6c5a75b02f419","datavalue":{"value":"4558","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$3D0F778C-7BB9-4049-AD22-686B97F1D126","rank":"normal","references":[{"hash":"45e8fa2e37c421b7e5970029041dbdeac9824284","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"5f5ddd9d0bd8e6d4682296b4699cb39e94c9c9b5","datavalue":{"value":"10.5281/ZENODO.758080","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]}]}],"P571":[{"mainsnak":{"snaktype":"value","property":"P571","hash":"afd5d2e7b82cccc0ab6365248893029cdffb8be3","datavalue":{"value":{"time":"+1854-01-01T00:00:00Z","timezone":0,"before":0,"after":0,"precision":9,"calendarmodel":"http://www.wikidata.org/entity/Q1985727"},"type":"time"},"datatype":"time"},"type":"statement","id":"Q4570781$21A751CE-D91C-4226-B700-E789F817CED6","rank":"normal","references":[{"hash":"8f6d2b4a0e3da23aca841c5dfe6b7ed894bd315a","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"c4cc8cf0417b27e19c135f9b4312453d668ab641","datavalue":{"value":{"entity-type":"item","numeric-id":191769,"id":"Q191769"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P131":[{"mainsnak":{"snaktype":"value","property":"P131","hash":"b32e0c98f6c646eb7883f976dfbb72bee2929917","datavalue":{"value":{"entity-type":"item","numeric-id":27840,"id":"Q27840"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$DFD17CAA-B6B3-4789-947A-563941DC73AA","rank":"normal","references":[{"hash":"fa278ebfc458360e5aed63d5058cca83c46134f1","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"e4f6d9441d0600513c4533c672b5ab472dc73694","datavalue":{"value":{"entity-type":"item","numeric-id":328,"id":"Q328"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P143"]}]}],"P3153":[{"mainsnak":{"snaktype":"value","property":"P3153","hash":"1edbccfd7d86159735e927c50d957a6e8ada342c","datavalue":{"value":"100007032","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$1664B2BD-BC48-4868-A40D-FFFE918922F2","rank":"normal","references":[{"hash":"f20e7cc1dc95f8af90470df9ddea266baf12be00","snaks":{"P356":[{"snaktype":"value","property":"P356","hash":"39f2d847bb7bcfcba055cff1323f108b7bc3af66","datavalue":{"value":"10.6084/M9.FIGSHARE.4539889","type":"string"},"datatype":"external-id"}]},"snaks-order":["P356"]},{"hash":"c336cb6387a408bdcc68f4d0782ceceec714b5c1","snaks":{"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}]},"snaks-order":["P2427"]}]}],"P3876":[{"mainsnak":{"snaktype":"value","property":"P3876","hash":"4001004c1311eb0a78d72cb60cc929ff551bd0cc","datavalue":{"value":{"entity-type":"item","numeric-id":9754785,"id":"Q9754785"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$D7C956B1-DF38-4591-8436-78B2AAF64438","rank":"normal"}],"P1889":[{"mainsnak":{"snaktype":"value","property":"P1889","hash":"f49e6b3683c1095ee717cbe6637811f064081205","datavalue":{"value":{"entity-type":"item","numeric-id":25205678,"id":"Q25205678"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$7eca1eda-43ac-bb54-7a7e-ebfe9932e883","rank":"normal"}],"P2427":[{"mainsnak":{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$ED79A2C6-06E5-4032-A518-2C12A0386E7D","rank":"normal","references":[{"hash":"40fdc7f3ce7f6771a8f285a1267bfc3f3de154d9","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"858e5db66e8139829fa8f88e7e16ea6af5213e4b","datavalue":{"value":{"entity-type":"item","numeric-id":53869345,"id":"Q53869345"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]},{"hash":"a1914c8952a5bc482eafeb26be4fda504fe701f9","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"31f77799b27e462a188007d80e9cae011a037bca","datavalue":{"value":{"entity-type":"item","numeric-id":53705036,"id":"Q53705036"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P4195":[{"mainsnak":{"snaktype":"value","property":"P4195","hash":"377da8de51159c01202815ee732408fda70fded9","datavalue":{"value":{"entity-type":"item","numeric-id":8591254,"id":"Q8591254"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$903A84A8-87B0-4DF5-89E8-47399FB788DA","rank":"normal"}],"P1417":[{"mainsnak":{"snaktype":"value","property":"P1417","hash":"d7991d384f060ffcfbaecd9bd3727cbfe83f4c2b","datavalue":{"value":"topic/Lincoln-University-Pennsylvania-United-states","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$7B397790-5D99-4CDC-9799-07EDEA48AD5A","rank":"normal"}],"P18":[{"mainsnak":{"snaktype":"value","property":"P18","hash":"f20962a027c4a984155a85edff28abf92bd515a5","datavalue":{"value":"Amos
-        Hall Lincoln U PA.JPG","type":"string"},"datatype":"commonsMedia"},"type":"statement","id":"Q4570781$6E61BE1F-FDCE-45E7-958F-85A8BB143696","rank":"normal","references":[{"hash":"dc85bc3510a8d5dcad6ba09f5cae3a43701aada2","snaks":{"P143":[{"snaktype":"value","property":"P143","hash":"390e3b73e7cd926978cab220968d0e3451cfb814","datavalue":{"value":{"entity-type":"item","numeric-id":199698,"id":"Q199698"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}],"P4656":[{"snaktype":"value","property":"P4656","hash":"5bc9b659b9ce7bb6ed6283dad16f79623ed7c32c","datavalue":{"value":"https://uk.wikipedia.org/w/index.php?title=\u0423\u043d\u0456\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442_\u041b\u0456\u043d\u043a\u043e\u043b\u044c\u043d\u0430&oldid=21600655","type":"string"},"datatype":"url"}]},"snaks-order":["P143","P4656"]}]}],"P6366":[{"mainsnak":{"snaktype":"value","property":"P6366","hash":"8f51016879ee7a56c4de177720afd82d29177292","datavalue":{"value":"33821262","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$489DE985-FEC1-4351-B2B6-D47D2A28A2AE","rank":"normal","references":[{"hash":"dfbedb134ffd3d8aba7ccc1774267c8148aa2a39","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"2995ad06d424d751f036cb92149fada89fe252d9","datavalue":{"value":{"entity-type":"item","numeric-id":60683589,"id":"Q60683589"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}],"P2427":[{"snaktype":"value","property":"P2427","hash":"6907c28f80e18a08afad5dca4414ab0b57f9af96","datavalue":{"value":"grid.417434.1","type":"string"},"datatype":"external-id"}],"P813":[{"snaktype":"value","property":"P813","hash":"74c664545729bbe3e2b6db4bfa3d58ebdeb8e9f0","datavalue":{"value":{"time":"+2019-01-19T00:00:00Z","timezone":0,"before":0,"after":0,"precision":11,"calendarmodel":"http://www.wikidata.org/entity/Q1985727"},"type":"time"},"datatype":"time"}]},"snaks-order":["P248","P2427","P813"]}]}],"P6375":[{"mainsnak":{"snaktype":"value","property":"P6375","hash":"1b17e3b0c69d209ee0168cf1f423d2abbc9724c0","datavalue":{"value":{"text":"1570
-        Baltimore Pike, Lincoln University, PA, 19352-0999","language":"en"},"type":"monolingualtext"},"datatype":"monolingualtext"},"type":"statement","id":"Q4570781$711689B5-19FD-469E-B24A-9539CFFCC03D","rank":"normal","references":[{"hash":"3a898e189b5a0c811a5d4ee8eeab4639efe4b6e1","snaks":{"P248":[{"snaktype":"value","property":"P248","hash":"de023d0250f2da0b78b75da8b0d774c678641334","datavalue":{"value":{"entity-type":"item","numeric-id":6042926,"id":"Q6042926"},"type":"wikibase-entityid"},"datatype":"wikibase-item"}]},"snaks-order":["P248"]}]}],"P6782":[{"mainsnak":{"snaktype":"value","property":"P6782","hash":"eb3574290432313bf17d2b6cc9d470fd4e154cbf","datavalue":{"value":"0521rfb23","type":"string"},"datatype":"external-id"},"type":"statement","id":"Q4570781$7F92D09E-A30B-4351-88B5-3EC4948A493B","rank":"normal"}],"P5008":[{"mainsnak":{"snaktype":"value","property":"P5008","hash":"c6c648b0590b7d5c185e9db5318f24d428d5e9a5","datavalue":{"value":{"entity-type":"item","numeric-id":15304953,"id":"Q15304953"},"type":"wikibase-entityid"},"datatype":"wikibase-item"},"type":"statement","id":"Q4570781$203D2406-5848-46CB-8AAC-AE7E56E08009","rank":"normal"}]}}},"success":1}'
-  recorded_at: Sat, 29 Aug 2020 17:31:59 GMT
-- request:
-    method: get
-    uri: https://api.ror.org/v1/organizations/ror.org/0521rfb23
+    uri: https://api.ror.org/v2/organizations/ror.org/0521rfb23
     body:
       encoding: US-ASCII
       string: ''
@@ -138,31 +19,114 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 11 Jul 2025 08:28:56 GMT
+      - Thu, 25 Sep 2025 09:34:12 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '1341'
+      - '1231'
       Connection:
       - keep-alive
-      Status:
-      - 200 OK
-      Vary:
-      - Cookie, Origin
-      X-Frame-Options:
-      - SAMEORIGIN
+      X-Amzn-Requestid:
+      - 68e20a98-f615-4cb9-9631-1cfdd7f621c2
       Allow:
       - GET, PUT, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '1231'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - Rc7nSHFkDoEELvA=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
       X-Powered-By:
       - Phusion Passenger 6.0.7
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Thu, 25 Sep 2025 09:34:12 GMT
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"https://ror.org/0521rfb23","name":"Lincoln University - Pennsylvania","email_address":null,"ip_addresses":[],"established":1854,"types":["Education","Funder"],"relationships":[],"addresses":[{"lat":39.78539,"lng":-75.97883,"state":null,"state_code":null,"city":"Oxford","geonames_city":{"id":4560185,"city":"Oxford","geonames_admin1":{"name":"Pennsylvania","id":null,"ascii_name":null,"code":"US.PA"},"geonames_admin2":{"name":null,"id":null,"ascii_name":null,"code":null},"license":{"attribution":"Data
-        from geonames.org under a CC-BY 3.0 license","license":"http://creativecommons.org/licenses/by/3.0/"},"nuts_level1":{"name":null,"code":null},"nuts_level2":{"name":null,"code":null},"nuts_level3":{"name":null,"code":null}},"postcode":null,"primary":false,"line":null,"country_geonames_id":null}],"links":["http://www.lincoln.edu/"],"aliases":["Ashmun
-        Institute"],"acronyms":["LU"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)","labels":[{"label":"Universidad
-        Lincoln","iso639":"es"}],"country":{"country_name":"United States","country_code":"US"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
-        0004 0420 5871"]},"FundRef":{"preferred":null,"all":["100007032"]},"Wikidata":{"preferred":null,"all":["Q4570781"]},"GRID":{"preferred":"grid.417434.1","all":"grid.417434.1"}}}'
-  recorded_at: Fri, 11 Jul 2025 08:28:56 GMT
+      string: '{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1854,"external_ids":[{"all":["100007032"],"preferred":null,"type":"fundref"},{"all":["grid.417434.1"],"preferred":"grid.417434.1","type":"grid"},{"all":["0000
+        0004 0420 5871"],"preferred":null,"type":"isni"},{"all":["Q4570781"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/0521rfb23","links":[{"type":"website","value":"http://www.lincoln.edu/"},{"type":"wikipedia","value":"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)"}],"locations":[{"geonames_details":{"continent_code":"NA","continent_name":"North
+        America","country_code":"US","country_name":"United States","country_subdivision_code":"PA","country_subdivision_name":"Pennsylvania","lat":39.78539,"lng":-75.97883,"name":"Oxford"},"geonames_id":4560185}],"names":[{"lang":"en","types":["alias"],"value":"Ashmun
+        Institute"},{"lang":null,"types":["acronym"],"value":"LU"},{"lang":"en","types":["ror_display","label"],"value":"Lincoln
+        University - Pennsylvania"},{"lang":"es","types":["label"],"value":"Universidad
+        Lincoln"}],"relationships":[],"status":"active","types":["education","funder"]}'
+  recorded_at: Thu, 25 Sep 2025 09:34:12 GMT
+- request:
+    method: get
+    uri: https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q4570781&languages=en&props=labels%7Cdescriptions%7Cclaims
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 25 Sep 2025 09:34:13 GMT
+      Server:
+      - mw-api-ext.codfw.main-7c5cbd9d46-2fds9
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Encoding:
+      - gzip
+      Age:
+      - '0'
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      X-Cache:
+      - cp5021 miss, cp5021 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp5021"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - WMF-Last-Access=25-Sep-2025;Path=/;HttpOnly;secure;Expires=Mon, 27 Oct 2025
+        00:00:00 GMT, WMF-Last-Access-Global=25-Sep-2025;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Mon,
+        27 Oct 2025 00:00:00 GMT, GeoIP=IN:MH:Kolh__pur:16.70:74.23:v4; Path=/; secure;
+        Domain=.wikidata.org, NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600,
+        WMF-Uniq=TVO8Thp65vN3pk5lcyUrkAJ5AAAAAFvddZ_J6vNojvQ9RRF-eUf4hLC7PZ2gTN2G;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        25 Sep 2026 00:00:00 GMT
+      X-Client-Ip:
+      - 152.58.8.215
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+  recorded_at: Thu, 25 Sep 2025 09:34:14 GMT
 recorded_with: VCR 6.2.0

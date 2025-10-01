@@ -2,57 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.ror.org/organizations?query=%22xxx%22
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - application/json
-      Content-Length:
-      - '84'
-      Connection:
-      - keep-alive
-      Date:
-      - Sat, 31 Oct 2020 10:21:13 GMT
-      Status:
-      - 200 OK
-      X-Frame-Options:
-      - SAMEORIGIN
-      Allow:
-      - GET, HEAD, OPTIONS
-      X-Powered-By:
-      - Phusion Passenger 6.0.6
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.6
-      Vary:
-      - Cookie,Origin
-      X-Cache:
-      - Hit from cloudfront
-      Via:
-      - 1.1 375e9ad5042f2098d2251daf2e517c52.cloudfront.net (CloudFront)
-      X-Amz-Cf-Pop:
-      - DUS51-C1
-      X-Amz-Cf-Id:
-      - FSv_LoTM6Mr-A7_EqdcuFzicZdSV-0uG0zkuCvqpkW2pGrKLiXnYQA==
-      Age:
-      - '370'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"number_of_results":0,"time_taken":8,"items":[],"meta":{"types":[],"countries":[]}}'
-  recorded_at: Sat, 31 Oct 2020 10:27:23 GMT
-- request:
-    method: get
-    uri: https://api.ror.org/v1/organizations?query=%22xxx%22
+    uri: https://api.ror.org/v2/organizations?query=%22xxx%22
     body:
       encoding: US-ASCII
       string: ''
@@ -69,27 +19,37 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 11 Jul 2025 08:28:40 GMT
+      - Thu, 25 Sep 2025 10:06:43 GMT
       Content-Type:
       - application/json
       Content-Length:
-      - '98'
+      - '114'
       Connection:
       - keep-alive
-      Status:
-      - 200 OK
-      Vary:
-      - Cookie, Origin
-      X-Frame-Options:
-      - SAMEORIGIN
+      X-Amzn-Requestid:
+      - 26c66bc9-1b4f-4655-a981-05c5f10c88ed
       Allow:
       - GET, POST, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '114'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - RdAYJGOujoEEZzA=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
       X-Powered-By:
       - Phusion Passenger 6.0.7
-      Server:
-      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Thu, 25 Sep 2025 10:06:43 GMT
     body:
       encoding: ASCII-8BIT
-      string: '{"number_of_results":0,"time_taken":2,"items":[],"meta":{"types":[],"countries":[],"statuses":[]}}'
-  recorded_at: Fri, 11 Jul 2025 08:28:40 GMT
+      string: '{"number_of_results":0,"time_taken":1,"items":[],"meta":{"types":[],"countries":[],"continents":[],"statuses":[]}}'
+  recorded_at: Thu, 25 Sep 2025 10:06:43 GMT
 recorded_with: VCR 6.2.0
