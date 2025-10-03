@@ -355,10 +355,27 @@ class Doi < ApplicationRecord
         dateInformation: { type: :keyword },
       }
       indexes :geo_locations, type: :object, properties: {
-        geoLocationPoint: { type: :object },
-        geoLocationBox: { type: :object },
         geoLocationPlace: { type: :keyword },
-        geoLocationPolygon:  { type: :object },
+        geoLocationPoint: { type: :object, properties: {
+          pointLatitude: { type: :float },
+          pointLongitude: { type: :float },
+        }},
+        geoLocationBox: { type: :object, properties: {
+          westBoundLongitude: { type: :float  },
+          eastBoundLongitude: { type: :float  },
+          southBoundLatitude: { type: :float  },
+          northBoundLatitude: { type: :float  },
+        }},
+        geoLocationPolygon: { type: :object, properties: {
+          polygonPoint: { type: :object, properties: {
+            pointLatitude: { type: :float },
+            pointLongitude: { type: :float },
+          }},
+          inPolygonPoint: { type: :object, properties: {
+            pointLatitude: { type: :float },
+            pointLongitude: { type: :float },
+          }},
+        }},
       }
       indexes :rights_list, type: :object, properties: {
         rights: { type: :keyword },
@@ -635,7 +652,6 @@ class Doi < ApplicationRecord
       "funding_references" => Array.wrap(funding_references),
       "publication_year" => publication_year,
       "dates" => dates,
-      "geo_locations" => Array.wrap(geo_locations),
       "rights_list" => Array.wrap(rights_list),
       "container" => container,
       "content_url" => content_url,
@@ -673,6 +689,7 @@ class Doi < ApplicationRecord
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
+      "geo_locations" => Array.wrap(geo_locations),
     }
   end
 
