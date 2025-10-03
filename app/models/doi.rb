@@ -359,23 +359,23 @@ class Doi < ApplicationRecord
         geoLocationPoint: { type: :object, properties: {
           pointLatitude: { type: :float },
           pointLongitude: { type: :float },
-        }},
+        } },
         geoLocationBox: { type: :object, properties: {
           westBoundLongitude: { type: :float  },
           eastBoundLongitude: { type: :float  },
           southBoundLatitude: { type: :float  },
           northBoundLatitude: { type: :float  },
-        }},
+        } },
         geoLocationPolygon: { type: :object, properties: {
           polygonPoint: { type: :object, properties: {
             pointLatitude: { type: :float },
             pointLongitude: { type: :float },
-          }},
+          } },
           inPolygonPoint: { type: :object, properties: {
             pointLatitude: { type: :float },
             pointLongitude: { type: :float },
-          }},
-        }},
+          } },
+        } },
       }
       indexes :rights_list, type: :object, properties: {
         rights: { type: :keyword },
