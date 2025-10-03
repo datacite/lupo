@@ -2504,9 +2504,9 @@ class Doi < ApplicationRecord
           if key == "geoLocationPolygon"
             gl[key] = update_geoLocationPolygon(gl[key])
           elsif key == "geoLocationPoint"
-            gl[key] = update_geoPoints(gl[key])
+            gl[key] = update_geoCoordinates(gl[key])
           elsif key == "geoLocationBox"
-            gl[key] = update_geoPoints(gl[key])
+            gl[key] = update_geoCoordinates(gl[key])
           elsif key == "geoLocationPlace"
             gl[key] = gl[key]
           else
@@ -2719,7 +2719,7 @@ class Doi < ApplicationRecord
       !!Float(str.gsub(/\.\s*$/, ""), exception: false)
     end
 
-    def update_geoPoint(point)
+    def update_geoCoordinate(point)
       if point.is_a?(String) && is_valid_decimal?(point)
         convert_number_string(point)
       else
@@ -2727,10 +2727,10 @@ class Doi < ApplicationRecord
       end
     end
 
-    def update_geoPoints(value)
+    def update_geoCoordinates(value)
       if value.is_a?(Hash)
         value.transform_values do |value1|
-          update_geoPoint(value1)
+          update_geoCoordinate(value1)
         end
       else
         value
@@ -2742,9 +2742,9 @@ class Doi < ApplicationRecord
         if glpp.is_a?(Hash)
           glpp.each_key do | key |
             if key == "polygonPoint"
-              glpp[key] = update_geoPoints(glpp[key])
+              glpp[key] = update_geoCoordinates(glpp[key])
             elsif key == "inPolygonPoint"
-              glpp[key] = update_geoPoints(glpp[key])
+              glpp[key] = update_geoCoordinates(glpp[key])
             else
               glpp[key] = glpp[key]
             end
