@@ -12,7 +12,7 @@ gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
-# gem "bolognese", "~> 2.3.6"
+# gem "bolognese", "~> 2.3.8"
 ## gem "bolognese", path: "./vendor/gems/bolognese"
 gem "bolognese", git: "https://github.com/datacite/bolognese.git", branch: "pb88-geolocation"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false

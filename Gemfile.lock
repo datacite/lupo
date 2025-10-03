@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/datacite/bolognese.git
-  revision: 6bc182fb24c7680d73fa2810370a345cb044584e
+  revision: eb73b6022575d06bfea44fa238e0b4bdcb1226e0
   branch: pb88-geolocation
   specs:
-    bolognese (2.3.7)
+    bolognese (2.3.8)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -553,7 +553,7 @@ GEM
       sysrandom
     qonfig (0.28.0)
     racc (1.8.1)
-    rack (2.2.14)
+    rack (2.2.18)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-cors (1.1.1)
