@@ -55,7 +55,7 @@ module Indexable
     after_commit on: [:destroy] do
       deleted_from_active = false
       deleted_from_inactive = false
-      
+
       # Delete from active index
       begin
         __elasticsearch__.delete_document
@@ -63,7 +63,7 @@ module Indexable
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
         Rails.logger.warn "Document not found in active index: #{e.message}"
       end
-      
+
       # Delete from inactive index if sync is enabled
       if instance_of?(DataciteDoi) && index_sync_enabled?
         begin
@@ -73,7 +73,7 @@ module Indexable
           Rails.logger.warn "Document not found in inactive index: #{e.message}"
         end
       end
-      
+
       # Only log success if at least one deletion succeeded
       if deleted_from_active || deleted_from_inactive
         if self.class.name == "Event"
@@ -82,7 +82,7 @@ module Indexable
           Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
         end
       end
-      
+
       # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
 
       # reindex prefix
