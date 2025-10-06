@@ -2496,7 +2496,7 @@ class Doi < ApplicationRecord
   end
 
   def self.index_sync_enabled?
-    AppSettings.index_sync_enabled?
+    SharedContainerSettings.index_sync_enabled?
   end
 
   def self.repair_landing_page(id: nil)

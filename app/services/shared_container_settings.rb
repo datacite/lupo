@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AppSettings
+class SharedContainerSettings
   # Use a constant to avoid magic strings scattered in your code
   INDEX_SYNC_KEY = "INDEX_SYNC_ENABLED"
 

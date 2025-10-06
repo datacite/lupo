@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe AppSettings, type: :service do
+RSpec.describe SharedContainerSettings, type: :service do
   # Define a constant for the cache key to avoid repeating the "magic string"
-  let(:cache_key) { AppSettings::INDEX_SYNC_KEY }
+  let(:cache_key) { SharedContainerSettings::INDEX_SYNC_KEY }
 
   # IMPORTANT: Before each individual test (`it` block), clear the cache.
   # This ensures that tests are isolated and don't affect each other.
