@@ -17,6 +17,10 @@ module Indexable
         IndexJob.perform_later(self)
       elsif instance_of?(DataciteDoi)
         IndexJobDoiRegistration.perform_later(self)
+
+        if index_sync_enabled?
+          DataciteDoiImportInBulkJob.perform_later([id], { index: inactive_index })
+        end
       else
         __elasticsearch__.index_document
         # This is due to the order of indexing, we want to always ensure
