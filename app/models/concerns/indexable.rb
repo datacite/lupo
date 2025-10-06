@@ -12,7 +12,7 @@ module Indexable
         other_doi = OtherDoi.find_by(id: self.id)
         if other_doi
           IndexBackgroundJob.perform_later(other_doi)
-          
+
           if index_sync_enabled?
             OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: inactive_index })
           end
@@ -61,7 +61,7 @@ module Indexable
     after_commit on: [:destroy] do
       deleted_from_active = false
       deleted_from_inactive = false
-      
+
       # Delete from active index
       begin
         __elasticsearch__.delete_document
@@ -69,7 +69,7 @@ module Indexable
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
         Rails.logger.warn "Document not found in active index: #{e.message}"
       end
-      
+
       # Delete from inactive index if sync is enabled
       if (instance_of?(DataciteDoi) || instance_of?(OtherDoi)) && index_sync_enabled?
         begin
