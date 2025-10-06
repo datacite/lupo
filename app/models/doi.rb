@@ -2492,7 +2492,7 @@ class Doi < ApplicationRecord
   end
 
   def index_sync_enabled?
-    self.__class__.index_sync_enabled?
+    self.class.index_sync_enabled?
   end
 
   def self.index_sync_enabled?
