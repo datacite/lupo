@@ -10,13 +10,23 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
         other_doi = OtherDoi.find_by(id: self.id)
-        IndexBackgroundJob.perform_later(other_doi) if other_doi
+        if other_doi
+          IndexBackgroundJob.perform_later(other_doi)
+
+          if index_sync_enabled?
+            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: inactive_index })
+          end
+        end
       elsif ["Event", "Activity"].include?(self.class.name)
         IndexBackgroundJob.perform_later(self)
       elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
         IndexJob.perform_later(self)
       elsif instance_of?(DataciteDoi)
         IndexJobDoiRegistration.perform_later(self)
+
+        if index_sync_enabled?
+          DataciteDoiImportInBulkJob.perform_later([id], { index: inactive_index })
+        end
       else
         __elasticsearch__.index_document
         # This is due to the order of indexing, we want to always ensure
@@ -49,34 +59,40 @@ module Indexable
     end
 
     after_commit on: [:destroy] do
+      deleted_from_active = false
+      deleted_from_inactive = false
+
+      # Delete from active index
       begin
         __elasticsearch__.delete_document
-        if self.class.name == "Event"
-          Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
-        else
-          Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
-        end
-        # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
-
-        # reindex prefix
-        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-          IndexJob.perform_later(self.prefix)
-        end
+        deleted_from_active = true
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
-        Rails.logger.error e.message
+        Rails.logger.warn "Document not found in active index: #{e.message}"
       end
-      if instance_of?(Event)
-        Rails.logger.info "#{self.class.name} #{
-                              uuid
-                            } deleted from Elasticsearch index."
-      else
-        Rails.logger.info "#{self.class.name} #{
-                              uid
-                            } deleted from Elasticsearch index."
+
+      # Delete from inactive index if sync is enabled
+      if (instance_of?(DataciteDoi) || instance_of?(OtherDoi)) && index_sync_enabled?
+        begin
+          __elasticsearch__.delete_document(index: inactive_index)
+          deleted_from_inactive = true
+        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+          Rails.logger.warn "Document not found in inactive index: #{e.message}"
+        end
+      end      # Only log success if at least one deletion succeeded
+      if deleted_from_active || deleted_from_inactive
+        if self.class.name == "Event"
+          Rails.logger.info "#{self.class.name} #{uuid} deleted from Elasticsearch index."
+        else
+          Rails.logger.info "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        end
       end
+
       # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
-    rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
-      Rails.logger.error e.message
+
+      # reindex prefix
+      if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        IndexJob.perform_later(self.prefix)
+      end
     end
 
     def send_delete_message(data)
