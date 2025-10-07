@@ -56,3 +56,4 @@ docker-compose.override.yml
 .vscode
 .solargraph.yml
 .devspace
+.nvimrc
