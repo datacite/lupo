@@ -6,10 +6,14 @@ RSpec.describe SharedContainerSettings, type: :service do
   # Define a constant for the cache key to avoid repeating the "magic string"
   let(:cache_key) { SharedContainerSettings::INDEX_SYNC_KEY }
 
-  # IMPORTANT: Before each individual test (`it` block), clear the cache.
-  # This ensures that tests are isolated and don't affect each other.
+  # Clear only the specific cache key before and after each test
+  # This ensures test isolation without affecting other cached data
   before do
-    Rails.cache.clear
+    Rails.cache.delete(cache_key)
+  end
+
+  after do
+    Rails.cache.delete(cache_key)
   end
 
   describe ".index_sync_enabled?" do
