@@ -424,6 +424,7 @@ paths:
               type: string
               enum:
                 - audiovisual
+                - award
                 - book
                 - book-chapter
                 - collection
@@ -444,6 +445,7 @@ paths:
                 - peer-review
                 - physical-object
                 - preprint
+                - project
                 - report
                 - service
                 - software
