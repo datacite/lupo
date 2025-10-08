@@ -14,7 +14,7 @@ module Indexable
           IndexBackgroundJob.perform_later(other_doi)
 
           if index_sync_enabled?
-            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: inactive_index })
+            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
           end
         end
       elsif ["Event", "Activity"].include?(self.class.name)
@@ -25,7 +25,7 @@ module Indexable
         IndexJobDoiRegistration.perform_later(self)
 
         if index_sync_enabled?
-          DataciteDoiImportInBulkJob.perform_later([id], { index: inactive_index })
+          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
         end
       else
         __elasticsearch__.index_document
@@ -73,7 +73,7 @@ module Indexable
       # Delete from inactive index if sync is enabled
       if (instance_of?(DataciteDoi) || instance_of?(OtherDoi)) && index_sync_enabled?
         begin
-          __elasticsearch__.delete_document(index: inactive_index)
+          __elasticsearch__.delete_document(index: self.class.inactive_index)
           deleted_from_inactive = true
         rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
           Rails.logger.warn "Document not found in inactive index: #{e.message}"
