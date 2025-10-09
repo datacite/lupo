@@ -37,13 +37,13 @@ GraphQL::Errors.configure(LupoSchema) do
   end
 
   rescue_from CSL::ParseError do |exception|
-    Raven.capture_exception(exception)
+    Sentry.capture_exception(exception)
     message = exception.message
     GraphQL::ExecutionError.new(message)
   end
 
   rescue_from StandardError do |exception|
-    Raven.capture_exception(exception)
+    Sentry.capture_exception(exception)
     message =
       if Rails.env.production?
         "We are sorry, but an error has occured. This problem has been logged and support has been notified. Please try again later. If the error persists please contact support."

@@ -147,8 +147,6 @@ class ApplicationController < ActionController::API
       ].include?(exception.class.to_s)
         message = exception.message
       else
-        Raven.capture_exception(exception)
-
         message = exception.message
       end
 
@@ -179,12 +177,12 @@ class ApplicationController < ActionController::API
     end
 
     def set_raven_context
-      if current_user.try(:uid)
-        Raven.user_context(
-          email: current_user.email, id: current_user.uid, ip_address: request.ip,
-        )
-      else
-        Raven.user_context(ip_address: request.ip)
-      end
+      Sentry.set_user(
+        if current_user.try(:uid)
+          { email: current_user.email, id: current_user.uid, ip_address: request.ip }
+        else
+          { ip_address: request.ip }
+        end
+      )
     end
 end
