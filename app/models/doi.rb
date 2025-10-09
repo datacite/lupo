@@ -1356,7 +1356,7 @@ class Doi < ApplicationRecord
       message = "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
     else
       message = "[MySQL] Error importing metadata: " + e.message
-      Raven.capture_exception(e)
+      Sentry.capture_exception(e)
     end
 
     Rails.logger.error message
