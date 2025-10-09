@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/datacite/bolognese.git
-  revision: 70433c821af3c16c7f1b694201153181249e6537
+  revision: 875adfac2414f2555b5fb4a82f30abf840f2e56d
   branch: pb88-geolocation
   specs:
     bolognese (2.3.8)
