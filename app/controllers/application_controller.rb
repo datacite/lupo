@@ -147,6 +147,8 @@ class ApplicationController < ActionController::API
       ].include?(exception.class.to_s)
         message = exception.message
       else
+        # Capture unexpected exceptions in Sentry
+        Sentry.capture_exception(exception)
         message = exception.message
       end
 
