@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby31:3.1.0
+FROM phusion/passenger-ruby31:3.1.3
 
 # Set correct environment variables.
 ENV HOME /home/app
@@ -13,7 +13,7 @@ RUN usermod -a -G docker_env app
 CMD ["/sbin/my_init"]
 
 #  Use Ruby 3.1.6
-RUN bash -lc 'rvm --default use ruby-3.1.6'
+RUN bash -lc 'rvm --default use ruby-3.1.7'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
