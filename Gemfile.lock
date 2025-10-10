@@ -544,7 +544,7 @@ GEM
       sysrandom
     qonfig (0.28.0)
     racc (1.8.1)
-    rack (2.2.18)
+    rack (2.2.19)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-cors (1.1.1)
