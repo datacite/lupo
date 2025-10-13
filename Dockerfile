@@ -1,9 +1,10 @@
-FROM phusion/passenger-ruby31:3.0.7
+FROM phusion/passenger-ruby31:3.1.3
 
 # Set correct environment variables.
 ENV HOME /home/app
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
+ENV NGINX_ENVSUBST_OUTPUT_DIR /etc/nginx/sites-enabled
 
 # Allow app user to read /etc/container_environment
 RUN usermod -a -G docker_env app
@@ -12,18 +13,19 @@ RUN usermod -a -G docker_env app
 CMD ["/sbin/my_init"]
 
 #  Use Ruby 3.1.6
-RUN bash -lc 'rvm --default use ruby-3.1.6'
+RUN bash -lc 'rvm --default use ruby-3.1.7'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
-    apt-get install ntp wget nano tmux tzdata percona-toolkit imagemagick shared-mime-info -y && \
+    apt-get install ntp wget nano tmux tzdata percona-toolkit imagemagick shared-mime-info gettext -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Enable Passenger and Nginx and remove the default site
 # Preserve env variables for nginx
 RUN rm -f /etc/service/nginx/down && \
-    rm /etc/nginx/sites-enabled/default
-COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
+    rm /etc/nginx/sites-enabled/default && \
+    mkdir -p /etc/nginx/templates
+COPY vendor/docker/webapp.conf.template /etc/nginx/templates/webapp.conf.template
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
 # Use Amazon NTP servers
@@ -63,6 +65,9 @@ COPY vendor/docker/10_ssh.sh /etc/my_init.d/10_ssh.sh
 
 # COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
+
+# Add the script to perform nginx template substitution
+COPY vendor/docker/70_nginx_templates.sh /etc/my_init.d/70_nginx_templates.sh
 
 # Expose web
 EXPOSE 80

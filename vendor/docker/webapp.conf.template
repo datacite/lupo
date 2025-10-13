@@ -1,0 +1,61 @@
+passenger_max_pool_size ${PASSENGER_MAX_POOL_SIZE};
+
+server {
+    listen 80 default_server;
+    server_name _;
+    root /home/app/webapp/public;
+
+    passenger_enabled on;
+    passenger_user app;
+    passenger_min_instances ${PASSENGER_MIN_INSTANCES};
+    passenger_ruby /usr/bin/ruby;
+    passenger_preload_bundler on;
+
+    merge_slashes off;
+    client_max_body_size 10M;
+
+    error_log stderr;
+
+    location / {
+        # enable CORS
+        set $cors 'true';
+        # if ($http_origin ~* 'https?://(localhost:3000|localhost:4200|doi.stage.datacite.org|commons.stage.datacite.org|doi.datacite.org|commons.datacite.org)') {
+        #     set $cors 'true';
+        # }
+
+        # always is required to add headers even if response's status is 4xx or 5xx
+        if ($cors = 'true') {
+            add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+            add_header 'Access-Control-Allow-Credentials' 'true' always;
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+            add_header 'Access-Control-Allow-Headers' 'Accept,Access-Control-Allow-Origin,Access-Control-Expose-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Headers,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
+            # required to be able to read Authorization header in frontend
+            add_header 'Access-Control-Expose-Headers' 'Authorization' always;
+        }
+
+        # 2 if are required, nginx treats each if block as a different context
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' "$http_origin";
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'Accept,Access-Control-Allow-Origin,Access-Control-Expose-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Headers,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With';
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
+
+    location = / {
+        return 301 https://support.datacite.org/docs/api;
+    }
+
+    location /client-api/graphql {
+        gzip            on;
+        gzip_min_length 1000;
+        gzip_proxied    expired no-cache no-store private auth;
+        gzip_types      text/plain application/json;
+    }
+}
+
+passenger_pre_start http://localhost/heartbeat;
