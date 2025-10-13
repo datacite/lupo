@@ -57,3 +57,5 @@ server {
         gzip_types      text/plain application/json;
     }
 }
+
+passenger_pre_start http://localhost/heartbeat;
