@@ -48,7 +48,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       http://datacite.org/schema/kernel-3
     ]
 
-    if invalid_schemas.include?(record.schema_version)
+    if invalid_schemas.include?(record.schema_version) && !record.skip_schema_version_validation
       record.errors.add(:xml, "DOI #{record.uid}: Schema #{record.schema_version} is no longer supported")
       return false
     end
