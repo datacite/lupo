@@ -153,6 +153,7 @@ class Doi < ApplicationRecord
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
   before_validation :update_types
+  before_validation :update_geo_locations
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -354,9 +355,27 @@ class Doi < ApplicationRecord
         dateInformation: { type: :keyword },
       }
       indexes :geo_locations, type: :object, properties: {
-        geoLocationPoint: { type: :object },
-        geoLocationBox: { type: :object },
         geoLocationPlace: { type: :keyword },
+        geoLocationPoint: { type: :object, properties: {
+          pointLatitude: { type: :float },
+          pointLongitude: { type: :float },
+        } },
+        geoLocationBox: { type: :object, properties: {
+          westBoundLongitude: { type: :float  },
+          eastBoundLongitude: { type: :float  },
+          southBoundLatitude: { type: :float  },
+          northBoundLatitude: { type: :float  },
+        } },
+        geoLocationPolygon: { type: :object, properties: {
+          polygonPoint: { type: :object, properties: {
+            pointLatitude: { type: :float },
+            pointLongitude: { type: :float },
+          } },
+          inPolygonPoint: { type: :object, properties: {
+            pointLatitude: { type: :float },
+            pointLongitude: { type: :float },
+          } },
+        } },
       }
       indexes :rights_list, type: :object, properties: {
         rights: { type: :keyword },
@@ -633,7 +652,6 @@ class Doi < ApplicationRecord
       "funding_references" => Array.wrap(funding_references),
       "publication_year" => publication_year,
       "dates" => dates,
-      "geo_locations" => Array.wrap(geo_locations),
       "rights_list" => Array.wrap(rights_list),
       "container" => container,
       "content_url" => content_url,
@@ -671,6 +689,7 @@ class Doi < ApplicationRecord
       "version_of_ids" => version_of_ids,
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
+      "geo_locations" => Array.wrap(geo_locations),
     }
   end
 
@@ -2476,6 +2495,30 @@ class Doi < ApplicationRecord
     ).compact
   end
 
+  def update_geo_locations
+    return nil if geo_locations.nil?
+
+    self.geo_locations = Array.wrap(geo_locations).each do | gl |
+      if gl.is_a?(Hash)
+        gl.each_key do | key |
+          if key == "geoLocationPolygon"
+            gl[key] = update_geoLocationPolygon(gl[key])
+          elsif key == "geoLocationPoint"
+            gl[key] = update_geoCoordinates(gl[key])
+          elsif key == "geoLocationBox"
+            gl[key] = update_geoCoordinates(gl[key])
+          elsif key == "geoLocationPlace"
+            gl[key] = gl[key]
+          else
+            gl[key] = gl[key]
+          end
+        end
+      else
+        gl
+      end
+    end.compact
+  end
+
   def update_publisher
     case publisher_before_type_cast
     when Hash
@@ -2664,9 +2707,59 @@ class Doi < ApplicationRecord
 
     def update_publisher_from_string
       self.publisher_obj = { name: publisher_before_type_cast }
-     end
+    end
 
     def reset_publishers
       self.publisher_obj = nil
+    end
+
+    # GeoLocation helpers.
+
+    def convert_number_string(str)
+      if str.include?(".")
+        str.to_f
+      else
+        str.to_i
+      end
+    end
+
+    def is_valid_decimal?(str)
+      !!Float(str.gsub(/\.\s*$/, ""), exception: false)
+    end
+
+    def update_geoCoordinate(point)
+      if point.is_a?(String) && is_valid_decimal?(point)
+        convert_number_string(point)
+      else
+        point
+      end
+    end
+
+    def update_geoCoordinates(value)
+      if value.is_a?(Hash)
+        value.transform_values do |value1|
+          update_geoCoordinate(value1)
+        end
+      else
+        value
+      end
+    end
+
+    def update_geoLocationPolygon(glp)
+      Array.wrap(glp).each do | glpp |
+        if glpp.is_a?(Hash)
+          glpp.each_key do | key |
+            if key == "polygonPoint"
+              glpp[key] = update_geoCoordinates(glpp[key])
+            elsif key == "inPolygonPoint"
+              glpp[key] = update_geoCoordinates(glpp[key])
+            else
+              glpp[key] = glpp[key]
+            end
+          end
+        else
+          glpp
+        end
+      end.compact
     end
 end

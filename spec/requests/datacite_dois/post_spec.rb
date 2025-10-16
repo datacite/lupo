@@ -253,8 +253,8 @@ describe DataciteDoisController, type: :request, vcr: true do
               "geoLocations" => [
                 {
                   "geoLocationPoint" => {
-                    "pointLatitude" => "49.0850736",
-                    "pointLongitude" => "-123.3300992",
+                    "pointLatitude" => 49.0850736,
+                    "pointLongitude" => -123.3300992,
                   },
                 },
               ],
@@ -297,7 +297,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
         expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
-        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => "49.0850736", "pointLongitude" => "-123.3300992" } }])
+        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } }])
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
@@ -2109,48 +2109,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         )
       end
     end
-
-    # TODO needs updating
-    # context 'update geoLocationPoint' do
-    #   let(:geo_locations) { [
-    #     {
-    #       "geoLocationPoint" => {
-    #         "pointLatitude" => "49.0850736",
-    #         "pointLongitude" => "-123.3300992"
-    #       }
-    #     }] }
-    #   let(:update_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "geoLocations" => geo_locations
-    #         }
-    #       }
-    #     }
-    #   end
-
-    #   it 'updates the Doi' do
-    #     patch "/dois/#{doi.doi}", update_attributes, headers
-
-    #     expect(last_response.status).to eq(200)
-    #     expect(json.dig('data', 'attributes', 'geoLocations')).to eq(geo_locations)
-
-    #     doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
-    #     expect(doc.at_css("geoLocations", "geoLocation").to_s + "\n").to eq(
-    #       <<~HEREDOC
-    #         <geoLocations>
-    #           <geoLocation>
-    #             <geoLocationPoint>
-    #               <pointLatitude>49.0850736</pointLatitude>
-    #               <pointLongitude>-123.3300992</pointLongitude>
-    #             </geoLocationPoint>
-    #           </geoLocation>
-    #         </geoLocations>
-    #       HEREDOC
-    #     )
-    #   end
-    # end
 
     context "remove series_information" do
       let(:xml) { File.read(file_fixture("datacite_series_information.xml")) }

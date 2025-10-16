@@ -2,7 +2,6 @@
 
 require "uri"
 require "base64"
-require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
