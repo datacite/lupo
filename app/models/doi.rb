@@ -200,7 +200,7 @@ class Doi < ApplicationRecord
         givenName: { type: :text },
         familyName: { type: :text },
         affiliation: { type: :object, properties: {
-          name: { type: :keyword },
+          name: { type: :text },
           affiliationIdentifier: { type: :keyword },
           affiliationIdentifierScheme: { type: :keyword },
           schemeUri: { type: :keyword },
@@ -217,7 +217,7 @@ class Doi < ApplicationRecord
         givenName: { type: :text },
         familyName: { type: :text },
         affiliation: { type: :object, properties: {
-          name: { type: :keyword },
+          name: { type: :text },
           affiliationIdentifier: { type: :keyword },
           affiliationIdentifierScheme: { type: :keyword },
           schemeUri: { type: :keyword },
