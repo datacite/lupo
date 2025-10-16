@@ -191,31 +191,7 @@ paths:
         - in: query
           name: software
           schema:
-            type: string
-            enum:
-              - cayuse
-              - ckan
-              - dataverse
-              - dlibra
-              - dspace
-              - eprints
-              - ex libris esploro
-              - fedora
-              - invenio
-              - islandora
-              - mycore
-              - nesstar
-              - omega-psir
-              - omeka s
-              - open journal systems (ojs)
-              - opus
-              - pubman
-              - pure
-              - redivis
-              - samvera
-              - ubiquity
-              - other
-              - unknown
+            $ref: '#/components/schemas/software'
         - in: query
           name: client-type
           schema:
@@ -223,14 +199,7 @@ paths:
         - in: query
           name: repository-type
           schema:
-            type: string
-            enum:
-              - disciplinary
-              - governmental
-              - institutional
-              - multidisciplinary
-              - project-related
-              - other
+            $ref: '#/components/schemas/repositoryType'
         - in: query
           name: certificate
           schema:
@@ -347,6 +316,267 @@ paths:
                    data:
                     type: object
                     $ref: '#/components/schemas/Client'
+  /repositories:
+    post:
+      tags:
+        - repositories
+      summary: Add a new repository.
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - clients
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                        - symbol
+                        - systemEmail
+                        - clientType
+                      properties:
+                        name:
+                          type: string
+                        alternateName:
+                          type: string
+                        symbol:
+                          description: Can only contain capital letters, numbers, and at most one hyphen. Must begin with provider ID followed by a period ("."). Minimum length is 5 characters and maximum length is 18 characters.
+                          pattern: /\A([A-Z]+\.[A-Z0-9]+(-[A-Z0-9]+)?)\Z/
+                          example: ABCD.EFG-HIJ
+                          type: string
+                        domains:
+                          type: string
+                        systemEmail:
+                          type: string
+                          format: email
+                        description:
+                          type: string
+                        language:
+                          type: array
+                          items:
+                            type: string
+                            example: en
+                        certificate:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/certificate'
+                        serviceContact:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              format: email
+                            givenName:
+                              type: string
+                            familyName:
+                              type: string
+                        issn:
+                          type: object
+                          properties:
+                            issnl:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                            electronic:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                            print:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                        url:
+                          type: string
+                          format: url
+                        clientType:
+                          type: string
+                          $ref: '#/components/schemas/client-type'
+                        repositoryType:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/repositoryType'
+                        software:
+                          type: string
+                          $ref: '#/components/schemas/software'
+                        isActive:
+                          description: Set to true if this account can register and update DOIs.
+                          type: boolean
+                        passwordInput:
+                          description: Sets the password of the repository account.
+                          type: string
+                        subjects:
+                          type: array
+                          description: Only permitted when repositoryType includes 'disciplinary'.
+                          items:
+                            $ref: "#/components/schemas/subject"
+                    relationships:
+                      type: object
+                      required:
+                        - provider
+                      properties:
+                        provider:
+                          type: object
+                          properties:
+                            data:
+                              type: object
+                              required:
+                                - id
+                                - type
+                              properties:
+                                id:
+                                  type: string
+                                  description: The symbol of the provider (DataCite Member or Consortium Organization) the repository belongs to.
+                                  example: ABCD
+                                type:
+                                  type: string
+                                  enum:
+                                    - providers
+      responses:
+        '201':
+          description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/RepositoryResponse'
+  '/repositories/{id}':
+    put:
+      parameters:
+      - name: id
+        in: path
+        description: DataCite Repository ID.
+        required: true
+        schema:
+          type: string
+      summary: Update a repository.
+      security:
+        - BasicAuth: []
+      tags:
+        - repositories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - clients
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                        - symbol
+                        - systemEmail
+                        - clientType
+                      properties:
+                        name:
+                          type: string
+                        alternateName:
+                          type: string
+                        domains:
+                          type: string
+                        systemEmail:
+                          type: string
+                          format: email
+                        description:
+                          type: string
+                        language:
+                          type: array
+                          items:
+                            type: string
+                            example: en
+                        certificate:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/certificate'
+                        serviceContact:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              format: email
+                            givenName:
+                              type: string
+                            familyName:
+                              type: string
+                        issn:
+                          type: object
+                          description: Will only be saved if the repository has clientType "periodical".
+                          properties:
+                            issnl:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                            electronic:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                            print:
+                              type: string
+                              example: 2049-3630
+                              pattern: \A\d{4}(-)?\d{3}[0-9X]+\z
+                        url:
+                          type: string
+                          format: url
+                        clientType:
+                          type: string
+                          $ref: '#/components/schemas/client-type'
+                        repositoryType:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/repositoryType'
+                        software:
+                          type: string
+                          $ref: '#/components/schemas/software'
+                        isActive:
+                          description: Set to true if this account can register and update DOIs.
+                          type: boolean
+                        passwordInput:
+                          description: Sets the password of the repository account.
+                          type: string
+                        subjects:
+                          type: array
+                          description: Only permitted when repositoryType includes 'disciplinary'.
+                          items:
+                            $ref: "#/components/schemas/subject"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/RepositoryResponse'
+    delete:
+      parameters:
+      - name: id
+        in: path
+        description: DataCite Repository ID.
+        required: true
+        schema:
+          type: string
+      tags:
+        - repositories
+      summary: Delete a repository. Only possible if no DOIs are in the repository.
+      security:
+        - BasicAuth: []
+      responses:
+        '204':
+          description: No Content
   /dois:
     get:
       tags:
@@ -1651,6 +1881,89 @@ components:
       required:
         - id
         - attributes - name - symbol - contactEmail
+    RepositoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [repositories]
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            symbol:
+              type: string
+            re3data:
+              type: string
+            opendoar:
+              type: string
+            year:
+              type: number
+            systemEmail:
+              description: Returned only when authenticated with associated credentials.
+              type: string
+            serviceContact:
+              description: Returned only when authenticated with associated credentials.
+              type: object
+              properties:
+                email: 
+                  type: string
+                givenName:
+                  type: string
+                familyName:
+                  type: string
+            alternateName:
+              type: string
+            description:
+              type: string
+            language:
+              type: array
+              items:
+                type: string
+            clientType:
+              $ref: '#/components/schemas/client-type'
+            repositoryType:
+              type: array
+              items:
+                $ref: '#/components/schemas/repositoryType'
+            certificates:
+              type: array
+              items:
+                $ref: '#/components/schemas/certificate'
+            domains:
+              type: string
+            issn:
+              type: object
+              properties:
+                issnl:
+                  type: string
+                print:
+                  type: string
+                electronic:
+                  type: string
+            url:
+              type: string
+            software:
+              type: string
+              $ref: '#/components/schemas/software'
+            subjects:
+              type: array
+              items:
+                $ref: "#/components/schemas/subject"
+            created:
+              type: string
+              readOnly: true
+            updated:
+              type: string
+              readOnly: true
+            isActive:
+              type: boolean
+            hasPassword:
+              description: Returned only when authenticated with associated credentials.
+              type: boolean
     ClientPrefix:
       type: object
       properties:
@@ -2080,20 +2393,7 @@ components:
           description: '[DataCite Metadata Schema: Subject](https://datacite-metadata-schema.readthedocs.io/en/4/properties/subject/)'
           type: array
           items:
-            type: object
-            properties:
-              subject:
-                type: string
-              subjectScheme:
-                type: string
-              schemeUri:
-                type: string
-              valueUri:
-                type: string
-              lang:
-                type: string
-              classificationCode:
-                type: string
+            $ref: "#/components/schemas/subject"
         contributors:
           description: '[DataCite Metadata Schema: Contributor](https://datacite-metadata-schema.readthedocs.io/en/4/properties/contributor/)'
           type: array
@@ -2993,7 +3293,58 @@ components:
           type: string
         next:
           type: string
+    # reusable objects
+    subject:
+      type: object
+      properties:
+        subject:
+          type: string
+        subjectScheme:
+          type: string
+        schemeUri:
+          type: string
+        valueUri:
+          type: string
+        lang:
+          type: string
+        classificationCode:
+          type: string
     # reusable enums
+    repositoryType:
+      type: string
+      enum:
+        - disciplinary
+        - governmental
+        - institutional
+        - multidisciplinary
+        - project-related
+        - other
+    software:
+      type: string
+      enum:
+        - cayuse
+        - ckan
+        - dataverse
+        - dlibra
+        - dspace
+        - eprints
+        - ex libris esploro
+        - fedora
+        - invenio
+        - islandora
+        - mycore
+        - nesstar
+        - omega-psir
+        - omeka s
+        - open journal systems (ojs)
+        - opus
+        - pubman
+        - pure
+        - redivis
+        - samvera
+        - ubiquity
+        - other
+        - unknown
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
