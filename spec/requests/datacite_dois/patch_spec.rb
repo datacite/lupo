@@ -417,7 +417,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string.", "uid" => "10.14454/4k3m-nyvg" }])
+        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Root is not of type: array", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
