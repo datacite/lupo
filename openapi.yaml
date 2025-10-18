@@ -356,6 +356,7 @@ paths:
                           type: string
                         domains:
                           type: string
+                          example: '*'
                         systemEmail:
                           type: string
                           format: email
@@ -382,6 +383,7 @@ paths:
                               type: string
                         issn:
                           type: object
+                          description: Will only be saved if the repository has clientType "periodical".
                           properties:
                             issnl:
                               type: string
@@ -490,6 +492,7 @@ paths:
                           type: string
                         domains:
                           type: string
+                          example: '*'
                         systemEmail:
                           type: string
                           format: email
@@ -1929,7 +1932,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/repositoryType'
-            certificates:
+            certificate:
               type: array
               items:
                 $ref: '#/components/schemas/certificate'
@@ -3299,16 +3302,20 @@ components:
       properties:
         subject:
           type: string
+          example: Chemical engineering
         subjectScheme:
           type: string
+          example: 'Fields of Science and Technology (FOS)'
         schemeUri:
           type: string
+          example: 'https://web-archive.oecd.org/2012-06-15/138575-38235147.pdf'
         valueUri:
           type: string
         lang:
           type: string
         classificationCode:
           type: string
+          example: '2.4'
     # reusable enums
     repositoryType:
       type: string
