@@ -3322,29 +3322,31 @@ components:
     software:
       type: string
       enum:
-        - cayuse
-        - ckan
-        - dataverse
-        - dlibra
-        - dspace
-        - eprints
-        - ex libris esploro
-        - fedora
-        - invenio
-        - islandora
-        - mycore
-        - nesstar
-        - omega-psir
-        - omeka s
-        - open journal systems (ojs)
-        - opus
-        - pubman
-        - pure
-        - redivis
-        - samvera
-        - ubiquity
-        - other
-        - unknown
+        - Cayuse
+        - CKAN
+        - Dataverse
+        - dLibra
+        - DSpace
+        - EPrints
+        - Ex Libris Esploro
+        - Fedora
+        - Invenio
+        - Islandora
+        - MyCoRe
+        - Nesstar
+        - Omega-PSIR
+        - Omeka S
+        - Open Journal Systems (OJS)
+        - OPUS
+        - Pubman
+        - Pure
+        - Redivis
+        - RSpace
+        - Samvera
+        - SESAR
+        - Ubiquity
+        - Other
+        - Unknown
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
