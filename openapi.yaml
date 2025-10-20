@@ -336,7 +336,7 @@ paths:
                     type:
                       type: string
                       enum:
-                        - clients
+                        - repositories
                     attributes:
                       type: object
                       required:
@@ -477,7 +477,7 @@ paths:
                     type:
                       type: string
                       enum:
-                        - clients
+                        - repositories
                     attributes:
                       type: object
                       required:
@@ -574,7 +574,7 @@ paths:
           type: string
       tags:
         - repositories
-      summary: Delete a repository. Only possible if no DOIs are in the repository.
+      summary: Delete a repository (only possible if no DOIs are in the repository)
       security:
         - BasicAuth: []
       responses:
