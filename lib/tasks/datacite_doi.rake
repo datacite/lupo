@@ -14,6 +14,12 @@ namespace :datacite_doi do
   desc "Upgrade index for datacite dois"
   task upgrade_index: :environment do
     puts DataciteDoi.upgrade_index(index: ENV["INDEX"])
+    puts DataciteDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
+  end
+
+  desc "Set refresh interval for datacite dois"
+  task set_refresh_interval: :environment do
+    puts DataciteDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
   end
 
   desc "Create alias for datacite dois"
@@ -143,7 +149,11 @@ namespace :nifs_dois do
     puts("End date: #{end_date}")
 
     query = "client.id:rpht.nifs AND created:[#{start_date} TO #{end_date}}"
+    puts("NIFS query: #{query}")
+
     response = Doi.query(query, { page: { size: 1, cursor: [] } })
+
+    puts(response.inspect)
 
     if response.results.total.zero?
       puts("No NIFS DOIs found for the specified date range.")
@@ -162,7 +172,7 @@ namespace :nifs_dois do
       search_dois = response.results.results.map(&:doi)
       dois = DataciteDoi.where(doi: search_dois)
 
-      dois.each do |doi|
+      Parallel.each(dois, in_threads: 10) do |doi|
         doi.send_import_message(doi.to_jsonapi)
       end
     end

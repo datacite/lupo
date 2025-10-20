@@ -8,7 +8,7 @@ class HideJob < ApplicationJob
 
     if doi.present?
       doi.hide
-      doi.save
+      doi.save(validate: false)
       Rails.logger.error "DOI hidden" + doi_id + "."
     else
       Rails.logger.error "Error hiding DOI " + doi_id + ": not found"

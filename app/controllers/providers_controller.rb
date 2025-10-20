@@ -149,8 +149,6 @@ class ProvidersController < ApplicationController
         end
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-      Raven.capture_exception(e)
-
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
           "error",

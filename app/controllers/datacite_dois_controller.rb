@@ -2,7 +2,6 @@
 
 require "uri"
 require "base64"
-require "pp"
 
 class DataciteDoisController < ApplicationController
   include ActionController::MimeResponds
@@ -827,7 +826,9 @@ class DataciteDoisController < ApplicationController
     def set_raven_context
       return nil if params.dig(:data, :attributes, :xml).blank?
 
-      Raven.extra_context metadata:
-                            Base64.decode64(params.dig(:data, :attributes, :xml))
+      Sentry.set_context(
+        :metadata,
+        { xml: Base64.decode64(params.dig(:data, :attributes, :xml)) }
+      )
     end
 end

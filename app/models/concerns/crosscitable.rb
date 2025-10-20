@@ -60,7 +60,7 @@ module Crosscitable
         end
       meta.merge("string" => input, "from" => from)
     rescue NoMethodError, ArgumentError => e
-      Raven.capture_exception(e)
+      Sentry.capture_exception(e)
 
       Rails.logger.error "Error " + e.message.to_s + " for doi " + @doi.to_s +
         "."

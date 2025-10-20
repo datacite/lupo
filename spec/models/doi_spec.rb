@@ -2178,4 +2178,58 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(coverage_date["date"]).to eq("2020-03-15")
     end
   end
+
+  describe "Importing XML metadata" do
+    let(:schema_3_xml) { file_fixture("datacite_schema_3.xml").read }
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, aasm_state: "findable", client: client) }
+
+    it "updates values when DOI url is invalid against client domains settings" do
+      correct_types = doi.types
+      incorrect_types = {
+        "resourceTypeGeneral": "Project",
+        "resourceType": "New Project",
+        "schemaOrg": "Dataset",
+        "citeproc": "dataset",
+        "bibtex": "misc",
+        "ris": "DATA",
+      }
+      # Update DOI types column to contain metadata mismatched with XML
+      doi.update_column(:types, incorrect_types)
+      expect(doi.types.symbolize_keys).to eq(incorrect_types.symbolize_keys)
+
+      # Invalidate the URL against client domains setting
+      client.domains = "datacite.org"
+      client.save!
+
+      # Re-import XML to assign correct types metadata values
+      Doi.import_one(doi_id: doi.doi)
+      doi.reload
+      expect(doi.types.symbolize_keys).to eq(correct_types.symbolize_keys)
+    end
+
+    it "updates values when DOI is using an invalid Schema version" do
+      correct_types = doi.types
+      incorrect_types = {
+        "resourceTypeGeneral": "Project",
+        "resourceType": "New Project",
+        "schemaOrg": "Dataset",
+        "citeproc": "dataset",
+        "bibtex": "misc",
+        "ris": "DATA",
+      }
+      # Update DOI types column to contain metadata mismatched with XML
+      doi.update_column(:types, incorrect_types)
+      expect(doi.types.symbolize_keys).to eq(incorrect_types.symbolize_keys)
+
+      # Invalidate the Schema version
+      doi.xml = schema_3_xml
+      doi.save!(validate: false)
+
+      # Re-import XML to assign correct types metadata values
+      Doi.import_one(doi_id: doi.doi)
+      doi.reload
+      expect(doi.types.symbolize_keys).to eq(correct_types.symbolize_keys)
+    end
+  end
 end

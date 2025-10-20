@@ -12,7 +12,7 @@ gem "aws-sdk-sqs", "~> 1.3"
 gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
-gem "bolognese", "~> 2.3.5"
+gem "bolognese", "~> 2.3.9"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "countries", "~> 2.1", ">= 2.1.2"
@@ -65,7 +65,8 @@ gem "rack-cors", "~> 1.0", require: "rack/cors"
 gem "rack-utf8_sanitizer", "~> 1.6"
 gem "rails", "~> 7.1", ">= 7.1.3"
 gem "rake", "~> 12.0"
-gem "sentry-raven", "~> 3.1", ">= 3.1.2"
+gem "sentry-ruby", "~> 5.20"
+gem "sentry-rails", "~> 5.20"
 gem "shoryuken", "~> 4.0"
 gem "simple_command"
 gem "slack-notifier", "~> 2.1"
@@ -75,6 +76,7 @@ gem "string_pattern"
 gem "strip_attributes", "~> 1.8"
 gem "turnout", "~> 2.5"
 gem "uuid", "~> 2.3", ">= 2.3.9"
+gem "parallel", "~> 1.27"
 
 group :production, :stage do
   gem "datadog", require: "datadog/auto_instrument"
@@ -100,7 +102,7 @@ group :development do
   gem "spring", "~> 4.1", ">= 4.1.3"
   gem "spring-commands-rspec"
   gem "spring-watcher-listen", "~> 2.1"
-  gem "rubocop", "~> 1.3", ">= 1.3.1", require: false
+  gem "rubocop", "~> 1.79.2", require: false
   gem "rubocop-performance", "~> 1.5", ">= 1.5.1", require: false
   gem "rubocop-rails", "~> 2.8", ">= 2.8.1", require: false
   gem "rubocop-packaging", "~> 0.5.1", require: false

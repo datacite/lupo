@@ -95,7 +95,6 @@ class ClientPrefixesController < ApplicationController
       render json: ClientPrefixSerializer.new(client_prefixes, options).serializable_hash.to_json,
              status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
-      Raven.capture_exception(e)
 
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
