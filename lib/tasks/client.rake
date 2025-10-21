@@ -257,7 +257,7 @@ namespace :client do
           end
           deleted += 1
         rescue => error
-          Sentry.capture_exception(error, extra: { doi: doi.doi, client: client.symbol })
+          Sentry.capture_exception(error, extra: { doi: doi.doi })
           puts "Failed to delete DOI #{doi.doi}: #{error.message}"
         end
       end
