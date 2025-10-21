@@ -251,8 +251,13 @@ namespace :client do
     deleted = 0
     dois.find_in_batches(batch_size: 1000) do |batch|
       batch.each do |doi|
-        doi.destroy
-        deleted += 1
+        ActiveRecord::Base.logger.silence do
+          doi.destroy
+          deleted += 1
+        rescue => error
+          Sentry.capture_exception(error, extra: { doi: doi.doi })
+          puts "Failed to delete DOI #{doi.doi}: #{error.message}"
+        end
       end
       puts "Deleted #{deleted}/#{total} DOIs"
     end
