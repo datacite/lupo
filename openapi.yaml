@@ -2647,13 +2647,6 @@ components:
           items:
             type: object
             properties:
-              geoLocationPoint:
-                type: object
-                properties:
-                  pointLongitude:
-                    type: string
-                  pointLatitude:
-                    type: string
               geoLocationBox:
                 type: object
                 properties:
@@ -2667,6 +2660,32 @@ components:
                     type: string
               geoLocationPlace:
                 type: string
+              geoLocationPoint:
+                type: object
+                properties:
+                  pointLongitude:
+                    type: string
+                  pointLatitude:
+                    type: string
+              geoLocationPolygon:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    polygonPoint:
+                      type: object
+                      properties:
+                        pointLongitude:
+                          type: string
+                        pointLatitude:
+                          type: string
+                    inPolygonPoint:
+                      type: object
+                      properties:
+                        pointLongitude:
+                          type: string
+                        pointLatitude:
+                          type: string          
         fundingReferences:
           description: '[DataCite Metadata Schema: FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
