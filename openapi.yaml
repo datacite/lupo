@@ -2651,22 +2651,22 @@ components:
                 type: object
                 properties:
                   westBoundLongitude:
-                    type: string
+                    type: number
                   eastBoundLongitude:
-                    type: string
+                    type: number
                   southBoundLatitude:
-                    type: string
+                    type: number
                   northBoundLatitude:
-                    type: string
+                    type: number
               geoLocationPlace:
                 type: string
               geoLocationPoint:
                 type: object
                 properties:
                   pointLongitude:
-                    type: string
+                    type: number
                   pointLatitude:
-                    type: string
+                    type: number
               geoLocationPolygon:
                 type: array
                 items:
@@ -2676,16 +2676,16 @@ components:
                       type: object
                       properties:
                         pointLongitude:
-                          type: string
+                          type: number
                         pointLatitude:
-                          type: string
+                          type: number
                     inPolygonPoint:
                       type: object
                       properties:
                         pointLongitude:
-                          type: string
+                          type: number
                         pointLatitude:
-                          type: string          
+                          type: number          
         fundingReferences:
           description: '[DataCite Metadata Schema: FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
