@@ -2671,21 +2671,25 @@ components:
                 type: array
                 items:
                   type: object
-                  properties:
-                    polygonPoint:
-                      type: object
+                  oneOf:
+                    - type: object
                       properties:
-                        pointLongitude:
-                          type: number
-                        pointLatitude:
-                          type: number
-                    inPolygonPoint:
-                      type: object
+                        polygonPoint:
+                          type: object
+                          properties:
+                            pointLongitude:
+                              type: number
+                            pointLatitude:
+                              type: number
+                    - type: object
                       properties:
-                        pointLongitude:
-                          type: number
-                        pointLatitude:
-                          type: number          
+                        inPolygonPoint:
+                          type: object
+                          properties:
+                            pointLongitude:
+                              type: number
+                            pointLatitude:
+                              type: number          
         fundingReferences:
           description: '[DataCite Metadata Schema: FundingReference](https://datacite-metadata-schema.readthedocs.io/en/4/properties/fundingreference/)'
           type: array
