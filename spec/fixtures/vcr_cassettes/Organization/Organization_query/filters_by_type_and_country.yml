@@ -1,0 +1,127 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/v2/organizations?filter=types:Government,country.country_code:GB&page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 26 Sep 2025 11:46:02 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '21595'
+      Connection:
+      - keep-alive
+      X-Amzn-Requestid:
+      - 112eea9f-37a9-49b2-85f8-6d2baaecedb0
+      Allow:
+      - GET, POST, HEAD, OPTIONS
+      X-Amzn-Remapped-Content-Length:
+      - '21595'
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Amzn-Remapped-Connection:
+      - keep-alive
+      X-Amz-Apigw-Id:
+      - Rgh3OEbjjoEEmDw=
+      Vary:
+      - Cookie, Origin
+      X-Amzn-Remapped-Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.7
+      Status:
+      - 200 OK
+      X-Powered-By:
+      - Phusion Passenger 6.0.7
+      X-Amzn-Remapped-Date:
+      - Fri, 26 Sep 2025 11:46:02 GMT
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":336,"time_taken":17,"items":[{"admin":{"created":{"date":"2024-11-18","schema_version":"2.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":["redbridge.gov.uk"],"established":1963,"external_ids":[{"all":["0000
+        0004 0413 2350"],"preferred":"0000 0004 0413 2350","type":"isni"},{"all":["Q208955"],"preferred":"Q208955","type":"wikidata"}],"id":"https://ror.org/040x97916","links":[{"type":"website","value":"https://www.redbridge.gov.uk"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/London_Borough_of_Redbridge"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.56667,"lng":0.08333,"name":"Redbridge"},"geonames_id":3333185}],"names":[{"lang":"en","types":["acronym"],"value":"LBR"},{"lang":"en","types":["label","ror_display"],"value":"London
+        Borough of Redbridge"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2021-09-23","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":null,"external_ids":[{"all":["grid.511172.1"],"preferred":"grid.511172.1","type":"grid"},{"all":["0000
+        0004 0613 128X"],"preferred":null,"type":"isni"},{"all":["Q101046429"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/059zxg644","links":[{"type":"website","value":"http://www.ed.ac.uk/schools-departments/medicine-vet-medicine/about/little-france/qmri"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"SCT","country_subdivision_name":"Scotland","lat":55.95206,"lng":-3.19648,"name":"Edinburgh"},"geonames_id":2650225}],"names":[{"lang":null,"types":["acronym"],"value":"QMRI"},{"lang":"en","types":["ror_display","label"],"value":"The
+        Queen''s Medical Research Institute"}],"relationships":[{"label":"University
+        of Edinburgh","type":"parent","id":"https://ror.org/01nrxwf90"}],"status":"active","types":["government"]},{"admin":{"created":{"date":"2025-02-26","schema_version":"2.1"},"last_modified":{"date":"2025-02-26","schema_version":"2.1"}},"domains":["nstauthority.co.uk"],"established":2015,"external_ids":[],"id":"https://ror.org/02ag4yb46","links":[{"type":"website","value":"https://www.nstauthority.co.uk"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/North_Sea_Transition_Authority"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"SCT","country_subdivision_name":"Scotland","lat":57.14369,"lng":-2.09814,"name":"Aberdeen"},"geonames_id":2657832}],"names":[{"lang":"en","types":["acronym"],"value":"NSTA"},{"lang":"en","types":["label","ror_display"],"value":"North
+        Sea Transition Authority"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2025-02-26","schema_version":"2.1"}},"domains":["sais.gov.uk"],"established":null,"external_ids":[{"all":["grid.469423.e"],"preferred":"grid.469423.e","type":"grid"}],"id":"https://ror.org/0092hde74","links":[{"type":"website","value":"https://www.sais.gov.uk"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"SCT","country_subdivision_name":"Scotland","lat":57.47908,"lng":-4.22398,"name":"Inverness"},"geonames_id":2646088}],"names":[{"lang":null,"types":["acronym"],"value":"SAIS"},{"lang":"en","types":["label","ror_display"],"value":"Scottish
+        Avalanche Information Service"},{"lang":"en","types":["alias"],"value":"Sportscotland
+        Avalanche Information Service"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2024-12-09","schema_version":"2.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":["npsa.gov.uk"],"established":2023,"external_ids":[],"id":"https://ror.org/0560xhg44","links":[{"type":"website","value":"https://www.npsa.gov.uk"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.50853,"lng":-0.12574,"name":"London"},"geonames_id":2643743}],"names":[{"lang":"en","types":["acronym"],"value":"NPSA"},{"lang":"en","types":["label","ror_display"],"value":"National
+        Protective Security Authority"}],"relationships":[{"label":"Centre for the
+        Protection of National Infrastructure","type":"predecessor","id":"https://ror.org/01y9py784"}],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2005,"external_ids":[{"all":["grid.413893.4"],"preferred":"grid.413893.4","type":"grid"},{"all":["0000
+        0001 2232 4338"],"preferred":null,"type":"isni"},{"all":["Q18713021"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/04zgkpa58","links":[{"type":"website","value":"http://www.hps.scot.nhs.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Health_Protection_Scotland"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"SCT","country_subdivision_name":"Scotland","lat":55.86515,"lng":-4.25763,"name":"Glasgow"},"geonames_id":2648579}],"names":[{"lang":null,"types":["acronym"],"value":"HPS"},{"lang":"en","types":["ror_display","label"],"value":"Health
+        Protection Scotland"}],"relationships":[{"label":"Public Health Scotland","type":"parent","id":"https://ror.org/023wh8b50"}],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1999,"external_ids":[{"all":["100010377"],"preferred":null,"type":"fundref"},{"all":["grid.416710.5"],"preferred":"grid.416710.5","type":"grid"},{"all":["0000
+        0004 1794 1878"],"preferred":null,"type":"isni"},{"all":["Q3425168"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/015ah0c92","links":[{"type":"website","value":"https://www.nice.org.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/National_Institute_for_Health_and_Care_Excellence"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":53.48095,"lng":-2.23743,"name":"Manchester"},"geonames_id":2643123}],"names":[{"lang":null,"types":["acronym"],"value":"NICE"},{"lang":"en","types":["alias"],"value":"National
+        Institute for Clinical Excellence"},{"lang":"en","types":["ror_display","label"],"value":"National
+        Institute for Health and Care Excellence"}],"relationships":[],"status":"active","types":["funder","government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2001,"external_ids":[{"all":["100010418"],"preferred":null,"type":"fundref"},{"all":["grid.417845.b"],"preferred":"grid.417845.b","type":"grid"},{"all":["0000
+        0004 0376 1104"],"preferred":null,"type":"isni"},{"all":["Q5251253"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/04jswqb94","links":[{"type":"website","value":"https://www.gov.uk/government/organisations/defence-science-and-technology-laboratory"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Defence_Science_and_Technology_Laboratory"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.06931,"lng":-1.79569,"name":"Salisbury"},"geonames_id":2638664}],"names":[{"lang":null,"types":["acronym"],"value":"DSTL"},{"lang":"en","types":["ror_display","label"],"value":"Defence
+        Science and Technology Laboratory"}],"relationships":[{"label":"Ministry of
+        Defence","type":"parent","id":"https://ror.org/01bvxzn29"}],"status":"active","types":["funder","government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":null,"external_ids":[{"all":["grid.432614.6"],"preferred":"grid.432614.6","type":"grid"},{"all":["0000
+        0004 0619 3085"],"preferred":null,"type":"isni"}],"id":"https://ror.org/00kn2ga67","links":[{"type":"website","value":"http://www.britishpoultry.org.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/British_Poultry_Council"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.50853,"lng":-0.12574,"name":"London"},"geonames_id":2643743}],"names":[{"lang":null,"types":["acronym"],"value":"BPC"},{"lang":"en","types":["ror_display","label"],"value":"British
+        Poultry Council"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1948,"external_ids":[{"all":["grid.432631.1"],"preferred":"grid.432631.1","type":"grid"},{"all":["Q174588"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/01ded9f36","links":[{"type":"website","value":"http://www.btp.police.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/British_Transport_Police"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.50853,"lng":-0.12574,"name":"London"},"geonames_id":2643743}],"names":[{"lang":null,"types":["acronym"],"value":"BTP"},{"lang":"en","types":["ror_display","label"],"value":"British
+        Transport Police"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1905,"external_ids":[{"all":["grid.432908.4"],"preferred":"grid.432908.4","type":"grid"},{"all":["0000
+        0000 9226 6332"],"preferred":null,"type":"isni"}],"id":"https://ror.org/031me7t03","links":[{"type":"website","value":"https://www.cardiff.gov.uk/ENG/Home/Pages/default.aspx"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/City_of_Cardiff_Council"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"WLS","country_subdivision_name":"Wales","lat":51.48,"lng":-3.18,"name":"Cardiff"},"geonames_id":2653822}],"names":[{"lang":"en","types":["ror_display","label"],"value":"Cardiff
+        Council"},{"lang":"en","types":["alias"],"value":"City of Cardiff Council"},{"lang":"cy","types":["alias"],"value":"Dinas
+        a Sir Caerdydd"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1970,"external_ids":[{"all":["grid.433427.5"],"preferred":"grid.433427.5","type":"grid"},{"all":["0000
+        0000 9693 6743"],"preferred":null,"type":"isni"},{"all":["Q3774189"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/04wbxh769","links":[{"type":"website","value":"http://www.cornwall.gov.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Cornwall_Council"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":50.26526,"lng":-5.05436,"name":"Truro"},"geonames_id":2635412}],"names":[{"lang":"en","types":["ror_display","label"],"value":"Cornwall
+        Council"},{"lang":"en","types":["alias"],"value":"Konsel Kernow"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2010,"external_ids":[{"all":["grid.433475.2"],"preferred":"grid.433475.2","type":"grid"}],"id":"https://ror.org/021c40092","links":[{"type":"website","value":"http://www.adeptnet.org.uk/"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.73575,"lng":0.46958,"name":"Chelmsford"},"geonames_id":2653266}],"names":[{"lang":null,"types":["acronym"],"value":"ADEPT"},{"lang":"en","types":["ror_display","label"],"value":"Association
+        of Directors of Environment, Economy, Planning and Transport"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1974,"external_ids":[{"all":["grid.433518.8"],"preferred":"grid.433518.8","type":"grid"},{"all":["0000
+        0004 1788 9379"],"preferred":null,"type":"isni"}],"id":"https://ror.org/00n523x67","links":[{"type":"website","value":"http://www.crawley.gov.uk/pw/index.htm"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.11303,"lng":-0.18312,"name":"Crawley"},"geonames_id":2652053}],"names":[{"lang":"en","types":["ror_display","label"],"value":"Crawley
+        Borough Council"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1997,"external_ids":[{"all":["grid.433522.1"],"preferred":"grid.433522.1","type":"grid"},{"all":["Q910019"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/02zqy3981","links":[{"type":"website","value":"https://www.gov.uk/government/organisations/department-for-digital-culture-media-sport"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Department_for_Digital,_Culture,_Media_and_Sport"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.50853,"lng":-0.12574,"name":"London"},"geonames_id":2643743}],"names":[{"lang":null,"types":["acronym"],"value":"DCMS"},{"lang":"en","types":["ror_display","label"],"value":"Department
+        for Digital, Culture, Media & Sport"},{"lang":"cy","types":["label"],"value":"Yr
+        Adran Ddigidol, Diwylliant, Cyfryngau a Chwaraeon"}],"relationships":[{"label":"Horserace
+        Betting Levy Board","type":"child","id":"https://ror.org/02z2a9w02"},{"label":"United
+        Kingdom Sport","type":"child","id":"https://ror.org/03qnzrx19"},{"label":"Government
+        of the United Kingdom","type":"parent","id":"https://ror.org/05wnh3t63"}],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2010,"external_ids":[{"all":["501100000829","501100003592"],"preferred":"501100000829","type":"fundref"},{"all":["grid.433524.7"],"preferred":"grid.433524.7","type":"grid"},{"all":["0000
+        0000 9732 3201"],"preferred":null,"type":"isni"},{"all":["Q2612019"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/0320bge18","links":[{"type":"website","value":"https://www.gov.uk/government/organisations/department-for-education"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Department_for_Education"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":51.50853,"lng":-0.12574,"name":"London"},"geonames_id":2643743}],"names":[{"lang":null,"types":["acronym"],"value":"DFE"},{"lang":"en","types":["ror_display","label"],"value":"Department
+        for Education"},{"lang":"en","types":["alias"],"value":"Department of Education
+        and Science"}],"relationships":[{"label":"Office for Students","type":"child","id":"https://ror.org/00npz5r87"},{"label":"Qualifications
+        and Curriculum Authority","type":"child","id":"https://ror.org/000qvv970"},{"label":"Government
+        of the United Kingdom","type":"parent","id":"https://ror.org/05wnh3t63"}],"status":"active","types":["funder","government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":2010,"external_ids":[{"all":["501100000365"],"preferred":null,"type":"fundref"},{"all":["grid.433531.3"],"preferred":"grid.433531.3","type":"grid"},{"all":["0000
+        0004 0606 7054"],"preferred":null,"type":"isni"}],"id":"https://ror.org/02jcwf181","links":[{"type":"website","value":"http://www.creativescotland.com/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Creative_Scotland"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"SCT","country_subdivision_name":"Scotland","lat":55.95206,"lng":-3.19648,"name":"Edinburgh"},"geonames_id":2650225}],"names":[{"lang":"en","types":["alias"],"value":"Alba
+        Chruthachail"},{"lang":"en","types":["ror_display","label"],"value":"Creative
+        Scotland"}],"relationships":[],"status":"active","types":["funder","government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1974,"external_ids":[{"all":["grid.433633.2"],"preferred":"grid.433633.2","type":"grid"},{"all":["Q3044713"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/01wsx6q69","links":[{"type":"website","value":"https://www.doeni.gov.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Department_of_the_Environment_(Northern_Ireland)"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"NIR","country_subdivision_name":"Northern
+        Ireland","lat":54.59682,"lng":-5.92541,"name":"Belfast"},"geonames_id":2655984}],"names":[{"lang":null,"types":["acronym"],"value":"DOENI"},{"lang":"en","types":["ror_display","label"],"value":"Department
+        of the Environment"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":null,"external_ids":[{"all":["grid.433651.6"],"preferred":"grid.433651.6","type":"grid"},{"all":["0000
+        0004 0517 398X"],"preferred":null,"type":"isni"},{"all":["Q5261430"],"preferred":null,"type":"wikidata"}],"id":"https://ror.org/042jr0j26","links":[{"type":"website","value":"http://www.derby.gov.uk/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Derby_City_Council"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"ENG","country_subdivision_name":"England","lat":52.92277,"lng":-1.47663,"name":"Derby"},"geonames_id":2651347}],"names":[{"lang":"en","types":["ror_display","label"],"value":"Derby
+        City Council"}],"relationships":[],"status":"active","types":["government"]},{"admin":{"created":{"date":"2018-11-14","schema_version":"1.0"},"last_modified":{"date":"2024-12-11","schema_version":"2.1"}},"domains":[],"established":1984,"external_ids":[{"all":["grid.433667.3"],"preferred":"grid.433667.3","type":"grid"},{"all":["0000
+        0000 9846 3126"],"preferred":null,"type":"isni"}],"id":"https://ror.org/00wdz4w44","links":[{"type":"website","value":"http://www.derrystrabane.com/"},{"type":"wikipedia","value":"https://en.wikipedia.org/wiki/Derry_City_Council"}],"locations":[{"geonames_details":{"continent_code":"EU","continent_name":"Europe","country_code":"GB","country_name":"United
+        Kingdom","country_subdivision_code":"NIR","country_subdivision_name":"Northern
+        Ireland","lat":54.9981,"lng":-7.30934,"name":"Londonderry"},"geonames_id":2643736}],"names":[{"lang":"en","types":["ror_display","label"],"value":"Derry
+        City Council"},{"lang":"en","types":["alias"],"value":"Londonderry City Council"},{"lang":"en","types":["alias"],"value":"Londonderry
+        County Borough"},{"lang":"en","types":["alias"],"value":"Londonderry Rural
+        District"}],"relationships":[],"status":"active","types":["government"]}],"meta":{"types":[{"id":"government","title":"government","count":336},{"id":"funder","title":"funder","count":87},{"id":"healthcare","title":"healthcare","count":1}],"countries":[{"id":"gb","title":"United
+        Kingdom","count":336}],"continents":[{"id":"eu","title":"Europe","count":336}],"statuses":[{"id":"active","title":"active","count":336}]}}'
+  recorded_at: Fri, 26 Sep 2025 11:46:02 GMT
+recorded_with: VCR 6.2.0
