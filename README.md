@@ -8,7 +8,7 @@ Rails API application for managing DataCite providers, clients, prefixes and DOI
 
 ## Installation
 
-Using Docker.
+Using Docker.  
 
 ```bash
 docker run -p 8065:80 datacite/lupo
