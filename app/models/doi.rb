@@ -109,16 +109,19 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  json_schema_validation = {
-    message: ->(errors) { errors },
-    schema: PUBLISHER_JSON_SCHEMA
-  }
-
   def validate_publisher_obj?(doi)
     doi.validatable? && doi.publisher_obj? && !(doi.publisher_obj.blank? || doi.publisher_obj.all?(nil))
   end
 
-  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
+  def validate_json_attribute?(attribute)
+    validatable? && !self[attribute].nil?
+  end
+
+  def schema_file_path(schema_name)
+    Rails.root.join("app", "models", "schemas", "doi", "#{schema_name}.json")
+  end
+
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -131,6 +134,7 @@ class Doi < ApplicationRecord
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
   validate :check_titles, if: :titles?
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
