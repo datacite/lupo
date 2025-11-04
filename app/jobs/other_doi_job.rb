@@ -12,8 +12,10 @@ class OtherDoiJob < ApplicationJob
     Rails.logger.info("#######################")
     Rails.logger.info(data.inspect)
     Rails.logger.info("#######################")
-    json_data = JSON.parse(data["body"])
-    event = Event.new(subj_id: json_data["subj_id"], obj_id: json_data["obj_id"])
+    json_data = JSON.parse(data)
+    Rails.logger.info(json_data)
+    body = json_data["message"]["body"]
+    event = Event.new(subj_id: body["subj_id"], obj_id: body["obj_id"])
     ids = event.dois_to_import
     Rails.logger.info(ids.inspect)
     Rails.logger.info("#######################")
