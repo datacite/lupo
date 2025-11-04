@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class OtherDoiJob < ApplicationJob
-  queue_as :events_other_doi_job
+  include Shoryuken::Worker
+
+  shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_events_other_doi_job" }, auto_delete: true
 
   def perform(data, options = {})
     # to test in staging
