@@ -7,9 +7,8 @@ class OtherDoiJob < ApplicationJob
 
   def perform(sqs_message = nil, data = nil)
     event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
-    Rails.logger.info(event)
     ids = event.dois_to_import
-    ids = ["fake_doi_1", "fake_doi_2"]
+    Rails.logger.info("OtherDoiJob: ids: #{ids.inspect}")
     ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
   end
 end

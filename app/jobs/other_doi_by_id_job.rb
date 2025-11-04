@@ -15,10 +15,6 @@ class OtherDoiByIdJob < ApplicationJob
 
   def perform(id, options = {})
     # Event.import_doi(id, options)
-    Rails.logger.info("#######################")
-    Rails.logger.info("the other doi job by id has run")
-    Rails.logger.info("#######################")
-    Rails.logger.info("the id is #{id}")
-    Rails.logger.info("#######################")
+    Rails.logger.info("OtherDoiByIdJob id: #{id}")
   end
 end
