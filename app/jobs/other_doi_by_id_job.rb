@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OtherDoiByIdJob < ApplicationJob
-  queue_as :events_other_doi_job
+  queue_as :events_other_doi_by_id_job
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
   # retry_on Faraday::TimeoutError, wait: 10.minutes, attempts: 3
@@ -14,6 +14,11 @@ class OtherDoiByIdJob < ApplicationJob
   end
 
   def perform(id, options = {})
-    Event.import_doi(id, options)
+    # Event.import_doi(id, options)
+    Rails.logger.info("#######################")
+    Rails.logger.info("the other doi job by id has run")
+    Rails.logger.info("#######################")
+    Rails.logger.info("the id is #{id}")
+    Rails.logger.info("#######################")
   end
 end
