@@ -8,7 +8,7 @@ class OtherDoiJob < ApplicationJob
   def perform(sqs_message = nil, data = nil)
     Rails.logger.info("#######################")
     Rails.logger.info(data)
-    event = Event.new(subj_id: body["subj_id"], obj_id: body["obj_id"])
+    event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
     ids = event.dois_to_import
     Rails.logger.info(ids.inspect)
     Rails.logger.info("#######################")
