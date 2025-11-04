@@ -10,15 +10,16 @@ class OtherDoiJob < ApplicationJob
     Rails.logger.info("#######################")
     Rails.logger.info("the other doi job has run")
     Rails.logger.info("#######################")
-    Rails.logger.info(data.inspect)
-    Rails.logger.info("#######################")
-    json_data = JSON.parse(data)
-    Rails.logger.info(json_data)
-    body = json_data["message"]["body"]
-    event = Event.new(subj_id: body["subj_id"], obj_id: body["obj_id"])
-    ids = event.dois_to_import
-    Rails.logger.info(ids.inspect)
-    Rails.logger.info("#######################")
-    ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
+    Rails.logger.info(data)
+    Rails.logger.info(data["message"])
+    # Rails.logger.info("#######################")
+    # json_data = JSON.parse(data)
+    # Rails.logger.info(json_data)
+    # body = json_data["message"]["body"]
+    # event = Event.new(subj_id: body["subj_id"], obj_id: body["obj_id"])
+    # ids = event.dois_to_import
+    # Rails.logger.info(ids.inspect)
+    # Rails.logger.info("#######################")
+    # ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
   end
 end
