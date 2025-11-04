@@ -6,12 +6,10 @@ class OtherDoiJob < ApplicationJob
   shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_events_other_doi_job" }, auto_delete: true
 
   def perform(sqs_message = nil, data = nil)
-    Rails.logger.info("#######################")
-    Rails.logger.info(data)
     event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
+    Rails.logger.info(event)
     ids = event.dois_to_import
-    Rails.logger.info(ids.inspect)
-    Rails.logger.info("#######################")
-    # ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
+    ids = ["fake_doi_1", "fake_doi_2"]
+    ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
   end
 end
