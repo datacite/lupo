@@ -8,67 +8,52 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
+      Date:
+      - Mon, 29 Sep 2025 08:10:32 GMT
       Content-Type:
-      - application/json;charset=UTF-8
-      Vary:
-      - Accept
+      - application/json
+      Content-Length:
+      - '1335'
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - AWSALB=ILUV7ixiIwC5dtPX8dstbB67uS0yiAXRilc4Z1wKun/eeXFFbbMw048s99iKNZoweVJEhF7Ffn//z6PkrgVtW4Gg+h/q+eQXa9DqFmv6piQ7SuPkIwLTeCqgqbhe;
+        Expires=Mon, 06 Oct 2025 08:10:17 GMT; Path=/, AWSALBCORS=ILUV7ixiIwC5dtPX8dstbB67uS0yiAXRilc4Z1wKun/eeXFFbbMw048s99iKNZoweVJEhF7Ffn//z6PkrgVtW4Gg+h/q+eQXa9DqFmv6piQ7SuPkIwLTeCqgqbhe;
+        Expires=Mon, 06 Oct 2025 08:10:17 GMT; Path=/; SameSite=None
+      Access-Control-Expose-Headers:
+      - Link
+      Access-Control-Allow-Headers:
+      - X-Requested-With, Accept, Accept-Encoding, Accept-Charset, Accept-Language,
+        Accept-Ranges, Cache-Control
       Access-Control-Allow-Origin:
       - "*"
-      Access-Control-Allow-Headers:
-      - X-Requested-With
-      Content-Length:
-      - '3400'
+      Vary:
+      - Accept-Encoding
+      Content-Encoding:
+      - gzip
       Server:
-      - http-kit
-      Date:
-      - Tue, 08 Sep 2020 08:16:41 GMT
+      - Jetty(9.4.40.v20210413)
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
       - 1s
-      Connection:
-      - close
+      X-Api-Pool:
+      - polite
+      Permissions-Policy:
+      - interest-cohort=()
     body:
       encoding: ASCII-8BIT
-      string: '{"status":"ok","message-type":"funder","message-version":"1.0.0","message":{"hierarchy-names":{"501100000621":"Girton
-        College, University of Cambridge","501100007552":"School of Clinical Medicine,
-        University of Cambridge","501100000609":"Emmanuel College, University of Cambridge","501100000705":"School
-        of the Biological Sciences, University of Cambridge","501100000602":"Department
-        of Anglo-Saxon, Norse and Celtic, Faculty of English, University of Cambridge","501100008101":"St\u00a0Catharine''s
-        College, University of Cambridge","501100000622":"Gonville and Caius College,
-        University of Cambridge","501100003987":"James Baird Fund, University of Cambridge","501100000663":"Newnham
-        College, University of Cambridge","501100000742":"Churchill College, University
-        of Cambridge","501100005705":"St. Edmund\u2019s College, University of Cambridge","501100009163":"Centre
-        of Latin American Studies, University of Cambridge","501100000653":"Magdalene
-        College, University of Cambridge","501100004537":"Institute for Aviation and
-        the Environment, University of Cambridge","501100004222":"Pembroke College,
-        University of Cambridge","501100004495":"Sir Arthur Marshall Institute for
-        Aeronautics, University of Cambridge","501100000591":"Corpus Christi College,
-        University of Cambridge","501100000595":"Darwin College, University of Cambridge","501100008420":"Homerton
-        College, University of Cambridge","501100000585":"Centre for Entrepreneurial
-        Learning, University of Cambridge","501100000644":"Jesus College, University
-        of Cambridge","501100000727":"Trinity College, University of Cambridge","501100000603":"Department
-        of Clinical Veterinary Medicine, University of Cambridge","501100000735":"University
-        of Cambridge","501100006299":"Department of Materials Science and Metallurgy,
-        University of Cambridge","501100014816":"Faculty of History, University of
-        Cambridge","501100000587":"Centre for Research in the Arts, Social Sciences
-        and Humanities, University of Cambridge","501100005796":"Department of Biochemistry,
-        University of Cambridge","more":null,"501100000590":"Christ''s College, University
-        of Cambridge","501100001625":"Clare College, University of Cambridge","501100000648":"King''s
-        College Cambridge, University of Cambridge","501100000580":"Cambridge Institute
-        for Medical Research, University of Cambridge","501100008931":"Sidney Sussex
-        College, University of Cambridge","501100000710":"Smuts Memorial Fund, University
-        of Cambridge"},"replaced-by":[],"work-count":12,"name":"James Baird Fund,
-        University of Cambridge","descendants":[],"descendant-work-count":12,"id":"501100003987","tokens":["james","baird","fund","university","of","cambridge"],"replaces":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100003987","hierarchy":{"501100000735":{"501100000621":{},"501100007552":{},"501100000609":{},"501100000705":{},"501100000602":{},"501100008101":{},"501100000622":{},"501100003987":{},"501100000663":{},"501100000742":{},"501100005705":{"more":true},"501100009163":{},"501100000653":{},"501100004537":{},"501100004222":{},"501100004495":{},"501100000591":{},"501100000595":{},"501100008420":{},"501100000585":{},"501100000644":{},"501100000727":{},"501100000603":{},"501100006299":{},"501100014816":{},"501100000587":{},"501100005796":{},"501100000590":{},"501100001625":{},"501100000648":{},"501100000580":{},"501100008931":{},"501100000710":{}}},"alt-names":[],"location":"United
-        Kingdom"}}'
-    http_version: null
-  recorded_at: Tue, 08 Sep 2020 08:16:41 GMT
-recorded_with: VCR 5.1.0
+      string: !binary |-
+        H4sIAAAAAAAA/5VYS1PjOBD+Kypf9pKA7NiJzQ1CgJ2ZTFGE2Tls5iBsEWuxpZQkA5lU/vu2ZIgtp7bW5sBDafXj6+6vW+w9pYmulHfhiRdv5JVUKbKhY73bUjh7rnhGZev8lUrFBIeP/DN8hptPvIu9lzMqiUzz3ZgTODZHEfZ9bL6mgQ+XbpnUgqO5KAq6oSP0gzOrUe+QeEZzUj5JloGy0fHiLIoCuLhKcyEKK1QwzlJSoCXNWMp4Ly14ihPQsihLwitaDHDAn/qTKVx9EE+Mq2G+4xmOHN91TtEVE4XY2AhWKaM8papnBAaHa7olUpeUayN4yTeFGK/Iu+Aj9F1IRRHhGZrTQrN0hG5IWhW1ygVIMpX3sRT72KRqpdcVxgTPic6JBJz/UINinwbG31vBXxlcqv0irBqkZJLEM1DyxVQTuiJMZugGKrLH1QAHUXiC1zynpUUe4ICIKIS1sZ5BUjRNc25Ss+sX3nQC6r/TN56TckBMQRgn5ubxI3R1dwMZ41pSc+WBKmp6CC3eUwpKoT6cigoNqvO8AhHAdQiY0Uc16jO0yEqAcV0F2E8GJSTxbdiNu9+IZhxdlgBlSjha6SpjfQs6MqqWZJMRCJMOcSOMJqYu/uRKM11pip6FRJevDJyBDjUJNZ22gNKTgpvk92n0ZBqbirmtZAZKjrrbZgNb0/cULouXIR4H/mxmov0JKU1FSdEYLR/mjSQAR0vTt0VjuBcQYWJzyiB8qaEq0JJIlZO2nhocCkiQCmihX3KixHDAXMit6dhcMlA2qP0j69g1kW9sCGf609C3vCFJVhFwviHPx0ENGocBBj13APbQkYOjOGqK3KC3ML9tJVRpJRnQxzdoUQ7c0a/OQ1NWX6gaxH0Bnk6MFzdM/36DTmeDWAaIIjAd8ggMZ6QGETeenBLn59D9i2rDmkTuhsxfP4ksCE29t8C9J/LFjtbxfQGLSIPAJPFPPbncbgtGM6hzaPGSmIK2Df+YUyGptk7e5zvVt9BnFuX/TwdQpe0IAoQsG5b+8bXVxINadxokyUl0EBU1FaY+dwMb25Jq6OhK9qp8P4x9s7C0hv8ddK+Q/eZaZCduKz3HUKGPDasCzwCyK5Gy1gZj3byrYLtiuif/R7NkehI/zOHUzGil+7qbYDsPDUENW1D8aWC7vCBy0OyBfo7h3ldo/8ZgI9knQ3ESxS7Ij1Jsc/FUEKWPgPdMF3b6ymV926KQpgEqYQzavCzTaxgYRdadI6CF0OMG+6m4TbzJxK6PLON0h1aVUvR9GHP5JqRVWWkFAZTCMm7ftc/HM+P9T1E891rWDyMPmL0gKc3GTzvv4u9fI+9NyJdxKiquvQsfjzzzmBm4hWZUpZRnhGtV62wOxl31LAPlzsY78jSsF9xc9f6xL6mR92Tswk/zIoMf1dE0/CGe4Vt6NP/rGNOHcRhaYCLXeqsu1ufr80ywMyE363Mfn/kTsLk+79g/vuScN5zlyu6bbn/oPtb2HiQNENOyogdnsCSO+MfTqq2gfjHt3VuBe1K/T1yZoCNTPxxaJx/vAfeW2WXbMvVq7voTdjTXW/R/hFivx66RqHNS765tGOrF05EJOgF97I+OjF39HFt2aeucRB3I7XrlwGkXJfdWfJKEMOzAabcTF6pgdpK6SSfSqKunnvHtk3rQtvXUk7Ktpx5xHZ9n3UQlJzJJJ9J6BnQijV1bNVl3bOFuBru2ahZ08fFxJ6eWq/aHA5yRQn/+08R0bCFS+5apVxMN+46ZN5kovcPhX39hLcGzEQAA
+  recorded_at: Mon, 29 Sep 2025 08:10:32 GMT
+recorded_with: VCR 6.2.0
