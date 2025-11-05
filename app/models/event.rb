@@ -465,7 +465,10 @@ class Event < ApplicationRecord
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.map(&:subj_id).uniq
-        send_message(data, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+
+        dois.each do |subj_id|
+          send_message({"subj_id": subj_id}, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+        end
       end
     end
 
@@ -524,8 +527,9 @@ class Event < ApplicationRecord
 
         dois = response.results.map(&:obj_id).uniq
 
-        # use same job for all non-DataCite dois
-        send_message(data, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+        dois.each do |obj_id|
+          send_message({"obj_id": obj_id}, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+        end
       end
     end
 
