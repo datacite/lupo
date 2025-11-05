@@ -8,8 +8,6 @@ module Shoryuken
         def call(_worker_instance, queue, _sqs_msg, body)
           Sentry.with_scope do |scope|
             context_hash = body.is_a?(Hash) ? body : JSON.parse(body)
-            # scope.set_tags(job: body["job_class"], queue: queue)
-            # scope.set_context(:message, body)
             scope.set_tags(job: context_hash["job_class"], queue: queue)
             scope.set_context(:message, context_hash)
             yield
