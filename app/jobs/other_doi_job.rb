@@ -9,6 +9,6 @@ class OtherDoiJob < ApplicationJob
     # event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
     # ids = event.dois_to_import
     ids = ["subj_id", "obj_id"]
-    ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
+    ids.each { |id| OtherDoiByIdJob.perform_later(id, {}) }
   end
 end
