@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OtherDoiByIdJob < ApplicationJob
-  queue_as :lupo_background
+  queue_as :events_other_doi_by_id_job
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
   # retry_on Faraday::TimeoutError, wait: 10.minutes, attempts: 3

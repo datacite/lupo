@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 class OtherDoiJob < ApplicationJob
-  queue_as :lupo_background
+  include Shoryuken::Worker
 
-  def perform(ids, options = {})
-    ids.each { |id| OtherDoiByIdJob.perform_later(id, options) }
+  shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_events_other_doi_job" }, auto_delete: true
+
+  def perform(sqs_message = nil, data = nil)
+    event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
+    ids = event.dois_to_import
+    ids.each { |id| OtherDoiByIdJob.perform_later(id, {}) }
   end
 end
