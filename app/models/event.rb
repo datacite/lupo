@@ -467,7 +467,7 @@ class Event < ApplicationRecord
         dois = response.results.map(&:subj_id).uniq
 
         dois.each do |subj_id|
-          send_message({"subj_id": subj_id}, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+          send_message({ "subj_id": subj_id }, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
         end
       end
     end
@@ -528,7 +528,7 @@ class Event < ApplicationRecord
         dois = response.results.map(&:obj_id).uniq
 
         dois.each do |obj_id|
-          send_message({"obj_id": obj_id}, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
+          send_message({ "obj_id": obj_id }, shoryuken_class: "OtherDoiJob", queue_name: "events_other_doi_job")
         end
       end
     end
