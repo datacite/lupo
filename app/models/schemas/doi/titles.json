@@ -1,13 +1,21 @@
 {
   "type": "array",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "items": {
     "type": "object",
     "properties": {
-      "title": { "type": "string" },
+      "title": { 
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!\\s*$).+"
+      },
       "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
-      "lang": { "type": "string" }
+      "lang": { "type": ["string", "null"] }
     },
+    "required": [
+      "title"
+    ],
     "additionalProperties": false
-  }
+  },
+  "minitems": 1
 }
