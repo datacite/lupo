@@ -134,7 +134,6 @@ class Doi < ApplicationRecord
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
   validate :check_titles, if: :titles?
-  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
   validate :check_container, if: :container?
@@ -148,6 +147,9 @@ class Doi < ApplicationRecord
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
+
+  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
