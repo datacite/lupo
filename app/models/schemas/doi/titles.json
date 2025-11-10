@@ -5,9 +5,7 @@
     "type": "object",
     "properties": {
       "title": { 
-        "type": "string",
-        "minLength": 1,
-        "pattern": "^(?!\\s*$).+"
+        "type": "string"
       },
       "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
       "lang": { "type": ["string", "null"] }
