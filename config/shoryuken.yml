@@ -20,7 +20,7 @@ groups:
     queues:
       - lupo_queue_batches_datacite_doi
   events_other_doi_job_group:
-    concurrency: 2
+    concurrency: 10
     queues:
       - events_other_doi_job
       - events_other_doi_by_id_job
