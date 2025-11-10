@@ -63,7 +63,7 @@ gem "premailer", "~> 1.11", ">= 1.11.1"
 gem "pwqgen.rb", "~> 0.1.0"
 gem "rack-cors", "~> 1.0", require: "rack/cors"
 gem "rack-utf8_sanitizer", "~> 1.6"
-gem "rails", "~> 7.1", ">= 7.1.3"
+gem "rails", "~> 7.2"
 gem "rake", "~> 12.0"
 gem "sentry-ruby", "~> 5.20"
 gem "sentry-rails", "~> 5.20"
@@ -85,7 +85,7 @@ end
 group :development, :test do
   gem "better_errors"
   gem "binding_of_caller"
-  gem "bullet", "~> 7.1", ">= 7.1.6"
+  gem "bullet", "~> 8.1"
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "rspec-benchmark", "~> 0.4.0"
   gem "rspec-graphql_matchers", "~> 1.4"
