@@ -1,0 +1,21 @@
+{
+  "type": [ "integer", "string" ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "publicationYear",
+  "oneOf": [
+    {
+      "type": "string",
+      "pattern": "^(1[0-9]{3}|2[0-9]{3}|3000)$",
+      "minLength": 4,
+      "maxLength": 4
+    },
+    {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 3000,
+      "inclusiveMinimum": true,
+      "inclusiveMaximum": true
+    }
+  ],
+  "description": "publicationYear: A required value representing a year in YYYY format."
+}
