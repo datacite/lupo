@@ -1274,7 +1274,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the title changes" do
-      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
+      let(:titles) { [ { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } ] }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
