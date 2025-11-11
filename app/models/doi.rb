@@ -121,8 +121,6 @@ class Doi < ApplicationRecord
     Rails.root.join("app", "models", "schemas", "doi", "#{schema_name}.json")
   end
 
-  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }
-
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
@@ -148,8 +146,12 @@ class Doi < ApplicationRecord
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
+  # json-schema validation
   validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }
   validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }
+  # validates :doi, if: proc { |doi| doi.validate_json_attribute?(:doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }
+  validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
