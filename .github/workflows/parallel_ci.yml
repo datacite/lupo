@@ -1,12 +1,18 @@
 name: Parallel CI
 on:
   workflow_call:
+    inputs:
+      fail-fast:
+        description: 'Stop all jobs if any job fails'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   parallel-test:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: ${{ inputs.fail-fast }}
       matrix:
         # set N-1 indexes for parallel jobs
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
@@ -106,5 +112,9 @@ jobs:
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
         run: |
-          bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec -o "--fail-fast"
+          if [ "${{ inputs.fail-fast }}" = "true" ]; then
+            bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec -o "--fail-fast"
+          else
+            bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
+          fi
           echo $?
