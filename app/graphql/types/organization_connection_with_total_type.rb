@@ -2,7 +2,6 @@
 
 class OrganizationConnectionWithTotalType < BaseConnection
   edge_type(OrganizationEdgeType)
-  field_class GraphQL::Cache::Field
 
   # data from GRID taken on Oct 18, 2020 https://grid.ac/downloads
   # using latest release in any given year, starting with end of 2017,
@@ -13,11 +12,11 @@ class OrganizationConnectionWithTotalType < BaseConnection
     { "id" => "2019", "title" => "2019", "count" => 6_179 },
   ].freeze
 
-  field :total_count, Integer, null: false, cache: true
-  field :years, [FacetType], null: true, cache: true
-  field :types, [FacetType], null: true, cache: true
-  field :countries, [FacetType], null: true, cache: true
-  field :person_connection_count, Integer, null: false, cache: true
+  field :total_count, Integer, null: false, cache_fragment: true
+  field :years, [FacetType], null: true, cache_fragment: true
+  field :types, [FacetType], null: true, cache_fragment: true
+  field :countries, [FacetType], null: true, cache_fragment: true
+  field :person_connection_count, Integer, null: false, cache_fragment: true
 
   def years
     count =

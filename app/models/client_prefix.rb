@@ -61,8 +61,8 @@ class ClientPrefix < ApplicationRecord
       "client_id" => client_id,
       "prefix_id" => prefix_id,
       "provider_prefix_id" => provider_prefix_id,
-      "created_at" => created_at,
-      "updated_at" => updated_at,
+      "created_at" => created_at.try(:iso8601),
+      "updated_at" => updated_at.try(:iso8601),
       "client" =>
         if options[:exclude_associations]
           nil

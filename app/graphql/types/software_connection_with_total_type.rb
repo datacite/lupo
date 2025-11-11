@@ -2,15 +2,14 @@
 
 class SoftwareConnectionWithTotalType < BaseConnection
   edge_type(SoftwareEdgeType)
-  field_class GraphQL::Cache::Field
   implements Interfaces::WorkFacetsInterface
 
-  field :dataset_connection_count, Integer, null: false, cache: true
-  field :funder_connection_count, Integer, null: false, cache: true
-  field :organization_connection_count, Integer, null: false, cache: true
-  field :person_connection_count, Integer, null: false, cache: true
-  field :publication_connection_count, Integer, null: false, cache: true
-  field :software_connection_count, Integer, null: false, cache: true
+  field :dataset_connection_count, Integer, null: false, cache_fragment: true
+  field :funder_connection_count, Integer, null: false, cache_fragment: true
+  field :organization_connection_count, Integer, null: false, cache_fragment: true
+  field :person_connection_count, Integer, null: false, cache_fragment: true
+  field :publication_connection_count, Integer, null: false, cache_fragment: true
+  field :software_connection_count, Integer, null: false, cache_fragment: true
 
   def dataset_connection_count
     Event.query(

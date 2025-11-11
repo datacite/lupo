@@ -2,12 +2,11 @@
 
 class FunderConnectionWithTotalType < BaseConnection
   edge_type(FunderEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :publication_connection_count, Integer, null: false, cache: true
-  field :dataset_connection_count, Integer, null: false, cache: true
-  field :software_connection_count, Integer, null: false, cache: true
+  field :total_count, Integer, null: false, cache_fragment: true
+  field :publication_connection_count, Integer, null: false, cache_fragment: true
+  field :dataset_connection_count, Integer, null: false, cache_fragment: true
+  field :software_connection_count, Integer, null: false, cache_fragment: true
 
   def total_count
     object.total_count
