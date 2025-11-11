@@ -14,7 +14,7 @@ class ActivitySerializer
              :action,
              :version
 
-  attribute :changes do |object, params|
+  attribute :activity_changes do |object, params|
     # Determine the source and action based on the object's type
     if object.is_a? Activity
       changes = object.audited_changes
