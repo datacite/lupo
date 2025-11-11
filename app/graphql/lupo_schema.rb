@@ -26,18 +26,18 @@ class LupoSchema < GraphQL::Schema
   rescue_from ActiveRecord::RecordNotFound do |_exception|
     raise GraphQL::ExecutionError, "Record not found"
   end
-  
+
   rescue_from ActiveRecord::RecordInvalid do |exception|
     raise GraphQL::ExecutionError,
       exception.record.errors.full_messages.join("\n")
   end
-  
+
   rescue_from CSL::ParseError do |exception|
     Sentry.capture_exception(exception)
     message = exception.message
     raise GraphQL::ExecutionError, message
   end
-  
+
   rescue_from StandardError do |exception|
     Sentry.capture_exception(exception)
     message =
@@ -49,4 +49,3 @@ class LupoSchema < GraphQL::Schema
     raise GraphQL::ExecutionError, message
   end
 end
-
