@@ -38,10 +38,9 @@ gem "flipper-active_support_cache_store"
 gem "gender_detector", "~> 0.1.2"
 gem "git", "~> 1.11"
 gem "google-protobuf", ">= 3.25.5"
-gem "graphql", "1.11.4"
-gem "graphql-batch", "~> 0.4.1"
-gem "graphql-cache", "~> 0.6.0"
-gem "graphql-errors", "~> 0.4.0"
+gem "graphql", "2.0.0"
+gem "graphql-batch", "~> 0.5.1"
+gem "graphql-fragment_cache", "~> 1.18", ">= 1.18.2"
 gem "hashid-rails", "~> 1.4"
 gem "iso-639", "~> 0.3.5"
 gem "iso8601", "~> 0.9.0"
@@ -88,7 +87,7 @@ group :development, :test do
   gem "bullet", "~> 8.1"
   gem "byebug", platforms: %i[mri mingw x64_mingw]
   gem "rspec-benchmark", "~> 0.4.0"
-  gem "rspec-graphql_matchers", "~> 1.4"
+  gem "rspec-graphql_matchers", "2.0.0.pre.rc.0"
   gem "rspec-rails", "~> 6.1", ">= 6.1.1"
 end
 
@@ -111,8 +110,7 @@ end
 
 group :test do
   gem "capybara"
-  gem "database_cleaner"
-  gem "database_cleaner-active_record", "~> 2.1"
+  gem "database_cleaner-active_record", "~> 2.2", ">= 2.2.2"
   gem "elasticsearch-extensions", "~> 0.0.29"
   gem "factory_bot_rails", "~> 6.4", ">= 6.4.3"
   gem "faker", "~> 3.2", ">= 3.2.3"
