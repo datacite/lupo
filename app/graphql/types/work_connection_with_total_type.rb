@@ -2,14 +2,13 @@
 
 class WorkConnectionWithTotalType < BaseConnection
   edge_type(WorkEdgeType)
-  field_class GraphQL::Cache::Field
   implements Interfaces::WorkFacetsInterface
 
   field :totalCountFromCrossref,
-        resolver: TotalCountFromCrossref, null: true, cache: true
-  field :total_open_licenses, Integer, null: true, cache: true
-  field :total_content_url, Integer, null: true, cache: true
-  field :resource_types, [FacetType], null: true, cache: true
+        resolver: TotalCountFromCrossref, null: true, cache_fragment: true
+  field :total_open_licenses, Integer, null: true, cache_fragment: true
+  field :total_content_url, Integer, null: true, cache_fragment: true
+  field :resource_types, [FacetType], null: true, cache_fragment: true
 
 
   def total_content_url
