@@ -9,7 +9,7 @@ class Metadata < ApplicationRecord
   include Cacheable
 
   alias_attribute :created_at, :created
-  alias_attribute :datacite_doi_id, :doi_id
+
 
   validates_associated :doi
   validates_presence_of :xml, :namespace
@@ -65,6 +65,7 @@ class Metadata < ApplicationRecord
     # hasn't yet been setup
     doi&.doi
   end
+  alias_method :datacite_doi_id, :doi_id
 
   def doi_id=(value)
     r = Doi.find_by(doi: value)
