@@ -813,6 +813,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                 "nameType": "Personal",
                 "givenName": "Julia M.",
                 "familyName": "Rovera",
+                "name": "Rovera, Julia M.",
                 "affiliation": [{
                   "name": "Drexel University"
                 }],
