@@ -934,9 +934,9 @@ describe WorkType do
           {
             "name" => "Kristian Garza",
             "nameType" => "Personal",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany"
-            }
+            }]
           },
           {
             "familyName" => "Garza",
