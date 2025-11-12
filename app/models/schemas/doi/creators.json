@@ -17,6 +17,7 @@
       "familyName": {
         "type": ["string", "null"]
       },
+      "lang": { "type": ["string", "null"] },
       "affiliation": {
         "type": "array",
         "items": {
