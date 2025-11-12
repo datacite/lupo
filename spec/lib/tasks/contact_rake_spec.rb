@@ -14,6 +14,11 @@ describe "contact:import_from_providers", elasticsearch: true do
   end
 
   it "should run the rake task" do
-    expect(capture_stdout { subject.invoke }).to start_with(output)
+    Provider.delete_all
+    Contact.delete_all
+    provider = create(:provider)
+    expected = "Imported voting contact robin@example.com for provider #{provider.symbol}.\nImported billing contact trisha@example.com for provider #{provider.symbol}."
+
+    expect(capture_stdout { subject.invoke }).to start_with(expected)
   end
 end

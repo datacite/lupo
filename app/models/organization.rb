@@ -4,7 +4,7 @@ class Organization
   # include helper module for working with Wikidata
   include Wikidatable
 
-  ROR_API_BASE_URL = "https://api.ror.org/v1/organizations"
+  ROR_API_BASE_URL = "https://api.ror.org/v2/organizations"
 
   MEMBER_ROLES = {
     "ROLE_CONSORTIUM" => "consortium",
@@ -133,44 +133,61 @@ class Organization
   end
 
   def self.parse_message(message)
+    geonames = message.dig("locations", 0, "geonames_details")
+
     country = {
-      id: message.dig("country", "country_code"),
-      name: message.dig("country", "country_name"),
+      id: geonames&.dig("country_code")&.upcase,
+      name: geonames&.dig("country_name"),
     }.compact
 
     labels =
-      Array.wrap(message["labels"]).map do |label|
-        code = label["iso639"].present? ? label["iso639"].upcase : nil
-        { code: code, name: label["label"] }.compact
-      end
+      Array.wrap(message["names"])
+        .select { |n| n["types"].include?("label") }
+        .map do |n|
+          code = n["lang"]&.upcase
+          { code: code, name: n["value"] }.compact
+        end
 
-    # remove whitespace from isni identifier
-    isni =
-      Array.wrap(message.dig("external_ids", "ISNI", "all")).map do |i|
-        i.gsub(/ /, "")
-      end
+    # --- external_ids helper ---
+    extract_id = ->(type) do
+      entry = Array.wrap(message["external_ids"]).find { |eid| eid["type"].casecmp(type).zero? }
+      entry&.fetch("all", []) || []
+    end
+
+    # remove whitespace from ISNI
+    isni = extract_id.call("isni").map { |i| i.delete(" ") }
 
     # add DOI prefix to Crossref Funder ID
-    fundref =
-      Array.wrap(message.dig("external_ids", "FundRef", "all")).map do |f|
-        "10.13039/#{f}"
-      end
+    fundref = extract_id.call("fundref").map { |f| "10.13039/#{f}" }
+
+    wikidata = extract_id.call("wikidata")
+    grid     = extract_id.call("grid")
+
+    # --- Links ---
+    links =
+      Array.wrap(message["links"])
+        .select { |l| l["type"] == "website" }
+        .map { |l| l["value"] }
+
+    wikipedia_url =
+      Array.wrap(message["links"])
+        .find { |l| l["type"] == "wikipedia" }&.dig("value")
 
     Hashie::Mash.new(
       id: message["id"],
       type: "Organization",
       types: message["types"],
-      name: message["name"],
-      aliases: message["aliases"],
-      acronyms: message["acronyms"],
+      name: Array.wrap(message["names"]).find { |n| n["types"].include?("ror_display") }&.dig("value"),
+      aliases: Array.wrap(message["names"]).select { |n| n["types"].include?("alias") }.map { |n| n["value"] },
+      acronyms: Array.wrap(message["names"]).select { |n| n["types"].include?("acronym") }.map { |n| n["value"] },
       labels: labels,
-      links: message["links"],
-      wikipedia_url: message["wikipedia_url"].presence,
+      links: links,
+      wikipedia_url: wikipedia_url,
       country: country,
       isni: isni,
       fundref: fundref,
-      wikidata: message.dig("external_ids", "Wikidata", "all"),
-      grid: message.dig("external_ids", "GRID", "all"),
+      wikidata: wikidata,
+      grid: grid,
     )
   end
 

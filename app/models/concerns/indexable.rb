@@ -46,8 +46,6 @@ module Indexable
             Rails.logger.info "[Event Data Import Message] State: #{aasm_state} Params: #{to_jsonapi} message sent to Event Data service."
           end
         end
-      elsif instance_of?(Event)
-        OtherDoiJob.perform_later(dois_to_import)
       # ignore if record was created via Salesforce API
       elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_provider_export_message(to_jsonapi.merge(slack_output: true))

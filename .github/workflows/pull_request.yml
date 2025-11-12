@@ -4,6 +4,12 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      fail-fast:
+        description: 'Stop all jobs if any job fails'
+        type: boolean
+        default: true
+        required: false
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
@@ -11,3 +17,5 @@ jobs:
     needs: lint
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
+    with:
+      fail-fast: ${{ github.event_name == 'workflow_dispatch' && inputs.fail-fast || !contains(github.event.pull_request.labels.*.name, 'run-all-tests') }}
