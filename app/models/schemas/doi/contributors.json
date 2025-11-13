@@ -1,0 +1,81 @@
+{
+  "type": "array",
+  "title": "Contributors",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "nameType": {
+        "$ref": "controlled_vocabularies/name_type.json"
+      },
+      "givenName": {
+        "type": ["string", "null"]
+      },
+      "familyName": {
+        "type": ["string", "null"]
+      },
+      "contributorType": {
+        "oneOf": [
+          {
+             "$ref": "controlled_vocabularies/contributor_type.json"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "lang": { "type": ["string", "null"] },
+      "affiliation": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "affiliationIdentifier": {
+              "type": ["string", "null"]
+            },
+            "affiliationIdentifierScheme": {
+              "type": ["string", "null"]
+            },
+            "name": {
+              "type": ["string", "null"]
+            },
+            "schemeUri": {
+              "type": ["string", "null"]
+            }
+          },
+          "dependentRequired": {
+            "affiliationIdentifier": ["affiliationIdentifierScheme"]
+          },
+          "additionalProperties": false
+        }
+      },
+      "nameIdentifiers": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "schemeUri": {
+              "type": ["string", "null"]
+            },
+            "nameIdentifier": {
+              "type": ["string", "null"]
+            },
+            "nameIdentifierScheme": {
+              "type": ["string", "null"]
+            }
+          },
+          "dependentRequired": {
+            "nameIdentifier": ["nameIdentifierScheme"]
+          }
+        }
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "name"
+    ]
+  }
+}
