@@ -898,6 +898,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
 
+    # There were no nameIdentifiers in contributors/creators.  Added them so that would be tested.
     context "when the request has wrong object in nameIdentifiers nasa" do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
@@ -1750,30 +1751,29 @@ describe DataciteDoisController, type: :request, vcr: true do
         end
       end
 
-      # Temporarily removing this test
-      # context "validates crosscite" do
-      #   let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("crosscite.json"))) }
-      #   let(:params) do
-      #     {
-      #       "data" => {
-      #         "type" => "dois",
-      #         "attributes" => {
-      #           "doi" => "10.14454/10703",
-      #           "xml" => xml,
-      #         },
-      #       },
-      #     }
-      #   end
-      #
-      #   it "validates a Doi" do
-      #     post "/dois/validate", params, headers
-      #
-      #     expect(last_response.status).to eq(200)
-      #     expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
-      #     expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Analysis Tools for Crossover Experiment of UI using Choice Architecture" }])
-      #     expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2016-03-27", "dateType" => "Issued" }])
-      #   end
-      # end
+      context "validates crosscite" do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("crosscite.json"))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/10703",
+                "xml" => xml,
+              },
+            },
+          }
+        end
+
+        it "validates a Doi" do
+          post "/dois/validate", params, headers
+
+          expect(last_response.status).to eq(200)
+          expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+          expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Analysis Tools for Crossover Experiment of UI using Choice Architecture" }])
+          expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2016-03-27", "dateType" => "Issued" }])
+        end
+      end
 
       context "validates bibtex" do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture("crossref.bib"))) }
