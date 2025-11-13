@@ -29,48 +29,10 @@
       },
       "lang": { "type": ["string", "null"] },
       "affiliation": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "affiliationIdentifier": {
-              "type": ["string", "null"]
-            },
-            "affiliationIdentifierScheme": {
-              "type": ["string", "null"]
-            },
-            "name": {
-              "type": ["string", "null"]
-            },
-            "schemeUri": {
-              "type": ["string", "null"]
-            }
-          },
-          "dependentRequired": {
-            "affiliationIdentifier": ["affiliationIdentifierScheme"]
-          },
-          "additionalProperties": false
-        }
+        "$ref": "shared/affiliations.json"
       },
       "nameIdentifiers": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "schemeUri": {
-              "type": ["string", "null"]
-            },
-            "nameIdentifier": {
-              "type": ["string", "null"]
-            },
-            "nameIdentifierScheme": {
-              "type": ["string", "null"]
-            }
-          },
-          "dependentRequired": {
-            "nameIdentifier": ["nameIdentifierScheme"]
-          }
-        }
+       "$ref": "shared/name_identifiers.json"
       }
     },
     "additionalProperties": false,
