@@ -967,14 +967,16 @@ describe WorkType do
           {
             "givenName" => "Cody",
             "familyName" => "Ross",
+            "name" => "Ross, Cody",
             "contributorType" => "Editor",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany"
-            }
+            }]
           },
           {
             "givenName" => "Kristian",
             "familyName" => "Garza",
+            "name" => "Garza, Kristian",
             "contributorType" => "Editor",
             "affiliation" => [
               {
@@ -1089,7 +1091,7 @@ describe WorkType do
         aasm_state: "findable",
         creators: [
           {
-            "name" => "Kristian Garza",
+            "name" => "Garza, Kristian",
             "nameType" => "Personal",
             "nameIdentifiers" =>
              [{
@@ -1194,7 +1196,7 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "creators")).to eq(
         [
           { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "name" => "Kristian Garza",
+          "name" => "Garza, Kristian",
           "givenName" => nil,
           "familyName" => nil },
          { "id" => "https://orcid.org/0000-0003-3484-6875",
@@ -1207,12 +1209,12 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "contributors")).to eq(
         [
           { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "name" => nil,
+          "name" => "Ross, Cody",
           "givenName" => "Cody",
           "familyName" => "Ross",
           "contributorType" => "Editor" },
           { "id" => "https://orcid.org/0000-0003-3484-6875",
-            "name" => nil,
+            "name" => "Garza, Kristian",
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor" }
@@ -1700,18 +1702,18 @@ describe WorkType do
               },
             ],
             "contributorType" => "Editor",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany",
               "affiliationIdentifier": "https://ror.org/013meh722",
               "affiliationIdentifierScheme": "ROR"
-            }
+            }]
           },
           {
             "givenName" => "Kristian",
             "familyName" => "Garza",
+            "name" => "Garza, Kristian",
             "contributorType" => "Editor",
-            "affiliation" => [
-              {
+            "affiliation" => [{
               "name" => "University of Cambridge"
             }
           ]
