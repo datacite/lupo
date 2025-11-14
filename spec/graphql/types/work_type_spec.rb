@@ -1113,6 +1113,7 @@ describe WorkType do
         ],
         contributors: [
           {
+            "name" => "Ross, Cody",
             "givenName" => "Cody",
             "familyName" => "Ross",
             "contributorType" => "Editor",
@@ -1124,6 +1125,7 @@ describe WorkType do
               }]
           },
           {
+            "name" => "Garza, Kristian",
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor",
