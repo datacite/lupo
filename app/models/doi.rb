@@ -109,16 +109,17 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  json_schema_validation = {
-    message: ->(errors) { errors },
-    schema: PUBLISHER_JSON_SCHEMA
-  }
-
   def validate_publisher_obj?(doi)
     doi.validatable? && doi.publisher_obj? && !(doi.publisher_obj.blank? || doi.publisher_obj.all?(nil))
   end
 
-  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
+  def validate_json_attribute?(attribute)
+    validatable? && !self[attribute].nil?
+  end
+
+  def schema_file_path(schema_name)
+    Rails.root.join("app", "models", "schemas", "doi", "#{schema_name}.json")
+  end
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -144,6 +145,15 @@ class Doi < ApplicationRecord
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
+
+  # json-schema validation
+  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }, unless: :only_validate
+  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
+  # validates :doi, if: proc { |doi| doi.validate_json_attribute?(:doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
+  validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
+  validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
+  validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]

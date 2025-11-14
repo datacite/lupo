@@ -813,6 +813,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                 "nameType": "Personal",
                 "givenName": "Julia M.",
                 "familyName": "Rovera",
+                "name": "Rovera, Julia M.",
                 "affiliation": [{
                   "name": "Drexel University"
                 }],
@@ -893,10 +894,11 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "fails to create a Doi" do
         post "/dois", valid_attributes, headers
-        expect(last_response.status).to eq(201)
+        expect(last_response.status).to eq(422)
       end
     end
 
+    # There were no nameIdentifiers in contributors/creators.  Added them so that would be tested.
     context "when the request has wrong object in nameIdentifiers nasa" do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
@@ -1274,7 +1276,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the title changes" do
-      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
+      let(:titles) { [ { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } ] }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
