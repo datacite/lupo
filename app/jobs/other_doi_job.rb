@@ -12,6 +12,8 @@ class OtherDoiJob < ApplicationJob
     ids.each do |id|
       Rails.logger.info("OtherDoiJob: sending #{doi} to OtherDoiByIdJob")
       OtherDoiByIdJob.perform_later(id, {})
+    rescue => error
+      Rails.logger.error("OtherDoiJob: Error: #{error}")
     end
   end
 end
