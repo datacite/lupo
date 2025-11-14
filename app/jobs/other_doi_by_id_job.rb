@@ -14,6 +14,7 @@ class OtherDoiByIdJob < ApplicationJob
   end
 
   def perform(id, options = {})
+    Rails.logger.info("OtherDoiByIJob: hsa started for #{id}")
     Event.import_doi(id, options)
   end
 end
