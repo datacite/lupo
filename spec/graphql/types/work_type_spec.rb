@@ -1183,7 +1183,7 @@ describe WorkType do
       expect(response.dig("data", "works", "authors").length).to eq(2)
       expect(response.dig("data", "works", "authors", 0)).to eq(
         { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "title" => "Kristian Garza",
+          "title" => "Garza, Kristian",
           "count" => 1 }
       )
     end
