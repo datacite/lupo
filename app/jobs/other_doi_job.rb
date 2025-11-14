@@ -10,7 +10,7 @@ class OtherDoiJob < ApplicationJob
     ids = event.dois_to_import
     Rails.logger.info("OtherDoiJob: dois that should be created: #{ids}")
     ids.each do |id|
-      Rails.logger.info("OtherDoiJob: sending #{doi} to OtherDoiByIdJob")
+      Rails.logger.info("OtherDoiJob: sending #{id} to OtherDoiByIdJob")
       OtherDoiByIdJob.perform_later(id, {})
     rescue => error
       Rails.logger.error("OtherDoiJob: Error: #{error}")
