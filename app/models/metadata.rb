@@ -65,7 +65,6 @@ class Metadata < ApplicationRecord
     # hasn't yet been setup
     doi&.doi
   end
-  alias_method :datacite_doi_id, :doi_id
 
   def doi_id=(value)
     r = Doi.find_by(doi: value)
@@ -73,6 +72,8 @@ class Metadata < ApplicationRecord
 
     self.dataset = r.id
   end
+
+  alias_method :datacite_doi_id, :doi_id
 
   def client_id
     client.symbol.downcase
