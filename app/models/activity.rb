@@ -47,7 +47,7 @@ class Activity < Audited::Audit
       "action" => action,
       "version" => version,
       "request_uuid" => request_uuid,
-      "changes" => changes,
+      "changes" => activity_changes,
       "was_derived_from" => was_derived_from,
       "was_attributed_to" => was_attributed_to,
       "was_generated_by" => was_generated_by,
