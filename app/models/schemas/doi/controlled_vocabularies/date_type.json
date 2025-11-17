@@ -1,0 +1,26 @@
+{
+  "type": ["string", "null"],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": [
+        "Accepted",
+        "Available",
+        "Copyrighted",
+        "Collected",
+        "Coverage",
+        "Created",
+        "Issued",
+        "Submitted",
+        "Updated",
+        "Valid",
+        "Withdrawn",
+        "Other"
+      ]
+    },
+    {
+      "type": "null"
+    }
+  ]
+}
