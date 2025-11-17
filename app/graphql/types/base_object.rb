@@ -2,7 +2,6 @@
 
 class BaseObject < GraphQL::Schema::Object
   include ApolloFederation::Object
-  include GraphQL::FragmentCache::Object
 
   include Modelable
   include Facetable

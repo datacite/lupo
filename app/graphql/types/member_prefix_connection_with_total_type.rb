@@ -3,9 +3,9 @@
 class MemberPrefixConnectionWithTotalType < BaseConnection
   edge_type(MemberPrefixEdgeType)
 
-  field :total_count, Integer, null: false, cache_fragment: true
-  field :states, [FacetType], null: false, cache_fragment: true
-  field :years, [FacetType], null: false, cache_fragment: true
+  field :total_count, Integer, null: false
+  field :states, [FacetType], null: false
+  field :years, [FacetType], null: false
 
   def total_count
     object.total_count

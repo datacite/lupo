@@ -3,7 +3,7 @@
 class ActorConnectionType < BaseConnection
   edge_type(ActorEdgeType)
 
-  field :total_count, Integer, null: false, cache_fragment: true
+  field :total_count, Integer, null: false
 
   def total_count
     object.total_count

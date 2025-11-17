@@ -4,7 +4,7 @@ class ServiceConnectionWithTotalType < BaseConnection
   edge_type(ServiceEdgeType)
   implements Interfaces::WorkFacetsInterface
 
-  field :pid_entities, [FacetType], null: true, cache_fragment: true
+  field :pid_entities, [FacetType], null: true
   def pid_entities
     if object.aggregations.pid_entities
       facet_by_software(object.aggregations.pid_entities.subject.buckets)

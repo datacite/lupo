@@ -3,23 +3,23 @@
 module Interfaces::WorkFacetsInterface
   include BaseInterface
 
-  field :total_count, Integer, null: false, cache_fragment: true
+  field :total_count, Integer, null: false
 
-  field :published, [FacetType], null: true, cache_fragment: true
-  field :open_license_resource_types, [FacetType], null: true, cache_fragment: true
-  field :registration_agencies, [FacetType], null: true, cache_fragment: true
-  field :repositories, [FacetType], null: true, cache_fragment: true
-  field :affiliations, [FacetType], null: true, cache_fragment: true
-  field :authors, [FacetType], null: true, cache_fragment: true
-  field :creators_and_contributors, [FacetType], null: true, cache_fragment: true
-  field :funders, [FacetType], null: true, cache_fragment: true
-  field :fields_of_science, [FacetType], null: true, cache_fragment: true
-  field :fields_of_science_combined, [FacetType], null: true, cache_fragment: true
-  field :fields_of_science_repository, [FacetType], null: true, cache_fragment: true
-  field :licenses, [FacetType], null: true, cache_fragment: true
-  field :languages, [FacetType], null: true, cache_fragment: true
-  field :repository_types, [FacetType], null: true, cache_fragment: true
-  field :person_to_work_types_multilevel, [MultiFacetType], null: true, cache_fragment: true
+  field :published, [FacetType], null: true
+  field :open_license_resource_types, [FacetType], null: true
+  field :registration_agencies, [FacetType], null: true
+  field :repositories, [FacetType], null: true
+  field :affiliations, [FacetType], null: true
+  field :authors, [FacetType], null: true
+  field :creators_and_contributors, [FacetType], null: true
+  field :funders, [FacetType], null: true
+  field :fields_of_science, [FacetType], null: true
+  field :fields_of_science_combined, [FacetType], null: true
+  field :fields_of_science_repository, [FacetType], null: true
+  field :licenses, [FacetType], null: true
+  field :languages, [FacetType], null: true
+  field :repository_types, [FacetType], null: true
+  field :person_to_work_types_multilevel, [MultiFacetType], null: true
 
   def person_to_work_types_multilevel
     if object.aggregations.creators_and_contributors

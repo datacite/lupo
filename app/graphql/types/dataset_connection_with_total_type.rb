@@ -5,12 +5,12 @@ class DatasetConnectionWithTotalType < BaseConnection
   implements Interfaces::WorkFacetsInterface
 
 
-  field :dataset_connection_count, Integer, null: false, cache_fragment: true
-  field :publication_connection_count, Integer, null: false, cache_fragment: true
-  field :software_connection_count, Integer, null: false, cache_fragment: true
-  field :person_connection_count, Integer, null: false, cache_fragment: true
-  field :funder_connection_count, Integer, null: false, cache_fragment: true
-  field :organization_connection_count, Integer, null: false, cache_fragment: true
+  field :dataset_connection_count, Integer, null: false
+  field :publication_connection_count, Integer, null: false
+  field :software_connection_count, Integer, null: false
+  field :person_connection_count, Integer, null: false
+  field :funder_connection_count, Integer, null: false
+  field :organization_connection_count, Integer, null: false
 
   def dataset_connection_count
     @dataset_connection_count ||=

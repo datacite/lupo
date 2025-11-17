@@ -15,7 +15,6 @@ class LupoSchema < GraphQL::Schema
   # use GraphQL::Tracing::DataDogTracing, service: "graphql"
   use ApolloFederation::Tracing
   use GraphQL::Batch
-  use GraphQL::FragmentCache
 
   default_max_page_size 1_000
   max_depth 10

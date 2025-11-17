@@ -5,10 +5,10 @@ class WorkConnectionWithTotalType < BaseConnection
   implements Interfaces::WorkFacetsInterface
 
   field :totalCountFromCrossref,
-        resolver: TotalCountFromCrossref, null: true, cache_fragment: true
-  field :total_open_licenses, Integer, null: true, cache_fragment: true
-  field :total_content_url, Integer, null: true, cache_fragment: true
-  field :resource_types, [FacetType], null: true, cache_fragment: true
+        resolver: TotalCountFromCrossref, null: true
+  field :total_open_licenses, Integer, null: true
+  field :total_content_url, Integer, null: true
+  field :resource_types, [FacetType], null: true
 
 
   def total_content_url

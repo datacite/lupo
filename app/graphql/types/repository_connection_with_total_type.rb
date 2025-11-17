@@ -3,12 +3,12 @@
 class RepositoryConnectionWithTotalType < BaseConnection
   edge_type(RepositoryEdgeType)
 
-  field :total_count, Integer, null: true, cache_fragment: true
-  field :software, [FacetType], null: true, cache_fragment: true
-  field :certificates, [FacetType], null: true, cache_fragment: true
-  field :repository_types, [FacetType], null: true, cache_fragment: true
-  field :years, [FacetType], null: true, cache_fragment: true
-  field :members, [FacetType], null: true, cache_fragment: true
+  field :total_count, Integer, null: true
+  field :software, [FacetType], null: true
+  field :certificates, [FacetType], null: true
+  field :repository_types, [FacetType], null: true
+  field :years, [FacetType], null: true
+  field :members, [FacetType], null: true
 
   def total_count
     object.total_count

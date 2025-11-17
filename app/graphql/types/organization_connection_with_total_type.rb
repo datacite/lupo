@@ -12,11 +12,11 @@ class OrganizationConnectionWithTotalType < BaseConnection
     { "id" => "2019", "title" => "2019", "count" => 6_179 },
   ].freeze
 
-  field :total_count, Integer, null: false, cache_fragment: true
-  field :years, [FacetType], null: true, cache_fragment: true
-  field :types, [FacetType], null: true, cache_fragment: true
-  field :countries, [FacetType], null: true, cache_fragment: true
-  field :person_connection_count, Integer, null: false, cache_fragment: true
+  field :total_count, Integer, null: false
+  field :years, [FacetType], null: true
+  field :types, [FacetType], null: true
+  field :countries, [FacetType], null: true
+  field :person_connection_count, Integer, null: false
 
   def years
     count =
