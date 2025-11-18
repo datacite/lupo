@@ -8,6 +8,12 @@ class OtherDoiJob < ApplicationJob
   def perform(sqs_message = nil, data = nil)
     event = Event.new(subj_id: data["subj_id"], obj_id: data["obj_id"])
     ids = event.dois_to_import
-    ids.each { |id| OtherDoiByIdJob.perform_later(id, {}) }
+    Rails.logger.info("OtherDoiJob: dois that should be created: #{ids}")
+    ids.each do |id|
+      Rails.logger.info("OtherDoiJob: sending #{id} to OtherDoiByIdJob")
+      OtherDoiByIdJob.perform_later(id, {})
+    rescue => error
+      Rails.logger.error("OtherDoiJob: Error: #{error}")
+    end
   end
 end
