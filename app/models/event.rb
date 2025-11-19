@@ -712,8 +712,8 @@ class Event < ApplicationRecord
   # import DOIs unless they are from DataCite or are a Crossref Funder ID
   def dois_to_import
     Rails.logger.info("Inside dois_to_import")
-    Rails.logger.info("Inside dois_to_import: subj_id: #{doi_from_url(subj_id)}")
-    Rails.logger.info("Inside dois_to_import: obj_id: #{doi_from_url(obj_id)}")
+    Rails.logger.info("Inside dois_to_import: subj_id (#{subj_id}): #{doi_from_url(subj_id)}")
+    Rails.logger.info("Inside dois_to_import: obj_id (#{obj_id}): #{doi_from_url(obj_id)}")
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact.reduce(
       [],
     ) do |sum, d|
@@ -732,7 +732,6 @@ class Event < ApplicationRecord
       sum.push d
       sum
     end
-    Rails.logger.info("Exit dois_to_import")
   end
 
   def send_callback
