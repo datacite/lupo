@@ -717,9 +717,10 @@ class Event < ApplicationRecord
     ) do |sum, d|
       prefix = d.split("/", 2).first
 
+      Rails.logger.info("Inside dois_to_import: the prefix is #{prefix}")
+
       # ignore Crossref Funder ID
       next sum if prefix == "10.13039"
-      Rails.logger.info("Inside dois_to_import: the prefix is #{prefix}")
 
       # ignore DataCite DOIs
       ra = cached_get_doi_ra(prefix)&.downcase
