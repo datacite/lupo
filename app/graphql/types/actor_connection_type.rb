@@ -2,9 +2,8 @@
 
 class ActorConnectionType < BaseConnection
   edge_type(ActorEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
+  field :total_count, Integer, null: false
 
   def total_count
     object.total_count

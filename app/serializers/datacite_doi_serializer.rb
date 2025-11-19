@@ -75,6 +75,7 @@ class DataciteDoiSerializer
              if: Proc.new { |_object, params| params && params[:detail] }
   has_many :media,
            record_type: :media,
+           serializer: MediaSerializer,
            id_method_name: :uid,
            if:
              Proc.new { |_object, params|

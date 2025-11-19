@@ -1337,9 +1337,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true do
-    argument :first, Int, required: false, default_value: 25
-  end
+  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true
 
   def usage_reports(first: nil)
     UsageReport.query(nil, page: { number: 1, size: first }).fetch(:data, [])
