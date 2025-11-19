@@ -40,9 +40,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     kernel = get_valid_kernel(record.schema_version)
     return false if kernel.blank?
 
-
-   invalid_schemas = Doi::INVALID_SCHEMAS
-
+    invalid_schemas = Doi::INVALID_SCHEMAS
 
     if invalid_schemas.include?(record.schema_version) && !record.skip_schema_version_validation
       record.errors.add(:xml, "DOI #{record.uid}: Schema #{record.schema_version} is no longer supported")
