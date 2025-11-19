@@ -711,6 +711,7 @@ class Event < ApplicationRecord
 
   # import DOIs unless they are from DataCite or are a Crossref Funder ID
   def dois_to_import
+    Rails.logger.info("Inside dois_to_import")
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact.reduce(
       [],
     ) do |sum, d|
@@ -718,9 +719,11 @@ class Event < ApplicationRecord
 
       # ignore Crossref Funder ID
       next sum if prefix == "10.13039"
+      Rails.logger.info("Inside dois_to_import: the prefix is #{prefix}")
 
       # ignore DataCite DOIs
       ra = cached_get_doi_ra(prefix)&.downcase
+      Rails.logger.info("Inside dois_to_import: the ra is #{ra}")
       next sum if ra.blank? || ra == "datacite"
 
       sum.push d
