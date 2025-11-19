@@ -4,6 +4,14 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
+INVALID_SCHEMAS = %w[
+    http://datacite.org/schema/kernel-2.1
+    http://datacite.org/schema/kernel-2.2
+    http://datacite.org/schema/kernel-3.0
+    http://datacite.org/schema/kernel-3.1
+    http://datacite.org/schema/kernel-3
+  ].freeze
+
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
   audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
@@ -114,7 +122,7 @@ class Doi < ApplicationRecord
   end
 
   def validate_json_attribute?(attribute)
-    validatable? && !self[attribute].nil?
+    validatable? && self[attribute].present? && !INVALID_SCHEMAS.include?(self.schema_version)
   end
 
   def schema_file_path(schema_name)
