@@ -6,6 +6,7 @@ class OtherDoiJob < ApplicationJob
   shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_events_other_doi_job" }, auto_delete: true
 
   def perform(sqs_message = nil, data = nil)
+    data = JSON.parse(data)
     Rails.logger.info("OtherDoiJob: Start of other doi job for data: #{data.inspect}")
     Rails.logger.info("subj_id: #{data["subj_id"]}")
     Rails.logger.info("obj_id: #{data["obj_id"]}")
