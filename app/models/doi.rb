@@ -4,13 +4,13 @@ require "maremma"
 require "benchmark"
 
 class Doi < ApplicationRecord
-INVALID_SCHEMAS = %w[
-    http://datacite.org/schema/kernel-2.1
-    http://datacite.org/schema/kernel-2.2
-    http://datacite.org/schema/kernel-3.0
-    http://datacite.org/schema/kernel-3.1
-    http://datacite.org/schema/kernel-3
-  ].freeze
+  INVALID_SCHEMAS = %w[
+      http://datacite.org/schema/kernel-2.1
+      http://datacite.org/schema/kernel-2.2
+      http://datacite.org/schema/kernel-3.0
+      http://datacite.org/schema/kernel-3.1
+      http://datacite.org/schema/kernel-3
+    ].freeze
 
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
