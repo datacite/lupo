@@ -610,6 +610,20 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                         "volume" => "776"
                                                                       }
                                                                       ])
+        expect(json.dig("data", "attributes", "container")).to eq({
+          "type" => "Series",
+          "title" => "Understanding the fictional John Smith",
+          "identifier" => "10.5072/john-smiths-1234",
+          "identifierType" => "DOI",
+          "issue" => "1",
+          "firstPage" => "50",
+          "lastPage" => "60",
+          "type" => "Series",
+          "volume" => "776",
+          "edition" => "1",
+          "number" => "1",
+          "chapterNumber" => "1"
+        })
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("relatedItems", "relatedItem")).to eq(
