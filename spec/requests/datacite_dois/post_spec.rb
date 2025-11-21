@@ -618,7 +618,6 @@ describe DataciteDoisController, type: :request, vcr: true do
           "issue" => "1",
           "firstPage" => "50",
           "lastPage" => "60",
-          "type" => "Series",
           "volume" => "776",
           "edition" => "1",
           "number" => "1",
