@@ -1723,7 +1723,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
           "identifierType": "ISSN",
         }
       end
-      let(:doi) { create(:doi, container: container) }
+      let(:doi) { create(:doi, container: container, related_items: nil) }
 
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
