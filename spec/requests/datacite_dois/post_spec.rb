@@ -2140,7 +2140,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         times depending on the cohesion of the soil and the depth of the sampling. The goal for this project is to
         build a working prototype of a percussive scoop for Axel.", "descriptionType" => "Abstract" }]
       end
-      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://example.org", xml: xml, event: "publish") }
+      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://example.org", xml: xml, event: "publish", related_items: nil) }
       let(:update_attributes) do
         {
           "data" => {
@@ -2163,7 +2163,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     context "remove series_information via xml", elasticsearch: true do
       let(:xml) { Base64.strict_encode64(File.read(file_fixture("datacite_series_information.xml"))) }
       let(:xml_new) { Base64.strict_encode64(File.read(file_fixture("datacite_no_series_information.xml"))) }
-      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://datacite.org", event: "publish") }
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://datacite.org", event: "publish", related_items: nil) }
       let(:update_attributes) do
         {
           "data" => {
