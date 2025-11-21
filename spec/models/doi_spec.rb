@@ -1723,7 +1723,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
           "identifierType": "ISSN",
         }
       end
-      let(:doi) { create(:doi, container: container) }
+      let(:doi) { create(:doi, container: container, related_items: nil) }
 
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
@@ -2202,6 +2202,131 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       Doi.import_one(doi_id: doi.doi)
       doi.reload
       expect(doi.types.symbolize_keys).to eq(correct_types.symbolize_keys)
+    end
+  end
+
+  describe "container" do
+    let(:doi) { create(:doi, types: { resourceTypeGeneral: "JournalArticle" }, related_items: nil, descriptions: nil) }
+
+    it "when no container information is available" do
+      expect(doi.container).to eq({})
+    end
+
+    it "when container is set" do
+      doi.container = {
+        "type": "Series",
+        "identifier": "10.17605/OSF.IO/CEA94",
+        "identifierType": "DOI"
+      }
+      expect(doi.container).to eq({
+        "type" => "Series",
+        "identifier" => "10.17605/OSF.IO/CEA94",
+        "identifierType" => "DOI"
+      })
+    end
+
+    it "when SeriesInformation description and relatedIdentifier IsPartOf is available" do
+      doi.descriptions = [
+        { "descriptionType" => "SeriesInformation",
+          "description" => "series title, volume(issue), firstpage-lastpage", },
+      ]
+      doi.related_identifiers = [
+        { "relatedIdentifier": "10.5438/0000-00ss",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsPartOf" }
+      ]
+      expect(doi.container).to eq({
+        "firstPage" => "firstpage",
+        "identifier" => "10.5438/0000-00ss",
+        "identifierType" => "DOI",
+        "issue" => "issue",
+        "lastPage" => "lastpage",
+        "title" => "series title",
+        "type" => "Series",
+        "volume" => "volume"
+      })
+    end
+
+    it "when relatedItem IsPublishedIn is available" do
+      doi.descriptions = [
+        { "descriptionType" => "SeriesInformation",
+          "description" => "series title, volume(issue), firstpage-lastpage", },
+      ]
+      doi.related_items = [
+        {
+          "relatedItemType": "Journal",
+          "relationType": "IsPublishedIn",
+          "relatedItemIdentifier": {
+            "relatedItemIdentifier": "3034-834X",
+            "relatedItemIdentifierType": "ISSN"
+          },
+          "creators": [
+            {
+              "nameType": "Personal",
+              "name": "Smith, John",
+              "givenName": "John",
+              "familyName": "Smith"
+            }
+          ],
+          "titles": [
+            {
+              "title": "Understanding the fictional John Smith"
+            },
+            {
+              "title": "A detailed look",
+              "titleType": "Subtitle"
+            }
+          ],
+          "volume": "776",
+          "issue": "1",
+          "number": "1",
+          "numberType": "Chapter",
+          "firstPage": "50",
+          "lastPage": "60",
+          "publisher": "Example Inc",
+          "publicationYear": "1776",
+          "edition": "1",
+          "contributors": [
+            {
+              "name": "Hallett, Richard",
+              "givenName": "Richard",
+              "familyName": "Hallett",
+              "contributorType": "ProjectLeader"
+            },
+            {
+              "name": "Ross, Cody",
+              "givenName": "Cody",
+              "familyName": "Ross",
+              "contributorType": "Editor"
+            },
+            {
+              "name": "Stathis, Kelly",
+              "givenName": "Kelly",
+              "familyName": "Stathis",
+              "contributorType": "Editor"
+            },
+            {
+              "name": "Doe, Jane",
+              "givenName": "Jane",
+              "familyName": "Doe",
+              "contributorType": "Translator"
+            }
+          ]
+        }
+      ]
+      expect(doi.container).to eq({
+        "firstPage" => "50",
+        "identifier" => "3034-834X",
+        "identifierType" => "ISSN",
+        "issue" => "1",
+        "lastPage" => "60",
+        "title" => "Understanding the fictional John Smith",
+        "type" => "Series",
+        "volume" => "776",
+        "edition" => "1",
+        "number" => "1",
+        "chapterNumber" => "1"
+      })
     end
   end
 end

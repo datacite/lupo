@@ -25,6 +25,7 @@ describe WorkType do
           "identifier" => "0020-1693",
           "identifierType" => "ISSN",
         },
+        related_items: nil,
       )
     end
     let!(:repository) do
@@ -1487,7 +1488,7 @@ describe WorkType do
         query_works, variables: { id: work_one.doi }
       ).as_json
       expect(response.dig("data", "work", "formattedCitation")).to eq(
-        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> [Data set]. Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. In <i>Physics letters / B</i> (Vol. 776, pp. 249–264). Dryad Digital Repository. <a href='https://doi.org/10.14454/X45ZNPCOA'>https://doi.org/10.14454/X45ZNPCOA</a>"
       )
     end
 
@@ -1497,7 +1498,7 @@ describe WorkType do
         variables: { id: work_one.doi, format: "text" }
       ).as_json
       expect(response.dig("data", "work", "formattedCitation")).to eq(
-        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., & Renaud, F. (2011). Data from: A new malaria agent in African hominids. [Data set]. In Physics letters / B (Vol. 776, pp. 249–264). Dryad Digital Repository. https://doi.org/10.14454/X45ZNPCOA"
       )
     end
 

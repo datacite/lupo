@@ -224,7 +224,48 @@ describe DataciteDoisController, type: :request, vcr: true do
         get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }
 
         expect(last_response.status).to eq(200)
-        expect(json["type"]).to eq("dataset")
+        expect(json).to eq({
+          "type" => "dataset",
+          "id" => "https://doi.org/#{datacite_doi.doi.downcase}",
+          "categories" => [
+            "Phylogeny",
+            "Malaria",
+            "Parasites",
+            "Taxonomy",
+            "Mitochondrial genome",
+            "Africa",
+            "Plasmodium"
+          ],
+          "author" => [
+            { "family" => "Ollomo",
+              "given" => "Benjamin" },
+            { "family" => "Durand",
+              "given" => "Patrick" },
+            { "family" => "Prugnolle",
+              "given" => "Franck" },
+            { "family" => "Douzery",
+              "given" => "Emmanuel J. P." },
+            { "family" => "Arnathau",
+              "given" => "Céline" },
+            { "family" => "Nkoghe",
+              "given" => "Dieudonné" },
+            { "family" => "Leroy",
+              "given" => "Eric" },
+            { "family" => "Renaud",
+              "given" => "François" }
+            ],
+          "issued" => { "date-parts" => [[2011]] },
+          "abstract" => "Data from: A new malaria agent in African hominids.",
+          "container-title" => "Physics letters / B",
+          "DOI" => datacite_doi.doi,
+          "volume" => "776",
+          "page" => "249-264",
+          "page-first" => "249",
+          "publisher" => "Dryad Digital Repository",
+          "title" => "Data from: A new malaria agent in African hominids.",
+          "URL" => datacite_doi.url,
+          "copyright" => "Creative Commons Zero v1.0 Universal"
+        })
       end
     end
 
