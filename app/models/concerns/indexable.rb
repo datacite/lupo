@@ -11,7 +11,7 @@ module Indexable
       if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
         other_doi = OtherDoi.find_by(id: self.id)
         if other_doi
-          IndexBackgroundJob.perform_later(other_doi)
+          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
 
           if index_sync_enabled?
             OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
