@@ -225,7 +225,7 @@ describe "Indexable class methods", elasticsearch: true do
       let!(:event) { create(:event, obj_id: other_doi.doi, source_doi: other_doi.doi) }
 
       it "performs IndexBackgroundJob with OtherDoi when touched as Doi" do
-        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |arg|
+        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |args|
           args.each do |arg|
             expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
             expect(arg.class.name).to eq("OtherDoi")
@@ -235,7 +235,7 @@ describe "Indexable class methods", elasticsearch: true do
       end
 
       it "performs IndexBackgroundJob with OtherDoi when touched as DataciteDoi" do
-        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |arg|
+        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |args|
           args.each do |arg|
             expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
             expect(arg.class.name).to eq("OtherDoi")
@@ -245,7 +245,7 @@ describe "Indexable class methods", elasticsearch: true do
       end
 
       it "performs IndexBackgroundJob with OtherDoi when touched as OtherDoi" do
-        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |arg|
+        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |args|
           args.each do |arg|
             expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
             expect(arg.class.name).to eq("OtherDoi")
@@ -255,7 +255,7 @@ describe "Indexable class methods", elasticsearch: true do
       end
 
       it "the index_name of the object passed to IndexBackgroundJob is dois-other when related event doi_for_source is touched" do
-        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |arg|
+        expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |args|
           args.each do |arg|
             expect(arg.__elasticsearch__.index_name).to eq("dois-other-test")
             expect(arg.class.name).to eq("OtherDoi")
