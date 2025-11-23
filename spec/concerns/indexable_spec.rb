@@ -227,7 +227,7 @@ describe "Indexable class methods", elasticsearch: true do
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as Doi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(opts[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq("dois-other-test"))
         end
         Doi.find(other_doi.id).touch
       end
@@ -235,7 +235,7 @@ describe "Indexable class methods", elasticsearch: true do
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as DataciteDoi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(opts[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq("dois-other-test"))
         end
         DataciteDoi.find(other_doi.id).touch
       end
@@ -243,7 +243,7 @@ describe "Indexable class methods", elasticsearch: true do
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as OtherDoi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(opts[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq("dois-other-test"))
         end
         other_doi.touch
       end
@@ -251,7 +251,7 @@ describe "Indexable class methods", elasticsearch: true do
       it "the index_name of the object passed to OtherDoiImportInBulkJob is dois-other when related event doi_for_source is touched" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(opts[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq("dois-other-test"))
         end
         event.doi_for_source.touch
       end
