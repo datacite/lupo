@@ -120,8 +120,8 @@ describe ActivitiesController, type: :request do
             nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data").length).to eq(1)
-        expect(json.dig("meta", "total")).to eq(1)
+        expect(json.dig("data").length).to eq(2)
+        expect(json.dig("meta", "total")).to eq(2)
         expect(json.dig("data", 0, "attributes", "action")).to eq("create")
 
         expect(
