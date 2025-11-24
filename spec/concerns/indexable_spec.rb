@@ -224,6 +224,10 @@ describe "Indexable class methods", elasticsearch: true do
       let!(:other_doi) { create(:other_doi, agency: "crossref") }
       let!(:event) { create(:event, obj_id: other_doi.doi, source_doi: other_doi.doi) }
 
+      before do
+        allow(Doi).to receive(:active_index).and_return("dois-other-test")
+      end
+
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as Doi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
@@ -234,6 +238,7 @@ describe "Indexable class methods", elasticsearch: true do
 
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as DataciteDoi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
+          puts("the options are #{options}")
           expect(ids).to(eq([other_doi.id]))
           expect(options[:index]).to(eq("dois-other-test"))
         end
