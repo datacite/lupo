@@ -4,15 +4,52 @@
 ![Release](https://github.com/datacite/lupo/workflows/Release/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage)
 
-Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API usesthe [JSONAPI](http://jsonapi.org/) specification.
+Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API uses the [JSONAPI](http://jsonapi.org/) specification.
+
+## Key Concepts
+
+*   **Provider**: An organization that manages clients (e.g., a university or research institute).
+*   **Client**: A data center or repository that registers DOIs.
+*   **DOI**: Digital Object Identifier, the core entity managed by the system.
+*   **Prefix**: DOIs are assigned within a prefix (e.g., 10.1234).
+
+## Tech Stack
+
+*   Ruby on Rails
+*   MySQL
+*   OpenSearch (Elasticsearch)
+*   Memcached
+*   S3 compatible storage (Minio in dev and test)
+*   Shoryuken (AWS SQS) for Background Jobs
+    * Inline Background Jobs in development and test environments
 
 ## Development
 
 We use Docker Compose for development to ensure a consistent environment.
 
+### Project Structure
+
+*   `app/graphql`: GraphQL schema, types, mutations, and resolvers.
+*   `app/models`: Core domain logic (Provider, Client, Doi, etc.).
+*   `app/jobs`: Background jobs (Shoryuken).
+*   `app/serializers`: JSONAPI serializers.
+*   `app/controllers`: API controllers.
+
+### Prerequisites
+
+*   Docker
+*   Docker Compose
+
 ### Configuration
 
 You do not need a complicated `.env` file to get started. Reasonable defaults are set for both development and test environments and are loaded automatically by Rails. You can start with an empty `.env` file or override specific values as needed.
+
+However, if you wish to seed the database with default data, you must set the following environment variables in your `.env` file:
+
+```bash
+MDS_USERNAME=YOUR_USERNAME
+MDS_PASSWORD=YOUR_PASSWORD
+```
 
 ### Starting the Application
 
@@ -37,6 +74,14 @@ Useful endpoints to visit include:
 *   `http://localhost:8065/dois`
 *   `http://localhost:8065/clients`
 
+### Authentication
+
+To obtain a token, you can send a POST request to `/token` or `/oidc-token`.
+
+```bash
+curl -X POST http://localhost:8065/token -d "grant_type=password&username=YOUR_USERNAME&password=YOUR_PASSWORD"
+```
+
 
 ### Running Tests
 
@@ -56,6 +101,26 @@ To run a specific test at a specific line:
 
 ```bash
 docker-compose exec web bundle exec rspec spec/models/doi_spec.rb:10
+```
+
+### Linting and Checking
+
+To run code linting:
+
+```bash
+docker-compose exec web bundle exec rubocop
+```
+
+To run security checks:
+
+```bash
+docker-compose exec web bundle exec brakeman
+```
+
+To check for vulnerable gem versions:
+
+```bash
+docker-compose exec web bundle exec bundle-audit check --update
 ```
 
 ### Rails Console
