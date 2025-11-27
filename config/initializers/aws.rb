@@ -17,7 +17,7 @@ aws_config[:sqs] = {
     credentials: Aws::Credentials.new(ENV["AWS_ACCESS_KEY_ID"], ENV["AWS_SECRET_ACCESS_KEY"]),
 }
 
-if Rails.env.test?
+if Rails.env.test? || Rails.env.development?
   aws_config[:sqs] = {
     credentials: Aws::Credentials.new("DUMMY_ACCESS_KEY_ID", "DUMMY_SECRET_ACCESS_KEY"),
     stub_responses: true,
