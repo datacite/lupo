@@ -44,13 +44,6 @@ We use Docker Compose for development to ensure a consistent environment.
 
 You do not need a complicated `.env` file to get started. Reasonable defaults are set for both development and test environments and are loaded automatically by Rails. You can start with an empty `.env` file or override specific values as needed.
 
-However, if you wish to seed the database with default data, you must set the following environment variables in your `.env` file:
-
-```bash
-MDS_USERNAME=YOUR_USERNAME
-MDS_PASSWORD=YOUR_PASSWORD
-```
-
 ### Starting the Application
 
 To build and start the application and its dependencies:
@@ -73,15 +66,6 @@ The application will be available at `http://localhost:8065`.
 Useful endpoints to visit include:
 *   `http://localhost:8065/dois`
 *   `http://localhost:8065/clients`
-
-### Authentication
-
-To obtain a token, you can send a POST request to `/token` or `/oidc-token`.
-
-```bash
-curl -X POST http://localhost:8065/token -d "grant_type=password&username=YOUR_USERNAME&password=YOUR_PASSWORD"
-```
-
 
 ### Running Tests
 
