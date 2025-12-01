@@ -755,21 +755,21 @@ class Doi < ApplicationRecord
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
       link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
-      subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
-      pid_entities: {
-        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
-        },
-      },
-      fields_of_science: {
-        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-        aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
-                              include: "FOS:.*" } },
-        },
-      },
+      # subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
+      # pid_entities: {
+      #   filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+      #   aggs: {
+      #     subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+      #                         include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+      #   },
+      # },
+      # fields_of_science: {
+      #   filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+      #   aggs: {
+      #     subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+      #                         include: "FOS:.*" } },
+      #   },
+      # },
       licenses: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1 } },
       licenses_with_missing: { terms: { field: "rights_list.rightsIdentifier", size: 10, min_doc_count: 1, missing: "__missing__" } },
       languages: { terms: { field: "language", size: 10, min_doc_count: 1 } },
