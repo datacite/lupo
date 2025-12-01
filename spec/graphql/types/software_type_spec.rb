@@ -42,7 +42,7 @@ describe SoftwareType do
         "https://handle.stage.datacite.org/" + software.uid,
       )
       expect(response.dig("data", "software", "formattedCitation")).to eq(
-        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). <i>Data from: A new malaria agent in African hominids.</i> (Version 1.0.1) [Computer software]. Dryad Digital Repository. <a href='https://doi.org/10.14454/12345'>https://doi.org/10.14454/12345</a>",
+        "Ollomo, B., Durand, P., Prugnolle, F., Douzery, E. J. P., Arnathau, C., Nkoghe, D., Leroy, E., &amp; Renaud, F. (2011). Data from: A new malaria agent in African hominids. In <i>Physics letters / B</i> (Version 1.0.1, Vol. 776, pp. 249–264) [Computer software]. Dryad Digital Repository. <a href='https://doi.org/10.14454/12345'>https://doi.org/10.14454/12345</a>",
       )
     end
   end

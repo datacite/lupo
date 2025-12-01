@@ -610,6 +610,19 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                         "volume" => "776"
                                                                       }
                                                                       ])
+        expect(json.dig("data", "attributes", "container")).to eq({
+          "type" => "Series",
+          "title" => "Understanding the fictional John Smith",
+          "identifier" => "10.5072/john-smiths-1234",
+          "identifierType" => "DOI",
+          "issue" => "1",
+          "firstPage" => "50",
+          "lastPage" => "60",
+          "volume" => "776",
+          "edition" => "1",
+          "number" => "1",
+          "chapterNumber" => "1"
+        })
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
 
         expect(xml.dig("relatedItems", "relatedItem")).to eq(
@@ -2128,7 +2141,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         times depending on the cohesion of the soil and the depth of the sampling. The goal for this project is to
         build a working prototype of a percussive scoop for Axel.", "descriptionType" => "Abstract" }]
       end
-      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://example.org", xml: xml, event: "publish") }
+      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://example.org", xml: xml, event: "publish", related_items: nil) }
       let(:update_attributes) do
         {
           "data" => {
@@ -2151,7 +2164,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     context "remove series_information via xml", elasticsearch: true do
       let(:xml) { Base64.strict_encode64(File.read(file_fixture("datacite_series_information.xml"))) }
       let(:xml_new) { Base64.strict_encode64(File.read(file_fixture("datacite_no_series_information.xml"))) }
-      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://datacite.org", event: "publish") }
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", url: "https://datacite.org", event: "publish", related_items: nil) }
       let(:update_attributes) do
         {
           "data" => {

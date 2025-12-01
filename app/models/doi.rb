@@ -1790,6 +1790,10 @@ class Doi < ApplicationRecord
     write_attribute(:content_url, Array.wrap(value))
   end
 
+  def container
+    generate_container(types, related_items, related_identifiers, descriptions) || read_attribute(:container) || {}
+  end
+
   def container=(value)
     write_attribute(:container, value || {})
   end
