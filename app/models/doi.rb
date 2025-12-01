@@ -394,9 +394,10 @@ class Doi < ApplicationRecord
           type: :text,
          fields: {
           keyword: {
-            type: "keyword"
+            type: :keyword
           }
-         }},
+         }
+        },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
         lang: { type: :keyword },
