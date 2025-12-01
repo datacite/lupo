@@ -766,14 +766,14 @@ class Doi < ApplicationRecord
       pid_entities: {
         filter: { term: { "subjects.subjectScheme": "PidEntity" } },
         aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+          subject: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1,
                               include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
         },
       },
       fields_of_science: {
         filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
         aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+          subject: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1,
                               include: "FOS:.*" } },
         },
       },
