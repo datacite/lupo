@@ -762,7 +762,7 @@ class Doi < ApplicationRecord
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
       link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
-      subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
+      subjects: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1 } },
       pid_entities: {
         filter: { term: { "subjects.subjectScheme": "PidEntity" } },
         aggs: {

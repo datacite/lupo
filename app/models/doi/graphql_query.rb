@@ -372,7 +372,7 @@ module Doi::GraphqlQuery
             filter: { term: { "subjects.subjectScheme": "PidEntity" } },
             aggs: {
               subject: { terms: {
-                field: "subjects.subject",
+                field: "subjects.subject.keyword",
                 size: facet_count,
                 min_doc_count: 1,
                 include: %w(
