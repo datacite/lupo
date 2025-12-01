@@ -344,7 +344,7 @@ class Doi < ApplicationRecord
         ris: { type: :keyword },
       }
       indexes :funding_references, type: :object, properties: {
-        funderName: { type: :keyword },
+        funderName: { type: :text },
         funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
         schemeUri: { type: :keyword },
