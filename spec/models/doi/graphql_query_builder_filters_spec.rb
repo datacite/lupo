@@ -1,10 +1,8 @@
-
-
 # frozen_string_literal: true
 
 require "rails_helper"
 
-RSpec.describe Doi::GraphqlQuery::Builder do
+RSpec.describe Doi::GraphqlQuery::Builder, elasticsearch: false, skip_prefix_pool: true do
   let(:query) { "" }
   let(:options) { {} }
 
@@ -22,7 +20,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { resource_type_id: "Journal_Article" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { resource_type_id: "journal-article" } }
+          { terms: { resource_type_id: ["journal-article"] } }
         )
       end
 
@@ -63,7 +61,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { uid: "10.5438/0012" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { uid: "10.5438/0012" } }
+          { terms: { uid: ["10.5438/0012"] } }
         )
       end
 
@@ -79,7 +77,15 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { consortium_id: "dc" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { consortium_id: { case_insensitive: true, value: "dc" } } }
+          { terms: { consortium_id: ["dc"] } }
+        )
+      end
+
+      it "handles registered" do
+        options = { registered: "2021,2023" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { range: { registered: { gte: "2021||/y", lte: "2023||/y", format: "yyyy" } } }
         )
       end
 
@@ -97,7 +103,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { re3data_id: "10.17616/r31njmjx" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "client.re3data_id" => "10.17616/r31njmjx" } }
+          { terms: { "client.re3data_id": ["10.17616/r31njmjx"] } }
         )
       end
 
@@ -105,7 +111,15 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { opendoar_id: "123456" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "client.opendoar_id" => "123456" } }
+          { terms: { "client.opendoar_id": ["123456"] } }
+        )
+      end
+
+      it "handles certificates" do
+        options = { certificate: "CoreTrustSeal,WDS" }
+        builder = described_class.new(query, options)
+        expect(builder.filters).to include(
+          { terms: { "client.certificate" => ["CoreTrustSeal", "WDS"] } }
         )
       end
 
@@ -207,7 +221,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { pid_entity: "dataset,software" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "subjects.subjectScheme": "PidEntity" } },
+          { terms: { "subjects.subjectScheme": ["PidEntity"] } },
           { terms: { "subjects.subject": ["Dataset", "Software"] } }
         )
       end
@@ -216,7 +230,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { field_of_science: "computer_science,mathematics" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+          { terms: { "subjects.subjectScheme": ["Fields of Science and Technology (FOS)"] } },
           { terms: { "subjects.subject": ["FOS: Computer science", "FOS: Mathematics"] } }
         )
       end
@@ -227,7 +241,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { link_check_status: "200" }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "landing_page.status": "200" } }
+          { terms: { "landing_page.status": ["200"] } }
         )
       end
 
@@ -235,7 +249,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         options = { link_check_has_schema_org: true }
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
-          { term: { "landing_page.hasSchemaOrg": true } }
+          { terms: { "landing_page.hasSchemaOrg": [true] } }
         )
       end
     end
