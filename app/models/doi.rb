@@ -324,7 +324,7 @@ class Doi < ApplicationRecord
         numberType: { type: :keyword },
         firstPage: { type: :keyword },
         lastPage: { type: :keyword },
-        publisher: { type: :keyword },
+        publisher: { type: :text },
         publicationYear: { type: :keyword },
         edition: { type: :keyword },
         contributors: { type: :object, properties: {
