@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "title": "ResourceType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "resourceType": { "type": "string" },
+    "resourceTypeGeneral": { "$ref": "controlled_vocabularies/resource_type_general.json" }
+  },
+  "required": [
+    "resourceType",
+    "resourceTypeGeneral"
+  ],
+  "additionalProperties": false,
+  "minitems": 1
+}
