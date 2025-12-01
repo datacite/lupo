@@ -83,8 +83,8 @@ class Doi < ApplicationRecord
   attr_accessor :skip_schema_version_validation
 
   belongs_to :client, foreign_key: :datacentre, optional: true
-  has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
-  has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
+  has_many :media, -> { order "created DESC" }, class_name: "Media", foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
+  has_many :metadata, -> { order "created DESC" }, class_name: "Metadata", foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy

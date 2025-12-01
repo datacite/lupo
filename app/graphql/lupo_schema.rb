@@ -3,7 +3,6 @@
 class LupoSchema < GraphQL::Schema
   include ApolloFederation::Schema
 
-  use GraphQL::Pagination::Connections
   # custom connection wrapper for Elasticsearch
   connections.add(
     Elasticsearch::Model::Response::Response,
@@ -16,30 +15,26 @@ class LupoSchema < GraphQL::Schema
   # use GraphQL::Tracing::DataDogTracing, service: "graphql"
   use ApolloFederation::Tracing
   use GraphQL::Batch
-  use GraphQL::Cache
 
   default_max_page_size 1_000
   max_depth 10
 
   mutation(MutationType)
   query(QueryType)
-end
 
-GraphQL::Errors.configure(LupoSchema) do
   rescue_from ActiveRecord::RecordNotFound do |_exception|
-    GraphQL::ExecutionError.new("Record not found")
+    raise GraphQL::ExecutionError, "Record not found"
   end
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
-    GraphQL::ExecutionError.new(
-      exception.record.errors.full_messages.join("\n"),
-    )
+    raise GraphQL::ExecutionError,
+      exception.record.errors.full_messages.join("\n")
   end
 
   rescue_from CSL::ParseError do |exception|
     Sentry.capture_exception(exception)
     message = exception.message
-    GraphQL::ExecutionError.new(message)
+    raise GraphQL::ExecutionError, message
   end
 
   rescue_from StandardError do |exception|
@@ -50,6 +45,6 @@ GraphQL::Errors.configure(LupoSchema) do
       else
         exception.message
       end
-    GraphQL::ExecutionError.new(message)
+    raise GraphQL::ExecutionError, message
   end
 end
