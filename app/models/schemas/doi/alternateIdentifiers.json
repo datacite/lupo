@@ -1,0 +1,24 @@
+{
+  "type": "array",
+  "title": "AlternateIdentifiers",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "items": {
+    "type": "object",
+    "properties": {
+      "alternateIdentifier": {
+        "type": "string"
+      },
+      "alternateIdentifierType": {
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "dependentRequired": {
+      "date": ["alternateIdentifierType"]
+    },
+    "required": [
+      "name"
+    ]
+  },
+  "minItems": 0
+}
