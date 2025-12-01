@@ -390,7 +390,7 @@ class Doi < ApplicationRecord
       }
       indexes :subjects, type: :object, properties: {
         subjectScheme: { type: :keyword },
-        subject: { type: :keyword },
+        subject: { type: :text },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
         lang: { type: :keyword },
