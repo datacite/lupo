@@ -337,7 +337,7 @@ class Doi < ApplicationRecord
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
-        resourceType: { type: :keyword },
+        resourceType: { type: :keyword, normalizer: "keyword_lowercase" },
         schemaOrg: { type: :keyword },
         bibtex: { type: :keyword },
         citeproc: { type: :keyword },
