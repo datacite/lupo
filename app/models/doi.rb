@@ -1127,14 +1127,14 @@ class Doi < ApplicationRecord
     filter << { range: { created: { gte: "#{options[:created].split(',').min}||/y", lte: "#{options[:created].split(',').max}||/y", format: "yyyy" } } } if options[:created].present?
     filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } } if options[:schema_version].present?
-    filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    filter << { terms: { "subjects.subject.keyword": options[:subject].split(",") } } if options[:subject].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
-      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
+      filter << { terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+      filter << { terms: { "subjects.subject.keyword": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     if options[:field_of_science_repository].present?
       filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
