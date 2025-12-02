@@ -165,6 +165,7 @@ class Doi < ApplicationRecord
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
   validates :resource_type, if: proc { |doi| doi.validate_json_attribute?(:resource_type) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
   validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
+  validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
