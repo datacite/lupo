@@ -55,7 +55,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
             aggs: {
               subject: {
                 terms: {
-                  field: "subjects.subject",
+                  field: "subjects.subject.keyword",
                   include: "FOS:.*",
                   min_doc_count: 1,
                   size: 10,
@@ -132,7 +132,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
             aggs: {
               subject: {
                 terms: {
-                  field: "subjects.subject",
+                  field: "subjects.subject.keyword",
                   include: [
                     "Dataset",
                     "Publication",
