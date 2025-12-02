@@ -1,0 +1,18 @@
+{
+  "title": "Descriptions",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "items": {
+    "type": "object",
+    "properties": {
+      "description": { 
+        "type": "string"
+      },
+    "dependentRequired": {
+      "description": ["descriptionType"]
+    },
+      "descriptionType": { "$ref": "controlled_vocabularies/description_type.json" },
+      "lang": { "type": ["string", "null"] }
+    },
+    "additionalProperties": false
+  }
+}
