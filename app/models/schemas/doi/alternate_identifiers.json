@@ -1,7 +1,7 @@
 {
-  "type": "array",
   "title": "AlternateIdentifiers",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
   "items": {
     "type": "object",
     "properties": {
@@ -14,11 +14,8 @@
     },
     "additionalProperties": false,
     "dependentRequired": {
-      "date": ["alternateIdentifierType"]
-    },
-    "required": [
-      "name"
-    ]
+      "alternateIdentifier": ["alternateIdentifierType"]
+    }
   },
   "minItems": 0
 }

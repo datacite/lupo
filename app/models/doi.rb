@@ -122,7 +122,7 @@ class Doi < ApplicationRecord
   end
 
   def validate_json_attribute?(attribute)
-    validatable? && self[attribute].present? && !INVALID_SCHEMAS.include?(self.schema_version)
+    validatable? && !self[attribute].nil? && !INVALID_SCHEMAS.include?(self.schema_version)
   end
 
   def schema_file_path(schema_name)
@@ -169,6 +169,7 @@ class Doi < ApplicationRecord
   validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
   validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
   validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
+  # validates :rights_list, if: proc { |doi| doi.validate_json_attribute?(:rights_list) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("rights") } }, unless: :only_validate
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
