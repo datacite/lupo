@@ -1,7 +1,7 @@
 {
   "title": "Publisher",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "properties": {
     "name": { "type": "string" },
     "publisherIdentifier": { "type": "string" },
