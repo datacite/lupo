@@ -1,0 +1,17 @@
+{
+  "title": "RightsList",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "rights": { "type": "string" },
+      "rightsUri": { "type": "string" },
+      "rightsIdentifier": { "type": "string" },
+      "rightsIdentifierScheme": { "type": "string" },
+      "schemeUri": { "type": "string" },
+      "lang": { "type": "string" }
+    },
+    "additionalProperties": false
+  }
+}
