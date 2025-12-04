@@ -1,6 +1,7 @@
 {
-  "type": ["string", "null"],
+  "title": "ContributorType",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": ["string", "null"],
   "anyOf": [
     {
       "type": "string",

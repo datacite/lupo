@@ -1,0 +1,28 @@
+{
+  "title": "RelatedItemIdentifierType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "string",
+  "enum": [
+    "ARK",
+    "arXiv",
+    "bibcode",
+    "CSTR",
+    "DOI",
+    "EAN13",
+    "EISSN",
+    "Handle",
+    "IGSN",
+    "ISBN",
+    "ISSN",
+    "ISTC",
+    "LISSN",
+    "LSID",
+    "PMID",
+    "PURL",
+    "RRID",
+    "UPC",
+    "URL",
+    "URN",
+    "w3id"
+  ]
+}
