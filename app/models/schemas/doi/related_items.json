@@ -4,6 +4,6 @@
   "type": "array",
   "minItems": 0,
   "items": {
-    "$ref": "relatedItem.json"
+    "$ref": "related_item.json"
   }
 }
