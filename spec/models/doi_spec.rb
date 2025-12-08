@@ -1430,7 +1430,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
              publisher: publisher,
              publication_year: publication_year,
              types: types,
-             descriptions: [{ "description" => description }],
+             descriptions: [{ "description" => description, "descriptionType" => "Abstract" }],
              event: "publish")
     end
 
