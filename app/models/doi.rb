@@ -150,22 +150,27 @@ class Doi < ApplicationRecord
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
-  # json-schema validation
-  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }, unless: :only_validate
-  validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
-  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
-  # validates :doi, if: proc { |doi| doi.validate_json_attribute?(:doi) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
+  # JSON-SCHEMA VALIDATION
+  # validates :identifier, if: proc { |doi| doi.validate_json_attribute?(:identifier) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
   validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
-  validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
+  validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
+  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }, unless: :only_validate
   validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
+  validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
+  # validates :language, if: proc { |doi| doi.validate_json_attribute?(:language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") } }, unless: :only_validate
   validates :resource_type, if: proc { |doi| doi.validate_json_attribute?(:resource_type) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
   validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
   validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
   validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
   validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
-  validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
+  # validates :version, if: proc { |doi| doi.validate_json_attribute?(:version) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("version") } }, unless: :only_validate
   validates :rights_list, if: proc { |doi| doi.validate_json_attribute?(:rights_list) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("rights_list") } }, unless: :only_validate
+  validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
+  # validates :geolocations, if: proc { |doi| doi.validate_json_attribute?(:geolocations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geolocations") } }, unless: :only_validate
+  # validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
+  validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]

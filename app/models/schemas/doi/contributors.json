@@ -2,42 +2,8 @@
   "title": "Contributors",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
+  "minItems": 0,
   "items": {
-    "type": "object",
-    "properties": {
-      "name": {
-        "type": "string"
-      },
-      "nameType": {
-        "$ref": "controlled_vocabularies/name_type.json"
-      },
-      "givenName": {
-        "type": ["string", "null"]
-      },
-      "familyName": {
-        "type": ["string", "null"]
-      },
-      "contributorType": {
-        "oneOf": [
-          {
-             "$ref": "controlled_vocabularies/contributor_type.json"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "lang": { "type": ["string", "null"] },
-      "affiliation": {
-        "$ref": "shared/affiliations.json"
-      },
-      "nameIdentifiers": {
-       "$ref": "shared/name_identifiers.json"
-      }
-    },
-    "additionalProperties": false,
-    "required": [
-      "name"
-    ]
+    "$ref": "contributor.json"
   }
 }

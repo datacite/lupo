@@ -1,9 +1,9 @@
 {
-  "title": "Creators",
+  "title": "NameIdentifiers",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
-  "minItems": 1,
+  "minItems": 0,
   "items": {
-    "$ref": "creator.json"
+    "$ref": "name_identifier.json"
   }
 }

@@ -3,17 +3,6 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
   "items": {
-    "type": "object",
-    "properties": {
-      "description": { 
-        "type": "string"
-      },
-    "dependentRequired": {
-      "description": ["descriptionType"]
-    },
-      "descriptionType": { "$ref": "controlled_vocabularies/description_type.json" },
-      "lang": { "type": ["string", "null"] }
-    },
-    "additionalProperties": false
+    "$ref": "description.json"
   }
 }

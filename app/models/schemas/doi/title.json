@@ -1,0 +1,16 @@
+{
+  "title": "Title",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": { 
+      "type": "string"
+    },
+    "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
+    "lang": { "type": ["string", "null"] }
+  },
+  "required": [
+    "title"
+  ],
+  "additionalProperties": false
+}

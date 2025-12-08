@@ -4,32 +4,6 @@
   "type": "array",
   "minItems": 0,
   "items": {
-      "type": "object",
-      "properties": {
-        "subject": {
-          "type": ["string", "null"]
-        },
-        "schemeUri": {
-          "type": ["string", "null"],
-          "format": "uri"
-        },
-        "valueUri": {
-          "type": ["string", "null"],
-          "format": "uri"
-        },
-        "subjectScheme":  {
-           "type": ["string", "null" ]
-        },
-        "classificationCode": {
-          "type": ["string", "null" ]
-        },
-        "lang": {
-          "type": ["string", "null" ]
-        }
-      },
-      "required": [
-        "subject"
-      ],
-      "additionalProperties": false
+    "$ref": "subject.json"
   }
 }

@@ -1,0 +1,20 @@
+{
+  "title": "NameIdentifiers",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemeUri": {
+      "type": ["string", "null"]
+    },
+    "nameIdentifier": {
+      "type": ["string", "null"]
+    },
+    "nameIdentifierScheme": {
+      "type": ["string", "null"]
+    }
+  },
+  "dependentRequired": {
+    "affiliationIdentifier": ["nameIdentifierScheme"]
+  },
+  "additionalProperties": false
+}

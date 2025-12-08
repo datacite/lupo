@@ -1,0 +1,86 @@
+{
+  "title": "RelatedItems",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "relatedItemType": {
+        "$ref": "controlled_vocabularies/related_item_type.json"
+      },
+      "relationType": {
+        "$ref": "controlled_vocabularies/relation_type.json"
+      },
+      "relatedItemIdentifier": {
+        "type": "object",
+        "properties": {
+          "relatedItemIdentifier": {
+            "type": "string"
+          },
+					"relatedItemIdentifierType": {
+						"$ref": "controlled_vocabularies/related_identifier_type.json"
+					},
+					"relatedMetadataScheme": {
+						"type": "string"
+					},
+					"schemeURI": {
+						"type": "string"
+					},
+					"schemeType": {
+						"type": "string"
+					}
+        },
+        "additionalProperties": false
+      },
+      "creators": {
+        "type": "array",
+        "minItems": 0,
+        "items": {
+          "$ref": "creator.json"
+        }
+      },
+      "titles": {
+        "type": "array",
+        "minItems": 0,
+        "items": {
+          "$ref": "title.json"
+        }
+      },
+      "publicationYear": {
+        "$ref": "publication_year.json"
+      },
+      "volume": {
+        "type": "string"
+      },
+      "issue": {
+        "type": "string"
+      },
+      "number": {
+        "type": "string"
+      },
+      "numberType": {
+        "$ref": "controlled_vocabularies/number_type.json"
+      },
+      "firstPage": {
+        "type": "string"
+      },
+      "lastPage": {
+        "type": "string"
+      },
+      "publisher": {
+        "type": "string"
+      },
+      "edition": {
+        "type": "string"
+      },
+      "contributors": {
+        "type": "array",
+        "minItems": 0,
+        "items": {
+          "$ref": "contributor.json"
+        }
+      }
+    },
+    "additionalProperties": true
+  }
+}

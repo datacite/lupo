@@ -2,19 +2,8 @@
   "title": "Titles",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
+  "minItems": 1,
   "items": {
-    "type": "object",
-    "properties": {
-      "title": { 
-        "type": "string"
-      },
-      "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
-      "lang": { "type": ["string", "null"] }
-    },
-    "required": [
-      "title"
-    ],
-    "additionalProperties": false
-  },
-  "minitems": 1
+    "$ref": "title.json"
+  }
 }

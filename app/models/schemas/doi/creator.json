@@ -1,0 +1,30 @@
+{
+  "title": "Creator",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "nameType": {
+      "$ref": "controlled_vocabularies/name_type.json"
+    },
+    "givenName": {
+      "type": ["string", "null"]
+    },
+    "familyName": {
+      "type": ["string", "null"]
+    },
+    "lang": { "type": ["string", "null"] },
+    "affiliation": {
+      "$ref": "affiliations.json"
+    },
+    "nameIdentifiers": {
+      "$ref": "name_identifiers.json"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "name"
+  ]
+}

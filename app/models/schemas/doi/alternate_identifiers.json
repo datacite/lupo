@@ -2,20 +2,8 @@
   "title": "AlternateIdentifiers",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
+  "minItems": 0,
   "items": {
-    "type": "object",
-    "properties": {
-      "alternateIdentifier": {
-        "type": "string"
-      },
-      "alternateIdentifierType": {
-        "type": "string"
-      }
-    },
-    "additionalProperties": false,
-    "dependentRequired": {
-      "alternateIdentifier": ["alternateIdentifierType"]
-    }
-  },
-  "minItems": 0
+    "$ref": "alternate_identifier.json"
+  }
 }
