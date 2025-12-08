@@ -1,0 +1,23 @@
+{
+  "title": "Date",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string"
+    },
+    "dateType": {
+      "$ref": "controlled_vocabularies/date_type.json"
+    },
+    "dateInformation": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date"
+  ],
+  "dependentRequired": {
+    "date": ["dateType"]
+  },
+  "additionalProperties": false
+}

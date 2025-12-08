@@ -71,7 +71,7 @@ describe "Indexable class methods", elasticsearch: true do
         :doi,
         titles: [ { title: "Soil investigations" } ],
         publisher: "Pangaea",
-        descriptions: [{ description: "this is a description" }],
+        descriptions: [{ description: "this is a description", descriptionType: "SeriesInformation" }],
         aasm_state: "findable",
       )
     end

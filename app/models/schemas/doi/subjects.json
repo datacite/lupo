@@ -2,7 +2,6 @@
   "title": "Subjects",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
-  "minItems": 0,
   "items": {
     "$ref": "subject.json"
   }
