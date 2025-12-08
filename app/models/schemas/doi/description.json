@@ -6,11 +6,15 @@
     "description": { 
       "type": "string"
     },
+    "descriptionType": { 
+      "$ref": "controlled_vocabularies/description_type.json"
+    },
+    "lang": { 
+      "$ref": "language.json"
+    }
+  },
   "dependentRequired": {
     "description": ["descriptionType"]
-  },
-    "descriptionType": { "$ref": "controlled_vocabularies/description_type.json" },
-    "lang": { "type": ["string", "null"] }
   },
   "additionalProperties": false
 }

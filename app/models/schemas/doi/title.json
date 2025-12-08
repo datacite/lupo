@@ -6,8 +6,12 @@
     "title": { 
       "type": "string"
     },
-    "titleType": { "$ref": "controlled_vocabularies/title_type.json" },
-    "lang": { "type": ["string", "null"] }
+    "titleType": { 
+      "$ref": "controlled_vocabularies/title_type.json"
+    },
+    "lang": {
+      "$ref": "language.json"
+    }
   },
   "required": [
     "title"

@@ -7,7 +7,9 @@
     "publisherIdentifier": { "type": "string" },
     "publisherIdentifierScheme": { "type": "string" },
     "schemeUri": { "type": "string" },
-    "lang": { "type": "string" }
+    "lang": { 
+      "$ref": "language.json"
+    }
   },
   "additionalProperties": false
 }

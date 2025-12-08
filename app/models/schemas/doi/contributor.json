@@ -25,7 +25,9 @@
         }
       ]
     },
-    "lang": { "type": ["string", "null"] },
+    "lang": {
+      "$ref": "language.json"
+    },
     "affiliation": {
       "$ref": "affiliations.json"
     },

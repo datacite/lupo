@@ -8,7 +8,9 @@
     "rightsIdentifier": { "type": "string" },
     "rightsIdentifierScheme": { "type": "string" },
     "schemeUri": { "type": "string" },
-    "lang": { "type": "string" }
+    "lang": { 
+      "$ref": "language.json"
+    }
   },
   "additionalProperties": false
 }

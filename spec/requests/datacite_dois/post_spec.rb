@@ -2194,7 +2194,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "updates the Doi" do
         get "/dois/#{doi.doi}", nil, headers
 
-        expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids." }])
+        expect(json.dig("data", "attributes", "descriptions")).to eq([{"description"=>"Data from: A new malaria agent in African hominids.", "descriptionType"=>"TechnicalInfo"}])
         expect(json.dig("data", "attributes", "container")).to be_empty
 
         patch "/dois/#{doi.doi}", update_attributes, headers

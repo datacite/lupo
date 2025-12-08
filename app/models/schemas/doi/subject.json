@@ -21,7 +21,7 @@
         "type": ["string", "null" ]
       },
       "lang": {
-        "type": ["string", "null" ]
+        "$ref": "language.json"
       }
     },
     "required": [

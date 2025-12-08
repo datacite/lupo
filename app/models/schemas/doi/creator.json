@@ -15,8 +15,9 @@
     "familyName": {
       "type": ["string", "null"]
     },
-    "lang": { "type": ["string", "null"] },
-    "affiliation": {
+    "lang": {
+      "$ref": "language.json"
+    },    "affiliation": {
       "$ref": "affiliations.json"
     },
     "nameIdentifiers": {
