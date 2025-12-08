@@ -227,7 +227,7 @@ describe DissertationType do
 
     it "returns all dissertations" do
       response = LupoSchema.execute(query).as_json
-    
+
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
       expect(
         response.dig("data", "dissertations", "registrationAgencies"),
