@@ -159,6 +159,7 @@ class Doi < ApplicationRecord
   validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
   validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
+  # temporarily commenting out because of problems with language validation.
   # validates :language, if: proc { |doi| doi.validate_json_attribute?(:language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") } }, unless: :only_validate
   validates :resource_type, if: proc { |doi| doi.validate_json_attribute?(:resource_type) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
   validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate

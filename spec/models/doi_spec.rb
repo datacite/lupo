@@ -1477,7 +1477,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "descriptions" do
-      expect(subject.descriptions).to eq([{ "description" => description }])
+      expect(subject.descriptions).to eq([{ "description" => description, "descriptionType" => "Abstract" }])
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("descriptions", "description")).to eq("__content__" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...", "descriptionType" => "Abstract")
