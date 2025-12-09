@@ -63,7 +63,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         travel_to(Time.zone.local(2023, 12, 14, 10, 7, 40)) do
           expect(doi).to receive(:send_import_message).with(doi.to_jsonapi)
 
-          doi.update(funding_references: [{ "funder" => "New Funder", "title" => "New Title" }])
+          doi.update(funding_references: [{ "funderName" => "New Funder",  "awardTitle" => "New Award Title" }])
         end
       end
 
