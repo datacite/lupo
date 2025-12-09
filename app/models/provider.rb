@@ -25,6 +25,7 @@ class Provider < ApplicationRecord
     doi_quota_allowed
     doi_quota_used
     doi_estimate
+    created
   ]
 
   # include helper module for caching infrequently changing resources
