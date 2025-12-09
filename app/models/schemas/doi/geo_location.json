@@ -1,0 +1,32 @@
+{
+  "title": "GeoLocation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "anyOf": [
+    {
+      "geoLocationPlace": { "type": "string" }
+    },
+    {
+      "geoLocationPlace": { 
+        "type": "object",
+        "properties": {
+          "geoLocationpoint": {
+            "type": "object",
+            "properties" {
+              "pointLatitude": {
+                "type": [ "number", "string"]
+              },
+              "pointLongitude": {
+                "type": [ "number", "string"]
+              }
+            },
+            "required": [
+              "pointLatitude",
+              "pointLongitude"
+            ]
+          }
+        } 
+      }
+    }
+  ]
+}
