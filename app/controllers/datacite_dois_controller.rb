@@ -140,6 +140,8 @@ class DataciteDoisController < ApplicationController
           sort: sort,
           random: params[:random],
           client_type: params[:client_type],
+          funded_by: params[:funded_by],
+          include_funder_child_organizations: params[:include_funder_child_organizations],
         )
     end
 
@@ -333,6 +335,8 @@ class DataciteDoisController < ApplicationController
                       composite: params[:composite],
                       affiliation: params[:affiliation],
                       publisher: params[:publisher],
+                      funded_by: params[:funded_by],
+                      include_funder_child_organizations: params[:include_funder_child_organizations],
                       # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                       "page[cursor]" =>
                         page[:cursor] ? make_cursor(results) : nil,
