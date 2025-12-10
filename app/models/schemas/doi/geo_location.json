@@ -2,31 +2,23 @@
   "title": "GeoLocation",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "anyOf": [
-    {
-      "geoLocationPlace": { "type": "string" }
+  "properties": {
+    "geoLocationPoint": {
+      "$ref": "geo_location_point.json"
     },
-    {
-      "geoLocationPlace": { 
-        "type": "object",
-        "properties": {
-          "geoLocationpoint": {
-            "type": "object",
-            "properties" {
-              "pointLatitude": {
-                "type": [ "number", "string"]
-              },
-              "pointLongitude": {
-                "type": [ "number", "string"]
-              }
-            },
-            "required": [
-              "pointLatitude",
-              "pointLongitude"
-            ]
-          }
-        } 
-      }
+    "geoLocationBox": {
+      "$ref": "geo_location_box.json"
+    },
+    "geoLocationPlace": {
+      "$ref": "geo_location_place.json"
+    },
+    "geoLocationPolygon": {
+      "$ref": "geo_location_polygon.json"
     }
-  ]
+  },
+  "required": [
+    "pointLatitude",
+    "pointLongitude"
+  ],
+  "additionalProperties": false
 }
