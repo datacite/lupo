@@ -27,7 +27,7 @@ jobs:
         ports:
           - 11211
       mysql:
-        image: mysql:8.0.36
+        image: mysql:8.4.7
         env:
           MYSQL_DATABASE: datacite
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
