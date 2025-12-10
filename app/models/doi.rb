@@ -1982,7 +1982,7 @@ class Doi < ApplicationRecord
   def funder_rors
     Array.wrap(funding_references).reduce([]) do |sum, f|
       result = if f.is_a?(Hash) && f.fetch("funderIdentifierType", nil) == "ROR" && f.fetch("funderIdentifier", nil).present?
-        ror = ror_from_url(f.fetch('funderIdentifier', nil))
+        ror = ror_from_url(f.fetch("funderIdentifier", nil))
         ror.present? ? "https://#{ror}" : nil
       elsif f.is_a?(Hash) && f.fetch("funderIdentifierType", nil) == "Crossref Funder ID" && f.fetch("funderIdentifier", nil).present?
         get_ror_from_crossref_funder_id(f.fetch("funderIdentifier", nil))
