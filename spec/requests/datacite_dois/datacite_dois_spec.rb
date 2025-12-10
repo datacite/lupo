@@ -653,6 +653,132 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois with funded_by filter", prefix_pool_size: 3 do
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
+    let!(:funded_by_ec_dois) do
+      create_list(:doi, 5, client: client, aasm_state: "findable", funding_references:
+        [
+          {
+            "awardUri": "info:eu-repo/grantAgreement/EC/FP7/282625/",
+            "awardTitle": "MOTivational strength of ecosystem services and alternative ways to express the value of BIOdiversity",
+            "funderName": "European Commission",
+            "awardNumber": "282625",
+            "funderIdentifier": "https://doi.org/10.13039/501100000780",
+            "funderIdentifierType": "Crossref Funder ID"
+          }
+      ])
+    end
+
+    let!(:funded_by_ec_crossref_funder_id_descendant_dois) do
+      create_list(:doi, 2, client: client, aasm_state: "findable", funding_references:
+        [
+          {
+            "awardUri": "info:eu-repo/grantAgreement/EC/FP7/282625/",
+            "awardTitle": "MOTivational strength of ecosystem services and alternative ways to express the value of BIOdiversity",
+            "funderName": "European Commission",
+            "awardNumber": "282625",
+            "funderIdentifier": "https://doi.org/10.13039/501100000781",
+            "funderIdentifierType": "Crossref Funder ID"
+          }
+      ])
+    end
+    let!(:funded_by_ec_ror_descendant_dois) do
+      create_list(:doi, 4, client: client, aasm_state: "findable", funding_references:
+        [
+          {
+            "awardUri": "info:eu-repo/grantAgreement/EC/FP7/282625/",
+            "awardTitle": "MOTivational strength of ecosystem services and alternative ways to express the value of BIOdiversity",
+            "funderName": "European Commission",
+            "awardNumber": "282625",
+            "funderIdentifier": "ror.org/05mkt9r11",
+            "funderIdentifierType": "ROR"
+          }
+      ])
+    end
+    let!(:funded_by_lshtm_dois) do
+      create_list(:doi, 2, client: client, aasm_state: "findable", funding_references:
+        [
+          {
+            "awardUri": "info:eu-repo/grantAgreement/EC/FP7/284382/",
+            "awardTitle": "Institutionalizing global genetic-resource commons. Global Strategies for accessing and using essential public knowledge assets in the life sciences.",
+            "funderName": "London School of Hygiene & Tropical Medicine",
+            "awardNumber": "284382",
+            "funderIdentifier": "https://ror.org/00a0jsq62",
+            "funderIdentifierType": "ROR"
+          }
+      ])
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "filters by funder when funded_by is set with Crossref Funder ID funderIdentifier", vcr: true do
+      get "/dois?funded-by=https://ror.org/00k4n6c32", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+    end
+
+    it "filters by funder when query string is set with Crossref Funder ID funderIdentifier", vcr: true do
+      get "/dois?query=funder_rors:\"https://ror.org/00k4n6c32\"", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+    end
+
+    it "filters by funder when funded_by is set with ROR funderIdentifier", vcr: true do
+      get "/dois?funded-by=https://ror.org/00a0jsq62", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(2)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_lshtm_dois.first.doi.downcase)
+    end
+
+    it "filters by funder and funder child orgs when funded_by is set with Crossref Funder ID funderIdentifier and include_funder_child_organizations is true", vcr: true do
+      get "/dois?funded-by=https://ror.org/00k4n6c32&include-funder-child-organizations=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(11)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_crossref_funder_id_descendant_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_ror_descendant_dois.first.doi.downcase)
+    end
+
+    it "filters by funder and funder child orgs when query string is set with Crossref Funder ID funderIdentifier and child organizations are included", vcr: true do
+      get "/dois?query=funder_rors:\"https://ror.org/00k4n6c32\" OR funder_parent_rors:\"https://ror.org/00k4n6c32\"", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(11)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_crossref_funder_id_descendant_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_ror_descendant_dois.first.doi.downcase)
+    end
+
+    it "filters by funder when entered ROR is a parent of entered RORs or Crossref Funder IDs but isn't included in metadata", vcr: true do
+      get "/dois?funded-by=https://ror.org/019w4f821&include-funder-child-organizations=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(11)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_crossref_funder_id_descendant_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_ror_descendant_dois.first.doi.downcase)
+    end
+
+    it "filters by funder when entered ROR in query is a parent of entered RORs or Crossref Funder IDs but isn't included in metadata", vcr: true do
+      get "/dois?query=funder_rors:\"https://ror.org/019w4f821\" OR funder_parent_rors:\"https://ror.org/019w4f821\"", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(11)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_crossref_funder_id_descendant_dois.first.doi.downcase)
+      expect(json["data"].map { |d| d["attributes"]["doi"] }).to include(funded_by_ec_ror_descendant_dois.first.doi.downcase)
+    end
+  end
+
   describe "GET /dois with resource-type-id filter", elasticsearch: false, prefix_pool_size: 1 do
     let!(:instrument_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "Instrument" }) }
     let!(:study_registration_doi) { create(:doi, client: client, aasm_state: "findable", types: { "resourceTypeGeneral": "StudyRegistration" }) }

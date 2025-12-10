@@ -14,6 +14,7 @@ class Doi < ApplicationRecord
   include Metadatable
   include Cacheable
   include Dateable
+  include Rorable
 
   # include helper module for generating random DOI suffixes
   include Helpable
@@ -269,6 +270,8 @@ class Doi < ApplicationRecord
       indexes :organization_id,                type: :keyword
       indexes :fair_organization_id,           type: :keyword
       indexes :related_dmp_organization_id,    type: :keyword
+      indexes :funder_rors,                    type: :keyword
+      indexes :funder_parent_rors,           type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
@@ -639,6 +642,8 @@ class Doi < ApplicationRecord
       "organization_id" => organization_id,
       "fair_organization_id" => fair_organization_id,
       "related_dmp_organization_id" => related_dmp_organization_and_affiliation_id,
+      "funder_rors" => funder_rors,
+      "funder_parent_rors" => funder_parent_rors,
       "affiliation_id_and_name" => affiliation_id_and_name,
       "fair_affiliation_id_and_name" => fair_affiliation_id_and_name,
       "media_ids" => media_ids,
@@ -1172,6 +1177,22 @@ class Doi < ApplicationRecord
     filter << { term: { "client.client_type" =>  options[:client_type] } } if options[:client_type]
     filter << { term: { "types.resourceTypeGeneral" => "PhysicalObject" } } if options[:client_type] == "igsnCatalog"
 
+    if options[:funded_by].present?
+      normalized_funder = "https://#{ror_from_url(options[:funded_by])}"
+      if options[:include_funder_child_organizations] == "true"
+        filter << {
+          bool: {
+            should: [
+              { term: { "funder_rors": normalized_funder } },
+              { term: { "funder_parent_rors": normalized_funder } }
+            ],
+            minimum_should_match: 1
+          }
+        }
+      else
+        filter << { term: { "funder_rors": normalized_funder } }
+      end
+    end
     # match either one of has_affiliation, has_organization, or has_funder
     if options[:has_organization].present?
       should << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" } }
@@ -1958,6 +1979,27 @@ class Doi < ApplicationRecord
     end
   end
 
+  def funder_rors
+    Array.wrap(funding_references).reduce([]) do |sum, f|
+      result = if f.is_a?(Hash) && f.fetch("funderIdentifierType", nil) == "ROR" && f.fetch("funderIdentifier", nil).present?
+        ror = ror_from_url(f.fetch('funderIdentifier', nil))
+        ror.present? ? "https://#{ror}" : nil
+      elsif f.is_a?(Hash) && f.fetch("funderIdentifierType", nil) == "Crossref Funder ID" && f.fetch("funderIdentifier", nil).present?
+        get_ror_from_crossref_funder_id(f.fetch("funderIdentifier", nil))
+      end
+
+      sum << result if result.present?
+      sum
+    end.compact.uniq
+  end
+
+  def funder_parent_rors
+    Array.wrap(funder_rors).reduce([]) do |sum, ror|
+      ancestors = get_ror_parents(ror)
+      sum.concat(ancestors) if ancestors.present?
+      sum.uniq
+    end
+  end
 
   def prefix
     doi.split("/", 2).first if doi.present?
