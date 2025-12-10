@@ -852,6 +852,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
+      clear_doi_index
       import_doi_index
     end
 

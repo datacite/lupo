@@ -2,7 +2,6 @@
 
 module Rorable
   extend ActiveSupport::Concern
-  include Indexable
 
   def get_ror_from_crossref_funder_id(funder_id)
     funder_id_suffix = funder_id.split("10.13039/").last
