@@ -166,8 +166,7 @@ class Doi < ApplicationRecord
   validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
   validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
   validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
-  # temporarily commenting out because of problems with version validation.
-  # validates :version, if: proc { |doi| doi.validate_json_attribute?(:version) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("version") } }, unless: :only_validate
+  validates :version, if: proc { |doi| doi.validate_json_attribute?(:version) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("version") } }, unless: :only_validate
   validates :rights_list, if: proc { |doi| doi.validate_json_attribute?(:rights_list) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("rights_list") } }, unless: :only_validate
   validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
   validates :geolocations, if: proc { |doi| doi.validate_json_attribute?(:geolocations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geolocations") } }, unless: :only_validate
