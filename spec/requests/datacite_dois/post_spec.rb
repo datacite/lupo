@@ -357,7 +357,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                              "schemeType" => "URL"
                                             },
                 "relatedItemType" => "Journal",
-                "relationType" => "IsPublishedIn",
+                "relationType" => "HasMetadata",
                 "titles" => [{ "title" => "Physics letters / B" }],
                 "volume" => "776"
               }],
@@ -388,7 +388,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
-        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "HasMetadata",
                                                                       "relatedItemType" => "Journal",
                                                                       "publicationYear" => "2018",
                                                                       "relatedItemIdentifier" => {
@@ -826,6 +826,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                 "nameType": "Personal",
                 "givenName": "Julia M.",
                 "familyName": "Rovera",
+                "name": "Rovera, Julia M.",
                 "affiliation": [{
                   "name": "Drexel University"
                 }],
@@ -906,10 +907,11 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "fails to create a Doi" do
         post "/dois", valid_attributes, headers
-        expect(last_response.status).to eq(201)
+        expect(last_response.status).to eq(422)
       end
     end
 
+    # There were no nameIdentifiers in contributors/creators.  Added them so that would be tested.
     context "when the request has wrong object in nameIdentifiers nasa" do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
@@ -1287,7 +1289,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the title changes" do
-      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
+      let(:titles) { [ { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } ] }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
@@ -2192,7 +2194,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "updates the Doi" do
         get "/dois/#{doi.doi}", nil, headers
 
-        expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids." }])
+        expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids.", "descriptionType" => "TechnicalInfo" }])
         expect(json.dig("data", "attributes", "container")).to be_empty
 
         patch "/dois/#{doi.doi}", update_attributes, headers

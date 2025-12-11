@@ -14,10 +14,7 @@
           ]
         },
         "lang": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "../doi/language.json"
         },
         "subject":             { "type": "string" },
         "subjectScheme":       { "type": "string" }

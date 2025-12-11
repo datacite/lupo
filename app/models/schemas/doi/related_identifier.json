@@ -1,0 +1,58 @@
+{
+  "title": "RelatedIdentifiers",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "relatedIdentifier": {
+      "type": "string"
+    },
+    "relationType": {
+      "$ref": "controlled_vocabularies/relation_type.json"
+    },
+    "relatedIdentifierType": {
+      "$ref": "controlled_vocabularies/related_identifier_type.json"
+    },
+    "relatedMetaDataScheme": {
+      "type": "string"
+    },
+    "schemeUri": {
+      "type": "string"
+    },
+    "resourceTypeGeneral": {
+      "$ref": "controlled_vocabularies/resource_type_general.json"
+    }
+  },
+  "if": {
+    "properties": {
+      "relationType": {
+        "enum": ["HasMetadata", "IsMetadataFor"]
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "relatedMetadataScheme": {
+        "type": "string"
+      },
+      "schemeUri": {
+        "type": "string"
+      },
+      "schemeType": {
+        "type": "string"
+      }
+    }
+  },
+  "else": {
+    "not": {
+      "anyOf": [
+        { "required": ["relatedMetadataScheme"] },
+        { "required": ["schemeUri"] },
+        { "required": ["schemeType"] }
+      ]
+    }
+  },
+  "dependentRequired": {
+    "relatedIdentifier": ["relatedIdentifierType", "relationType"]
+  },
+  "additionalProperties": false
+}

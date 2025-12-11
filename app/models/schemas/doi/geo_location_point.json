@@ -1,0 +1,18 @@
+{
+  "title": "GeoLocationPoint",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "pointLatitude": {
+      "$ref": "point_latitude.json"
+    },
+    "pointLongitude": {
+      "$ref": "point_longitude.json"
+    }
+  },
+  "required": [
+    "pointLatitude",
+    "pointLongitude"
+  ],
+  "additionalProperties": false
+}

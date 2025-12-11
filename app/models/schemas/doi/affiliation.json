@@ -1,0 +1,23 @@
+{
+  "title": "Affiliation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "affiliationIdentifier": {
+      "type": ["string", "null"]
+    },
+    "affiliationIdentifierScheme": {
+      "type": ["string", "null"]
+    },
+    "name": {
+      "type": ["string", "null"]
+    },
+    "schemeUri": {
+      "type": ["string", "null"]
+    }
+  },
+  "dependentRequired": {
+    "affiliationIdentifier": ["affiliationIdentifierScheme"]
+  },
+  "additionalProperties": false
+}
