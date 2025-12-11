@@ -4,31 +4,10 @@
   "type": "object",
   "properties": {
     "relatedItemType": {
-      "$ref": "controlled_vocabularies/related_item_type.json"
+      "$ref": "controlled_vocabularies/resource_type_general.json"
     },
     "relationType": {
       "$ref": "controlled_vocabularies/relation_type.json"
-    },
-    "relatedItemIdentifier": {
-      "type": "object",
-      "properties": {
-        "relatedItemIdentifier": {
-          "type": "string"
-        },
-        "relatedItemIdentifierType": {
-          "$ref": "controlled_vocabularies/related_identifier_type.json"
-        },
-        "relatedMetadataScheme": {
-          "type": "string"
-        },
-        "schemeURI": {
-          "type": "string"
-        },
-        "schemeType": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false
     },
     "creators": {
       "type": "array",
@@ -79,5 +58,54 @@
       }
     }
   },
-  "additionalProperties": true
+  "if": {
+    "properties": {
+      "relationType": {
+        "enum": [ "HasMetadata", "IsMetadataFor" ]
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "relatedItemIdentifier": {
+        "type": "object",
+        "properties": {
+          "relatedItemIdentifier": {
+            "type": "string"
+          },
+          "relatedItemIdentifierType": {
+            "$ref": "controlled_vocabularies/related_identifier_type.json"
+          },
+          "relatedMetadataScheme": {
+            "type": "string"
+          },
+          "schemeURI": {
+            "type": "string"
+          },
+          "schemeType": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "relatedItemIdentifier": {
+        "type": "object",
+        "properties": {
+          "relatedItemIdentifier": {
+            "type": "string"
+          },
+          "relatedItemIdentifierType": {
+            "$ref": "controlled_vocabularies/related_identifier_type.json"
+          }
+       }
+      }
+    }
+  },
+  "required": [
+    "relatedItemType",
+    "relationType"
+  ]
 }
