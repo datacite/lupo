@@ -14,6 +14,7 @@ class Client < ApplicationRecord
     version
     doi_quota_allowed
     doi_quota_used
+    created
   ]
 
   # include helper module for caching infrequently changing resources
