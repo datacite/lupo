@@ -9,6 +9,9 @@
     "relationType": {
       "$ref": "controlled_vocabularies/relation_type.json"
     },
+    "relatedItemIdentifier": {
+      "type": "object"
+    },
     "creators": {
       "type": "array",
       "minItems": 0,
@@ -85,7 +88,8 @@
           "schemeType": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -100,10 +104,12 @@
           "relatedItemIdentifierType": {
             "$ref": "controlled_vocabularies/related_identifier_type.json"
           }
-       }
+        },
+        "additionalProperties": false
       }
     }
   },
+  "unevaluatedProperties": false,
   "required": [
     "relatedItemType",
     "relationType"

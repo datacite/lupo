@@ -357,7 +357,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                              "schemeType" => "URL"
                                             },
                 "relatedItemType" => "Journal",
-                "relationType" => "IsPublishedIn",
+                "relationType" => "HasMetadata",
                 "titles" => [{ "title" => "Physics letters / B" }],
                 "volume" => "776"
               }],
@@ -388,7 +388,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
-        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "HasMetadata",
                                                                       "relatedItemType" => "Journal",
                                                                       "publicationYear" => "2018",
                                                                       "relatedItemIdentifier" => {
