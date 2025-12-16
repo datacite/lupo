@@ -324,7 +324,7 @@ class Doi < ApplicationRecord
         numberType: { type: :keyword },
         firstPage: { type: :keyword },
         lastPage: { type: :keyword },
-        publisher: { type: :keyword },
+        publisher: { type: :text },
         publicationYear: { type: :keyword },
         edition: { type: :keyword },
         contributors: { type: :object, properties: {
@@ -337,14 +337,14 @@ class Doi < ApplicationRecord
       }
       indexes :types, type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
-        resourceType: { type: :keyword },
+        resourceType: { type: :keyword, normalizer: "keyword_lowercase" },
         schemaOrg: { type: :keyword },
         bibtex: { type: :keyword },
         citeproc: { type: :keyword },
         ris: { type: :keyword },
       }
       indexes :funding_references, type: :object, properties: {
-        funderName: { type: :keyword },
+        funderName: { type: :text },
         funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
         schemeUri: { type: :keyword },
@@ -390,7 +390,14 @@ class Doi < ApplicationRecord
       }
       indexes :subjects, type: :object, properties: {
         subjectScheme: { type: :keyword },
-        subject: { type: :keyword },
+        subject: {
+          type: :text,
+         fields: {
+          keyword: {
+            type: :keyword
+          }
+         }
+        },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
         lang: { type: :keyword },
@@ -755,18 +762,18 @@ class Doi < ApplicationRecord
       prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: "schema_version", size: 10, min_doc_count: 1 } },
       link_checks_status: { terms: { field: "landing_page.status", size: 10, min_doc_count: 1 } },
-      subjects: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1 } },
+      subjects: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1 } },
       pid_entities: {
         filter: { term: { "subjects.subjectScheme": "PidEntity" } },
         aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+          subject: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1,
                               include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
         },
       },
       fields_of_science: {
         filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
         aggs: {
-          subject: { terms: { field: "subjects.subject", size: 10, min_doc_count: 1,
+          subject: { terms: { field: "subjects.subject.keyword", size: 10, min_doc_count: 1,
                               include: "FOS:.*" } },
         },
       },
@@ -1120,14 +1127,14 @@ class Doi < ApplicationRecord
     filter << { range: { created: { gte: "#{options[:created].split(',').min}||/y", lte: "#{options[:created].split(',').max}||/y", format: "yyyy" } } } if options[:created].present?
     filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } } if options[:schema_version].present?
-    filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    filter << { terms: { "subjects.subject.keyword": options[:subject].split(",") } } if options[:subject].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
-      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
+      filter << { terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+      filter << { terms: { "subjects.subject.keyword": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     if options[:field_of_science_repository].present?
       filter << { terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } }
@@ -1769,6 +1776,10 @@ class Doi < ApplicationRecord
 
   def content_url=(value)
     write_attribute(:content_url, Array.wrap(value))
+  end
+
+  def container
+    generate_container(types, related_items, related_identifiers, descriptions) || read_attribute(:container) || {}
   end
 
   def container=(value)

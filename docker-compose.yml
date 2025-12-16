@@ -6,6 +6,7 @@ services:
       - PASSENGER_MAX_POOL_SIZE=12
       - PASSENGER_MIN_INSTANCES=5
     image: ghcr.io/datacite/lupo:main
+    # build: .
     ports:
       - "8065:80"
       - "2265:22"
@@ -25,7 +26,7 @@ services:
       - minio
 
   memcached:
-    image: memcached:1.4.31
+    image: memcached:1.6.22
     networks:
       - public
 
@@ -34,7 +35,7 @@ services:
     environment:
       MYSQL_DATABASE: datacite
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    image: mysql:8
+    image: mysql:8.4.7
     ports:
       - "3309:3306"
     networks:
