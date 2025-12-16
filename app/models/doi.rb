@@ -1773,7 +1773,7 @@ class Doi < ApplicationRecord
   def dates=(value)
     write_attribute(:dates, Array.wrap(value))
   end
-  
+
   def language=(value)
     write_attribute(:language, value)
   end
