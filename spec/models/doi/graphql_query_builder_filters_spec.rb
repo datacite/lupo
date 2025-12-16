@@ -208,7 +208,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
           { term: { "subjects.subjectScheme": "PidEntity" } },
-          { terms: { "subjects.subject": ["Dataset", "Software"] } }
+          { terms: { "subjects.subject.keyword": ["Dataset", "Software"] } }
         )
       end
 
@@ -217,7 +217,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
         builder = described_class.new(query, options)
         expect(builder.filters).to include(
           { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
-          { terms: { "subjects.subject": ["FOS: Computer science", "FOS: Mathematics"] } }
+          { terms: { "subjects.subject.keyword": ["FOS: Computer science", "FOS: Mathematics"] } }
         )
       end
     end
