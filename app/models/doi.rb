@@ -161,7 +161,7 @@ class Doi < ApplicationRecord
   validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
   # temporarily commenting out because of problems with language validation.
-  validates :language, if: proc { |doi| doi.validate_json_attribute?(:language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") } }, unless: :only_validate
+  # validates :language, if: proc { |doi| doi.validate_json_attribute?(:language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") } }, unless: :only_validate
   validates :resource_type, if: proc { |doi| doi.validate_json_attribute?(:resource_type) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
   validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
   validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
@@ -1772,10 +1772,6 @@ class Doi < ApplicationRecord
 
   def dates=(value)
     write_attribute(:dates, Array.wrap(value))
-  end
-
-  def language=(value)
-    write_attribute(:language, value)
   end
 
   def subjects=(value)
