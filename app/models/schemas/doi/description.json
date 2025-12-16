@@ -13,8 +13,8 @@
       "$ref": "language.json"
     }
   },
+  "additionalProperties": false,
   "dependentRequired": {
     "description": ["descriptionType"]
-  },
-  "additionalProperties": false
+  }
 }
