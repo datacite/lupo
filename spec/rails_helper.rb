@@ -9,18 +9,14 @@ require "simplecov"
 SimpleCov.start
 
 require "openssl"
+require File.expand_path("../config/environment", __dir__)
 
 # Generate dummy JWT keys for testing if not already set
 if ENV["JWT_PRIVATE_KEY"].nil? || ENV["JWT_PUBLIC_KEY"].nil?
-  # Generate a new RSA key pair
-  key = OpenSSL::PKey::RSA.new(2048)
-
-  # Set private and public keys as environment variables
-  ENV["JWT_PRIVATE_KEY"] = key.to_s
-  ENV["JWT_PUBLIC_KEY"] = key.public_key.to_s
+  # Use existing test certificates
+  ENV["JWT_PRIVATE_KEY"] = File.read(Rails.root.join('spec', 'fixtures', 'certs', 'rsa-2048-private.pem'))
+  ENV["JWT_PUBLIC_KEY"] = File.read(Rails.root.join('spec', 'fixtures', 'certs', 'rsa-2048-public.pem'))
 end
-
-require File.expand_path("../config/environment", __dir__)
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
