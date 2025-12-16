@@ -169,7 +169,7 @@ describe WorkType do
 
     it "returns work" do
       current_user =
-        User.new(User.generate_token(uid: "0000-0001-5663-772X", aud: "stage"))
+        OpenStruct.new(uid: "0000-0001-5663-772X", aud: "stage")
       response =
         LupoSchema.execute(query, context: { current_user: current_user }).
           as_json
@@ -221,7 +221,7 @@ describe WorkType do
 
     it "returns work" do
       current_user =
-        User.new(User.generate_token(uid: "0000-0002-7352-517X", aud: "stage"))
+        OpenStruct.new(uid: "0000-0002-7352-517X", aud: "stage")
       response =
         LupoSchema.execute(query, context: { current_user: current_user }).
           as_json
