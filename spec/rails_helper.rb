@@ -14,8 +14,8 @@ require File.expand_path("../config/environment", __dir__)
 # Generate dummy JWT keys for testing if not already set
 if ENV["JWT_PRIVATE_KEY"].nil? || ENV["JWT_PUBLIC_KEY"].nil?
   # Use existing test certificates
-  ENV["JWT_PRIVATE_KEY"] = File.read(Rails.root.join('spec', 'fixtures', 'certs', 'rsa-2048-private.pem'))
-  ENV["JWT_PUBLIC_KEY"] = File.read(Rails.root.join('spec', 'fixtures', 'certs', 'rsa-2048-public.pem'))
+  ENV["JWT_PRIVATE_KEY"] = File.read(Rails.root.join("spec", "fixtures", "certs", "rsa-2048-private.pem"))
+  ENV["JWT_PUBLIC_KEY"] = File.read(Rails.root.join("spec", "fixtures", "certs", "rsa-2048-public.pem"))
 end
 
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
