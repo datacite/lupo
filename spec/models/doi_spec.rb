@@ -2329,4 +2329,38 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       })
     end
   end
+
+  describe "with funding references" do
+    let(:doi) { create(:doi,
+      funding_references:
+        [
+            {
+              "awardUri": "info:eu-repo/grantAgreement/EC/FP7/282625/",
+              "awardTitle": "MOTivational strength of ecosystem services and alternative ways to express the value of BIOdiversity",
+              "funderName": "European Commission",
+              "awardNumber": "282625",
+              "funderIdentifier": "https://doi.org/10.13039/501100000780",
+              "funderIdentifierType": "Crossref Funder ID"
+            },
+            {
+              "awardUri": "info:eu-repo/grantAgreement/EC/FP7/284382/",
+              "awardTitle": "Institutionalizing global genetic-resource commons. Global Strategies for accessing and using essential public knowledge assets in the life sciences.",
+              "funderName": "European Commission",
+              "awardNumber": "284382",
+              "funderIdentifier": "https://ror.org/00a0jsq62",
+              "funderIdentifierType": "ROR"
+            }
+        ]
+      ) }
+
+    it "has normalized funding references in funder_rors" do
+      expect(doi.funder_rors).to eq(["https://ror.org/00k4n6c32", "https://ror.org/00a0jsq62"])
+      expect(doi.as_indexed_json["funder_rors"]).to eq(["https://ror.org/00k4n6c32", "https://ror.org/00a0jsq62"])
+    end
+
+    it "has funder ancestor ROR in funder_parent_rors" do
+      expect(doi.funder_parent_rors).to eq(["https://ror.org/019w4f821", "https://ror.org/04cw6st05"])
+      expect(doi.as_indexed_json["funder_parent_rors"]).to eq(["https://ror.org/019w4f821", "https://ror.org/04cw6st05"])
+    end
+  end
 end
