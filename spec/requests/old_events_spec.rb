@@ -940,7 +940,7 @@ describe OldEventsController, type: :request, elasticsearch: true, vcr: true do
       it "JSON" do
         get uri, nil, headers
 
-      expect(last_response.status).to eq(200)
+        expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "relation-type-id")).to eq(
           "is-referenced-by",
         )
