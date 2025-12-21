@@ -676,9 +676,9 @@ class Client < ApplicationRecord
       "dois_total" => dois_total,
       "dois_current_year" => dois_current_year,
       "dois_last_year" => dois_last_year,
-      "created" => created.iso8601,
-      "updated" => updated.iso8601,
-      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
+      "created" => created.try(:iso8601),
+      "updated" => updated.try(:iso8601),
+      "deleted_at" => deleted_at ? deleted_at.try(:iso8601) : nil,
     }
 
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }

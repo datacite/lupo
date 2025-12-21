@@ -2619,7 +2619,7 @@ class Doi < ApplicationRecord
       # If we dont have one (there was legacy reasons) then set to unix epoch
       checked = doi.last_landing_page_status_check
       checked = checked.nil? ? Time.at(0) : checked
-      checked = checked.iso8601
+      checked = checked.try(:iso8601)
 
       # Next we want to build a new landing_page result.
       landing_page = {

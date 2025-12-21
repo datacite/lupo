@@ -871,12 +871,12 @@ class Provider < ApplicationRecord
       "billing_country_code" => billing_country,
       "billing_country" => billing_country_name,
       "billing_city" => billing_city,
-      "joined" => joined&.iso8601,
+      "joined" => joined.try(:iso8601),
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      "created" => created.iso8601,
-      "updated" => updated.iso8601,
-      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil,
+      "created" => created.try(:iso8601),
+      "updated" => updated.try(:iso8601),
+      "deleted_at" => deleted_at ? deleted_at.try(:iso8601) : nil,
       "doi_estimate" => doi_estimate,
     }
 
