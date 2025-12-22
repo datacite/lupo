@@ -161,8 +161,7 @@ class Doi < ApplicationRecord
   validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
   validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
-  # temporarily commenting out because of problems with language validation.
-  # validates :language, if: proc { |doi| doi.validate_json_attribute?(:language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") } }, unless: :only_validate
+  validates :raw_language, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("language") }}, unless: :only_validate
   validates :resource_type, if: proc { |doi| doi.validate_json_attribute?(:resource_type) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
   validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
   validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
@@ -174,6 +173,11 @@ class Doi < ApplicationRecord
   validates :geolocations, if: proc { |doi| doi.validate_json_attribute?(:geolocations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geolocations") } }, unless: :only_validate
   validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
   validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
+
+  # See https://github.com/mirego/activerecord_json_validator for an explanation of why this must be done.
+  def raw_language
+    self[:language]
+  end
 
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
