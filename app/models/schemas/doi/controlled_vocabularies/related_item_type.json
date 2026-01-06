@@ -1,0 +1,47 @@
+{
+  "title": "RelatedItemType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": ["string", "null"],
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": [
+        "Audiovisual",
+        "Award",
+        "Book",
+        "BookChapter",
+        "Collection",
+        "ComputationalNotebook",
+        "ConferencePaper",
+        "ConferenceProceeding",
+        "DataPaper",
+        "Dataset",
+        "Dissertation",
+        "Event",
+        "Image",
+        "InteractiveResource",
+        "Instrument",
+        "Journal",
+        "JournalArticle",
+        "Model",
+        "OutputManagementPlan",
+        "PeerReview",
+        "PhysicalObject",
+        "Preprint",
+        "Project",
+        "Report",
+        "Service",
+        "Software",
+        "Sound",
+        "Standard",
+        "StudyRegistration",
+        "Text",
+        "Workflow",
+        "Other"
+      ]
+    },
+    {
+      "type": "null"
+    }
+  ]
+}

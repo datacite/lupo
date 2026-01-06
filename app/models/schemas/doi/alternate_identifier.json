@@ -1,0 +1,17 @@
+{
+  "title": "AlternateIdentifier",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "alternateIdentifier": {
+      "type": "string"
+    },
+    "alternateIdentifierType": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "dependentRequired": {
+    "alternateIdentifier": ["alternateIdentifierType"]
+  }
+}
