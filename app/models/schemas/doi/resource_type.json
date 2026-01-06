@@ -9,7 +9,5 @@
   "required": [
     "resourceType",
     "resourceTypeGeneral"
-  ],
-  "additionalProperties": false,
-  "minitems": 1
+  ]
 }

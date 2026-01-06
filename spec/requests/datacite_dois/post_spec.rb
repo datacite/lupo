@@ -2429,7 +2429,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-# json-schema testing
+  # json-schema testing
 
   describe "POST /dois - json-schema" do
     let(:valid_attributes) do
@@ -2490,17 +2490,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       WebMock.allow_net_connect!
     end
 
-    context "json-schema - validate language field - VALID" do
+    context "json-schema - VALID doi" do
       before do
         valid_attributes["data"]["attributes"]["language"] = "fr"
       end
 
       it "creates a Doi" do
-        puts "--------------------------"
-        puts "LANGUAGE IS:"
-        puts valid_attributes["data"]["attributes"]["language"]
-        puts "--------------------------"
-
         VCR.turned_off do
           post "/dois", valid_attributes, headers
         end
@@ -2515,23 +2510,13 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
 
       it "creates a Doi" do
-        puts "--------------------------"
-        puts "LANGUAGE IS:"
-        puts valid_attributes["data"]["attributes"]["language"]
-        puts "--------------------------"
-
         VCR.turned_off do
           post "/dois", valid_attributes, headers
         end
 
-        puts "--------------------------"
-        puts "ERRORS ARE:"
-        puts json.dig("errors")
-        puts "--------------------------"
-
         expect(last_response.status).to eq(422)
         expect(json.dig("errors")).to eq([
-          {"source"=>"metadata", "title"=>"Is invalid", "uid"=>"10.14454/10703"}
+          { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }
         ])
       end
     end
