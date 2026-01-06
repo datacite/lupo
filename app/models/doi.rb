@@ -173,13 +173,13 @@ class Doi < ApplicationRecord
   validates :geolocations, if: proc { |doi| doi.validate_json_attribute?(:geolocations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geolocations") } }, unless: :only_validate
   validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
   validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
-  
+
   validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
-    message: ->(errors) { errors }, 
+    message: ->(errors) { errors },
     schema: lambda { schema_file_path("language") }
   }, unless: :only_validate
 
-  validates :raw_types, if: proc { |doi| doi.validate_json_attribute?(:raw_types) }, json: { 
+  validates :raw_types, if: proc { |doi| doi.validate_json_attribute?(:raw_types) }, json: {
     message: ->(errors) { errors },
     schema: lambda { schema_file_path("resource_type") },
   }, unless: :only_validate
