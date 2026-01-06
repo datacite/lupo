@@ -2,6 +2,7 @@
 
 require "rails_helper"
 include Passwordable
+require "pp"
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -2424,6 +2425,114 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10704")
+      end
+    end
+  end
+
+# json-schema testing
+
+  describe "POST /dois - json-schema" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "doi" => "10.14454/10703",
+            "url" => "http://www.bl.uk/pdf/patspec.pdf",
+            "types" => { "bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle" },
+            "titles" => [{ "title" => "Eating your own Dog Food" }],
+            "publisher" => "DataCite",
+            "publicationYear" => 2016,
+            "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+            "language" => "en",
+            "alternateIdentifiers" => [{ "alternateIdentifier" => "123", "alternateIdentifierType" => "Repository ID" }],
+            "rightsList" => [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en" }],
+            "sizes" => ["4 kB", "12.6 MB"],
+            "formats" => ["application/pdf", "text/csv"],
+            "version" => "1.1",
+            "fundingReferences" => [{ "funderIdentifier" => "https://doi.org/10.13039/501100009053", "funderIdentifierType" => "Crossref Funder ID", "funderName" => "The Wellcome Trust DBT India Alliance" }],
+            "source" => "test",
+            "event" => "publish",
+            "relatedItems" => [{
+              "contributors" => [{ "name" => "Smithson, James",
+                                    "contributorType" => "ProjectLeader",
+                                    "givenName" => "James",
+                                    "familyName" => "Smithson",
+                                    "nameType" => "Personal"
+                                  }],
+              "creators" => [{ "name" => "Smith, John",
+                                "nameType" => "Personal",
+                                "givenName" => "John",
+                                "familyName" => "Smith",
+                              }],
+              "firstPage" => "249",
+              "lastPage" => "264",
+              "publicationYear" => "2018",
+              "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                            "relatedItemIdentifierType" => "DOI",
+                                            "relatedMetadataScheme" => "citeproc+json",
+                                            "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                            "schemeType" => "URL"
+                                          },
+              "relatedItemType" => "Journal",
+              "relationType" => "HasMetadata",
+              "titles" => [{ "title" => "Physics letters / B" }],
+              "volume" => "776"
+            }],
+          },
+        },
+      }
+    end
+
+    before do
+      VCR.eject_cassette
+      VCR.turn_off!
+      WebMock.allow_net_connect!
+    end
+
+    context "json-schema - validate language field - VALID" do
+      before do
+        valid_attributes["data"]["attributes"]["language"] = "fr"
+      end
+
+      it "creates a Doi" do
+        puts "--------------------------"
+        puts "LANGUAGE IS:"
+        puts valid_attributes["data"]["attributes"]["language"]
+        puts "--------------------------"
+
+        VCR.turned_off do
+          post "/dois", valid_attributes, headers
+        end
+
+        expect(last_response.status).to eq(201)
+      end
+    end
+
+    context "json-schema - validate language field - INVALID" do
+      before do
+        valid_attributes["data"]["attributes"]["language"] = "fr!800-afs"
+      end
+
+      it "creates a Doi" do
+        puts "--------------------------"
+        puts "LANGUAGE IS:"
+        puts valid_attributes["data"]["attributes"]["language"]
+        puts "--------------------------"
+
+        VCR.turned_off do
+          post "/dois", valid_attributes, headers
+        end
+
+        puts "--------------------------"
+        puts "ERRORS ARE:"
+        puts json.dig("errors")
+        puts "--------------------------"
+
+        expect(last_response.status).to eq(422)
+        expect(json.dig("errors")).to eq([
+          {"source"=>"metadata", "title"=>"Is invalid", "uid"=>"10.14454/10703"}
+        ])
       end
     end
   end
