@@ -6,7 +6,7 @@ class DatafileController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :validate_config
 
-  CREDENTIAL_EXPIRY_TIME = 900
+  CREDENTIAL_EXPIRY_TIME = 3600
 
   rescue_from Aws::Errors::MissingCredentialsError, with: :handle_aws_missing_credentials
   rescue_from Aws::STS::Errors::ServiceError, with: :handle_aws_sts_service_error
