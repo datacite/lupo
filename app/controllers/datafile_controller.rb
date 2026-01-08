@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-core'
+require "aws-sdk-core"
 
 class DatafileController < ApplicationController
   prepend_before_action :authenticate_user!
@@ -25,7 +25,6 @@ class DatafileController < ApplicationController
     render json: {
       errors: [{ status: "500", title: "Internal Server Error" }]
     }, status: :internal_server_error
-
   end
 
   # Factory method to build the AWS STS client.
@@ -77,40 +76,39 @@ class DatafileController < ApplicationController
   end
 
   private
+    # Handles missing server-side AWS credentials/configuration issues.
+    def handle_aws_missing_credentials(error)
+      Rails.logger.error(
+        "AWS credentials missing while generating monthly datafile STS credentials " \
+        "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}: #{error.message})"
+      )
 
-  # Handles missing server-side AWS credentials/configuration issues.
-  def handle_aws_missing_credentials(error)
-    Rails.logger.error(
-      "AWS credentials missing while generating monthly datafile STS credentials " \
-      "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}: #{error.message})"
-    )
+      render json: {
+        errors: [{ status: "500", title: "Internal Server Error" }]
+      }, status: :internal_server_error
+    end
 
-    render json: {
-      errors: [{ status: "500", title: "Internal Server Error" }]
-    }, status: :internal_server_error
-  end
+    # Handles STS service errors such as AccessDenied, ExpiredToken, InvalidClientTokenId, etc.
+    def handle_aws_sts_service_error(error)
+      Rails.logger.warn(
+        "AWS STS error while generating monthly datafile STS credentials " \
+        "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}, message=#{error.message})"
+      )
 
-  # Handles STS service errors such as AccessDenied, ExpiredToken, InvalidClientTokenId, etc.
-  def handle_aws_sts_service_error(error)
-    Rails.logger.warn(
-      "AWS STS error while generating monthly datafile STS credentials " \
-      "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}, message=#{error.message})"
-    )
+      render json: {
+        errors: [{ status: "500", title: "Internal Server Error" }]
+      }, status: :internal_server_error
+    end
 
-    render json: {
-      errors: [{ status: "500", title: "Internal Server Error" }]
-    }, status: :internal_server_error
-  end
+    # Handles connectivity/timeout problems to AWS endpoints.
+    def handle_aws_networking_error(error)
+      Rails.logger.warn(
+        "AWS networking error while generating monthly datafile STS credentials " \
+        "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}, message=#{error.message})"
+      )
 
-  # Handles connectivity/timeout problems to AWS endpoints.
-  def handle_aws_networking_error(error)
-    Rails.logger.warn(
-      "AWS networking error while generating monthly datafile STS credentials " \
-      "(uid=#{current_user&.uid}, request_id=#{request.request_id}, error=#{error.class}, message=#{error.message})"
-    )
-
-    render json: {
-      errors: [{ status: "500", title: "Internal Server Error" }]
-    }, status: :internal_server_error
-  end
+      render json: {
+        errors: [{ status: "500", title: "Internal Server Error" }]
+      }, status: :internal_server_error
+    end
 end
