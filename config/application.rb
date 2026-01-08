@@ -67,6 +67,8 @@ ENV["REALM"] ||= ENV["API_URL"]
 ENV["SQS_PREFIX"] ||= ""
 ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
 ENV["METADATA_STORAGE_BUCKET_NAME"] ||= ""
+ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
+ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 
 module Lupo
   class Application < Rails::Application
