@@ -2,16 +2,15 @@
 
 class EventConnectionWithTotalType < BaseConnection
   edge_type(EventEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :published, [FacetType], null: true, cache: true
-  field :registration_agencies, [FacetType], null: true, cache: true
-  field :repositories, [FacetType], null: true, cache: true
-  field :affiliations, [FacetType], null: true, cache: true
-  field :fields_of_science, [FacetType], null: true, cache: true
-  field :licenses, [FacetType], null: true, cache: true
-  field :languages, [FacetType], null: true, cache: true
+  field :total_count, Integer, null: false
+  field :published, [FacetType], null: true
+  field :registration_agencies, [FacetType], null: true
+  field :repositories, [FacetType], null: true
+  field :affiliations, [FacetType], null: true
+  field :fields_of_science, [FacetType], null: true
+  field :licenses, [FacetType], null: true
+  field :languages, [FacetType], null: true
 
   def total_count
     object.total_count

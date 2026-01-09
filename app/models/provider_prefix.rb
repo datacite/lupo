@@ -68,8 +68,8 @@ class ProviderPrefix < ApplicationRecord
       "client_ids" => client_ids,
       "client_prefix_ids" => client_prefix_ids,
       "state" => state,
-      "created_at" => created_at,
-      "updated_at" => updated_at,
+      "created_at" => created_at.try(:iso8601),
+      "updated_at" => updated_at.try(:iso8601),
       "provider" => provider.try(:as_indexed_json, exclude_associations: true),
       "prefix" =>
         if options[:exclude_associations]

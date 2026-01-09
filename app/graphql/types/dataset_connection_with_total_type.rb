@@ -4,14 +4,13 @@ class DatasetConnectionWithTotalType < BaseConnection
   edge_type(DatasetEdgeType)
   implements Interfaces::WorkFacetsInterface
 
-  field_class GraphQL::Cache::Field
 
-  field :dataset_connection_count, Integer, null: false, cache: true
-  field :publication_connection_count, Integer, null: false, cache: true
-  field :software_connection_count, Integer, null: false, cache: true
-  field :person_connection_count, Integer, null: false, cache: true
-  field :funder_connection_count, Integer, null: false, cache: true
-  field :organization_connection_count, Integer, null: false, cache: true
+  field :dataset_connection_count, Integer, null: false
+  field :publication_connection_count, Integer, null: false
+  field :software_connection_count, Integer, null: false
+  field :person_connection_count, Integer, null: false
+  field :funder_connection_count, Integer, null: false
+  field :organization_connection_count, Integer, null: false
 
   def dataset_connection_count
     @dataset_connection_count ||=

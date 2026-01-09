@@ -7,9 +7,7 @@ class DatasetType < BaseObject
         DatasetUsageReportConnectionWithTotalType,
         null: false,
         description: "Usage reports for this dataset",
-        connection: true do
-    argument :first, Int, required: false, default_value: 25
-  end
+        connection: true
 
   def usage_reports(**args)
     ids =
