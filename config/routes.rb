@@ -176,6 +176,9 @@ Rails.application.routes.draw do
   post "repositories/export", to: "repositories#export"
   post "contacts/export", to: "contacts#export"
 
+  # Monthly Data File access
+  get "credentials/datafile", to: "datafile#create_credentials"
+
   resources :heartbeat, only: %i[index]
 
   resources :activities, only: %i[index show], constraints: { id: /.+/ }

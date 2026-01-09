@@ -112,4 +112,6 @@ Rails.application.configure do
   ENV["HANDLES_MINTED"] ||= "10132"
   ENV["REALM"] ||= "http://localhost:4000"
   ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
+  ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
+  ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 end
