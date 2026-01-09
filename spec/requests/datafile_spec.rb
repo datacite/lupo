@@ -3,8 +3,8 @@
 require "rails_helper"
 
 RSpec.describe DatafileController, type: :request do
-  describe "GET /datafile" do
-    let(:path) { "/datafile" }
+  describe "GET /credentials/datafile" do
+    let(:path) { "/credentials/datafile" }
 
     let(:bucket) { "monthly-datafile-test" }
     let(:role_arn) { "arn:aws:iam::123456789012:role/monthly-datafile-access" }
