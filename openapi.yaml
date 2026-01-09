@@ -639,6 +639,16 @@ paths:
           schema:
             type: string
         - in: query
+          name: funded-by
+          description: Search fundingReferences.funderIdentifier for a ROR ID. Results also include DOIs containing a Crossref Funder ID in fundingReferences.funderIdentifier corresponding to the ROR ID.
+          schema:
+            type: string
+        - in: query
+          name: include-funder-child-organizations
+          description: When the `funded-by=` parameter is set to a ROR ID and `include-funder-child-organizations=true`, the returned list of DOIs will be filtered to DataCite resources funded by the organization identified by the ROR ID as well as all of its child organizations. Child organizations include direct descendants as well as children of children. 
+          schema:
+            type: boolean
+        - in: query
           name: funder-id
           description: Search fundingReferences.funderIdentifier for a Crossref Funder ID.
           schema:
