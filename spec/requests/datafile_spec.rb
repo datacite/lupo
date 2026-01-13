@@ -65,6 +65,13 @@ RSpec.describe DatafileController, type: :request do
       }
     end
 
+    let(:expected_text_body) do
+      "[datacite-datafile]\n" \
+        "aws_access_key_id=#{access_key_id}\n" \
+        "aws_secret_access_key=#{secret_access_key}\n" \
+        "aws_session_token=#{session_token}\n"
+    end
+
     let(:expected_unauthorized_body) do
       { "errors" => [{ "status" => "401", "title" => "Bad credentials." }] }
     end
@@ -110,6 +117,32 @@ RSpec.describe DatafileController, type: :request do
     context "as staff_admin" do
       let(:bearer) { User.generate_token(role_id: "staff_admin") }
       include_examples "grants datafile access"
+
+      context "with format=text query parameter" do
+        it "returns credentials in AWS shared credentials format" do
+          get "#{path}?format=text", nil, headers
+
+          expect(last_response.status).to eq(200)
+          expect(last_response.content_type).to include("text/plain")
+          expect(last_response.body).to eq(expected_text_body)
+        end
+      end
+
+      context "with Accept: text/plain" do
+        let(:headers) do
+          super().merge(
+            "HTTP_ACCEPT" => "text/plain",
+          )
+        end
+
+        it "returns credentials in AWS shared credentials format" do
+          get path, nil, headers
+
+          expect(last_response.status).to eq(200)
+          expect(last_response.content_type).to include("text/plain")
+          expect(last_response.body).to eq(expected_text_body)
+        end
+      end
     end
 
     context "as staff_user" do

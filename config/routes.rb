@@ -177,7 +177,7 @@ Rails.application.routes.draw do
   post "contacts/export", to: "contacts#export"
 
   # Monthly Data File access
-  get "credentials/datafile", to: "datafile#create_credentials"
+  get "credentials/datafile", to: "datafile#create_credentials", defaults: { format: :json }
 
   resources :heartbeat, only: %i[index]
 
