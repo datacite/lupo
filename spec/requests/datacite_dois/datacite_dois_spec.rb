@@ -1915,6 +1915,107 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois search with person to work types multilevel", prefix_pool_size: 11 do
+    let!(:dois_contributor_1) do
+      create_list(:doi, 5, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    let!(:dois_contributor_2) do
+      create_list(:doi, 3, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Software"
+        }
+      )
+    end
+
+    let!(:dois_contributor_3) do
+      create_list(:doi, 2, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Cousijn, Helena",
+            "givenName" => "Helena",
+            "familyName" => "Cousijn",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0001-6660-6214",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns person to work types multilevel values" do
+      get "/dois?facets=person_to_work_types_multilevel", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "personToWorkTypesMultilevel")).to be_truthy
+      expect(json.dig("meta", "personToWorkTypesMultilevel").length()).to be >= 2
+      
+      # Check the structure includes the expected fields
+      first_person = json.dig("meta", "personToWorkTypesMultilevel", 0)
+      expect(first_person).to have_key("id")
+      expect(first_person).to have_key("title")
+      expect(first_person).to have_key("count")
+      expect(first_person).to have_key("inner")
+      
+      # Check inner array has work type entries
+      expect(first_person["inner"]).to be_a(Array)
+      expect(first_person["inner"].length).to be > 0
+      
+      # Check inner items have expected structure
+      first_work_type = first_person["inner"][0]
+      expect(first_work_type).to have_key("id")
+      expect(first_work_type).to have_key("title")
+      expect(first_work_type).to have_key("count")
+    end
+  end
+
   describe "GET /dois search with count values", prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }

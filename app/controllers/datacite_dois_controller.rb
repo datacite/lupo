@@ -255,7 +255,8 @@ class DataciteDoisController < ApplicationController
           content_url_count: :metric_value,
           open_licenses: :facet_by_combined_key,
           open_licenses_count: :metric_doc_count,
-          funders: :facet_by_funders
+          funders: :facet_by_funders,
+          person_to_work_types_multilevel: :multi_facet_by_contributors_and_worktype,
         }
 
         facets_to_bucket_path = {
@@ -266,6 +267,7 @@ class DataciteDoisController < ApplicationController
           download_count: [],
           content_url_count: [],
           open_licenses: [:resource_types, :buckets],
+          person_to_work_types_multilevel: [:creators_and_contributors, :buckets],
         }
 
         # For facets that aren't in response.aggregations,
