@@ -2,6 +2,7 @@
 
 require "rails_helper"
 include Passwordable
+require "pp"
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -357,7 +358,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                              "schemeType" => "URL"
                                             },
                 "relatedItemType" => "Journal",
-                "relationType" => "IsPublishedIn",
+                "relationType" => "HasMetadata",
                 "titles" => [{ "title" => "Physics letters / B" }],
                 "volume" => "776"
               }],
@@ -388,7 +389,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "source")).to eq("test")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle")
         expect(json.dig("data", "attributes", "state")).to eq("findable")
-        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
+        expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "HasMetadata",
                                                                       "relatedItemType" => "Journal",
                                                                       "publicationYear" => "2018",
                                                                       "relatedItemIdentifier" => {
@@ -826,6 +827,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                 "nameType": "Personal",
                 "givenName": "Julia M.",
                 "familyName": "Rovera",
+                "name": "Rovera, Julia M.",
                 "affiliation": [{
                   "name": "Drexel University"
                 }],
@@ -906,10 +908,11 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       it "fails to create a Doi" do
         post "/dois", valid_attributes, headers
-        expect(last_response.status).to eq(201)
+        expect(last_response.status).to eq(422)
       end
     end
 
+    # There were no nameIdentifiers in contributors/creators.  Added them so that would be tested.
     context "when the request has wrong object in nameIdentifiers nasa" do
       let(:valid_attributes) { JSON.parse(file_fixture("nasa_error.json").read) }
 
@@ -1287,7 +1290,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     context "when the title changes" do
-      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
+      let(:titles) { [ { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } ] }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
       let(:valid_attributes) do
         {
@@ -2192,7 +2195,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "updates the Doi" do
         get "/dois/#{doi.doi}", nil, headers
 
-        expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids." }])
+        expect(json.dig("data", "attributes", "descriptions")).to eq([{ "description" => "Data from: A new malaria agent in African hominids.", "descriptionType" => "TechnicalInfo" }])
         expect(json.dig("data", "attributes", "container")).to be_empty
 
         patch "/dois/#{doi.doi}", update_attributes, headers
@@ -2422,6 +2425,99 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10704")
+      end
+    end
+  end
+
+  # json-schema testing
+
+  describe "POST /dois - json-schema" do
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "doi" => "10.14454/10703",
+            "url" => "http://www.bl.uk/pdf/patspec.pdf",
+            "types" => { "bibtex" => "article", "citeproc" => "article-journal", "resourceType" => "BlogPosting", "resourceTypeGeneral" => "Text", "ris" => "RPRT", "schemaOrg" => "ScholarlyArticle" },
+            "titles" => [{ "title" => "Eating your own Dog Food" }],
+            "publisher" => "DataCite",
+            "publicationYear" => 2016,
+            "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+            "language" => "en",
+            "alternateIdentifiers" => [{ "alternateIdentifier" => "123", "alternateIdentifierType" => "Repository ID" }],
+            "rightsList" => [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en" }],
+            "sizes" => ["4 kB", "12.6 MB"],
+            "formats" => ["application/pdf", "text/csv"],
+            "version" => "1.1",
+            "fundingReferences" => [{ "funderIdentifier" => "https://doi.org/10.13039/501100009053", "funderIdentifierType" => "Crossref Funder ID", "funderName" => "The Wellcome Trust DBT India Alliance" }],
+            "source" => "test",
+            "event" => "publish",
+            "relatedItems" => [{
+              "contributors" => [{ "name" => "Smithson, James",
+                                    "contributorType" => "ProjectLeader",
+                                    "givenName" => "James",
+                                    "familyName" => "Smithson",
+                                    "nameType" => "Personal"
+                                  }],
+              "creators" => [{ "name" => "Smith, John",
+                                "nameType" => "Personal",
+                                "givenName" => "John",
+                                "familyName" => "Smith",
+                              }],
+              "firstPage" => "249",
+              "lastPage" => "264",
+              "publicationYear" => "2018",
+              "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
+                                            "relatedItemIdentifierType" => "DOI",
+                                            "relatedMetadataScheme" => "citeproc+json",
+                                            "schemeURI" => "https://github.com/citation-style-language/schema/raw/master/csl-data.json",
+                                            "schemeType" => "URL"
+                                          },
+              "relatedItemType" => "Journal",
+              "relationType" => "HasMetadata",
+              "titles" => [{ "title" => "Physics letters / B" }],
+              "volume" => "776"
+            }],
+          },
+        },
+      }
+    end
+
+    before do
+      VCR.eject_cassette
+      VCR.turn_off!
+      WebMock.allow_net_connect!
+    end
+
+    context "json-schema - VALID doi" do
+      before do
+        valid_attributes["data"]["attributes"]["language"] = "fr"
+      end
+
+      it "creates a Doi" do
+        VCR.turned_off do
+          post "/dois", valid_attributes, headers
+        end
+
+        expect(last_response.status).to eq(201)
+      end
+    end
+
+    context "json-schema - validate language field - INVALID" do
+      before do
+        valid_attributes["data"]["attributes"]["language"] = "fr!800-afs"
+      end
+
+      it "creates a Doi" do
+        VCR.turned_off do
+          post "/dois", valid_attributes, headers
+        end
+
+        expect(last_response.status).to eq(422)
+        expect(json.dig("errors")).to eq([
+          { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }
+        ])
       end
     end
   end

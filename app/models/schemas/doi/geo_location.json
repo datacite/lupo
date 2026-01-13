@@ -1,0 +1,24 @@
+{
+  "title": "GeoLocation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "geoLocationPoint": {
+      "$ref": "geo_location_point.json"
+    },
+    "geoLocationBox": {
+      "$ref": "geo_location_box.json"
+    },
+    "geoLocationPlace": {
+      "$ref": "geo_location_place.json"
+    },
+    "geoLocationPolygon": {
+      "$ref": "geo_location_polygon.json"
+    }
+  },
+  "required": [
+    "pointLatitude",
+    "pointLongitude"
+  ],
+  "additionalProperties": false
+}

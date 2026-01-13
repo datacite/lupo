@@ -10,7 +10,14 @@
           "name":"Maskey, Manil",
           "nameType":"Personal",
           "givenName":"Manil",
-          "familyName":"Maskey"
+          "familyName":"Maskey",
+          "nameIdentifiers": [
+            {
+              "schemeUri": "https://orcid.org",
+              "nameIdentifier": "https://orcid.org/0000-0001-5727-2427",
+              "nameIdentifierScheme": "ORCID"
+            }
+          ]
         },
         {
           "name":"Ramachandran, Rahul",
@@ -31,20 +38,29 @@
           "familyName":"Ramasubramanian"
         }
   		],
-  		"titles":{
+  		"titles": [ 
+        {
   			"title":"Tropical Cyclone Satellite Imagery and Wind Speed Dataset"
-  		},
+        }
+      ],
   		"publisher": "Radiant MLHub",
   		"publicationYear": 2020,
   		"types":{
   			"resourceTypeGeneral":"Dataset"
   		},
   		"version":1.0,
-  		"contributors":{
+  		"contributors": [{
   			"nameType":"Organizational",
   			"name":"NASA Interagency Implementation and Advanced Concepts Team (IMPACT)",
-  			"contributorType":"DataCurator"
-  		},
+  			"contributorType":"DataCurator",
+        "nameIdentifiers": [
+          {
+            "schemeUri": "https://orcid.org",
+            "nameIdentifier": "https://orcid.org/0000-0001-5727-2427",
+            "nameIdentifierScheme": "ORCID"
+          }
+    ]
+  		}],
   		"dates":{
   			"dateType":"Valid",
   			"date": "2000/2019"

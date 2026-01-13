@@ -1,0 +1,6 @@
+{
+  "title": "Doi",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": [ "string", "null" ],
+  "description": "A DOI (Digital Object Identifier) registered by a DataCite Member. The format should be 10.21384/foo."
+}
