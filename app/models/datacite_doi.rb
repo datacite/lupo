@@ -151,7 +151,7 @@ class DataciteDoi < Doi
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
       # Preload all events for this batch in a single query
       EventsPreloader.new(dois).preload!
-      
+
       bulk_body = dois.map do |doi|
         {
           index: {
