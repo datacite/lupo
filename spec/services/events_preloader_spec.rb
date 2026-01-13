@@ -11,7 +11,7 @@ describe EventsPreloader do
   describe "#initialize" do
     it "initializes preloaded_events for each DOI" do
       dois = [doi1, doi2]
-      preloader = EventsPreloader.new(dois)
+      EventsPreloader.new(dois)
 
       expect(doi1.preloaded_events).to eq([])
       expect(doi2.preloaded_events).to eq([])
