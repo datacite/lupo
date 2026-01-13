@@ -2,6 +2,7 @@
 
 require "maremma"
 require "benchmark"
+require_relative "concerns/preloaded_event_relation"
 
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
@@ -74,6 +75,7 @@ class Doi < ApplicationRecord
   alias_attribute :state, :aasm_state
 
   attr_accessor :current_user
+  attr_accessor :preloaded_events
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
@@ -97,6 +99,88 @@ class Doi < ApplicationRecord
   has_many :activities, as: :auditable, dependent: :destroy
   # has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+
+  # Override association methods to use preloaded_events when available
+  # Check for !nil instead of present? to handle empty arrays (preloaded but no events)
+  def view_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.target_relation_type_id == "views" }
+      )
+    else
+      association(:view_events).scope
+    end
+  end
+
+  def download_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.target_relation_type_id == "downloads" }
+      )
+    else
+      association(:download_events).scope
+    end
+  end
+
+  def reference_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.source_relation_type_id == "references" }
+      )
+    else
+      association(:reference_events).scope
+    end
+  end
+
+  def citation_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.target_relation_type_id == "citations" }
+      )
+    else
+      association(:citation_events).scope
+    end
+  end
+
+  def part_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.source_relation_type_id == "parts" }
+      )
+    else
+      association(:part_events).scope
+    end
+  end
+
+  def part_of_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.target_relation_type_id == "part_of" }
+      )
+    else
+      association(:part_of_events).scope
+    end
+  end
+
+  def version_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.source_relation_type_id == "versions" }
+      )
+    else
+      association(:version_events).scope
+    end
+  end
+
+  def version_of_events
+    if !preloaded_events.nil?
+      PreloadedEventRelation.new(
+        preloaded_events.select { |e| e.target_relation_type_id == "version_of" }
+      )
+    else
+      association(:version_of_events).scope
+    end
+  end
 
   has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
   has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
