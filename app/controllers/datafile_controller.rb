@@ -66,25 +66,23 @@ class DatafileController < ApplicationController
 
     credentials = get_role_credentials(current_user.uid)
 
-    respond_to do |format|
-      format.json do
-        render json: {
-          "bucket" => ENV["MONTHLY_DATAFILE_BUCKET"],
-          "access_key_id" => credentials.access_key_id,
-          "secret_access_key" => credentials.secret_access_key,
-          "session_token" => credentials.session_token,
-          "expires_in" => CREDENTIAL_EXPIRY_TIME
-        }, status: :ok
-      end
+    wants_text = params[:format].to_s == "text" || request.headers["Accept"].to_s.include?("text/plain")
 
-      format.text do
-        render plain: "[datacite-datafile]\n" \
-                     "aws_access_key_id=#{credentials.access_key_id}\n" \
-                     "aws_secret_access_key=#{credentials.secret_access_key}\n" \
-                     "aws_session_token=#{credentials.session_token}\n",
-               content_type: "text/plain",
-               status: :ok
-      end
+    if wants_text
+      render plain: "[datacite-datafile]\n" \
+                   "aws_access_key_id=#{credentials.access_key_id}\n" \
+                   "aws_secret_access_key=#{credentials.secret_access_key}\n" \
+                   "aws_session_token=#{credentials.session_token}\n",
+             content_type: "text/plain",
+             status: :ok
+    else
+      render json: {
+        "bucket" => ENV["MONTHLY_DATAFILE_BUCKET"],
+        "access_key_id" => credentials.access_key_id,
+        "secret_access_key" => credentials.secret_access_key,
+        "session_token" => credentials.session_token,
+        "expires_in" => CREDENTIAL_EXPIRY_TIME
+      }, status: :ok
     end
   end
 
