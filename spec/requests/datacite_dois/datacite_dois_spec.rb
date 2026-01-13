@@ -1996,18 +1996,18 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "personToWorkTypesMultilevel")).to be_truthy
       expect(json.dig("meta", "personToWorkTypesMultilevel").length()).to be >= 2
-      
+
       # Check the structure includes the expected fields
       first_person = json.dig("meta", "personToWorkTypesMultilevel", 0)
       expect(first_person).to have_key("id")
       expect(first_person).to have_key("title")
       expect(first_person).to have_key("count")
       expect(first_person).to have_key("inner")
-      
+
       # Check inner array has work type entries
       expect(first_person["inner"]).to be_a(Array)
       expect(first_person["inner"].length).to be > 0
-      
+
       # Check inner items have expected structure
       first_work_type = first_person["inner"][0]
       expect(first_work_type).to have_key("id")
