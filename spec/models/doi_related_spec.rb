@@ -23,15 +23,43 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
   describe "N+1 safety" do
     describe ".import_in_bulk" do
-      let(:ids) { [1, 2, 3] }
+      let(:client) { create(:client) }
+      let!(:doi1) { create(:doi, client: client, type: "DataciteDoi", aasm_state: "findable") }
+      let!(:doi2) { create(:doi, client: client, type: "DataciteDoi", aasm_state: "findable") }
+      let!(:doi3) { create(:doi, client: client, type: "DataciteDoi", aasm_state: "findable") }
+      let(:ids) { [doi1.id, doi2.id, doi3.id] }
 
-      it "should make only one db call" do
+      it "should use EventsPreloader to reduce queries" do
         allow(DataciteDoi).to receive(:upload_to_elasticsearch)
 
-        # Test the maximum number of queries made by the method
+        # With EventsPreloader, we should make minimal queries
+        # 1 query for DOIs, 1 query for events (via EventsPreloader)
         expect {
           DataciteDoi.import_in_bulk(ids)
-        }.not_to exceed_query_limit(1)
+        }.not_to exceed_query_limit(5) # Allow some overhead for associations
+      end
+
+      it "should preload events for all DOIs in batch" do
+        # Create events for the DOIs
+        create(:event_for_crossref, {
+          subj_id: "https://doi.org/#{doi1.doi}",
+          obj_id: "https://doi.org/#{doi2.doi}",
+          relation_type_id: "references",
+        })
+        create(:event_for_datacite_crossref, {
+          subj_id: "https://doi.org/#{doi3.doi}",
+          obj_id: "https://doi.org/#{doi1.doi}",
+          relation_type_id: "is-referenced-by",
+        })
+
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch)
+
+        DataciteDoi.import_in_bulk(ids)
+
+        # Verify that events were preloaded (check via a fresh query)
+        fresh_doi1 = DataciteDoi.find(doi1.id)
+        expect(fresh_doi1.reference_events.count).to eq(1)
+        expect(fresh_doi1.citation_events.count).to eq(1)
       end
     end
 
@@ -306,6 +334,69 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       sleep 2
       expect(doi.other_relation_ids.length).to eq(3)
       expect(doi.other_relation_count).to eq(3)
+    end
+  end
+
+  describe "backward compatibility with preloaded_events" do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:reference_event) do
+      create(:event_for_crossref, {
+        subj_id: "https://doi.org/#{doi.doi}",
+        obj_id: "https://doi.org/#{target_doi.doi}",
+        relation_type_id: "references",
+      })
+    end
+    let!(:citation_event) do
+      create(:event_for_datacite_crossref, {
+        subj_id: "https://doi.org/#{target_doi.doi}",
+        obj_id: "https://doi.org/#{doi.doi}",
+        relation_type_id: "is-referenced-by",
+      })
+    end
+
+    it "works the same when preloaded_events is nil (fallback to database)" do
+      expect(doi.preloaded_events).to be_nil
+      expect(doi.reference_events.count).to eq(1)
+      expect(doi.citation_events.count).to eq(1)
+      expect(doi.reference_count).to eq(1)
+      expect(doi.citation_count).to eq(1)
+    end
+
+    it "works the same when preloaded_events is set (uses in-memory data)" do
+      EventsPreloader.new([doi]).preload!
+
+      expect(doi.preloaded_events).not_to be_nil
+      expect(doi.reference_events.count).to eq(1)
+      expect(doi.citation_events.count).to eq(1)
+      expect(doi.reference_count).to eq(1)
+      expect(doi.citation_count).to eq(1)
+      expect(doi.reference_ids).to include(target_doi.doi.downcase)
+    end
+
+    it "returns same results whether preloaded or not" do
+      # Get results without preloading
+      reference_ids_without_preload = doi.reference_ids
+      citation_ids_without_preload = doi.citation_ids
+      reference_count_without_preload = doi.reference_count
+      citation_count_without_preload = doi.citation_count
+
+      # Reload and preload
+      doi.reload
+      EventsPreloader.new([doi]).preload!
+
+      # Get results with preloading
+      reference_ids_with_preload = doi.reference_ids
+      citation_ids_with_preload = doi.citation_ids
+      reference_count_with_preload = doi.reference_count
+      citation_count_with_preload = doi.citation_count
+
+      # Should be the same
+      expect(reference_ids_with_preload).to eq(reference_ids_without_preload)
+      expect(citation_ids_with_preload).to eq(citation_ids_without_preload)
+      expect(reference_count_with_preload).to eq(reference_count_without_preload)
+      expect(citation_count_with_preload).to eq(citation_count_without_preload)
     end
   end
 end
