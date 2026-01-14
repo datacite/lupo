@@ -1995,24 +1995,44 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "personToWorkTypesMultilevel")).to be_truthy
-      expect(json.dig("meta", "personToWorkTypesMultilevel").length()).to be >= 2
 
-      # Check the structure includes the expected fields
-      first_person = json.dig("meta", "personToWorkTypesMultilevel", 0)
-      expect(first_person).to have_key("id")
-      expect(first_person).to have_key("title")
-      expect(first_person).to have_key("count")
-      expect(first_person).to have_key("inner")
+      # Validate exact count of unique contributors
+      expect(json.dig("meta", "personToWorkTypesMultilevel").length).to eq(2)
 
-      # Check inner array has work type entries
-      expect(first_person["inner"]).to be_a(Array)
-      expect(first_person["inner"].length).to be > 0
+      # Find contributors by their ORCID IDs
+      fenner = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0003-1419-2405" }
+      cousijn = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0001-6660-6214" }
 
-      # Check inner items have expected structure
-      first_work_type = first_person["inner"][0]
-      expect(first_work_type).to have_key("id")
-      expect(first_work_type).to have_key("title")
-      expect(first_work_type).to have_key("count")
+      # Validate Fenner, Martin exists with correct data
+      expect(fenner).to be_present
+      expect(fenner["title"]).to eq("Fenner, Martin")
+      expect(fenner["count"]).to eq(8) # 5 Text + 3 Software
+      expect(fenner["inner"].length).to eq(2) # Should have 2 work types
+
+      # Validate Fenner's work types
+      fenner_text = fenner["inner"].find { |wt| wt["id"] == "text" }
+      fenner_software = fenner["inner"].find { |wt| wt["id"] == "software" }
+
+      expect(fenner_text).to be_present
+      expect(fenner_text["title"]).to eq("Text")
+      expect(fenner_text["count"]).to eq(5)
+
+      expect(fenner_software).to be_present
+      expect(fenner_software["title"]).to eq("Software")
+      expect(fenner_software["count"]).to eq(3)
+
+      # Validate Cousijn, Helena exists with correct data
+      expect(cousijn).to be_present
+      expect(cousijn["title"]).to eq("Cousijn, Helena")
+      expect(cousijn["count"]).to eq(2) # 2 Text
+      expect(cousijn["inner"].length).to eq(1) # Should have 1 work type
+
+      # Validate Cousijn's work types
+      cousijn_text = cousijn["inner"].find { |wt| wt["id"] == "text" }
+
+      expect(cousijn_text).to be_present
+      expect(cousijn_text["title"]).to eq("Text")
+      expect(cousijn_text["count"]).to eq(2)
     end
   end
 
