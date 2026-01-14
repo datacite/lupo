@@ -267,7 +267,6 @@ class DataciteDoisController < ApplicationController
           download_count: [],
           content_url_count: [],
           open_licenses: [:resource_types, :buckets],
-          person_to_work_types_multilevel: [:creators_and_contributors, :buckets],
         }
 
         # For facets that aren't in response.aggregations,
