@@ -15,6 +15,19 @@ class PreloadedEventRelation
     @events.each(&block)
   end
 
+  # Delegate common Enumerable methods explicitly
+  def first
+    @events.first
+  end
+
+  def last
+    @events.last
+  end
+
+  def count
+    @events.count
+  end
+
   # Implement pluck to match ActiveRecord::Relation#pluck behavior
   # Supports single or multiple column names
   def pluck(*column_names)
