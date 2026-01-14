@@ -32,10 +32,12 @@ describe EventsPreloader do
           relation_type_id: "references",
         })
       end
+      # For citation_events, the DOI must be the target (target_doi)
+      # For "is-referenced-by", target_doi = subj_id, so doi1 needs to be subj_id
       let!(:citation_event) do
         create(:event_for_datacite_crossref, {
-          subj_id: "https://doi.org/#{doi3.doi}",
-          obj_id: "https://doi.org/#{doi1.doi}",
+          subj_id: "https://doi.org/#{doi1.doi}",
+          obj_id: "https://doi.org/#{doi3.doi}",
           relation_type_id: "is-referenced-by",
         })
       end
@@ -51,9 +53,9 @@ describe EventsPreloader do
         dois = [doi1, doi2, doi3]
         EventsPreloader.new(dois).preload!
 
-        # doi1 should have reference_event (as source) and citation_event (as target)
-        expect(doi1.preloaded_events.length).to eq(2)
-        expect(doi1.preloaded_events).to include(reference_event, citation_event)
+        # doi1 should have reference_event (as source), citation_event (as target), and part_event (as source)
+        expect(doi1.preloaded_events.length).to eq(3)
+        expect(doi1.preloaded_events).to include(reference_event, citation_event, part_event)
 
         # doi2 should have reference_event (as target)
         expect(doi2.preloaded_events.length).to eq(1)
@@ -131,10 +133,12 @@ describe EventsPreloader do
         relation_type_id: "references",
       })
     end
+    # For citation_events, the DOI must be the target (target_doi)
+    # For "is-referenced-by", target_doi = subj_id, so doi1 needs to be subj_id
     let!(:citation_event) do
       create(:event_for_datacite_crossref, {
-        subj_id: "https://doi.org/#{doi3.doi}",
-        obj_id: "https://doi.org/#{doi1.doi}",
+        subj_id: "https://doi.org/#{doi1.doi}",
+        obj_id: "https://doi.org/#{doi3.doi}",
         relation_type_id: "is-referenced-by",
       })
     end
