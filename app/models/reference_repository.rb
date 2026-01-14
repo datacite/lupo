@@ -355,6 +355,11 @@ class ReferenceRepository < ApplicationRecord
             "repository_type": options[:repository_type].split(",")
           } }
         end
+        if options[:provider_id].present?
+          retval << { term: {
+            "provider_id": { value: options[:provider_id], case_insensitive: true }
+          } }
+        end
         if options[:is_open] == "true"
           retval << { term: {
             "data_access.type": "open"
