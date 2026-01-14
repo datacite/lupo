@@ -41,14 +41,14 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
       it "should preload events for all DOIs in batch" do
         # Create events for the DOIs
-        reference_event = create(:event_for_crossref, {
+        create(:event_for_crossref, {
           subj_id: "https://doi.org/#{doi1.doi}",
           obj_id: "https://doi.org/#{doi2.doi}",
           relation_type_id: "references",
         })
         # For citation_events, the DOI must be the target (target_doi)
         # For "is-referenced-by", target_doi = subj_id, so doi1 needs to be subj_id
-        citation_event = create(:event_for_datacite_crossref, {
+        create(:event_for_datacite_crossref, {
           subj_id: "https://doi.org/#{doi1.doi}",
           obj_id: "https://doi.org/#{doi3.doi}",
           relation_type_id: "is-referenced-by",
