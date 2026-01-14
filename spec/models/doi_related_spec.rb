@@ -33,22 +33,24 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         allow(DataciteDoi).to receive(:upload_to_elasticsearch)
 
         # With EventsPreloader, we should make minimal queries
-        # 1 query for DOIs, 1 query for events (via EventsPreloader)
+        # 1 query for DOIs, 1 query for events (via EventsPreloader), plus associations
         expect {
           DataciteDoi.import_in_bulk(ids)
-        }.not_to exceed_query_limit(5) # Allow some overhead for associations
+        }.not_to exceed_query_limit(6) # Allow some overhead for associations (client, media, metadata, allocator)
       end
 
       it "should preload events for all DOIs in batch" do
         # Create events for the DOIs
-        create(:event_for_crossref, {
+        reference_event = create(:event_for_crossref, {
           subj_id: "https://doi.org/#{doi1.doi}",
           obj_id: "https://doi.org/#{doi2.doi}",
           relation_type_id: "references",
         })
-        create(:event_for_datacite_crossref, {
-          subj_id: "https://doi.org/#{doi3.doi}",
-          obj_id: "https://doi.org/#{doi1.doi}",
+        # For citation_events, the DOI must be the target (target_doi)
+        # For "is-referenced-by", target_doi = subj_id, so doi1 needs to be subj_id
+        citation_event = create(:event_for_datacite_crossref, {
+          subj_id: "https://doi.org/#{doi1.doi}",
+          obj_id: "https://doi.org/#{doi3.doi}",
           relation_type_id: "is-referenced-by",
         })
 
@@ -72,18 +74,14 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         dois = DataciteDoi.where(id: doi.id).includes(
           :client,
           :media,
-          :view_events,
-          :download_events,
-          :citation_events,
-          :reference_events,
-          :part_events,
-          :part_of_events,
-          :version_events,
-          :version_of_events,
           :metadata
         )
 
+        # Preload events to avoid N+1 queries
+        EventsPreloader.new(dois.to_a).preload!
+
         # Test the maximum number of queries made by the method
+        # With EventsPreloader, we should have fewer queries
         expect {
           dois.first.as_indexed_json
         }.not_to exceed_query_limit(13)
@@ -341,6 +339,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:reference_event) do
       create(:event_for_crossref, {
         subj_id: "https://doi.org/#{doi.doi}",
@@ -348,10 +347,12 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         relation_type_id: "references",
       })
     end
+    # For citation_events, the DOI must be the target (target_doi)
+    # For "is-referenced-by", target_doi = subj_id, so doi needs to be subj_id
     let!(:citation_event) do
       create(:event_for_datacite_crossref, {
-        subj_id: "https://doi.org/#{target_doi.doi}",
-        obj_id: "https://doi.org/#{doi.doi}",
+        subj_id: "https://doi.org/#{doi.doi}",
+        obj_id: "https://doi.org/#{source_doi.doi}",
         relation_type_id: "is-referenced-by",
       })
     end
