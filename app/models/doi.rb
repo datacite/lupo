@@ -104,10 +104,11 @@ class Doi < ApplicationRecord
 
   # Override association methods to use preloaded_events when available
   # Check for !nil instead of present? to handle empty arrays (preloaded but no events)
+  # Also filter by source_doi/target_doi to match association behavior
   def view_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.target_relation_type_id == "views" }
+        preloaded_events.select { |e| e.target_relation_type_id == "views" && e.target_doi&.upcase == doi.upcase }
       )
     else
       association(:view_events).scope
@@ -117,7 +118,7 @@ class Doi < ApplicationRecord
   def download_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.target_relation_type_id == "downloads" }
+        preloaded_events.select { |e| e.target_relation_type_id == "downloads" && e.target_doi&.upcase == doi.upcase }
       )
     else
       association(:download_events).scope
@@ -127,7 +128,7 @@ class Doi < ApplicationRecord
   def reference_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.source_relation_type_id == "references" }
+        preloaded_events.select { |e| e.source_relation_type_id == "references" && e.source_doi&.upcase == doi.upcase }
       )
     else
       association(:reference_events).scope
@@ -137,7 +138,7 @@ class Doi < ApplicationRecord
   def citation_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.target_relation_type_id == "citations" }
+        preloaded_events.select { |e| e.target_relation_type_id == "citations" && e.target_doi&.upcase == doi.upcase }
       )
     else
       association(:citation_events).scope
@@ -147,7 +148,7 @@ class Doi < ApplicationRecord
   def part_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.source_relation_type_id == "parts" }
+        preloaded_events.select { |e| e.source_relation_type_id == "parts" && e.source_doi&.upcase == doi.upcase }
       )
     else
       association(:part_events).scope
@@ -157,7 +158,7 @@ class Doi < ApplicationRecord
   def part_of_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.target_relation_type_id == "part_of" }
+        preloaded_events.select { |e| e.target_relation_type_id == "part_of" && e.target_doi&.upcase == doi.upcase }
       )
     else
       association(:part_of_events).scope
@@ -167,7 +168,7 @@ class Doi < ApplicationRecord
   def version_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.source_relation_type_id == "versions" }
+        preloaded_events.select { |e| e.source_relation_type_id == "versions" && e.source_doi&.upcase == doi.upcase }
       )
     else
       association(:version_events).scope
@@ -177,7 +178,7 @@ class Doi < ApplicationRecord
   def version_of_events
     if !preloaded_events.nil?
       PreloadedEventRelation.new(
-        preloaded_events.select { |e| e.target_relation_type_id == "version_of" }
+        preloaded_events.select { |e| e.target_relation_type_id == "version_of" && e.target_doi&.upcase == doi.upcase }
       )
     else
       association(:version_of_events).scope
