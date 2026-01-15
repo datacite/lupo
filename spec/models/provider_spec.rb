@@ -314,9 +314,8 @@ describe Provider, type: :model do
 
     it "should show all cumulative years" do
       provider = create(:provider)
-      expect(provider.cumulative_years).to eq(
-        [2_015, 2_016, 2_017, 2_018, 2_019, 2_020, 2_021, 2_022, 2_023, 2_024, 2_025],
-      )
+      cumulative_years = (2015..Date.today.year).to_a
+      expect(provider.cumulative_years).to eq(cumulative_years)
     end
 
     it "should show years before deleted" do

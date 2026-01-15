@@ -617,7 +617,7 @@ paths:
           $ref: '#/components/parameters/consortiumIdParam'
         - in: query
           name: prefix
-          description: Filter by a specific prefix. Use commmas to include multiple prefixes.
+          description: Filter by a specific prefix. Use commas to include multiple prefixes.
           schema:
             type: string
           example: 10.5438
@@ -639,6 +639,16 @@ paths:
           schema:
             type: string
         - in: query
+          name: funded-by
+          description: Search fundingReferences.funderIdentifier for a ROR ID. Results also include DOIs containing a Crossref Funder ID in fundingReferences.funderIdentifier corresponding to the ROR ID.
+          schema:
+            type: string
+        - in: query
+          name: include-funder-child-organizations
+          description: When the `funded-by=` parameter is set to a ROR ID and `include-funder-child-organizations=true`, the returned list of DOIs will be filtered to DataCite resources funded by the organization identified by the ROR ID as well as all of its child organizations. Child organizations include direct descendants as well as children of children. 
+          schema:
+            type: boolean
+        - in: query
           name: funder-id
           description: Search fundingReferences.funderIdentifier for a Crossref Funder ID.
           schema:
@@ -650,7 +660,7 @@ paths:
             type: string
         - in: query
           name: resource-type-id
-          description: Filter by the resourceTypeGeneral. Use commmas to include multiple values.
+          description: Filter by the resourceTypeGeneral. Use commas to include multiple values.
           schema:
             type: array
             items:
@@ -692,12 +702,12 @@ paths:
           style: form
         - in: query
           name: resource-type
-          description: Filter by the free text resourceType. Use commmas to include multiple values.
+          description: Filter by the free text resourceType. Use commas to include multiple values.
           schema:
             type: string  
         - in: query
           name: subject
-          description: Filter by the free text Subject. Use commmas to include multiple terms.
+          description: Filter by the free text Subject. Use commas to include multiple terms.
           schema:
             type: string
         - in: query
@@ -808,7 +818,7 @@ paths:
             type: boolean
         - in: query
           name: random
-          description: Retreive a random sample of DOIs. When true, the `page[number]` parameter is ignored.
+          description: Retrieve a random sample of DOIs. When true, the `page[number]` parameter is ignored.
           schema:
             type: boolean
         - in: query
@@ -965,7 +975,7 @@ paths:
                           - $ref: '#/components/schemas/MetaArray'
                         affiliations:
                           allOf:
-                          - description: The top 10 represented ROR affliations with ROR ID, research organization title, and counts.
+                          - description: The top 10 represented ROR affiliations with ROR ID, research organization title, and counts.
                           - $ref: '#/components/schemas/MetaArray'
                         prefixes:
                           allOf:
@@ -2113,7 +2123,7 @@ components:
                         items:
                           type: object
                           properties:
-                            yearMonth:
+                            year:
                               type: string
                             total:
                               type: number
