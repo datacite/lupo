@@ -1915,6 +1915,127 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois search with person to work types multilevel", prefix_pool_size: 11 do
+    let!(:dois_contributor_1) do
+      create_list(:doi, 5, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    let!(:dois_contributor_2) do
+      create_list(:doi, 3, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Software"
+        }
+      )
+    end
+
+    let!(:dois_contributor_3) do
+      create_list(:doi, 2, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Cousijn, Helena",
+            "givenName" => "Helena",
+            "familyName" => "Cousijn",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0001-6660-6214",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns person to work types multilevel values" do
+      get "/dois?facets=person_to_work_types_multilevel", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "personToWorkTypesMultilevel")).to be_truthy
+
+      # Validate exact count of unique contributors
+      expect(json.dig("meta", "personToWorkTypesMultilevel").length).to eq(2)
+
+      # Find contributors by their ORCID IDs
+      fenner = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0003-1419-2405" }
+      cousijn = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0001-6660-6214" }
+
+      # Validate Fenner, Martin exists with correct data
+      expect(fenner).to be_present
+      expect(fenner["title"]).to eq("Fenner, Martin")
+      expect(fenner["count"]).to eq(8) # 5 Text + 3 Software
+      expect(fenner["inner"].length).to eq(2) # Should have 2 work types
+
+      # Validate Fenner's work types
+      fenner_text = fenner["inner"].find { |wt| wt["id"] == "text" }
+      fenner_software = fenner["inner"].find { |wt| wt["id"] == "software" }
+
+      expect(fenner_text).to be_present
+      expect(fenner_text["title"]).to eq("Text")
+      expect(fenner_text["count"]).to eq(5)
+
+      expect(fenner_software).to be_present
+      expect(fenner_software["title"]).to eq("Software")
+      expect(fenner_software["count"]).to eq(3)
+
+      # Validate Cousijn, Helena exists with correct data
+      expect(cousijn).to be_present
+      expect(cousijn["title"]).to eq("Cousijn, Helena")
+      expect(cousijn["count"]).to eq(2) # 2 Text
+      expect(cousijn["inner"].length).to eq(1) # Should have 1 work type
+
+      # Validate Cousijn's work types
+      cousijn_text = cousijn["inner"].find { |wt| wt["id"] == "text" }
+
+      expect(cousijn_text).to be_present
+      expect(cousijn_text["title"]).to eq("Text")
+      expect(cousijn_text["count"]).to eq(2)
+    end
+  end
+
   describe "GET /dois search with count values", prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }

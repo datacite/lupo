@@ -835,6 +835,30 @@ class Doi < ApplicationRecord
           }
         }
       },
+      person_to_work_types_multilevel: {
+        terms: {
+          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          size: 10,
+          min_doc_count: 1,
+          include: "https?://orcid.org/.*"
+        },
+        aggs: {
+          creators_and_contributors: {
+            top_hits: {
+              _source: {
+                includes: [ "creators_and_contributors.name", "creators_and_contributors.nameIdentifiers.nameIdentifier" ]
+              },
+              size: 1
+            }
+          },
+          "work_types": {
+            "terms": {
+              "field": "resource_type_id_and_name",
+              "min_doc_count": 1
+            }
+          }
+        }
+      },
       views: {
         date_histogram: { field: "publication_year", interval: "year", format: "year", order: { _key: "desc" }, min_doc_count: 1 },
         aggs: {
