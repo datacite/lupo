@@ -242,7 +242,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                "classificationCode" => "080505" }],
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
-              "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }],
+              "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References", "relationTypeInformation" => "Test relatedIdentifier => relationTypeInformation" }],
               "descriptions" => [
                 {
                   "lang" => "en",
@@ -295,7 +295,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                "schemeUri" => "https://orcid.org" }],
                                                                         "nameType" => "Personal" }])
         expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
-        expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
+        expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References", "relationTypeInformation" => "Test relatedIdentifier => relationTypeInformation" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
         expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } }])
         expect(json.dig("data", "attributes", "source")).to eq("test")
@@ -358,6 +358,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                             },
                 "relatedItemType" => "Journal",
                 "relationType" => "IsPublishedIn",
+                "relationTypeInformation" => "Test relatedItem => relationTypeInformation",
                 "titles" => [{ "title" => "Physics letters / B" }],
                 "volume" => "776"
               }],
@@ -390,6 +391,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "state")).to eq("findable")
         expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
                                                                       "relatedItemType" => "Journal",
+                                                                      "relationTypeInformation" => "Test relatedItem => relationTypeInformation",
                                                                       "publicationYear" => "2018",
                                                                       "relatedItemIdentifier" => {
                                                                                                    "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",

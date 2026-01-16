@@ -300,10 +300,12 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
         resourceTypeGeneral: { type: :keyword },
+        relationTypeInformation: { type: :keyword },
       }
       indexes :related_items,                       type: :object, properties: {
         relatedItemType: { type: :keyword },
         relationType: { type: :keyword },
+        relationTypeInformation: { type: :keyword },
         relatedItemIdentifier: { type: :object, properties: {
           relatedItemIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
           relatedItemIdentifierType: { type: :keyword },
