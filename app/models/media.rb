@@ -8,7 +8,6 @@ class Media < ApplicationRecord
 
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :datacite_doi_id, :doi_id
 
   validates_presence_of :url
   validates_format_of :url,
@@ -28,8 +27,8 @@ class Media < ApplicationRecord
       "version" => version,
       "url" => url,
       "media_type" => media_type,
-      "created" => created,
-      "updated" => updated,
+      "created" => created.try(:iso8601),
+      "updated" => updated.try(:iso8601),
     }
   end
 
@@ -47,6 +46,8 @@ class Media < ApplicationRecord
 
     write_attribute(:dataset, r.id)
   end
+
+  alias_method :datacite_doi_id, :doi_id
 
   def set_defaults
     current_media =

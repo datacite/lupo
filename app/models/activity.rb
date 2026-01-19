@@ -7,8 +7,7 @@ class Activity < Audited::Audit
   include Indexable
 
   alias_attribute :created, :created_at
-  alias_attribute :doi_id, :uid
-  alias_attribute :changes, :audited_changes
+  alias_attribute :activity_changes, :audited_changes
 
   belongs_to :auditable, polymorphic: true
 
@@ -48,11 +47,11 @@ class Activity < Audited::Audit
       "action" => action,
       "version" => version,
       "request_uuid" => request_uuid,
-      "changes" => changes,
+      "changes" => activity_changes,
       "was_derived_from" => was_derived_from,
       "was_attributed_to" => was_attributed_to,
       "was_generated_by" => was_generated_by,
-      "created" => created,
+      "created" => created.try(:iso8601),
     }
   end
 
@@ -252,6 +251,8 @@ class Activity < Audited::Audit
   def uid
     auditable.uid
   end
+
+  alias_method :doi_id, :uid
 
   def url
     if Rails.env.production?

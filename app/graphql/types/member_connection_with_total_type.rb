@@ -2,16 +2,15 @@
 
 class MemberConnectionWithTotalType < BaseConnection
   edge_type(MemberEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :years, [FacetType], null: true, cache: true
-  field :regions, [FacetType], null: true, cache: true
-  field :member_types, [FacetType], null: true, cache: true
-  field :organization_types, [FacetType], null: true, cache: true
-  field :focus_areas, [FacetType], null: true, cache: true
-  field :non_profit_statuses, [FacetType], null: true, cache: true
-  field :has_required_contacts, [FacetType], null: true, cache: true
+  field :total_count, Integer, null: false
+  field :years, [FacetType], null: true
+  field :regions, [FacetType], null: true
+  field :member_types, [FacetType], null: true
+  field :organization_types, [FacetType], null: true
+  field :focus_areas, [FacetType], null: true
+  field :non_profit_statuses, [FacetType], null: true
+  field :has_required_contacts, [FacetType], null: true
 
   def total_count
     object.total_count

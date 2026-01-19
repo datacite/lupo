@@ -50,12 +50,12 @@ class QueryType < BaseObject
       software: args[:software],
       certificate: args[:certificate],
       subject: args[:subject],
-      subject_id: args[:subject_id],
-      repository_type: args[:repository_type],
-      is_open: args[:is_open],
-      is_certified: args[:is_certified],
-      is_disciplinary: args[:is_disciplinary],
-      has_pid: args[:has_pid],
+      subject_id: args[:subjectId],
+      repository_type: args[:repositoryType],
+      is_open: args[:isOpen],
+      is_certified: args[:isCertified],
+      is_disciplinary: args[:isDisciplinary],
+      has_pid: args[:hasPid],
       page: {
         cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil,
         size: args[:first]
@@ -1337,9 +1337,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true do
-    argument :first, Int, required: false, default_value: 25
-  end
+  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true
 
   def usage_reports(first: nil)
     UsageReport.query(nil, page: { number: 1, size: first }).fetch(:data, [])

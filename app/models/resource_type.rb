@@ -22,7 +22,7 @@ class ResourceType
       "id" => id,
       "title" => title,
       "cache_key" => cache_key,
-      "updated" => updated,
+      "updated" => updated.try(:iso8601),
     }
   end
 

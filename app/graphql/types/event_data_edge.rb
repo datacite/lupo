@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
-class EventDataEdge < GraphQL::Relay::Edge
+class EventDataEdge < GraphQL::Types::Relay::BaseEdge
+  node_type(EventDataType) # if you have a custom node type
+
+  field :event_data, EventDataType, null: true
+  field :source_id, String, null: true
+  field :target_id, String, null: true
+  field :source, String, null: true
+  field :relation_type, String, null: true
+  field :total, Integer, null: true
+
   RELATION_TYPES = {
     "funds" => "isFundedBy",
     "isFundedBy" => "funds",

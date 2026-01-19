@@ -2,10 +2,9 @@
 
 class RepositoryPrefixConnectionWithTotalType < BaseConnection
   edge_type(RepositoryPrefixEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :years, [FacetType], null: false, cache: true
+  field :total_count, Integer, null: false
+  field :years, [FacetType], null: false
 
   def total_count
     object.total_count

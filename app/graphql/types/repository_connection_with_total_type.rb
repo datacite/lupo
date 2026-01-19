@@ -2,14 +2,13 @@
 
 class RepositoryConnectionWithTotalType < BaseConnection
   edge_type(RepositoryEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: true, cache: true
-  field :software, [FacetType], null: true, cache: true
-  field :certificates, [FacetType], null: true, cache: true
-  field :repository_types, [FacetType], null: true, cache: true
-  field :years, [FacetType], null: true, cache: true
-  field :members, [FacetType], null: true, cache: true
+  field :total_count, Integer, null: true
+  field :software, [FacetType], null: true
+  field :certificates, [FacetType], null: true
+  field :repository_types, [FacetType], null: true
+  field :years, [FacetType], null: true
+  field :members, [FacetType], null: true
 
   def total_count
     object.total_count

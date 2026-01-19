@@ -73,7 +73,7 @@ ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
