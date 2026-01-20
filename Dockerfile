@@ -16,9 +16,31 @@ CMD ["/sbin/my_init"]
 RUN bash -lc 'rvm --default use ruby-3.2.9'
 
 # Update installed APT packages
-RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
-    apt-get install ntp wget nano tmux tzdata percona-toolkit imagemagick shared-mime-info gettext -y && \
+RUN apt-get update && \
+    apt-get install -y \
+      wget \
+      gnupg \
+      ca-certificates \
+      lsb-release \
+      ntp \
+      nano \
+      tmux \
+      tzdata \
+      imagemagick \
+      shared-mime-info \
+      gettext \
+      libdbd-mysql-perl \
+      libdbi-perl \
+      libterm-readkey-perl \
+      libio-socket-ssl-perl && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install Percona Toolkit 3.7.1
+RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1/binary/debian/noble/x86_64/percona-toolkit_3.7.1-2.noble_amd64.deb && \
+    apt-get update && \
+    apt-get install -y -f && \
+    dpkg -i percona-toolkit_3.7.1-2.noble_amd64.deb && \
+    rm percona-toolkit_3.7.1-2.noble_amd64.deb
 
 # Enable Passenger and Nginx and remove the default site
 # Preserve env variables for nginx

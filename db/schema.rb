@@ -16,7 +16,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_10_121400) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", precision: nil, null: false
+    t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -322,5 +322,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_10_121400) do
     t.datetime "updated_at", precision: nil, null: false
   end
 
-  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id", name: "_fk_rails_993965df05"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
 end
