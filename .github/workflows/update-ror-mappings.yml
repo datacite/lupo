@@ -1,0 +1,16 @@
+name: Update ROR Mappings
+
+on:
+  workflow_dispatch:
+
+jobs:
+  manual-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Confirm manual trigger works
+        run: |
+          echo "✅ Update ROR Mappings workflow triggered manually"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch ref: ${{ github.ref }}"
+          echo "Triggered by: ${{ github.actor }}"
