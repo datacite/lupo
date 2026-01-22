@@ -42,7 +42,7 @@ services:
       - public
 
   elasticsearch:
-    image: opensearchproject/opensearch:2
+    image: opensearchproject/opensearch:3.3
     ports:
       - "9201:9200"
       - "9301:9300"
