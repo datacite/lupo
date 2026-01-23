@@ -2,15 +2,108 @@ name: Update ROR Mappings
 
 on:
   workflow_dispatch:
+  schedule:
+    # Run monthly on the 1st at 02:00 UTC
+    - cron: '0 2 1 * *'
+
+concurrency:
+  group: update-ror-mappings
+  cancel-in-progress: false
 
 jobs:
-  manual-test:
+  update-ror-mappings:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      LOCAL_FUNDER_MAPPING: app/resources/funder_to_ror.json
+      LOCAL_ROR_HIERARCHY: app/resources/ror_hierarchy.json
+      S3_FUNDER_KEY: ror_funder_mapping/funder_to_ror.json
+      S3_HIERARCHY_KEY: ror_funder_mapping/ror_hierarchy.json
+
     steps:
-      - name: Confirm manual trigger works
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure app/resources directory exists
+        run: mkdir -p app/resources
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.ROR_MAPPING_ROLE_ARN }}
+          role-duration-seconds: 900
+
+      - name: Download latest ROR mapping files from S3
         run: |
-          echo "✅ Update ROR Mappings workflow triggered manually"
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch ref: ${{ github.ref }}"
-          echo "Triggered by: ${{ github.actor }}"
+          aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" "${LOCAL_FUNDER_MAPPING}.new"
+          aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" "${LOCAL_ROR_HIERARCHY}.new"
+
+      - name: Replace files if changed
+        id: diff
+        run: |
+          changed=false
+
+          if [ ! -f "${LOCAL_FUNDER_MAPPING}" ] || ! cmp -s "${LOCAL_FUNDER_MAPPING}" "${LOCAL_FUNDER_MAPPING}.new"; then
+            mv "${LOCAL_FUNDER_MAPPING}.new" "${LOCAL_FUNDER_MAPPING}"
+            changed=true
+          fi
+
+          if [ ! -f "${LOCAL_ROR_HIERARCHY}" ] || ! cmp -s "${LOCAL_ROR_HIERARCHY}" "${LOCAL_ROR_HIERARCHY}.new"; then
+            mv "${LOCAL_ROR_HIERARCHY}.new" "${LOCAL_ROR_HIERARCHY}"
+            changed=true
+          fi
+
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Clean up temp files
+        if: always()
+        run: rm -f app/resources/*.new || true
+
+      - name: Set git identity
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "lupo-bot"
+          git config user.email "lupo-bot@datacite.org"
+
+      - name: Create update branch
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
+          git checkout -b "$BRANCH"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+      - name: Commit changes
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git add app/resources
+          git commit -m "chore: update ROR mapping files from S3"
+
+      - name: Push branch
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git push origin "$BRANCH"
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BRANCH }}
+          base: master
+          title: "chore: update ROR mapping files from S3"
+          body: |
+            This PR updates ROR mapping JSON files in `app/resources`
+            using the latest data from S3.
+
+            - Generated automatically via GitHub Actions
+            - Requires manual review and merge
+          labels: automated-pr, ror-mapping
+
+      - name: No changes detected
+        if: steps.diff.outputs.changed != 'true'
+        run: echo "ROR mapping files are already up to date. No PR created."

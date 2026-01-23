@@ -1,4 +1,8 @@
 # frozen_string_literal: true
 
-FUNDER_TO_ROR = JSON.parse(File.read(Rails.root.join("app/resources/funder_to_ror.json"))).freeze
-ROR_HIERARCHY = JSON.parse(File.read(Rails.root.join("app/resources/ror_hierarchy.json"))).freeze
+if defined?(Shoryuken) && ENV["DISABLE_QUEUE_WORKER"].blank?
+  require "aws-sdk-s3"
+  require "fileutils"
+
+  RorMappingLoader.load!
+end
