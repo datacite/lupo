@@ -35,11 +35,12 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.ROR_MAPPING_ROLE_ARN }}
-          role-duration-seconds: 900
+          aws-access-key-id: ${{ secrets.ROR_ANALYSIS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.ROR_ANALYSIS_SECRET_ACCESS_KEY }}
 
       - name: Download latest ROR mapping files from S3
         run: |
+          set -euo pipefail
           aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" "${LOCAL_FUNDER_MAPPING}.new"
           aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" "${LOCAL_ROR_HIERARCHY}.new"
 
@@ -64,45 +65,31 @@ jobs:
         if: always()
         run: rm -f app/resources/*.new || true
 
-      - name: Set git identity
+      - name: Create Pull Request (GitHub CLI)
         if: steps.diff.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Configure git identity
           git config user.name "lupo-bot"
           git config user.email "lupo-bot@datacite.org"
 
-      - name: Create update branch
-        if: steps.diff.outputs.changed == 'true'
-        run: |
+          # Create branch
           BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
           git checkout -b "$BRANCH"
-          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
-      - name: Commit changes
-        if: steps.diff.outputs.changed == 'true'
-        run: |
+          # Commit changes
           git add app/resources
           git commit -m "chore: update ROR mapping files from S3"
-
-      - name: Push branch
-        if: steps.diff.outputs.changed == 'true'
-        run: |
           git push origin "$BRANCH"
 
-      - name: Create Pull Request
-        if: steps.diff.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ env.BRANCH }}
-          base: master
-          title: "chore: update ROR mapping files from S3"
-          body: |
-            This PR updates ROR mapping JSON files in `app/resources`
-            using the latest data from S3.
-
-            - Generated automatically via GitHub Actions
-            - Requires manual review and merge
-          labels: automated-pr, ror-mapping
+          # Create PR
+          gh pr create \
+            --title "chore: update ROR mapping files from S3" \
+            --body "This PR updates ROR mapping JSON files in \`app/resources\` using the latest data from S3.\n\n- Generated automatically via GitHub Actions\n- Requires manual review and merge" \
+            --base master \
+            --head "$BRANCH" \
+            --label "automated-pr,ror-mapping"
 
       - name: No changes detected
         if: steps.diff.outputs.changed != 'true'
