@@ -21,8 +21,8 @@ jobs:
     env:
       LOCAL_FUNDER_MAPPING: app/resources/funder_to_ror.json
       LOCAL_ROR_HIERARCHY: app/resources/ror_hierarchy.json
-      S3_FUNDER_KEY: ror_funder_mapping/funder_to_ror.json
-      S3_HIERARCHY_KEY: ror_funder_mapping/ror_hierarchy.json
+      S3_FUNDER_KEY: funder_to_ror.json
+      S3_HIERARCHY_KEY: ror_hierarchy.json
 
     steps:
       - name: Checkout repository
