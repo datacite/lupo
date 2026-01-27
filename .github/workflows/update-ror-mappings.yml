@@ -71,8 +71,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Configure git identity
-          git config user.name "lupo-bot"
-          git config user.email "lupo-bot@datacite.org"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
 
           # Create branch
           BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
