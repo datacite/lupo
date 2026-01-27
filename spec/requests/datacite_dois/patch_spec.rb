@@ -1022,7 +1022,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
       expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
       expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
-      
+
       expect(json.dig("data", "attributes", "types", "resourceTypeGeneral")).to eq("Presentation")
       expect(json.dig("data", "attributes", "types", "resourceType")).to eq("Example ResourceType")
 
