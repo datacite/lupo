@@ -242,7 +242,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                "classificationCode" => "080505" }],
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
-              "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References", "relationTypeInformation" => "Test relatedIdentifier => relationTypeInformation" }],
+              "relatedIdentifiers" => [{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }],
               "descriptions" => [
                 {
                   "lang" => "en",
@@ -295,7 +295,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                "schemeUri" => "https://orcid.org" }],
                                                                         "nameType" => "Personal" }])
         expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
-        expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References", "relationTypeInformation" => "Test relatedIdentifier => relationTypeInformation" }])
+        expect(json.dig("data", "attributes", "relatedIdentifiers")).to eq([{ "relatedIdentifier" => "10.5438/55e5-t5c0", "relatedIdentifierType" => "DOI", "relationType" => "References" }])
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
         expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } }])
         expect(json.dig("data", "attributes", "source")).to eq("test")
@@ -358,7 +358,6 @@ describe DataciteDoisController, type: :request, vcr: true do
                                             },
                 "relatedItemType" => "Journal",
                 "relationType" => "IsPublishedIn",
-                "relationTypeInformation" => "Test relatedItem => relationTypeInformation",
                 "titles" => [{ "title" => "Physics letters / B" }],
                 "volume" => "776"
               }],
@@ -391,7 +390,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "state")).to eq("findable")
         expect(json.dig("data", "attributes", "relatedItems")).to eq(["relationType" => "IsPublishedIn",
                                                                       "relatedItemType" => "Journal",
-                                                                      "relationTypeInformation" => "Test relatedItem => relationTypeInformation",
                                                                       "publicationYear" => "2018",
                                                                       "relatedItemIdentifier" => {
                                                                                                    "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044",
@@ -2424,6 +2422,203 @@ describe DataciteDoisController, type: :request, vcr: true do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10704")
+      end
+    end
+
+    ## Metadata 4.7 elements
+
+    context "when the request uses schema 4.7 - xml" do
+      let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.7.xml").read) }
+      let(:doi) { "10.14454/10703" }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => doi,
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "creates a Doi" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig("data", "attributes", "doi")).to eq(doi)
+        expect(json.dig("data", "attributes", "schemaVersion")).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+        expect(json.dig("data", "attributes", "publisher")).to eq("Example Publisher")
+
+        expect(json.dig("data", "attributes", "types", "resourceTypeGeneral")).to eq("Presentation")
+
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 36, "resourceTypeGeneral")).to eq("Poster")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 37, "resourceTypeGeneral")).to eq("Presentation")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 38, "relatedIdentifierType")).to eq("RAiD")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 40, "relationType")).to eq("Other")
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 40, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
+
+        expect(json.dig("data", "attributes", "relatedItems", 1, "relationType")).to eq("Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 1, "titles", 0, "title")).to eq("Journal of Metadata Examples - Collects")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "relationType")).to eq("IsCollectedBy")
+        expect(json.dig("data", "attributes", "relatedItems", 2, "titles", 0, "title")).to eq("Journal of Metadata Examples - IsCollectedBy")
+
+        expect(json.dig("data", "attributes", "relatedItems", 3, "relatedItemType")).to eq("Presentation")
+        expect(json.dig("data", "attributes", "relatedItems", 4, "relatedItemType")).to eq("Poster")
+        expect(json.dig("data", "attributes", "relatedItems", 5, "relatedItemIdentifier", "relatedItemIdentifierType")).to eq("SWHID")
+        expect(json.dig("data", "attributes", "relatedItems", 6, "relationType")).to eq("Other")
+        # expect(json.dig("data", "attributes", "relatedItems", 6, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
+      end
+    end
+
+    context "when the request uses schema 4.7 - json" do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types": {
+                "resourceTypeGeneral": "Poster",
+                "resourceType": "Test Resource Type"
+              },
+              "titles" => [{ "title" => "Eating your own Dog Food" }],
+              "publisher" => "DataCite",
+              "publicationYear" => 2016,
+              "creators" => [{ "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }],
+              "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+                               "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+                               "subjectScheme" => "FOR",
+                               "lang" => "en",
+                               "classificationCode" => "080505" }],
+              "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
+              "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
+              "relatedIdentifiers" => [
+                { 
+                  "relatedIdentifier" => "10.5438/55e5-t5c0",
+                  "relatedIdentifierType" => "DOI", 
+                  "relationType" => "Other", 
+                  "relationTypeInformation" => "More information to supplement relationType 'Other'", "resourceTypeGeneral" => "Presentation"
+                },
+              { 
+                  "relatedIdentifier" => "10.5438/55e5-t5c0",
+                  "relatedIdentifierType" => "RAiD", 
+                  "relationType" => "Other", 
+                  "relationTypeInformation" => "More information to supplement relationType 'Other'", "resourceTypeGeneral" => "Presentation"
+                },
+              ],
+
+              "relatedItems": [
+                { 
+                  "relatedItemType" => "Presentation", 
+                  "relationType" => "Other", 
+                  "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+                  "relatedItemIdentifier": { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
+                }
+              ],
+              
+              "descriptions" => [
+                {
+                  "lang" => "en",
+                  "description" => "Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. One purpose of this study was to assess the differences in dietary intake and bone mineral density (BMD) in a Masters athlete population (n=87, n=49 female; 41.06 ± 5.00 years of age) and examine sex- and sport-related differences in dietary and total calcium and vitamin K intake and BMD of the total body, lumbar spine, and dual femoral neck (TBBMD, LSBMD and DFBMD, respectively). Total calcium is defined as calcium intake from diet and supplements. Athletes were categorized as participating in an endurance or interval sport. BMD was measured using dual-energy X-ray absorptiometry (DXA). Data on dietary intake was collected from Block 2005 Food Frequency Questionnaires (FFQs). Dietary calcium, total calcium, or vitamin K intake did not differ between the female endurance and interval athletes. All three BMD sites were significantly different among the female endurance and interval athletes, with female interval athletes having higher BMD at each site (TBBMD: 1.26 ± 0.10 g/cm2, p<0.05; LSBMD: 1.37 ± 0.14 g/cm2, p<0.01; DFBMD: 1.11 ± 0.12 g/cm2, p<0.05, for female interval athletes; TBBMD: 1.19 ± 0.09 g/cm2; LSBMD: 1.23 ± 0.16 g/cm2; DFBMD: 1.04 ± 0.10 g/cm2, for female endurance athletes). Male interval athletes had higher BMD at all three sites (TBBMD 1.44 ± 0.11 g/cm2, p<0.05; LSBMD 1.42 ± 0.15 g/cm2, p=0.179; DFBMD 1.26 ± 0.14 g/cm2, p<0.01, for male interval athletes; TBBMD 1.33 ± 0.11 g/cm2; LSBMD 1.33 ± 0.17 g/cm2; DFBMD 1.10 ± 0.12 g/cm2 for male endurance athletes). Dietary calcium, total daily calcium and vitamin K intake did not differ between the male endurance and interval athletes. This study evaluated the relationship between calcium intake and BMD. No relationship between dietary or total calcium intake and BMD was evident in all female athletes, female endurance athletes or female interval athletes. In all male athletes, there was no significant correlation between dietary or total calcium intake and BMD at any of the measured sites. However, the male interval athlete group had a negative relationship between dietary calcium intake and TBBMD (r=-0.738, p<0.05) and LSBMD (r=-0.738, p<0.05). The negative relationship persisted between total calcium intake and LSBMD (r=-0.714, p<0.05), but not TBBMD, when calcium from supplements was included. The third purpose of this study was to evaluate the relationship between vitamin K intake (as phylloquinone) and BMD. In all female athletes, there was no significant correlation between vitamin K intake and BMD at any of the measured sites. No relationship between vitamin K and BMD was evident in female interval or female endurance athletes. Similarly, there was no relationship between vitamin K intake and BMD in the male endurance and interval groups. The final purpose of this study was to assess the relationship between the Calcium-to-Vitamin K (Ca:K) ratio and BMD. A linear regression model established that the ratio predicted TBBMD in female athletes, F(1,47) = 4.652, p <0.05, and the ratio accounted for 9% of the variability in TBBMD. The regression equation was: predicted TBBMD in a female athlete = 1.250 - 0.008 x (Ca:K). In conclusion, Masters interval athletes have higher BMD than Masters endurance athletes; however, neither dietary or supplemental calcium nor vitamin K were related to BMD in skeletal sites prone to fracture in older adulthood. We found that a Ca:K ratio could predict TBBMD in female athletes. Further research should consider the calcium-to-vitamin K relationship in conjunction with other modifiable, lifestyle factors associated with bone health in the investigation of methods to minimize the development and effect of osteoporosis in the older athlete population.",
+                  "descriptionType" => "Abstract",
+                },
+              ],
+              "geoLocations" => [
+                {
+                  "geoLocationPoint" => {
+                    "pointLatitude" => 49.0850736,
+                    "pointLongitude" => -123.3300992,
+                  },
+                },
+              ],
+              "source" => "test",
+              "event" => "publish",
+            },
+          },
+        }
+      end
+
+      it "creates a Doi" do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+
+        expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig("data", "attributes", "doi")).to eq("10.14454/10703")
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "title" => "Eating your own Dog Food" }])
+        expect(json.dig("data", "attributes", "creators")).to eq([{ "affiliation" => [], "familyName" => "Fenner", "givenName" => "Martin", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Martin", "nameType" => "Personal" }])
+        expect(json.dig("data", "attributes", "publisher")).to eq("DataCite")
+        expect(json.dig("data", "attributes", "publicationYear")).to eq(2016)
+        expect(json.dig("data", "attributes", "subjects")).to eq([{ "lang" => "en",
+                                                                    "subject" => "80505 Web Technologies (excl. Web Search)",
+                                                                    "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+                                                                    "subjectScheme" => "FOR",
+                                                                    "classificationCode" => "080505" },
+                                                                  { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
+                                                                    "subject" => "FOS: Computer and information sciences",
+                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }
+                                                                  ])
+        expect(json.dig("data", "attributes", "contributors")).to eq([{ "affiliation" => [],
+                                                                        "contributorType" => "DataManager",
+                                                                        "familyName" => "Fenner",
+                                                                        "givenName" => "Kurt",
+                                                                        "name" => "Fenner, Kurt",
+                                                                        "nameIdentifiers" =>
+                                                                          [{ 
+                                                                            "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401",
+                                                                            "nameIdentifierScheme" => "ORCID",
+                                                                            "schemeUri" => "https://orcid.org" }],
+                                                                            "nameType" => "Personal"
+                                                                          }])
+        expect(json.dig("data", "attributes", "dates")).to eq([{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }])
+
+        expect(json.dig("data", "attributes", "types", "resourceTypeGeneral")).to eq("Poster")
+        expect(json.dig("data", "attributes", "types", "resourceType")).to eq("Test Resource Type")
+
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 0)).to eq(
+          { 
+            "relatedIdentifier" => "10.5438/55e5-t5c0",
+            "relatedIdentifierType" => "DOI",
+            "relationType" => "Other",
+            "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+            "resourceTypeGeneral"=>"Presentation"
+          }
+        )
+        expect(json.dig("data", "attributes", "relatedIdentifiers", 1)).to eq(
+          { 
+            "relatedIdentifier" => "10.5438/55e5-t5c0",
+            "relatedIdentifierType" => "RAiD",
+            "relationType" => "Other",
+            "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+            "resourceTypeGeneral"=>"Presentation"
+          }
+        )
+
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{ 
+          "relatedItemType" => "Presentation",
+          "relationType" => "Other",
+          "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+          "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
+        }])
+
+        expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
+        expect(json.dig("data", "attributes", "geoLocations")).to eq([{ "geoLocationPoint" => { "pointLatitude" => 49.0850736, "pointLongitude" => -123.3300992 } }])
+        expect(json.dig("data", "attributes", "source")).to eq("test")
+        expect(json.dig("data", "attributes", "state")).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig("data", "attributes", "xml")), nil, "UTF-8", &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
+        expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
+        expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
+        # expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
+        expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
       end
     end
   end
