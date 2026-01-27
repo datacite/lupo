@@ -2498,29 +2498,29 @@ describe DataciteDoisController, type: :request, vcr: true do
               "contributors" => [{ "contributorType" => "DataManager", "familyName" => "Fenner", "givenName" => "Kurt", "nameIdentifiers" => [{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri" => "https://orcid.org" }], "name" => "Fenner, Kurt", "nameType" => "Personal" }],
               "dates" => [{ "date" => "2017-02-24", "dateType" => "Issued" }, { "date" => "2015-11-28", "dateType" => "Created" }, { "date" => "2017-02-24", "dateType" => "Updated" }],
               "relatedIdentifiers" => [
-                { 
+                {
                   "relatedIdentifier" => "10.5438/55e5-t5c0",
-                  "relatedIdentifierType" => "DOI", 
-                  "relationType" => "Other", 
+                  "relatedIdentifierType" => "DOI",
+                  "relationType" => "Other",
                   "relationTypeInformation" => "More information to supplement relationType 'Other'", "resourceTypeGeneral" => "Presentation"
                 },
-              { 
+              {
                   "relatedIdentifier" => "10.5438/55e5-t5c0",
-                  "relatedIdentifierType" => "RAiD", 
-                  "relationType" => "Other", 
+                  "relatedIdentifierType" => "RAiD",
+                  "relationType" => "Other",
                   "relationTypeInformation" => "More information to supplement relationType 'Other'", "resourceTypeGeneral" => "Presentation"
                 },
               ],
 
               "relatedItems": [
-                { 
-                  "relatedItemType" => "Presentation", 
-                  "relationType" => "Other", 
-                  "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+                {
+                  "relatedItemType" => "Presentation",
+                  "relationType" => "Other",
+                  "relationTypeInformation" => "More information to supplement relationType 'Other'",
                   "relatedItemIdentifier": { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
                 }
               ],
-              
+
               "descriptions" => [
                 {
                   "lang" => "en",
@@ -2569,7 +2569,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                         "givenName" => "Kurt",
                                                                         "name" => "Fenner, Kurt",
                                                                         "nameIdentifiers" =>
-                                                                          [{ 
+                                                                          [{
                                                                             "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401",
                                                                             "nameIdentifierScheme" => "ORCID",
                                                                             "schemeUri" => "https://orcid.org" }],
@@ -2581,28 +2581,28 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", "attributes", "types", "resourceType")).to eq("Test Resource Type")
 
         expect(json.dig("data", "attributes", "relatedIdentifiers", 0)).to eq(
-          { 
+          {
             "relatedIdentifier" => "10.5438/55e5-t5c0",
             "relatedIdentifierType" => "DOI",
             "relationType" => "Other",
-            "relationTypeInformation" => "More information to supplement relationType 'Other'", 
-            "resourceTypeGeneral"=>"Presentation"
+            "relationTypeInformation" => "More information to supplement relationType 'Other'",
+            "resourceTypeGeneral" => "Presentation"
           }
         )
         expect(json.dig("data", "attributes", "relatedIdentifiers", 1)).to eq(
-          { 
+          {
             "relatedIdentifier" => "10.5438/55e5-t5c0",
             "relatedIdentifierType" => "RAiD",
             "relationType" => "Other",
-            "relationTypeInformation" => "More information to supplement relationType 'Other'", 
-            "resourceTypeGeneral"=>"Presentation"
+            "relationTypeInformation" => "More information to supplement relationType 'Other'",
+            "resourceTypeGeneral" => "Presentation"
           }
         )
 
-        expect(json.dig("data", "attributes", "relatedItems")).to eq([{ 
+        expect(json.dig("data", "attributes", "relatedItems")).to eq([{
           "relatedItemType" => "Presentation",
           "relationType" => "Other",
-          "relationTypeInformation" => "More information to supplement relationType 'Other'", 
+          "relationTypeInformation" => "More information to supplement relationType 'Other'",
           "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
         }])
 
