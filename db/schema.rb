@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_29_195058) do
-  create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
+ActiveRecord::Schema[7.2].define(version: 2025_11_10_121400) do
+  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -21,27 +21,27 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", charset: "utf8mb4", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", limit: 191, null: false
-    t.datetime "created_at", null: false
+    t.string "checksum", limit: 191
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", charset: "utf8mb4", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "allocator", charset: "utf8", force: :cascade do |t|
+  create_table "allocator", charset: "utf8mb3", force: :cascade do |t|
     t.string "system_email", null: false
-    t.datetime "created"
+    t.datetime "created", precision: nil
     t.integer "doi_quota_allowed", null: false
     t.integer "doi_quota_used", null: false
     t.binary "is_active", limit: 1
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.string "password"
     t.string "role_name"
     t.string "symbol", null: false
-    t.datetime "updated"
+    t.datetime "updated", precision: nil
     t.integer "version"
     t.text "comments", size: :long
     t.string "experiments"
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.string "region"
     t.string "country_code"
     t.string "website"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.date "joined"
     t.string "logo"
     t.string "focus_area", limit: 191
@@ -81,7 +81,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.string "logo_file_name"
     t.string "logo_content_type"
     t.bigint "logo_file_size"
-    t.datetime "logo_updated_at"
+    t.datetime "logo_updated_at", precision: nil
     t.integer "doi_estimate", default: 0, null: false
     t.index ["deleted_at"], name: "index_allocator_deleted_at"
     t.index ["organization_type"], name: "index_allocator_organization_type"
@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "audits", charset: "utf8mb4", force: :cascade do |t|
+  create_table "audits", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -112,11 +112,11 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "client_prefixes", charset: "utf8", force: :cascade do |t|
+  create_table "client_prefixes", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.bigint "prefix_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.bigint "provider_prefix_id"
     t.string "uid", null: false
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
@@ -125,25 +125,25 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uid"], name: "index_client_prefixes_on_uid", length: 128
   end
 
-  create_table "contacts", charset: "utf8", force: :cascade do |t|
+  create_table "contacts", charset: "utf8mb3", force: :cascade do |t|
     t.string "uid", limit: 36
     t.bigint "provider_id", null: false
     t.string "given_name"
     t.string "family_name"
     t.string "email"
     t.json "role_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "deleted_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.datetime "deleted_at", precision: nil
     t.index ["deleted_at"], name: "index_contacts_deleted_at"
     t.index ["email"], name: "index_contacts_email"
     t.index ["uid"], name: "index_contacts_uid"
   end
 
-  create_table "datacentre", charset: "utf8", force: :cascade do |t|
+  create_table "datacentre", charset: "utf8mb3", force: :cascade do |t|
     t.text "comments", size: :long
     t.string "system_email", null: false
-    t.datetime "created"
+    t.datetime "created", precision: nil
     t.integer "doi_quota_allowed", null: false
     t.integer "doi_quota_used", null: false
     t.text "domains"
@@ -152,11 +152,11 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.string "password"
     t.string "role_name"
     t.string "symbol", null: false
-    t.datetime "updated"
+    t.datetime "updated", precision: nil
     t.integer "version"
     t.bigint "allocator", null: false
     t.string "experiments"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "re3data_id"
     t.text "url"
     t.string "software", limit: 191
@@ -181,19 +181,19 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
-  create_table "dataset", charset: "utf8", force: :cascade do |t|
-    t.datetime "created"
+  create_table "dataset", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created", precision: nil
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
     t.binary "is_ref_quality", limit: 1
     t.integer "last_landing_page_status"
-    t.datetime "last_landing_page_status_check"
+    t.datetime "last_landing_page_status_check", precision: nil
     t.json "last_landing_page_status_result"
     t.string "last_metadata_status"
-    t.datetime "updated"
+    t.datetime "updated", precision: nil
     t.integer "version"
     t.bigint "datacentre", null: false
-    t.datetime "minted"
+    t.datetime "minted", precision: nil
     t.text "url"
     t.text "last_landing_page"
     t.string "last_landing_page_content_type"
@@ -239,7 +239,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", charset: "utf8mb4", force: :cascade do |t|
+  create_table "events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -251,8 +251,8 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.text "source_token"
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
-    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
-    t.datetime "occurred_at"
+    t.datetime "indexed_at", precision: nil, default: "1970-01-01 00:00:00", null: false
+    t.datetime "occurred_at", precision: nil
     t.string "message_action", limit: 191, default: "create", null: false
     t.string "relation_type_id", limit: 191
     t.text "subj", size: :medium
@@ -272,10 +272,10 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "media", charset: "utf8", force: :cascade do |t|
-    t.datetime "created"
+  create_table "media", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created", precision: nil
     t.string "media_type", limit: 80
-    t.datetime "updated"
+    t.datetime "updated", precision: nil
     t.text "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
@@ -285,8 +285,8 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_media_on_url", length: 100
   end
 
-  create_table "metadata", charset: "utf8", force: :cascade do |t|
-    t.datetime "created"
+  create_table "metadata", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created", precision: nil
     t.integer "metadata_version"
     t.integer "version"
     t.binary "xml", size: :medium
@@ -298,28 +298,28 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
-  create_table "prefixes", charset: "utf8", force: :cascade do |t|
-    t.datetime "created_at"
+  create_table "prefixes", charset: "utf8mb3", force: :cascade do |t|
+    t.datetime "created_at", precision: nil
     t.string "uid", limit: 80, null: false
     t.index ["uid"], name: "prefix", unique: true
   end
 
-  create_table "provider_prefixes", charset: "utf8", force: :cascade do |t|
+  create_table "provider_prefixes", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "provider_id", null: false
     t.bigint "prefix_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "uid", null: false
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
 
-  create_table "reference_repositories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "reference_repositories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "client_id"
     t.string "re3doi"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"

@@ -2,7 +2,6 @@
 
 class PersonConnectionWithTotalType < BaseConnection
   edge_type(PersonEdgeType)
-  field_class GraphQL::Cache::Field
 
   # data from Tom Demeranville (ORCID) on Sep 15, 2020
   YEARS = [
@@ -16,12 +15,12 @@ class PersonConnectionWithTotalType < BaseConnection
     { "id" => "2019", "title" => "2019", "count" => 2_006_672 },
   ].freeze
 
-  field :total_count, Integer, null: false, cache: true
-  field :years, [FacetType], null: true, cache: true
-  field :publication_connection_count, Integer, null: false, cache: true
-  field :dataset_connection_count, Integer, null: false, cache: true
-  field :software_connection_count, Integer, null: false, cache: true
-  field :organization_connection_count, Integer, null: false, cache: true
+  field :total_count, Integer, null: false
+  field :years, [FacetType], null: true
+  field :publication_connection_count, Integer, null: false
+  field :dataset_connection_count, Integer, null: false
+  field :software_connection_count, Integer, null: false
+  field :organization_connection_count, Integer, null: false
 
   def total_count
     object.total_count

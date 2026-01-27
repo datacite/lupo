@@ -337,7 +337,7 @@ describe Provider, type: :model do
       expect(subject.errors.details).to be_empty
       expect(subject.activities.length).to eq(1)
       activity = subject.activities.first
-      expect(activity.changes["non_profit_status"]).to eq("non-profit")
+      expect(activity.audited_changes["non_profit_status"]).to eq("non-profit")
     end
   end
 end

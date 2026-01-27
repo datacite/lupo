@@ -71,8 +71,8 @@ namespace :repository do
 
   desc "Import all reference_repositories"
   task :import, [:pages] => :environment do |t, args|
-    pages = (args[:pages] || 3).to_i
-    DataCatalog.fetch_and_cache_all(pages: pages)
+    # (args[:pages] || 3).to_i
+    # DataCatalog.fetch_and_cache_all(pages: pages)
     ReferenceRepository.import(index: ReferenceRepository.inactive_index)
   end
 

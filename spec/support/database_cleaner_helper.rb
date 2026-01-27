@@ -1,19 +1,17 @@
-# frozen_string_literal: true
-
 RSpec.configure do |config|
-  config.before(:suite) { DatabaseCleaner.clean_with(:truncation) }
+  config.before(:suite) { DatabaseCleaner[:active_record].clean_with(:truncation) }
 
-  config.before(:each) { DatabaseCleaner.strategy = :transaction }
+  config.before(:each) { DatabaseCleaner[:active_record].strategy = :transaction }
 
   config.before(:each, js: true) do
-    DatabaseCleaner.strategy = :truncation, { pre_count: true }
+    DatabaseCleaner[:active_record].strategy = :truncation, { pre_count: true }
   end
 
   config.before(:each, trunk_db_before: true) do
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner[:active_record].clean_with(:truncation)
   end
 
-  config.before(:each) { DatabaseCleaner.start }
+  config.before(:each) { DatabaseCleaner[:active_record].start }
 
-  config.after(:each) { DatabaseCleaner.clean }
+  config.after(:each) { DatabaseCleaner[:active_record].clean }
 end

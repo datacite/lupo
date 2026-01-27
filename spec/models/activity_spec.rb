@@ -13,8 +13,8 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(doi.uid)
       # expect(activity.username).to eq(2)
       expect(activity.request_uuid).to be_present
-      expect(activity.changes["aasm_state"]).to eq("draft")
-      expect(activity.changes["types"]).to eq(
+      expect(activity.audited_changes["aasm_state"]).to eq("draft")
+      expect(activity.audited_changes["types"]).to eq(
         "bibtex" => "misc",
         "citeproc" => "dataset",
         "resourceType" => "DataPackage",
@@ -37,7 +37,7 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(doi.uid)
       # expect(activity.username).to eq(2)
       expect(activity.request_uuid).to be_present
-      expect(activity.changes).to eq("aasm_state" => %w[draft findable])
+      expect(activity.audited_changes).to eq("aasm_state" => %w[draft findable])
     end
   end
 
@@ -50,8 +50,8 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(provider.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes["non_profit_status"]).to eq("non-profit")
-      expect(activity.changes["display_name"]).to eq("My provider")
+      expect(activity.audited_changes["non_profit_status"]).to eq("non-profit")
+      expect(activity.audited_changes["display_name"]).to eq("My provider")
     end
   end
 
@@ -66,7 +66,7 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(provider.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes).to eq(
+      expect(activity.audited_changes).to eq(
         "non_profit_status" => %w[non-profit for-profit],
       )
     end
@@ -81,8 +81,8 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(client.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes["client_type"]).to eq("repository")
-      expect(activity.changes["name"]).to eq("My data center")
+      expect(activity.audited_changes["client_type"]).to eq("repository")
+      expect(activity.audited_changes["name"]).to eq("My data center")
     end
   end
 
@@ -97,7 +97,7 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(client.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes).to eq("client_type" => %w[repository periodical])
+      expect(activity.audited_changes).to eq("client_type" => %w[repository periodical])
     end
   end
 end

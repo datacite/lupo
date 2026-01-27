@@ -40,11 +40,11 @@ describe MemberType do
   describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
-    it { is_expected.to have_field(:id).of_type(!types.ID) }
+    it { is_expected.to have_field(:id).of_type("ID!") }
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:displayName).of_type("String!") }
-    it { is_expected.to have_field(:rorId).of_type(types.ID) }
+    it { is_expected.to have_field(:rorId).of_type("ID") }
     it { is_expected.to have_field(:description).of_type("String") }
     it { is_expected.to have_field(:website).of_type("Url") }
     it { is_expected.to have_field(:logoUrl).of_type("Url") }
