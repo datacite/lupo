@@ -3,7 +3,7 @@ name: Update ROR Mappings
 on:
   workflow_dispatch:
   schedule:
-    # Run monthly on the 1st at 03:00 UTC
+    # Run monthly on the 1st at 03:00 UTC (after upload workflow)
     - cron: '0 3 1 * *'
 
 concurrency:
@@ -28,9 +28,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Ensure app/resources directory exists
-        run: mkdir -p app/resources
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -41,68 +38,39 @@ jobs:
       - name: Download latest ROR mapping files from S3
         run: |
           set -euo pipefail
-          aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" "${LOCAL_FUNDER_MAPPING}.new"
-          aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" "${LOCAL_ROR_HIERARCHY}.new"
+          aws s3 cp \
+            "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" \
+            "${LOCAL_FUNDER_MAPPING}"
 
-      - name: Compare JSON and overwrite if changed
-        id: diff
+          aws s3 cp \
+            "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" \
+            "${LOCAL_ROR_HIERARCHY}"
+
+      # SINGLE source of truth: Git decides if anything changed
+      - name: Check for changes
+        id: git-diff
         run: |
-          changed=false
-          mkdir -p tmp
-
-          # Normalize new files
-          jq -S . "${LOCAL_FUNDER_MAPPING}.new" | sed '/^\s*$/d' > tmp/funder_new.json
-          jq -S . "${LOCAL_ROR_HIERARCHY}.new" | sed '/^\s*$/d' > tmp/hierarchy_new.json
-
-          # Compare FUNDERS
-          if [ -f "${LOCAL_FUNDER_MAPPING}" ]; then
-            jq -S . "${LOCAL_FUNDER_MAPPING}" | sed '/^\s*$/d' > tmp/funder_local.json
-            cmp -s tmp/funder_new.json tmp/funder_local.json || changed=true
+          if [[ -z $(git status --porcelain app/resources) ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            changed=true
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-
-          # Compare HIERARCHY
-          if [ -f "${LOCAL_ROR_HIERARCHY}" ]; then
-            jq -S . "${LOCAL_ROR_HIERARCHY}" | sed '/^\s*$/d' > tmp/hierarchy_local.json
-            cmp -s tmp/hierarchy_new.json tmp/hierarchy_local.json || changed=true
-          else
-            changed=true
-          fi
-
-          # Overwrite only if changed
-          if [ "$changed" = true ]; then
-            mv "${LOCAL_FUNDER_MAPPING}.new" "${LOCAL_FUNDER_MAPPING}"
-            mv "${LOCAL_ROR_HIERARCHY}.new" "${LOCAL_ROR_HIERARCHY}"
-          fi
-
-          # Cleanup
-          rm -rf tmp
-          echo "changed=$changed" >> "$GITHUB_OUTPUT"
-
-      - name: Clean up temp files
-        if: always()
-        run: rm -f app/resources/*.new || true
 
       - name: Create Pull Request (GitHub CLI)
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.git-diff.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Configure git identity
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Create branch
           BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
           git checkout -b "$BRANCH"
 
-          # Commit changes
           git add app/resources
           git commit -m "chore: update ROR mapping files from S3"
           git push origin "$BRANCH"
 
-          # Create PR
           gh pr create \
             --title "chore: update ROR mapping files from S3" \
             --body $'This PR updates ROR mapping JSON files in `app/resources` using the latest data from S3.\n\n- Generated automatically via GitHub Actions\n- Requires manual review and merge' \
@@ -111,5 +79,5 @@ jobs:
             --label "automated-pr,ror-mapping"
 
       - name: No changes detected
-        if: steps.diff.outputs.changed != 'true'
+        if: steps.git-diff.outputs.changed == 'false'
         run: echo "ROR mapping files are already up to date. No PR created."
