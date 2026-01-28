@@ -1,8 +1,3 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile.local
-      additional_contexts:
-        mygitdir: ../
-    pull_policy: build
+    build: .
