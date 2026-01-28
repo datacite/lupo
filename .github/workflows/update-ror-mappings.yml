@@ -3,7 +3,7 @@ name: Update ROR Mappings
 on:
   workflow_dispatch:
   schedule:
-    # Run monthly on the 1st at 03:00 UTC (after upload workflow)
+    # Run monthly on the 1st at 03:00 UTC (after upload job)
     - cron: '0 3 1 * *'
 
 concurrency:
@@ -19,10 +19,10 @@ jobs:
       pull-requests: write
 
     env:
-      LOCAL_FUNDER_MAPPING: app/resources/funder_to_ror.json
-      LOCAL_ROR_HIERARCHY: app/resources/ror_hierarchy.json
+      BUCKET: ${{ secrets.ROR_ANALYSIS_S3_BUCKET }}
       S3_FUNDER_KEY: ror_funder_mapping/funder_to_ror.json
       S3_HIERARCHY_KEY: ror_funder_mapping/ror_hierarchy.json
+      LOCAL_DIR: app/resources
 
     steps:
       - name: Checkout repository
@@ -35,32 +35,53 @@ jobs:
           aws-access-key-id: ${{ secrets.ROR_ANALYSIS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.ROR_ANALYSIS_SECRET_ACCESS_KEY }}
 
-      - name: Download latest ROR mapping files from S3
+      - name: Download latest ROR mapping files (temp only)
         run: |
           set -euo pipefail
-          aws s3 cp \
-            "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" \
-            "${LOCAL_FUNDER_MAPPING}"
+          aws s3 cp "s3://${BUCKET}/${S3_FUNDER_KEY}" funder_to_ror.json.new
+          aws s3 cp "s3://${BUCKET}/${S3_HIERARCHY_KEY}" ror_hierarchy.json.new
 
-          aws s3 cp \
-            "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" \
-            "${LOCAL_ROR_HIERARCHY}"
-
-      # SINGLE source of truth: Git decides if anything changed
-      - name: Check for changes
-        id: git-diff
+      - name: Compare and update tracked files (semantic JSON)
+        id: update
         run: |
-          if [[ -z $(git status --porcelain app/resources) ]]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+          set -euo pipefail
+          mkdir -p "${LOCAL_DIR}"
+          changed=false
+
+          normalize_and_update () {
+            local new_file="$1"
+            local dest_file="$2"
+
+            # If dest doesn't exist, this is definitely a change
+            if [ ! -f "$dest_file" ]; then
+              mv "$new_file" "$dest_file"
+              changed=true
+              return
+            fi
+
+            # Normalize both (sorted keys, consistent formatting)
+            jq -S . "$new_file"  > /tmp/new.norm.json
+            jq -S . "$dest_file" > /tmp/dest.norm.json
+
+            if ! cmp -s /tmp/new.norm.json /tmp/dest.norm.json; then
+              mv "$new_file" "$dest_file"
+              changed=true
+            else
+              rm "$new_file"
+            fi
+          }
+
+          normalize_and_update funder_to_ror.json.new "${LOCAL_DIR}/funder_to_ror.json"
+          normalize_and_update ror_hierarchy.json.new "${LOCAL_DIR}/ror_hierarchy.json"
+
+          echo "changed=${changed}" >> "$GITHUB_OUTPUT"
 
       - name: Create Pull Request (GitHub CLI)
-        if: steps.git-diff.outputs.changed == 'true'
+        if: steps.update.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
@@ -79,5 +100,5 @@ jobs:
             --label "automated-pr,ror-mapping"
 
       - name: No changes detected
-        if: steps.git-diff.outputs.changed == 'false'
+        if: steps.update.outputs.changed != 'true'
         run: echo "ROR mapping files are already up to date. No PR created."
