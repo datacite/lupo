@@ -3,8 +3,8 @@ name: Update ROR Mappings
 on:
   workflow_dispatch:
   schedule:
-    # Run monthly on the 1st at 02:00 UTC
-    - cron: '0 2 1 * *'
+    # Run monthly on the 1st at 03:00 UTC
+    - cron: '0 3 1 * *'
 
 concurrency:
   group: update-ror-mappings
@@ -44,21 +44,38 @@ jobs:
           aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_FUNDER_KEY}" "${LOCAL_FUNDER_MAPPING}.new"
           aws s3 cp "s3://${{ secrets.ROR_ANALYSIS_S3_BUCKET }}/${S3_HIERARCHY_KEY}" "${LOCAL_ROR_HIERARCHY}.new"
 
-      - name: Replace files if changed
+      - name: Compare JSON and overwrite if changed
         id: diff
         run: |
           changed=false
+          mkdir -p tmp
 
-          if [ ! -f "${LOCAL_FUNDER_MAPPING}" ] || ! cmp -s "${LOCAL_FUNDER_MAPPING}" "${LOCAL_FUNDER_MAPPING}.new"; then
+          # Normalize new funder JSON
+          jq -S . "${LOCAL_FUNDER_MAPPING}.new" > tmp/funder_new.json
+          if [ -f "${LOCAL_FUNDER_MAPPING}" ]; then
+            jq -S . "${LOCAL_FUNDER_MAPPING}" > tmp/funder_local.json
+            cmp -s tmp/funder_new.json tmp/funder_local.json || changed=true
+          else
+            changed=true
+          fi
+
+          # Normalize new hierarchy JSON
+          jq -S . "${LOCAL_ROR_HIERARCHY}.new" > tmp/hierarchy_new.json
+          if [ -f "${LOCAL_ROR_HIERARCHY}" ]; then
+            jq -S . "${LOCAL_ROR_HIERARCHY}" > tmp/hierarchy_local.json
+            cmp -s tmp/hierarchy_new.json tmp/hierarchy_local.json || changed=true
+          else
+            changed=true
+          fi
+
+          # Overwrite files if changed
+          if [ "$changed" = true ]; then
             mv "${LOCAL_FUNDER_MAPPING}.new" "${LOCAL_FUNDER_MAPPING}"
-            changed=true
-          fi
-
-          if [ ! -f "${LOCAL_ROR_HIERARCHY}" ] || ! cmp -s "${LOCAL_ROR_HIERARCHY}" "${LOCAL_ROR_HIERARCHY}.new"; then
             mv "${LOCAL_ROR_HIERARCHY}.new" "${LOCAL_ROR_HIERARCHY}"
-            changed=true
           fi
 
+          # Cleanup
+          rm -rf tmp
           echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - name: Clean up temp files
@@ -74,7 +91,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Create branch
+          # Create a branch
           BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
           git checkout -b "$BRANCH"
 
@@ -86,7 +103,7 @@ jobs:
           # Create PR
           gh pr create \
             --title "chore: update ROR mapping files from S3" \
-            --body "This PR updates ROR mapping JSON files in \`app/resources\` using the latest data from S3.\n\n- Generated automatically via GitHub Actions\n- Requires manual review and merge" \
+            --body $'This PR updates ROR mapping JSON files in `app/resources` using the latest data from S3.\n\n- Generated automatically via GitHub Actions\n- Requires manual review and merge' \
             --base master \
             --head "$BRANCH" \
             --label "automated-pr,ror-mapping"
