@@ -285,7 +285,7 @@
               <title>Journal of Metadata Examples - IsCollectedBy - Poster</title>
             </titles>
         </relatedItem>
-        <relatedItem relationType="Other" relationTypeInformation="is output of" relatedItemType="Poster">
+        <relatedItem relationType="Other" relationTypeInformation="More relationType information to supplement relationType 'Other'" relatedItemType="Poster">
             <relatedItemIdentifier relatedItemIdentifierType="SWHID">0123-4567</relatedItemIdentifier>
             <titles>
               <title>Journal of Metadata Examples - IsCollectedBy - Poster</title>

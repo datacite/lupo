@@ -1033,7 +1033,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", "attributes", "relatedItems", 4, "relatedItemType")).to eq("Poster")
       expect(json.dig("data", "attributes", "relatedItems", 5, "relatedItemIdentifier", "relatedItemIdentifierType")).to eq("SWHID")
       expect(json.dig("data", "attributes", "relatedItems", 6, "relationType")).to eq("Other")
-      # expect(json.dig("data", "attributes", "relatedItems", 6, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
+      expect(json.dig("data", "attributes", "relatedItems", 6, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
     end
   end
 end
