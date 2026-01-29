@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/datacite/bolognese.git
-  revision: 02e99bbb92309a3aae9e10c1185cd5c21cb9e5fd
+  revision: 25b92c22de944d4c34a319423677d919c4c0a47d
   branch: metadata-47
   specs:
     bolognese (2.5.1)
