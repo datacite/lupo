@@ -110,7 +110,7 @@ RSpec.describe Enrichment, type: :model do
         enrichment = described_class.new(valid_attributes)
         hash = enrichment.send(:to_enrichment_hash)
 
-        expect(hash).to include(
+        expected = {
           "doi" => valid_attributes[:doi],
           "contributors" => valid_attributes[:contributors],
           "resources" => valid_attributes[:resources],
@@ -118,7 +118,9 @@ RSpec.describe Enrichment, type: :model do
           "action" => valid_attributes[:action],
           "originalValue" => valid_attributes[:original_value],
           "enrichedValue" => valid_attributes[:enriched_value]
-        )
+        }.deep_stringify_keys
+
+        expect(hash).to include(expected)
       end
 
       it "compacts nil values (omits keys when underlying attributes are nil)" do
