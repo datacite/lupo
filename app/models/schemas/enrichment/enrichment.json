@@ -1,162 +1,359 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://json-schema.org/draft-07/schema#",
-  "title": "Core schema meta-schema",
-  "definitions": {
-    "schemaArray": {
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "doi": {
+      "type": "string",
+      "description": "The target DOI of the enrichment record."
+    },
+    "contributors": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#" }
-    },
-    "nonNegativeInteger": {
-      "type": "integer",
-      "minimum": 0
-    },
-    "nonNegativeIntegerDefault0": {
-      "allOf": [
-        { "$ref": "#/definitions/nonNegativeInteger" },
-        { "default": 0 }
-      ]
-    },
-    "simpleTypes": {
-      "enum": [
-        "array",
-        "boolean",
-        "integer",
-        "null",
-        "number",
-        "object",
-        "string"
-      ]
-    },
-    "stringArray": {
-      "type": "array",
-      "items": { "type": "string" },
-      "uniqueItems": true,
-      "default": []
-    }
-  },
-  "type": ["object", "boolean"],
-  "properties": {
-    "$id": {
-      "type": "string",
-      "format": "uri-reference"
-    },
-    "$schema": {
-      "type": "string",
-      "format": "uri"
-    },
-    "$ref": {
-      "type": "string",
-      "format": "uri-reference"
-    },
-    "$comment": {
-      "type": "string"
-    },
-    "title": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "default": true,
-    "readOnly": {
-      "type": "boolean",
-      "default": false
-    },
-    "examples": {
-      "type": "array",
-      "items": true
-    },
-    "multipleOf": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
-    "maximum": {
-      "type": "number"
-    },
-    "exclusiveMaximum": {
-      "type": "number"
-    },
-    "minimum": {
-      "type": "number"
-    },
-    "exclusiveMinimum": {
-      "type": "number"
-    },
-    "maxLength": { "$ref": "#/definitions/nonNegativeInteger" },
-    "minLength": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
-    "pattern": {
-      "type": "string",
-      "format": "regex"
-    },
-    "additionalItems": { "$ref": "#" },
-    "items": {
-      "anyOf": [{ "$ref": "#" }, { "$ref": "#/definitions/schemaArray" }],
-      "default": true
-    },
-    "maxItems": { "$ref": "#/definitions/nonNegativeInteger" },
-    "minItems": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
-    "uniqueItems": {
-      "type": "boolean",
-      "default": false
-    },
-    "contains": { "$ref": "#" },
-    "maxProperties": { "$ref": "#/definitions/nonNegativeInteger" },
-    "minProperties": { "$ref": "#/definitions/nonNegativeIntegerDefault0" },
-    "required": { "$ref": "#/definitions/stringArray" },
-    "additionalProperties": { "$ref": "#" },
-    "definitions": {
-      "type": "object",
-      "additionalProperties": { "$ref": "#" },
-      "default": {}
-    },
-    "properties": {
-      "type": "object",
-      "additionalProperties": { "$ref": "#" },
-      "default": {}
-    },
-    "patternProperties": {
-      "type": "object",
-      "additionalProperties": { "$ref": "#" },
-      "propertyNames": { "format": "regex" },
-      "default": {}
-    },
-    "dependencies": {
-      "type": "object",
-      "additionalProperties": {
-        "anyOf": [{ "$ref": "#" }, { "$ref": "#/definitions/stringArray" }]
+      "description": "The source entities of the enrichment represented as an array of contributors",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "contributorType"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nameType": {
+            "$ref": "#/definitions/nameType"
+          },
+          "givenName": {
+            "type": ["string", "null"]
+          },
+          "familyName": {
+            "type": ["string", "null"]
+          },
+          "lang": {
+            "type": ["string", "null"]
+          },
+          "affiliation": {
+            "$ref": "#/definitions/affiliations"
+          },
+          "nameIdentifiers": {
+            "$ref": "#/definitions/nameIdentifiers"
+          },
+          "contributorType": {
+            "$ref": "#/definitions/contributorTypes"
+          }
+        }
       }
     },
-    "propertyNames": { "$ref": "#" },
-    "const": true,
-    "enum": {
+    "resources": {
       "type": "array",
-      "items": true,
       "minItems": 1,
-      "uniqueItems": true
+      "description": "The processes that produced the enrichment represented as an array of relatedIdentifiers",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relatedIdentifier",
+          "relationType",
+          "relatedIdentifierType"
+        ],
+        "properties": {
+          "relatedIdentifier": {
+            "type": "string"
+          },
+          "relationType": {
+            "$ref": "#/definitions/relationTypes"
+          },
+          "relatedIdentifierType": {
+            "$ref": "#/definitions/relatedIdentifierTypes"
+          },
+          "relatedMetadataScheme": {
+            "type": "string"
+          },
+          "schemeUri": {
+            "type": "string"
+          },
+          "resourceTypeGeneral": {
+            "$ref": "#/definitions/resourceTypeGeneral"
+          }
+        }
+      }
     },
-    "type": {
-      "anyOf": [
-        { "$ref": "#/definitions/simpleTypes" },
+    "field": {
+      "type": "string",
+      "description": "The top-level field to enrich.",
+      "enum": [
+        "alternateIdentifiers",
+        "creators",
+        "titles",
+        "publisher",
+        "publicationYear",
+        "subjects",
+        "contributors",
+        "dates",
+        "language",
+        "types",
+        "relatedIdentifiers",
+        "relatedItems",
+        "sizes",
+        "formats",
+        "version",
+        "rightsList",
+        "descriptions",
+        "geoLocations",
+        "fundingReferences"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "description": "The action that the enrichment performs. The available actions are: update (change the entire top-level \"field\" from the \"originalValue\" to the \"enrichedValue\") updateChild (change a child object within the top-level \"field\" from the \"originalValue\" to the \"enrichedValue\") insert (insert the object in \"enrichedValue\" into the top-level \"field\") deleteChild (remove the object in \"originalValue\" within the top-level field specified in \"field\")",
+      "enum": ["update", "updateChild", "insert", "deleteChild"]
+    },
+    "originalValue": {
+      "description": "When the action is update, updateChild, or deleteChild, the original value of the field or child value. Otherwise, this field is empty.",
+      "oneOf": [
         {
-          "type": "array",
-          "items": { "$ref": "#/definitions/simpleTypes" },
-          "minItems": 1,
-          "uniqueItems": true
+          "type": "object"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "array"
         }
       ]
     },
-    "format": { "type": "string" },
-    "contentMediaType": { "type": "string" },
-    "contentEncoding": { "type": "string" },
-    "if": { "$ref": "#" },
-    "then": { "$ref": "#" },
-    "else": { "$ref": "#" },
-    "allOf": { "$ref": "#/definitions/schemaArray" },
-    "anyOf": { "$ref": "#/definitions/schemaArray" },
-    "oneOf": { "$ref": "#/definitions/schemaArray" },
-    "not": { "$ref": "#" }
+    "enrichedValue": {
+      "description": "When the action is update, updateChild, or insert, the enriched value of the field or child value. Otherwise, this field is empty.",
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "array"
+        }
+      ]
+    }
   },
-  "default": true
+  "required": ["doi", "contributors", "resources", "action", "field"],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "enum": ["update", "updateChild", "deleteChild"]
+          }
+        }
+      },
+      "then": {
+        "required": ["originalValue"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "enum": ["update", "updateChild", "insert"]
+          }
+        }
+      },
+      "then": {
+        "required": ["enrichedValue"]
+      }
+    }
+  ],
+  "definitions": {
+    "nameType": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": ["Organizational", "Personal"]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "affiliations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "affiliationIdentifier": {
+            "type": ["string", "null"]
+          },
+          "affiliationIdentifierScheme": {
+            "type": ["string", "null"]
+          },
+          "name": {
+            "type": "string"
+          },
+          "schemeUri": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "nameIdentifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nameIdentifier", "nameIdentifierScheme"],
+        "additionalProperties": false,
+        "properties": {
+          "schemeUri": {
+            "type": ["string", "null"]
+          },
+          "nameIdentifier": {
+            "type": "string"
+          },
+          "nameIdentifierScheme": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "relationTypes": {
+      "type": "string",
+      "enum": [
+        "IsCitedBy",
+        "Cites",
+        "IsSupplementTo",
+        "IsSupplementedBy",
+        "IsContinuedBy",
+        "Continues",
+        "IsDescribedBy",
+        "Describes",
+        "HasMetadata",
+        "IsMetadataFor",
+        "HasVersion",
+        "IsVersionOf",
+        "IsNewVersionOf",
+        "IsPreviousVersionOf",
+        "IsPartOf",
+        "HasPart",
+        "IsPublishedIn",
+        "IsReferencedBy",
+        "References",
+        "IsDocumentedBy",
+        "Documents",
+        "IsCompiledBy",
+        "Compiles",
+        "IsVariantFormOf",
+        "IsOriginalFormOf",
+        "IsIdenticalTo",
+        "IsReviewedBy",
+        "Reviews",
+        "IsDerivedFrom",
+        "IsSourceOf",
+        "IsRequiredBy",
+        "Requires",
+        "IsObsoletedBy",
+        "Obsoletes",
+        "IsCollectedBy",
+        "Collects",
+        "IsTranslationOf",
+        "HasTranslation"
+      ]
+    },
+    "relatedIdentifierTypes": {
+      "type": "string",
+      "enum": [
+        "ARK",
+        "arXiv",
+        "bibcode",
+        "CSTR",
+        "DOI",
+        "EAN13",
+        "EISSN",
+        "Handle",
+        "IGSN",
+        "ISBN",
+        "ISSN",
+        "ISTC",
+        "LISSN",
+        "LSID",
+        "PMID",
+        "PURL",
+        "RRID",
+        "UPC",
+        "URL",
+        "URN",
+        "w3id"
+      ]
+    },
+    "resourceTypeGeneral": {
+      "type": "string",
+      "enum": [
+        "Audiovisual",
+        "Award",
+        "Book",
+        "BookChapter",
+        "Collection",
+        "ComputationalNotebook",
+        "ConferencePaper",
+        "ConferenceProceeding",
+        "DataPaper",
+        "Dataset",
+        "Dissertation",
+        "Event",
+        "Image",
+        "InteractiveResource",
+        "Instrument",
+        "Journal",
+        "JournalArticle",
+        "Model",
+        "OutputManagementPlan",
+        "PeerReview",
+        "PhysicalObject",
+        "Preprint",
+        "Project",
+        "Report",
+        "Service",
+        "Software",
+        "Sound",
+        "Standard",
+        "StudyRegistration",
+        "Text",
+        "Workflow",
+        "Other"
+      ]
+    },
+    "contributorTypes": {
+      "type": "string",
+      "enum": [
+        "ContactPerson",
+        "DataCollector",
+        "DataCurator",
+        "DataManager",
+        "Distributor",
+        "Editor",
+        "HostingInstitution",
+        "Producer",
+        "ProjectLeader",
+        "ProjectManager",
+        "ProjectMember",
+        "RegistrationAgency",
+        "RegistrationAuthority",
+        "RelatedPerson",
+        "Researcher",
+        "ResearchGroup",
+        "RightsHolder",
+        "Sponsor",
+        "Supervisor",
+        "Translator",
+        "WorkPackageLeader",
+        "Other"
+      ]
+    }
+  }
 }
