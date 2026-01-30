@@ -1,6 +1,27 @@
 class Enrichment < ApplicationRecord
   validate :validate_json_schema
 
+  belongs_to :doi_record,
+    class_name: "Doi",
+    foreign_key: :doi, # enrichments.doi
+    primary_key: :doi, # dois.doi
+    optional: false
+
+  has_one :client, through: :doi_record
+
+  scope :by_doi, ->(doi) { where(doi: doi) }
+
+  scope :by_client, ->(client_id) { joins(doi_record: :client).where(datacentre: { symbol: client_id }) }
+
+  scope :by_cursor, ->(updated_at, id) {
+    where("(enrichments.updated_at < ?) OR (enrichments.updated_at = ? AND enrichments.id < ?)",
+      updated_at,
+      updated_at,
+      id)
+  }
+
+  scope :order_by_cursor, -> { order(updated_at: :desc, id: :desc) }
+
   private
     def validate_json_schema
       doc = to_enrichment_hash
