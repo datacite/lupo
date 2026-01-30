@@ -95,18 +95,19 @@ RSpec.describe Enrichment, type: :model do
     end
 
     describe ".by_client" do
-      it "returns enrichments for DOIs belonging to the given client symbol (Client model backed by datacentre table)" do
-        client_a = create(:client, symbol: "DATACITE.TEST")
-        client_b = create(:client, symbol: "OTHER.TEST")
+      it "returns enrichments for DOIs belonging to the given client symbol" do
+      provider = create(:provider)
 
-        doi_a = create(:doi, client: client_a)
-        doi_b = create(:doi, client: client_b)
+      client_a = create(:client, provider: provider)
+      client_b = create(:client, provider: provider)
 
-        e1 = create_enrichment!(doi: doi_a.doi)
-        _e2 = create_enrichment!(doi: doi_b.doi)
+      doi_a = create(:doi, client: client_a)
+      doi_b = create(:doi, client: client_b)
 
-        expect(described_class.by_client("DATACITE.TEST")).to contain_exactly(e1)
-      end
+      e1 = create_enrichment!(doi: doi_a.doi)
+      e2 = create_enrichment!(doi: doi_b.doi)
+
+      expect(described_class.by_client(client_a.symbol)).to contain_exactly(e1)
     end
 
     describe ".order_by_cursor" do
