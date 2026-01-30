@@ -12,16 +12,16 @@ RSpec.describe Enrichment, type: :model do
           nameType: "Organizational",
           contributorType: "ResearchGroup",
           affiliation: [],
-          nameIdentifiers: []
-        }
+          nameIdentifiers: [],
+        },
       ],
       resources: [
         {
           relatedIdentifier: "10.1234/example_dataset",
           relationType: "IsDerivedFrom",
           relatedIdentifierType: "DOI",
-          resourceTypeGeneral: "Dataset"
-        }
+          resourceTypeGeneral: "Dataset",
+        },
       ],
       field: "creators",
       action: "updateChild",
@@ -34,15 +34,15 @@ RSpec.describe Enrichment, type: :model do
           {
             name: "California Institute of Technology",
             affiliationIdentifier: "https://ror.org/05dxps055",
-            affiliationIdentifierScheme: "ROR"
-          }
+            affiliationIdentifierScheme: "ROR",
+          },
         ],
         nameIdentifiers: [
           {
             nameIdentifier: "https://orcid.org/0000-0002-8417-1522",
-            nameIdentifierScheme: "ORCID"
-          }
-        ]
+            nameIdentifierScheme: "ORCID",
+          },
+        ],
       },
       enriched_value: {
         name: "Chadly, Duncan",
@@ -53,16 +53,16 @@ RSpec.describe Enrichment, type: :model do
           {
             name: "California Institute of Technology",
             affiliationIdentifier: "https://ror.org/05dxps055",
-            affiliationIdentifierScheme: "ROR"
-          }
+            affiliationIdentifierScheme: "ROR",
+          },
         ],
         nameIdentifiers: [
           {
             nameIdentifier: "https://orcid.org/0000-0002-8417-1522",
-            nameIdentifierScheme: "ORCID"
-          }
-        ]
-      }
+            nameIdentifierScheme: "ORCID",
+          },
+        ],
+      },
     }
   end
 
@@ -72,82 +72,83 @@ RSpec.describe Enrichment, type: :model do
   end
 
   describe "scopes" do
-  before do
-    allow_any_instance_of(described_class).to receive(:validate_json_schema)
-  end
+    before do
+      allow_any_instance_of(described_class).to receive(:validate_json_schema)
+    end
 
-  def create_enrichment!(doi:, updated_at: nil)
-    attrs = valid_enrichment_attrs(doi: doi)
-    attrs = attrs.merge(updated_at: updated_at) if updated_at
-    described_class.create!(attrs)
-  end
+    def create_enrichment!(doi:, updated_at: nil)
+      attrs = valid_enrichment_attrs(doi: doi)
+      attrs = attrs.merge(updated_at: updated_at) if updated_at
+      described_class.create!(attrs)
+    end
 
-  describe ".by_doi" do
-    it "returns enrichments matching the doi" do
-      doi_a = create(:doi)
-      doi_b = create(:doi)
+    describe ".by_doi" do
+      it "returns enrichments matching the doi" do
+        doi_a = create(:doi)
+        doi_b = create(:doi)
 
-      e1 = create_enrichment!(doi: doi_a.doi)
-      _e2 = create_enrichment!(doi: doi_b.doi)
+        e1 = create_enrichment!(doi: doi_a.doi)
+        _e2 = create_enrichment!(doi: doi_b.doi)
 
-      expect(described_class.by_doi(doi_a.doi)).to contain_exactly(e1)
+        expect(described_class.by_doi(doi_a.doi)).to contain_exactly(e1)
+      end
+    end
+
+    describe ".by_client" do
+      it "returns enrichments for DOIs belonging to the given client symbol" do
+        provider = create(:provider)
+
+        client_a = create(:client, provider: provider)
+        client_b = create(:client, provider: provider)
+
+        doi_a = create(:doi, client: client_a)
+        doi_b = create(:doi, client: client_b)
+
+        e1 = create_enrichment!(doi: doi_a.doi)
+        create_enrichment!(doi: doi_b.doi)
+
+        expect(described_class.by_client(client_a.symbol)).to contain_exactly(e1)
+      end
+    end
+
+    describe ".order_by_cursor" do
+      it "orders by updated_at desc then id desc" do
+        doi = create(:doi)
+        t = Time.utc(2026, 1, 29, 10, 0, 0)
+
+        a = create_enrichment!(doi: doi.doi, updated_at: t)
+        b = create_enrichment!(doi: doi.doi, updated_at: t)
+        c = create_enrichment!(doi: doi.doi, updated_at: t + 1.second)
+
+        ordered = described_class.where(id: [a.id, b.id, c.id]).order_by_cursor.to_a
+
+        expect(ordered.first).to eq(c)
+        expect(ordered[1].updated_at).to eq(t)
+        expect(ordered[2].updated_at).to eq(t)
+        expect(ordered[1].id).to be > ordered[2].id
+      end
+    end
+
+    describe ".by_cursor" do
+      it "filters to records before the cursor (updated_at desc, id desc tie-break)" do
+        doi = create(:doi)
+        t = Time.utc(2026, 1, 29, 10,  0, 0)
+
+        older = create_enrichment!(doi: doi.doi, updated_at: t - 10.seconds)
+        newer = create_enrichment!(doi: doi.doi, updated_at: t + 10.seconds)
+
+        same_time_1 = create_enrichment!(doi: doi.doi, updated_at: t)
+        same_time_2 = create_enrichment!(doi: doi.doi, updated_at: t)
+
+        small, big = [same_time_1, same_time_2].sort_by(&:id)
+
+        results = described_class.by_cursor(t, big.id)
+
+        expect(results).to include(older, small)
+        expect(results).not_to include(newer, big)
+      end
     end
   end
-
-  describe ".by_client" do
-  it "returns enrichments for DOIs belonging to the given client symbol" do
-  provider = create(:provider)
-
-  client_a = create(:client, provider: provider)
-  client_b = create(:client, provider: provider)
-
-  doi_a = create(:doi, client: client_a)
-  doi_b = create(:doi, client: client_b)
-
-  e1 = create_enrichment!(doi: doi_a.doi)
-  create_enrichment!(doi: doi_b.doi)
-
-  expect(described_class.by_client(client_a.symbol)).to contain_exactly(e1)
-end
-
-  describe ".order_by_cursor" do
-    it "orders by updated_at desc then id desc" do
-      doi = create(:doi)
-      t = Time.utc(2026, 1, 29, 10, 0, 0)
-
-      a = create_enrichment!(doi: doi.doi, updated_at: t)
-      b = create_enrichment!(doi: doi.doi, updated_at: t)
-      c = create_enrichment!(doi: doi.doi, updated_at: t + 1.second)
-
-      ordered = described_class.where(id: [a.id, b.id, c.id]).order_by_cursor.to_a
-
-      expect(ordered.first).to eq(c)
-      expect(ordered[1].updated_at).to eq(t)
-      expect(ordered[2].updated_at).to eq(t)
-      expect(ordered[1].id).to be > ordered[2].id
-    end
-  end
-
-  describe ".by_cursor" do
-    it "filters to records before the cursor (updated_at desc, id desc tie-break)" do
-      doi = create(:doi)
-      t = Time.utc(2026, 1, 29, 10, 0, 0)
-
-      older = create_enrichment!(doi: doi.doi, updated_at: t - 10.seconds)
-      newer = create_enrichment!(doi: doi.doi, updated_at: t + 10.seconds)
-
-      same_time_1 = create_enrichment!(doi: doi.doi, updated_at: t)
-      same_time_2 = create_enrichment!(doi: doi.doi, updated_at: t)
-
-      small, big = [same_time_1, same_time_2].sort_by(&:id)
-
-      results = described_class.by_cursor(t, big.id)
-
-      expect(results).to include(older, small)
-      expect(results).not_to include(newer, big)
-    end
-  end
-end
 
   describe "json schema validation" do
     # Create the required associated DOI record so "Doi record must exist" passes.
@@ -260,10 +261,9 @@ end
 
       it "fails when resource is missing required keys (relatedIdentifier, relationType, relatedIdentifierType)" do
         bad = valid_attributes.deep_dup
-        bad[:resources] = [{ relatedIdentifier: "10.1234/x" }] # missing relationType + relatedIdentifierType
+        bad[:resources] = [{ relatedIdentifier: "10.1234/x" }]
 
-        enrichment = described_class.new(bad)
-
+        enrichment = described_class.new(bad.deep_stringify_keys)
         expect(enrichment).not_to be_valid
         expect(enrichment.errors[:base].join(" ")).to include("Validation failed")
       end
@@ -333,7 +333,7 @@ end
           "field" => valid_attributes[:field],
           "action" => valid_attributes[:action],
           "originalValue" => valid_attributes[:original_value],
-          "enrichedValue" => valid_attributes[:enriched_value]
+          "enrichedValue" => valid_attributes[:enriched_value],
         }.deep_stringify_keys
 
         expect(hash).to include(expected)
@@ -347,5 +347,4 @@ end
       end
     end
   end
-end
 end
