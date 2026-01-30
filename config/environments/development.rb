@@ -38,12 +38,19 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  # config.file_watcher = ActiveSupport::FileUpdateChecker
+
+  # config.action_controller.action_on_unpermitted_parameters = :raise
+
 
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
   config.flipper.memoize = false
-
   config.hosts << "lupo_web"
+  config.hosts << "lupo-web-1"
+  config.hosts << "lupo-web-1:8065"
+  config.hosts << "whirlwind.local:8065"
+
   ENV["TEST_ENV_NUMBER"] ||= "" # For parallel tests, often set by CI, default to empty
   ENV["ES_PREFIX"] ||= "" # ElasticSearch index prefix
   ENV["API_KEY"] ||= "test_api_key" # Placeholder for general API key

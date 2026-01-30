@@ -175,6 +175,7 @@ class ParamsSanitizer
         schemeUri
         schemeType
         resourceTypeGeneral
+        relationTypeInformation
         relatedMetadataScheme
         schemeUri
         schemeType
@@ -231,6 +232,7 @@ class ParamsSanitizer
       relatedItems: [
         :relationType,
         :relatedItemType,
+        :relationTypeInformation,
         {
           relatedItemIdentifier: %i[relatedItemIdentifier relatedItemIdentifierType relatedMetadataScheme schemeURI schemeType],
         },
