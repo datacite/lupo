@@ -149,7 +149,9 @@ RSpec.describe Enrichment, type: :model do
   end
 
   describe "json schema validation" do
-    let(:valid_attributes) { valid_enrichment_attrs(doi: "10.1234/example") }
+    # Create the required associated DOI record so "Doi record must exist" passes.
+    let!(:doi_record) { create(:doi) }
+    let(:valid_attributes) { valid_enrichment_attrs(doi: doi_record.doi) }
 
     context "happy paths (action-dependent requirements)" do
       it "is valid for action=update with original_value and enriched_value" do
