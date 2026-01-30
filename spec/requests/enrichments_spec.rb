@@ -47,8 +47,9 @@ RSpec.describe "Enrichments", type: :request do
     end
 
     it "filters by client_id when client_id param is provided" do
-      client_a = create(:client, symbol: "DATACITE.TEST")
-      client_b = create(:client, symbol: "OTHER.TEST")
+      provider = create(:provider)
+      client_a = create(:client, provider: provider, symbol: "#{provider.symbol}.DATACITE.TEST")
+      client_b = create(:client, provider: provider, symbol: "#{provider.symbol}.OTHER.TEST")
 
       doi_a = create(:doi, client: client_a)
       doi_b = create(:doi, client: client_b)
@@ -57,7 +58,7 @@ RSpec.describe "Enrichments", type: :request do
       e1 = create_enrichment!(doi: doi_a.doi, updated_at: t)
       _e2 = create_enrichment!(doi: doi_b.doi, updated_at: t)
 
-      get "/enrichments", params: { client_id: "DATACITE.TEST" }
+      get "/enrichments", params: { client_id: client_a.symbol }
 
       expect(response).to have_http_status(:ok)
       expect(json["data"].map { |h| h["id"] }).to eq([e1.id])
@@ -114,12 +115,10 @@ RSpec.describe "Enrichments", type: :request do
       doi = create(:doi)
       t = Time.utc(2026, 1, 29, 10, 0, 0)
 
-      # Newest -> Oldest in page 1
       newest = create_enrichment!(doi: doi.doi, updated_at: t + 3.seconds)
       mid    = create_enrichment!(doi: doi.doi, updated_at: t + 2.seconds)
       older  = create_enrichment!(doi: doi.doi, updated_at: t + 1.second)
 
-      # Page 1
       get "/enrichments", params: { doi: doi.doi }
 
       expect(response).to have_http_status(:ok)
@@ -131,7 +130,6 @@ RSpec.describe "Enrichments", type: :request do
 
       cursor = CGI.parse(URI.parse(next_link).query).fetch("cursor").first
 
-      # Page 2 using cursor
       get "/enrichments", params: { doi: doi.doi, cursor: cursor }
 
       expect(response).to have_http_status(:ok)
@@ -151,19 +149,20 @@ RSpec.describe "Enrichments", type: :request do
     it "builds next link with client-id param name (hyphen) when paginating by client_id" do
       stub_const("EnrichmentsController::PAGE_SIZE", 2)
 
-      client = create(:client, symbol: "DATACITE.TEST")
+      provider = create(:provider)
+      client = create(:client, provider: provider, symbol: "#{provider.symbol}.DATACITE.TEST")
       doi = create(:doi, client: client)
 
       t = Time.utc(2026, 1, 29, 10, 0, 0)
       create_enrichment!(doi: doi.doi, updated_at: t + 2.seconds)
       create_enrichment!(doi: doi.doi, updated_at: t + 1.second)
 
-      get "/enrichments", params: { client_id: "DATACITE.TEST" }
+      get "/enrichments", params: { client_id: client.symbol }
 
       expect(response).to have_http_status(:ok)
       next_link = json.dig("links", "next")
       expect(next_link).to be_present
-      expect(next_link).to include("client-id=DATACITE.TEST")
+      expect(next_link).to include("client-id=#{CGI.escape(client.symbol)}")
       expect(next_link).to include("cursor=")
     end
   end
