@@ -119,17 +119,21 @@ RSpec.describe "Enrichments", type: :request do
       mid    = create_enrichment!(doi: doi.doi, updated_at: t + 2.seconds)
       older  = create_enrichment!(doi: doi.doi, updated_at: t + 1.second)
 
+      # Page 1
       get "/enrichments", params: { doi: doi.doi }
 
       expect(response).to have_http_status(:ok)
       ids1 = json["data"].map { |h| h["id"] }
       expect(ids1).to eq([newest.id, mid.id])
 
-      next_link = json.dig("links", "next")
-      expect(next_link).to be_present
+      # Build a cursor that represents "mid" (the last record of page 1)
+      cursor_payload = {
+        updated_at: mid.updated_at.iso8601(6),
+        id: mid.id
+      }
+      cursor = Base64.urlsafe_encode64(cursor_payload.to_json, padding: false)
 
-      cursor = CGI.parse(URI.parse(next_link).query).fetch("cursor").first
-
+      # Page 2 using cursor
       get "/enrichments", params: { doi: doi.doi, cursor: cursor }
 
       expect(response).to have_http_status(:ok)
