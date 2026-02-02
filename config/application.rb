@@ -69,6 +69,7 @@ ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
 ENV["METADATA_STORAGE_BUCKET_NAME"] ||= ""
 ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
 ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
+ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= "stage-enrichments-ingestion-files"
 
 module Lupo
   class Application < Rails::Application
