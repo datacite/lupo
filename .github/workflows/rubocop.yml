@@ -11,10 +11,10 @@ jobs:
       BUNDLE_PATH: "vendor/bundle"
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Ruby 3.2.9
+    - name: Set up Ruby 3.2.10
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2.9
+        ruby-version: 3.2.10
         bundler-cache: true
     - name: Run RuboCop
       run: bundle exec rubocop --parallel
