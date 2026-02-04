@@ -1,21 +1,21 @@
-#concurrency: <%= ENV.fetch('SHORYUKEN_CONCURRENCY', 30) %>
-#delay: 0
-#pidfile: tmp/pids/shoryuken.pid
-#queues:
-#  - [lupo, 8]
-#  - [lupo_doi_registration, 8]
-#  - [lupo_import, 8]
-#  - [lupo_import_other_doi, 8]
-#  - [lupo_transfer, 4]
-#  - [lupo_background, 2]
-#  - [lupo_support, 1]
+concurrency: <%= ENV.fetch('SHORYUKEN_CONCURRENCY', 30) %>
+delay: 0
+pidfile: tmp/pids/shoryuken.pid
+queues:
+  - [lupo, 8]
+  - [lupo_doi_registration, 8]
+  - [lupo_import, 8]
+  - [lupo_import_other_doi, 8]
+  - [lupo_transfer, 4]
+  - [lupo_background, 2]
+  - [lupo_support, 1]
 
-#groups:
-#  batch_enqueue_other_group:
-#    concurrency: 1
-#    queues:
-#      - lupo_queue_batches_other_doi
-#  batch_enqueue_datacite_group:
-#    concurrency: 1
-#    queues:
-#      - lupo_queue_batches_datacite_doi
+groups:
+  batch_enqueue_other_group:
+    concurrency: 1
+    queues:
+      - lupo_queue_batches_other_doi
+  batch_enqueue_datacite_group:
+    concurrency: 1
+    queues:
+      - lupo_queue_batches_datacite_doi
