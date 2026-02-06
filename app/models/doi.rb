@@ -302,7 +302,7 @@ class Doi < ApplicationRecord
         resourceTypeGeneral: { type: :keyword },
         relationTypeInformation: { type: :text },
       }
-      indexes :related_items,                       type: :object, properties: {
+      indexes :related_items, type: :object, properties: {
         relatedItemType: { type: :keyword },
         relationType: { type: :keyword },
         relationTypeInformation: { type: :text },
