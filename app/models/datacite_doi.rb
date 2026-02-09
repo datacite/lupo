@@ -43,7 +43,7 @@ class DataciteDoi < Doi
     count = 0
     (from_id..until_id).step(shard_size) do |start_id|
       end_id = [start_id + shard_size - 1, until_id].min
-      DataciteDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size, index)
+      DataciteDoiBatchEnqueueJob.perform_later(start_id, end_id, batch_size: batch_size, index: index)
       count += 1
       Rails.logger.info "Queued batch (#{count}) of DataciteDoiBatchEnqueueJob for DataciteDois with IDs #{start_id}-#{end_id}"
     end
