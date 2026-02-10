@@ -14,8 +14,6 @@ gem "base32-url", "~> 0.3"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "bcrypt", "~> 3.1.7"
 gem "bolognese", "~> 2.5.1"
-# gem "bolognese", git: "https://github.com/datacite/bolognese.git", branch: "metadata-47"
-# gem "bolognese", path: "./vendor/gems/bolognese"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "cancancan", "~> 3.0"
 gem "countries", "~> 2.1", ">= 2.1.2"
