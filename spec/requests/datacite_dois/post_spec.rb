@@ -2482,7 +2482,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "attributes" => {
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "types": {
+              "types" => {
                 "resourceTypeGeneral": "Poster",
                 "resourceType": "Test Resource Type"
               },
@@ -2512,12 +2512,12 @@ describe DataciteDoisController, type: :request, vcr: true do
                 },
               ],
 
-              "relatedItems": [
+              "relatedItems" => [
                 {
                   "relatedItemType" => "Presentation",
                   "relationType" => "Other",
                   "relationTypeInformation" => "More information to supplement relationType 'Other'",
-                  "relatedItemIdentifier": { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
+                  "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.82523/hnhr-r562", "relatedItemIdentifierType" => "SWHID" }
                 }
               ],
 
