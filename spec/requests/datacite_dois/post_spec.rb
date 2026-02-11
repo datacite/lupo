@@ -2616,7 +2616,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
         expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
-        # expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
+        expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c010.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
         expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
       end
