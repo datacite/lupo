@@ -6,7 +6,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
   queue_as :enrichment_batch_process_job
 
   def perform(lines)
-    log_prefix = "EnrichmentBathProcessJob"
+    log_prefix = "EnrichmentBatchProcessJob"
 
     # We will process the lines in parallel to speed up ingestion.
     Parallel.each(lines, in_threads: 10) do |line|
@@ -51,21 +51,21 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
   def enrich_doi(enrichment, doi)
     action = enrichment["action"]
+    field = enrichment["field"].underscore
+
     case action
     when "insert"
-      doi[enrichment["field"]] ||= []
-      doi[enrichment["field"]] << enrichment["enriched_value"]
+      doi[field] ||= []
+      doi[field] << enrichment["enriched_value"]
     when "update"
-      doi[enrichment["field"]] = enrichment["enriched_value"]
+      doi[field] = enrichment["enriched_value"]
     when "update_child"
-      field = enrichment["field"]
       doi[field].each_with_index do |item, index|
         if item == enrichment["original_value"]
           doi[field][index] = enrichment["enriched_value"]
         end
       end
     when "delete_child"
-      field = enrichment["field"]
       doi[field] ||= []
       doi[field].each_with_index do |item, index|
         if item == enrichment["original_value"]

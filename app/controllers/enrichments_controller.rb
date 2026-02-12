@@ -22,7 +22,6 @@ class EnrichmentsController < ApplicationController
       enrichments = enrichments.by_cursor(cursor_updated_at, cursor_id)
     end
 
-    puts(enrichments.order_by_cursor.limit(PAGE_SIZE).to_sql)
     enrichments = enrichments.order_by_cursor.limit(PAGE_SIZE).to_a
 
     current_link = request.original_url
