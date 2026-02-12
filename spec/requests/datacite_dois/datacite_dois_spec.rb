@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "pp"
 
 require "rails_helper"
@@ -2179,11 +2180,10 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  # Metadata 4.7 search for new field: relationTypeInformation (in relatedIdentifiers and relatedItems)
+  ## Metadata 4.7 queries with new field: relationTypeInformation (in relatedIdentifiers and relatedItems)
 
   describe "GET /dois/query=...relationTypeInformation", vcr: true, elasticsearch: true do
-
-    let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable", 
+    let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable",
       related_items: [
         {
           "firstPage" => "250",

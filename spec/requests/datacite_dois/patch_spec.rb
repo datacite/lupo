@@ -999,7 +999,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  # Metadata 4.7 - elements
+  ## Metadata 4.7 elements
 
   context "when the record exists" do
     let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.7.xml").read) }
