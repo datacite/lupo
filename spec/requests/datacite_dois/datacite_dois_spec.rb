@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "pp"
 
 require "rails_helper"
 include Passwordable
@@ -2175,6 +2176,82 @@ describe DataciteDoisController, type: :request, vcr: true do
         get "/dois?query=id:10.5438/Fj3W-0sHd", nil, headers
         expect(last_response.status).to eq(200)
       end
+    end
+  end
+
+  # Metadata 4.7 search for new field: relationTypeInformation (in relatedIdentifiers and relatedItems)
+
+  describe "GET /dois/query=...relationTypeInformation", vcr: true, elasticsearch: true do
+
+    let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable", 
+      related_items: [
+        {
+          "firstPage" => "250",
+          "lastPage" => "264",
+          "publicationYear" => "2018",
+          "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044", "relatedItemIdentifierType" => "DOI" },
+          "relatedItemType" => "Journal",
+          "relationType" => "IsPublishedIn",
+          "relationTypeInformation" => "Relates this DOI to the journal in which it was published.",
+          "titles" => [{ "title" => "Physics letters / B" }],
+          "volume" => "776"
+        }
+      ],
+      related_identifiers: [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+          "relationTypeInformation": "Relates this DOI to the dataset in Dryad that contains the data underlying the article.",
+        },
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/2",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsReferencedBy",
+          "relationTypeInformation": "Relates this DOI to the article that references it.",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsSupplementTo",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsSupplementTo",
+        }
+      ]
+    )}
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "finds the doi based on relatedItems.relationTypeInformation" do
+      get "/dois?query=relatedItems.relationTypeInformation:\"Relates this DOI to*\"", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "relatedItems", 0, "relationTypeInformation")).to eq("Relates this DOI to the journal in which it was published.")
+    end
+
+
+    it "finds the dois based on relatedIdentiers.relationTypeInformation" do
+      get "/dois?query=relatedIdentifiers.relationTypeInformation:\"Relates this DOI to*\"", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 0, "relationTypeInformation")).to eq("Relates this DOI to the dataset in Dryad that contains the data underlying the article.")
+      expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 2, "relationTypeInformation")).to eq("Relates this DOI to the article that references it.")
     end
   end
 end
