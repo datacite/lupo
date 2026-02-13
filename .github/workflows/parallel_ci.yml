@@ -23,7 +23,7 @@ jobs:
 
     services:
       memcached:
-        image: memcached:1.4.31
+        image: memcached:1.6.22
         ports:
           - 11211
       mysql:
