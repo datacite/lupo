@@ -34,7 +34,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         enriched_value: parsed_line["enrichedValue"]
       )
 
-      enrich_doi(enrichment, doi)
+      doi.apply_enrichment(enrichment)
 
       unless doi.valid?
         errors = serialize_errors(doi.errors, uid: enrichment.doi)
@@ -49,30 +49,30 @@ class EnrichmentBatchProcessJob < ApplicationJob
     end
   end
 
-  def enrich_doi(enrichment, doi)
-    action = enrichment["action"]
-    field = enrichment["field"].underscore
+  # def enrich_doi(enrichment, doi)
+  #   action = enrichment["action"]
+  #   field = enrichment["field"].underscore
 
-    case action
-    when "insert"
-      doi[field] ||= []
-      doi[field] << enrichment["enriched_value"]
-    when "update"
-      doi[field] = enrichment["enriched_value"]
-    when "update_child"
-      doi[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
-          doi[field][index] = enrichment["enriched_value"]
-        end
-      end
-    when "delete_child"
-      doi[field] ||= []
-      doi[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
-          doi[field].delete_at(index)
-          break
-        end
-      end
-    end
-  end
+  #   case action
+  #   when "insert"
+  #     doi[field] ||= []
+  #     doi[field] << enrichment["enriched_value"]
+  #   when "update"
+  #     doi[field] = enrichment["enriched_value"]
+  #   when "update_child"
+  #     doi[field].each_with_index do |item, index|
+  #       if item == enrichment["original_value"]
+  #         doi[field][index] = enrichment["enriched_value"]
+  #       end
+  #     end
+  #   when "delete_child"
+  #     doi[field] ||= []
+  #     doi[field].each_with_index do |item, index|
+  #       if item == enrichment["original_value"]
+  #         doi[field].delete_at(index)
+  #         break
+  #       end
+  #     end
+  #   end
+  # end
 end

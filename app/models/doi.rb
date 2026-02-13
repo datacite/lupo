@@ -2770,6 +2770,33 @@ class Doi < ApplicationRecord
     end
   end
 
+  def apply_enrichment(enrichment)
+    action = enrichment["action"]
+    field = enrichment["field"].underscore
+
+    case action
+    when "insert"
+      self[field] ||= []
+      self[field] << enrichment["enriched_value"]
+    when "update"
+      self[field] = enrichment["enriched_value"]
+    when "update_child"
+      self[field].each_with_index do |item, index|
+        if item == enrichment["original_value"]
+          self[field][index] = enrichment["enriched_value"]
+        end
+      end
+    when "delete_child"
+      self[field] ||= []
+      self[field].each_with_index do |item, index|
+        if item == enrichment["original_value"]
+          self[field].delete_at(index)
+          break
+        end
+      end
+    end
+  end
+
   private
     def update_publisher_from_hash
       symbolized_publisher_hash = publisher_before_type_cast.symbolize_keys

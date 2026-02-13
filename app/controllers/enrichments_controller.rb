@@ -1,18 +1,20 @@
 # frozen_string_literal: true
 
 class EnrichmentsController < ApplicationController
-  PAGE_SIZE = 10
+  PAGE_SIZE = 25
 
   def index
     doi = params["doi"]
     client_id = params["client_id"]
     cursor = params["cursor"]
 
-    if doi.blank? && client_id.blank?
-      return render(json: { message: "Missing doi or client-id query string parameter" }, status: :bad_request)
+    enrichments = if doi.present?
+      Enrichment.by_doi(doi)
+    elsif client_id.present?
+      Enrichment.by_client(client_id)
+    else
+      Enrichment.all
     end
-
-    enrichments = doi.present? ? Enrichment.by_doi(doi) : Enrichment.by_client(client_id)
 
     if cursor.present?
       decoded_cursor = decode_cursor(cursor)
