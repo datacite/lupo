@@ -46,7 +46,7 @@ class EnrichmentsController < ApplicationController
         decoded_cursor = decode_cursor(cursor)
         cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
         cursor_id = decoded_cursor.fetch("id").to_i
-      rescue ArgumentError, KeyError
+      rescue
         raise ActionController::BadRequest, "Invalid cursor"
       end
 
