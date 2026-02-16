@@ -32,7 +32,7 @@ class EnrichmentsController < ApplicationController
 
   private
     def base_page_enrichments(doi, client_id)
-      enrichments = if doi.present?
+      if doi.present?
         Enrichment.by_doi(doi)
       elsif client_id.present?
         Enrichment.by_client(client_id)
