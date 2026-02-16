@@ -5,7 +5,7 @@ class EnrichmentsController < ApplicationController
 
   def index
     doi = params["doi"]&.upcase
-    client_id = params["client_id"]&.upcase
+    client_id = params["client_id"]
     cursor = params["cursor"]
 
     enrichments = base_page_enrichments(doi, client_id)
@@ -22,7 +22,7 @@ class EnrichmentsController < ApplicationController
     next_link = build_next_link(doi, client_id, next_cursor)
 
     render(json: {
-      data: enrichments,
+      data: EnrichmentSerializer.new(enrichments, {}).serializable_hash,
       links: {
         self: current_link,
         next: enrichments.length == PAGE_SIZE ? next_link : nil
