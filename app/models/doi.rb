@@ -35,6 +35,8 @@ class Doi < ApplicationRecord
 
   include Elasticsearch::Model
 
+  include Enrichable
+
   aasm whiny_transitions: false do
     # draft is initial state for new DOIs.
     state :draft, initial: true
@@ -2767,33 +2769,6 @@ class Doi < ApplicationRecord
       "Project"
     else
       types.to_h["resourceTypeGeneral"]
-    end
-  end
-
-  def apply_enrichment(enrichment)
-    action = enrichment["action"]
-    field = enrichment["field"].underscore
-
-    case action
-    when "insert"
-      self[field] ||= []
-      self[field] << enrichment["enriched_value"]
-    when "update"
-      self[field] = enrichment["enriched_value"]
-    when "update_child"
-      self[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
-          self[field][index] = enrichment["enriched_value"]
-        end
-      end
-    when "delete_child"
-      self[field] ||= []
-      self[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
-          self[field].delete_at(index)
-          break
-        end
-      end
     end
   end
 

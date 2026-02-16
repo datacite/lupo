@@ -5,8 +5,8 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
   queue_as :enrichment_batch_process_job
 
-  def perform(lines)
-    log_prefix = "EnrichmentBatchProcessJob"
+  def perform(lines, file_name)
+    log_prefix = "EnrichmentBatchProcessJob (#{file_name})"
 
     # We will process the lines in parallel to speed up ingestion.
     Parallel.each(lines, in_threads: 10) do |line|
@@ -17,6 +17,11 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
       if doi.blank?
         Rails.logger.error("#{log_prefix}: Doi #{parsed_line["doi"]} does not exist")
+        next
+      end
+
+      if doi.enrichment_field(parsed_line["field"]).nil?
+        Rails.logger.error("#{log_prefix}: Unsupported enrichment field #{parsed_line["field"]} for DOI #{parsed_line["doi"]}")
         next
       end
 
@@ -48,31 +53,4 @@ class EnrichmentBatchProcessJob < ApplicationJob
       end
     end
   end
-
-  # def enrich_doi(enrichment, doi)
-  #   action = enrichment["action"]
-  #   field = enrichment["field"].underscore
-
-  #   case action
-  #   when "insert"
-  #     doi[field] ||= []
-  #     doi[field] << enrichment["enriched_value"]
-  #   when "update"
-  #     doi[field] = enrichment["enriched_value"]
-  #   when "update_child"
-  #     doi[field].each_with_index do |item, index|
-  #       if item == enrichment["original_value"]
-  #         doi[field][index] = enrichment["enriched_value"]
-  #       end
-  #     end
-  #   when "delete_child"
-  #     doi[field] ||= []
-  #     doi[field].each_with_index do |item, index|
-  #       if item == enrichment["original_value"]
-  #         doi[field].delete_at(index)
-  #         break
-  #       end
-  #     end
-  #   end
-  # end
 end

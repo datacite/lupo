@@ -28,7 +28,7 @@ namespace :enrichment do
     flush = lambda do
       return if batch_lines.empty?
 
-      EnrichmentBatchProcessJob.perform_later(batch_lines)
+      EnrichmentBatchProcessJob.perform_later(batch_lines, key)
 
       batch_lines.clear
       batch_bytes = 0
