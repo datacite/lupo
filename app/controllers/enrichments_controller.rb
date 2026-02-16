@@ -17,9 +17,13 @@ class EnrichmentsController < ApplicationController
     end
 
     if cursor.present?
-      decoded_cursor = decode_cursor(cursor)
-      cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
-      cursor_id = decoded_cursor.fetch("id").to_i
+      begin
+        decoded_cursor = decode_cursor(cursor)
+        cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
+        cursor_id = decoded_cursor.fetch("id").to_i
+      rescue
+        raise ActionController::BadRequest, "Invalid cursor"
+      end
 
       enrichments = enrichments.by_cursor(cursor_updated_at, cursor_id)
     end
@@ -55,7 +59,5 @@ class EnrichmentsController < ApplicationController
 
     def decode_cursor(token)
       JSON.parse(Base64.urlsafe_decode64(token))
-    rescue
-      raise ActionController::BadRequest
     end
 end
