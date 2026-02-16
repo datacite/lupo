@@ -39,7 +39,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         doi.only_validate = true
 
         enrichment = Enrichment.new(
-          doi: "#{uid}",
+          doi: uid,
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
           field: parsed_line["field"],
