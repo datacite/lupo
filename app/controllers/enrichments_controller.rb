@@ -4,8 +4,8 @@ class EnrichmentsController < ApplicationController
   PAGE_SIZE = 25
 
   def index
-    doi = params["doi"]
-    client_id = params["client_id"]
+    doi = params["doi"]&.upcase
+    client_id = params["client_id"]&.upcase
     cursor = params["cursor"]
 
     enrichments = base_page_enrichments(doi, client_id)

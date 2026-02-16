@@ -21,15 +21,16 @@ class EnrichmentBatchProcessJob < ApplicationJob
         end
 
         # We only create enrichments for DOIs that exist and which have an agency of 'datacite'.
-        doi = Doi.find_by(doi: parsed_line["doi"], agency: "datacite")
+        uid = parsed_line["doi"]&.upcase
+        doi = Doi.find_by(doi: uid, agency: "datacite")
 
         if doi.blank?
-          Rails.logger.error("#{log_prefix}: Doi #{parsed_line["doi"]} does not exist")
+          Rails.logger.error("#{log_prefix}: Doi #{uid} does not exist")
           next
         end
 
         if doi.enrichment_field(parsed_line["field"]).nil?
-          Rails.logger.error("#{log_prefix}: Unsupported enrichment field #{parsed_line["field"]} for DOI #{parsed_line["doi"]}")
+          Rails.logger.error("#{log_prefix}: Unsupported enrichment field #{parsed_line["field"]} for DOI #{uid}")
           next
         end
 
@@ -38,7 +39,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         doi.only_validate = true
 
         enrichment = Enrichment.new(
-          doi: "#{parsed_line["doi"]}",
+          doi: "#{uid}",
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
           field: parsed_line["field"],
