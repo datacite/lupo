@@ -7,8 +7,7 @@ class EnrichmentSerializer
   set_type :enrichments
   set_id :id
 
-  attributes :id,
-             :doi,
+  attributes :doi,
              :contributors,
              :resources,
              :field,
