@@ -10,6 +10,7 @@ class CreateEnrichments < ActiveRecord::Migration[7.2]
       t.string :action, null: false
       t.json :original_value, null: true
       t.json :enriched_value, null: true
+      t.string :filename, null: true
 
       t.timestamps
     end

@@ -249,6 +249,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_083752) do
     t.json "enriched_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "filename"
     t.index ["doi", "updated_at", "id"], name: "index_enrichments_on_doi_and_updated_at_and_id", order: { updated_at: :desc, id: :desc }
   end
 

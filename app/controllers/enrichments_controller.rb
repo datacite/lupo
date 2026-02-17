@@ -21,13 +21,14 @@ class EnrichmentsController < ApplicationController
 
     next_link = build_next_link(doi, client_id, next_cursor)
 
-    render(json: {
-      data: EnrichmentSerializer.new(enrichments, {}).serializable_hash,
+    options = {
       links: {
         self: current_link,
         next: enrichments.length == PAGE_SIZE ? next_link : nil
       }
-    })
+    }
+
+    render(json: EnrichmentSerializer.new(enrichments, options).serializable_hash, status: :ok)
   end
 
   private
