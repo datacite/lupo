@@ -733,7 +733,12 @@ class Doi < ApplicationRecord
             "cc0-1.0",
             "cc-pdm-1.0"
           ]
-        } }
+        } },
+        aggs: {
+          resource_types: {
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
+          }
+        }
       },
       states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
       published: {
