@@ -6,26 +6,24 @@ class EnrichmentsController < ApplicationController
   def index
     doi = params["doi"]&.upcase
     client_id = params["client_id"]
-    cursor = params["cursor"]
+    cursor = params.dig("page", "cursor")
 
-    enrichments = base_page_enrichments(doi, client_id)
-    enrichments = cursor.present? ? filter_enrichments_with_cursor(enrichments, cursor) : enrichments
-    enrichments = enrichments.order_by_cursor.limit(PAGE_SIZE).to_a
+    base_enrichments = base_page_enrichments(doi, client_id)
 
-    current_link = request.original_url
-
-    next_cursor = if enrichments.any?
-      last = enrichments.last
-      encode_cursor(updated_at: last.updated_at.iso8601(6), id: last.id)
+    enrichments = if cursor.present?
+      cursor_updated_at, cursor_id, cursor_page = decode_cursor(cursor)
+      base_enrichments.by_cursor(cursor_updated_at, cursor_id)
+    else
+      base_enrichments
     end
 
-    next_link = build_next_link(doi, client_id, next_cursor)
+    enrichments = enrichments.order_by_cursor.limit(PAGE_SIZE).to_a
+
+    cursor_page ||= 1
 
     options = {
-      links: {
-        self: current_link,
-        next: enrichments.length == PAGE_SIZE ? next_link : nil
-      }
+      meta: build_meta(base_enrichments, cursor_page),
+      links: build_paging_links(enrichments, doi, client_id, cursor_page)
     }
 
     render(json: EnrichmentSerializer.new(enrichments, options).serializable_hash, status: :ok)
@@ -42,26 +40,35 @@ class EnrichmentsController < ApplicationController
       end
     end
 
-    def filter_enrichments_with_cursor(enrichments, cursor)
-      begin
-        decoded_cursor = decode_cursor(cursor)
-        cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
-        cursor_id = decoded_cursor.fetch("id").to_i
-      rescue
-        raise ActionController::BadRequest, "Invalid cursor"
-      end
-
-      enrichments.by_cursor(cursor_updated_at, cursor_id)
-    end
-
     def encode_cursor(hash)
       Base64.urlsafe_encode64(hash.to_json, padding: false)
     rescue
-      raise ActionController::BadRequest
+      raise ActionController::InternalServerError, "Failed to encode cursor"
     end
 
     def decode_cursor(token)
-      JSON.parse(Base64.urlsafe_decode64(token))
+      begin
+        decoded_cursor = JSON.parse(Base64.urlsafe_decode64(token))
+        cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
+        cursor_id = decoded_cursor.fetch("id").to_i
+        cursor_page = decoded_cursor.fetch("page", nil).to_i || 0
+
+        Rails.logger.info("cursor_page: #{cursor_page}")
+
+        [cursor_updated_at, cursor_id, cursor_page]
+      rescue
+        raise ActionController::BadRequest, "Invalid cursor"
+      end
+    end
+
+    def build_meta(enrichments, cursor_page)
+      enrichments_total = enrichments.count
+
+      {
+        total: enrichments_total,
+        totalPages: (enrichments_total / PAGE_SIZE.to_f).ceil,
+        page: cursor_page
+      }
     end
 
     def build_next_link(doi, client_id, next_cursor)
@@ -72,9 +79,25 @@ class EnrichmentsController < ApplicationController
       elsif client_id.present?
         "client-id=#{client_id}&cursor=#{next_cursor}"
       else
-        "cursor=#{next_cursor}"
+        "page[cursor]=#{next_cursor}"
       end
 
       "#{base_link}?#{query_string}"
+    end
+
+    def build_paging_links(enrichments, doi, client_id, cursor_page)
+      current_link = request.original_url
+
+      next_cursor = if enrichments.any?
+        last = enrichments.last
+        encode_cursor(updated_at: last.updated_at.iso8601(6), id: last.id, page: cursor_page + 1)
+      end
+
+      next_link = build_next_link(doi, client_id, next_cursor)
+
+      {
+        self: current_link,
+        next: enrichments.length == PAGE_SIZE ? next_link : nil
+      }
     end
 end
