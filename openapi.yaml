@@ -3661,6 +3661,8 @@ components:
         - obsoletes
         - is-collected-by
         - collects
+        - is-translation-of
+        - has-translation
         - other
         - is-authored-by
         - is-authored-at
