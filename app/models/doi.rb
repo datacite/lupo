@@ -712,7 +712,13 @@ class Doi < ApplicationRecord
 
   DOI_AGGREGATION_DEFINITIONS = {
       # number of resourceTypeGeneral increased from 34 to 34 in schema 4.6
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 } },
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }, 
+        aggs: {
+          resource_types: {
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
+          }
+        }
+      },
       open_licenses: {
         filter: { terms: {
           "rights_list.rightsIdentifier": [
@@ -727,12 +733,7 @@ class Doi < ApplicationRecord
             "cc0-1.0",
             "cc-pdm-1.0"
           ]
-        } },
-        aggs: {
-          resource_types: {
-            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
-          }
-        }
+        }}
       },
       states: { terms: { field: "aasm_state", size: 3, min_doc_count: 1 } },
       published: {
