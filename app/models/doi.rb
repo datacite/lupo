@@ -711,8 +711,8 @@ class Doi < ApplicationRecord
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
-      # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
+      # number of resourceTypeGeneral increased from 34 to 34 in schema 4.6
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 } },
       open_licenses: {
         filter: { terms: {
           "rights_list.rightsIdentifier": [
@@ -730,7 +730,7 @@ class Doi < ApplicationRecord
         } },
         aggs: {
           resource_types: {
-            terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 }
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
           }
         }
       },
