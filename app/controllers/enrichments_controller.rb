@@ -47,18 +47,16 @@ class EnrichmentsController < ApplicationController
     end
 
     def decode_cursor(token)
-      begin
-        decoded_cursor = JSON.parse(Base64.urlsafe_decode64(token))
-        cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
-        cursor_id = decoded_cursor.fetch("id").to_i
-        cursor_page = decoded_cursor.fetch("page", nil).to_i || 0
+      decoded_cursor = JSON.parse(Base64.urlsafe_decode64(token))
+      cursor_updated_at = Time.iso8601(decoded_cursor.fetch("updated_at"))
+      cursor_id = decoded_cursor.fetch("id").to_i
+      cursor_page = decoded_cursor.fetch("page", nil).to_i || 0
 
-        Rails.logger.info("cursor_page: #{cursor_page}")
+      Rails.logger.info("cursor_page: #{cursor_page}")
 
-        [cursor_updated_at, cursor_id, cursor_page]
-      rescue
-        raise ActionController::BadRequest, "Invalid cursor"
-      end
+      [cursor_updated_at, cursor_id, cursor_page]
+    rescue
+      raise ActionController::BadRequest, "Invalid cursor"
     end
 
     def build_meta(enrichments, cursor_page)
