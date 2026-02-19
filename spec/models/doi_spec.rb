@@ -2377,6 +2377,11 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
               "name": "DataCite",
               "affiliationIdentifier": "https://ror.org/00k4n6c32",
               "affiliationIdentifierScheme": "ROR"
+            },
+            {
+              "name": "University of Cambridge",
+              "affiliationIdentifier": "https://ror.org/04wxnsj81",
+              "affiliationIdentifierScheme": "ROR"
             }
           ]
         }
@@ -2389,8 +2394,8 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
           "contributorType": "Editor",
           "affiliation": [
             {
-              "name": "Another Org",
-              "affiliationIdentifier": "https://ror.org/00a0jsq62",
+              "name": "DataCite",
+              "affiliationIdentifier": "https://ror.org/00k4n6c32",
               "affiliationIdentifierScheme": "ROR"
             }
           ]
@@ -2399,8 +2404,13 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     ) }
 
     it "has countries from ROR affiliations in affiliation_countries" do
-      expect(doi.affiliation_countries).to eq(["US"])
-      expect(doi.as_indexed_json["affiliation_countries"]).to eq(["US"])
+      expect(doi.affiliation_countries).to match_array(["US", "GB"])
+      expect(doi.as_indexed_json["affiliation_countries"]).to match_array(["US", "GB"])
+    end
+
+    it "deduplicates country codes from multiple affiliations" do
+      # Verify that the duplicate US from creator and contributor is deduplicated
+      expect(doi.affiliation_countries.count("US")).to eq(1)
     end
   end
 end

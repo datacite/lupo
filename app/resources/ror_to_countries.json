@@ -1,4 +1,6 @@
 {
+  "_comment": "Placeholder test data. This file will be populated automatically by the update-ror-mappings workflow from S3.",
   "ror.org/00k4n6c32": ["US"],
-  "ror.org/00a0jsq62": ["US"]
+  "ror.org/00a0jsq62": ["US"],
+  "ror.org/04wxnsj81": ["GB"]
 }

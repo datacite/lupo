@@ -2037,39 +2037,30 @@ class Doi < ApplicationRecord
 
   def affiliation_countries
     countries = []
-    
-    # Process creators
-    Array.wrap(creators).each do |creator|
-      next unless creator.is_a?(Hash)
-      
-      Array.wrap(creator.fetch("affiliation", [])).each do |affiliation|
-        next unless affiliation.is_a?(Hash)
-        next unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
-        
-        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
-        next if affiliation_identifier.blank?
-        
-        countries.concat(get_countries_from_ror(affiliation_identifier))
-      end
-    end
-    
-    # Process contributors
-    Array.wrap(contributors).each do |contributor|
-      next unless contributor.is_a?(Hash)
-      
-      Array.wrap(contributor.fetch("affiliation", [])).each do |affiliation|
-        next unless affiliation.is_a?(Hash)
-        next unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
-        
-        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
-        next if affiliation_identifier.blank?
-        
-        countries.concat(get_countries_from_ror(affiliation_identifier))
-      end
-    end
-    
+    countries.concat(extract_countries_from_people(creators))
+    countries.concat(extract_countries_from_people(contributors))
     countries.uniq
   end
+
+  private
+
+  def extract_countries_from_people(people)
+    Array.wrap(people).flat_map do |person|
+      next [] unless person.is_a?(Hash)
+      
+      Array.wrap(person.fetch("affiliation", [])).flat_map do |affiliation|
+        next [] unless affiliation.is_a?(Hash)
+        next [] unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+        
+        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
+        next [] if affiliation_identifier.blank?
+        
+        get_countries_from_ror(affiliation_identifier)
+      end
+    end
+  end
+
+  public
 
   def prefix
     doi.split("/", 2).first if doi.present?
