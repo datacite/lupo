@@ -2363,4 +2363,44 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(doi.as_indexed_json["funder_parent_rors"]).to eq(["https://ror.org/019w4f821", "https://ror.org/04cw6st05"])
     end
   end
+
+  describe "with affiliation ROR IDs" do
+    let(:doi) { create(:doi,
+      creators: [
+        {
+          "name": "Garza, Kristian",
+          "givenName": "Kristian",
+          "familyName": "Garza",
+          "nameType": "Personal",
+          "affiliation": [
+            {
+              "name": "DataCite",
+              "affiliationIdentifier": "https://ror.org/00k4n6c32",
+              "affiliationIdentifierScheme": "ROR"
+            }
+          ]
+        }
+      ],
+      contributors: [
+        {
+          "name": "Smith, John",
+          "givenName": "John",
+          "familyName": "Smith",
+          "contributorType": "Editor",
+          "affiliation": [
+            {
+              "name": "Another Org",
+              "affiliationIdentifier": "https://ror.org/00a0jsq62",
+              "affiliationIdentifierScheme": "ROR"
+            }
+          ]
+        }
+      ]
+    ) }
+
+    it "has countries from ROR affiliations in affiliation_countries" do
+      expect(doi.affiliation_countries).to eq(["US"])
+      expect(doi.as_indexed_json["affiliation_countries"]).to eq(["US"])
+    end
+  end
 end

@@ -22,6 +22,7 @@ jobs:
       BUCKET: ${{ secrets.ROR_ANALYSIS_S3_BUCKET }}
       S3_FUNDER_KEY: ror_funder_mapping/funder_to_ror.json
       S3_HIERARCHY_KEY: ror_funder_mapping/ror_hierarchy.json
+      S3_COUNTRIES_KEY: ror_funder_mapping/ror_to_countries.json
       LOCAL_DIR: app/resources
 
     steps:
@@ -40,6 +41,7 @@ jobs:
           set -euo pipefail
           aws s3 cp "s3://${BUCKET}/${S3_FUNDER_KEY}" funder_to_ror.json.new
           aws s3 cp "s3://${BUCKET}/${S3_HIERARCHY_KEY}" ror_hierarchy.json.new
+          aws s3 cp "s3://${BUCKET}/${S3_COUNTRIES_KEY}" ror_to_countries.json.new
 
       - name: Compare and update tracked files (semantic JSON)
         id: update
@@ -73,6 +75,7 @@ jobs:
 
           normalize_and_update funder_to_ror.json.new "${LOCAL_DIR}/funder_to_ror.json"
           normalize_and_update ror_hierarchy.json.new "${LOCAL_DIR}/ror_hierarchy.json"
+          normalize_and_update ror_to_countries.json.new "${LOCAL_DIR}/ror_to_countries.json"
 
           echo "changed=${changed}" >> "$GITHUB_OUTPUT"
 

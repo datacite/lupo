@@ -272,6 +272,7 @@ class Doi < ApplicationRecord
       indexes :related_dmp_organization_id,    type: :keyword
       indexes :funder_rors,                    type: :keyword
       indexes :funder_parent_rors,           type: :keyword
+      indexes :affiliation_countries,          type: :keyword
       indexes :client_id_and_name,             type: :keyword
       indexes :provider_id_and_name,           type: :keyword
       indexes :resource_type_id_and_name,      type: :keyword
@@ -644,6 +645,7 @@ class Doi < ApplicationRecord
       "related_dmp_organization_id" => related_dmp_organization_and_affiliation_id,
       "funder_rors" => funder_rors,
       "funder_parent_rors" => funder_parent_rors,
+      "affiliation_countries" => affiliation_countries,
       "affiliation_id_and_name" => affiliation_id_and_name,
       "fair_affiliation_id_and_name" => fair_affiliation_id_and_name,
       "media_ids" => media_ids,
@@ -1256,6 +1258,14 @@ class Doi < ApplicationRecord
     if options[:member_id].present?
       should << { term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" } }
       minimum_should_match = 1
+    end
+
+    if options[:affiliation_country].present?
+      country_codes = options[:affiliation_country]
+                        .split(",")
+                        .map { |c| c.strip.upcase }
+                        .reject(&:blank?)
+      filter << { terms: { "affiliation_countries" => country_codes } } if country_codes.any?
     end
 
     must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] } } if options[:exclude_registration_agencies]
@@ -2023,6 +2033,42 @@ class Doi < ApplicationRecord
       sum.concat(ancestors) if ancestors.present?
       sum.uniq
     end
+  end
+
+  def affiliation_countries
+    countries = []
+    
+    # Process creators
+    Array.wrap(creators).each do |creator|
+      next unless creator.is_a?(Hash)
+      
+      Array.wrap(creator.fetch("affiliation", [])).each do |affiliation|
+        next unless affiliation.is_a?(Hash)
+        next unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+        
+        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
+        next if affiliation_identifier.blank?
+        
+        countries.concat(get_countries_from_ror(affiliation_identifier))
+      end
+    end
+    
+    # Process contributors
+    Array.wrap(contributors).each do |contributor|
+      next unless contributor.is_a?(Hash)
+      
+      Array.wrap(contributor.fetch("affiliation", [])).each do |affiliation|
+        next unless affiliation.is_a?(Hash)
+        next unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+        
+        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
+        next if affiliation_identifier.blank?
+        
+        countries.concat(get_countries_from_ror(affiliation_identifier))
+      end
+    end
+    
+    countries.uniq
   end
 
   def prefix
