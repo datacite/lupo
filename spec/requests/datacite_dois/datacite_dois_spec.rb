@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pp"
-
 require "rails_helper"
 include Passwordable
 
