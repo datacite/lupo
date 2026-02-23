@@ -2363,4 +2363,102 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(doi.as_indexed_json["funder_parent_rors"]).to eq(["https://ror.org/019w4f821", "https://ror.org/04cw6st05"])
     end
   end
+
+  describe "enrichable" do
+    describe "#enrichment_field" do
+      before do
+        let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
+      end
+
+      it "maps alternatveIdentifiers to alternate_identifiers" do
+        expect(doi.enrichment_field("alternateIdentifiers")).to(eq("alternate_identifiers"))
+      end
+
+      it "maps creators to creators" do
+        expect(doi.enrichment_field("creators")).to(eq("creators"))
+      end
+
+      it "maps titles to titles" do
+        expect(doi.enrichment_field("titles")).to(eq("titles"))
+      end
+
+      it "maps publisher to publisher" do
+        expect(doi.enrichment_field("publisher")).to(eq("publisher"))
+      end
+
+      it "maps publicationYear to publication_year" do
+        expect(doi.enrichment_field("publicationYear")).to(eq("publication_year"))
+      end
+
+      it "maps subjects to subjects" do
+        expect(doi.enrichment_field("subjects")).to(eq("subjects"))
+      end
+
+      it "maps contributors to contributors" do
+        expect(doi.enrichment_field("contributors")).to(eq("contributors"))
+      end
+
+      it "maps dates to dates" do
+        expect(doi.enrichment_field("dates")).to(eq("dates"))
+      end
+
+      it "maps language to language" do
+        expect(doi.enrichment_field("language")).to(eq("language"))
+      end
+
+      it "maps types to types" do
+        expect(doi.enrichment_field("types")).to(eq("types"))
+      end
+
+      it "maps relatedIdentifiers to related_identifiers" do
+        expect(doi.enrichment_field("relatedIdentifiers")).to(eq("related_identifiers"))
+      end
+
+      it "maps relatedItems to related_items" do
+        expect(doi.enrichment_field("relatedItems")).to(eq("related_items"))
+      end
+
+      it "maps sizes to sizes" do
+        expect(doi.enrichment_field("sizes")).to(eq("sizes"))
+      end
+
+      it "maps formats to formats" do
+        expect(doi.enrichment_field("formats")).to(eq("formats"))
+      end
+
+      it "maps version to version" do
+        expect(doi.enrichment_field("version")).to(eq("version"))
+      end
+
+      it "maps rightsList to rights_list" do
+        expect(doi.enrichment_field("rightsList")).to(eq("rights_list"))
+      end
+
+      it "maps descriptions to descriptions" do
+        expect(doi.enrichment_field("descriptions")).to(eq("descriptions"))
+      end
+
+      it "maps geoLocations to geo_locations" do
+        expect(doi.enrichment_field("geoLocations")).to(eq("geo_locations"))
+      end
+
+      it "maps fundingReferences to funding_references" do
+        expect(doi.enrichment_field("fundingReferences")).to(eq("funding_references"))
+      end
+    end
+
+    describe "#apply_enrichment" do
+      describe "when field is invalid" do
+        it "raises ArgumentError" do
+          enrichment = {
+            "action": "insert",
+            "field": "invalid_field",
+            "enriched_value": "foo"
+          }
+          expect { doi.apply_enrichment(enrichment) }
+            .to(raise_error(ArgumentError, "Invalid enrichment field: invalid_field"))
+        end
+      end
+    end
+  end
 end

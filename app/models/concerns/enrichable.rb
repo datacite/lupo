@@ -3,34 +3,54 @@
 module Enrichable
   extend ActiveSupport::Concern
 
+  # Returns a non-nil error message if application of the enrichment failed, otherwise returns nil.
   def apply_enrichment(enrichment)
     action = enrichment["action"]
-
     field = enrichment_field(enrichment["field"])
 
     raise ArgumentError, "Invalid enrichment field #{enrichment["field"]}" if field.nil?
 
+    error = nil
+
+    # A return of true indicates that the enrichment was applied.
+    # This is important in the case of the update_child and delete_child actions.
     case action
     when "insert"
       self[field] ||= []
       self[field] << enrichment["enriched_value"]
     when "update"
-      self[field] = enrichment["enriched_value"]
-    when "update_child"
+      if self[field] == enrichment["original_value"]
+        self[field] = enrichment["enriched_value"]
+      else
+        error = "Original value does not match current value for update action"
+      end
+    when "updateChild"
+      success = false
+
       self[field].each_with_index do |item, index|
         if item == enrichment["original_value"]
           self[field][index] = enrichment["enriched_value"]
+          success = true
+          break
         end
       end
-    when "delete_child"
+
+      error = "Original value not found for updateChild action" unless success
+    when "deleteChild"
+      success = false
+
       self[field] ||= []
       self[field].each_with_index do |item, index|
         if item == enrichment["original_value"]
           self[field].delete_at(index)
-          break
+          success = true
         end
       end
+
+      error = "Original value not found for deleteChild action" unless success
     end
+
+    error
   end
 
   def enrichment_field(field)

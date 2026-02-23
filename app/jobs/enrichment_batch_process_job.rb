@@ -49,7 +49,12 @@ class EnrichmentBatchProcessJob < ApplicationJob
           enriched_value: parsed_line["enrichedValue"]
         )
 
-        doi.apply_enrichment(enrichment)
+        apply_error = doi.apply_enrichment(parsed_line)
+
+        if apply_error.present?
+          Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}, #{apply_error}")
+          next
+        end
 
         unless doi.valid?
           errors = serialize_errors(doi.errors, uid: enrichment.doi)
@@ -59,7 +64,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
         unless enrichment.save
           errors = enrichment.errors.full_messages.join(";")
-          Rails.logger.error("#{log_prefix}: Enrichment failed to save: #{errors}")
+          Rails.logger.error("#{log_prefix}: Failed to save enrichment for DOI #{uid}: #{errors}")
         end
       end
     end
