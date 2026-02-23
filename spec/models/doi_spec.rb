@@ -2447,6 +2447,8 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
 
     describe "#apply_enrichment" do
       describe "when field is invalid" do
+        let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
+
         it "raises ArgumentError" do
           enrichment = {
             "action": "insert",
