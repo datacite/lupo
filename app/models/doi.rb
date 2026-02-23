@@ -2043,22 +2043,21 @@ class Doi < ApplicationRecord
   end
 
   private
+    def extract_countries_from_people(people)
+      Array.wrap(people).flat_map do |person|
+        next [] unless person.is_a?(Hash)
 
-  def extract_countries_from_people(people)
-    Array.wrap(people).flat_map do |person|
-      next [] unless person.is_a?(Hash)
-      
-      Array.wrap(person.fetch("affiliation", [])).flat_map do |affiliation|
-        next [] unless affiliation.is_a?(Hash)
-        next [] unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
-        
-        affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
-        next [] if affiliation_identifier.blank?
-        
-        get_countries_from_ror(affiliation_identifier)
+        Array.wrap(person.fetch("affiliation", [])).flat_map do |affiliation|
+          next [] unless affiliation.is_a?(Hash)
+          next [] unless affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+
+          affiliation_identifier = affiliation.fetch("affiliationIdentifier", nil)
+          next [] if affiliation_identifier.blank?
+
+          get_countries_from_ror(affiliation_identifier)
+        end
       end
     end
-  end
 
   public
 
