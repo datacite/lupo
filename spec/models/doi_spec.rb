@@ -2366,9 +2366,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
 
   describe "enrichable" do
     describe "#enrichment_field" do
-      before do
-        let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
-      end
+      let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
 
       it "maps alternatveIdentifiers to alternate_identifiers" do
         expect(doi.enrichment_field("alternateIdentifiers")).to(eq("alternate_identifiers"))
