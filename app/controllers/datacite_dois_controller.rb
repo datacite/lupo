@@ -71,8 +71,12 @@ class DataciteDoisController < ApplicationController
       params[:state] = "findable"
     end
 
-    # facets are enabled by default
-    disable_facets = params[:disable_facets]
+    # default: use env DISABLE_FACETS_BY_DEFAULT (true/1 => facets off); explicit param overrides
+    disable_facets = if params[:disable_facets].present?
+      ActiveModel::Type::Boolean.new.cast(params[:disable_facets])
+    else
+      ENV["DISABLE_FACETS_BY_DEFAULT"].to_s.downcase.in?(%w[true 1])
+    end
 
     # registration agencies are disabled by default
     exclude_registration_agencies = true
@@ -83,7 +87,7 @@ class DataciteDoisController < ApplicationController
     if params[:id].present?
       response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = DataciteDoi.find_by_ids(params[:ids], disable_facets: params[:disable_facets], facets: params[:facets], page: page, sort: sort)
+      response = DataciteDoi.find_by_ids(params[:ids], disable_facets: disable_facets, facets: params[:facets], page: page, sort: sort)
     else
       response =
         DataciteDoi.query(
@@ -330,7 +334,7 @@ class DataciteDoisController < ApplicationController
                       "has-person" => params[:has_person],
                       "has-affiliation" => params[:has_affiliation],
                       "has-funder" => params[:has_funder],
-                      "disable-facets" => params[:disable_facets],
+                      "disable-facets" => disable_facets,
                       "facets" => params[:facets],
                       detail: params[:detail],
                       composite: params[:composite],
