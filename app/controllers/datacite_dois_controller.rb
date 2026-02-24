@@ -330,7 +330,7 @@ class DataciteDoisController < ApplicationController
                       "has-person" => params[:has_person],
                       "has-affiliation" => params[:has_affiliation],
                       "has-funder" => params[:has_funder],
-                      "disable-facets" => disable_facets,
+                      "disable-facets" => (params[:disable_facets].present? ? disable_facets : nil),
                       "facets" => params[:facets],
                       detail: params[:detail],
                       composite: params[:composite],
