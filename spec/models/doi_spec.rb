@@ -2446,18 +2446,29 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     describe "#apply_enrichment" do
-      describe "when action is invalid" do
-        let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
+      describe "when action is" do
+        describe "insert" do
+          describe "and field is nil adds a new entry into the array" do
+            doi = create(
+              :doi,
+              aasm_state: "findable",
+              agency: "datacite",
+              creators: nil)
 
-        it "raises ArgumentError" do
-          enrichment = {
-            "action": "invalid_action",
-            "field": "invalid_field",
-            "enriched_value": "foo"
-          }
+            enrichment = {
+              "doi" => "10.14454/3HK0OBA6CJ",
+              "contributors" => [{"name":"COMET","nameType":"Organizational","affiliation":[],"contributorType":"ResearchGroup","nameIdentifiers":[]},{"name":"Buttrick, Adam","nameType":"Personal","affiliation":[{"name":"California Digital Library","affiliationIdentifier":"https://ror.org/03yrm5c26","affiliationIdentifierScheme":"ROR"}],"contributorType":"Researcher","nameIdentifiers":[{"schemeUri":"https://orcid.org","nameIdentifier":"https://orcid.org/0000-0003-1507-1031","nameIdentifierScheme":"ORCID"}]}],
+              "resources" => [{"relatedIdentifier":"10.1234/example_dataset","relationType":"IsDerivedFrom","relatedIdentifierType":"DOI","resourceTypeGeneral":"Dataset"},{"relatedIdentifier":"https://huggingface.co/cometadata/affiliation-parsing-lora-Qwen3-8B-distil-GLM_4.5_Air","relationType":"References","relatedIdentifierType":"URL","resourceTypeGeneral":"Model"}],
+              "field" => "creators",
+              "action" => "insert",
+              "originalValue" => {"name":"Chadly, Duncan","nameType":"Personal","givenName":"Duncan","familyName":"Chadly","affiliation":[{"name":"California Institute of Technology","affiliationIdentifier":"05dxps055","affiliationIdentifierScheme":"ROR"}],"nameIdentifiers":[{"nameIdentifier":"0000-0002-8417-1522","nameIdentifierScheme":"ORCID"}]},
+              "enrichedValue" => {"name":"Frank, Franky","nameType":"Personal","givenName":"Duncan","familyName":"Chadly","affiliation":[{"name":"California Institute of Technology","affiliationIdentifier":"https://ror.org/05dxps055","affiliationIdentifierScheme":"ROR"}],"nameIdentifiers":[{"nameIdentifier":"https://orcid.org/0000-0002-8417-1522","nameIdentifierScheme":"ORCID"}]}
+            }
 
-          expect { doi.apply_enrichment(enrichment) }
-            .to(raise_error(ArgumentError, "Unsupported enrichment action: invalid_action"))
+            doi.apply_enrichment(enrichment)
+
+            expect(doi.creators).to(eq([enrichment["enrichedValue"]]))
+          end
         end
       end
     end
