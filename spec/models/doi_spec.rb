@@ -2446,17 +2446,18 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     describe "#apply_enrichment" do
-      describe "when field is invalid" do
+      describe "when action is invalid" do
         let(:doi) { create(:doi, aasm_state: "findable", agency: "datacite") }
 
         it "raises ArgumentError" do
           enrichment = {
-            "action": "insert",
+            "action": "invalid_action",
             "field": "invalid_field",
             "enriched_value": "foo"
           }
+
           expect { doi.apply_enrichment(enrichment) }
-            .to(raise_error(ArgumentError, "Invalid enrichment field: invalid_field"))
+            .to(raise_error(ArgumentError, "Unsupported enrichment action: invalid_action"))
         end
       end
     end

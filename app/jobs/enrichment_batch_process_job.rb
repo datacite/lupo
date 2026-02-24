@@ -38,6 +38,13 @@ class EnrichmentBatchProcessJob < ApplicationJob
         # ensure that validation functions as expected when not persisting the record.
         doi.only_validate = true
 
+        begin
+          doi.apply_enrichment(parsed_line)
+        rescue ArgumentError => e
+          rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}: #{e.message}")
+          next
+        end
+
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
@@ -48,13 +55,6 @@ class EnrichmentBatchProcessJob < ApplicationJob
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"]
         )
-
-        apply_error = doi.apply_enrichment(parsed_line)
-
-        if apply_error.present?
-          Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}, #{apply_error}")
-          next
-        end
 
         unless doi.valid?
           errors = serialize_errors(doi.errors, uid: enrichment.doi)
