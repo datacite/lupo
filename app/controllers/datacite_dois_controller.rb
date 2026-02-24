@@ -72,11 +72,7 @@ class DataciteDoisController < ApplicationController
     end
 
     # default: use env DISABLE_FACETS_BY_DEFAULT (true/1 => facets off); explicit param overrides
-    disable_facets = if params[:disable_facets].present?
-      ActiveModel::Type::Boolean.new.cast(params[:disable_facets])
-    else
-      ENV["DISABLE_FACETS_BY_DEFAULT"].to_s.downcase.in?(%w[true 1])
-    end
+    disable_facets = (params[:disable_facets] || ENV["DISABLE_FACETS_BY_DEFAULT"]).to_s.downcase.in?(%w[true 1])
 
     # registration agencies are disabled by default
     exclude_registration_agencies = true
