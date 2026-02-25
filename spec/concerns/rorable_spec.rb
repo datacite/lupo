@@ -3,26 +3,13 @@
 require "rails_helper"
 
 describe "Rorable", type: :model do
-  let(:funder_to_ror_data) { { "100010552" => "https://ror.org/04ttjf776" } }
-  let(:ror_hierarchy_data) do
-    { "https://ror.org/00a0jsq62" => { "ancestors" => ["https://ror.org/04cw6st05"] } }
-  end
-
   before do
-    allow(RorReferenceStore).to receive(:funder_to_ror).and_return(funder_to_ror_data)
-    allow(RorReferenceStore).to receive(:ror_hierarchy).and_return(ror_hierarchy_data)
-  end
-
-  describe "data is loaded" do
-    it "loads Crossref Funder Id to ROR mapping" do
-      expect(RorReferenceStore.funder_to_ror).to be_a(Hash)
-      expect(RorReferenceStore.funder_to_ror).not_to be_empty
-    end
-
-    it "loads ROR hierarchy mapping" do
-      expect(RorReferenceStore.ror_hierarchy).to be_a(Hash)
-      expect(RorReferenceStore.ror_hierarchy).not_to be_empty
-    end
+    allow(RorReferenceStore).to receive(:funder_to_ror).with("100010552").and_return("https://ror.org/04ttjf776")
+    allow(RorReferenceStore).to receive(:funder_to_ror).with("10.77777/100010552").and_return(nil)
+    allow(RorReferenceStore).to receive(:ror_hierarchy).with("https://ror.org/00a0jsq62").and_return(
+      { "ancestors" => ["https://ror.org/04cw6st05"] }
+    )
+    allow(RorReferenceStore).to receive(:ror_hierarchy).with("https://ror.org/doi.org/00a0jsq62").and_return(nil)
   end
 
   describe "Crossref Funder ID to ROR mapping" do
@@ -37,7 +24,7 @@ describe "Rorable", type: :model do
     it "does not map invalid Crossref Funder ID to ROR" do
       funder_id = "10.77777/100010552"
       ror_id = doi.get_ror_from_crossref_funder_id(funder_id)
-      expect(ror_id).to eq(nil)
+      expect(ror_id).to be_nil
     end
 
     it "maps Crossref Funder ID with https://doi.org to ROR" do
