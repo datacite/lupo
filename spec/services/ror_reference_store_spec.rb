@@ -8,30 +8,24 @@ RSpec.describe RorReferenceStore, type: :service do
   let(:s3_response) { instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json)) }
 
   before do
-    # Clear all ROR reference cache keys before each test
-    RorReferenceStore::MAPPING_FILES.each_key do |key|
-      meta = Rails.cache.read("ror_ref/#{key}/meta")
-      if meta
-        meta["chunks"].times { |i| Rails.cache.delete("ror_ref/#{key}/#{i}") }
-      end
-      Rails.cache.delete("ror_ref/#{key}/meta")
+    # Clear all ROR reference cache keys before each test (per-key + populated sentinel)
+    RorReferenceStore::MAPPING_FILES.each_key do |mapping|
+      Rails.cache.delete("ror_ref/#{mapping}/#{RorReferenceStore::POPULATED_KEY_SUFFIX}")
+      # Clear the value key used in funder_to_ror tests so cold-cache behavior is consistent
+      Rails.cache.delete("ror_ref/#{mapping}/100010552")
     end
   end
 
-  describe "chunked cache write and read" do
-    it "stores and retrieves data via chunked cache keys" do
+  describe "per-key cache write and read" do
+    it "stores and retrieves data via per-key cache entries" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
       allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      result = described_class.funder_to_ror
-      expect(result).to be_a(Hash)
-      expect(result["100010552"]).to eq("https://ror.org/04ttjf776")
+      result = described_class.funder_to_ror("100010552")
+      expect(result).to eq("https://ror.org/04ttjf776")
 
-      # Meta key should now be populated
-      meta = Rails.cache.read("ror_ref/funder_to_ror/meta")
-      expect(meta).to be_a(Hash)
-      expect(meta["chunks"]).to be >= 1
+      expect(Rails.cache.read("ror_ref/funder_to_ror/populated")).to eq(true)
     end
 
     it "returns cached data on subsequent calls without hitting S3" do
@@ -39,29 +33,26 @@ RSpec.describe RorReferenceStore, type: :service do
       allow(s3_client).to receive(:get_object).and_return(s3_response).once
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      described_class.funder_to_ror
-      result = described_class.funder_to_ror
+      described_class.funder_to_ror("100010552")
+      result = described_class.funder_to_ror("100010552")
 
-      expect(result["100010552"]).to eq("https://ror.org/04ttjf776")
+      expect(result).to eq("https://ror.org/04ttjf776")
       expect(s3_client).to have_received(:get_object).once
     end
   end
 
-  describe "partial cache miss recovery" do
-    it "re-fetches from S3 when a chunk is missing" do
+  describe "cold cache refresh" do
+    it "re-fetches from S3 when populated key is missing" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
       allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      # Populate cache the first time
-      described_class.funder_to_ror
+      described_class.funder_to_ror("100010552")
 
-      # Corrupt the cache by deleting chunk 0
-      Rails.cache.delete("ror_ref/funder_to_ror/0")
+      Rails.cache.delete("ror_ref/funder_to_ror/populated")
 
-      # Should trigger another S3 download
-      result = described_class.funder_to_ror
-      expect(result).to be_a(Hash)
+      result = described_class.funder_to_ror("100010552")
+      expect(result).to eq("https://ror.org/04ttjf776")
       expect(s3_client).to have_received(:get_object).twice
     end
   end
@@ -82,37 +73,33 @@ RSpec.describe RorReferenceStore, type: :service do
       allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      # Populate first
-      described_class.funder_to_ror
-
-      # Refresh
+      described_class.funder_to_ror("100010552")
       described_class.refresh_all!
 
-      result = described_class.funder_to_ror
-      expect(result).to be_a(Hash)
+      result = described_class.funder_to_ror("100010552")
+      expect(result).to eq("https://ror.org/04ttjf776")
     end
   end
 
   describe "S3 failure handling" do
-    it "returns nil when S3 download fails" do
+    it "returns nil when S3 download fails and cache is cold" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
       allow(s3_client).to receive(:get_object).and_raise(
         Aws::S3::Errors::ServiceError.new(nil, "Access Denied")
       )
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      expect(described_class.funder_to_ror).to be_nil
+      expect(described_class.funder_to_ror("100010552")).to be_nil
     end
   end
 
   describe "cache key helpers" do
-    it "uses expected meta cache key format" do
-      expect(described_class.send(:meta_cache_key, :funder_to_ror)).to eq("ror_ref/funder_to_ror/meta")
+    it "uses expected value cache key format" do
+      expect(described_class.send(:value_cache_key, :funder_to_ror, "100010552")).to eq("ror_ref/funder_to_ror/100010552")
     end
 
-    it "uses expected chunk cache key format" do
-      expect(described_class.send(:chunk_cache_key, :funder_to_ror, 0)).to eq("ror_ref/funder_to_ror/0")
-      expect(described_class.send(:chunk_cache_key, :funder_to_ror, 2)).to eq("ror_ref/funder_to_ror/2")
+    it "uses expected populated cache key format" do
+      expect(described_class.send(:populated_cache_key, :funder_to_ror)).to eq("ror_ref/funder_to_ror/populated")
     end
   end
 end
