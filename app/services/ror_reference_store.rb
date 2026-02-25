@@ -4,99 +4,95 @@ require "aws-sdk-s3"
 
 # Service for loading and caching ROR reference mapping files from S3.
 #
-# Memcached has a ~1 MB item limit, so large JSON files are split into
-# fixed-size chunks and stored under individual cache keys.  A lightweight
-# "meta" key records how many chunks exist so the reader can reassemble the
-# original JSON without hitting S3 again.
+# Each key-value pair from the mapping JSON is stored as its own cache entry,
+# avoiding the need to assemble large Hashes in memory on every lookup.
 #
 # Cache key layout for mapping "funder_to_ror":
-#   ror_ref/funder_to_ror/meta  => { "chunks" => N }   (Hash)
-#   ror_ref/funder_to_ror/0     => "<first 512 KB of JSON>"
-#   ror_ref/funder_to_ror/1     => "<next  512 KB …>"
+#   ror_ref/funder_to_ror/populated       => true   (written last, signals warm cache)
+#   ror_ref/funder_to_ror/<funder_id>     => "<ror_id>"
+#   ror_ref/funder_to_ror/<funder_id>     => "<ror_id>"
 #   …
+#
+# For nested mappings like "ror_hierarchy":
+#   ror_ref/ror_hierarchy/<ror_id>        => { "ancestors" => [...], ... }
+#
 class RorReferenceStore
-  S3_PREFIX = "ror_funder_mapping/"
-  CHUNK_SIZE = 512 * 1024 # 512 KB – well below Memcached's 1 MB limit
+  S3_PREFIX    = "ror_funder_mapping/"
+  TTL          = 31.days
+  POPULATED_KEY_SUFFIX = "populated"
 
   MAPPING_FILES = {
-    funder_to_ror:   "funder_to_ror.json",
-    ror_hierarchy:   "ror_hierarchy.json",
+    funder_to_ror:    "funder_to_ror.json",
+    ror_hierarchy:    "ror_hierarchy.json",
     ror_to_countries: "ror_to_countries.json",
   }.freeze
 
   class << self
-    def funder_to_ror
-      load_mapping(:funder_to_ror)
+    # Returns the ROR ID for a given funder ID suffix, or nil if not found.
+    def funder_to_ror(funder_id)
+      lookup(:funder_to_ror, funder_id)
     end
 
-    def ror_hierarchy
-      load_mapping(:ror_hierarchy)
+    # Returns the hierarchy Hash for a given ROR ID, or nil if not found.
+    def ror_hierarchy(ror_id)
+      lookup(:ror_hierarchy, ror_id)
     end
 
-    def ror_to_countries
-      load_mapping(:ror_to_countries)
+    # Returns the country data for a given ROR ID, or nil if not found.
+    def ror_to_countries(ror_id)
+      lookup(:ror_to_countries, ror_id)
     end
 
     # Downloads all three mappings from S3 and rewrites the cache.
+    # Intended to be called from the monthly rake task.
     def refresh_all!
       MAPPING_FILES.each_key { |key| refresh!(key) }
     end
 
     private
 
-    def load_mapping(key)
-      json = read_from_cache(key)
-      if json
-        Rails.logger.info "[RorReferenceStore] cache hit: #{key}"
-        return json
+    def lookup(mapping, key)
+      # If cache isn't populated yet, trigger a refresh first
+      unless cache_populated?(mapping)
+        Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – fetching from S3"
+        refresh!(mapping)
       end
 
-      Rails.logger.info "[RorReferenceStore] cache miss: #{key} – fetching from S3"
-      refresh!(key)
+      value = Rails.cache.read(value_cache_key(mapping, key))
+      Rails.logger.info "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
+      value
     end
 
-    # Downloads the mapping from S3, writes chunked cache keys, and returns
-    # the parsed Hash.  Returns nil on failure so callers can degrade
-    # gracefully.
-    def refresh!(key)
-      body = download_from_s3(MAPPING_FILES[key])
+    def cache_populated?(mapping)
+      Rails.cache.read(populated_cache_key(mapping)) == true
+    end
+
+    def refresh!(mapping)
+      body = download_from_s3(MAPPING_FILES[mapping])
       return nil if body.nil?
 
-      write_to_cache(key, body)
-      JSON.parse(body)
-    rescue JSON::ParserError => e
-      Rails.logger.error "[RorReferenceStore] JSON parse error for #{key}: #{e.message}"
-      nil
-    end
+      hash = JSON.parse(body)
 
-    # Reassembles chunks from cache.  Returns nil if any chunk is missing.
-    def read_from_cache(key)
-      meta = Rails.cache.read(meta_cache_key(key))
-      return nil if meta.nil?
-
-      chunk_count = meta["chunks"]
-      chunks = (0...chunk_count).map { |i| Rails.cache.read(chunk_cache_key(key, i)) }
-      return nil if chunks.any?(&:nil?)
-
-      JSON.parse(chunks.join)
-    rescue JSON::ParserError => e
-      Rails.logger.error "[RorReferenceStore] JSON parse error reading cache for #{key}: #{e.message}"
-      nil
-    end
-
-    def write_to_cache(key, body)
-      chunks = body.scan(/.{1,#{CHUNK_SIZE}}/m)
-      chunks.each_with_index do |chunk, i|
-        Rails.cache.write(chunk_cache_key(key, i), chunk, expires_in: 25.hours)
+      # Write each key-value pair individually
+      hash.each do |key, value|
+        Rails.cache.write(value_cache_key(mapping, key), value, expires_in: TTL)
       end
-      Rails.cache.write(meta_cache_key(key), { "chunks" => chunks.size }, expires_in: 25.hours)
+
+      # Write the population signal last — only set after all keys are written
+      Rails.cache.write(populated_cache_key(mapping), true, expires_in: TTL)
+
+      Rails.logger.info "[RorReferenceStore] refreshed #{mapping} – #{hash.size} keys written"
+      nil
+    rescue JSON::ParserError => e
+      Rails.logger.error "[RorReferenceStore] JSON parse error for #{mapping}: #{e.message}"
+      nil
     end
 
     def download_from_s3(filename)
-      bucket = ENV["ROR_ANALYSIS_S3_BUCKET"]
+      bucket     = ENV["ROR_ANALYSIS_S3_BUCKET"]
       object_key = "#{S3_PREFIX}#{filename}"
 
-      client = Aws::S3::Client.new
+      client   = Aws::S3::Client.new
       response = client.get_object(bucket: bucket, key: object_key)
       response.body.read
     rescue Aws::S3::Errors::ServiceError => e
@@ -104,12 +100,12 @@ class RorReferenceStore
       nil
     end
 
-    def meta_cache_key(key)
-      "ror_ref/#{key}/meta"
+    def value_cache_key(mapping, key)
+      "ror_ref/#{mapping}/#{key}"
     end
 
-    def chunk_cache_key(key, index)
-      "ror_ref/#{key}/#{index}"
+    def populated_cache_key(mapping)
+      "ror_ref/#{mapping}/#{POPULATED_KEY_SUFFIX}"
     end
   end
 end
