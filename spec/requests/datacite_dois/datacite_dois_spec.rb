@@ -109,7 +109,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to start_with("/dois?")
-      expect(next_link).to include("disable-facets=false")
+      expect(next_link).not_to include("disable-facets=")
       expect(next_link).to include("page%5Bnumber%5D=2")
       expect(next_link).to include("page%5Bsize%5D=4")
 
@@ -121,7 +121,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to start_with("/dois?")
-      expect(next_link).to include("disable-facets=false")
+      expect(next_link).not_to include("disable-facets=")
       expect(next_link).to include("page%5Bnumber%5D=3")
       expect(next_link).to include("page%5Bsize%5D=4")
 
@@ -142,7 +142,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to start_with("/dois?")
-      expect(next_link).to include("disable-facets=false")
+      expect(next_link).not_to include("disable-facets=")
       expect(next_link).to include("page%5Bnumber%5D=2")
       expect(next_link).to include("page%5Bsize%5D=5")
 
@@ -299,7 +299,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to start_with("/dois?")
-      expect(next_link).to include("disable-facets=false")
+      expect(next_link).not_to include("disable-facets=")
       expect(next_link).to include("fields%5Bdois%5D=id")
       expect(next_link).to include("page%5Bnumber%5D=2")
       expect(next_link).to include("page%5Bsize%5D=2")
@@ -310,7 +310,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
       expect(next_link).to start_with("/dois?")
-      expect(next_link).to include("disable-facets=false")
+      expect(next_link).not_to include("disable-facets=")
       expect(next_link).to include("fields%5Bdois%5D=id%2Csubjects")
       expect(next_link).to include("page%5Bnumber%5D=2")
       expect(next_link).to include("page%5Bsize%5D=2")
@@ -348,6 +348,24 @@ describe DataciteDoisController, type: :request, vcr: true do
       DEFAULT_DOIS_FACETS.each do |facet|
         expect(json.dig("meta", facet)).to eq(nil)
       end
+    end
+
+    it "includes disable-facets=false in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=false")
+    end
+
+    it "includes disable-facets=true in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=true")
     end
 
     it "returns no facets when facets is empty" do
@@ -420,13 +438,13 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + DEFAULT_META_FIELDS)
       end
 
-      it "includes disable-facets=true in pagination next link when env is set" do
+      it "omits disable-facets from pagination next link when param not passed (even when env set)" do
         get "/dois?page[number]=1&page[size]=4", nil, headers
 
         expect(last_response.status).to eq(200)
         next_link = json.dig("links", "next")
         expect(next_link).to be_present
-        expect(next_link).to include("disable-facets=true")
+        expect(next_link).not_to include("disable-facets=")
       end
     end
   end
