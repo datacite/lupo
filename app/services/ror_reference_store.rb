@@ -50,67 +50,66 @@ class RorReferenceStore
     end
 
     private
-
-    def lookup(mapping, key)
-      value = Rails.cache.read(value_cache_key(mapping, key))
-      unless value.nil?
-        Rails.logger.info "[RorReferenceStore] hit: #{mapping}/#{key}"
-        return value
-      end
-
-      # Value nil: might be cold cache or key not in mapping — check populated
-      unless cache_populated?(mapping)
-        Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – fetching from S3"
-        refresh!(mapping)
+      def lookup(mapping, key)
         value = Rails.cache.read(value_cache_key(mapping, key))
-      end
-      Rails.logger.info "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
-      value
-    end
+        unless value.nil?
+          Rails.logger.info "[RorReferenceStore] hit: #{mapping}/#{key}"
+          return value
+        end
 
-    def cache_populated?(mapping)
-      Rails.cache.read(populated_cache_key(mapping)) == true
-    end
-
-    def refresh!(mapping)
-      body = download_from_s3(MAPPING_FILES[mapping])
-      return nil if body.nil?
-
-      hash = JSON.parse(body)
-
-      # Write each key-value pair individually
-      hash.each do |key, value|
-        Rails.cache.write(value_cache_key(mapping, key), value, expires_in: TTL)
+        # Value nil: might be cold cache or key not in mapping — check populated
+        unless cache_populated?(mapping)
+          Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – fetching from S3"
+          refresh!(mapping)
+          value = Rails.cache.read(value_cache_key(mapping, key))
+        end
+        Rails.logger.info "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
+        value
       end
 
-      # Write the population signal last — only set after all keys are written
-      Rails.cache.write(populated_cache_key(mapping), true, expires_in: TTL)
+      def cache_populated?(mapping)
+        Rails.cache.read(populated_cache_key(mapping)) == true
+      end
 
-      Rails.logger.info "[RorReferenceStore] refreshed #{mapping} – #{hash.size} keys written"
-      nil
-    rescue JSON::ParserError => e
-      Rails.logger.error "[RorReferenceStore] JSON parse error for #{mapping}: #{e.message}"
-      nil
-    end
+      def refresh!(mapping)
+        body = download_from_s3(MAPPING_FILES[mapping])
+        return nil if body.nil?
 
-    def download_from_s3(filename)
-      bucket     = ENV["ROR_ANALYSIS_S3_BUCKET"]
-      object_key = "#{S3_PREFIX}#{filename}"
+        hash = JSON.parse(body)
 
-      client   = Aws::S3::Client.new
-      response = client.get_object(bucket: bucket, key: object_key)
-      response.body.read
-    rescue Aws::S3::Errors::ServiceError => e
-      Rails.logger.error "[RorReferenceStore] S3 download failed for #{filename}: #{e.message}"
-      nil
-    end
+        # Write each key-value pair individually
+        hash.each do |key, value|
+          Rails.cache.write(value_cache_key(mapping, key), value, expires_in: TTL)
+        end
 
-    def value_cache_key(mapping, key)
-      "ror_ref/#{mapping}/#{key}"
-    end
+        # Write the population signal last — only set after all keys are written
+        Rails.cache.write(populated_cache_key(mapping), true, expires_in: TTL)
 
-    def populated_cache_key(mapping)
-      "ror_ref/#{mapping}/#{POPULATED_KEY_SUFFIX}"
-    end
+        Rails.logger.info "[RorReferenceStore] refreshed #{mapping} – #{hash.size} keys written"
+        nil
+      rescue JSON::ParserError => e
+        Rails.logger.error "[RorReferenceStore] JSON parse error for #{mapping}: #{e.message}"
+        nil
+      end
+
+      def download_from_s3(filename)
+        bucket     = ENV["ROR_ANALYSIS_S3_BUCKET"]
+        object_key = "#{S3_PREFIX}#{filename}"
+
+        client   = Aws::S3::Client.new
+        response = client.get_object(bucket: bucket, key: object_key)
+        response.body.read
+      rescue Aws::S3::Errors::ServiceError => e
+        Rails.logger.error "[RorReferenceStore] S3 download failed for #{filename}: #{e.message}"
+        nil
+      end
+
+      def value_cache_key(mapping, key)
+        "ror_ref/#{mapping}/#{key}"
+      end
+
+      def populated_cache_key(mapping)
+        "ror_ref/#{mapping}/#{POPULATED_KEY_SUFFIX}"
+      end
   end
 end
