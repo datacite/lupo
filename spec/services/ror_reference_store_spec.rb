@@ -44,12 +44,18 @@ RSpec.describe RorReferenceStore, type: :service do
   describe "cold cache refresh" do
     it "re-fetches from S3 when populated key is missing" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
-      allow(s3_client).to receive(:get_object).and_return(s3_response)
+      # Two responses so the second get_object returns a fresh readable body (StringIO is consumed on read)
+      allow(s3_client).to receive(:get_object).and_return(
+        instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json)),
+        instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json))
+      )
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
       described_class.funder_to_ror("100010552")
 
+      # Simulate cold cache: remove populated sentinel and the value so lookup checks populated and refreshes
       Rails.cache.delete("ror_ref/funder_to_ror/populated")
+      Rails.cache.delete("ror_ref/funder_to_ror/100010552")
 
       result = described_class.funder_to_ror("100010552")
       expect(result).to eq("https://ror.org/04ttjf776")
