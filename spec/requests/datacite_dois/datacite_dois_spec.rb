@@ -654,6 +654,8 @@ describe DataciteDoisController, type: :request, vcr: true do
   end
 
   describe "GET /dois with funded_by filter", prefix_pool_size: 3 do
+    include_context "ROR funding stubs for DOI indexing"
+
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable", version_info: "testtag") }
     let!(:funded_by_ec_dois) do
       create_list(:doi, 5, client: client, aasm_state: "findable", funding_references:
