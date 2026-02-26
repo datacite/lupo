@@ -108,7 +108,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=4")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=4")
 
       get next_link, nil, headers
 
@@ -117,7 +120,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=3&page%5Bsize%5D=4")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=3")
+      expect(next_link).to include("page%5Bsize%5D=4")
 
       get next_link, nil, headers
 
@@ -135,7 +141,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=5")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=5")
 
       get next_link, nil, headers
 
@@ -289,14 +298,22 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(last_response.status).to eq(200)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?fields%5Bdois%5D=id&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("fields%5Bdois%5D=id")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=2")
 
       get "/dois?fields[dois]=id,subjects&page[size]=2&page[number]=1", nil, headers
 
       expect(last_response.status).to eq(200)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("fields%5Bdois%5D=id%2Csubjects")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=2")
     end
 
     it "returns default facets" do
@@ -331,6 +348,24 @@ describe DataciteDoisController, type: :request, vcr: true do
       DEFAULT_DOIS_FACETS.each do |facet|
         expect(json.dig("meta", facet)).to eq(nil)
       end
+    end
+
+    it "includes disable-facets=false in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=false")
+    end
+
+    it "includes disable-facets=true in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=true")
     end
 
     it "returns no facets when facets is empty" do
@@ -370,6 +405,47 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(0)
       expect(json.dig("meta").length).to eq(3)
       expect(json.dig("meta").keys).to match_array(DEFAULT_META_FIELDS)
+    end
+
+    describe "GET /dois with DISABLE_FACETS_BY_DEFAULT=true" do
+      around do |example|
+        orig = ENV["DISABLE_FACETS_BY_DEFAULT"]
+        ENV["DISABLE_FACETS_BY_DEFAULT"] = "true"
+        example.run
+      ensure
+        ENV["DISABLE_FACETS_BY_DEFAULT"] = orig
+      end
+
+      it "returns no facets by default when env is set" do
+        get "/dois", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+        expect(json.dig("meta").length).to eq(3)
+        DEFAULT_DOIS_FACETS.each do |facet|
+          expect(json.dig("meta", facet)).to eq(nil)
+        end
+      end
+
+      it "returns default facets when disable-facets=false overrides env" do
+        get "/dois?disable-facets=false", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+        expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+        expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + DEFAULT_META_FIELDS)
+      end
+
+      it "omits disable-facets from pagination next link when param not passed (even when env set)" do
+        get "/dois?page[number]=1&page[size]=4", nil, headers
+
+        expect(last_response.status).to eq(200)
+        next_link = json.dig("links", "next")
+        expect(next_link).to be_present
+        expect(next_link).not_to include("disable-facets=")
+      end
     end
   end
 
