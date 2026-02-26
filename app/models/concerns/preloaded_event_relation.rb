@@ -66,8 +66,8 @@ class PreloadedEventRelation
     @events.group_by(&block)
   end
 
-  def inject(initial = nil, &block)
-    @events.inject(initial, &block)
+  def inject(*args, &block)
+    @events.inject(*args, &block)
   end
 
   def length
