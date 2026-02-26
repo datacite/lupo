@@ -17,10 +17,25 @@ describe EventsPreloader do
       expect(doi2.preloaded_events).to eq([])
     end
 
-    it "handles empty array" do
-      preloader = EventsPreloader.new([])
-      expect { preloader.preload! }.not_to raise_error
+  describe "#initialize" do
+    it "initializes preloaded_events for each DOI" do
+      dois = [doi1, doi2]
+      EventsPreloader.new(dois)
+
+      expect(doi1.preloaded_events).to eq([])
+      expect(doi2.preloaded_events).to eq([])
     end
+  end
+
+  describe "#preload!" do
+    context "with empty array" do
+      it "does not raise an error" do
+        preloader = EventsPreloader.new([])
+        expect { preloader.preload! }.not_to raise_error
+      end
+    end
+
+    context "with source and target events" do
   end
 
   describe "#preload!" do
