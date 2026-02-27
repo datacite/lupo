@@ -693,7 +693,9 @@ paths:
                 - output-management-plan
                 - peer-review
                 - physical-object
+                - poster
                 - preprint
+                - presentation
                 - project
                 - report
                 - service
@@ -2524,6 +2526,8 @@ components:
                 type: string
               schemeType:
                 type: string
+              relationTypeInformation:
+                type: string
         relatedItems:
           description: '[DataCite Metadata Schema: RelatedItem](https://datacite-metadata-schema.readthedocs.io/en/4/properties/relateditem/)'
           type: array
@@ -2547,6 +2551,8 @@ components:
                     type: string
                   schemeType:
                     type: string
+              relationTypeInformation:
+                type: string
               creators:
                 type: array
                 items:
@@ -3435,6 +3441,7 @@ components:
         - Collects
         - IsTranslationOf
         - HasTranslation
+        - Other
     resourceTypeGeneral:
       description: '[DataCite Metadata Schema: resourceTypeGeneral](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/resourceTypeGeneral/)'
       type: string
@@ -3460,7 +3467,9 @@ components:
         - OutputManagementPlan
         - PeerReview
         - PhysicalObject
+        - Poster
         - Preprint
+        - Presentation
         - Project
         - Report
         - Service
@@ -3517,7 +3526,9 @@ components:
         - LSID
         - PMID
         - PURL
+        - RAiD
         - RRID
+        - SWHID
         - UPC
         - URL
         - URN
@@ -3656,6 +3667,9 @@ components:
         - obsoletes
         - is-collected-by
         - collects
+        - is-translation-of
+        - has-translation
+        - other
         - is-authored-by
         - is-authored-at
         - is-funded-by

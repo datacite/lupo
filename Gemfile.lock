@@ -137,7 +137,7 @@ GEM
     bigdecimal (4.0.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bolognese (2.5.0)
+    bolognese (2.5.1)
       activesupport (= 7.2.3)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -707,7 +707,7 @@ GEM
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     sexp_processor (4.17.1)
-    shoryuken (7.0.0)
+    shoryuken (7.0.1)
       aws-sdk-sqs (>= 1.66.0)
       concurrent-ruby
       thor
@@ -821,7 +821,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   better_errors
   binding_of_caller
-  bolognese (~> 2.5.0)
+  bolognese (~> 2.5.1)
   bootsnap (~> 1.4, >= 1.4.4)
   brakeman (~> 6.1, >= 6.1.2)
   bullet (~> 8.1)
@@ -897,7 +897,7 @@ DEPENDENCIES
   seedbank
   sentry-rails (~> 5.20)
   sentry-ruby (~> 5.20)
-  shoryuken (~> 7.0)
+  shoryuken (~> 7.0.1)
   shoulda-matchers (~> 4.1, >= 4.1.2)
   simple_command
   simplecov (~> 0.22.0)
