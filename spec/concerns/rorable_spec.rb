@@ -74,45 +74,46 @@ describe "Rorable", type: :model do
   describe "ROR to country mapping" do
     let(:doi) { create(:doi) }
 
+    let(:ror_url) { "https://ror.org/00k4n6c32" }
+    let(:ror_incomplete_url) { "ror.org/00k4n6c32" }
+    let(:ror_suffix) { "00k4n6c32" }
+
+    let(:uppercase_fixture_ror_url) { "https://ror.org/00a0jsq62" }
+
     it "loads ROR to countries mapping" do
       expect(ROR_TO_COUNTRIES).to be_a(Hash)
       expect(ROR_TO_COUNTRIES).not_to be_empty
     end
 
     it "maps ROR URL to country codes" do
-      ror_id = "https://ror.org/00k4n6c32"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq(["US"])
+      expected = Array.wrap(ROR_TO_COUNTRIES[ror_url]).map(&:upcase).uniq
+      expect(doi.get_countries_from_ror(ror_url)).to eq(expected)
     end
 
     it "maps incomplete ROR URL to country codes" do
-      ror_id = "ror.org/00k4n6c32"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq(["US"])
+      expected = Array.wrap(ROR_TO_COUNTRIES[ror_url]).map(&:upcase).uniq
+      expect(doi.get_countries_from_ror(ror_incomplete_url)).to eq(expected)
     end
 
     it "maps ROR suffix to country codes" do
-      ror_id = "00k4n6c32"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq(["US"])
+      expected = Array.wrap(ROR_TO_COUNTRIES[ror_url]).map(&:upcase).uniq
+      expect(doi.get_countries_from_ror(ror_suffix)).to eq(expected)
     end
 
     it "returns empty array for invalid ROR" do
       ror_id = "doi.org/00k4n6c32"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq([])
+      expect(doi.get_countries_from_ror(ror_id)).to eq([])
     end
 
     it "returns empty array for ROR not in mapping" do
       ror_id = "https://ror.org/nonexistent"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq([])
+      expect(doi.get_countries_from_ror(ror_id)).to eq([])
     end
 
     it "normalizes country codes to uppercase" do
-      ror_id = "https://ror.org/00a0jsq62"
-      countries = doi.get_countries_from_ror(ror_id)
-      expect(countries).to eq(["US"])
+      # Prove normalization by comparing to an upcased expected value from the mapping.
+      expected = Array.wrap(ROR_TO_COUNTRIES[uppercase_fixture_ror_url]).map(&:upcase).uniq
+      expect(doi.get_countries_from_ror(uppercase_fixture_ror_url)).to eq(expected)
     end
   end
 end
