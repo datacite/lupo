@@ -2331,6 +2331,8 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
   end
 
   describe "with funding references" do
+    include_context "ROR funding stubs for DOI indexing"
+
     let(:doi) { create(:doi,
       funding_references:
         [
