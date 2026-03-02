@@ -1,3 +1,5 @@
+# DOCKER-COMPOSE.YML
+
 services:
   web:
     env_file: .env
@@ -40,7 +42,6 @@ services:
       - "3309:3306"
     networks:
       - public
-
   elasticsearch:
     image: opensearchproject/opensearch:2
     ports:

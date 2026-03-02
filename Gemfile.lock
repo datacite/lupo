@@ -137,7 +137,7 @@ GEM
     bigdecimal (4.0.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
-    bolognese (2.5.0)
+    bolognese (2.5.1)
       activesupport (= 7.2.3)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -311,8 +311,10 @@ GEM
       railties (>= 5.0.0)
     faker (3.2.3)
       i18n (>= 1.8.11, < 2)
-    faraday (2.9.0)
-      faraday-net_http (>= 2.0, < 3.2)
+    faraday (2.14.1)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
     faraday-encoding (0.0.5)
       faraday
     faraday-excon (2.1.0)
@@ -325,8 +327,8 @@ GEM
       zlib (~> 2.1)
     faraday-multipart (1.0.4)
       multipart-post (~> 2)
-    faraday-net_http (3.1.0)
-      net-http
+    faraday-net_http (3.4.2)
+      net-http (~> 0.5)
     faraday_middleware-aws-sigv4 (0.3.0)
       aws-sigv4 (~> 1.0)
       faraday (>= 0.15)
@@ -489,8 +491,8 @@ GEM
     mysql2 (0.5.4)
     namae (1.2.0)
       racc (~> 1.7)
-    net-http (0.4.1)
-      uri
+    net-http (0.9.1)
+      uri (>= 0.11.1)
     net-http-persistent (4.0.1)
       connection_pool (~> 2.2)
     net-imap (0.5.12)
@@ -705,7 +707,7 @@ GEM
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     sexp_processor (4.17.1)
-    shoryuken (7.0.0)
+    shoryuken (7.0.1)
       aws-sdk-sqs (>= 1.66.0)
       concurrent-ruby
       thor
@@ -777,7 +779,7 @@ GEM
     unicode-types (1.8.0)
     unicode_utils (1.4.0)
     uniform_notifier (1.16.0)
-    uri (0.13.3)
+    uri (1.1.1)
     uri_template (0.7.0)
     useragent (0.16.11)
     uuid (2.3.9)
@@ -819,7 +821,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   better_errors
   binding_of_caller
-  bolognese (~> 2.5.0)
+  bolognese (~> 2.5.1)
   bootsnap (~> 1.4, >= 1.4.4)
   brakeman (~> 6.1, >= 6.1.2)
   bullet (~> 8.1)
@@ -844,7 +846,7 @@ DEPENDENCIES
   facets
   factory_bot_rails (~> 6.4, >= 6.4.3)
   faker (~> 3.2, >= 3.2.3)
-  faraday (~> 2.9)
+  faraday (~> 2.14)
   faraday_middleware-aws-sigv4 (~> 0.3.0)
   fasterer (~> 0.11.0)
   flipper (~> 1.2, >= 1.2.2)
@@ -895,7 +897,7 @@ DEPENDENCIES
   seedbank
   sentry-rails (~> 5.20)
   sentry-ruby (~> 5.20)
-  shoryuken (~> 7.0)
+  shoryuken (~> 7.0.1)
   shoulda-matchers (~> 4.1, >= 4.1.2)
   simple_command
   simplecov (~> 0.22.0)

@@ -302,10 +302,12 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
         resourceTypeGeneral: { type: :keyword },
+        relationTypeInformation: { type: :text },
       }
-      indexes :related_items,                       type: :object, properties: {
+      indexes :related_items, type: :object, properties: {
         relatedItemType: { type: :keyword },
         relationType: { type: :keyword },
+        relationTypeInformation: { type: :text },
         relatedItemIdentifier: { type: :object, properties: {
           relatedItemIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
           relatedItemIdentifierType: { type: :keyword },
@@ -711,8 +713,14 @@ class Doi < ApplicationRecord
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
-      # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
+      # number of resourceTypeGeneral increased from 34 to 34 in schema 4.6
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 },
+        aggs: {
+          resource_types: {
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
+          }
+        }
+      },
       open_licenses: {
         filter: { terms: {
           "rights_list.rightsIdentifier": [
@@ -730,7 +738,7 @@ class Doi < ApplicationRecord
         } },
         aggs: {
           resource_types: {
-            terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 }
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
           }
         }
       },

@@ -42,7 +42,6 @@ Rails.application.configure do
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
   config.flipper.memoize = false
-
   config.hosts << "lupo_web"
   ENV["TEST_ENV_NUMBER"] ||= "" # For parallel tests, often set by CI, default to empty
   ENV["ES_PREFIX"] ||= "" # ElasticSearch index prefix
