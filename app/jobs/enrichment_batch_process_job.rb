@@ -29,11 +29,6 @@ class EnrichmentBatchProcessJob < ApplicationJob
           next
         end
 
-        if doi.enrichment_field(parsed_line["field"]).nil?
-          Rails.logger.error("#{log_prefix}: Unsupported enrichment field #{parsed_line["field"]} for DOI #{uid}")
-          next
-        end
-
         # We set the only_validate flag on the DOI model to true such that we
         # ensure that validation functions as expected when not persisting the record.
         doi.only_validate = true
@@ -43,7 +38,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
           doi: uid,
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
-          field: parsed_line["field"],
+          field: doi.enrichment_field(parsed_line["field"]),
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"]

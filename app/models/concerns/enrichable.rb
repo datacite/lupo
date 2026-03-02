@@ -3,6 +3,28 @@
 module Enrichable
   extend ActiveSupport::Concern
 
+  FIELD_MAPPING = {
+    "alternateIdentifiers" => "alternate_identifiers",
+    "creators" => "creators",
+    "titles" => "titles",
+    "publisher" => "publisher",
+    "publicationYear" => "publication_year",
+    "subjects" => "subjects",
+    "contributors" => "contributors",
+    "dates" => "dates",
+    "language" => "language",
+    "types" => "types",
+    "relatedIdentifiers" => "related_identifiers",
+    "relatedItems" => "related_items",
+    "sizes" => "sizes",
+    "formats" => "formats",
+    "version" => "version",
+    "rightsList" => "rights_list",
+    "descriptions" => "descriptions",
+    "geoLocations" => "geo_locations",
+    "fundingReferences" => "funding_references"
+  }.freeze
+
   def apply_enrichment(enrichment)
     action = enrichment.action
     field = enrichment_field(enrichment.field)
@@ -44,28 +66,6 @@ module Enrichable
   end
 
   def enrichment_field(field)
-    field_mapping = {
-      "alternateIdentifiers" => "alternate_identifiers",
-      "creators" => "creators",
-      "titles" => "titles",
-      "publisher" => "publisher",
-      "publicationYear" => "publication_year",
-      "subjects" => "subjects",
-      "contributors" => "contributors",
-      "dates" => "dates",
-      "language" => "language",
-      "types" => "types",
-      "relatedIdentifiers" => "related_identifiers",
-      "relatedItems" => "related_items",
-      "sizes" => "sizes",
-      "formats" => "formats",
-      "version" => "version",
-      "rightsList" => "rights_list",
-      "descriptions" => "descriptions",
-      "geoLocations" => "geo_locations",
-      "fundingReferences" => "funding_references"
-    }
-
-    field_mapping.fetch(field, nil)
+    FIELD_MAPPING.fetch(field, nil)
   end
 end
