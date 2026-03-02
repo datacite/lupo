@@ -12,4 +12,14 @@ module Rorable
     normalized_ror = "https://#{ror_from_url(ror_id)}"
     ROR_HIERARCHY[normalized_ror]&.fetch("ancestors", []) || []
   end
+
+  def get_countries_from_ror(ror_id)
+    normalized_ror = ror_from_url(ror_id)
+    return [] if normalized_ror.blank?
+
+    normalized_ror = "https://#{normalized_ror}" unless normalized_ror.start_with?("https://")
+
+    countries = ROR_TO_COUNTRIES[normalized_ror]
+    Array.wrap(countries).map(&:upcase).uniq
+  end
 end

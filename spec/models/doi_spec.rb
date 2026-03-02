@@ -2363,4 +2363,66 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(doi.as_indexed_json["funder_parent_rors"]).to eq(["https://ror.org/019w4f821", "https://ror.org/04cw6st05"])
     end
   end
+
+  describe "with affiliation ROR IDs" do
+    let(:datacite_ror) { "https://ror.org/00k4n6c32" }
+    let(:cambridge_ror) { "https://ror.org/04wxnsj81" }
+
+    let(:doi) do
+      create(
+        :doi,
+        creators: [
+          {
+            "name": "Garza, Kristian",
+            "givenName": "Kristian",
+            "familyName": "Garza",
+            "nameType": "Personal",
+            "affiliation": [
+              {
+                "name": "DataCite",
+                "affiliationIdentifier": datacite_ror,
+                "affiliationIdentifierScheme": "ROR",
+              },
+              {
+                "name": "University of Cambridge",
+                "affiliationIdentifier": cambridge_ror,
+                "affiliationIdentifierScheme": "ROR",
+              },
+            ],
+          },
+        ],
+        contributors: [
+          {
+            "name": "Smith, John",
+            "givenName": "John",
+            "familyName": "Smith",
+            "contributorType": "Editor",
+            "affiliation": [
+              {
+                "name": "DataCite",
+                "affiliationIdentifier": datacite_ror,
+                "affiliationIdentifierScheme": "ROR",
+              },
+            ],
+          },
+        ],
+      )
+    end
+
+    let(:expected_countries) do
+      (Array.wrap(ROR_TO_COUNTRIES[datacite_ror]) + Array.wrap(ROR_TO_COUNTRIES[cambridge_ror]))
+        .map(&:upcase)
+        .uniq
+    end
+
+    it "has countries from ROR affiliations in affiliation_countries" do
+      expect(doi.affiliation_countries).to match_array(expected_countries)
+      expect(doi.as_indexed_json["affiliation_countries"]).to match_array(expected_countries)
+    end
+
+    it "deduplicates country codes from multiple affiliations" do
+      countries = doi.affiliation_countries
+      expect(countries).to eq(countries.uniq)
+    end
+  end
 end
