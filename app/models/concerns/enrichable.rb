@@ -18,19 +18,24 @@ module Enrichable
         raise ArgumentError, "Original value does not match current value for update action"
       end
     when "updateChild"
+      success = false
+      self[field] ||= []
       self[field].each_with_index do |item, index|
         if item == enrichment["original_value"]
           self[field][index] = enrichment["enriched_value"]
+          success = true
           break
         end
       end
 
       raise ArgumentError, "Original value not found for updateChild action" unless success
     when "deleteChild"
+      success = false
       self[field] ||= []
       self[field].each_with_index do |item, index|
         if item == enrichment["original_value"]
           self[field].delete_at(index)
+          success = true
         end
       end
 

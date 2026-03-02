@@ -41,7 +41,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         begin
           doi.apply_enrichment(parsed_line)
         rescue ArgumentError => e
-          rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}: #{e.message}")
+          Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}: #{e.message}")
           next
         end
 
