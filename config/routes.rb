@@ -195,6 +195,8 @@ Rails.application.routes.draw do
     resources :activities
   end
 
+  resources :enrichments, only: %i[index]
+
   resources :reference_repositories, path: "reference-repositories", only: %i[index show], constraints: { id: /.+/ }
 
   resources :client_prefixes, path: "client-prefixes"
