@@ -58,7 +58,7 @@ class Prefix < ApplicationRecord
       "client_prefix_ids" => client_prefix_ids,
       "state" => state,
       "prefix" => prefix,
-      "created_at" => created_at,
+      "created_at" => created_at.try(:iso8601),
       "clients" =>
         clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "providers" =>

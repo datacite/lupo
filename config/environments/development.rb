@@ -42,7 +42,6 @@ Rails.application.configure do
   require "flipper/middleware/memoizer"
   config.middleware.use Flipper::Middleware::Memoizer
   config.flipper.memoize = false
-
   config.hosts << "lupo_web"
   ENV["TEST_ENV_NUMBER"] ||= "" # For parallel tests, often set by CI, default to empty
   ENV["ES_PREFIX"] ||= "" # ElasticSearch index prefix
@@ -93,6 +92,8 @@ Rails.application.configure do
   ENV["HANDLES_MINTED"] ||= "10132"
   ENV["REALM"] ||= "http://localhost:4000"
   ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
+  ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
+  ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 end
 
 BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]

@@ -45,6 +45,8 @@ class Doi < ApplicationRecord
 
   include Elasticsearch::Model
 
+  include Enrichable
+
   aasm whiny_transitions: false do
     # draft is initial state for new DOIs.
     state :draft, initial: true
@@ -94,8 +96,8 @@ class Doi < ApplicationRecord
   attr_accessor :skip_schema_version_validation
 
   belongs_to :client, foreign_key: :datacentre, optional: true
-  has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
-  has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
+  has_many :media, -> { order "created DESC" }, class_name: "Media", foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
+  has_many :metadata, -> { order "created DESC" }, class_name: "Metadata", foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
@@ -347,10 +349,12 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
         resourceTypeGeneral: { type: :keyword },
+        relationTypeInformation: { type: :text },
       }
-      indexes :related_items,                       type: :object, properties: {
+      indexes :related_items, type: :object, properties: {
         relatedItemType: { type: :keyword },
         relationType: { type: :keyword },
+        relationTypeInformation: { type: :text },
         relatedItemIdentifier: { type: :object, properties: {
           relatedItemIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
           relatedItemIdentifierType: { type: :keyword },
@@ -756,8 +760,14 @@ class Doi < ApplicationRecord
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
-      # number of resourceTypeGeneral increased from 30 to 32 in schema 4.6
-      resource_types: { terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 } },
+      # number of resourceTypeGeneral increased from 34 to 34 in schema 4.6
+      resource_types: { terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 },
+        aggs: {
+          resource_types: {
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
+          }
+        }
+      },
       open_licenses: {
         filter: { terms: {
           "rights_list.rightsIdentifier": [
@@ -775,7 +785,7 @@ class Doi < ApplicationRecord
         } },
         aggs: {
           resource_types: {
-            terms: { field: "resource_type_id_and_name", size: 32, min_doc_count: 1 }
+            terms: { field: "resource_type_id_and_name", size: 34, min_doc_count: 1 }
           }
         }
       },
@@ -870,6 +880,30 @@ class Doi < ApplicationRecord
                   "creators_and_contributors.name",
                   "creators_and_contributors.nameIdentifiers.nameIdentifier"
                 ]
+              },
+              size: 1
+            }
+          },
+          "work_types": {
+            "terms": {
+              "field": "resource_type_id_and_name",
+              "min_doc_count": 1
+            }
+          }
+        }
+      },
+      person_to_work_types_multilevel: {
+        terms: {
+          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          size: 10,
+          min_doc_count: 1,
+          include: "https?://orcid.org/.*"
+        },
+        aggs: {
+          creators_and_contributors: {
+            top_hits: {
+              _source: {
+                includes: [ "creators_and_contributors.name", "creators_and_contributors.nameIdentifiers.nameIdentifier" ]
               },
               size: 1
             }
@@ -2708,7 +2742,7 @@ class Doi < ApplicationRecord
       # If we dont have one (there was legacy reasons) then set to unix epoch
       checked = doi.last_landing_page_status_check
       checked = checked.nil? ? Time.at(0) : checked
-      checked = checked.iso8601
+      checked = checked.try(:iso8601)
 
       # Next we want to build a new landing_page result.
       landing_page = {

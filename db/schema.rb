@@ -10,8 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_29_195058) do
-  create_table "active_storage_attachments", charset: "utf8mb4", force: :cascade do |t|
+ActiveRecord::Schema[7.2].define(version: 2026_01_20_083752) do
+  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -21,25 +21,25 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", charset: "utf8mb4", force: :cascade do |t|
+  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", limit: 191, null: false
+    t.string "checksum", limit: 191
     t.datetime "created_at", null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", charset: "utf8mb4", force: :cascade do |t|
+  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "allocator", charset: "utf8", force: :cascade do |t|
+  create_table "allocator", charset: "utf8mb3", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "audits", charset: "utf8mb4", force: :cascade do |t|
+  create_table "audits", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "client_prefixes", charset: "utf8", force: :cascade do |t|
+  create_table "client_prefixes", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "client_id", null: false
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
@@ -125,7 +125,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uid"], name: "index_client_prefixes_on_uid", length: 128
   end
 
-  create_table "contacts", charset: "utf8", force: :cascade do |t|
+  create_table "contacts", charset: "utf8mb3", force: :cascade do |t|
     t.string "uid", limit: 36
     t.bigint "provider_id", null: false
     t.string "given_name"
@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uid"], name: "index_contacts_uid"
   end
 
-  create_table "datacentre", charset: "utf8", force: :cascade do |t|
+  create_table "datacentre", charset: "utf8mb3", force: :cascade do |t|
     t.text "comments", size: :long
     t.string "system_email", null: false
     t.datetime "created"
@@ -181,7 +181,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
-  create_table "dataset", charset: "utf8", force: :cascade do |t|
+  create_table "dataset", charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
@@ -239,7 +239,21 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", charset: "utf8mb4", force: :cascade do |t|
+  create_table "enrichments", charset: "utf8mb3", force: :cascade do |t|
+    t.string "doi", null: false
+    t.json "contributors", null: false
+    t.json "resources", null: false
+    t.string "field", null: false
+    t.string "action", null: false
+    t.json "original_value"
+    t.json "enriched_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "filename"
+    t.index ["doi", "updated_at", "id"], name: "index_enrichments_on_doi_and_updated_at_and_id", order: { updated_at: :desc, id: :desc }
+  end
+
+  create_table "events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -272,7 +286,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "media", charset: "utf8", force: :cascade do |t|
+  create_table "media", charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
     t.datetime "updated"
@@ -285,7 +299,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["url"], name: "index_media_on_url", length: 100
   end
 
-  create_table "metadata", charset: "utf8", force: :cascade do |t|
+  create_table "metadata", charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created"
     t.integer "metadata_version"
     t.integer "version"
@@ -298,13 +312,13 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
-  create_table "prefixes", charset: "utf8", force: :cascade do |t|
+  create_table "prefixes", charset: "utf8mb3", force: :cascade do |t|
     t.datetime "created_at"
     t.string "uid", limit: 80, null: false
     t.index ["uid"], name: "prefix", unique: true
   end
 
-  create_table "provider_prefixes", charset: "utf8", force: :cascade do |t|
+  create_table "provider_prefixes", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "provider_id", null: false
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
@@ -315,7 +329,7 @@ ActiveRecord::Schema.define(version: 2024_02_29_195058) do
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
 
-  create_table "reference_repositories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "reference_repositories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "client_id"
     t.string "re3doi"
     t.datetime "created_at", null: false

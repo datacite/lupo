@@ -2,6 +2,19 @@
 
 require "rails_helper"
 
+def clear_provider_prefix_index
+  ProviderPrefix.__elasticsearch__.client.delete_by_query(
+    index: ProviderPrefix.index_name,
+    body: { query: { match_all: {} } }
+  )
+  ProviderPrefix.__elasticsearch__.client.indices.refresh(index: ProviderPrefix.index_name)
+end
+
+def import_provider_prefix_index
+  ProviderPrefix.import
+  ProviderPrefix.__elasticsearch__.client.indices.refresh(index: ProviderPrefix.index_name)
+end
+
 describe ProviderPrefixesController, type: :request, elasticsearch: true do
   let!(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let!(:provider) do
@@ -36,7 +49,8 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
   end
 
   before(:each) do
-    ProviderPrefix.import
+    clear_provider_prefix_index
+    import_provider_prefix_index
     Prefix.import
     Provider.import
     sleep 2
@@ -239,6 +253,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true do
     let!(:provider_prefix) { create(:provider_prefix) }
 
     before do
+      clear_provider_prefix_index
       ProviderPrefix.import
       sleep 2
     end

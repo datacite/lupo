@@ -53,6 +53,13 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
+  after :all do
+    ReferenceRepository.destroy_all
+    Client.destroy_all
+    Provider.destroy_all
+    Prefix.destroy_all
+  end
+
   describe "GET /reference-repositories", elasticsearch: true do
     let!(:clients) { create_list(:client, 3) }
 

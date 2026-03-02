@@ -22,7 +22,7 @@ class ResourceType
       "id" => id,
       "title" => title,
       "cache_key" => cache_key,
-      "updated" => updated,
+      "updated" => updated.try(:iso8601),
     }
   end
 
@@ -53,7 +53,9 @@ class ResourceType
       { "id" => "output-management-plan", "title" => "OutputManagementPlan" },
       { "id" => "peer-review", "title" => "PeerReview" },
       { "id" => "physical-object", "title" => "PhysicalObject" },
+      { "id" => "poster", "title" => "Poster" },
       { "id" => "preprint", "title" => "Preprint" },
+      { "id" => "presentation", "title" => "Presentation" },
       { "id" => "project", "title" => "Project" },
       { "id" => "report", "title" => "Report" },
       { "id" => "service", "title" => "Service" },

@@ -65,6 +65,7 @@ class Ability
           activity.doi.provider &&
             user.provider_id.casecmp(activity.doi.provider.consortium_id)
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can %i[update read read_billing_information read_contact_information read_analytics],
           Provider,
@@ -93,6 +94,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "provider_user" && user.provider_id.present?
       can %i[read read_billing_information read_contact_information read_analytics],
           Provider,
@@ -111,6 +113,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "client_admin" && user.client.present? && user.client.is_active == "\x01"
       can %i[read], Provider
       can %i[read update read_contact_information read_analytics], Client, symbol: user.client_id.upcase
@@ -145,6 +148,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "client_admin" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
@@ -156,6 +160,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "client_user" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
@@ -169,13 +174,16 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "user"
       can %i[read], Provider
       if user.provider_id.present?
         can %i[update], Provider, symbol: user.provider_id.upcase
+        can %i[read], :access_datafile
       end
       if user.client_id.present?
         can %i[read update], Client, symbol: user.client_id.upcase
+        can %i[read], :access_datafile
       end
       can %i[read], Doi, client_id: user.client_id if user.client_id.present?
       can %i[read get_url], Doi

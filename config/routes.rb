@@ -176,6 +176,9 @@ Rails.application.routes.draw do
   post "repositories/export", to: "repositories#export"
   post "contacts/export", to: "contacts#export"
 
+  # Monthly Data File access
+  get "credentials/datafile", to: "datafile#create_credentials"
+
   resources :heartbeat, only: %i[index]
 
   resources :activities, only: %i[index show], constraints: { id: /.+/ }
@@ -191,6 +194,8 @@ Rails.application.routes.draw do
     resources :datacite_dois, path: "dois", constraints: { id: /.+/ }
     resources :activities
   end
+
+  resources :enrichments, only: %i[index]
 
   resources :reference_repositories, path: "reference-repositories", only: %i[index show], constraints: { id: /.+/ }
 

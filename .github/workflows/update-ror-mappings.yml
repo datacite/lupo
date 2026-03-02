@@ -1,0 +1,104 @@
+name: Update ROR Mappings
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run monthly on the 1st at 03:00 UTC (after upload job)
+    - cron: '0 3 1 * *'
+
+concurrency:
+  group: update-ror-mappings
+  cancel-in-progress: false
+
+jobs:
+  update-ror-mappings:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      BUCKET: ${{ secrets.ROR_ANALYSIS_S3_BUCKET }}
+      S3_FUNDER_KEY: ror_funder_mapping/funder_to_ror.json
+      S3_HIERARCHY_KEY: ror_funder_mapping/ror_hierarchy.json
+      LOCAL_DIR: app/resources
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.ROR_ANALYSIS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.ROR_ANALYSIS_SECRET_ACCESS_KEY }}
+
+      - name: Download latest ROR mapping files (temp only)
+        run: |
+          set -euo pipefail
+          aws s3 cp "s3://${BUCKET}/${S3_FUNDER_KEY}" funder_to_ror.json.new
+          aws s3 cp "s3://${BUCKET}/${S3_HIERARCHY_KEY}" ror_hierarchy.json.new
+
+      - name: Compare and update tracked files (semantic JSON)
+        id: update
+        run: |
+          set -euo pipefail
+          mkdir -p "${LOCAL_DIR}"
+          changed=false
+
+          normalize_and_update () {
+            local new_file="$1"
+            local dest_file="$2"
+
+            # If dest doesn't exist, this is definitely a change
+            if [ ! -f "$dest_file" ]; then
+              mv "$new_file" "$dest_file"
+              changed=true
+              return
+            fi
+
+            # Normalize both (sorted keys, consistent formatting)
+            jq -S . "$new_file"  > /tmp/new.norm.json
+            jq -S . "$dest_file" > /tmp/dest.norm.json
+
+            if ! cmp -s /tmp/new.norm.json /tmp/dest.norm.json; then
+              mv "$new_file" "$dest_file"
+              changed=true
+            else
+              rm "$new_file"
+            fi
+          }
+
+          normalize_and_update funder_to_ror.json.new "${LOCAL_DIR}/funder_to_ror.json"
+          normalize_and_update ror_hierarchy.json.new "${LOCAL_DIR}/ror_hierarchy.json"
+
+          echo "changed=${changed}" >> "$GITHUB_OUTPUT"
+
+      - name: Create Pull Request (GitHub CLI)
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="update/ror-mappings-$(date +'%Y%m%d%H%M%S')"
+          git checkout -b "$BRANCH"
+
+          git add app/resources
+          git commit -m "chore: update ROR mapping files from S3"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "chore: update ROR mapping files from S3" \
+            --body $'This PR updates ROR mapping JSON files in `app/resources` using the latest data from S3.\n\n- Generated automatically via GitHub Actions\n- Requires manual review and merge' \
+            --base master \
+            --head "$BRANCH" \
+            --label "automated-pr,ror-mapping"
+
+      - name: No changes detected
+        if: steps.update.outputs.changed != 'true'
+        run: echo "ROR mapping files are already up to date. No PR created."

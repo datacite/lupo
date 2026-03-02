@@ -154,7 +154,10 @@ class ReferenceRepositoryDenormalizer
   end
 
   def year
-    created_at&.year
+    created_at_value = created_at
+    return nil if created_at_value.nil?
+
+    Time.parse(created_at_value).year
   end
 
   def updated_at
@@ -166,19 +169,19 @@ class ReferenceRepositoryDenormalizer
   end
 
   def re3_created_at
-    @repository.re3_repo&.created&.to_time(:utc)
+    @repository.re3_repo&.created&.to_time(:utc)&.iso8601
   end
 
   def re3_updated_at
-    @repository.re3_repo&.updated&.to_time(:utc)
+    @repository.re3_repo&.updated&.to_time(:utc)&.iso8601
   end
 
   def client_created_at
-    @repository.client_repo&.created_at
+    @repository.client_repo&.created_at&.utc&.iso8601
   end
 
   def client_updated_at
-    @repository.client_repo&.updated_at
+    @repository.client_repo&.updated_at&.utc&.iso8601
   end
 
   def provider_id

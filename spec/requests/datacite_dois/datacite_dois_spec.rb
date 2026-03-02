@@ -108,7 +108,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=4")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=4")
 
       get next_link, nil, headers
 
@@ -117,7 +120,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=3&page%5Bsize%5D=4")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=3")
+      expect(next_link).to include("page%5Bsize%5D=4")
 
       get next_link, nil, headers
 
@@ -135,7 +141,10 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(10)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=5")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=5")
 
       get next_link, nil, headers
 
@@ -289,14 +298,22 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(last_response.status).to eq(200)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?fields%5Bdois%5D=id&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("fields%5Bdois%5D=id")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=2")
 
       get "/dois?fields[dois]=id,subjects&page[size]=2&page[number]=1", nil, headers
 
       expect(last_response.status).to eq(200)
       next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
       next_link = next_link_absolute.path + "?" + next_link_absolute.query
-      expect(next_link).to eq("/dois?fields%5Bdois%5D=id%2Csubjects&page%5Bnumber%5D=2&page%5Bsize%5D=2")
+      expect(next_link).to start_with("/dois?")
+      expect(next_link).not_to include("disable-facets=")
+      expect(next_link).to include("fields%5Bdois%5D=id%2Csubjects")
+      expect(next_link).to include("page%5Bnumber%5D=2")
+      expect(next_link).to include("page%5Bsize%5D=2")
     end
 
     it "returns default facets" do
@@ -331,6 +348,24 @@ describe DataciteDoisController, type: :request, vcr: true do
       DEFAULT_DOIS_FACETS.each do |facet|
         expect(json.dig("meta", facet)).to eq(nil)
       end
+    end
+
+    it "includes disable-facets=false in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=false")
+    end
+
+    it "includes disable-facets=true in pagination next link when param is passed" do
+      get "/dois?page[number]=1&page[size]=4&disable-facets=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      next_link = json.dig("links", "next")
+      expect(next_link).to be_present
+      expect(next_link).to include("disable-facets=true")
     end
 
     it "returns no facets when facets is empty" do
@@ -370,6 +405,47 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(0)
       expect(json.dig("meta").length).to eq(3)
       expect(json.dig("meta").keys).to match_array(DEFAULT_META_FIELDS)
+    end
+
+    describe "GET /dois with DISABLE_FACETS_BY_DEFAULT=true" do
+      around do |example|
+        orig = ENV["DISABLE_FACETS_BY_DEFAULT"]
+        ENV["DISABLE_FACETS_BY_DEFAULT"] = "true"
+        example.run
+      ensure
+        ENV["DISABLE_FACETS_BY_DEFAULT"] = orig
+      end
+
+      it "returns no facets by default when env is set" do
+        get "/dois", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+        expect(json.dig("meta").length).to eq(3)
+        DEFAULT_DOIS_FACETS.each do |facet|
+          expect(json.dig("meta", facet)).to eq(nil)
+        end
+      end
+
+      it "returns default facets when disable-facets=false overrides env" do
+        get "/dois?disable-facets=false", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(10)
+        expect(json.dig("meta", "total")).to eq(10)
+        expect(json.dig("meta").length).to eq(DEFAULT_DOIS_FACETS.length + 3)
+        expect(json.dig("meta").keys).to match_array(DEFAULT_DOIS_FACETS + DEFAULT_META_FIELDS)
+      end
+
+      it "omits disable-facets from pagination next link when param not passed (even when env set)" do
+        get "/dois?page[number]=1&page[size]=4", nil, headers
+
+        expect(last_response.status).to eq(200)
+        next_link = json.dig("links", "next")
+        expect(next_link).to be_present
+        expect(next_link).not_to include("disable-facets=")
+      end
     end
   end
 
@@ -1915,6 +1991,127 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
+  describe "GET /dois search with person to work types multilevel", prefix_pool_size: 11 do
+    let!(:dois_contributor_1) do
+      create_list(:doi, 5, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    let!(:dois_contributor_2) do
+      create_list(:doi, 3, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Fenner, Martin",
+            "givenName" => "Martin",
+            "familyName" => "Fenner",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Software"
+        }
+      )
+    end
+
+    let!(:dois_contributor_3) do
+      create_list(:doi, 2, aasm_state: "findable",
+        creators: [
+          {
+            "nameType" => "Personal",
+            "name" => "Cousijn, Helena",
+            "givenName" => "Helena",
+            "familyName" => "Cousijn",
+            "nameIdentifiers" => [
+              {
+                "nameIdentifier" => "https://orcid.org/0000-0001-6660-6214",
+                "nameIdentifierScheme" => "ORCID",
+                "schemeUri" => "https://orcid.org",
+              },
+            ],
+          }
+        ],
+        types: {
+          "resourceTypeGeneral" => "Text"
+        }
+      )
+    end
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "returns person to work types multilevel values" do
+      get "/dois?facets=person_to_work_types_multilevel", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "personToWorkTypesMultilevel")).to be_truthy
+
+      # Validate exact count of unique contributors
+      expect(json.dig("meta", "personToWorkTypesMultilevel").length).to eq(2)
+
+      # Find contributors by their ORCID IDs
+      fenner = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0003-1419-2405" }
+      cousijn = json.dig("meta", "personToWorkTypesMultilevel").find { |p| p["id"] == "https://orcid.org/0000-0001-6660-6214" }
+
+      # Validate Fenner, Martin exists with correct data
+      expect(fenner).to be_present
+      expect(fenner["title"]).to eq("Fenner, Martin")
+      expect(fenner["count"]).to eq(8) # 5 Text + 3 Software
+      expect(fenner["inner"].length).to eq(2) # Should have 2 work types
+
+      # Validate Fenner's work types
+      fenner_text = fenner["inner"].find { |wt| wt["id"] == "text" }
+      fenner_software = fenner["inner"].find { |wt| wt["id"] == "software" }
+
+      expect(fenner_text).to be_present
+      expect(fenner_text["title"]).to eq("Text")
+      expect(fenner_text["count"]).to eq(5)
+
+      expect(fenner_software).to be_present
+      expect(fenner_software["title"]).to eq("Software")
+      expect(fenner_software["count"]).to eq(3)
+
+      # Validate Cousijn, Helena exists with correct data
+      expect(cousijn).to be_present
+      expect(cousijn["title"]).to eq("Cousijn, Helena")
+      expect(cousijn["count"]).to eq(2) # 2 Text
+      expect(cousijn["inner"].length).to eq(1) # Should have 1 work type
+
+      # Validate Cousijn's work types
+      cousijn_text = cousijn["inner"].find { |wt| wt["id"] == "text" }
+
+      expect(cousijn_text).to be_present
+      expect(cousijn_text["title"]).to eq("Text")
+      expect(cousijn_text["count"]).to eq(2)
+    end
+  end
+
   describe "GET /dois search with count values", prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -2054,6 +2251,81 @@ describe DataciteDoisController, type: :request, vcr: true do
         get "/dois?query=id:10.5438/Fj3W-0sHd", nil, headers
         expect(last_response.status).to eq(200)
       end
+    end
+  end
+
+  ## Metadata 4.7 queries with new field: relationTypeInformation (in relatedIdentifiers and relatedItems)
+
+  describe "GET /dois/query=...relationTypeInformation", vcr: true, elasticsearch: true do
+    let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable",
+      related_items: [
+        {
+          "firstPage" => "250",
+          "lastPage" => "264",
+          "publicationYear" => "2018",
+          "relatedItemIdentifier" => { "relatedItemIdentifier" => "10.1016/j.physletb.2017.11.044", "relatedItemIdentifierType" => "DOI" },
+          "relatedItemType" => "Journal",
+          "relationType" => "IsPublishedIn",
+          "relationTypeInformation" => "Relates this DOI to the journal in which it was published.",
+          "titles" => [{ "title" => "Physics letters / B" }],
+          "volume" => "776"
+        }
+      ],
+      related_identifiers: [
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/1",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+          "relationTypeInformation": "Relates this DOI to the dataset in Dryad that contains the data underlying the article.",
+        },
+        {
+          "relatedIdentifier": "10.5061/dryad.8515/2",
+          "relatedIdentifierType": "DOI",
+          "relationType": "HasPart",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsReferencedBy",
+          "relationTypeInformation": "Relates this DOI to the article that references it.",
+        },
+        {
+          "relatedIdentifier": "10.1371/journal.ppat.1000446",
+          "relatedIdentifierType": "DOI",
+          "relationType": "IsSupplementTo",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsReferencedBy",
+        },
+        {
+          "relatedIdentifier": "19478877",
+          "relatedIdentifierType": "PMID",
+          "relationType": "IsSupplementTo",
+        }
+      ]
+    )}
+
+    before do
+      clear_doi_index
+      import_doi_index
+    end
+
+    it "finds the doi based on relatedItems.relationTypeInformation" do
+      get "/dois?query=relatedItems.relationTypeInformation:\"Relates this DOI to*\"", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "relatedItems", 0, "relationTypeInformation")).to eq("Relates this DOI to the journal in which it was published.")
+    end
+
+
+    it "finds the dois based on relatedIdentiers.relationTypeInformation" do
+      get "/dois?query=relatedIdentifiers.relationTypeInformation:\"Relates this DOI to*\"", nil, headers
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 0, "relationTypeInformation")).to eq("Relates this DOI to the dataset in Dryad that contains the data underlying the article.")
+      expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 2, "relationTypeInformation")).to eq("Relates this DOI to the article that references it.")
     end
   end
 end

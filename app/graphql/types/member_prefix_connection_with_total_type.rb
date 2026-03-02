@@ -2,11 +2,10 @@
 
 class MemberPrefixConnectionWithTotalType < BaseConnection
   edge_type(MemberPrefixEdgeType)
-  field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :states, [FacetType], null: false, cache: true
-  field :years, [FacetType], null: false, cache: true
+  field :total_count, Integer, null: false
+  field :states, [FacetType], null: false
+  field :years, [FacetType], null: false
 
   def total_count
     object.total_count

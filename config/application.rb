@@ -66,12 +66,16 @@ ENV["HANDLES_MINTED"] ||= "10132"
 ENV["REALM"] ||= ENV["API_URL"]
 ENV["SQS_PREFIX"] ||= ""
 ENV["EXCLUDE_PREFIXES_FROM_DATA_IMPORT"] ||= ""
+ENV["DISABLE_FACETS_BY_DEFAULT"] ||= "false"
 ENV["METADATA_STORAGE_BUCKET_NAME"] ||= ""
+ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
+ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
+ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= ""
 
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,

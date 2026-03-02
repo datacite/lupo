@@ -998,4 +998,42 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
   end
+
+  ## Metadata 4.7 elements
+
+  context "when the record exists" do
+    let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.7.xml").read) }
+    let(:valid_attributes) do
+      {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "url" => "http://www.bl.uk/pdf/pat.pdf",
+            "xml" => xml,
+          },
+        },
+      }
+    end
+
+    it "updates the record" do
+      patch "/dois/#{doi.doi}", valid_attributes, headers
+
+      expect(last_response.status).to eq(200)
+
+      expect(json.dig("data", "attributes", "url")).to eq("http://www.bl.uk/pdf/pat.pdf")
+      expect(json.dig("data", "attributes", "doi")).to eq(doi.doi.downcase)
+
+      expect(json.dig("data", "attributes", "types", "resourceTypeGeneral")).to eq("Presentation")
+      expect(json.dig("data", "attributes", "types", "resourceType")).to eq("Example ResourceType")
+
+      expect(json.dig("data", "attributes", "relatedIdentifiers", 40, "relationType")).to eq("Other")
+      expect(json.dig("data", "attributes", "relatedIdentifiers", 40, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
+
+      expect(json.dig("data", "attributes", "relatedItems", 3, "relatedItemType")).to eq("Presentation")
+      expect(json.dig("data", "attributes", "relatedItems", 4, "relatedItemType")).to eq("Poster")
+      expect(json.dig("data", "attributes", "relatedItems", 5, "relatedItemIdentifier", "relatedItemIdentifierType")).to eq("SWHID")
+      expect(json.dig("data", "attributes", "relatedItems", 6, "relationType")).to eq("Other")
+      expect(json.dig("data", "attributes", "relatedItems", 6, "relationTypeInformation")).to eq("More relationType information to supplement relationType 'Other'")
+    end
+  end
 end
