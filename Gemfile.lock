@@ -352,7 +352,8 @@ GEM
     google-protobuf (3.25.8-arm64-darwin)
     google-protobuf (3.25.8-x86_64-darwin)
     google-protobuf (3.25.8-x86_64-linux)
-    graphql (2.0.0)
+    graphql (2.0.32)
+      base64
     graphql-batch (0.5.4)
       graphql (>= 1.12.18, < 3)
       promise.rb (~> 0.7.2)
@@ -854,7 +855,7 @@ DEPENDENCIES
   gender_detector (~> 0.1.2)
   git (~> 1.11)
   google-protobuf (>= 3.25.5)
-  graphql (= 2.0.0)
+  graphql (= 2.0.32)
   graphql-batch (~> 0.5.1)
   hashdiff (>= 1.0.0.beta1, < 2.0.0)
   hashid-rails (~> 1.4)
