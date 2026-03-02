@@ -4,16 +4,16 @@ module Enrichable
   extend ActiveSupport::Concern
 
   def apply_enrichment(enrichment)
-    action = enrichment["action"]
-    field = enrichment_field(enrichment["field"])
+    action = enrichment.action
+    field = enrichment_field(enrichment.field)
 
     case action
     when "insert"
       self[field] ||= []
-      self[field] << enrichment["enriched_value"]
+      self[field] << enrichment.enriched_value
     when "update"
-      if self[field] == enrichment["original_value"]
-        self[field] = enrichment["enriched_value"]
+      if self[field] == enrichment.original_value
+        self[field] = enrichment.enriched_value
       else
         raise ArgumentError, "Original value does not match current value for update action"
       end
@@ -21,8 +21,8 @@ module Enrichable
       success = false
       self[field] ||= []
       self[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
-          self[field][index] = enrichment["enriched_value"]
+        if item == enrichment.original_value
+          self[field][index] = enrichment.enriched_value
           success = true
           break
         end
@@ -33,7 +33,7 @@ module Enrichable
       success = false
       self[field] ||= []
       self[field].each_with_index do |item, index|
-        if item == enrichment["original_value"]
+        if item == enrichment.original_value
           self[field].delete_at(index)
           success = true
         end

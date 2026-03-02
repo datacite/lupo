@@ -38,13 +38,6 @@ class EnrichmentBatchProcessJob < ApplicationJob
         # ensure that validation functions as expected when not persisting the record.
         doi.only_validate = true
 
-        begin
-          doi.apply_enrichment(parsed_line)
-        rescue ArgumentError => e
-          Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}: #{e.message}")
-          next
-        end
-
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
@@ -56,12 +49,30 @@ class EnrichmentBatchProcessJob < ApplicationJob
           enriched_value: parsed_line["enrichedValue"]
         )
 
-        unless doi.valid?
+        # Validate enrichment and if invalid, exit.
+        if enrichment.invalid?
+          errors = enrichment.errors.full_messages.join(";")
+          Rails.logger.error("#{log_prefix}: Failed to save enrichment for DOI #{uid}: #{errors}")
+          next
+        end
+
+        # Apply enrichment and if it fails, exit.
+        begin
+          doi.apply_enrichment(enrichment)
+        rescue ArgumentError => e
+          Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{uid}: #{e.message}")
+          next
+        end
+
+        # If the doi is invalid after enrichment application, exit.
+        if doi.invalid?
           errors = serialize_errors(doi.errors, uid: enrichment.doi)
           Rails.logger.error("#{log_prefix}: Enrichment does not generate valid metadata: #{errors}")
           next
         end
 
+        # If we reach this point, the enrichment is valid and can be saved.
+        # We won't get any validation errors but something could still go wrong with the db.
         unless enrichment.save
           errors = enrichment.errors.full_messages.join(";")
           Rails.logger.error("#{log_prefix}: Failed to save enrichment for DOI #{uid}: #{errors}")
