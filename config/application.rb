@@ -70,6 +70,7 @@ ENV["DISABLE_FACETS_BY_DEFAULT"] ||= "false"
 ENV["METADATA_STORAGE_BUCKET_NAME"] ||= ""
 ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
 ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
+ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= ""
 
 module Lupo
   class Application < Rails::Application
