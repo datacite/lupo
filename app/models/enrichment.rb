@@ -28,7 +28,7 @@ class Enrichment < ApplicationRecord
 
   private
     def set_defaults
-      self.uuid ||= SecureRandom.uuid if uuid.blank?
+      self.uuid = SecureRandom.uuid if uuid.blank?
     end
 
     def validate_json_schema
