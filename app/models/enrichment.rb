@@ -1,4 +1,8 @@
 class Enrichment < ApplicationRecord
+  before_validation :set_defaults
+
+  validates :uuid, presence: true, uniqueness: true
+
   validate :validate_json_schema
 
   belongs_to :doi_record,
@@ -23,6 +27,10 @@ class Enrichment < ApplicationRecord
   scope :order_by_cursor, -> { order(updated_at: :desc, id: :desc) }
 
   private
+    def set_defaults
+      self.uuid ||= SecureRandom.uuid if uuid.blank?
+    end
+
     def validate_json_schema
       doc = to_enrichment_hash
       error_list = self.class.enrichment_schemer.validate(doc).to_a

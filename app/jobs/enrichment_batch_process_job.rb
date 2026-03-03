@@ -33,6 +33,9 @@ class EnrichmentBatchProcessJob < ApplicationJob
         # ensure that validation functions as expected when not persisting the record.
         doi.only_validate = true
 
+        # Ensure we regenerate the metadata XML for validation.
+        doi.regenerate = true
+
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,

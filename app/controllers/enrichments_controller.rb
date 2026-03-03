@@ -29,6 +29,14 @@ class EnrichmentsController < ApplicationController
     render(json: EnrichmentSerializer.new(enrichments, options).serializable_hash, status: :ok)
   end
 
+  def show
+    enrichment = Enrichment.find_by(uuid: params[:id])
+
+    fail ActiveRecord::RecordNotFound if enrichment.blank?
+
+    render(json: EnrichmentSerializer.new(enrichment, {is_collection: false}).serializable_hash, status: :ok)
+  end
+
   private
     def base_page_enrichments(doi, client_id)
       if doi.present?
