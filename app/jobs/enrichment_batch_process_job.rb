@@ -36,6 +36,10 @@ class EnrichmentBatchProcessJob < ApplicationJob
         # Ensure we regenerate the metadata XML for validation.
         doi.regenerate = true
 
+        # Set these to true to test the validity of the doi after enrichment more accurately.
+        doi.skip_client_domains_validation = true
+        doi.skip_schema_version_validation = true
+
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
