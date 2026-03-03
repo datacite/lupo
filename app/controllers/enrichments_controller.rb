@@ -34,7 +34,7 @@ class EnrichmentsController < ApplicationController
 
     fail ActiveRecord::RecordNotFound if enrichment.blank?
 
-    render(json: EnrichmentSerializer.new(enrichment, {is_collection: false}).serializable_hash, status: :ok)
+    render(json: EnrichmentSerializer.new(enrichment, { is_collection: false }).serializable_hash, status: :ok)
   end
 
   private
