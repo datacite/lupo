@@ -65,8 +65,7 @@ module Enrichable
     end
   end
 
-  private
-    def enrichment_field(field)
-      FIELD_MAPPING.fetch(field, nil)
-    end
+  def enrichment_field(field)
+    FIELD_MAPPING.fetch(field, nil)
+  end
 end
