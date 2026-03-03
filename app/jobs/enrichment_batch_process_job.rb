@@ -33,12 +33,19 @@ class EnrichmentBatchProcessJob < ApplicationJob
         # ensure that validation functions as expected when not persisting the record.
         doi.only_validate = true
 
+        # Ensure we regenerate the metadata XML for validation.
+        doi.regenerate = true
+
+        # Set these to true to test the validity of the doi after enrichment more accurately.
+        doi.skip_client_domains_validation = true
+        doi.skip_schema_version_validation = true
+
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
-          field: doi.enrichment_field(parsed_line["field"]),
+          field: parsed_line["field"],
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"]

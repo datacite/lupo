@@ -5,7 +5,7 @@ class EnrichmentSerializer
 
   set_key_transform :camel_lower
   set_type :enrichments
-  set_id :id
+  set_id :uuid
 
   attributes :doi,
              :contributors,

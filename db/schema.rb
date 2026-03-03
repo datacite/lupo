@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_20_083752) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_03_053712) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -247,10 +247,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_20_083752) do
     t.string "action", null: false
     t.json "original_value"
     t.json "enriched_value"
+    t.string "filename"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "filename"
+    t.string "uuid", limit: 36, null: false
     t.index ["doi", "updated_at", "id"], name: "index_enrichments_on_doi_and_updated_at_and_id", order: { updated_at: :desc, id: :desc }
+    t.index ["uuid"], name: "index_enrichments_on_uuid", unique: true
   end
 
   create_table "events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
