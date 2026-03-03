@@ -250,9 +250,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_03_053712) do
     t.string "filename"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "uuid", null: false
+    t.string "uuid", limit: 36, null: false
     t.index ["doi", "updated_at", "id"], name: "index_enrichments_on_doi_and_updated_at_and_id", order: { updated_at: :desc, id: :desc }
-    t.index ["uuid"], name: "index_enrichments_on_uuid", unique: true, length: 36
+    t.index ["uuid"], name: "index_enrichments_on_uuid", unique: true
   end
 
   create_table "events", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
