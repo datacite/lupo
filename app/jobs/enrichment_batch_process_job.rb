@@ -41,7 +41,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
           doi: uid,
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
-          field: doi.enrichment_field(parsed_line["field"]),
+          field: parsed_line["field"],
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"]
