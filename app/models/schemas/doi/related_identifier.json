@@ -9,6 +9,9 @@
     "relationType": {
       "$ref": "controlled_vocabularies/relation_type.json"
     },
+    "relationTypeInformation": {
+      "type": "string"
+    },
     "relatedIdentifierType": {
       "$ref": "controlled_vocabularies/related_identifier_type.json"
     },
@@ -39,7 +42,10 @@
       },
       "schemeType": {
         "type": "string"
-      }
+      },
+      "relationTypeInformation": {
+        "type": "string"
+      }      
     }
   },
   "else": {

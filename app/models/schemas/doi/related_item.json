@@ -9,6 +9,9 @@
     "relationType": {
       "$ref": "controlled_vocabularies/relation_type.json"
     },
+    "relationTypeInformation": {
+      "type": "string"
+    },
     "relatedItemIdentifier": {
       "type": "object"
     },
@@ -87,6 +90,9 @@
           },
           "schemeType": {
             "type": "string"
+          },
+          "relationTypeInformation": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -103,6 +109,9 @@
           },
           "relatedItemIdentifierType": {
             "$ref": "controlled_vocabularies/related_identifier_type.json"
+          },
+           "relationTypeInformation": {
+            "type": "string"
           }
         },
         "additionalProperties": false
