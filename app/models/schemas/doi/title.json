@@ -6,7 +6,8 @@
     "title": { 
       "type": "string"
     },
-    "titleType": { 
+    "titleType": {
+      
       "$ref": "controlled_vocabularies/title_type.json"
     },
     "lang": {
