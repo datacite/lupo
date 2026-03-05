@@ -4,14 +4,16 @@
   "type": "object",
   "properties": {
     "alternateIdentifier": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
     },
     "alternateIdentifierType": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
     }
   },
-  "additionalProperties": false,
-  "dependentRequired": {
-    "alternateIdentifier": ["alternateIdentifierType"]
-  }
+  "required": ["alternateIdentifier", "alternateIdentifierType"],
+  "additionalProperties": false
 }
