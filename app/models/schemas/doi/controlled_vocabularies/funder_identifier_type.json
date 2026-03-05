@@ -1,0 +1,20 @@
+{
+  "title": "FunderIdentifierType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": ["string", "null"],
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": [
+        "Crossref Funder ID",
+        "GRID",
+        "ISNI",
+        "ROR",
+        "Other"
+      ]
+    },
+    {
+      "type": "null"
+    }
+  ]
+}

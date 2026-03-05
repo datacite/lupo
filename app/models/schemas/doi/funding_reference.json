@@ -1,0 +1,35 @@
+{
+  "title": "FundingReference",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "funderName": {
+      "type": ["string", "null"]
+    },
+    "funderIdentifier": {
+      "type": ["string", "null"]
+    },
+    "funderIdentifierType": {
+      "$ref": "controlled_vocabularies/funder_identifier_type.json"
+    },
+    "awardNumber": {
+      "type": ["string", "null"]
+    },
+    "awardUri": {
+      "type": ["string", "null"]
+    },
+    "awardTitle": {
+      "type": ["string", "null"]
+    },
+    "schemeUri": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "funderName"
+  ],
+  "dependentRequired": {
+    "funderIdentifier": ["funderIdentifierType"]
+  },
+  "additionalProperties": false
+}
