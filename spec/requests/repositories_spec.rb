@@ -16,6 +16,8 @@ def reset_indices
   clear_index(DataciteDoi)
   clear_index(Client)
   clear_index(Provider)
+  clear_index(ReferenceRepository)
+  import_index(ReferenceRepository)
   import_index(Provider)
   import_index(Client)
   import_index(DataciteDoi)
