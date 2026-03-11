@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class ReindexByDoiJob < ApplicationJob
-  queue_as :lupo_background
+  include Shoryuken::Worker
 
-  def perform(doi_id, _options = {})
+  shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_lupo_background" }, auto_delete: true
+
+  def perform(sqs_message = nil, doi_id = nil)
     doi = Doi.find_by(doi: doi_id)
     return unless doi.present?
 
