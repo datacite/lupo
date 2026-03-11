@@ -3,6 +3,7 @@
 class ReindexByDoiJob < ApplicationJob
   include Shoryuken::Worker
 
+  queue_as :lupo_background
   shoryuken_options queue: -> { "#{ENV["RAILS_ENV"]}_lupo_background" }, auto_delete: true
 
   def perform(sqs_message = nil, doi_id = nil)
