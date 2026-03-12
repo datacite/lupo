@@ -1,51 +1,38 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://api.datacite.org/re3data/10.17616/r3xs37
+    method: put
+    uri: https://handle.test.datacite.org/api/handles/10.14454/4K3M-NYVG
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://www.bl.uk/pdf/pat.pdf"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.9.6; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/5.0.0; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
+      Authorization:
+      - Basic <HANDLE_TOKEN>
       Accept-Encoding:
       - gzip,deflate
   response:
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
     headers:
       Date:
-      - Wed, 04 May 2022 17:40:51 GMT
-      Content-Type:
-      - application/json; charset=utf-8
+      - Thu, 22 May 2025 13:11:35 GMT
+      Content-Length:
+      - '0'
       Connection:
       - keep-alive
-      Status:
-      - 200 OK
-      Cache-Control:
-      - max-age=0, private, must-revalidate
-      Vary:
-      - Origin
-      Etag:
-      - W/"4779b1c8cb81d39142cef21ab1d60307"
-      X-Runtime:
-      - '0.261111'
-      X-Request-Id:
-      - eda1eb1c-86ed-44bc-abb8-e241e0c9da76
-      X-Powered-By:
-      - Phusion Passenger 5.2.3
-      Server:
-      - nginx/1.12.2 + Phusion Passenger 5.2.3
-      Content-Encoding:
-      - gzip
+      Www-Authenticate:
+      - Basic realm="handle", Handle sessionId="node0jpq58pljxzd91vdly5e1oc72o5",
+        nonce="XJEPmnoCbjbSEdGkeuQcGQ==", error="Identity not verified"
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        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
-    http_version: null
-  recorded_at: Wed, 04 May 2022 17:40:49 GMT
-recorded_with: VCR 5.1.0
+      string: ''
+  recorded_at: Thu, 22 May 2025 13:11:35 GMT
+recorded_with: VCR 6.2.0
