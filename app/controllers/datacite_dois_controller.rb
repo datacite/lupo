@@ -449,10 +449,6 @@ class DataciteDoisController < ApplicationController
           fail ActiveRecord::RecordNotFound
         end
 
-        # Preload events if we are going to show details
-        # This optimizes the serializer which accesses part_events, citation_events, etc.
-        EventsPreloader.new([doi]).preload! if params[:detail] != false
-
         options = {}
         options[:include] = @include
         options[:is_collection] = false
@@ -464,6 +460,9 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
         }
+        # Preload events since we are going to show details
+        # This optimizes the serializer which accesses part_events, citation_events, etc.
+        EventsPreloader.new([doi]).preload!
 
         render(
           json: DataciteDoiSerializer.new(doi, options).serializable_hash.to_json,
