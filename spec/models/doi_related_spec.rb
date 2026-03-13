@@ -54,14 +54,19 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           relation_type_id: "is-referenced-by",
         })
 
-        allow(DataciteDoi).to receive(:upload_to_elasticsearch)
+        # Capture the DOIs passed to upload_to_elasticsearch to verify preloading
+        uploaded_dois = nil
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch) do |dois|
+          uploaded_dois = dois
+        end
 
         DataciteDoi.import_in_bulk(ids)
 
-        # Verify that events were preloaded (check via a fresh query)
-        fresh_doi1 = DataciteDoi.find(doi1.id)
-        expect(fresh_doi1.reference_events.count).to eq(1)
-        expect(fresh_doi1.citation_events.count).to eq(1)
+        # Verify that events were preloaded on the batch
+        doi1_uploaded = uploaded_dois.find { |d| d.id == doi1.id }
+        expect(doi1_uploaded.preloaded_events).not_to be_nil
+        expect(doi1_uploaded.reference_events.count).to eq(1)
+        expect(doi1_uploaded.citation_events.count).to eq(1)
       end
     end
 
