@@ -10,6 +10,7 @@ class EventsPreloader
     @dois = Array(dois)
     @doi_map = {}
     @dois.each do |doi|
+      next if doi.doi.blank?
       @doi_map[doi.doi.upcase] = doi
       # Initialize preloaded_events array if not already set
       doi.preloaded_events ||= []
@@ -20,7 +21,7 @@ class EventsPreloader
   def preload!
     return if @dois.empty?
 
-    doi_identifiers = @dois.map { |doi| doi.doi.upcase }.uniq
+    doi_identifiers = @dois.filter_map{ |doi| doi.doi&.upcase }.uniq
     return if doi_identifiers.empty?
 
     # Fetch events in chunks to avoid database parameter limits
@@ -29,7 +30,7 @@ class EventsPreloader
       events = Event.where(
         "source_doi IN (?) OR target_doi IN (?)",
         chunk, chunk
-      ).to_a
+      ).order(updated_at: :desc).to_a
       all_events.concat(events)
     end
 
@@ -44,7 +45,9 @@ class EventsPreloader
       # Add event to target DOI's preloaded_events if it matches
       if event.target_doi.present?
         target_doi_obj = @doi_map[event.target_doi.upcase]
-        target_doi_obj.preloaded_events << event if target_doi_obj
+        if target_doi_obj && target_doi_obj != source_doi_obj
+          target_doi_obj.preloaded_events << event
+        end
       end
     end
 
