@@ -21,7 +21,7 @@ class EventsPreloader
   def preload!
     return if @dois.empty?
 
-    doi_identifiers = @dois.filter_map{ |doi| doi.doi&.upcase }.uniq
+    doi_identifiers = @dois.filter_map { |doi| doi.doi&.upcase }.uniq
     return if doi_identifiers.empty?
 
     # Fetch events in chunks to avoid database parameter limits
