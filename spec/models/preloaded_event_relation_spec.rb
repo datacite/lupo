@@ -64,9 +64,9 @@ describe PreloadedEventRelation do
 
   describe "#sort_by" do
     it "sorts events" do
-      result = relation.sort_by(&:total)
+      result = relation.sort_by { |e| -e.total }
       expect(result).to be_a(PreloadedEventRelation)
-      expect(result.to_a.map(&:total)).to eq([10, 20, 30])
+      expect(result.to_a.map(&:total)).to eq([30, 20, 10])
     end
   end
 
