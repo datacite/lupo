@@ -33,6 +33,7 @@ class EventsPreloader
       ).order(updated_at: :desc).to_a
       all_events.concat(events)
     end
+    all_events.uniq!
 
     # Group events by DOI and assign to each Doi object
     all_events.each do |event|
