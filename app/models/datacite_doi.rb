@@ -144,7 +144,7 @@ class DataciteDoi < Doi
 
     # get database records from array of database ids
     selected_dois = DataciteDoi.where(id: ids, type: "DataciteDoi").includes(
-      :client,
+      {client: :provider},
       :media,
       :metadata
     )
