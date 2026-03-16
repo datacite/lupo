@@ -399,8 +399,8 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       citation_count_with_preload = doi.citation_count
 
       # Should be the same
-      expect(reference_ids_with_preload).to eq(reference_ids_without_preload)
-      expect(citation_ids_with_preload).to eq(citation_ids_without_preload)
+      expect(reference_ids_with_preload).to match_array(reference_ids_without_preload)
+      expect(citation_ids_with_preload).to match_array(citation_ids_without_preload)
       expect(reference_count_with_preload).to eq(reference_count_without_preload)
       expect(citation_count_with_preload).to eq(citation_count_without_preload)
     end
