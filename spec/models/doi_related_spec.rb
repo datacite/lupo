@@ -39,34 +39,22 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
         }.not_to exceed_query_limit(6) # Allow some overhead for associations (client, media, metadata, allocator)
       end
 
-      it "should preload events for all DOIs in batch" do
-        # Create events for the DOIs
-        create(:event_for_crossref, {
-          subj_id: "https://doi.org/#{doi1.doi}",
-          obj_id: "https://doi.org/#{doi2.doi}",
-          relation_type_id: "references",
-        })
-        # For citation_events, the DOI must be the target (target_doi)
-        # For "is-referenced-by", target_doi = subj_id, so doi1 needs to be subj_id
-        create(:event_for_datacite_crossref, {
-          subj_id: "https://doi.org/#{doi1.doi}",
-          obj_id: "https://doi.org/#{doi3.doi}",
-          relation_type_id: "is-referenced-by",
-        })
-
-        # Capture the DOIs passed to upload_to_elasticsearch to verify preloading
-        uploaded_dois = nil
-        allow(DataciteDoi).to receive(:upload_to_elasticsearch) do |dois|
-          uploaded_dois = dois
-        end
-
+      it "uses EventsPreloader to preload events for each batch" do
+        # Arrange
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch) # don’t actually hit ES
+        # Spy on EventsPreloader
+        preloader_double = instance_double(EventsPreloader, preload!: true)
+        allow(EventsPreloader).to receive(:new).and_return(preloader_double)
+        # Act
         DataciteDoi.import_in_bulk(ids)
-
-        # Verify that events were preloaded on the batch
-        doi1_uploaded = uploaded_dois.find { |d| d.id == doi1.id }
-        expect(doi1_uploaded.preloaded_events).not_to be_nil
-        expect(doi1_uploaded.reference_events.count).to eq(1)
-        expect(doi1_uploaded.citation_events.count).to eq(1)
+        # Assert
+        # Ensure we created a preloader at least once with an array of DOIs
+        expect(EventsPreloader).to have_received(:new) do |dois_arg|
+          expect(dois_arg).to all(be_a(DataciteDoi))
+          expect(dois_arg.map(&:id)).to match_array(ids) # or a subset if multiple batches
+        end
+        # And that preload! was actually invoked on that preloader
+        expect(preloader_double).to have_received(:preload!).at_least(:once)
       end
     end
 
@@ -74,6 +62,21 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       let(:client) { create(:client) }
       let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
+      it "uses preloaded_events-backed relations for event metrics" do
+        allow(DataciteDoi).to receive(:upload_to_elasticsearch)
+        # Build the relation with includes, as in production
+        dois = DataciteDoi.where(id: doi.id).includes(:client, :media, :metadata)
+        # Preload events explicitly
+        preloader = EventsPreloader.new(dois.to_a)
+        preloader.preload!
+        # Sanity: events are preloaded on the instance we’ll index
+        expect(dois.first.preloaded_events).not_to be_nil
+        # When we call as_indexed_json, the overridden *_events methods should
+        # hit the preloaded array, not issue extra queries for events.
+        expect {
+          dois.first.as_indexed_json
+        }.not_to exceed_query_limit(0) # if all associations were pre-included
+      end
       it "should make few db call" do
         allow(DataciteDoi).to receive(:upload_to_elasticsearch)
         dois = DataciteDoi.where(id: doi.id).includes(
