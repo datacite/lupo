@@ -148,7 +148,7 @@ class OtherDoi < Doi
 
     # get database records from array of database ids
     selected_dois = OtherDoi.where(id: ids, type: "OtherDoi").includes(
-      {client: :provider},
+      { client: :provider },
       :media,
       :metadata
     )
