@@ -65,7 +65,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       it "uses preloaded_events-backed relations for event metrics" do
         allow(DataciteDoi).to receive(:upload_to_elasticsearch)
         # Build the relation with includes, as in production
-        dois = DataciteDoi.where(id: doi.id).includes({client: :provider}, :media, :metadata)
+        dois = DataciteDoi.where(id: doi.id).includes({ client: :provider }, :media, :metadata)
         # Preload events explicitly
         preloader = EventsPreloader.new(dois.to_a)
         preloader.preload!
