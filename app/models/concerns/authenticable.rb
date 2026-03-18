@@ -222,7 +222,7 @@ module Authenticable
       return false if %w[staff_admin staff_user].include?(user.role_id)
       if %w[consortium_admin].include?(user.role_id) &&
           user.provider_id.present? &&
-          user.provider_id.upcase == doi.provider.consortium_id
+          user.provider_id.downcase == doi.provider.consortium_id.downcase
         return false
       end
       if %w[provider_admin provider_user].include?(user.role_id) &&
