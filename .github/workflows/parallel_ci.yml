@@ -48,14 +48,13 @@ jobs:
         ports:
           - 9200
       localstack:
-        image: localstack/localstack
+        image: localstack/localstack:2.3.2
         ports:
           - "4566:4566" # LocalStack edge port
         env:
           SERVICES: s3 # Only start S3
           AWS_ACCESS_KEY_ID: s3accesskeyid
           AWS_SECRET_ACCESS_KEY: s3accesskeypass
-          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
     env:
       MYSQL_HOST: "127.0.0.1"
