@@ -25,6 +25,6 @@ groups:
       - events_other_doi_job
       - events_other_doi_by_id_job
   enrichments_group:
-    concurrency: 2
+    concurrency: 5
     queues:
       - enrichment_batch_process_job
