@@ -5,7 +5,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
   queue_as :enrichment_batch_process_job
 
-  def perform(lines, filename)
+  def perform(lines, filename, source_id)
     log_prefix = "EnrichmentBatchProcessJob (#{filename})"
 
     # We will process the lines in parallel to speed up ingestion.
@@ -40,9 +40,13 @@ class EnrichmentBatchProcessJob < ApplicationJob
         doi.skip_client_domains_validation = true
         doi.skip_schema_version_validation = true
 
+        # We make sure we set the schema version to 4 if it is 3.
+        doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version == "http://datacite.org/schema/kernel-3"
+
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
+          source_id: source_id,
           contributors: parsed_line["contributors"],
           resources: parsed_line["resources"],
           field: parsed_line["field"],

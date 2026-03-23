@@ -1,8 +1,9 @@
 class Enrichment < ApplicationRecord
   before_validation :set_defaults
+  before_validation :normalize_source_id
 
   validates :uuid, presence: true, uniqueness: true
-
+  validates :source_id, presence: true
   validate :validate_json_schema
 
   belongs_to :doi_record,
@@ -29,6 +30,10 @@ class Enrichment < ApplicationRecord
   private
     def set_defaults
       self.uuid = SecureRandom.uuid if uuid.blank?
+    end
+
+    def normalize_source_id
+      self.source_id = source_id&.strip&.upcase
     end
 
     def validate_json_schema
