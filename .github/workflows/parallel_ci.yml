@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       fail-fast:
-        description: 'Stop all jobs if any job fails'
+        description: "Stop all jobs if any job fails"
         required: false
         type: boolean
         default: true
@@ -50,11 +50,12 @@ jobs:
       localstack:
         image: localstack/localstack
         ports:
-          - "4566:4566"  # LocalStack edge port
+          - "4566:4566" # LocalStack edge port
         env:
-          SERVICES: s3   # Only start S3
+          SERVICES: s3 # Only start S3
           AWS_ACCESS_KEY_ID: s3accesskeyid
           AWS_SECRET_ACCESS_KEY: s3accesskeypass
+          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
     env:
       MYSQL_HOST: "127.0.0.1"
