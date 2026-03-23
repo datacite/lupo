@@ -26,8 +26,7 @@ class AddIndexToEnrichmentsFilename < ActiveRecord::Migration[7.2]
   end
 
   private
-
-  def mysql?
-    ActiveRecord::Base.connection.adapter_name.to_s.downcase.include?("mysql")
-  end
+    def mysql?
+      ActiveRecord::Base.connection.adapter_name.to_s.downcase.include?("mysql")
+    end
 end
