@@ -3,20 +3,45 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "affiliationIdentifier": {
-      "type": ["string", "null"]
-    },
-    "affiliationIdentifierScheme": {
-      "type": ["string", "null"]
-    },
     "name": {
       "type": "string",
       "minLength": 1,
       "pattern": ".*\\S.*"
     },
+    "affiliationIdentifier": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "affiliationIdentifierScheme": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
     "schemeUri": {
-      "type": ["string", "null"]
+      "type": ["string", "null"],
+      "format": "uri"
     }
+  },
+  "if": {
+    "properties": {
+      "affiliationIdentifier": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": ".*\\S.*"
+      }
+    },
+    "required": ["affiliationIdentifier"]
+  },
+  "then": {
+    "properties": {
+      "affiliationIdentifierType": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": ".*\\S.*"
+      }
+    },
+    "required": ["affiliationIdentifierType"]
   },
   "required": ["name"],
   "additionalProperties": false
