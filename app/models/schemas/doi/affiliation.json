@@ -5,43 +5,17 @@
   "properties": {
     "name": {
       "type": "string",
-      "minLength": 1,
-      "pattern": ".*\\S.*"
+      "minLength": 1
     },
     "affiliationIdentifier": {
-      "type": ["string", "null"],
-      "minLength": 1,
-      "pattern": ".*\\S.*"
+      "type": ["string", "null"]
     },
     "affiliationIdentifierScheme": {
-      "type": ["string", "null"],
-      "minLength": 1,
-      "pattern": ".*\\S.*"
+      "type": ["string", "null"]
     },
     "schemeUri": {
-      "type": ["string", "null"],
-      "format": "uri"
+      "type": ["string", "null"]
     }
-  },
-  "if": {
-    "properties": {
-      "affiliationIdentifier": {
-        "type": "string",
-        "minLength": 1,
-        "pattern": ".*\\S.*"
-      }
-    },
-    "required": ["affiliationIdentifier"]
-  },
-  "then": {
-    "properties": {
-      "affiliationIdentifierType": {
-        "type": "string",
-        "minLength": 1,
-        "pattern": ".*\\S.*"
-      }
-    },
-    "required": ["affiliationIdentifierType"]
   },
   "required": ["name"],
   "additionalProperties": false
