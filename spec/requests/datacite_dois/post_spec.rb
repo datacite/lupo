@@ -887,6 +887,9 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "created the record" do
         post "/dois", valid_attributes, headers
 
+        pp "GOT HERE - POST_SPEC.RB 890"
+        pp json
+
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/9zwb-rb91")
@@ -2710,6 +2713,9 @@ describe DataciteDoisController, type: :request, vcr: true do
         VCR.turned_off do
           post "/dois", valid_attributes, headers
         end
+
+        pp "GOT HERE WITH INVALID LANGUAGE"
+        pp json
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors")).to eq([
