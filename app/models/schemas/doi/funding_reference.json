@@ -1,16 +1,28 @@
 {
   "title": "FundingReference",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Information about financial support (funding) for the resource being registered.",
   "type": "object",
   "properties": {
     "funderName": {
-      "type": ["string", "null"]
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "funderIdentifier": {
       "type": ["string", "null"]
     },
     "funderIdentifierType": {
-      "$ref": "controlled_vocabularies/funder_identifier_type.json"
+      "oneOf": [
+        {
+          "$ref": "controlled_vocabularies/funder_identifier_type.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schemeUri": {
+      "type": ["string", "null"],
+       "format": "uri"
     },
     "awardNumber": {
       "type": ["string", "null"]
@@ -20,16 +32,10 @@
     },
     "awardTitle": {
       "type": ["string", "null"]
-    },
-    "schemeUri": {
-      "type": ["string", "null"]
     }
   },
   "required": [
     "funderName"
   ],
-  "dependentRequired": {
-    "funderIdentifier": ["funderIdentifierType"]
-  },
   "additionalProperties": false
 }

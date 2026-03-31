@@ -1,11 +1,11 @@
 {
   "title": "Affiliation",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Uniquely identifies an affiliation, according to various identifier schemes.",
   "type": "object",
   "properties": {
     "name": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "affiliationIdentifier": {
       "type": ["string", "null"]

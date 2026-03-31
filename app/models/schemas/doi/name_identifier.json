@@ -1,20 +1,22 @@
 {
   "title": "NameIdentifier",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Uniquely identifies a creator or contributor, according to various identifier schemes.",
   "type": "object",
   "properties": {
-    "schemeUri": {
-      "type": ["string", "null"]
-    },
     "nameIdentifier": {
-      "type": ["string", "null"]
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "nameIdentifierScheme": {
+      "type": "string"
+    },
+    "schemeUri": {
       "type": ["string", "null"]
     }
   },
-  "dependentRequired": {
-    "affiliationIdentifier": ["nameIdentifierScheme"]
-  },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": [
+    "nameIdentifier",
+    "nameIdentifierScheme"
+  ]
 }

@@ -1,24 +1,16 @@
 {
   "title": "Contributor",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The institution or person responsible for collecting, creating, or otherwise contributing to the development of the dataset.",
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "nameType": {
-      "$ref": "controlled_vocabularies/name_type.json"
-    },
-    "givenName": {
-      "type": ["string", "null"]
-    },
-    "familyName": {
-      "type": ["string", "null"]
-    },
-    "contributorType": {
       "oneOf": [
         {
-            "$ref": "controlled_vocabularies/contributor_type.json"
+          "$ref": "controlled_vocabularies/name_type.json"
         },
         {
           "type": "null"
@@ -26,17 +18,48 @@
       ]
     },
     "lang": {
-      "$ref": "language.json"
+      "oneOf": [
+        {
+          "$ref": "definitions.json#/$defs/language"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
-    "affiliation": {
-      "$ref": "affiliations.json"
+    "givenName": {
+      "type": ["string", "null"]
+    },
+    "familyName": {
+      "type": ["string", "null"]
     },
     "nameIdentifiers": {
-      "$ref": "name_identifiers.json"
+      "oneOf": [
+        {
+          "$ref": "name_identifiers.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "affiliation": {
+      "oneOf": [
+        {
+          "$ref": "affiliations.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+     "contributorType": {
+      "$ref": "controlled_vocabularies/contributor_type.json"
     }
   },
   "additionalProperties": false,
   "required": [
-    "name"
+    "name",
+    "contributorType"
   ]
 }

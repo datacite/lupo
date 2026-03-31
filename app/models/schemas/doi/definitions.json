@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "definitions.json",
+  "Description": "Definitions for re-use in the DOI metadata schema.",
+	"$defs": {
+    "nonemptycontentStringType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "edtf": {
+      "pattern": "((-)?(\\d{4}(-\\d{2})?(-\\d{2})?)|unknown)/((-)?(\\d{4}(-\\d{2})?(-\\d{2})?)|unknown|open)",
+      "type": "string"
+    },
+    "yearType": {
+      "pattern": "[\\d]{4}",
+      "type": "string"
+    },
+    "longitudeType": {
+      "maximum": 180,
+      "minimum": -180,
+      "type": "number"
+    },
+    "latitudeType": {
+      "maximum": 90,
+      "minimum": -90,
+      "type": "number"
+    },
+		"box": {
+			"type": "object",
+			"properties": {
+				"westBoundLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"eastBoundLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"southBoundLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				},
+				"northBoundLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				}
+			},
+			"required": [
+				"westBoundLongitude",
+				"eastBoundLongitude",
+				"southBoundLatitude",
+				"northBoundLatitude"
+			],
+			"additionalProperties": false
+    },
+		"point": {
+			"type": "object",
+			"properties": {
+				"pointLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"pointLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				}
+			},
+			"required": [
+				"pointLongitude",
+				"pointLatitude"
+			],
+			"additionalProperties": false
+		},
+		"language": {
+			"type": [ "string", "null" ],
+			"pattern": "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$"
+		}
+	}
+}

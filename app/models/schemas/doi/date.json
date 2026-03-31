@@ -1,23 +1,21 @@
 {
   "title": "Date",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Different dates relevant to the work.",
   "type": "object",
   "properties": {
     "date": {
-      "type": "string"
+      "type": [ "string", "null" ]
     },
     "dateType": {
       "$ref": "controlled_vocabularies/date_type.json"
     },
     "dateInformation": {
-      "type": "string"
+      "type": [ "string", "null" ]
     }
   },
   "required": [
-    "date"
+    "dateType"
   ],
-  "dependentRequired": {
-    "date": ["dateType"]
-  },
   "additionalProperties": false
 }

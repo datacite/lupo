@@ -1,21 +1,14 @@
 {
   "title": "DescriptionType",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": ["string", "null"],
-  "anyOf": [
-    {
-      "type": "string",
-      "enum": [
-        "Abstract", 
-        "Methods", 
-        "SeriesInformation", 
-        "TableOfContents", 
-        "TechnicalInfo",
-        "Other"
-      ]
-    },
-    {
-      "type": "null"
-    }
+  "description": "The type of description of the resource.",
+  "type": "string",
+  "enum": [
+    "Abstract", 
+    "Methods", 
+    "SeriesInformation", 
+    "TableOfContents", 
+    "TechnicalInfo",
+    "Other"
   ]
 }

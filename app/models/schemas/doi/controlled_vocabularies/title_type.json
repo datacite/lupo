@@ -1,19 +1,12 @@
 {
   "title": "TitleType",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": ["string", "null"],
-  "anyOf": [
-    {
-      "type": "string",
-      "enum": [
-        "AlternativeTitle", 
-        "Subtitle", 
-        "TranslatedTitle", 
-        "Other"
-      ]
-    },
-    {
-      "type": "null"
-    }
+  "description": "The type of title of the resource.",
+  "type": "string",
+  "enum": [
+    "AlternativeTitle", 
+    "Subtitle", 
+    "TranslatedTitle", 
+    "Other"
   ]
 }

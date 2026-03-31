@@ -1,13 +1,31 @@
 {
   "title": "Creator",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The main researchers involved working on the data, or the authors of the publication in priority order. May be a corporate/institutional or personal name.",
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "nameType": {
-      "$ref": "controlled_vocabularies/name_type.json"
+      "oneOf": [
+        {
+          "$ref": "controlled_vocabularies/name_type.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "lang": {
+      "oneOf": [
+        {
+          "$ref": "definitions.json#/$defs/language"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "givenName": {
       "type": ["string", "null"]
@@ -15,13 +33,25 @@
     "familyName": {
       "type": ["string", "null"]
     },
-    "lang": {
-      "$ref": "language.json"
-    },    "affiliation": {
-      "$ref": "affiliations.json"
-    },
     "nameIdentifiers": {
-      "$ref": "name_identifiers.json"
+      "oneOf": [
+        {
+          "$ref": "name_identifiers.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "affiliation": {
+      "oneOf": [
+        {
+          "$ref": "affiliations.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "additionalProperties": false,

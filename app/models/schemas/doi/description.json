@@ -1,20 +1,28 @@
 {
   "title": "Description",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "All additional information that does not fit in any of the other categories. May be used for technical information. It is a best practice to supply a description.",
   "type": "object",
   "properties": {
     "description": { 
-      "type": "string"
+      "type": [ "string", "null" ]
     },
     "descriptionType": { 
       "$ref": "controlled_vocabularies/description_type.json"
     },
-    "lang": { 
-      "$ref": "language.json"
+    "lang": {
+      "oneOf": [
+        {
+          "$ref": "definitions.json#/$defs/language"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "additionalProperties": false,
-  "dependentRequired": {
-    "description": ["descriptionType"]
-  }
+  "required": [
+    "descriptionType"
+  ]
 }

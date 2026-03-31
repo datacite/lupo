@@ -1,19 +1,11 @@
 {
   "title": "NumberType",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": ["string", "null"],
-  "anyOf": [
-    {
-      "type": "string",
-      "enum": [
-        "Article",
-        "Chapter",
-        "Report",
-        "Other"
-      ]
-    },
-    {
-      "type": "null"
-    }
+  "type": "string",
+  "enum": [
+    "Article",
+    "Chapter",
+    "Report",
+    "Other"
   ]
 }
