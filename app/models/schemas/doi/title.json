@@ -7,11 +7,17 @@
       "type": "string"
     },
     "titleType": {
-      
-      "$ref": "controlled_vocabularies/title_type.json"
+      "oneOf": [
+        {
+          "$ref": "controlled_vocabularies/title_type.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "lang": {
-      "$ref": "language.json"
+      "$ref": "definitions.json#/$defs/language"
     }
   },
   "required": [
