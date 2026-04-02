@@ -428,12 +428,20 @@ class DataciteDoisController < ApplicationController
   end
 
   def show
+    show_enriched = params["enriched"]&.upcase == "TRUE"
+
     # only show findable DataCite DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
     # response = DataciteDoi.find_by_id(params[:id])
     # workaround until STI is enabled
-    doi = DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
+    doi = if show_enriched
+      uid = params[:id].upcase
+      Doi.includes(:enrichments).find_by(doi: uid, agency: "datacite")
+    else
+      DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
+    end
+    # doi = DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
     if doi.blank? ||
         (
           doi.aasm_state != "findable" &&
@@ -444,7 +452,6 @@ class DataciteDoisController < ApplicationController
 
     respond_to do |format|
       format.json do
-        # doi = response.results.first
         if not_allowed_by_doi_and_user(doi: doi, user: current_user)
           fail ActiveRecord::RecordNotFound
         end
@@ -460,6 +467,10 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
         }
+
+        if show_enriched
+          return handle_show_enriched_doi(doi, options)
+        end
 
         render(
           json: DataciteDoiSerializer.new(doi, options).serializable_hash.to_json,
@@ -767,6 +778,31 @@ class DataciteDoisController < ApplicationController
   end
 
   protected
+    def handle_show_enriched_doi(doi, options)
+      # Return 404 if there are no enrichments for the DOI
+      fail ActiveRecord::RecordNotFound if doi.enrichments.empty?
+
+      # Ensure validation works as expected when not persisting the record
+      doi.only_validate = true
+      doi.regenerate = true
+      doi.skip_client_domains_validation = true
+      doi.skip_schema_version_validation = true
+
+      # Ensure we use schema version 4 for validation
+      doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version == "http://datacite.org/schema/kernel-3"
+
+      doi.enrichments.each do |enrichment|
+        doi.apply_enrichment(enrichment)
+      rescue
+        next
+      end
+
+      # Return 404 if the DOI is invalid after applying enrichments.
+      fail ActiveRecord::RecordNotFound if doi.invalid?
+
+      render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash, status: :ok)
+    end
+
     def set_include
       if params[:include].present?
         @include =
