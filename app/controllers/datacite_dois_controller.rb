@@ -799,7 +799,7 @@ class DataciteDoisController < ApplicationController
       # Return 404 if the DOI is invalid after applying enrichments.
       fail ActiveRecord::RecordNotFound if doi.invalid?
 
-      render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash, status: :ok)
+      render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok)
     end
 
     def set_include
