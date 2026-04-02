@@ -441,7 +441,6 @@ class DataciteDoisController < ApplicationController
     else
       DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
     end
-    # doi = DataciteDoi.where(type: "DataciteDoi").where(doi: params[:id]).first
     if doi.blank? ||
         (
           doi.aasm_state != "findable" &&
