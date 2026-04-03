@@ -35,6 +35,8 @@ class Doi < ApplicationRecord
 
   include Elasticsearch::Model
 
+  include Enrichable
+
   aasm whiny_transitions: false do
     # draft is initial state for new DOIs.
     state :draft, initial: true
