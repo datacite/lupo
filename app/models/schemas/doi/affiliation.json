@@ -8,13 +8,13 @@
       "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "affiliationIdentifier": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "affiliationIdentifierScheme": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "schemeUri": {
-      "type": ["string", "null"]
+      "type": "string"
     }
   },
   "required": ["name"],

@@ -2,6 +2,7 @@
 
 require "rails_helper"
 include Passwordable
+require "pp"
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }

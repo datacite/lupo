@@ -4,24 +4,22 @@
     "type": "object",
     "properties": {
       "subject": {
-        "type": ["string", "null"]
+        "type": "string"
       },
       "schemeUri": {
-        "type": ["string", "null"],
-        "format": "uri"
-      },
+        "type": "string" 
+     },
       "valueUri": {
-        "type": ["string", "null"],
-        "format": "uri"
+        "type": "string" 
       },
       "subjectScheme":  {
-          "type": ["string", "null" ]
+        "type": "string" 
       },
       "classificationCode": {
-        "type": ["string", "null" ]
+        "type": "string"
       },
       "lang": {
-        "$ref": "language.json"
+        "$ref": "definitions.json#/$defs/language"
       }
     },
     "required": [

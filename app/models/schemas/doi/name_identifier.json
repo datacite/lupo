@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "nameIdentifier": {
-      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
+      "type": "string"
     },
     "nameIdentifierScheme": {
       "type": "string"

@@ -5,13 +5,13 @@
   "type": "object",
   "properties": {
     "date": {
-      "type": [ "string", "null" ]
+      "type": "string"
     },
     "dateType": {
       "$ref": "controlled_vocabularies/date_type.json"
     },
     "dateInformation": {
-      "type": [ "string", "null" ]
+      "type": "string"
     }
   },
   "required": [

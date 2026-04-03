@@ -1,21 +1,7 @@
 {
-  "title": "publicationYear",
+  "title": "PublicationYear",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": [ "integer", "string" ],
-  "oneOf": [
-    {
-      "type": "string",
-      "pattern": "^(1[0-9]{3}|2[0-9]{3}|3000)$",
-      "minLength": 4,
-      "maxLength": 4
-    },
-    {
-      "type": "integer",
-      "minimum": 1000,
-      "maximum": 3000,
-      "inclusiveMinimum": true,
-      "inclusiveMaximum": true
-    }
-  ],
-  "description": "publicationYear: A required value representing a year in YYYY format."
+  "description": "publicationYear: A required value representing a year in YYYY format.",
+  "type": [ "string", "integer" ],
+  "$ref": "definitions.json#/$defs/yearType"
 }

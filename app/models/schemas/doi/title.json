@@ -1,27 +1,21 @@
 {
   "title": "Title",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "A name or title by which a resource is known.",
   "type": "object",
   "properties": {
     "title": { 
       "type": "string"
     },
     "titleType": {
-      "oneOf": [
-        {
-          "$ref": "controlled_vocabularies/title_type.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "controlled_vocabularies/title_type.json"
     },
     "lang": {
       "$ref": "definitions.json#/$defs/language"
     }
   },
+  "additionalProperties": false,
   "required": [
     "title"
-  ],
-  "additionalProperties": false
+  ]
 }

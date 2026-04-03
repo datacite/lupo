@@ -3,59 +3,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "The main researchers involved working on the data, or the authors of the publication in priority order. May be a corporate/institutional or personal name.",
   "type": "object",
+  "$ref": "creator_base.json",
   "properties": {
-    "name": {
-      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
-    },
-    "nameType": {
-      "oneOf": [
-        {
-          "$ref": "controlled_vocabularies/name_type.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "lang": {
-      "oneOf": [
-        {
-          "$ref": "definitions.json#/$defs/language"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "givenName": {
-      "type": ["string", "null"]
-    },
-    "familyName": {
-      "type": ["string", "null"]
-    },
     "nameIdentifiers": {
-      "oneOf": [
-        {
-          "$ref": "name_identifiers.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "name_identifiers.json"
     },
     "affiliation": {
-      "oneOf": [
-        {
-          "$ref": "affiliations.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "affiliations.json"
     }
   },
-  "additionalProperties": false,
-  "required": [
-    "name"
-  ]
+  "unevaluatedProperties": false
 }

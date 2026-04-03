@@ -843,8 +843,7 @@ describe DataciteDoisController, type: :request, vcr: true do
             "titles": [
               {
                 "lang": "en",
-                "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
-                "titleType": null
+                "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population"
               },
               {
                 "lang": "en",
@@ -887,15 +886,12 @@ describe DataciteDoisController, type: :request, vcr: true do
       it "created the record" do
         post "/dois", valid_attributes, headers
 
-        pp "GOT HERE - POST_SPEC.RB 890"
-        pp json
-
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "attributes", "url")).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
         expect(json.dig("data", "attributes", "doi")).to eq("10.14454/9zwb-rb91")
         expect(json.dig("data", "attributes", "types")).to eq("bibtex" => "phdthesis", "citeproc" => "thesis", "resourceType" => "Dissertation", "resourceTypeGeneral" => "Text", "ris" => "THES", "schemaOrg" => "Thesis")
         expect(json.dig("data", "attributes", "descriptions", 0, "description")).to start_with("Diet and physical activity")
-        expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en", "title" => "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population", "titleType" => nil }, { "lang" => "en", "title" => "Subtitle", "titleType" => "Subtitle" }])
+        expect(json.dig("data", "attributes", "titles")).to eq([{ "lang" => "en", "title" => "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population" }, { "lang" => "en", "title" => "Subtitle", "titleType" => "Subtitle" }])
         expect(json.dig("data", "attributes", "state")).to eq("findable")
 
         xml = Maremma.from_xml(Base64.decode64(json.dig("data", "attributes", "xml"))).fetch("resource", {})
@@ -2713,9 +2709,6 @@ describe DataciteDoisController, type: :request, vcr: true do
         VCR.turned_off do
           post "/dois", valid_attributes, headers
         end
-
-        pp "GOT HERE WITH INVALID LANGUAGE"
-        pp json
 
         expect(last_response.status).to eq(422)
         expect(json.dig("errors")).to eq([

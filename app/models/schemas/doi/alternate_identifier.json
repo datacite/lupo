@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "alternateIdentifier": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "alternateIdentifierType": {
       "type": "string"
