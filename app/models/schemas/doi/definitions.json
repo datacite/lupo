@@ -52,7 +52,7 @@
 			]
     },
 		"language": {
-			"type": "string",
+			"type": [ "string", "null"],
 			"pattern": "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$"
 		},
     "longitudeType": {
