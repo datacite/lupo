@@ -8,23 +8,16 @@
       "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "publisherIdentifier": { 
-      "type": [ "string", "null" ]
+      "type": "string"
     },
     "publisherIdentifierScheme": {
-       "type": [ "string", "null" ]
+       "type": "string"
     },
     "schemeUri": { 
-      "type": [ "string", "null" ] 
+      "type": "string"
     },
     "lang": {
-      "oneOf": [
-        {
-          "$ref": "definitions.json#/$defs/language"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "definitions.json#/$defs/language"
     }
   },
   "additionalProperties": false,

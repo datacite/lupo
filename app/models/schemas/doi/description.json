@@ -5,20 +5,13 @@
   "type": "object",
   "properties": {
     "description": { 
-      "type": [ "string", "null" ]
+      "type": "string"
     },
     "descriptionType": { 
       "$ref": "controlled_vocabularies/description_type.json"
     },
     "lang": {
-      "oneOf": [
-        {
-          "$ref": "definitions.json#/$defs/language"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "definitions.json#/$defs/language"
     }
   },
   "additionalProperties": false,

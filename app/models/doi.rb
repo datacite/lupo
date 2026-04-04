@@ -157,7 +157,7 @@ class Doi < ApplicationRecord
 
   # JSON-SCHEMA VALIDATION
   # temporarily commenting out this validation.
-  # validates :doi, if: proc { |doi| doi.validate_json_attribute?(:identifier) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
+  validates :identifier, if: proc { |doi| doi.validate_json_attribute?(:identifier) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
   validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
   validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
   validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
