@@ -2,8 +2,6 @@
 
 require "maremma"
 require "benchmark"
-require "byebug"
-require "pp"
 
 class Doi < ApplicationRecord
   INVALID_SCHEMAS = %w[
