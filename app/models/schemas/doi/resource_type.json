@@ -3,9 +3,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "resourceType": { "type": "string" },
-    "resourceTypeGeneral": { "$ref": "controlled_vocabularies/resource_type_general.json" }
+    "resourceType": { 
+      "type": "string" 
+    },
+    "resourceTypeGeneral": { 
+      "$ref": "controlled_vocabularies/resource_type_general.json" 
+    }
   },
+  "additionalProperties": false,
   "required": [
     "resourceType",
     "resourceTypeGeneral"

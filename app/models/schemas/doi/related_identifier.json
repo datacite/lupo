@@ -5,17 +5,10 @@
   "type": "object",
   "properties": {
     "relatedIdentifier": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "resourceTypeGeneral": {
-      "oneOf": [
-        {
-          "$ref": "controlled_vocabularies/resource_type_general.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "controlled_vocabularies/resource_type_general.json"
     },
     "relatedIdentifierType": {
       "$ref": "controlled_vocabularies/related_identifier_type.json"
@@ -24,28 +17,17 @@
       "$ref": "controlled_vocabularies/relation_type.json"
     },
     "relatedMetadataScheme": {
-      "oneOf": [
-        {
-          "$ref": "controlled_vocabularies/relation_type.json"
-        },
-        {
-          "type": "null"
-        }
-      ]
+      "$ref": "controlled_vocabularies/relation_type.json"
     },
     "schemeUri": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "schemeType": {
-      "type": ["string", "null"]
+      "type": "string"
     },
     "relationTypeInformation": {
-      "type": ["string", "null"]
+      "type": "string"
     }
   },
-  "required": [
-    "relatedIdentifierType",
-    "relationType"
-  ],
   "additionalProperties": false
 }

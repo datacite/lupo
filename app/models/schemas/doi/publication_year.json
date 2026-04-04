@@ -2,6 +2,6 @@
   "title": "PublicationYear",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "publicationYear: A required value representing a year in YYYY format.",
-  "type": [ "string", "integer" ],
-  "$ref": "definitions.json#/$defs/yearType"
+  "$ref": "definitions.json#/$defs/yearType",
+  "minLength": 1
 }
