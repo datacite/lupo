@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Enrichable, vcr: true do
-  let(:doi) { create(:doi, creators: 
+  let(:doi) { create(:doi, creators:
     [
       {
         "name": "Arslan, M.",
@@ -47,7 +47,7 @@ describe Enrichable, vcr: true do
 
       doi.regenerate = true
       doi.apply_enrichment(enrichment)
-      
+
       expect(doi.valid?).to be true
       expect(doi.creators.first).to eq(enrichment.enriched_value)
       expect(doi.creators.second).to eq(original_creators.second)
