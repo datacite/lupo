@@ -45,7 +45,10 @@ describe Enrichable, vcr: true do
           } ]
         }
 
+      doi.regenerate = true
       doi.apply_enrichment(enrichment)
+      
+      expect(doi.valid?).to be true
       expect(doi.creators.first).to eq(enrichment.enriched_value)
       expect(doi.creators.second).to eq(original_creators.second)
     end
@@ -77,7 +80,10 @@ describe Enrichable, vcr: true do
           } ]
         }
 
+      doi.regenerate = true
       doi.apply_enrichment(enrichment)
+
+      expect(doi.valid?).to be true
       expect(doi.creators.first).to eq(enrichment.enriched_value)
       expect(doi.creators.second).to eq(original_creators.second)
     end
