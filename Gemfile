@@ -101,4 +101,5 @@ group :test do
   gem "webmock", "~> 3.26", ">= 3.26.2"
   gem "parallel_tests", "~> 5.6"
   gem "rspec-sqlimit", "~> 1.0"
+  gem "rspec-graphql_matchers", "~> 2.0.0.pre.rc.0"
 end
