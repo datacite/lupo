@@ -83,11 +83,11 @@ class Provider < ApplicationRecord
                       if: :group_email?,
                       message: "group_email should be an email"
   validates_format_of :website,
-                      with: %r{https?://\S+},
+                      with: %r{\Ahttps?://\S+\z},
                       if: :website?,
                       message: "Website should be a url"
   validates_format_of :salesforce_id,
-                      with: /[a-zA-Z0-9]{18}/,
+                      with: /\A[a-zA-Z0-9]{18}\z/,
                       message: "wrong format for salesforce id",
                       if: :salesforce_id?
   validates_inclusion_of :role_name,

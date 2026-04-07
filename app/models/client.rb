@@ -71,7 +71,7 @@ class Client < ApplicationRecord
   validates_format_of :system_email,
                       with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_format_of :salesforce_id,
-                      with: /[a-zA-Z0-9]{18}/,
+                      with: /\A[a-zA-Z0-9]{18}\z/,
                       message: "wrong format for salesforce id",
                       if: :salesforce_id?
   validates_inclusion_of :role_name,
