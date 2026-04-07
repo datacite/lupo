@@ -18,3 +18,7 @@ jobs:
         bundler-cache: true
     - name: Run RuboCop
       run: bundle exec rubocop --parallel
+    - name: Security Check
+      run: |
+        bundle exec bundler-audit check --update
+        bundle exec brakeman --no-pager

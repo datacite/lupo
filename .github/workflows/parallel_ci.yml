@@ -118,7 +118,4 @@ jobs:
             bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
           fi
           echo $?
-      - name: Security Check
-        run: |
-          bundle exec bundler-audit check --update
-          bundle exec brakeman --no-pager
+
