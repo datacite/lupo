@@ -11,6 +11,7 @@ RSpec.configure do |config|
 
     allow(RorReferenceStore).to receive(:funder_to_ror).and_return(nil)
     allow(RorReferenceStore).to receive(:ror_hierarchy).and_return(nil)
+    allow(RorReferenceStore).to receive(:ror_to_countries).and_return(nil)
   end
 end
 

@@ -2370,6 +2370,11 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     let(:datacite_ror) { "https://ror.org/00k4n6c32" }
     let(:cambridge_ror) { "https://ror.org/04wxnsj81" }
 
+    before do
+      allow(RorReferenceStore).to receive(:ror_to_countries).with(datacite_ror).and_return(["US"])
+      allow(RorReferenceStore).to receive(:ror_to_countries).with(cambridge_ror).and_return(["GB"])
+    end
+
     let(:doi) do
       create(
         :doi,
@@ -2411,11 +2416,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       )
     end
 
-    let(:expected_countries) do
-      (Array.wrap(ROR_TO_COUNTRIES[datacite_ror]) + Array.wrap(ROR_TO_COUNTRIES[cambridge_ror]))
-        .map(&:upcase)
-        .uniq
-    end
+    let(:expected_countries) { ["US", "GB"] }
 
     it "has countries from ROR affiliations in affiliation_countries" do
       expect(doi.affiliation_countries).to match_array(expected_countries)
