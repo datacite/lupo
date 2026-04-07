@@ -96,8 +96,8 @@ collect_and_publish() {
   fi
 
   # Log out values for validation against CloudWatch during testing
-  # TODO: Remove this before production, otherwise we'll be very noisy (1 log message per container every 15s!)
-  log "max=$max_workers current=$current_workers queued=$request_queue active=$active_workers idle=$idle_workers util=${utilisation}%"
+  # Only enable this when testing changes locally or in staging, otherwise we'll be very noisy (1 log message per container every 15s!)
+  # log "max=$max_workers current=$current_workers queued=$request_queue active=$active_workers idle=$idle_workers util=${utilisation}%"
 
   # Push metrics to CloudWatch
   publish_metrics "$max_workers" "$current_workers" "$request_queue" "$active_workers" "$idle_workers" "$utilisation"
