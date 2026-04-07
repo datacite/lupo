@@ -952,7 +952,7 @@ class Event < ApplicationRecord
   end
 
   def uuid_format
-    errors.add(:uuid, "#{uuid} is not a valid UUID") unless UUID.validate(uuid)
+    errors.add(:uuid, "#{uuid} is not a valid UUID") unless UUID_REGEX.match?(uuid.to_s)
   end
 
   def registrant_id

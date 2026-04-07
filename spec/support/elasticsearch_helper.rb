@@ -16,7 +16,7 @@ SEARCHABLE_MODELS = [
 ].freeze
 
 RSpec.configure do |config|
-  config.before :all do
+  config.before(:each, elasticsearch: true) do
     SEARCHABLE_MODELS.each do |esc|
       if esc.name == "DataciteDoi" || esc.name == "OtherDoi"
         esc.create_template
@@ -30,18 +30,16 @@ RSpec.configure do |config|
         index: esc.index_name,
         body: { settings: esc.settings.to_hash, mappings: esc.mappings.to_hash }
       )
+
+      esc.import(refresh: true, force: true)
     end
   end
 
-  config.after :all do
+  config.after(:each, elasticsearch: true) do
     SEARCHABLE_MODELS.each do |esc|
       if Elasticsearch::Model.client.indices.exists?(index: esc.index_name.to_s)
         esc.__elasticsearch__.client.indices.delete index: esc.index_name.to_s
       end
     end
-  end
-
-  config.before(:each, elasticsearch: true) do
-    SEARCHABLE_MODELS.each { |esc| esc.import(refresh: true, force: true) }
   end
 end
