@@ -43,8 +43,4 @@ Sentry.init do |config|
 
   # Async error sending (better performance, uses background threads)
   config.background_worker_threads = 5
-
-  # Logger configuration - uses LogStashLogger (structured JSON logging)
-  # Rails.logger and Rails.application.config.lograge.logger are the same instance
-  config.logger = Rails.logger
 end

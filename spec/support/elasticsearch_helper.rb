@@ -22,8 +22,8 @@ RSpec.configure do |config|
         esc.create_template
       end
 
-      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
-        esc.__elasticsearch__.client.indices.delete index: esc.index_name
+      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name.to_s)
+        esc.__elasticsearch__.client.indices.delete index: esc.index_name.to_s
       end
 
       esc.__elasticsearch__.client.indices.create(
@@ -35,8 +35,8 @@ RSpec.configure do |config|
 
   config.after :all do
     SEARCHABLE_MODELS.each do |esc|
-      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
-        esc.__elasticsearch__.client.indices.delete index: esc.index_name
+      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name.to_s)
+        esc.__elasticsearch__.client.indices.delete index: esc.index_name.to_s
       end
     end
   end
