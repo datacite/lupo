@@ -32,7 +32,9 @@ RUN apt-get update && \
       libdbd-mysql-perl \
       libdbi-perl \
       libterm-readkey-perl \
-      libio-socket-ssl-perl && \
+      libio-socket-ssl-perl \
+      unzip \
+      libxml2-utils && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Percona Toolkit 3.7.1
@@ -41,6 +43,12 @@ RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1/binary/de
     apt-get install -y -f && \
     dpkg -i percona-toolkit_3.7.1-2.noble_amd64.deb && \
     rm percona-toolkit_3.7.1-2.noble_amd64.deb
+
+# Install awscli
+RUN wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && \
+    unzip awscli-exe-linux-x86_64.zip && \
+    ./aws/install && \
+    rm awscli-exe-linux-x86_64.zip
 
 # Enable Passenger and Nginx and remove the default site
 # Preserve env variables for nginx
@@ -57,6 +65,10 @@ COPY vendor/docker/ntp.conf /etc/ntp.conf
 WORKDIR /home/app/webapp
 RUN mkdir /etc/service/shoryuken
 COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
+
+# Add Runit script for Passenger metrics collection
+RUN mkdir /etc/service/passenger-metrics
+COPY vendor/docker/passenger-metrics-run.sh /etc/service/passenger-metrics/run
 
 # Copy webapp folder
 COPY . /home/app/webapp/
