@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Ensure required ENVVARS exist
 AWS_REGION="${AWS_REGION:-eu-west-1}"
-SERVER_NAME="${SERVER_NAME:-unknown}"
+SERVER_NAME="${SERVERNAME:-unknown}"
 
 # Set up global variables
 NAMESPACE="Custom/LupoPassenger"
