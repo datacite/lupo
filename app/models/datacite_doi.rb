@@ -116,7 +116,7 @@ class DataciteDoi < Doi
     end
 
     number_of_dois
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+  rescue Elastic::Transport::Transport::Errors::RequestEntityTooLarge,
     Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e

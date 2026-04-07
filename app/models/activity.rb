@@ -137,7 +137,7 @@ class Activity < Audited::Audit
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+  rescue Elastic::Transport::Transport::Errors::RequestEntityTooLarge,
          Faraday::ConnectionFailed,
          ActiveRecord::LockWaitTimeout => e
     Rails.logger.error "[Elasticsearch] Error #{
@@ -238,7 +238,7 @@ class Activity < Audited::Audit
     end
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+  rescue Elastic::Transport::Transport::Errors::RequestEntityTooLarge,
          Faraday::ConnectionFailed,
          ActiveRecord::LockWaitTimeout => e
     Rails.logger.info "[Elasticsearch] Error #{

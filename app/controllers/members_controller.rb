@@ -103,7 +103,7 @@ class MembersController < ApplicationController
         json: MemberSerializer.new(@members, options).serializable_hash.to_json,
         status: :ok
       )
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+    rescue Elastic::Transport::Transport::Errors::BadRequest => e
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
           "error",

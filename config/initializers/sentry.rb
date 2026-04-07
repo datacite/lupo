@@ -22,9 +22,9 @@ Sentry.init do |config|
 
   # Ignore 502, 503 and 504 from Elasticsearch
   config.excluded_exceptions += %w[
-    Elasticsearch::Transport::Transport::Errors::BadGateway
-    Elasticsearch::Transport::Transport::Errors::ServiceUnavailable
-    Elasticsearch::Transport::Transport::Errors::GatewayTimeout
+    Elastic::Transport::Transport::Errors::BadGateway
+    Elastic::Transport::Transport::Errors::ServiceUnavailable
+    Elastic::Transport::Transport::Errors::GatewayTimeout
   ]
 
   # Performance monitoring (optional - adjust sample_rate as needed)

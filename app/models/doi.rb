@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "maremma"
-require "benchmark"
 
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
@@ -1057,7 +1056,7 @@ class Doi < ApplicationRecord
           scroll_id: response["_scroll_id"],
         )
       # handle expired scroll_id (Elasticsearch returns this error)
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
+      rescue Elastic::Transport::Transport::Errors::NotFound
         return Hashie::Mash.new(
           total: 0,
           results: [],

@@ -5,8 +5,8 @@ class IndexBackgroundJob < ApplicationJob
 
   rescue_from ActiveJob::DeserializationError,
               SocketError,
-              Elasticsearch::Transport::Transport::Errors::BadRequest,
-              Elasticsearch::Transport::Transport::Error do |error|
+              Elastic::Transport::Transport::Errors::BadRequest,
+              Elastic::Transport::Transport::Error do |error|
     Rails.logger.error error.message
   end
   def perform(obj)
