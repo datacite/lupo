@@ -19,8 +19,5 @@
     "familyName": {
       "type": "string"
     }
-	},
-  "required": [
-    "name"
-  ]
+	}
 }
