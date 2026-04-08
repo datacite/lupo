@@ -94,6 +94,12 @@ class RorReferenceStore
 
       def download_from_s3(filename)
         bucket     = ENV["ROR_ANALYSIS_S3_BUCKET"]
+
+        if bucket.blank?
+          Rails.logger.warn "[RorReferenceStore] ROR_ANALYSIS_S3_BUCKET not configured – skipping S3 fetch for #{filename}"
+          return nil
+        end
+
         object_key = "#{S3_PREFIX}#{filename}"
 
         client   = Aws::S3::Client.new

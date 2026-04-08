@@ -10,6 +10,10 @@ describe "Rorable", type: :model do
       { "ancestors" => ["https://ror.org/04cw6st05"] }
     )
     allow(RorReferenceStore).to receive(:ror_hierarchy).with("https://ror.org/doi.org/00a0jsq62").and_return(nil)
+    allow(RorReferenceStore).to receive(:ror_to_countries).with("https://ror.org/00k4n6c32").and_return(["US"])
+    allow(RorReferenceStore).to receive(:ror_to_countries).with("https://ror.org/00a0jsq62").and_return(["us"])
+    allow(RorReferenceStore).to receive(:ror_to_countries).with("https://ror.org/nonexistent").and_return(nil)
+    allow(RorReferenceStore).to receive(:ror_to_countries).with("https://ror.org/doi.org/00k4n6c32").and_return(nil)
   end
 
   describe "Crossref Funder ID to ROR mapping" do
@@ -59,6 +63,35 @@ describe "Rorable", type: :model do
       ror_id = "doi.org/00a0jsq62"
       ancestors = doi.get_ror_parents(ror_id)
       expect(ancestors).to eq([])
+    end
+  end
+
+  describe "ROR to country mapping" do
+    let(:doi) { create(:doi) }
+
+    it "maps ROR URL to country codes" do
+      expect(doi.get_countries_from_ror("https://ror.org/00k4n6c32")).to eq(["US"])
+    end
+
+    it "maps incomplete ROR URL to country codes" do
+      expect(doi.get_countries_from_ror("ror.org/00k4n6c32")).to eq(["US"])
+    end
+
+    it "maps ROR suffix to country codes" do
+      expect(doi.get_countries_from_ror("00k4n6c32")).to eq(["US"])
+    end
+
+    it "returns empty array for invalid ROR" do
+      expect(doi.get_countries_from_ror("doi.org/00k4n6c32")).to eq([])
+    end
+
+    it "returns empty array for ROR not in mapping" do
+      expect(doi.get_countries_from_ror("https://ror.org/nonexistent")).to eq([])
+    end
+
+    it "normalizes country codes to uppercase" do
+      # Store returns lowercase "us" — method must upcase it
+      expect(doi.get_countries_from_ror("https://ror.org/00a0jsq62")).to eq(["US"])
     end
   end
 end

@@ -13,4 +13,10 @@ module Rorable
     hierarchy = RorReferenceStore.ror_hierarchy(normalized_ror)
     hierarchy&.dig("ancestors") || []
   end
+
+  def get_countries_from_ror(ror_id)
+    normalized_ror = "https://#{ror_from_url(ror_id)}"
+    countries = RorReferenceStore.ror_to_countries(normalized_ror)
+    Array.wrap(countries).map(&:upcase).uniq
+  end
 end
