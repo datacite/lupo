@@ -790,7 +790,7 @@ class DataciteDoisController < ApplicationController
       doi.skip_schema_version_validation = true
 
       # Ensure we use schema version 4 for validation
-      doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version == "http://datacite.org/schema/kernel-3"
+      doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version&.start_with?("http://datacite.org/schema/kernel-3")
 
       doi.enrichments.each do |enrichment|
         doi.apply_enrichment(enrichment)
