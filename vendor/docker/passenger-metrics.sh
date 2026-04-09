@@ -11,7 +11,7 @@ SERVER_NAME="${SERVERNAME:-unknown}"
 # Set up global variables
 NAMESPACE="Custom/LupoPassenger"
 SERVICE_NAME="${SERVER_NAME%.datacite.org}" # client-api.datacite.org -> client-api
-INTERVAL=15
+INTERVAL=30
 
 log() {
   echo "[$(date -u '+%Y-%m-%dT%H:%M:%SZ')] passenger-metrics: $*" >&2
@@ -32,7 +32,6 @@ publish_metrics() {
   aws cloudwatch put-metric-data \
     --region "$AWS_REGION" \
     --namespace "$NAMESPACE" \
-    --storage-resolution 1 \
     --metric-data \
       "MetricName=PassengerMaxWorkers,Value=${max_workers},Unit=Count,Timestamp=${timestamp},Dimensions=[{Name=Service,Value=${SERVICE_NAME}}]" \
       "MetricName=PassengerCurrentWorkers,Value=${current_workers},Unit=Count,Timestamp=${timestamp},Dimensions=[{Name=Service,Value=${SERVICE_NAME}}]" \
