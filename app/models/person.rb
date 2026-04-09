@@ -182,7 +182,7 @@ class Person
       c = ISO3166::Country[message.fetch("country-code")]
       country = {
         id: message.fetch("country-code"),
-        name: c.present? ? c.name : message.fetch("country-code"),
+        name: c.present? ? c.iso_short_name : message.fetch("country-code"),
       }
     else
       country = nil

@@ -229,7 +229,7 @@ class MemberType < BaseObject
     return {} if object.country_code.blank?
 
     {
-      id: object.country_code, name: ISO3166::Country[object.country_code].name
+      id: object.country_code, name: ISO3166::Country[object.country_code].try(:iso_short_name),
     }.compact
   end
 

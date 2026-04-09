@@ -770,15 +770,15 @@ class Provider < ApplicationRecord
   # end
 
   def country_name
-    ISO3166::Country[country_code].name if country_code.present?
+    ISO3166::Country[country_code].try(:iso_short_name) if country_code.present?
   end
 
   def billing_country_name
-    ISO3166::Country[billing_country].try(:name) if billing_country.present?
+    ISO3166::Country[billing_country].try(:iso_short_name) if billing_country.present?
   end
 
   def set_region
-    r = ISO3166::Country[country_code].world_region if country_code.present?
+    r = ISO3166::Country[country_code].try(:world_region) if country_code.present?
     write_attribute(:region, r)
   end
 
