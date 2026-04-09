@@ -813,8 +813,8 @@ class DataciteDoisController < ApplicationController
     def reset_enriched_doi(doi)
       doi = Doi.includes(:enrichments).find_by(doi: doi.uid, agency: "datacite")
 
-        # Empty the enrichments
-        doi.enrichments = []
+      # Empty the enrichments
+      doi.enrichments = []
     end
 
     def set_include
