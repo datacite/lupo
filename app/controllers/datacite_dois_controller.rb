@@ -780,6 +780,9 @@ class DataciteDoisController < ApplicationController
 
   protected
     def handle_show_enriched_doi(doi, options)
+      # Short circuit if there are no enrichments
+      return render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok) if doi.enrichments.empty?
+
       # Ensure validation works as expected when not persisting the record
       doi.only_validate = true
       doi.regenerate = true
@@ -795,7 +798,23 @@ class DataciteDoisController < ApplicationController
         next
       end
 
+      # Ensure there are no enrichments in the relationship section if the doi is invalid
+      if doi.invalid?
+        # Reset the doi to the original values before enrichment
+        doi = Doi.includes(:enrichments).find_by(doi: uid, agency: "datacite")
+
+        # Empty the enrichments
+        doi.enrichments = []
+      end
+
       render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok)
+    end
+
+    def reset_enriched_doi(doi)
+      doi = Doi.includes(:enrichments).find_by(doi: doi.uid, agency: "datacite")
+
+        # Empty the enrichments
+        doi.enrichments = []
     end
 
     def set_include
