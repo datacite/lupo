@@ -780,9 +780,6 @@ class DataciteDoisController < ApplicationController
 
   protected
     def handle_show_enriched_doi(doi, options)
-      # Return 404 if there are no enrichments for the DOI
-      fail ActiveRecord::RecordNotFound if doi.enrichments.empty?
-
       # Ensure validation works as expected when not persisting the record
       doi.only_validate = true
       doi.regenerate = true
@@ -797,9 +794,6 @@ class DataciteDoisController < ApplicationController
       rescue
         next
       end
-
-      # Return 404 if the DOI is invalid after applying enrichments.
-      fail ActiveRecord::RecordNotFound if doi.invalid?
 
       render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok)
     end
