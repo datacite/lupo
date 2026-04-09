@@ -792,6 +792,7 @@ class DataciteDoisController < ApplicationController
       # Ensure we use schema version 4 for validation
       doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version&.start_with?("http://datacite.org/schema/kernel-3")
 
+      # Apply enrichments to the doi
       doi.enrichments.each do |enrichment|
         doi.apply_enrichment(enrichment)
       rescue
@@ -800,21 +801,14 @@ class DataciteDoisController < ApplicationController
 
       # Ensure there are no enrichments in the relationship section if the doi is invalid
       if doi.invalid?
-        # Reset the doi to the original values before enrichment
-        doi = Doi.includes(:enrichments).find_by(doi: uid, agency: "datacite")
+        # Reset the doi to original version to revert enrichment application
+        doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
 
-        # Empty the enrichments
-        doi.enrichments = []
+        # Clear enrichments
+        doi.association(:enrichments).target = []
       end
 
       render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok)
-    end
-
-    def reset_enriched_doi(doi)
-      doi = Doi.includes(:enrichments).find_by(doi: doi.uid, agency: "datacite")
-
-      # Empty the enrichments
-      doi.enrichments = []
     end
 
     def set_include
