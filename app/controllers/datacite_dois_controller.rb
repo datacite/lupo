@@ -787,27 +787,20 @@ class DataciteDoisController < ApplicationController
       doi.only_validate = true
       doi.regenerate = true
       doi.skip_client_domains_validation = true
-      doi.skip_schema_version_validation = true
+      doi.skip_schema_version_validation = false
 
       # Ensure we use schema version 4 for validation
-      doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version&.start_with?("http://datacite.org/schema/kernel-3")
+      doi.schema_version = "http://datacite.org/schema/kernel-4"
 
       # Apply enrichments to the doi
       doi.enrichments.each do |enrichment|
         doi.apply_enrichment(enrichment)
-      rescue => err
-        Rails.logger.info("Enrichment failed to apply for DOI #{doi.doi}: #{err.message}")
+      rescue
         next
-      end
-
-      if doi.valid?
-        Rails.logger.info("Enrichment applied successfully for DOI #{doi.doi}")
       end
 
       # Ensure there are no enrichments in the relationship section if the doi is invalid
       if doi.invalid?
-        Rails.logger.info("Enrichment failed to apply for DOI #{doi.doi}")
-
         # Reset the doi to original version to revert enrichment application
         doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
 
