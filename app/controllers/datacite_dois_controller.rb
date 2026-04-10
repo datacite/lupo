@@ -795,12 +795,19 @@ class DataciteDoisController < ApplicationController
       # Apply enrichments to the doi
       doi.enrichments.each do |enrichment|
         doi.apply_enrichment(enrichment)
-      rescue
+      rescue => err
+        Rails.logger.info("Enrichment failed to apply for DOI #{doi.doi}: #{err.message}")
         next
+      end
+
+      if doi.valid?
+        Rails.logger.info("Enrichment applied successfully for DOI #{doi.doi}")
       end
 
       # Ensure there are no enrichments in the relationship section if the doi is invalid
       if doi.invalid?
+        Rails.logger.info("Enrichment failed to apply for DOI #{doi.doi}")
+
         # Reset the doi to original version to revert enrichment application
         doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
 
