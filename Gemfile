@@ -61,6 +61,7 @@ gem "sentry-rails", "~> 6.5"
 gem "shoryuken", "~> 7.0", ">= 7.0.1"
 gem "slack-notifier", "~> 2.1"
 gem "sparql", "~> 3.1", ">= 3.1.2"
+gem "string_pattern", "~> 2.4"
 gem "strip_attributes", "~> 2.0", ">= 2.0.1"
 gem "parallel", "~> 1.28"
 
