@@ -855,7 +855,7 @@ DEPENDENCIES
   shoryuken (~> 7.0, >= 7.0.1)
   shoulda-matchers (~> 7.0, >= 7.0.1)
   simplecov (~> 0.22.0)
-  slack-notifier (~> 2.1)
+  slack-notifier (~> 2.4)
   sparql (~> 3.1, >= 3.1.2)
   string_pattern (~> 2.4)
   strip_attributes (~> 2.0, >= 2.0.1)
