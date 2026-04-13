@@ -6,8 +6,12 @@ class ContainerType < BaseObject
   field :identifier_type,
         String,
         null: true,
-        hash_key: "identifierType",
         description: "The type of identifier."
+
+  def identifier_type
+    object["identifierType"]
+  end
+
   field :identifier,
         String,
         null: true, description: "The value of the identifier."

@@ -17,8 +17,12 @@ class RepositoryType < BaseObject
         description: "The unique identifier for the client repository"
   field :re3data_doi,
         ID,
-        hash_key: "re3doi",
         null: true, description: "The re3data doi for the repository"
+
+  def re3data_doi
+    object.re3doi
+  end
+
   field :name,
         String,
         null: false,

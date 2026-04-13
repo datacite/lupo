@@ -13,8 +13,12 @@ class DataCatalogType < BaseObject
   field :url,
         String,
         null: true,
-        hash_key: "repositoryUrl",
         description: "URL of the data catalog."
+
+  def url
+    object["repositoryUrl"]
+  end
+
   field :contacts,
         [String],
         null: true, description: "Repository contact information"

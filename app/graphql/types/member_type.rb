@@ -6,8 +6,12 @@ class MemberType < BaseObject
   field :id,
         ID,
         null: false,
-        hash_key: "uid",
         description: "Unique identifier for the member"
+
+  def id
+    object.is_a?(Hash) ? object["uid"] : object.uid
+  end
+
   field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "Member name"
   field :displayName, String, null: false, description: "Member display name"
