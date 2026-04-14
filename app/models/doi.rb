@@ -106,6 +106,7 @@ class Doi < ApplicationRecord
   has_many :part_of, class_name: "Doi", through: :part_of_events, source: :doi_for_source
   has_many :versions, class_name: "Doi", through: :version_events, source: :doi_for_target
   has_many :version_of, class_name: "Doi", through: :version_of_events, source: :doi_for_source
+  has_many :enrichments, class_name: "Enrichment", foreign_key: :doi, primary_key: :doi, inverse_of: :doi_record
 
   delegate :provider, to: :client, allow_nil: true
 
@@ -1865,6 +1866,15 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
+  end
+
+  # Small work around to get serialization working as expected for enriched dois
+  def enrichment_uuids
+    if association(:enrichments).loaded?
+      enrichments.map(&:uuid)
+    else
+      enrichments.pluck(:uuid)
+    end
   end
 
   def _fos_filter(subject_array)
