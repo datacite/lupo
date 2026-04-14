@@ -18,7 +18,7 @@ require "aws-sdk-s3"
 #
 class RorReferenceStore
   S3_PREFIX    = "ror_funder_mapping/"
-  TTL          = 31.days
+  TTL          = 29.days
   POPULATED_KEY_SUFFIX = "populated"
 
   MAPPING_FILES = {
