@@ -50,6 +50,7 @@ class RorReferenceStore
     end
 
     private
+      # Try to lookup the key from the cache but if the cache is cold, keep going, return nil and fill it in later
       def lookup(mapping, key)
         value = Rails.cache.read(value_cache_key(mapping, key))
         unless value.nil?
@@ -59,9 +60,9 @@ class RorReferenceStore
 
         # Value nil: might be cold cache or key not in mapping — check populated
         unless cache_populated?(mapping)
-          Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – fetching from S3"
-          refresh!(mapping)
-          value = Rails.cache.read(value_cache_key(mapping, key))
+          Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – no populated key"
+          # refresh!(mapping)
+          # value = Rails.cache.read(value_cache_key(mapping, key))
         end
         Rails.logger.info "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
         value
