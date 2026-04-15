@@ -17,11 +17,12 @@ RSpec.describe RorReferenceStore, type: :service do
   end
 
   describe "per-key cache write and read" do
-    it "stores and retrieves data via per-key cache entries" do
+    it "stores and retrieves data via per-key cache entries after explicit refresh" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
       allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
+      described_class.refresh_all!
       result = described_class.funder_to_ror("100010552")
       expect(result).to eq("https://ror.org/04ttjf776")
 
@@ -30,36 +31,33 @@ RSpec.describe RorReferenceStore, type: :service do
 
     it "returns cached data on subsequent calls without hitting S3" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
-      allow(s3_client).to receive(:get_object).and_return(s3_response).once
+      allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      described_class.funder_to_ror("100010552")
+      described_class.refresh_all!
+      expect(s3_client).to have_received(:get_object).exactly(3).times
+
       result = described_class.funder_to_ror("100010552")
+      second_result = described_class.funder_to_ror("100010552")
 
       expect(result).to eq("https://ror.org/04ttjf776")
-      expect(s3_client).to have_received(:get_object).once
+      expect(second_result).to eq("https://ror.org/04ttjf776")
+      expect(s3_client).to have_received(:get_object).exactly(3).times
     end
   end
 
-  describe "cold cache refresh" do
-    it "re-fetches from S3 when populated key is missing" do
+  describe "cold cache lookup" do
+    it "returns nil and does not fetch from S3 when populated key is missing" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
-      # Two responses so the second get_object returns a fresh readable body (StringIO is consumed on read)
-      allow(s3_client).to receive(:get_object).and_return(
-        instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json)),
-        instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json))
-      )
+      allow(s3_client).to receive(:get_object).and_return(s3_response)
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
-      described_class.funder_to_ror("100010552")
-
-      # Simulate cold cache: remove populated sentinel and the value so lookup checks populated and refreshes
       Rails.cache.delete("ror_ref/funder_to_ror/populated")
       Rails.cache.delete("ror_ref/funder_to_ror/100010552")
 
       result = described_class.funder_to_ror("100010552")
-      expect(result).to eq("https://ror.org/04ttjf776")
-      expect(s3_client).to have_received(:get_object).twice
+      expect(result).to be_nil
+      expect(s3_client).not_to have_received(:get_object)
     end
   end
 
@@ -88,13 +86,14 @@ RSpec.describe RorReferenceStore, type: :service do
   end
 
   describe "S3 failure handling" do
-    it "returns nil when S3 download fails and cache is cold" do
+    it "handles S3 errors during refresh and lookup remains nil on cold cache" do
       allow(Aws::S3::Client).to receive(:new).and_return(s3_client)
       allow(s3_client).to receive(:get_object).and_raise(
         Aws::S3::Errors::ServiceError.new(nil, "Access Denied")
       )
       stub_const("ENV", ENV.to_h.merge("ROR_ANALYSIS_S3_BUCKET" => "test-bucket"))
 
+      expect { described_class.refresh_all! }.not_to raise_error
       expect(described_class.funder_to_ror("100010552")).to be_nil
     end
   end
