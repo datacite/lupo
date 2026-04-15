@@ -68,11 +68,11 @@ class EnrichmentsController < ApplicationController
     end
 
     def build_meta(enrichments, cursor_page)
-      enrichments_total = enrichments.count
+      # enrichments_total = enrichments.count
 
       {
-        total: enrichments_total,
-        totalPages: (enrichments_total / PAGE_SIZE.to_f).ceil,
+        # total: enrichments_total,
+        # totalPages: (enrichments_total / PAGE_SIZE.to_f).ceil,
         page: cursor_page
       }
     end
