@@ -59,7 +59,6 @@ class Ability
       end
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? ||
           activity.doi.provider &&
@@ -90,7 +89,6 @@ class Ability
           provider_id: user.provider_id
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
@@ -109,7 +107,6 @@ class Ability
           provider_id: user.provider_id
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
@@ -144,7 +141,6 @@ class Ability
       end
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
@@ -156,7 +152,6 @@ class Ability
       can %i[read], Doi, client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
@@ -170,7 +165,6 @@ class Ability
           client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
@@ -188,7 +182,6 @@ class Ability
       can %i[read], Doi, client_id: user.client_id if user.client_id.present?
       can %i[read get_url], Doi
       can %i[read], User, id: user.id
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable?
       end
@@ -204,7 +197,6 @@ class Ability
       can %i[read], Doi, client_id: user.client_id if user.client_id.present?
       can %i[read get_url], Doi
       can %i[read], User, id: user.id
-      can %i[read], Phrase
       can %i[read], Activity do |activity|
         activity.doi.findable?
       end
