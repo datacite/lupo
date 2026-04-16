@@ -238,7 +238,6 @@ GEM
     diff-lcs (1.5.0)
     diffy (3.4.2)
     docile (1.4.0)
-    docopt (0.6.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.8.1)
@@ -545,9 +544,6 @@ GEM
       date
       stringio
     public_suffix (2.0.5)
-    pwqgen.rb (0.1.0)
-      docopt (~> 0.5)
-      sysrandom
     qonfig (0.28.0)
     racc (1.8.1)
     rack (2.2.22)
@@ -754,7 +750,6 @@ GEM
     sxp (1.2.3)
       matrix (~> 0.4)
       rdf (~> 3.2)
-    sysrandom (1.0.5)
     systemu (2.6.5)
     terrapin (1.0.1)
       climate_control
@@ -879,7 +874,6 @@ DEPENDENCIES
   parallel (~> 1.27)
   parallel_tests (~> 3.12)
   premailer (~> 1.11, >= 1.11.1)
-  pwqgen.rb (~> 0.1.0)
   rack-cors (~> 1.0)
   rack-utf8_sanitizer (~> 1.6)
   rails (~> 7.2)
