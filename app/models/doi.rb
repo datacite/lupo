@@ -154,8 +154,6 @@ class Doi < ApplicationRecord
   validate :check_language, if: :language?
 
   # JSON-SCHEMA VALIDATION
-  # temporarily commenting out this validation.
-  validates :identifier, if: proc { |doi| doi.validate_json_attribute?(:identifier) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("identifier") } }, unless: :only_validate
   validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
   validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
   validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
@@ -163,7 +161,7 @@ class Doi < ApplicationRecord
   validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
   validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
   validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
-  validates :alternate_identifiers, if: proc { |doi| doi.validate_json_attribute?(:alternate_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
+  validates :identifiers, if: proc { |doi| doi.validate_json_attribute?(:identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
   validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
   validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
   validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
@@ -173,24 +171,16 @@ class Doi < ApplicationRecord
   validates :geolocations, if: proc { |doi| doi.validate_json_attribute?(:geolocations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geolocations") } }, unless: :only_validate
   validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
   validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
+  validates :types, if: proc { |doi| doi.validate_json_attribute?(:types) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
 
   validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
     message: ->(errors) { errors },
     schema: lambda { schema_file_path("language") }
   }, unless: :only_validate
 
-  validates :raw_types, if: proc { |doi| doi.validate_json_attribute?(:raw_types) }, json: {
-    message: ->(errors) { errors },
-    schema: lambda { schema_file_path("resource_type") },
-  }, unless: :only_validate
-
   # See https://github.com/mirego/activerecord_json_validator for an explanation of why this must be done.
   def raw_language
     self[:language]
-  end
-
-  def raw_types
-    self[:types]
   end
 
   after_commit :update_url, on: %i[create update]
@@ -199,7 +189,6 @@ class Doi < ApplicationRecord
   before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
-  before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
@@ -2622,18 +2611,6 @@ class Doi < ApplicationRecord
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
       end
-  end
-
-  def update_field_of_science
-    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
-      if subject.is_a?(String)
-        sum += name_to_fos(subject)
-      elsif subject.is_a?(Hash)
-        sum += hsh_to_fos(subject)
-      end
-
-      sum
-    end.uniq
   end
 
   def update_rights_list
