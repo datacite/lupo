@@ -337,5 +337,72 @@ describe IndexController, type: :request do
         expect(last_response.headers["Location"]).to eq(doi.url)
       end
     end
+
+    context "wildcard Accept: */*" do
+      it "redirects without 500" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "*/*" }
+
+        expect(last_response.status).not_to eq(500)
+        expect([200, 302, 303]).to include(last_response.status)
+      end
+    end
+
+    context "application/rdf+xml" do
+      it "returns the Doi as RDF/XML" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/rdf+xml" }
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("application/rdf+xml")
+        expect(last_response.body).to include("rdf:RDF")
+      end
+    end
+
+    context "application/rdf+xml link" do
+      it "returns the Doi as RDF/XML" do
+        get "/application/rdf+xml/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("application/rdf+xml")
+        expect(last_response.body).to include("rdf:RDF")
+      end
+    end
+
+    context "text/turtle" do
+      it "returns the Doi as Turtle" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "text/turtle" }
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("text/turtle")
+        expect(last_response.body).to include("@prefix schema:")
+      end
+    end
+
+    context "application/x-turtle" do
+      it "returns the Doi as Turtle" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-turtle" }
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.body).to include("@prefix schema:")
+      end
+    end
+
+    context "text/turtle link" do
+      it "returns the Doi as Turtle" do
+        get "/text/turtle/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("text/turtle")
+        expect(last_response.body).to include("@prefix schema:")
+      end
+    end
+
+    context "application/x-turtle link" do
+      it "returns the Doi as Turtle" do
+        get "/application/x-turtle/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.body).to include("@prefix schema:")
+      end
+    end
   end
 end
