@@ -382,6 +382,7 @@ describe IndexController, type: :request do
         get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-turtle" }
 
         expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("turtle")
         expect(last_response.body).to include("@prefix schema:")
       end
     end
@@ -401,6 +402,7 @@ describe IndexController, type: :request do
         get "/application/x-turtle/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("turtle")
         expect(last_response.body).to include("@prefix schema:")
       end
     end
