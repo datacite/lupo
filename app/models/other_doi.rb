@@ -148,19 +148,14 @@ class OtherDoi < Doi
 
     # get database records from array of database ids
     selected_dois = OtherDoi.where(id: ids, type: "OtherDoi").includes(
-      :client,
+      { client: :provider },
       :media,
-      :view_events,
-      :download_events,
-      :citation_events,
-      :reference_events,
-      :part_events,
-      :part_of_events,
-      :version_events,
-      :version_of_events,
       :metadata
     )
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
+      # Preload all events for this batch in a single query
+      EventsPreloader.new(dois).preload!
+
       bulk_body = dois.map do |doi|
         {
           index: {

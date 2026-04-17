@@ -2,6 +2,7 @@
 
 require "maremma"
 require "benchmark"
+require_relative "concerns/preloaded_event_relation"
 
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
@@ -76,6 +77,7 @@ class Doi < ApplicationRecord
   alias_attribute :state, :aasm_state
 
   attr_accessor :current_user
+  attr_accessor :preloaded_events
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
@@ -99,6 +101,73 @@ class Doi < ApplicationRecord
   has_many :activities, as: :auditable, dependent: :destroy
   # has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+
+  # Override association methods to use preloaded_events when available
+  # Check for !nil instead of present? to handle empty arrays (preloaded but no events)
+  # Also filter by source_doi/target_doi to match association behavior
+  def view_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "views", :target_doi)
+    else
+      association(:view_events).scope
+    end
+  end
+
+  def download_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "downloads", :target_doi)
+    else
+      association(:download_events).scope
+    end
+  end
+
+  def reference_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "references", :source_doi)
+    else
+      association(:reference_events).scope
+    end
+  end
+
+  def citation_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "citations", :target_doi)
+    else
+      association(:citation_events).scope
+    end
+  end
+
+  def part_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "parts", :source_doi)
+    else
+      association(:part_events).scope
+    end
+  end
+
+  def part_of_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "part_of", :target_doi)
+    else
+      association(:part_of_events).scope
+    end
+  end
+
+  def version_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "versions", :source_doi)
+    else
+      association(:version_events).scope
+    end
+  end
+
+  def version_of_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "version_of", :target_doi)
+    else
+      association(:version_of_events).scope
+    end
+  end
 
   has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
   has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
@@ -2827,6 +2896,15 @@ class Doi < ApplicationRecord
   end
 
   private
+    def filtered_preloaded_events(relation_type_key, relation_type_value, doi_key)
+      PreloadedEventRelation.new(
+        preloaded_events.select do |e|
+          e.public_send(relation_type_key) == relation_type_value &&
+            e.public_send(doi_key)&.upcase == doi.upcase
+        end
+      )
+    end
+
     def update_publisher_from_hash
       symbolized_publisher_hash = publisher_before_type_cast.symbolize_keys
       if !symbolized_publisher_hash.values.all?(nil)
