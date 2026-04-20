@@ -54,17 +54,16 @@ class RorReferenceStore
       def lookup(mapping, key)
         value = Rails.cache.read(value_cache_key(mapping, key))
         unless value.nil?
-          Rails.logger.info "[RorReferenceStore] hit: #{mapping}/#{key}"
           return value
         end
 
         # Value nil: might be cold cache or key not in mapping — check populated
         unless cache_populated?(mapping)
-          Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – no populated key"
+          # Rails.logger.info "[RorReferenceStore] cache cold for #{mapping} – no populated key"
           # refresh!(mapping)
           # value = Rails.cache.read(value_cache_key(mapping, key))
         end
-        Rails.logger.info "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
+        # Rails.logger.error "[RorReferenceStore] #{value ? 'hit' : 'miss'}: #{mapping}/#{key}"
         value
       end
 
