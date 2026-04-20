@@ -81,9 +81,9 @@ class EnrichmentsController < ApplicationController
       base_link = request.original_url.split("?").first
 
       query_string = if doi.present?
-        "doi=#{doi}&cursor=#{next_cursor}"
+        "doi=#{doi}&page[cursor]=#{next_cursor}"
       elsif client_id.present?
-        "client-id=#{client_id}&cursor=#{next_cursor}"
+        "client-id=#{client_id}&page[cursor]=#{next_cursor}"
       else
         "page[cursor]=#{next_cursor}"
       end
