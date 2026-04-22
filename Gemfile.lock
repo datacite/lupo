@@ -546,7 +546,7 @@ GEM
     public_suffix (2.0.5)
     qonfig (0.28.0)
     racc (1.8.1)
-    rack (2.2.22)
+    rack (2.2.23)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-cors (1.1.1)
