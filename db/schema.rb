@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_08_130608) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_10_131437) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
@@ -253,6 +253,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_130608) do
     t.string "uuid", limit: 36, null: false
     t.string "source_id", null: false
     t.index ["doi", "updated_at", "id"], name: "index_enrichments_on_doi_and_updated_at_and_id", order: { updated_at: :desc, id: :desc }
+    t.index ["field"], name: "index_enrichments_on_field"
     t.index ["filename"], name: "index_enrichments_on_filename"
     t.index ["updated_at", "id"], name: "index_enrichments_on_updated_at_and_id", order: :desc
     t.index ["uuid"], name: "index_enrichments_on_uuid", unique: true
