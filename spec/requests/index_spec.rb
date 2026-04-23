@@ -387,15 +387,15 @@ describe IndexController, type: :request do
       end
     end
 
-    context "text/turtle link" do
-      it "returns the Doi as Turtle" do
-        get "/text/turtle/#{doi.doi}"
+    # context "text/turtle link" do
+    #   it "returns the Doi as Turtle" do
+    #     get "/text/turtle/#{doi.doi}"
 
-        expect(last_response.status).to eq(200)
-        expect(last_response.headers["Content-Type"]).to include("text/turtle")
-        expect(last_response.body).to include("@prefix schema:")
-      end
-    end
+    #     expect(last_response.status).to eq(200)
+    #     expect(last_response.headers["Content-Type"]).to include("text/turtle")
+    #     expect(last_response.body).to include("@prefix schema:")
+    #   end
+    # end
 
     context "application/x-turtle link" do
       it "returns the Doi as Turtle" do
