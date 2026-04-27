@@ -1,0 +1,68 @@
+{
+  "title": "RelatedItem",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Information about a resource related to the one being registered e.g. a journal or book of which the article or chapter is part.",
+  "type": "object",
+  "properties": {
+    "relatedItemIdentifier": {
+      "$ref": "related_item_identifier.json"
+    },
+    "creators": {
+      "type": "array",
+      "items": {
+        "$ref": "creator_base.json"
+      }
+    },
+    "titles": {
+      "$ref": "titles.json",
+      "minItems": 0
+    },
+    "publicationYear": {
+      "$ref": "publication_year.json"
+    },
+    "volume": {
+      "type": "string"
+    },
+    "issue": {
+      "type": "string"
+    },
+    "number": {
+      "type": "string"
+    },
+    "numberType": {
+      "$ref": "controlled_vocabularies/number_type.json"
+    },
+    "firstPage": {
+      "type": "string"
+    },
+    "lastPage": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "edition": {
+      "type": "string"
+    },
+    "contributors": {
+      "type": "array",
+      "items": {
+        "$ref": "contributor_base.json"
+      }
+    },
+    "relatedItemType": {
+      "$ref": "controlled_vocabularies/resource_type_general.json"
+    },
+    "relationType": {
+      "$ref": "controlled_vocabularies/relation_type.json"
+    },
+    "relationTypeInformation": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "relatedItemType",
+    "relationType"
+  ]
+}

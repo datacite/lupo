@@ -1,0 +1,23 @@
+{
+  "title": "CreatorBase",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The main researchers involved working on the data, or the authors of the publication in priority order. May be a corporate/institutional or personal name.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "nameType": {
+      "$ref": "controlled_vocabularies/name_type.json"
+    },
+    "lang": {
+      "$ref": "definitions.json#/$defs/language"
+    },
+    "givenName": {
+      "type": "string"
+    },
+    "familyName": {
+      "type": "string"
+    }
+	}
+}

@@ -1,0 +1,16 @@
+{
+  "title": "AlternateIdentifier",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "An identifier or identifiers other than the primary Identifier applied to the resource being registered. This may be any alphanumeric string which is unique within its domain of issue. May be used for local identifiers. AlternateIdentifier should be used for another identifier of the same instance (same location, same file).",
+  "type": "object",
+  "properties": {
+    "alternateIdentifier": {
+      "type": "string"
+    },
+    "alternateIdentifierType": {
+      "type": "string"
+    }
+  },
+  "required": ["alternateIdentifierType"],
+  "additionalProperties": false
+}
