@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "name": {
-      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
+      "type": "string"
     },
     "affiliationIdentifier": {
       "type": "string"

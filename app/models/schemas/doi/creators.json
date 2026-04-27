@@ -4,6 +4,6 @@
   "type": "array",
   "items": {
     "$ref": "creator.json",
-    "minItems": 1
-  }
+  },
+  "minItems": 1
 }

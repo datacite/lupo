@@ -8,7 +8,7 @@
       "type": "string"
     },
     "nameIdentifierScheme": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeUri": {
       "type": "string"
