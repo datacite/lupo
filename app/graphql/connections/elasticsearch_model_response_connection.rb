@@ -166,6 +166,14 @@ class ElasticsearchModelResponseConnection
     encode(item[:sort].join(","))
   end
 
+  # Required by graphql 2.x for authorization scope checking on connection nodes.
+  # Without this, resolving `nodes` raises NoMethodError on `was_authorized_by_scope_items?`.
+  def was_authorized_by_scope_items?
+    @was_authorized_by_scope_items
+  end
+
+  attr_writer :was_authorized_by_scope_items
+
   private
     # @param argument [nil, Integer] `first` or `last`, as provided by the client
     # @param max_page_size [nil, Integer]

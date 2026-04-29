@@ -71,7 +71,7 @@ class Client < ApplicationRecord
   validates_format_of :system_email,
                       with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_format_of :salesforce_id,
-                      with: /[a-zA-Z0-9]{18}/,
+                      with: /\A[a-zA-Z0-9]{18}\z/,
                       message: "wrong format for salesforce id",
                       if: :salesforce_id?
   validates_inclusion_of :role_name,
@@ -119,6 +119,7 @@ class Client < ApplicationRecord
   end
 
   settings index: {
+    mapping: { total_fields: { limit: 2000 } },
     analysis: {
       analyzer: {
         string_lowercase: {
@@ -907,7 +908,7 @@ class Client < ApplicationRecord
     end
 
     def uuid_format
-      unless UUID.validate(globus_uuid)
+      unless UUID_REGEX.match?(globus_uuid.to_s)
         errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
       end
     end

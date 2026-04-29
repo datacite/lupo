@@ -6,30 +6,60 @@ class RelatedIdentifierType < BaseObject
   field :related_identifier,
         String,
         null: false,
-        hash_key: "relatedIdentifier",
         description: "Related identifier"
+
+  def related_identifier
+    object["relatedIdentifier"]
+  end
+
   field :related_identifier_type,
         String,
         null: false,
-        hash_key: "relatedIdentifierType",
         description: "Related identifier type"
+
+  def related_identifier_type
+    object["relatedIdentifierType"]
+  end
+
   field :relation_type,
         String,
-        null: false, hash_key: "relationType", description: "Relation type"
+        null: false, description: "Relation type"
+
+  def relation_type
+    object["relationType"]
+  end
+
   field :related_metadata_scheme,
         String,
         null: true,
-        hash_key: "relatedMetadataScheme",
         description: "Related metadata scheme"
+
+  def related_metadata_scheme
+    object["relatedMetadataScheme"]
+  end
+
   field :scheme_uri,
         String,
-        null: true, hash_key: "schemeUri", description: "Scheme URI"
+        null: true, description: "Scheme URI"
+
+  def scheme_uri
+    object["schemeUri"]
+  end
+
   field :scheme_type,
         String,
-        null: true, hash_key: "schemeType", description: "Scheme type"
+        null: true, description: "Scheme type"
+
+  def scheme_type
+    object["schemeType"]
+  end
+
   field :resource_type_general,
         String,
         null: true,
-        hash_key: "resourceTypeGeneral",
         description: "Resource type general"
+
+  def resource_type_general
+    object["resourceTypeGeneral"]
+  end
 end

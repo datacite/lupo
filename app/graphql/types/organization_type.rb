@@ -27,12 +27,20 @@ class OrganizationType < BaseObject
         null: true, description: "Membership role name if a DataCite member"
   field :url,
         [Url],
-        null: true, hash_key: "links", description: "URL of the organization."
+        null: true, description: "URL of the organization."
+
+  def url
+    object["links"]
+  end
+
   field :wikipedia_url,
         Url,
         null: true,
-        hash_key: "wikipedia_url",
         description: "Wikipedia URL of the organization."
+
+  def wikipedia_url
+    object["wikipedia_url"]
+  end
   field :twitter,
         String,
         null: true, description: "Twitter username of the organization."

@@ -24,11 +24,9 @@ require "rspec/rails"
 require "shoulda-matchers"
 require "webmock/rspec"
 require "rack/test"
-require "colorize"
 require "database_cleaner/active_record"
 require "aasm/rspec"
 require "strip_attributes/matchers"
-require "rspec-benchmark"
 
 if ENV["METADATA_STORAGE_BUCKET_NAME"].present?
   ENV["METADATA_STORAGE_BUCKET_NAME"] = ENV["METADATA_STORAGE_BUCKET_NAME"] + "-test#{ENV["TEST_ENV_NUMBER"]}"
@@ -56,7 +54,6 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include StripAttributes::Matchers
-  config.include RSpec::Benchmark::Matchers
   config.include Rack::Test::Methods, type: :request
   config.include RSpec::GraphqlMatchers::TypesHelper
   config.include ActiveSupport::Testing::TimeHelpers

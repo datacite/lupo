@@ -418,7 +418,7 @@ class Event < ApplicationRecord
                           id
                         } - #{id + 499}."
     end
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+  rescue Elastic::Transport::Transport::Errors::RequestEntityTooLarge,
          Faraday::ConnectionFailed,
          ActiveRecord::LockWaitTimeout => e
     Rails.logger.info "[Elasticsearch] Error #{
@@ -952,7 +952,7 @@ class Event < ApplicationRecord
   end
 
   def uuid_format
-    errors.add(:uuid, "#{uuid} is not a valid UUID") unless UUID.validate(uuid)
+    errors.add(:uuid, "#{uuid} is not a valid UUID") unless UUID_REGEX.match?(uuid.to_s)
   end
 
   def registrant_id

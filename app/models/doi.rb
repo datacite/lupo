@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "maremma"
-require "benchmark"
 
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
@@ -126,7 +125,7 @@ class Doi < ApplicationRecord
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
-  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+\z/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
@@ -178,6 +177,7 @@ class Doi < ApplicationRecord
   end
 
   settings index: {
+    mapping: { total_fields: { limit: 2000 } },
     analysis: {
       analyzer: {
         string_lowercase: { tokenizer: "keyword", filter: %w(lowercase ascii_folding) },
@@ -1060,7 +1060,7 @@ class Doi < ApplicationRecord
           scroll_id: response["_scroll_id"],
         )
       # handle expired scroll_id (Elasticsearch returns this error)
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
+      rescue Elastic::Transport::Transport::Errors::NotFound
         return Hashie::Mash.new(
           total: 0,
           results: [],
