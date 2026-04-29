@@ -6,23 +6,38 @@ class RelatedItemContributorType < BaseObject
   field :contributor_type,
         String,
         null: true,
-        hash_key: "contributorType",
         description: "The type of contributor."
+
+  def contributor_type
+    object["contributorType"]
+  end
+
   field :name,
         String,
         null: false,
-        hash_key: "contributorName",
         description: "The name of the contributor."
+
+  def name
+    object["contributorName"]
+  end
+
   field :given_name,
         String,
         null: true,
-        hash_key: "givenName",
         description: "Given name. In the U.S., the first name of a Person."
+
+  def given_name
+    object["givenName"]
+  end
+
   field :family_name,
         String,
         null: true,
-        hash_key: "familyName",
         description: "Family name. In the U.S., the last name of a Person."
+
+  def family_name
+    object["familyName"]
+  end
 
   def type
     case object.name_type

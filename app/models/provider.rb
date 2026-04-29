@@ -83,11 +83,11 @@ class Provider < ApplicationRecord
                       if: :group_email?,
                       message: "group_email should be an email"
   validates_format_of :website,
-                      with: %r{https?://\S+},
+                      with: %r{\Ahttps?://\S+\z},
                       if: :website?,
                       message: "Website should be a url"
   validates_format_of :salesforce_id,
-                      with: /[a-zA-Z0-9]{18}/,
+                      with: /\A[a-zA-Z0-9]{18}\z/,
                       message: "wrong format for salesforce id",
                       if: :salesforce_id?
   validates_inclusion_of :role_name,
@@ -194,6 +194,7 @@ class Provider < ApplicationRecord
   end
 
   settings index: {
+    mapping: { total_fields: { limit: 2000 } },
     analysis: {
       analyzer: {
         string_lowercase: {
@@ -770,15 +771,15 @@ class Provider < ApplicationRecord
   # end
 
   def country_name
-    ISO3166::Country[country_code].name if country_code.present?
+    ISO3166::Country[country_code].try(:iso_short_name) if country_code.present?
   end
 
   def billing_country_name
-    ISO3166::Country[billing_country].try(:name) if billing_country.present?
+    ISO3166::Country[billing_country].try(:iso_short_name) if billing_country.present?
   end
 
   def set_region
-    r = ISO3166::Country[country_code].world_region if country_code.present?
+    r = ISO3166::Country[country_code].try(:world_region) if country_code.present?
     write_attribute(:region, r)
   end
 
@@ -825,7 +826,7 @@ class Provider < ApplicationRecord
   end
 
   def uuid_format
-    unless UUID.validate(globus_uuid)
+    unless UUID_REGEX.match?(globus_uuid.to_s)
       errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
     end
   end

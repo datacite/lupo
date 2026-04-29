@@ -8,7 +8,11 @@ class DateType < BaseObject
         null: false, description: "Date information for this resource"
   field :date_type,
         String,
-        null: true, hash_key: "dateType", description: "The type of date"
+        null: true, description: "The type of date"
+
+  def date_type
+    object["dateType"]
+  end
 end
 
 # Acceptable values for date_type are from the DataCite Metadata Schema:

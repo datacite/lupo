@@ -6,11 +6,18 @@ class GeolocationPointType < BaseObject
   field :point_longitude,
         Float,
         null: true,
-        hash_key: "pointLongitude",
         description: "Longitudinal dimension of point."
+
+  def point_longitude
+    object["pointLongitude"]
+  end
+
   field :point_latitude,
         Float,
         null: true,
-        hash_key: "pointLatitude",
         description: "Latitudinal dimension of point."
+
+  def point_latitude
+    object["pointLatitude"]
+  end
 end

@@ -16,32 +16,37 @@ SEARCHABLE_MODELS = [
 ].freeze
 
 RSpec.configure do |config|
-  config.before :all do
+  config.before(:suite) do
     SEARCHABLE_MODELS.each do |esc|
       if esc.name == "DataciteDoi" || esc.name == "OtherDoi"
         esc.create_template
       end
 
-      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
-        esc.__elasticsearch__.client.indices.delete index: esc.index_name
+      unless Elasticsearch::Model.client.indices.exists?(index: esc.index_name.to_s)
+        esc.__elasticsearch__.client.indices.create(
+          index: esc.index_name,
+          body: { settings: esc.settings.to_hash, mappings: esc.mappings.to_hash }
+        )
+      end
+    end
+  end
+
+  config.before(:each, elasticsearch: true) do
+    SEARCHABLE_MODELS.each do |esc|
+      if esc.name == "DataciteDoi" || esc.name == "OtherDoi"
+        esc.create_template
+      end
+
+      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name.to_s)
+        esc.__elasticsearch__.client.indices.delete index: esc.index_name.to_s
       end
 
       esc.__elasticsearch__.client.indices.create(
         index: esc.index_name,
         body: { settings: esc.settings.to_hash, mappings: esc.mappings.to_hash }
       )
-    end
-  end
 
-  config.after :all do
-    SEARCHABLE_MODELS.each do |esc|
-      if Elasticsearch::Model.client.indices.exists?(index: esc.index_name)
-        esc.__elasticsearch__.client.indices.delete index: esc.index_name
-      end
+      esc.import(refresh: true, force: true)
     end
-  end
-
-  config.before(:each, elasticsearch: true) do
-    SEARCHABLE_MODELS.each { |esc| esc.import(refresh: true, force: true) }
   end
 end

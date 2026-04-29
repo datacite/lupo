@@ -7,7 +7,7 @@ class EventRegistrantUpdateByIdJob < ApplicationJob
   include Identifiable
 
   rescue_from ActiveJob::DeserializationError,
-              Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+              Elastic::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message
   end
 

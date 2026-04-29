@@ -6,6 +6,11 @@ class TitleType < BaseObject
   field :title, String, null: true, description: "Title"
   field :title_type,
         String,
-        null: true, hash_key: "titleType", description: "Title type"
+        null: true, description: "Title type"
+
+  def title_type
+    object["titleType"]
+  end
+
   field :lang, ID, null: true, description: "Language"
 end

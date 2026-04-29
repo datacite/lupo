@@ -64,7 +64,7 @@ module Indexable
       begin
         __elasticsearch__.delete_document
         deleted_from_active = true
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+      rescue Elastic::Transport::Transport::Errors::NotFound => e
         Rails.logger.warn "Document not found in active index: #{e.message}"
       end
 
@@ -73,7 +73,7 @@ module Indexable
         begin
           __elasticsearch__.delete_document(index: self.class.inactive_index)
           deleted_from_inactive = true
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        rescue Elastic::Transport::Transport::Errors::NotFound => e
           Rails.logger.warn "Document not found in inactive index: #{e.message}"
         end
       end      # Only log success if at least one deletion succeeded
@@ -185,7 +185,7 @@ module Indexable
             scroll_id: response["_scroll_id"],
           )
           # handle expired scroll_id (Elasticsearch returns this error)
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue Elastic::Transport::Transport::Errors::NotFound
           return Hashie::Mash.new(total: 0, results: [], scroll_id: nil)
         end
       end
@@ -1136,7 +1136,7 @@ module Indexable
             ret = h.keys.first
           end
         end
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+      rescue Elastic::Transport::Transport::Errors::NotFound => e
         Rails.logger.error e.message
       end
 

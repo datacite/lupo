@@ -100,7 +100,6 @@ class OtherDoi < Doi
     errors = 0
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,
-                                             type: OtherDoi.document_type,
                                              body: bulk_body
 
     # report errors
@@ -122,7 +121,7 @@ class OtherDoi < Doi
     end
 
     number_of_dois
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge,
+  rescue Elastic::Transport::Transport::Errors::RequestEntityTooLarge,
     Aws::SQS::Errors::RequestEntityTooLarge,
     Faraday::ConnectionFailed,
     ActiveRecord::LockWaitTimeout => e

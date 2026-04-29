@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -95,5 +95,3 @@ Rails.application.configure do
   ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
   ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 end
-
-BetterErrors::Middleware.allow_ip! ENV["TRUSTED_IP"]
