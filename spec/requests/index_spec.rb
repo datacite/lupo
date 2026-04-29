@@ -4,6 +4,7 @@ require "rails_helper"
 
 describe IndexController, type: :request do
   let(:doi) { create(:doi, aasm_state: "findable") }
+  let(:doi_with_xml) { create(:doi, :with_datacite_xml, aasm_state: "findable") }
 
   describe "content_negotation" do
     context "application/vnd.jats+xml" do
@@ -349,17 +350,31 @@ describe IndexController, type: :request do
 
     context "application/rdf+xml" do
       it "returns the Doi as RDF/XML" do
-        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/rdf+xml" }
+        get "/#{doi_with_xml.doi}", nil, { "HTTP_ACCEPT" => "application/rdf+xml" }
 
         expect(last_response.status).to eq(200)
         expect(last_response.headers["Content-Type"]).to include("application/rdf+xml")
         expect(last_response.body).to include("rdf:RDF")
       end
+
+      it "returns 406 when RDF representation is not available" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/rdf+xml" }
+
+        expect(last_response.status).to eq(406)
+        expect(json["errors"]).to eq(
+          [
+            {
+              "status" => "406",
+              "title" => "RDF representation is not available for this DOI",
+            },
+          ],
+        )
+      end
     end
 
     context "application/rdf+xml link" do
       it "returns the Doi as RDF/XML" do
-        get "/application/rdf+xml/#{doi.doi}"
+        get "/application/rdf+xml/#{doi_with_xml.doi}"
 
         expect(last_response.status).to eq(200)
         expect(last_response.headers["Content-Type"]).to include("application/rdf+xml")
@@ -369,17 +384,31 @@ describe IndexController, type: :request do
 
     context "text/turtle" do
       it "returns the Doi as Turtle" do
-        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "text/turtle" }
+        get "/#{doi_with_xml.doi}", nil, { "HTTP_ACCEPT" => "text/turtle" }
 
         expect(last_response.status).to eq(200)
         expect(last_response.headers["Content-Type"]).to include("text/turtle")
         expect(last_response.body).to include("@prefix schema:")
       end
+
+      it "returns 406 when RDF representation is not available" do
+        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "text/turtle" }
+
+        expect(last_response.status).to eq(406)
+        expect(json["errors"]).to eq(
+          [
+            {
+              "status" => "406",
+              "title" => "RDF representation is not available for this DOI",
+            },
+          ],
+        )
+      end
     end
 
     context "application/x-turtle" do
       it "returns the Doi as Turtle" do
-        get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-turtle" }
+        get "/#{doi_with_xml.doi}", nil, { "HTTP_ACCEPT" => "application/x-turtle" }
 
         expect(last_response.status).to eq(200)
         expect(last_response.headers["Content-Type"]).to include("turtle")
@@ -387,19 +416,19 @@ describe IndexController, type: :request do
       end
     end
 
-    # context "text/turtle link" do
-    #   it "returns the Doi as Turtle" do
-    #     get "/text/turtle/#{doi.doi}"
+    context "text/turtle link" do
+      it "returns the Doi as Turtle" do
+        get "/text/turtle/#{doi_with_xml.doi}"
 
-    #     expect(last_response.status).to eq(200)
-    #     expect(last_response.headers["Content-Type"]).to include("text/turtle")
-    #     expect(last_response.body).to include("@prefix schema:")
-    #   end
-    # end
+        expect(last_response.status).to eq(200)
+        expect(last_response.headers["Content-Type"]).to include("text/turtle")
+        expect(last_response.body).to include("@prefix schema:")
+      end
+    end
 
     context "application/x-turtle link" do
       it "returns the Doi as Turtle" do
-        get "/application/x-turtle/#{doi.doi}"
+        get "/application/x-turtle/#{doi_with_xml.doi}"
 
         expect(last_response.status).to eq(200)
         expect(last_response.headers["Content-Type"]).to include("turtle")
