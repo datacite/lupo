@@ -100,7 +100,6 @@ class OtherDoi < Doi
     errors = 0
     response =
       OtherDoi.__elasticsearch__.client.bulk index: index,
-                                             type: OtherDoi.document_type,
                                              body: bulk_body
 
     # report errors

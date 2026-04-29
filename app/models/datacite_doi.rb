@@ -93,8 +93,6 @@ class DataciteDoi < Doi
     errors = 0
     response =
       DataciteDoi.__elasticsearch__.client.bulk index: index,
-                                                type:
-                                                  DataciteDoi.document_type,
                                                 body: bulk_body
 
     # report errors

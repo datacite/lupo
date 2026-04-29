@@ -103,7 +103,6 @@ class Activity < Audited::Audit
     ) do |activities|
       response =
         Activity.__elasticsearch__.client.bulk index: index,
-                                               type: Activity.document_type,
                                                body:
                                                  activities.map { |activity|
                                                    {

@@ -388,7 +388,6 @@ class Event < ApplicationRecord
     ) do |events|
       response =
         Event.__elasticsearch__.client.bulk index: index,
-                                            type: Event.document_type,
                                             body:
                                               events.map { |event|
                                                 {
