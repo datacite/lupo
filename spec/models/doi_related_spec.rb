@@ -81,7 +81,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
       it "should make few db calls" do
         allow(DataciteDoi).to receive(:upload_to_elasticsearch)
         dois = DataciteDoi.where(id: doi.id).includes(
-          :client,
+          { client: :provider },
           :media,
           :metadata
         )
