@@ -228,7 +228,7 @@ GEM
       libdatadog (~> 11.0.0.1.0)
       libddwaf (~> 1.14.0.0.0)
       msgpack
-    date (3.5.0)
+    date (3.5.1)
     debase-ruby_core_source (3.3.1)
     debug_inspector (1.1.0)
     departure (6.8.0)
@@ -494,7 +494,7 @@ GEM
       uri (>= 0.11.1)
     net-http-persistent (4.0.1)
       connection_pool (~> 2.2)
-    net-imap (0.5.12)
+    net-imap (0.5.14)
       date
       net-protocol
     net-pop (0.1.2)
@@ -758,7 +758,7 @@ GEM
     tilt (2.0.11)
     time (0.4.1)
       date
-    timeout (0.4.4)
+    timeout (0.6.1)
     tsort (0.2.0)
     turnout (2.5.0)
       i18n (>= 0.7, < 2)
