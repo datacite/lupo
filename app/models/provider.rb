@@ -857,6 +857,7 @@ class Provider < ApplicationRecord
       "group_email" => group_email,
       "description" => description,
       "region" => region,
+      "country_code" => country_code,
       "logo_url" => logo_url,
       "non_profit_status" => non_profit_status,
       "focus_area" => focus_area,
