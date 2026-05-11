@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EnrichedDoiIndexJob < ApplicationJob
-  queue_as :enriched_doi_index
+  queue_as :enriched_doi_index_job
 
   rescue_from ActiveJob::DeserializationError,
               SocketError,
