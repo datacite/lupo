@@ -26,11 +26,9 @@ class EnrichedDoiIndexJob < ApplicationJob
     source_doi.schema_version = "http://datacite.org/schema/kernel-4"
 
     source_doi.enrichments.each do |enrichment|
-      begin
-        source_doi.apply_enrichment(enrichment)
-      rescue => e
-        Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{source_doi.doi}: #{e.message}")
-      end
+      source_doi.apply_enrichment(enrichment)
+    rescue => e
+      Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{source_doi.doi}: #{e.message}")
     end
 
     if source_doi.invalid?
