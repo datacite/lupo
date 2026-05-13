@@ -1798,7 +1798,11 @@ class Doi < ApplicationRecord
   end
 
   def has_enrichments
-    enrichments.exists?
+    if association(:enrichments).loaded?
+      enrichments.any?
+    else
+      enrichments.exists?
+    end
   end
 
   def doi=(value)
