@@ -460,18 +460,30 @@ class DataciteDoisController < ApplicationController
 
             # sparse fieldsets
             fields = fields_from_params(params)
-            if fields
-              render(
-                # json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
-                json: EnrichedDoiSearchSerializer.serialize_many(results, options.merge(fields: fields)),
-                status: :ok
-              )
+            if params["enriched"]&.upcase == "TRUE"
+              if fields
+                render(
+                  json: EnrichedDoiSearchSerializer.serialize_many(results, options.merge(fields: fields)),
+                  status: :ok
+                )
+              else
+                render(
+                  json: EnrichedDoiSearchSerializer.serialize_many(results, options),
+                  status: :ok
+                )
+              end
             else
-              render(
-                # json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
-                json: EnrichedDoiSearchSerializer.serialize_many(results, options),
-                status: :ok
-              )
+              if fields
+                render(
+                  json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash,
+                  status: :ok
+                )
+              else
+                render(
+                  json: DataciteDoiSerializer.new(results, options).serializable_hash,
+                  status: :ok
+                )
+              end
             end
           end
 
