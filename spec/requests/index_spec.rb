@@ -329,6 +329,23 @@ describe IndexController, type: :request do
       end
     end
 
+    %w[
+      */*
+      application/xml
+      application/rdf+xml
+      text/turtle
+      application/x-turtle
+    ].each do |accept|
+      context accept do
+        it "redirects to the DOI URL" do
+          get "/#{doi.doi}", nil, { "HTTP_ACCEPT" => accept }
+
+          expect(last_response.status).to eq(303)
+          expect(last_response.headers["Location"]).to eq(doi.url)
+        end
+      end
+    end
+
     context "missing content type" do
       it "returns the Doi" do
         get "/#{doi.doi}"

@@ -11,10 +11,15 @@ class IndexController < ApplicationController
     doi = Doi.where(doi: params[:id], aasm_state: "findable").first
     fail ActiveRecord::RecordNotFound if doi.blank?
 
+    if request.format.symbol.nil?
+      redirect_to_doi(doi)
+      return
+    end
+
     respond_to do |format|
       format.html do
         # forward to URL registered in handle system for no content negotiation
-        redirect_to doi.url, status: :see_other
+        redirect_to_doi(doi)
       end
       format.citation do
         # extract optional style and locale from header
@@ -56,18 +61,23 @@ class IndexController < ApplicationController
     end
   rescue ActionController::UnknownFormat, ActionController::RoutingError
     # forward to URL registered in handle system for unrecognized format
-    redirect_to doi.url, status: :see_other, allow_other_host: true
+    redirect_to_doi(doi)
   end
 
-  def routing_error
-    fail ActiveRecord::RecordNotFound
-  end
+  private
+    def redirect_to_doi(doi)
+      redirect_to doi.url, status: :see_other, allow_other_host: true
+    end
 
-  def method_not_allowed
-    response.set_header("Allow", "POST")
-    render json: {
-      "message": "This endpoint only supports POST requests.",
-    }.to_json,
-           status: :method_not_allowed
-  end
+    def routing_error
+      fail ActiveRecord::RecordNotFound
+    end
+
+    def method_not_allowed
+      response.set_header("Allow", "POST")
+      render json: {
+        "message": "This endpoint only supports POST requests.",
+      }.to_json,
+             status: :method_not_allowed
+    end
 end
