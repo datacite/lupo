@@ -10,7 +10,7 @@ class EnrichedDoiSearchSerializer
       if index.start_with?("enriched_dois")
         EnrichedDoiSerializer
       else index.start_with?("dois")
-        DataciteDoiSerializer
+           DataciteDoiSerializer
       end
 
     serializer.new(object, options).serializable_hash[:data]
