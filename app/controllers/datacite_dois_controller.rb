@@ -81,11 +81,72 @@ class DataciteDoisController < ApplicationController
     end
 
     if params[:id].present?
+      # TODO: if enriched=true then we want to search EnrichedDoi instead.
       response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
+      # TODO: if enriched=true then we want to search EnrichedDoi instead.
       response = DataciteDoi.find_by_ids(params[:ids], disable_facets: disable_facets, facets: params[:facets], page: page, sort: sort)
     else
-      response =
+      response = if params["enriched"]&.upcase == "TRUE"
+        EnrichedDoi.enriched_search_query(
+          params[:query],
+          state: params[:state],
+          exclude_registration_agencies: exclude_registration_agencies,
+          published: params[:published],
+          created: params[:created],
+          registered: params[:registered],
+          provider_id: params[:provider_id],
+          consortium_id: params[:consortium_id],
+          client_id: params[:client_id],
+          affiliation_id: params[:affiliation_id],
+          funder_id: params[:funder_id],
+          re3data_id: params[:re3data_id],
+          opendoar_id: params[:opendoar_id],
+          license: params[:license],
+          certificate: params[:certificate],
+          prefix: params[:prefix],
+          user_id: params[:user_id],
+          resource_type_id: params[:resource_type_id],
+          resource_type: params[:resource_type],
+          schema_version: params[:schema_version],
+          subject: params[:subject],
+          field_of_science: params[:field_of_science],
+          has_citations: params[:has_citations],
+          has_references: params[:has_references],
+          has_parts: params[:has_parts],
+          has_part_of: params[:has_part_of],
+          has_versions: params[:has_versions],
+          has_version_of: params[:has_version_of],
+          has_views: params[:has_views],
+          has_downloads: params[:has_downloads],
+          has_person: params[:has_person],
+          has_affiliation: params[:has_affiliation],
+          has_organization: params[:has_organization],
+          has_funder: params[:has_funder],
+          link_check_status: params[:link_check_status],
+          link_check_has_schema_org: params[:link_check_has_schema_org],
+          link_check_body_has_pid: params[:link_check_body_has_pid],
+          link_check_found_schema_org_id:
+            params[:link_check_found_schema_org_id],
+          link_check_found_dc_identifier:
+            params[:link_check_found_dc_identifier],
+          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+          sample_group: sample_group_field,
+          sample_size: params[:sample],
+          source: params[:source],
+          scroll_id: params[:scroll_id],
+          disable_facets: disable_facets,
+          facets: params[:facets],
+          page: page,
+          sort: sort,
+          random: params[:random],
+          client_type: params[:client_type],
+          funded_by: params[:funded_by],
+          include_funder_child_organizations: params[:include_funder_child_organizations],
+          affiliation_country: params[:affiliation_country],
+        )
+      else
         DataciteDoi.query(
           params[:query],
           state: params[:state],
@@ -144,15 +205,28 @@ class DataciteDoisController < ApplicationController
           include_funder_child_organizations: params[:include_funder_child_organizations],
           affiliation_country: params[:affiliation_country],
         )
+      end
     end
 
     begin
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+      # if sample_group_field.present?
+      #   sample_dois = []
+      #   response.aggregations.samples.buckets.each do |bucket|
+      #     bucket.samples_hits.hits.hits.each do |hit|
+      #       sample_dois << hit._source
+      #     end
+      #   end
+      # end
       if sample_group_field.present?
         sample_dois = []
         response.aggregations.samples.buckets.each do |bucket|
           bucket.samples_hits.hits.hits.each do |hit|
-            sample_dois << hit._source
+            sample_dois << {
+              index: hit._index,
+              id: hit._id,
+              source: hit._source
+            }
           end
         end
       end
@@ -173,8 +247,13 @@ class DataciteDoisController < ApplicationController
         results = response.results
         total = response.total
       else
+        # results = response.results
+        # total = response.results.total
+        # total_for_pages =
+        #   page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
+        # total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
         results = response.results
-        total = response.results.total
+        total = response.total
         total_for_pages =
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
@@ -214,12 +293,14 @@ class DataciteDoisController < ApplicationController
         fields = fields_from_params(params)
         if fields
           render(
-            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            # json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            json: EnrichedDoiSearchSerializer.serialize_many(results, options.merge(fields: fields)),
             status: :ok
           )
         else
           render(
-            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            # json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            json: EnrichedDoiSearchSerializer.serialize_many(results, options),
             status: :ok
           )
         end
@@ -369,12 +450,14 @@ class DataciteDoisController < ApplicationController
             fields = fields_from_params(params)
             if fields
               render(
-                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                # json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                json: EnrichedDoiSearchSerializer.serialize_many(results, options.merge(fields: fields)),
                 status: :ok
               )
             else
               render(
-                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                # json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                json: EnrichedDoiSearchSerializer.serialize_many(results, options),
                 status: :ok
               )
             end

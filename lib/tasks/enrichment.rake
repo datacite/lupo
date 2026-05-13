@@ -11,6 +11,11 @@ namespace :enrichment do
     puts EnrichedDoi.delete_index(index: ENV["INDEX"])
   end
 
+  desc "Upgrade index for enriched dois"
+  task upgrade_index: :environment do
+    puts EnrichedDoi.upgrade_index
+  end
+
   desc "Create alias for enriched dois"
   task create_alias: :environment do
     puts EnrichedDoi.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
