@@ -3,28 +3,18 @@
 class EnrichedDoi < Doi
   include Elasticsearch::Model
 
-  # if Rails.env.test?
-  #   index_name("enriched_dois-test#{ENV['TEST_ENV_NUMBER']}")
-  # elsif ENV["ES_PREFIX"].present?
-  #   index_name("enriched_dois-#{ENV['ES_PREFIX']}")
-  # else
-  #   index_name("enriched_dois")
-  # end
-  if ENV["ES_PREFIX"].present?
+  if Rails.env.test?
+    index_name("enriched_dois-test#{ENV['TEST_ENV_NUMBER']}")
+  elsif ENV["ES_PREFIX"].present?
     index_name("enriched_dois-#{ENV['ES_PREFIX']}")
   else
     index_name("enriched_dois")
   end
 
   def self.search_indices
-    # if Rails.env.test?
-    #   ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
-    # elsif ENV["ES_PREFIX"].present?
-    #   ["dois-#{ENV['ES_PREFIX']}", "enriched_dois-#{ENV['ES_PREFIX']}"]
-    # else
-    #   ["dois", "enriched_dois"]
-    # end
-    if ENV["ES_PREFIX"].present?
+    if Rails.env.test?
+      ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
+    elsif ENV["ES_PREFIX"].present?
       ["dois-#{ENV['ES_PREFIX']}", "enriched_dois-#{ENV['ES_PREFIX']}"]
     else
       ["dois", "enriched_dois"]
