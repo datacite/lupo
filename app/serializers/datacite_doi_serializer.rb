@@ -7,6 +7,12 @@ class DataciteDoiSerializer
   set_type :dois
   set_id :uid
 
+  # has_many :enrichments,
+  #          record_type: :enrichments,
+  #          serializer: EnrichmentSerializer,
+  #          id_method_name: :enrichment_uuids,
+  #          if: proc { |_object, params| params && params[:show_enrichments] }
+
   # don't cache dois, as works are cached using the doi model
 
   attributes :doi,
