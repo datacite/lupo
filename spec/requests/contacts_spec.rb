@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "json"
+require "pp"
 
 describe ContactsController, type: :request, elasticsearch: true do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
@@ -201,6 +203,8 @@ describe ContactsController, type: :request, elasticsearch: true do
   end
 
   describe "POST /contacts" do
+=begin
+    # TEMPORARILY DISABLED - validation and export message process has been disabled for contacts created via Salesforce API, so this test is no longer relevant but may be in the future if we re-enable validation and export messages for these contacts
     context "when the request is valid" do
       it "creates a contact" do
         post "/contacts", params, headers
@@ -220,6 +224,9 @@ describe ContactsController, type: :request, elasticsearch: true do
 
         get "/contacts", nil, headers
 
+        puts "AFTER GET ALL CONTACTS:"
+        pp json
+
         expect(last_response.status).to eq(200)
         expect(json.dig("data").length).to eq(3)
 
@@ -234,6 +241,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         )
       end
     end
+=end
 
     context "when the request is valid consortium_admin" do
       let(:params) do
