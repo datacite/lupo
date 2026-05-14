@@ -471,7 +471,6 @@ class DataciteDoisController < ApplicationController
           affiliation: params[:affiliation],
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
-          show_enrichments: show_enrichments,
         }
 
         if show_enriched
