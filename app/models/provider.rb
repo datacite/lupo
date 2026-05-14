@@ -182,6 +182,54 @@ class Provider < ApplicationRecord
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
+  after_save :update_contacts_if_role_changed
+
+  def update_contacts_if_role_changed
+    puts "\n----------------------------------------------"
+    puts "++++GOT HERE: PROVIDER:189 - update_contacts_if_role_changed!!!"
+    puts contacts.where(deleted_at: nil)
+
+    contacts_with_role = [
+      { current: get_contact_with_role("voting"), new: get_contact_with_email(voting_contact_email), role: "voting" },
+      { current: get_contact_with_role("billing"), new: get_contact_with_email(billing_contact_email), role: "billing" },
+      { current: get_contact_with_role("secondary_billing"), new: get_contact_with_email(secondary_billing_contact_email), role: "secondary_billing" },
+      { current: get_contact_with_role("service"), new: get_contact_with_email(service_contact_email), role: "service" },
+      { current: get_contact_with_role("secondary_service"), new: get_contact_with_email(secondary_service_contact_email), role: "secondary_service" },
+      { current: get_contact_with_role("technical"), new: get_contact_with_email(technical_contact_email), role: "technical" },
+      { current: get_contact_with_role("secondary_technical"), new: get_contact_with_email(secondary_technical_contact_email), role: "secondary_technical" }
+    ]
+
+    contacts_with_role.each do |contact_with_role|
+      puts "++++GOT HERE: PROVIDER:203 UPDATING CONTACTS - current contact for role #{contact_with_role[:role]} is #{contact_with_role[:current].present? ? contact_with_role[:current].name : 'NIL'}, new contact is #{contact_with_role[:new].present? ? contact_with_role[:new].name : 'NIL'}"
+      if contact_with_role[:current] != contact_with_role[:new]
+        puts "++++GOT HERE: PROVIDER:205 - Contact for role #{contact_with_role[:role]} has changed, updating roles accordingly"
+        contact_with_role[:current]&.remove_roles!([contact_with_role[:role]])
+        contact_with_role[:current]&.update(role_name: contact_with_role[:current].role_name)
+        contact_with_role[:new]&.add_roles!([contact_with_role[:role]])
+        contact_with_role[:new]&.update(role_name: contact_with_role[:new].role_name)
+      end
+    end
+   
+  end
+
+  def get_contact_with_role(role)
+    contacts.where(deleted_at: nil).each do |contact|
+      if contact.has_role?(role)
+        return contact
+      end
+    end
+    nil
+  end
+
+  def get_contact_with_email(email)
+    contacts.where(deleted_at: nil).each do |contact|
+      if contact.email == email
+        return contact
+      end
+    end
+    nil
+  end
+
   accepts_nested_attributes_for :prefixes
 
   # use different index for testing
