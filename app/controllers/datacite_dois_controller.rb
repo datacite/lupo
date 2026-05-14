@@ -12,6 +12,8 @@ class DataciteDoisController < ApplicationController
   before_action :set_raven_context, only: %i[create update validate]
 
   def index
+    show_enrichments = params["enriched"]&.upcase == "TRUE"
+
     sort =
       case params[:sort]
       when "name"
@@ -208,6 +210,7 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
           is_collection: options[:is_collection],
+          show_enrichments: show_enrichments,
         }
 
         # sparse fieldsets
@@ -363,6 +366,7 @@ class DataciteDoisController < ApplicationController
               publisher: params[:publisher],
               include_other_registration_agencies: params[:include_other_registration_agencies],
               is_collection: options[:is_collection],
+              show_enrichments: show_enrichments,
             }
 
             # sparse fieldsets
@@ -467,6 +471,7 @@ class DataciteDoisController < ApplicationController
           affiliation: params[:affiliation],
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
+          show_enrichments: show_enrichments,
         }
 
         if show_enriched
