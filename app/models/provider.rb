@@ -185,9 +185,9 @@ class Provider < ApplicationRecord
   after_save :update_contacts_if_role_changed
 
   def update_contacts_if_role_changed
-    puts "\n----------------------------------------------"
-    puts "++++GOT HERE: PROVIDER:189 - update_contacts_if_role_changed!!!"
-    puts contacts.where(deleted_at: nil)
+    # puts "\n----------------------------------------------"
+    # puts "++++GOT HERE: PROVIDER:189 - update_contacts_if_role_changed!!!"
+    # puts contacts.where(deleted_at: nil)
 
     contacts_with_role = [
       { current: get_contact_with_role("voting"), new: get_contact_with_email(voting_contact_email), role: "voting" },
@@ -200,9 +200,9 @@ class Provider < ApplicationRecord
     ]
 
     contacts_with_role.each do |contact_with_role|
-      puts "++++GOT HERE: PROVIDER:203 UPDATING CONTACTS - current contact for role #{contact_with_role[:role]} is #{contact_with_role[:current].present? ? contact_with_role[:current].name : 'NIL'}, new contact is #{contact_with_role[:new].present? ? contact_with_role[:new].name : 'NIL'}"
+      # puts "++++GOT HERE: PROVIDER:203 UPDATING CONTACTS - current contact for role #{contact_with_role[:role]} is #{contact_with_role[:current].present? ? contact_with_role[:current].name : 'NIL'}, new contact is #{contact_with_role[:new].present? ? contact_with_role[:new].name : 'NIL'}"
       if contact_with_role[:current] != contact_with_role[:new]
-        puts "++++GOT HERE: PROVIDER:205 - Contact for role #{contact_with_role[:role]} has changed, updating roles accordingly"
+        # puts "++++GOT HERE: PROVIDER:205 - Contact for role #{contact_with_role[:role]} has changed, updating roles accordingly"
         contact_with_role[:current]&.remove_roles!([contact_with_role[:role]])
         contact_with_role[:current]&.update(role_name: contact_with_role[:current].role_name)
         contact_with_role[:new]&.add_roles!([contact_with_role[:role]])

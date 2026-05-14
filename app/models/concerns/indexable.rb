@@ -8,7 +8,7 @@ module Indexable
 
   included do
     after_commit on: %i[create update] do
-      puts "++++GOT HERE: INDEXABLE:11 - Record created or updated, starting indexing and export message process for #{self.class.name} with id: #{id}\n"
+      # puts "++++GOT HERE: INDEXABLE:11 - Record created or updated, starting indexing and export message process for #{self.class.name} with id: #{id}\n"
       # use index_document instead of update_document to also update virtual attributes
       if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
         other_doi = OtherDoi.find_by(id: self.id)
@@ -50,12 +50,12 @@ module Indexable
         end
       # ignore if record was created via Salesforce API
       elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "++++GOT HERE: INDEXABLE:56 - EXPORTING PROVIDER! #{JSON.pretty_generate(to_jsonapi)}\n"
+        # puts "++++GOT HERE: INDEXABLE:56 - EXPORTING PROVIDER! #{JSON.pretty_generate(to_jsonapi)}\n"
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "++++GOT HERE: INDEXABLE:59 - EXPORTING CONTACT 1111! #{JSON.pretty_generate(to_jsonapi)}"
+        # puts "++++GOT HERE: INDEXABLE:59 - EXPORTING CONTACT 1111! #{JSON.pretty_generate(to_jsonapi)}"
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
@@ -114,7 +114,7 @@ module Indexable
     end
 
     def send_contact_export_message(data)
-      puts "++++GOT HERE: INDEXABLE:124 - send_contact_export_message - EXPORTING CONTACT 2222! #{JSON.pretty_generate(data)}"
+      # puts "++++GOT HERE: INDEXABLE:124 - send_contact_export_message - EXPORTING CONTACT 2222! #{JSON.pretty_generate(data)}"
       send_message(data, shoryuken_class: "ContactExportWorker", queue_name: "salesforce")
     end
 
