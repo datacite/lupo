@@ -458,7 +458,7 @@ class Contact < ApplicationRecord
   end
 
   def add_roles!(roles = [])
-     roles.each do | role |
+    roles.each do | role |
       Array.wrap(role_name) << role unless has_role?(role)
     end
     self.changed?

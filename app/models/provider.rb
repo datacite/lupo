@@ -209,7 +209,6 @@ class Provider < ApplicationRecord
         contact_with_role[:new]&.update(role_name: contact_with_role[:new].role_name)
       end
     end
-   
   end
 
   def get_contact_with_role(role)
