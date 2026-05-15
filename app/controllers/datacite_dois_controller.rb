@@ -88,7 +88,7 @@ class DataciteDoisController < ApplicationController
       response = DataciteDoi.find_by_ids(params[:ids], disable_facets: disable_facets, facets: params[:facets], page: page, sort: sort)
     else
       response = if show_enrichments
-        DataciteDoi.query(
+        EnrichedDoi.enriched_search_query(
           params[:query],
           state: params[:state],
           exclude_registration_agencies: exclude_registration_agencies,
@@ -147,7 +147,7 @@ class DataciteDoisController < ApplicationController
           affiliation_country: params[:affiliation_country],
         )
       else
-        EnrichedDoi.enriched_search_query(
+        DataciteDoi.query(
           params[:query],
           state: params[:state],
           exclude_registration_agencies: exclude_registration_agencies,
