@@ -22,12 +22,15 @@ class EnrichedDoi < Doi
   end
 
   def self.enriched_search_query(query, options = {})
-    # support scroll api
     if options[:scroll_id].present? && options.dig(:page, :scroll)
       begin
-        response = __elasticsearch__.client.scroll(body:
-          { scroll_id: options[:scroll_id],
-            scroll: options.dig(:page, :scroll) })
+        response = __elasticsearch__.client.scroll(
+          body: {
+            scroll_id: options[:scroll_id],
+            scroll: options.dig(:page, :scroll),
+          }
+        )
+
         return Hashie::Mash.new(
           total: response.dig("hits", "total", "value"),
           results: response.dig("hits", "hits").map { |r| r["_source"] },
@@ -46,19 +49,26 @@ class EnrichedDoi < Doi
     options[:page][:number] ||= 1
     options[:page][:size] ||= 25
 
-    aggregations = if options[:totals_agg] == "provider"
-      provider_aggregations
-    elsif options[:totals_agg] == "client"
-      client_aggregations
-    elsif options[:totals_agg] == "client_export"
-      client_export_aggregations
-    elsif options[:totals_agg] == "prefix"
-      prefix_aggregations
-    elsif options[:client_type] == "igsnCatalog"
-      query_aggregations(disable_facets: options[:disable_facets], facets: options[:facets]).merge(self.igsn_id_catalog_aggregations)
-    else
-      query_aggregations(disable_facets: options[:disable_facets], facets: options[:facets])
-    end
+    aggregations =
+      if options[:totals_agg] == "provider"
+        provider_aggregations
+      elsif options[:totals_agg] == "client"
+        client_aggregations
+      elsif options[:totals_agg] == "client_export"
+        client_export_aggregations
+      elsif options[:totals_agg] == "prefix"
+        prefix_aggregations
+      elsif options[:client_type] == "igsnCatalog"
+        query_aggregations(
+          disable_facets: options[:disable_facets],
+          facets: options[:facets],
+        ).merge(self.igsn_id_catalog_aggregations)
+      else
+        query_aggregations(
+          disable_facets: options[:disable_facets],
+          facets: options[:facets],
+        )
+      end
 
     if options.fetch(:page, {}).key?(:cursor)
       cursor = [0, ""]
@@ -76,12 +86,27 @@ class EnrichedDoi < Doi
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
       search_after = nil
-      sort = Array.wrap(options[:sort])
+      sort = Array.wrap(options[:sort] || { updated: { order: "desc" } })
     end
 
-    # Prefer enriched docs over base docs when collapsing on doi
+    # Prefer docs from enriched_dois over docs from dois when the same DOI exists in both
     unless options[:random].present? && options[:random].to_s.downcase == "true"
-      sort = [{ enriched_record: { order: "desc" } }, *sort]
+      sort = [
+        {
+          _script: {
+            type: "number",
+            order: "asc",
+            script: {
+              lang: "painless",
+              source: "doc['_index'].value == params.enriched ? 0 : 1",
+              params: {
+                enriched: index_name,
+              },
+            },
+          },
+        },
+        *sort,
+      ]
     end
 
     if query.present?
@@ -97,43 +122,58 @@ class EnrichedDoi < Doi
       query = query.gsub(/citationCount/, "citation_count")
       query = query.gsub(/viewCount/, "view_count")
       query = query.gsub(/downloadCount/, "download_count")
-      query = query.gsub(/(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/, 'publisher_obj.\2')
+      query = query.gsub(
+        /(publisher\.)(name|publisherIdentifier|publisherIdentifierScheme|schemeUri|lang)/,
+        'publisher_obj.\2'
+      )
       query = query.gsub(/schemaVersion/, "schema_version")
       query = query.gsub("/", "\\/")
     end
 
     options[:ids] = options[:ids].split(",") if options[:ids].is_a?(String)
 
-    if query.present?
-      must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
-    else
-      must = [{ match_all: {} }]
-    end
+    must =
+      if query.present?
+        [
+          {
+            query_string: {
+              query: query,
+              fields: query_fields,
+              default_operator: "AND",
+              phrase_slop: 1,
+            },
+          },
+        ]
+      else
+        [{ match_all: {} }]
+      end
 
     must_not = []
     filter = []
     should = []
     minimum_should_match = 0
 
-    filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
+    filter << ({ terms: { doi: options[:ids].map(&:upcase) } }) if options[:ids].present?
+
     if options[:resource_type_id].present?
       resource_type_ids = options[:resource_type_id]
                             .split(",")
                             .map { |id| id.strip.underscore.dasherize }
-      filter << { terms: { resource_type_id: resource_type_ids } }
+      filter << ({ terms: { resource_type_id: resource_type_ids } })
     end
+
     filter << ({ terms: { "types.resourceType": options[:resource_type].split(",") } }) if options[:resource_type].present?
 
     if options[:provider_id].present?
       options[:provider_id].split(",").each do |id|
-        should << { term: { "provider_id": { value: id, case_insensitive: true } } }
+        should << ({ term: { "provider_id": { value: id, case_insensitive: true } } })
       end
       minimum_should_match = 1
     end
 
     if options[:client_id].present?
       options[:client_id].split(",").each do |id|
-        should << { term: { "client_id": { value: id, case_insensitive: true } } }
+        should << ({ term: { "client_id": { value: id, case_insensitive: true } } })
       end
       minimum_should_match = 1
     end
@@ -197,7 +237,7 @@ class EnrichedDoi < Doi
     if options[:funded_by].present?
       normalized_funder = "https://#{ror_from_url(options[:funded_by])}"
       if options[:include_funder_child_organizations] == "true"
-        filter << {
+        filter << ({
           bool: {
             should: [
               { term: { "funder_rors": normalized_funder } },
@@ -205,7 +245,7 @@ class EnrichedDoi < Doi
             ],
             minimum_should_match: 1
           }
-        }
+        })
       else
         filter << ({ term: { "funder_rors": normalized_funder } })
       end
