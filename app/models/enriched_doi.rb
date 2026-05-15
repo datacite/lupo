@@ -21,17 +21,6 @@ class EnrichedDoi < Doi
     end
   end
 
-  def self.dedupe_results(results)
-    Array.wrap(results)
-      .group_by { |r| r.dig(:source, "doi") || r.dig("source", "doi") }
-      .values
-      .map do |group|
-        chosen =
-          group.find { |r| (r[:index] || r["index"]) == index_name } || group.first
-        chosen[:source] || chosen["source"]
-      end
-  end
-
   def self.enriched_search_query(query, options = {})
     # support scroll api
     # map function is small performance hit
@@ -94,6 +83,26 @@ class EnrichedDoi < Doi
       sort = options[:sort]
     end
 
+    # Prefer documents from enriched_dois when the same DOI exists in both indices
+    unless options[:random].present? && options[:random].to_s.downcase == "true"
+      sort = [
+        {
+          _script: {
+            type: "number",
+            order: "asc",
+            script: {
+              lang: "painless",
+              source: "doc['_index'].value == params.enriched ? 0 : 1",
+              params: {
+                enriched: index_name,
+              },
+            },
+          },
+        },
+        *Array.wrap(sort),
+      ]
+    end
+
     # make sure field name uses underscore
     # escape forward slash, but not other Elasticsearch special characters
     if query.present?
@@ -127,29 +136,6 @@ class EnrichedDoi < Doi
     filter = []
     should = []
     minimum_should_match = 0
-
-    # If a DOI has enrichments it will be in the enriched_dois index, if it doesn't it will be in the dois index,
-    # so we need to search both and combine results. The filter below ensures we get results from both indices
-    # but don't get duplicates of DOIs that have enrichments (i.e. if a DOI has an enrichment it will only return
-    # the enriched version from the enriched_dois index, not the non-enriched version from the dois index).
-    filter << {
-      bool: {
-        should: [
-          { term: { "_index": index_name } },
-          {
-            bool: {
-              must: [
-                { term: { "_index": Doi.index_name } }
-              ],
-              must_not: [
-                { term: { has_enrichments: true } }
-              ]
-            }
-          }
-        ],
-        minimum_should_match: 1
-      }
-    }
 
     filter << { terms: { doi: options[:ids].map(&:upcase) } } if options[:ids].present?
     if options[:resource_type_id].present?
@@ -363,23 +349,15 @@ class EnrichedDoi < Doi
           size: options.dig(:page, :size),
           sort: sort,
           query: es_query,
+          collapse: { field: "doi" },
           aggregations: aggregations,
           track_total_hits: true,
         }.compact,
       )
 
-      results = response.dig("hits", "hits").map do |r|
-        {
-          index: r["_index"],
-          id: r["_id"],
-          source: r["_source"],
-          sort: r["sort"],
-        }
-      end
-
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: dedupe_results(results),
+        results: response.dig("hits", "hits").map { |r| r["_source"] },
         scroll_id: response["_scroll_id"],
       )
     elsif options.fetch(:page, {}).key?(:cursor)
@@ -390,23 +368,15 @@ class EnrichedDoi < Doi
           search_after: search_after,
           sort: sort,
           query: es_query,
+          collapse: { field: "doi" },
           aggregations: aggregations,
           track_total_hits: true,
         }.compact,
       )
 
-      results = response.dig("hits", "hits").map do |r|
-        {
-          index: r["_index"],
-          id: r["_id"],
-          source: r["_source"],
-          sort: r["sort"],
-        }
-      end
-
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: dedupe_results(results),
+        results: response.dig("hits", "hits").map { |r| r["_source"] },
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     else
@@ -417,23 +387,15 @@ class EnrichedDoi < Doi
           from: from,
           sort: sort,
           query: es_query,
+          collapse: { field: "doi" },
           aggregations: aggregations,
           track_total_hits: true,
         }.compact,
       )
 
-      results = response.dig("hits", "hits").map do |r|
-        {
-          index: r["_index"],
-          id: r["_id"],
-          source: r["_source"],
-          sort: r["sort"],
-        }
-      end
-
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: dedupe_results(results),
+        results: response.dig("hits", "hits").map { |r| r["_source"] },
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     end
