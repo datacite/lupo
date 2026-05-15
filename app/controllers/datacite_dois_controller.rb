@@ -472,9 +472,13 @@ class DataciteDoisController < ApplicationController
             :jats,
             :ris,
             :schema_org,
-          ) { render request.format.to_sym => (show_enrichments ? results : response.records.to_a) }
+          ) do
+            render request.format.to_sym =>
+                     (show_enrichments ? results : response.records.to_a)
+          end
           format.csv do
-            render request.format.to_sym => (show_enrichments ? results : response.records.to_a),
+            render request.format.to_sym =>
+                     (show_enrichments ? results : response.records.to_a),
                    header: header
           end
         end
@@ -491,7 +495,7 @@ class DataciteDoisController < ApplicationController
       render json: { "errors" => { "title" => message } }.to_json,
              status: :bad_request
     end
-  end
+end
 
   def show
     show_enriched = params["enriched"]&.upcase == "TRUE"

@@ -21,6 +21,17 @@ class EnrichedDoi < Doi
     end
   end
 
+  def self.dedupe_results(results)
+    Array.wrap(results)
+      .group_by { |r| r.dig(:source, "doi") || r.dig("source", "doi") }
+      .values
+      .map do |group|
+        chosen =
+          group.find { |r| (r[:index] || r["index"]) == index_name } || group.first
+        chosen[:source] || chosen["source"]
+      end
+  end
+
   def self.enriched_search_query(query, options = {})
     # support scroll api
     # map function is small performance hit
@@ -356,16 +367,19 @@ class EnrichedDoi < Doi
           track_total_hits: true,
         }.compact,
       )
+
+      results = response.dig("hits", "hits").map do |r|
+        {
+          index: r["_index"],
+          id: r["_id"],
+          source: r["_source"],
+          sort: r["sort"],
+        }
+      end
+
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
+        results: dedupe_results(results),
         scroll_id: response["_scroll_id"],
       )
     elsif options.fetch(:page, {}).key?(:cursor)
@@ -381,16 +395,18 @@ class EnrichedDoi < Doi
         }.compact,
       )
 
+      results = response.dig("hits", "hits").map do |r|
+        {
+          index: r["_index"],
+          id: r["_id"],
+          source: r["_source"],
+          sort: r["sort"],
+        }
+      end
+
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
+        results: dedupe_results(results),
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     else
@@ -406,16 +422,18 @@ class EnrichedDoi < Doi
         }.compact,
       )
 
+      results = response.dig("hits", "hits").map do |r|
+        {
+          index: r["_index"],
+          id: r["_id"],
+          source: r["_source"],
+          sort: r["sort"],
+        }
+      end
+
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
+        results: dedupe_results(results),
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     end
