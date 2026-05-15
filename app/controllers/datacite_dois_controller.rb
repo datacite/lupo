@@ -236,7 +236,7 @@ class DataciteDoisController < ApplicationController
         total = response.total
       else
         results = response.results
-        total = response.results.total
+        total = show_enrichments ? response.total : response.results.total
         total_for_pages =
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
@@ -446,7 +446,7 @@ class DataciteDoisController < ApplicationController
 
           format.citation do
             # fetch formatted citations
-            render citation: response.records.to_a,
+            render citation: (show_enrichments ? results : response.records.to_a),
                    style: params[:style] || "apa",
                    locale: params[:locale] || "en-US"
           end
@@ -472,9 +472,9 @@ class DataciteDoisController < ApplicationController
             :jats,
             :ris,
             :schema_org,
-          ) { render request.format.to_sym => response.records.to_a }
+          ) { render request.format.to_sym => (show_enrichments ? results : response.records.to_a) }
           format.csv do
-            render request.format.to_sym => response.records.to_a,
+            render request.format.to_sym => (show_enrichments ? results : response.records.to_a),
                    header: header
           end
         end
