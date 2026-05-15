@@ -122,7 +122,7 @@ class EnrichedDoi < Doi
                             .map { |id| id.strip.underscore.dasherize }
       filter << { terms: { resource_type_id: resource_type_ids } }
     end
-    filter <<({ terms: { "types.resourceType": options[:resource_type].split(",") } }) if options[:resource_type].present?
+    filter << ({ terms: { "types.resourceType": options[:resource_type].split(",") } }) if options[:resource_type].present?
 
     if options[:provider_id].present?
       options[:provider_id].split(",").each do |id|
@@ -138,61 +138,61 @@ class EnrichedDoi < Doi
       minimum_should_match = 1
     end
 
-    filter <<({ terms: { agency: options[:agency].split(",").map(&:downcase) } }) if options[:agency].present?
-    filter <<({ terms: { prefix: options[:prefix].to_s.split(",") } }) if options[:prefix].present?
-    filter <<({ terms: { language: options[:language].to_s.split(",").map(&:downcase) } }) if options[:language].present?
-    filter <<({ term: { uid: options[:uid] } }) if options[:uid].present?
-    filter <<({ range: { created: { gte: "#{options[:created].split(',').min}||/y", lte: "#{options[:created].split(',').max}||/y", format: "yyyy" } } }) if options[:created].present?
-    filter <<({ range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } }) if options[:published].present?
-    filter <<({ term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } }) if options[:schema_version].present?
-    filter <<({ terms: { "subjects.subject.keyword": options[:subject].split(",") } }) if options[:subject].present?
+    filter << ({ terms: { agency: options[:agency].split(",").map(&:downcase) } }) if options[:agency].present?
+    filter << ({ terms: { prefix: options[:prefix].to_s.split(",") } }) if options[:prefix].present?
+    filter << ({ terms: { language: options[:language].to_s.split(",").map(&:downcase) } }) if options[:language].present?
+    filter << ({ term: { uid: options[:uid] } }) if options[:uid].present?
+    filter << ({ range: { created: { gte: "#{options[:created].split(',').min}||/y", lte: "#{options[:created].split(',').max}||/y", format: "yyyy" } } }) if options[:created].present?
+    filter << ({ range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } }) if options[:published].present?
+    filter << ({ term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } }) if options[:schema_version].present?
+    filter << ({ terms: { "subjects.subject.keyword": options[:subject].split(",") } }) if options[:subject].present?
 
     if options[:pid_entity].present?
-      filter <<({ term: { "subjects.subjectScheme": "PidEntity" } })
-      filter <<({ terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } })
+      filter << ({ term: { "subjects.subjectScheme": "PidEntity" } })
+      filter << ({ terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } })
     end
 
     if options[:field_of_science].present?
-      filter <<({ term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } })
-      filter <<({ terms: { "subjects.subject.keyword": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } })
+      filter << ({ term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } })
+      filter << ({ terms: { "subjects.subject.keyword": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } })
     end
 
     if options[:field_of_science_repository].present?
-      filter <<({ terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } })
+      filter << ({ terms: { "fields_of_science_repository": options[:field_of_science_repository].split(",").map { |s| s.humanize } } })
     end
 
     if options[:field_of_science_combined].present?
-      filter <<({ terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } })
+      filter << ({ terms: { "fields_of_science_combined": options[:field_of_science_combined].split(",").map { |s| s.humanize } } })
     end
 
-    filter <<({ terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } }) if options[:license].present?
-    filter <<({ term: { source: options[:source] } }) if options[:source].present?
-    filter <<({ range: { reference_count: { "gte": options[:has_references].to_i } } }) if options[:has_references].present?
-    filter <<({ range: { citation_count: { "gte": options[:has_citations].to_i } } }) if options[:has_citations].present?
-    filter <<({ range: { part_count: { "gte": options[:has_parts].to_i } } }) if options[:has_parts].present?
-    filter <<({ range: { part_of_count: { "gte": options[:has_part_of].to_i } } }) if options[:has_part_of].present?
-    filter <<({ range: { version_count: { "gte": options[:has_versions].to_i } } }) if options[:has_versions].present?
-    filter <<({ range: { version_of_count: { "gte": options[:has_version_of].to_i } } }) if options[:has_version_of].present?
-    filter <<({ range: { view_count: { "gte": options[:has_views].to_i } } }) if options[:has_views].present?
-    filter <<({ range: { download_count: { "gte": options[:has_downloads].to_i } } }) if options[:has_downloads].present?
-    filter <<({ term: { "landing_page.status": options[:link_check_status] } }) if options[:link_check_status].present?
-    filter <<({ exists: { field: "landing_page.checked" } }) if options[:link_checked].present?
-    filter <<({ term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] } }) if options[:link_check_has_schema_org].present?
-    filter <<({ term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] } }) if options[:link_check_body_has_pid].present?
-    filter <<({ exists: { field: "landing_page.schemaOrgId" } }) if options[:link_check_found_schema_org_id].present?
-    filter <<({ exists: { field: "landing_page.dcIdentifier" } }) if options[:link_check_found_dc_identifier].present?
-    filter <<({ exists: { field: "landing_page.citationDoi" } }) if options[:link_check_found_citation_doi].present?
-    filter <<({ range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } }) if options[:link_check_redirect_count_gte].present?
-    filter <<({ terms: { aasm_state: options[:state].to_s.split(",") } }) if options[:state].present?
-    filter <<({ range: { registered: { gte: "#{options[:registered].split(',').min}||/y", lte: "#{options[:registered].split(',').max}||/y", format: "yyyy" } } }) if options[:registered].present?
-    filter <<({ term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true } } }) if options[:consortium_id].present?
-    filter <<({ term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) } }) if options[:re3data_id].present?
-    filter <<({ term: { "client.opendoar_id" => options[:opendoar_id] } }) if options[:opendoar_id].present?
-    filter <<({ terms: { "client.certificate" => options[:certificate].split(",") } }) if options[:certificate].present?
-    filter <<({ term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" } }) if options[:user_id].present?
-    filter <<({ term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } }) if options[:has_person].present?
-    filter <<({ term: { "client.client_type" => options[:client_type] } }) if options[:client_type]
-    filter <<({ term: { "types.resourceTypeGeneral" => "PhysicalObject" } }) if options[:client_type] == "igsnCatalog"
+    filter << ({ terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } }) if options[:license].present?
+    filter << ({ term: { source: options[:source] } }) if options[:source].present?
+    filter << ({ range: { reference_count: { "gte": options[:has_references].to_i } } }) if options[:has_references].present?
+    filter << ({ range: { citation_count: { "gte": options[:has_citations].to_i } } }) if options[:has_citations].present?
+    filter << ({ range: { part_count: { "gte": options[:has_parts].to_i } } }) if options[:has_parts].present?
+    filter << ({ range: { part_of_count: { "gte": options[:has_part_of].to_i } } }) if options[:has_part_of].present?
+    filter << ({ range: { version_count: { "gte": options[:has_versions].to_i } } }) if options[:has_versions].present?
+    filter << ({ range: { version_of_count: { "gte": options[:has_version_of].to_i } } }) if options[:has_version_of].present?
+    filter << ({ range: { view_count: { "gte": options[:has_views].to_i } } }) if options[:has_views].present?
+    filter << ({ range: { download_count: { "gte": options[:has_downloads].to_i } } }) if options[:has_downloads].present?
+    filter << ({ term: { "landing_page.status": options[:link_check_status] } }) if options[:link_check_status].present?
+    filter << ({ exists: { field: "landing_page.checked" } }) if options[:link_checked].present?
+    filter << ({ term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] } }) if options[:link_check_has_schema_org].present?
+    filter << ({ term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] } }) if options[:link_check_body_has_pid].present?
+    filter << ({ exists: { field: "landing_page.schemaOrgId" } }) if options[:link_check_found_schema_org_id].present?
+    filter << ({ exists: { field: "landing_page.dcIdentifier" } }) if options[:link_check_found_dc_identifier].present?
+    filter << ({ exists: { field: "landing_page.citationDoi" } }) if options[:link_check_found_citation_doi].present?
+    filter << ({ range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } }) if options[:link_check_redirect_count_gte].present?
+    filter << ({ terms: { aasm_state: options[:state].to_s.split(",") } }) if options[:state].present?
+    filter << ({ range: { registered: { gte: "#{options[:registered].split(',').min}||/y", lte: "#{options[:registered].split(',').max}||/y", format: "yyyy" } } }) if options[:registered].present?
+    filter << ({ term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true } } }) if options[:consortium_id].present?
+    filter << ({ term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) } }) if options[:re3data_id].present?
+    filter << ({ term: { "client.opendoar_id" => options[:opendoar_id] } }) if options[:opendoar_id].present?
+    filter << ({ terms: { "client.certificate" => options[:certificate].split(",") } }) if options[:certificate].present?
+    filter << ({ term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" } }) if options[:user_id].present?
+    filter << ({ term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" } }) if options[:has_person].present?
+    filter << ({ term: { "client.client_type" => options[:client_type] } }) if options[:client_type]
+    filter << ({ term: { "types.resourceTypeGeneral" => "PhysicalObject" } }) if options[:client_type] == "igsnCatalog"
 
     if options[:funded_by].present?
       normalized_funder = "https://#{ror_from_url(options[:funded_by])}"
@@ -207,49 +207,49 @@ class EnrichedDoi < Doi
           }
         }
       else
-        filter <<({ term: { "funder_rors": normalized_funder } })
+        filter << ({ term: { "funder_rors": normalized_funder } })
       end
     end
 
     if options[:has_organization].present?
-      should <<({ term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" } })
-      should <<({ term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" } })
+      should << ({ term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ROR" } })
+      should << ({ term: { "contributors.nameIdentifiers.nameIdentifierScheme" => "ROR" } })
       minimum_should_match = 1
     end
 
     if options[:has_affiliation].present?
-      should <<({ term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" } })
-      should <<({ term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" } })
+      should << ({ term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" } })
+      should << ({ term: { "contributors.affiliation.affiliationIdentifierScheme" => "ROR" } })
       minimum_should_match = 1
     end
 
     if options[:has_funder].present?
-      should <<({ term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" } })
+      should << ({ term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" } })
       minimum_should_match = 1
     end
 
     if options[:has_member].present?
-      should <<({ exists: { field: "provider.ror_id" } })
+      should << ({ exists: { field: "provider.ror_id" } })
       minimum_should_match = 1
     end
 
     if options[:organization_id].present?
-      should <<({ term: { "organization_id" => ror_from_url(options[:organization_id]) } })
+      should << ({ term: { "organization_id" => ror_from_url(options[:organization_id]) } })
       minimum_should_match = 1
     end
 
     if options[:affiliation_id].present?
-      should <<({ term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) } })
+      should << ({ term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) } })
       minimum_should_match = 1
     end
 
     if options[:funder_id].present?
-      should <<({ terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } })
+      should << ({ terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } })
       minimum_should_match = 1
     end
 
     if options[:member_id].present?
-      should <<({ term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" } })
+      should << ({ term: { "provider.ror_id" => "https://#{ror_from_url(options[:member_id])}" } })
       minimum_should_match = 1
     end
 
@@ -258,10 +258,10 @@ class EnrichedDoi < Doi
                         .split(",")
                         .map { |c| c.strip.upcase }
                         .reject(&:blank?)
-      filter <<({ terms: { "affiliation_countries" => country_codes } }) if country_codes.any?
+      filter << ({ terms: { "affiliation_countries" => country_codes } }) if country_codes.any?
     end
 
-    must_not <<({ terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] } }) if options[:exclude_registration_agencies]
+    must_not << ({ terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] } }) if options[:exclude_registration_agencies]
 
     es_query = {}
 
