@@ -62,8 +62,8 @@ module Indexable
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         # elsif instance_of?(Contact) && !from_salesforce
-        puts "\n****GOT HERE: INDEXABLE:62 - EXPORTING CONTACT!"
-        send_contact_export_message(to_jsonapi.merge(slack_output: true))
+        # puts "\n****GOT HERE: INDEXABLE:62 - EXPORTING CONTACT!"
+        # send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
 
