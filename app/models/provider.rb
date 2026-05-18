@@ -182,53 +182,6 @@ class Provider < ApplicationRecord
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  after_save :update_contacts_if_role_changed
-
-  def update_contacts_if_role_changed
-    # puts "\n----------------------------------------------"
-    # puts "++++GOT HERE: PROVIDER:189 - update_contacts_if_role_changed!!!"
-    # puts contacts.where(deleted_at: nil)
-
-    contacts_with_role = [
-      { current: get_contact_with_role("voting"), new: get_contact_with_email(voting_contact_email), role: "voting" },
-      { current: get_contact_with_role("billing"), new: get_contact_with_email(billing_contact_email), role: "billing" },
-      { current: get_contact_with_role("secondary_billing"), new: get_contact_with_email(secondary_billing_contact_email), role: "secondary_billing" },
-      { current: get_contact_with_role("service"), new: get_contact_with_email(service_contact_email), role: "service" },
-      { current: get_contact_with_role("secondary_service"), new: get_contact_with_email(secondary_service_contact_email), role: "secondary_service" },
-      { current: get_contact_with_role("technical"), new: get_contact_with_email(technical_contact_email), role: "technical" },
-      { current: get_contact_with_role("secondary_technical"), new: get_contact_with_email(secondary_technical_contact_email), role: "secondary_technical" }
-    ]
-
-    contacts_with_role.each do |contact_with_role|
-      # puts "++++GOT HERE: PROVIDER:203 UPDATING CONTACTS - current contact for role #{contact_with_role[:role]} is #{contact_with_role[:current].present? ? contact_with_role[:current].name : 'NIL'}, new contact is #{contact_with_role[:new].present? ? contact_with_role[:new].name : 'NIL'}"
-      if contact_with_role[:current] != contact_with_role[:new]
-        # puts "++++GOT HERE: PROVIDER:205 - Contact for role #{contact_with_role[:role]} has changed, updating roles accordingly"
-        contact_with_role[:current]&.remove_roles!([contact_with_role[:role]])
-        contact_with_role[:current]&.update(role_name: contact_with_role[:current].role_name)
-        contact_with_role[:new]&.add_roles!([contact_with_role[:role]])
-        contact_with_role[:new]&.update(role_name: contact_with_role[:new].role_name)
-      end
-    end
-  end
-
-  def get_contact_with_role(role)
-    contacts.where(deleted_at: nil).each do |contact|
-      if contact.has_role?(role)
-        return contact
-      end
-    end
-    nil
-  end
-
-  def get_contact_with_email(email)
-    contacts.where(deleted_at: nil).each do |contact|
-      if contact.email == email
-        return contact
-      end
-    end
-    nil
-  end
-
   accepts_nested_attributes_for :prefixes
 
   # use different index for testing
@@ -963,7 +916,94 @@ class Provider < ApplicationRecord
     "#{i} providers exported."
   end
 
+  def voting_contact=(value)
+    if voting_contact != value
+      apply_contact_role(value, "voting")
+
+      write_attribute(:voting_contact, value)
+    end
+
+    voting_contact
+  end
+
+  def billing_contact=(value)
+    if billing_contact != value
+      apply_contact_role(value, "billing")
+
+      write_attribute(:billing_contact, value)
+    end
+
+    billing_contact
+  end
+
+  def secondary_billing_contact=(value)
+    if secondary_billing_contact != value
+      apply_contact_role(value, "secondary_billing")
+
+      write_attribute(:secondary_billing_contact, value)
+    end
+
+    secondary_billing_contact
+  end
+
+  def service_contact=(value)
+    if service_contact != value
+      apply_contact_role(value, "service")
+
+      write_attribute(:service_contact, value)
+    end
+
+    service_contact
+  end
+
+  def secondary_service_contact=(value)
+    if secondary_service_contact != value
+      apply_contact_role(value, "secondary_service")
+
+      write_attribute(:secondary_service_contact, value)
+    end
+
+    secondary_service_contact
+  end
+
+  def technical_contact=(value)
+    if technical_contact != value
+      apply_contact_role(value, "technical")
+
+      write_attribute(:technical_contact, value)
+    end
+
+    technical_contact
+  end
+
+  def secondary_technical_contact=(value)
+    if secondary_technical_contact != value
+      apply_contact_role(value, "secondary_technical")
+
+      write_attribute(:secondary_technical_contact, value)
+    end
+    secondary_technical_contact
+  end
+
   private
+    def apply_contact_role(provider_contact, role)
+      if provider_contact.present? && provider_contact["email"].present? && role.present?
+        contact_with_new_role = contacts.where(deleted_at: nil).find_by("email = ?", provider_contact["email"])
+
+        if contact_with_new_role.present?
+          contacts.each do | contact |
+            if contact.has_provider_role?(role)
+              contact.remove_roles(Array.wrap(role))
+              contact.update(role_name: contact.role_name)
+            end
+          end
+
+          contact_with_new_role.add_roles(Array.wrap(role))
+          contact_with_new_role.update(role_name: contact_with_new_role.role_name)
+        end
+      end
+    end
+
     def set_region
       r = ISO3166::Country[country_code].world_region if country_code.present?
       write_attribute(:region, r)

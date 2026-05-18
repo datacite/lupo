@@ -7,8 +7,6 @@ class ContactsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
 
-  after_action :set_provider_contacts, only: %i[create update]
-  after_action :remove_provider_contacts, only: %i[destroy]
   load_and_authorize_resource
 
   def index
@@ -190,36 +188,6 @@ class ContactsController < ApplicationController
     end
 
   private
-    def set_provider_contacts
-      if @contact.valid?
-        Contact.roles.each do | role |
-          if @contact.has_role?(role)
-            @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
-          elsif @contact.has_provider_role?(role)
-            @contact.set_provider_role(role, nil)
-          end
-        end
-
-        # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.each do | contact |
-          if !@contact.is_me?(contact)
-            if contact.remove_roles!(Array.wrap(@contact.role_name))
-              contact.update_attribute("role_name", contact.role_name)
-            end
-          end
-        end
-      end
-    end
-
-    def remove_provider_contacts
-      Array.wrap(@contact.role_name).each do | role |
-        if @contact.has_provider_role?(role)
-          @contact.set_provider_role(role, nil)
-        end
-      end
-      @contact.update_attribute("role_name", [])
-    end
-
     def safe_params
       if params[:data].blank?
         fail JSON::ParserError,
