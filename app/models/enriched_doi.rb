@@ -31,9 +31,22 @@ class EnrichedDoi < Doi
           }
         )
 
+        hits = response.dig("hits", "hits") || []
+
+        preferred_hits =
+          hits.each_with_object({}) do |hit, acc|
+            doi = hit.dig("_source", "doi")
+            next if doi.blank?
+
+            existing = acc[doi]
+            if existing.nil? || hit["_index"] == index_name
+              acc[doi] = hit
+            end
+          end.values
+
         return Hashie::Mash.new(
-          total: response.dig("hits", "total", "value"),
-          results: response.dig("hits", "hits").map do |r|
+          total: preferred_hits.length,
+          results: preferred_hits.map do |r|
             {
               index: r["_index"],
               id: r["_id"],
@@ -94,27 +107,6 @@ class EnrichedDoi < Doi
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
       search_after = nil
       sort = Array.wrap(options[:sort] || { updated: { order: "desc" } })
-    end
-
-    # Prefer docs from enriched_dois over docs from dois when the same DOI exists in both,
-    # but still allow fallback to the plain doi document if no enriched document is available.
-    unless options[:random].present? && options[:random].to_s.downcase == "true"
-      sort = [
-        {
-          _script: {
-            type: "number",
-            order: "asc",
-            script: {
-              lang: "painless",
-              source: "doc['_index'].value == params.enriched ? 0 : 1",
-              params: {
-                enriched: index_name,
-              },
-            },
-          },
-        },
-        *sort,
-      ]
     end
 
     if query.present?
@@ -335,7 +327,6 @@ class EnrichedDoi < Doi
         fail ActionController::BadRequest, "Cursor-based pagination and random sampling are mutually exclusive, please choose one or the other."
       end
       es_query["function_score"] = function_score
-      sort = nil
     else
       es_query["bool"] = bool_query
     end
@@ -358,84 +349,71 @@ class EnrichedDoi < Doi
 
     indices = search_indices
 
-    if options.dig(:page, :scroll).present?
-      response = __elasticsearch__.client.search(
-        index: indices,
-        scroll: options.dig(:page, :scroll),
-        body: {
-          size: options.dig(:page, :size),
-          sort: sort,
-          query: es_query,
-          collapse: { field: "doi" },
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
+    search_body = {
+      size: if options.fetch(:page, {}).key?(:cursor)
+              (options.dig(:page, :size) || 25) * 2
+            else
+              (options.dig(:page, :size) || 25) * 2
+            end,
+      sort: sort,
+      query: es_query,
+      aggregations: aggregations,
+      track_total_hits: true,
+    }.compact
 
-      Hashie::Mash.new(
-        total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
-        scroll_id: response["_scroll_id"],
-      )
-    elsif options.fetch(:page, {}).key?(:cursor)
-      response = __elasticsearch__.client.search(
-        index: indices,
-        body: {
-          size: options.dig(:page, :size),
-          search_after: search_after,
-          sort: sort,
-          query: es_query,
-          collapse: { field: "doi" },
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
+    search_body[:from] = from if search_after.nil? && !options.dig(:page, :scroll).present?
+    search_body[:search_after] = search_after if search_after.present?
 
-      Hashie::Mash.new(
-        total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
-        aggregations: Hashie::Mash.new(response["aggregations"] || {}),
-      )
-    else
-      response = __elasticsearch__.client.search(
-        index: indices,
-        body: {
-          size: options.dig(:page, :size),
-          from: from,
-          sort: sort,
-          query: es_query,
-          collapse: { field: "doi" },
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
+    response =
+      if options.dig(:page, :scroll).present?
+        __elasticsearch__.client.search(
+          index: indices,
+          scroll: options.dig(:page, :scroll),
+          body: search_body,
+        )
+      else
+        __elasticsearch__.client.search(
+          index: indices,
+          body: search_body,
+        )
+      end
 
-      Hashie::Mash.new(
-        total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map do |r|
-          {
-            index: r["_index"],
-            id: r["_id"],
-            source: r["_source"],
-            sort: r["sort"],
-          }
-        end,
-        aggregations: Hashie::Mash.new(response["aggregations"] || {}),
-      )
+    hits = response.dig("hits", "hits") || []
+
+    preferred_hits =
+      hits.each_with_object({}) do |hit, acc|
+        doi = hit.dig("_source", "doi")
+        next if doi.blank?
+
+        existing = acc[doi]
+
+        if existing.nil?
+          acc[doi] = hit
+        elsif existing["_index"] != index_name && hit["_index"] == index_name
+          acc[doi] = hit
+        end
+      end.values
+
+    if !options.fetch(:page, {}).key?(:cursor) && !options.dig(:page, :scroll).present?
+      page_size = options.dig(:page, :size) || 25
+      preferred_hits = preferred_hits.first(page_size)
     end
-  end
+
+    result = {
+      total: preferred_hits.length,
+      results: preferred_hits.map do |r|
+        {
+          index: r["_index"],
+          id: r["_id"],
+          source: r["_source"],
+          sort: r["sort"],
+        }
+      end,
+    }
+
+    result[:scroll_id] = response["_scroll_id"] if options.dig(:page, :scroll).present?
+    result[:aggregations] = Hashie::Mash.new(response["aggregations"] || {}) unless options.dig(:page, :scroll).present?
+
+    Hashie::Mash.new(result)
+end
 end
