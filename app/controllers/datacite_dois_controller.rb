@@ -450,7 +450,7 @@ class DataciteDoisController < ApplicationController
 
           format.citation do
             # fetch formatted citations
-            render citation: (show_enrichments ? results : response.records.to_a),
+            render citation: response.records.to_a,
                    style: params[:style] || "apa",
                    locale: params[:locale] || "en-US"
           end
@@ -476,14 +476,9 @@ class DataciteDoisController < ApplicationController
             :jats,
             :ris,
             :schema_org,
-          ) do
-            render request.format.to_sym =>
-                     (show_enrichments ? results : response.records.to_a)
-          end
+          ) { render request.format.to_sym => response.records.to_a }
           format.csv do
-            render request.format.to_sym =>
-                     (show_enrichments ? results : response.records.to_a),
-                   header: header
+            render request.format.to_sym => response.records.to_a, header: header
           end
         end
       end
