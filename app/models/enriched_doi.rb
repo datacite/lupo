@@ -96,7 +96,8 @@ class EnrichedDoi < Doi
       sort = Array.wrap(options[:sort] || { updated: { order: "desc" } })
     end
 
-    # Prefer docs from enriched_dois over docs from dois when the same DOI exists in both
+    # Prefer docs from enriched_dois over docs from dois when the same DOI exists in both,
+    # but still allow fallback to the plain doi document if no enriched document is available.
     unless options[:random].present? && options[:random].to_s.downcase == "true"
       sort = [
         {
@@ -159,27 +160,6 @@ class EnrichedDoi < Doi
     filter = []
     should = []
     minimum_should_match = 0
-
-    # Search both indices, but when a DOI has enrichments, only return the enriched_dois version.
-    # Plain dois should only be returned if they do not have enrichments.
-    filter << {
-      bool: {
-        should: [
-          { term: { "_index": index_name } },
-          {
-            bool: {
-              must: [
-                { term: { "_index": Doi.index_name } },
-              ],
-              must_not: [
-                { term: { has_enrichments: true } },
-              ],
-            },
-          },
-        ],
-        minimum_should_match: 1,
-      },
-    }
 
     filter << ({ terms: { doi: options[:ids].map(&:upcase) } }) if options[:ids].present?
 
