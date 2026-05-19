@@ -33,7 +33,14 @@ class EnrichedDoi < Doi
 
         return Hashie::Mash.new(
           total: response.dig("hits", "total", "value"),
-          results: response.dig("hits", "hits").map { |r| r["_source"] },
+          results: response.dig("hits", "hits").map do |r|
+            {
+              index: r["_index"],
+              id: r["_id"],
+              source: r["_source"],
+              sort: r["sort"],
+            }
+          end,
           scroll_id: response["_scroll_id"],
         )
       rescue Elasticsearch::Transport::Transport::Errors::NotFound
@@ -366,7 +373,14 @@ class EnrichedDoi < Doi
 
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map { |r| r["_source"] },
+        results: response.dig("hits", "hits").map do |r|
+          {
+            index: r["_index"],
+            id: r["_id"],
+            source: r["_source"],
+            sort: r["sort"],
+          }
+        end,
         scroll_id: response["_scroll_id"],
       )
     elsif options.fetch(:page, {}).key?(:cursor)
@@ -385,7 +399,14 @@ class EnrichedDoi < Doi
 
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map { |r| r["_source"] },
+        results: response.dig("hits", "hits").map do |r|
+          {
+            index: r["_index"],
+            id: r["_id"],
+            source: r["_source"],
+            sort: r["sort"],
+          }
+        end,
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     else
@@ -404,7 +425,14 @@ class EnrichedDoi < Doi
 
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map { |r| r["_source"] },
+        results: response.dig("hits", "hits").map do |r|
+            {
+              index: r["_index"],
+              id: r["_id"],
+              source: r["_source"],
+              sort: r["sort"],
+            }
+          end,
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     end

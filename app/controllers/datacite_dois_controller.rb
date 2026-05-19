@@ -214,7 +214,11 @@ class DataciteDoisController < ApplicationController
         sample_dois = []
         response.aggregations.samples.buckets.each do |bucket|
           bucket.samples_hits.hits.hits.each do |hit|
-            sample_dois << hit._source
+            sample_dois << {
+              index: hit._index,
+              id: hit._id,
+              source: hit._source
+            }
           end
         end
       end

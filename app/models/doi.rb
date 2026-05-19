@@ -714,6 +714,7 @@ class Doi < ApplicationRecord
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
       "has_enrichments" => has_enrichments,
+      "enrichment_uuids" => enrichment_uuids,
     }
   end
 
