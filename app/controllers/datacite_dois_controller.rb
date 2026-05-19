@@ -224,12 +224,10 @@ class DataciteDoisController < ApplicationController
       end
 
       # Results to return are either our sample group dois or the regular hit results
-
       # The total is just the length because for sample grouping we get everything back in one shot no pagination.
 
       if sample_dois
         results = sample_dois
-
         total = sample_dois.length
         total_pages = 1
       elsif page[:scroll].present?
@@ -245,6 +243,13 @@ class DataciteDoisController < ApplicationController
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
+
+      serializer_results =
+        if show_enrichments
+          results.map { |hit| OpenStruct.new(hit[:source] || hit["source"]) }
+        else
+          results
+        end
 
       if page[:scroll].present?
         options = {}
@@ -281,12 +286,12 @@ class DataciteDoisController < ApplicationController
         fields = fields_from_params(params)
         if fields
           render(
-            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(serializer_results, options.merge(fields: fields)).serializable_hash.to_json,
             status: :ok
           )
         else
           render(
-            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(serializer_results, options).serializable_hash.to_json,
             status: :ok
           )
         end
@@ -437,12 +442,12 @@ class DataciteDoisController < ApplicationController
             fields = fields_from_params(params)
             if fields
               render(
-                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(serializer_results, options.merge(fields: fields)).serializable_hash.to_json,
                 status: :ok
               )
             else
               render(
-                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(serializer_results, options).serializable_hash.to_json,
                 status: :ok
               )
             end
