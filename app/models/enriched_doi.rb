@@ -160,6 +160,27 @@ class EnrichedDoi < Doi
     should = []
     minimum_should_match = 0
 
+    # Search both indices, but when a DOI has enrichments, only return the enriched_dois version.
+    # Plain dois should only be returned if they do not have enrichments.
+    filter << {
+      bool: {
+        should: [
+          { term: { "_index": index_name } },
+          {
+            bool: {
+              must: [
+                { term: { "_index": Doi.index_name } },
+              ],
+              must_not: [
+                { term: { has_enrichments: true } },
+              ],
+            },
+          },
+        ],
+        minimum_should_match: 1,
+      },
+    }
+
     filter << ({ terms: { doi: options[:ids].map(&:upcase) } }) if options[:ids].present?
 
     if options[:resource_type_id].present?
@@ -426,13 +447,13 @@ class EnrichedDoi < Doi
       Hashie::Mash.new(
         total: response.dig("hits", "total", "value"),
         results: response.dig("hits", "hits").map do |r|
-            {
-              index: r["_index"],
-              id: r["_id"],
-              source: r["_source"],
-              sort: r["sort"],
-            }
-          end,
+          {
+            index: r["_index"],
+            id: r["_id"],
+            source: r["_source"],
+            sort: r["sort"],
+          }
+        end,
         aggregations: Hashie::Mash.new(response["aggregations"] || {}),
       )
     end
