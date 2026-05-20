@@ -13,6 +13,7 @@ class EnrichedDoiIndexJob < ApplicationJob
   def perform(doi)
     log_prefix = "[EnrichedDoiIndexJob]"
     source_doi = Doi.includes(:enrichments).find_by(doi: doi, agency: "datacite")
+    enrichment_uuids = source_doi&.enrichment_uuids || []
 
     if source_doi.blank?
       Rails.logger.info("#{log_prefix}: DOI not found: #{doi}")
@@ -40,6 +41,8 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.id = source_doi.id
     enriched_doi.created_at = source_doi.created_at
     enriched_doi.updated_at = source_doi.updated_at
+    enriched_doi.indexed_enrichment_uuids = enrichment_uuids
+    enriched_doi.indexed_has_enrichments = enrichment_uuids.any?
 
     response = enriched_doi.__elasticsearch__.index_document
     Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
