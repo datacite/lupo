@@ -983,7 +983,7 @@ class Provider < ApplicationRecord
 
       write_attribute(:secondary_technical_contact, value)
     end
-    
+
     secondary_technical_contact
   end
 
@@ -998,8 +998,8 @@ class Provider < ApplicationRecord
           previous_contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", previous_provider_contact["email"].downcase)
           if !previous_contact.present?
             puts "GOT HERE PROVIDER:993 NO CONTACT FOUND FOR PREVIOUS CONTACT #{previous_provider_contact["email"]}, CREATING CONTACT"
-            previous_contact = self.contacts.create(
-              email: previous_provider_contact["email"],
+            self.contacts.create(
+              email: previous_provider_contact["email"].downcase,
               given_name: previous_provider_contact["given_name"],
               family_name: previous_provider_contact["family_name"],
               role_name: [role]
@@ -1013,22 +1013,22 @@ class Provider < ApplicationRecord
         if contact.nil?
           puts "GOT HERE PROVIDER:1007 NO CONTACT FOUND FOR #{provider_contact["email"]}, CREATING CONTACT"
           contact = self.contacts.create(
-            email: provider_contact["email"],
+            email: provider_contact["email"].downcase,
             given_name: provider_contact["given_name"],
             family_name: provider_contact["family_name"],
             role_name: []
           )
         end
 
-        contacts_with_role = contacts.where(deleted_at: nil).select { |contact| contact.role_name.include?(role) }
+        contacts_with_role = contacts.where(deleted_at: nil).select { |c| c.role_name.include?(role) }
 
         puts "GOT HERE PROVIDER:1007 CONTACTS WITH ROLE #{role} FOR PROVIDER #{symbol}: #{contacts_with_role.map(&:email)}"
 
         # Remove the role from any other contacts that already have it.
         if contacts_with_role.present?
-          contacts_with_role.each do | contact |
-            contact.remove_roles(Array.wrap(role))
-            contact.update(role_name: contact.role_name)
+          contacts_with_role.each do | c |
+            c.remove_roles(Array.wrap(role))
+            c.update(role_name: c.role_name)
           end
         end
 
