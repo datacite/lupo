@@ -31,6 +31,11 @@ namespace :enrichment do
     puts EnrichedDoi.active_index + " is the active index."
   end
 
+  desc "Create template for enriched dois"
+  task create_template: :environment do
+    puts EnrichedDoi.create_template
+  end
+
   desc "Process JSONL from S3 and enqueue batches sized by bytes (256KB message size limit)"
   # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl SOURCE_ID=DATACITE.COMET
   task batch_process_file: :environment do
