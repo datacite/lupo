@@ -998,7 +998,7 @@ class Provider < ApplicationRecord
           previous_contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", previous_provider_contact["email"].downcase)
           if !previous_contact.present?
             puts "GOT HERE PROVIDER:993 NO CONTACT FOUND FOR PREVIOUS CONTACT #{previous_provider_contact["email"]}, CREATING CONTACT"
-            self.contacts.create(
+            self.contacts.build(
               email: previous_provider_contact["email"].downcase,
               given_name: previous_provider_contact["given_name"],
               family_name: previous_provider_contact["family_name"],
@@ -1012,7 +1012,7 @@ class Provider < ApplicationRecord
         # if provider_contact does not have an equivalent contact, create one.
         if contact.nil?
           puts "GOT HERE PROVIDER:1007 NO CONTACT FOUND FOR #{provider_contact["email"]}, CREATING CONTACT"
-          contact = self.contacts.create(
+          contact = self.contacts.build(
             email: provider_contact["email"].downcase,
             given_name: provider_contact["given_name"],
             family_name: provider_contact["family_name"],
