@@ -12,6 +12,8 @@ class DataciteDoisController < ApplicationController
   before_action :set_raven_context, only: %i[create update validate]
 
   def index
+    show_enrichments = params["enriched"]&.upcase == "TRUE"
+
     sort =
       case params[:sort]
       when "name"
@@ -66,119 +68,193 @@ class DataciteDoisController < ApplicationController
         "types.resourceTypeGeneral"
       end
 
-    # only show findable DOIs to no user, role user, and role anonymous
     if current_user.nil? || current_user.role_id == "user" || current_user.role_id == "anonymous"
       params[:state] = "findable"
     end
 
-    # default: use env DISABLE_FACETS_BY_DEFAULT (true/1 => facets off); explicit param overrides
     disable_facets = (params[:disable_facets] || ENV["DISABLE_FACETS_BY_DEFAULT"]).to_s.downcase.in?(%w[true 1])
 
-    # registration agencies are disabled by default
     exclude_registration_agencies = true
-    if params[:include_other_registration_agencies].present?
-      exclude_registration_agencies = false
-    end
+    exclude_registration_agencies = false if params[:include_other_registration_agencies].present?
 
     if params[:id].present?
       response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = DataciteDoi.find_by_ids(params[:ids], disable_facets: disable_facets, facets: params[:facets], page: page, sort: sort)
+      response = DataciteDoi.find_by_ids(
+        params[:ids],
+        disable_facets: disable_facets,
+        facets: params[:facets],
+        page: page,
+        sort: sort
+      )
     else
       response =
-        DataciteDoi.query(
-          params[:query],
-          state: params[:state],
-          exclude_registration_agencies: exclude_registration_agencies,
-          published: params[:published],
-          created: params[:created],
-          registered: params[:registered],
-          provider_id: params[:provider_id],
-          consortium_id: params[:consortium_id],
-          client_id: params[:client_id],
-          affiliation_id: params[:affiliation_id],
-          funder_id: params[:funder_id],
-          re3data_id: params[:re3data_id],
-          opendoar_id: params[:opendoar_id],
-          license: params[:license],
-          certificate: params[:certificate],
-          prefix: params[:prefix],
-          user_id: params[:user_id],
-          resource_type_id: params[:resource_type_id],
-          resource_type: params[:resource_type],
-          schema_version: params[:schema_version],
-          subject: params[:subject],
-          field_of_science: params[:field_of_science],
-          has_citations: params[:has_citations],
-          has_references: params[:has_references],
-          has_parts: params[:has_parts],
-          has_part_of: params[:has_part_of],
-          has_versions: params[:has_versions],
-          has_version_of: params[:has_version_of],
-          has_views: params[:has_views],
-          has_downloads: params[:has_downloads],
-          has_person: params[:has_person],
-          has_affiliation: params[:has_affiliation],
-          has_organization: params[:has_organization],
-          has_funder: params[:has_funder],
-          link_check_status: params[:link_check_status],
-          link_check_has_schema_org: params[:link_check_has_schema_org],
-          link_check_body_has_pid: params[:link_check_body_has_pid],
-          link_check_found_schema_org_id:
-            params[:link_check_found_schema_org_id],
-          link_check_found_dc_identifier:
-            params[:link_check_found_dc_identifier],
-          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-          sample_group: sample_group_field,
-          sample_size: params[:sample],
-          source: params[:source],
-          scroll_id: params[:scroll_id],
-          disable_facets: disable_facets,
-          facets: params[:facets],
-          page: page,
-          sort: sort,
-          random: params[:random],
-          client_type: params[:client_type],
-          funded_by: params[:funded_by],
-          include_funder_child_organizations: params[:include_funder_child_organizations],
-          affiliation_country: params[:affiliation_country],
-        )
+        if show_enrichments
+          EnrichedDoi.enriched_search_query(
+            params[:query],
+            state: params[:state],
+            exclude_registration_agencies: exclude_registration_agencies,
+            published: params[:published],
+            created: params[:created],
+            registered: params[:registered],
+            provider_id: params[:provider_id],
+            consortium_id: params[:consortium_id],
+            client_id: params[:client_id],
+            affiliation_id: params[:affiliation_id],
+            funder_id: params[:funder_id],
+            re3data_id: params[:re3data_id],
+            opendoar_id: params[:opendoar_id],
+            license: params[:license],
+            certificate: params[:certificate],
+            prefix: params[:prefix],
+            user_id: params[:user_id],
+            resource_type_id: params[:resource_type_id],
+            resource_type: params[:resource_type],
+            schema_version: params[:schema_version],
+            subject: params[:subject],
+            field_of_science: params[:field_of_science],
+            has_citations: params[:has_citations],
+            has_references: params[:has_references],
+            has_parts: params[:has_parts],
+            has_part_of: params[:has_part_of],
+            has_versions: params[:has_versions],
+            has_version_of: params[:has_version_of],
+            has_views: params[:has_views],
+            has_downloads: params[:has_downloads],
+            has_person: params[:has_person],
+            has_affiliation: params[:has_affiliation],
+            has_organization: params[:has_organization],
+            has_funder: params[:has_funder],
+            link_check_status: params[:link_check_status],
+            link_check_has_schema_org: params[:link_check_has_schema_org],
+            link_check_body_has_pid: params[:link_check_body_has_pid],
+            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+            sample_group: sample_group_field,
+            sample_size: params[:sample],
+            source: params[:source],
+            scroll_id: params[:scroll_id],
+            disable_facets: disable_facets,
+            facets: params[:facets],
+            page: page,
+            sort: sort,
+            random: params[:random],
+            client_type: params[:client_type],
+            funded_by: params[:funded_by],
+            include_funder_child_organizations: params[:include_funder_child_organizations],
+            affiliation_country: params[:affiliation_country],
+          )
+        else
+          DataciteDoi.query(
+            params[:query],
+            state: params[:state],
+            exclude_registration_agencies: exclude_registration_agencies,
+            published: params[:published],
+            created: params[:created],
+            registered: params[:registered],
+            provider_id: params[:provider_id],
+            consortium_id: params[:consortium_id],
+            client_id: params[:client_id],
+            affiliation_id: params[:affiliation_id],
+            funder_id: params[:funder_id],
+            re3data_id: params[:re3data_id],
+            opendoar_id: params[:opendoar_id],
+            license: params[:license],
+            certificate: params[:certificate],
+            prefix: params[:prefix],
+            user_id: params[:user_id],
+            resource_type_id: params[:resource_type_id],
+            resource_type: params[:resource_type],
+            schema_version: params[:schema_version],
+            subject: params[:subject],
+            field_of_science: params[:field_of_science],
+            has_citations: params[:has_citations],
+            has_references: params[:has_references],
+            has_parts: params[:has_parts],
+            has_part_of: params[:has_part_of],
+            has_versions: params[:has_versions],
+            has_version_of: params[:has_version_of],
+            has_views: params[:has_views],
+            has_downloads: params[:has_downloads],
+            has_person: params[:has_person],
+            has_affiliation: params[:has_affiliation],
+            has_organization: params[:has_organization],
+            has_funder: params[:has_funder],
+            link_check_status: params[:link_check_status],
+            link_check_has_schema_org: params[:link_check_has_schema_org],
+            link_check_body_has_pid: params[:link_check_body_has_pid],
+            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+            sample_group: sample_group_field,
+            sample_size: params[:sample],
+            source: params[:source],
+            scroll_id: params[:scroll_id],
+            disable_facets: disable_facets,
+            facets: params[:facets],
+            page: page,
+            sort: sort,
+            random: params[:random],
+            client_type: params[:client_type],
+            funded_by: params[:funded_by],
+            include_funder_child_organizations: params[:include_funder_child_organizations],
+            affiliation_country: params[:affiliation_country],
+          )
+        end
     end
 
     begin
-      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
         response.aggregations.samples.buckets.each do |bucket|
           bucket.samples_hits.hits.hits.each do |hit|
-            sample_dois << hit._source
+            if show_enrichments
+              sample_dois << {
+                index: hit._index,
+                id: hit._id,
+                source: hit._source,
+                sort: hit.sort
+              }
+            else
+              sample_dois << hit._source
+            end
           end
         end
       end
 
-      # Results to return are either our sample group dois or the regular hit results
-
-      # The total is just the length because for sample grouping we get everything back in one shot no pagination.
-
       if sample_dois
         results = sample_dois
-
         total = sample_dois.length
         total_pages = 1
       elsif page[:scroll].present?
-        # if scroll_id has expired
         fail ActiveRecord::RecordNotFound if response.scroll_id.blank?
 
         results = response.results
         total = response.total
       else
         results = response.results
-        total = response.results.total
+        total = show_enrichments ? response.total : response.results.total
         total_for_pages =
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
+
+      serializer_results =
+        if show_enrichments
+          results.map { |hit| OpenStruct.new(hit[:source] || hit["source"]) }
+        else
+          results
+        end
+
+      cursor_results =
+        if show_enrichments
+          results.map { |hit| hit[:source] || hit["source"] }
+        else
+          results
+        end
 
       if page[:scroll].present?
         options = {}
@@ -196,8 +272,7 @@ class DataciteDoisController < ApplicationController
                   "scroll-id" => response.scroll_id,
                   "page[scroll]" => page[:scroll],
                   "page[size]" => page[:size],
-                }.compact.
-                to_query
+                }.compact.to_query
             end,
         }.compact
         options[:is_collection] = true
@@ -208,18 +283,18 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
           is_collection: options[:is_collection],
+          show_enrichments: show_enrichments,
         }
 
-        # sparse fieldsets
         fields = fields_from_params(params)
         if fields
           render(
-            json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(serializer_results, options.merge(fields: fields)).serializable_hash.to_json,
             status: :ok
           )
         else
           render(
-            json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+            json: DataciteDoiSerializer.new(serializer_results, options).serializable_hash.to_json,
             status: :ok
           )
         end
@@ -270,8 +345,6 @@ class DataciteDoisController < ApplicationController
           open_licenses: [:resource_types, :buckets],
         }
 
-        # For facets that aren't in response.aggregations,
-        # define the path to the arguments to be sent to the method
         facets_to_argument_path = {
           open_licenses_count: [:open_licenses],
         }
@@ -298,7 +371,7 @@ class DataciteDoisController < ApplicationController
                 if page[:cursor].nil? && page[:number].present?
                   page[:number]
                 end
-              }.merge(facets).compact
+            }.merge(facets).compact
 
             options[:links] = {
               self: request.original_url,
@@ -340,17 +413,14 @@ class DataciteDoisController < ApplicationController
                       funded_by: params[:funded_by],
                       include_funder_child_organizations: params[:include_funder_child_organizations],
                       "affiliation-country" => params[:affiliation_country],
-                      # The cursor link should be an array of values, but we want to encode it into a single string for the URL
-                      "page[cursor]" =>
-                        page[:cursor] ? make_cursor(results) : nil,
+                      "page[cursor]" => page[:cursor] ? make_cursor(cursor_results) : nil,
                       "page[number]" =>
                         if page[:cursor].nil? && page[:number].present?
                           page[:number] + 1
                         end,
                       "page[size]" => page[:size],
                       fields: fields_hash_from_params(params)
-                    }.compact.
-                    to_query
+                    }.compact.to_query
                 end,
             }.compact
             options[:include] = @include
@@ -363,29 +433,29 @@ class DataciteDoisController < ApplicationController
               publisher: params[:publisher],
               include_other_registration_agencies: params[:include_other_registration_agencies],
               is_collection: options[:is_collection],
+              show_enrichments: show_enrichments,
             }
 
-            # sparse fieldsets
             fields = fields_from_params(params)
             if fields
               render(
-                json: DataciteDoiSerializer.new(results, options.merge(fields: fields)).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(serializer_results, options.merge(fields: fields)).serializable_hash.to_json,
                 status: :ok
               )
             else
               render(
-                json: DataciteDoiSerializer.new(results, options).serializable_hash.to_json,
+                json: DataciteDoiSerializer.new(serializer_results, options).serializable_hash.to_json,
                 status: :ok
               )
             end
           end
 
           format.citation do
-            # fetch formatted citations
             render citation: response.records.to_a,
                    style: params[:style] || "apa",
                    locale: params[:locale] || "en-US"
           end
+
           header = %w[
             doi
             url
@@ -398,6 +468,7 @@ class DataciteDoisController < ApplicationController
             publisher
             publicationYear
           ]
+
           format.any(
             :bibtex,
             :citeproc,
@@ -409,9 +480,9 @@ class DataciteDoisController < ApplicationController
             :ris,
             :schema_org,
           ) { render request.format.to_sym => response.records.to_a }
+
           format.csv do
-            render request.format.to_sym => response.records.to_a,
-                   header: header
+            render request.format.to_sym => response.records.to_a, header: header
           end
         end
       end
