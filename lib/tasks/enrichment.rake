@@ -21,6 +21,16 @@ namespace :enrichment do
     puts EnrichedDoi.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
+  desc "Switch index for enriched dois"
+  task switch_index: :environment do
+    puts EnrichedDoi.switch_index(alias: ENV["ALIAS"], index: ENV["INDEX"])
+  end
+
+  desc "Return active index for enriched dois"
+  task active_index: :environment do
+    puts EnrichedDoi.active_index + " is the active index."
+  end
+
   desc "Process JSONL from S3 and enqueue batches sized by bytes (256KB message size limit)"
   # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl SOURCE_ID=DATACITE.COMET
   task batch_process_file: :environment do
