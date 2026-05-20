@@ -714,8 +714,11 @@ class Doi < ApplicationRecord
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
       "has_enrichments" => has_enrichments,
-      "enrichment_uuids" => enrichment_uuids,
-    }
+    }.merge(extra_indexed_fields)
+  end
+
+  def extra_indexed_fields
+    {}
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
@@ -1877,15 +1880,6 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
-  end
-
-  # Small work around to get serialization working as expected for enriched dois
-  def enrichment_uuids
-    if association(:enrichments).loaded?
-      enrichments.map(&:uuid)
-    else
-      enrichments.pluck(:uuid)
-    end
   end
 
   def _fos_filter(subject_array)
