@@ -919,7 +919,7 @@ class Provider < ApplicationRecord
 
   def voting_contact=(value)
     if voting_contact != value
-      apply_contact_role(value, "voting")
+      apply_contact_role(value, "voting", voting_contact)
 
       write_attribute(:voting_contact, value)
     end
@@ -929,7 +929,7 @@ class Provider < ApplicationRecord
 
   def billing_contact=(value)
     if billing_contact != value
-      apply_contact_role(value, "billing")
+      apply_contact_role(value, "billing", billing_contact)
 
       write_attribute(:billing_contact, value)
     end
@@ -939,7 +939,7 @@ class Provider < ApplicationRecord
 
   def secondary_billing_contact=(value)
     if secondary_billing_contact != value
-      apply_contact_role(value, "secondary_billing")
+      apply_contact_role(value, "secondary_billing", secondary_billing_contact)
 
       write_attribute(:secondary_billing_contact, value)
     end
@@ -949,7 +949,7 @@ class Provider < ApplicationRecord
 
   def service_contact=(value)
     if service_contact != value
-      apply_contact_role(value, "service")
+      apply_contact_role(value, "service", service_contact)
 
       write_attribute(:service_contact, value)
     end
@@ -959,7 +959,7 @@ class Provider < ApplicationRecord
 
   def secondary_service_contact=(value)
     if secondary_service_contact != value
-      apply_contact_role(value, "secondary_service")
+      apply_contact_role(value, "secondary_service", secondary_service_contact)
 
       write_attribute(:secondary_service_contact, value)
     end
@@ -969,7 +969,7 @@ class Provider < ApplicationRecord
 
   def technical_contact=(value)
     if technical_contact != value
-      apply_contact_role(value, "technical")
+      apply_contact_role(value, "technical", technical_contact)
 
       write_attribute(:technical_contact, value)
     end
@@ -979,29 +979,62 @@ class Provider < ApplicationRecord
 
   def secondary_technical_contact=(value)
     if secondary_technical_contact != value
-      apply_contact_role(value, "secondary_technical")
+      apply_contact_role(value, "secondary_technical", secondary_technical_contact)
 
       write_attribute(:secondary_technical_contact, value)
     end
+    
     secondary_technical_contact
   end
 
   private
-    def apply_contact_role(provider_contact, role)
+    def apply_contact_role(provider_contact, role, previous_provider_contact)
       if provider_contact.present? && provider_contact["email"].present? && role.present?
-        contact_with_new_role = contacts.where(deleted_at: nil).find_by("email = ?", provider_contact["email"])
 
-        if contact_with_new_role.present?
-          contacts.each do | contact |
-            if contact.has_provider_role?(role)
-              contact.remove_roles(Array.wrap(role))
-              contact.update(role_name: contact.role_name)
-            end
+        puts "GOT HERE PROVIDER:993 APPLYING CONTACT ROLE #{role} FOR CONTACT #{provider_contact["email"]}"
+
+        # If previous_provider_contact does not have an equivalent contact, create one.
+        if previous_provider_contact.present? && previous_provider_contact["email"].present?
+          previous_contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", previous_provider_contact["email"].downcase)
+          if !previous_contact.present?
+            puts "GOT HERE PROVIDER:993 NO CONTACT FOUND FOR PREVIOUS CONTACT #{previous_provider_contact["email"]}, CREATING CONTACT"
+            previous_contact = self.contacts.create(
+              email: previous_provider_contact["email"],
+              given_name: previous_provider_contact["given_name"],
+              family_name: previous_provider_contact["family_name"],
+              role_name: [role]
+            )
           end
-
-          contact_with_new_role.add_roles(Array.wrap(role))
-          contact_with_new_role.update(role_name: contact_with_new_role.role_name)
         end
+
+        contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", provider_contact["email"].downcase)
+
+        # if provider_contact does not have an equivalent contact, create one.
+        if contact.nil?
+          puts "GOT HERE PROVIDER:1007 NO CONTACT FOUND FOR #{provider_contact["email"]}, CREATING CONTACT"
+          contact = self.contacts.create(
+            email: provider_contact["email"],
+            given_name: provider_contact["given_name"],
+            family_name: provider_contact["family_name"],
+            role_name: []
+          )
+        end
+
+        contacts_with_role = contacts.where(deleted_at: nil).select { |contact| contact.role_name.include?(role) }
+
+        puts "GOT HERE PROVIDER:1007 CONTACTS WITH ROLE #{role} FOR PROVIDER #{symbol}: #{contacts_with_role.map(&:email)}"
+
+        # Remove the role from any other contacts that already have it.
+        if contacts_with_role.present?
+          contacts_with_role.each do | contact |
+            contact.remove_roles(Array.wrap(role))
+            contact.update(role_name: contact.role_name)
+          end
+        end
+
+        # Apply the role to the contact for the provider_contact.
+        contact.add_roles(Array.wrap(role))
+        contact.update(role_name: contact.role_name)
       end
     end
 
