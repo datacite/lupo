@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gem "aasm", "~> 5.0", ">= 5.0.1"
 gem "active_model_serializers", "~> 0.10.0"
-gem "activerecord_json_validator", "~> 2.1", ">= 2.1.5"
+gem "activerecord_json_validator", "~> 3.1"
 gem "apollo-federation", "~> 3.8"
 gem "audited", "~> 5.8"
 gem "aws-sdk-core", "~> 3.226"
