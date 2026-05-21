@@ -714,7 +714,11 @@ class Doi < ApplicationRecord
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
       "has_enrichments" => has_enrichments,
-    }
+    }.merge(extra_indexed_fields)
+  end
+
+  def extra_indexed_fields
+    {}
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
