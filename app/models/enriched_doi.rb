@@ -456,12 +456,6 @@ class EnrichedDoi < Doi
     end
   end
 
-  def extra_indexed_fields
-    {
-      "enrichments" => enrichment_uuids,
-    }
-  end
-
   def self.search_indices
     if Rails.env.test?
       ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
