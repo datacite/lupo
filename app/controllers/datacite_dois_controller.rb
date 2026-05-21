@@ -851,31 +851,25 @@ class DataciteDoisController < ApplicationController
 
   protected
     def handle_show_enriched_doi(doi, options)
-      # Short circuit if there are no enrichments
       return render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok) if doi.enrichments.empty?
 
-      # Ensure validation works as expected when not persisting the record
       doi.only_validate = true
       doi.regenerate = true
       doi.skip_client_domains_validation = true
       doi.skip_schema_version_validation = false
-
-      # Ensure we use schema version 4 for validation
       doi.schema_version = "http://datacite.org/schema/kernel-4"
 
-      # Apply enrichments to the doi
-      doi.enrichments.each do |enrichment|
+      enrichments = doi.enrichments.to_a
+      doi.association(:enrichments).target = enrichments
+
+      enrichments.each do |enrichment|
         doi.apply_enrichment(enrichment)
       rescue
         next
       end
 
-      # Ensure there are no enrichments in the relationship section if the doi is invalid
       if doi.invalid?
-        # Reset the doi to original version to revert enrichment application
         doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
-
-        # Clear enrichments
         doi.association(:enrichments).target = []
       end
 
