@@ -13,21 +13,19 @@ class DataciteDoiSerializer
   #          id_method_name: :enrichment_uuids,
   #          if: proc { |_object, params| params && params[:show_enrichments] }
   has_many :enrichments,
-           record_type: :enrichments,
-           if: proc { |_object, params| params && params[:show_enrichments] } do |object|
-            ids =
-            if object.respond_to?(:enrichment_uuids)
-              object.enrichment_uuids
-            elsif object.respond_to?(:enrichments)
-              object.enrichments
-            else
-              []
-            end
+         record_type: :enrichments,
+         if: proc { |_object, params| params && params[:show_enrichments] } do |object|
+  ids =
+    if object.respond_to?(:enrichment_uuids)
+      object.enrichment_uuids
+    elsif object.respond_to?(:enrichments)
+      object.enrichments
+    else
+      []
+    end
 
-            Array.wrap(ids).map do |id|
-              OpenStruct.new(uuid: id)
-            end
-          end
+  Array.wrap(ids).compact.map { |id| OpenStruct.new(id: id) }
+end
 
   # don't cache dois, as works are cached using the doi model
 
