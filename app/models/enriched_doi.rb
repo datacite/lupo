@@ -452,7 +452,6 @@ class EnrichedDoi < Doi
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
-      indexes :enrichments, type: :keyword
     end
   end
 
@@ -460,6 +459,11 @@ class EnrichedDoi < Doi
     {
       "enrichments" => enrichment_uuids,
     }
+  end
+
+  # Do not map has_enrichments to opensearch for enriched dois.
+  def as_indexed_json(_options = {})
+    super.except("has_enrichments")
   end
 
   def self.search_indices
