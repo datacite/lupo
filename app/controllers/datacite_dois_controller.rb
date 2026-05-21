@@ -256,6 +256,8 @@ class DataciteDoisController < ApplicationController
           results
         end
 
+      enriched_next_link_param = show_enrichments ? { enriched: true } : {}
+
       if page[:scroll].present?
         options = {}
         options[:meta] = {
@@ -272,6 +274,7 @@ class DataciteDoisController < ApplicationController
                   "scroll-id" => response.scroll_id,
                   "page[scroll]" => page[:scroll],
                   "page[size]" => page[:size],
+                  "enriched" => (show_enrichments ? "true" : nil),
                 }.compact.to_query
             end,
         }.compact
@@ -419,7 +422,8 @@ class DataciteDoisController < ApplicationController
                           page[:number] + 1
                         end,
                       "page[size]" => page[:size],
-                      fields: fields_hash_from_params(params)
+                      fields: fields_hash_from_params(params),
+                      "enriched" => (show_enrichments ? "true" : nil),
                     }.compact.to_query
                 end,
             }.compact
