@@ -19,17 +19,8 @@ class EnrichedDoi < Doi
 
   def extra_indexed_fields
     {
-      "enrichment_uuids" => enrichment_uuids,
+      "enrichments" => enrichment_uuids,
     }
-  end
-
-  # Small work around to get serialization working as expected for enriched dois
-  def enrichment_uuids
-    if association(:enrichments).loaded?
-      enrichments.map(&:uuid)
-    else
-      enrichments.pluck(:uuid)
-    end
   end
 
   def self.search_indices

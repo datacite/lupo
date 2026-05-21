@@ -1446,6 +1446,15 @@ class Doi < ApplicationRecord
     message
   end
 
+  # Small work around to get serialization working as expected for enriched dois
+  def enrichment_uuids
+    if association(:enrichments).loaded?
+      enrichments.map(&:uuid)
+    else
+      enrichments.pluck(:uuid)
+    end
+  end
+
   def uid
     doi.downcase
   end
