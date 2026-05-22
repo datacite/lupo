@@ -618,7 +618,6 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
-      indexes :has_enrichments, type: :boolean
     end
   end
 
@@ -713,7 +712,6 @@ class Doi < ApplicationRecord
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
-      "has_enrichments" => has_enrichments,
     }.merge(extra_indexed_fields)
   end
 
@@ -1808,14 +1806,6 @@ class Doi < ApplicationRecord
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => e
     Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{id + 499}: #{e.message}."
     count
-  end
-
-  def has_enrichments
-    if association(:enrichments).loaded?
-      enrichments.any?
-    else
-      enrichments.exists?
-    end
   end
 
   def doi=(value)
