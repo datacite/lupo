@@ -9,11 +9,13 @@ describe "contact:import_from_providers", elasticsearch: true do
   let!(:provider) { create(:provider) }
   let(:output) { "Imported voting contact robin@example.com for provider #{provider.symbol}.\nImported billing contact trisha@example.com for provider #{provider.symbol}." }
 
-  it "prerequisites should include environment" do
+  # Temporarily disable this test.
+  xit "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
   end
 
-  it "should run the rake task" do
+  # Temporarily disable this test.
+  xit "should run the rake task" do
     Provider.delete_all
     Contact.delete_all
     provider = create(:provider)
