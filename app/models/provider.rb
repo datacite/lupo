@@ -941,6 +941,8 @@ class Provider < ApplicationRecord
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
+    contacts.touch_all
+
     voting_contact
   end
 
@@ -960,6 +962,8 @@ class Provider < ApplicationRecord
 
       write_attribute(:billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
+
+    contacts.touch_all
 
     billing_contact
   end
@@ -981,6 +985,8 @@ class Provider < ApplicationRecord
       write_attribute(:secondary_billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
+    contacts.touch_all
+
     secondary_billing_contact
   end
 
@@ -1000,6 +1006,8 @@ class Provider < ApplicationRecord
 
       write_attribute(:service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
+
+    contacts.touch_all
 
     service_contact
   end
@@ -1021,6 +1029,8 @@ class Provider < ApplicationRecord
       write_attribute(:secondary_service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
+    contacts.touch_all
+
     secondary_service_contact
   end
 
@@ -1035,11 +1045,13 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "technical")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "technical")
 
       write_attribute(:technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
+
+    contacts.touch_all
 
     technical_contact
   end
@@ -1060,6 +1072,8 @@ class Provider < ApplicationRecord
 
       write_attribute(:secondary_technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
+
+    contacts.touch_all
 
     secondary_technical_contact
   end

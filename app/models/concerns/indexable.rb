@@ -48,12 +48,15 @@ module Indexable
         end
       # ignore if record was created via Salesforce API
       elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "GOT HERE - EXPORTING PROVIDER - indexable:51 - #{to_jsonapi}"
+        # elsif instance_of?(Provider) && !from_salesforce
+        # puts "GOT HERE - EXPORTING PROVIDER - indexable:52 - #{to_jsonapi}"
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        # elsif instance_of?(Client) && !from_salesforce
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "GOT HERE - EXPORTING CONTACT - indexable:57 - #{to_jsonapi}"
+        # elsif instance_of?(Contact) && !from_salesforce
+        # puts "GOT HERE - EXPORTING CONTACT - indexable:59 - #{to_jsonapi}"
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
@@ -104,6 +107,7 @@ module Indexable
     end
 
     def send_provider_export_message(data)
+      puts "GOT HERE - EXPORTING PROVIDER - indexable:110 - #{data}"
       send_message(data, shoryuken_class: "ProviderExportWorker", queue_name: "salesforce")
     end
 
@@ -112,12 +116,14 @@ module Indexable
     end
 
     def send_contact_export_message(data)
+      puts "GOT HERE - EXPORTING CONTACT - indexable:119 - #{data}"
       send_message(data, shoryuken_class: "ContactExportWorker", queue_name: "salesforce")
     end
 
     # shoryuken_class is needed for the consumer to process the message
     # SQS interaction is handled by SqsMessageService
     def send_message(body, options = {})
+      puts "GOT HERE - EXPORTING OBJECT - indexable:124 - Body: #{body}, Options: #{options}"
       SqsMessageService.enqueue(body, options)
     end
 
