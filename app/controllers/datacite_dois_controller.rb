@@ -210,6 +210,7 @@ class DataciteDoisController < ApplicationController
                   "scroll-id" => response.scroll_id,
                   "page[scroll]" => page[:scroll],
                   "page[size]" => page[:size],
+                  "enriched" => (show_enrichments ? "true" : nil),
                 }.compact.
                 to_query
             end,
@@ -362,7 +363,8 @@ class DataciteDoisController < ApplicationController
                           page[:number] + 1
                         end,
                       "page[size]" => page[:size],
-                      fields: fields_hash_from_params(params)
+                      fields: fields_hash_from_params(params),
+                      "enriched" => (show_enrichments ? "true" : nil),
                     }.compact.
                     to_query
                 end,
