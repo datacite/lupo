@@ -256,8 +256,6 @@ class DataciteDoisController < ApplicationController
           results
         end
 
-      enriched_next_link_param = show_enrichments ? { enriched: true } : {}
-
       if page[:scroll].present?
         options = {}
         options[:meta] = {
