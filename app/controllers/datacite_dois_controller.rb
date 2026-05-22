@@ -185,13 +185,9 @@ class DataciteDoisController < ApplicationController
       if show_enrichments && results.present?
         page_dois = results.map(&:doi)
 
-        enriched_by_doi =
-          Doi.includes(:enrichments)
-            .where(doi: page_dois, agency: "datacite")
-            .select { |doi| doi.enrichments.any? }
-            .index_by(&:doi)
+        enriched_by_dois = EnrichedDoi.includes(:enrichments).where(doi: page_dois)
 
-        results = results.map { |result| enriched_by_doi[result.doi] || result }
+        results = results.map { |result| enriched_by_dois[result.doi] || result }
       end
 
       if page[:scroll].present?
