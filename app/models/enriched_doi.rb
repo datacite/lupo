@@ -469,29 +469,29 @@ class EnrichedDoi < Doi
     else
       ["dois", "enriched_dois"]
     end
+  end
 
-    def self.find_enriched_dois(dois)
-      return {} if dois.blank?
+  def self.find_enriched_dois(dois)
+    return {} if dois.blank?
 
-      response = __elasticsearch__.client.search(
-        index: index_name,
-        body: {
-          size: dois.length,
-          query: {
-            bool: {
-              filter: [
-                { terms: { doi: dois } }
-              ]
-            }
+    response = __elasticsearch__.client.search(
+      index: index_name,
+      body: {
+        size: dois.length,
+        query: {
+          bool: {
+            filter: [
+              { terms: { doi: dois } }
+            ]
           }
         }
-      )
+      }
+    )
 
-      (response.dig("hits", "hits") || []).each_with_object({}) do |hit, acc|
-        source = hit["_source"] || {}
-        doi = source["doi"]
-        acc[doi] = OpenStruct.new(source) if doi.present?
-      end
+    (response.dig("hits", "hits") || []).each_with_object({}) do |hit, acc|
+      source = hit["_source"] || {}
+      doi = source["doi"]
+      acc[doi] = OpenStruct.new(source) if doi.present?
     end
   end
 end
