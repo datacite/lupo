@@ -918,11 +918,11 @@ class Provider < ApplicationRecord
 
   ## CONTACTS
 
-   def uuid_format
+  def uuid_format
     unless UUID.validate(globus_uuid)
       errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
     end
-  end 
+ end
 
   def voting_contact=(value)
     if value.present? &&
@@ -1065,8 +1065,6 @@ class Provider < ApplicationRecord
   end
 
   private
-
-
     def find_or_create_contact(value)
       contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", value["email"].downcase)
 
@@ -1083,7 +1081,7 @@ class Provider < ApplicationRecord
     end
 
     def remove_contact_role(contacts, role)
-      contacts_with_role = contacts.select { |c| c.role_name.include?(role) } 
+      contacts_with_role = contacts.select { |c| c.role_name.include?(role) }
       if contacts_with_role.present?
         contacts_with_role.each do | c |
           c.remove_roles(Array.wrap(role))
