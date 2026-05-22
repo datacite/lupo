@@ -148,22 +148,6 @@ class DataciteDoisController < ApplicationController
         )
     end
 
-    if show_enrichments
-      # let's check if each of the dois in the response has enrichment and if so, we will replace it with the enriched version of the doi with enrichments included in the response
-      enriched_dois = []
-      response.records.each do |doi|
-        enriched_doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
-        if enriched_doi.present? && enriched_doi.enrichments.any?
-          enriched_dois << enriched_doi
-        else
-          enriched_dois << doi
-        end
-      end
-
-      # we will replace the original response records with the enriched dois (for those that had enrichments)
-      response.records = enriched_dois
-    end
-
     begin
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
