@@ -916,7 +916,187 @@ class Provider < ApplicationRecord
     "#{i} providers exported."
   end
 
+  ## CONTACTS
+
+   def uuid_format
+    unless UUID.validate(globus_uuid)
+      errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
+    end
+  end 
+
+  def voting_contact=(value)
+    if value.present? &&
+       voting_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "voting")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "voting")
+
+      write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    voting_contact
+  end
+
+  def billing_contact=(value)
+    if value.present? &&
+       billing_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "billing")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "billing")
+
+      write_attribute(:billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    billing_contact
+  end
+
+  def secondary_billing_contact=(value)
+    if value.present? &&
+       secondary_billing_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_billing")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "secondary_billing")
+
+      write_attribute(:secondary_billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    secondary_billing_contact
+  end
+
+  def service_contact=(value)
+    if value.present? &&
+       service_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "service")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "service")
+
+      write_attribute(:service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    service_contact
+  end
+
+  def secondary_service_contact=(value)
+    if value.present? &&
+       secondary_service_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_service")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "secondary_service")
+
+      write_attribute(:secondary_service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    secondary_service_contact
+  end
+
+  def technical_contact=(value)
+    if value.present? &&
+       technical_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "technical")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "technical")
+
+      write_attribute(:technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    technical_contact
+  end
+
+  def secondary_technical_contact=(value)
+    if value.present? &&
+       secondary_technical_contact != value &&
+       value.fetch("email", nil).present?
+
+      # find target contact for provider_contact or create if it doesn't exist
+      contact = find_or_create_contact(value)
+
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_technical")
+
+      # appply role to specified contact
+      apply_contact_role(contact, "secondary_technical")
+
+      write_attribute(:secondary_technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    end
+
+    secondary_technical_contact
+  end
+
   private
+
+
+    def find_or_create_contact(value)
+      contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", value["email"].downcase)
+
+      if contact.nil?
+        contact = contacts.build(
+          email: value["email"],
+          given_name: value["given_name"].present? ? value["given_name"] : nil,
+          family_name: value["family_name"].present? ? value["family_name"] : nil,
+          role_name: []
+        )
+      end
+
+      contact
+    end
+
+    def remove_contact_role(contacts, role)
+      contacts_with_role = contacts.select { |c| c.role_name.include?(role) } 
+      if contacts_with_role.present?
+        contacts_with_role.each do | c |
+          c.remove_roles(Array.wrap(role))
+          c.update(role_name: c.role_name)
+        end
+      end
+    end
+
+    def apply_contact_role(contact, role)
+      contact.add_roles(Array.wrap(role))
+      contact.update(role_name: contact.role_name)
+    end
+
     def set_region
       r = ISO3166::Country[country_code].world_region if country_code.present?
       write_attribute(:region, r)

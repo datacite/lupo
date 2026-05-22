@@ -457,6 +457,32 @@ class Contact < ApplicationRecord
     self.changed?
   end
 
+  def add_roles!(roles = [])
+    roles.each do | role |
+      Array.wrap(role_name) << role unless has_role?(role)
+    end
+    self.changed?
+  end
+
+
+  def remove_roles(roles = [])
+    # ActiveRecord::Base.no_touching do
+    roles.each do | role |
+      Array.wrap(role_name).delete(role)
+    end
+    # end
+    self.changed?
+  end
+
+  def add_roles(roles = [])
+    # ActiveRecord::Base.no_touching do
+    roles.each do | role |
+      Array.wrap(role_name) << role unless has_role?(role)
+    end
+    # end
+    self.changed?
+  end
+
   def is_me?(contact = nil)
     uid == contact.uid
   end
