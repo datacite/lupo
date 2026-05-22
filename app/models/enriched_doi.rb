@@ -491,7 +491,15 @@ class EnrichedDoi < Doi
     (response.dig("hits", "hits") || []).each_with_object({}) do |hit, acc|
       source = hit["_source"] || {}
       doi = source["doi"]
-      acc[doi] = OpenStruct.new(source) if doi.present?
+      next if doi.blank?
+
+      record = OpenStruct.new(source)
+
+      def record.enrichment_uuids
+        enrichments || []
+      end
+
+      acc[doi] = record
     end
   end
 end
