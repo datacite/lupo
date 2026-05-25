@@ -710,7 +710,7 @@ class EnrichedDoi < Doi
       must_not << {
         bool: {
           filter: [
-            { term: { _index: Doi.index_name } },
+            { prefix: { _index: "dois" } },
             { term: { has_enrichments: true } }
           ]
         }
