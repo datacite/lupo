@@ -706,16 +706,16 @@ class EnrichedDoi < Doi
 
     must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] } } if options[:exclude_registration_agencies]
 
-    if options[:show_enrichments]
-      must_not << {
-        bool: {
-          filter: [
-            { prefix: { _index: "dois" } },
-            { term: { has_enrichments: true } }
-          ]
-        }
-      }
-    end
+    # if options[:show_enrichments]
+    #   must_not << {
+    #     bool: {
+    #       filter: [
+    #         { prefix: { _index: "dois" } },
+    #         { term: { has_enrichments: true } }
+    #       ]
+    #     }
+    #   }
+    # end
 
     # ES query can be op tionally defined in different ways
     # So here we build it differently based upon options
