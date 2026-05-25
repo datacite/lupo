@@ -147,7 +147,7 @@ class DataciteDoisController < ApplicationController
       response = if show_enrichments
         DataciteDoi.query(params[:query], **query_options)
       else
-        EnrichedDoi.enriched_query(params[:query], **query_options)
+        DataciteDoi.enriched_query(params[:query], **query_options)
       end
     end
 
