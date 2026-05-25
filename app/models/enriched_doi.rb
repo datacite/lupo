@@ -461,6 +461,11 @@ class EnrichedDoi < Doi
     }
   end
 
+  # Do not map has_enrichments to opensearch for enriched dois.
+  def as_indexed_json(_options = {})
+    super.except("has_enrichments")
+  end
+
   def self.search_indices
     if Rails.env.test?
       ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
