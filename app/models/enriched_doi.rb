@@ -461,7 +461,7 @@ class EnrichedDoi < Doi
     }
   end
 
-  search_indices =
+  def self.search_indices
     if Rails.env.test?
       ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
     elsif ENV["ES_PREFIX"].present?
@@ -469,6 +469,7 @@ class EnrichedDoi < Doi
     else
       ["dois", "enriched_dois"]
     end
+  end
 
   def self.enriched_query(query, options = {})
     # support scroll api
