@@ -618,6 +618,7 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
+      indexes :has_enrichments, type: :boolean
     end
   end
 
@@ -712,6 +713,7 @@ class Doi < ApplicationRecord
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
+      "has_enrichments" => has_enrichments,
     }.merge(extra_indexed_fields)
   end
 
