@@ -200,7 +200,6 @@ class DataciteDoisController < ApplicationController
           funded_by: params[:funded_by],
           include_funder_child_organizations: params[:include_funder_child_organizations],
           affiliation_country: params[:affiliation_country],
-          show_enrichments: show_enrichments,
         )
       end
     end
