@@ -462,9 +462,7 @@ class EnrichedDoi < Doi
   end
 
   def self.search_indices
-    if Rails.env.test?
-      ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
-    elsif ENV["ES_PREFIX"].present?
+    if ENV["ES_PREFIX"].present?
       ["dois-#{ENV['ES_PREFIX']}", "enriched_dois-#{ENV['ES_PREFIX']}"]
     else
       ["dois", "enriched_dois"]
