@@ -793,25 +793,27 @@ class EnrichedDoi < Doi
         scroll_id: response["_scroll_id"],
       )
     elsif options.fetch(:page, {}).key?(:cursor)
-      __elasticsearch__.search({
+      __elasticsearch__.search(
         index: search_indices,
-        size: options.dig(:page, :size),
-        search_after: search_after,
-        sort: sort,
-        query: es_query,
-        aggregations: aggregations,
-        track_total_hits: true,
-      }.compact)
+        body: {
+          size: options.dig(:page, :size),
+          search_after: search_after,
+          sort: sort,
+          query: es_query,
+          aggregations: aggregations,
+          track_total_hits: true,
+        }.compact)
     else
-      __elasticsearch__.search({
+      __elasticsearch__.search(
         index: search_indices,
-        size: options.dig(:page, :size),
-        from: from,
-        sort: sort,
-        query: es_query,
-        aggregations: aggregations,
-        track_total_hits: true,
-      }.compact)
+        body: {
+          size: options.dig(:page, :size),
+          from: from,
+          sort: sort,
+          query: es_query,
+          aggregations: aggregations,
+          track_total_hits: true,
+        }.compact)
     end
   end
 end
