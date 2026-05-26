@@ -770,45 +770,51 @@ class EnrichedDoi < Doi
 
     # can't use search wrapper function for scroll api
     # map function for scroll is small performance hit
-    if options.dig(:page, :scroll).present?
-      response = __elasticsearch__.client.search(
-        index: search_indices.join(","),
-        scroll: options.dig(:page, :scroll),
-        body: {
-          size: options.dig(:page, :size),
-          sort: sort,
-          query: es_query,
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact,
-      )
-      Hashie::Mash.new(
-        total: response.dig("hits", "total", "value"),
-        results: response.dig("hits", "hits").map { |r| r["_source"] },
-        scroll_id: response["_scroll_id"],
-      )
-    elsif options.fetch(:page, {}).key?(:cursor)
-      __elasticsearch__.search(
-        index: search_indices.join(","),
-        body: {
-          size: options.dig(:page, :size),
-          search_after: search_after,
-          sort: sort,
-          query: es_query,
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact)
-    else
-      __elasticsearch__.search(
-        index: search_indices.join(","),
-        body: {
-          size: options.dig(:page, :size),
-          from: from,
-          sort: sort,
-          query: es_query,
-          aggregations: aggregations,
-          track_total_hits: true,
-        }.compact)
-    end
+    response =
+      if options.dig(:page, :scroll).present?
+        __elasticsearch__.client.search(
+          index: search_indices.join(","),
+          scroll: options.dig(:page, :scroll),
+          body: {
+            size: options.dig(:page, :size),
+            sort: sort,
+            query: es_query,
+            aggregations: aggregations,
+            track_total_hits: true,
+          }.compact,
+        )
+      elsif options.fetch(:page, {}).key?(:cursor)
+        __elasticsearch__.client.search(
+          index: search_indices.join(","),
+          body: {
+            size: options.dig(:page, :size),
+            search_after: search_after,
+            sort: sort,
+            query: es_query,
+            aggregations: aggregations,
+            track_total_hits: true,
+          }.compact
+        )
+      else
+        __elasticsearch__.client.search(
+          index: search_indices.join(","),
+          body: {
+            size: options.dig(:page, :size),
+            from: from,
+            sort: sort,
+            query: es_query,
+            aggregations: aggregations,
+            track_total_hits: true,
+          }.compact
+        )
+      end
+
+    Hashie::Mash.new(
+      total:        response.dig("hits", "total", "value") || 0,
+      results:      (response.dig("hits", "hits") || []).map { |r| r["_source"] },
+      scroll_id:    response["_scroll_id"],
+      aggregations: response["aggregations"] || {},
+      records:      (response.dig("hits", "hits") || []).map { |r| r }
+    )
   end
 end

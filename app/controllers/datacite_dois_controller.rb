@@ -177,7 +177,7 @@ class DataciteDoisController < ApplicationController
         total = response.total
       else
         results = response.results
-        total = response.results.total
+        total = show_enrichments ? response.total : response.results.total
         total_for_pages =
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
