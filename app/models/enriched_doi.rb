@@ -466,6 +466,7 @@ class EnrichedDoi < Doi
     super.except("has_enrichments")
   end
 
+  # For enriched searches we search over two indices dois and enriched_dois and favour the enriched version.
   def self.search_indices
     [DataciteDoi.active_index, EnrichedDoi.active_index]
   end
