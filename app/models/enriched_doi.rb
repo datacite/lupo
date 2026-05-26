@@ -771,7 +771,7 @@ class EnrichedDoi < Doi
     # map function for scroll is small performance hit
     if options.dig(:page, :scroll).present?
       response = __elasticsearch__.client.search(
-        index: search_indices,
+        index: search_indices.join(","),
         scroll: options.dig(:page, :scroll),
         body: {
           size: options.dig(:page, :size),
@@ -788,7 +788,7 @@ class EnrichedDoi < Doi
       )
     elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search(
-        index: search_indices,
+        index: search_indices.join(","),
         body: {
           size: options.dig(:page, :size),
           search_after: search_after,
@@ -799,7 +799,7 @@ class EnrichedDoi < Doi
         }.compact)
     else
       __elasticsearch__.search(
-        index: search_indices,
+        index: search_indices.join(","),
         body: {
           size: options.dig(:page, :size),
           from: from,
