@@ -467,13 +467,7 @@ class EnrichedDoi < Doi
   end
 
   def self.search_indices
-    if Rails.env.test?
-      ["dois-test#{ENV['TEST_ENV_NUMBER']}", "enriched_dois-test#{ENV['TEST_ENV_NUMBER']}"]
-    elsif ENV["ES_PREFIX"].present?
-      ["dois-#{ENV['ES_PREFIX']}", "enriched_dois-#{ENV['ES_PREFIX']}"]
-    else
-      ["dois", "enriched_dois"]
-    end
+    [DataciteDoi.active_index, EnrichedDoi.active_index]
   end
 
   def self.enriched_query(query, options = {})
@@ -777,7 +771,7 @@ class EnrichedDoi < Doi
     # map function for scroll is small performance hit
     if options.dig(:page, :scroll).present?
       response = __elasticsearch__.client.search(
-        index: search_indices.join(","),
+        index: search_indices,
         scroll: options.dig(:page, :scroll),
         body: {
           size: options.dig(:page, :size),
@@ -794,7 +788,7 @@ class EnrichedDoi < Doi
       )
     elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search(
-        index: search_indices.join(","),
+        index: search_indices,
         body: {
           size: options.dig(:page, :size),
           search_after: search_after,
@@ -805,7 +799,7 @@ class EnrichedDoi < Doi
         }.compact)
     else
       __elasticsearch__.search(
-        index: search_indices.join(","),
+        index: search_indices,
         body: {
           size: options.dig(:page, :size),
           from: from,
