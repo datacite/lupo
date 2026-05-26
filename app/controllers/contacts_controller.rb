@@ -192,6 +192,27 @@ class ContactsController < ApplicationController
   private
     def set_provider_contacts
       if @contact.valid?
+
+        # Remove role from other contacts
+        @contact.provider.contacts.each do | c |
+          if !@contact.is_me?(c)
+            if c.remove_roles!(Array.wrap(@contact.role_name))
+              c.update_attribute("role_name", c.role_name)
+            end
+          end
+        end
+
+        # Add role to this contact
+        Contact.roles.each do | role |
+          if @contact.has_role?(role)
+            @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
+          elsif @contact.has_provider_role?(role)
+            @contact.set_provider_role(role, nil)
+          end
+        end
+
+=begin
+        # Add role to this contact
         Contact.roles.each do | role |
           if @contact.has_role?(role)
             @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
@@ -208,9 +229,11 @@ class ContactsController < ApplicationController
             end
           end
         end
+=end
       end
     end
 
+    # Remove this contact from any provider roles it claims, and set the contact's role_name to an empty array. This is called after_destroy, so the contact will be marked as deleted, but not actually removed from the database.
     def remove_provider_contacts
       Array.wrap(@contact.role_name).each do | role |
         if @contact.has_provider_role?(role)
