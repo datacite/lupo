@@ -918,18 +918,15 @@ class Provider < ApplicationRecord
 
   ## CONTACTS
 
-  def uuid_format
-    unless UUID.validate(globus_uuid)
-      errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
-    end
- end
-
   def voting_contact=(value)
     if value.present? &&
        voting_contact != value &&
        value.fetch("email", nil).present?
 
       # find target contact for provider_contact or create if it doesn't exist
+      # contact = find_or_create_contact(value)
+
+      # find target contact or raise an error if there is none.
       contact = find_or_create_contact(value)
 
       # remove role from any contacts that currently have it
@@ -939,11 +936,15 @@ class Provider < ApplicationRecord
       apply_contact_role(contact, "voting")
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
-    end
 
-    contacts.touch_all
+    # contacts.touch_all
 
     voting_contact
+    
+    rescue ActiveRecord::RecordNotFound, ActiveRecord::SoleRecordExceeded => e
+      errors.add(:voting_contact, "No contact or multiple contacts found with email #{value['email']}")
+      raise ActiveRecord::RecordInvalid.new(self)
+    end
   end
 
   def billing_contact=(value)
@@ -1079,6 +1080,11 @@ class Provider < ApplicationRecord
   end
 
   private
+    def find_contact(value)
+      # Valid in Rails 7. Returns exactly 1 contact. Raises an error if: there are multiple contacts with the same email, or none are found.
+      contacts.where(deleted_at: nil).find_sole_by("LOWER(email) = ?", value["email"].downcase)
+    end
+
     def find_or_create_contact(value)
       contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", value["email"].downcase)
 
