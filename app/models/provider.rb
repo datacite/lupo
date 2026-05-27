@@ -927,7 +927,7 @@ class Provider < ApplicationRecord
       # contact = find_or_create_contact(value)
 
       # find target contact or raise an error if there is none.
-      contact = find_or_create_contact(value)
+      contact = find_contact(value)
 
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "voting")
