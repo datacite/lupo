@@ -937,14 +937,14 @@ class Provider < ApplicationRecord
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
 
-    # contacts.touch_all
+      # contacts.touch_all
+    end
 
     voting_contact
-    
-    rescue ActiveRecord::RecordNotFound, ActiveRecord::SoleRecordExceeded => e
+
+    rescue ActiveRecord::RecordNotFound, ActiveRecord::SoleRecordExceeded
       errors.add(:voting_contact, "No contact or multiple contacts found with email #{value['email']}")
       raise ActiveRecord::RecordInvalid.new(self)
-    end
   end
 
   def billing_contact=(value)
