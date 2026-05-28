@@ -924,10 +924,7 @@ class Provider < ApplicationRecord
        value.fetch("email", nil).present?
 
       # find target contact for provider_contact or create if it doesn't exist
-      # contact = find_or_create_contact(value)
-
-      # find target contact or raise an error if there is none.
-      contact = find_contact(value)
+      contact = find_or_create_contact(value)
 
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "voting")
@@ -936,15 +933,9 @@ class Provider < ApplicationRecord
       apply_contact_role(contact, "voting")
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
-
-      # contacts.touch_all
     end
 
     voting_contact
-
-    rescue ActiveRecord::RecordNotFound, ActiveRecord::SoleRecordExceeded
-      errors.add(:voting_contact, "No contact or multiple contacts found with email #{value['email']}")
-      raise ActiveRecord::RecordInvalid.new(self)
   end
 
   def billing_contact=(value)
@@ -963,8 +954,6 @@ class Provider < ApplicationRecord
 
       write_attribute(:billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
-
-    contacts.touch_all
 
     billing_contact
   end
@@ -986,8 +975,6 @@ class Provider < ApplicationRecord
       write_attribute(:secondary_billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
-    contacts.touch_all
-
     secondary_billing_contact
   end
 
@@ -1007,8 +994,6 @@ class Provider < ApplicationRecord
 
       write_attribute(:service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
-
-    contacts.touch_all
 
     service_contact
   end
@@ -1030,8 +1015,6 @@ class Provider < ApplicationRecord
       write_attribute(:secondary_service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
-    contacts.touch_all
-
     secondary_service_contact
   end
 
@@ -1051,8 +1034,6 @@ class Provider < ApplicationRecord
 
       write_attribute(:technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
-
-    contacts.touch_all
 
     technical_contact
   end
@@ -1074,19 +1055,21 @@ class Provider < ApplicationRecord
       write_attribute(:secondary_technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
     end
 
-    contacts.touch_all
-
     secondary_technical_contact
   end
 
   private
-    def find_contact(value)
-      # Valid in Rails 7. Returns exactly 1 contact. Raises an error if: there are multiple contacts with the same email, or none are found.
-      contacts.where(deleted_at: nil).find_sole_by("LOWER(email) = ?", value["email"].downcase)
+    def find_unique_contact(email)
+      contacts.where(deleted_at: nil).find_sole_by("LOWER(email) = ?", email.downcase)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    rescue ActiveRecord::SoleRecordExceeded
+      errors.add(:contacts, "Multiple contacts found with the same email: #{email}")
+      raise ActiveRecord::RecordInvalid.new(self)
     end
 
     def find_or_create_contact(value)
-      contact = contacts.where(deleted_at: nil).find_by("LOWER(email) = ?", value["email"].downcase)
+      contact = find_unique_contact(value["email"])
 
       if contact.nil?
         contact = contacts.build(
