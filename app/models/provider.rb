@@ -919,6 +919,7 @@ class Provider < ApplicationRecord
   ## CONTACTS
 
   def voting_contact=(value)
+    puts "Updating voting contact for provider #{symbol} with value: #{value}"
     if value.present? &&
        voting_contact != value &&
        value.fetch("email", nil).present?
@@ -933,7 +934,8 @@ class Provider < ApplicationRecord
       apply_contact_role(contact, "voting")
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
-    elsif value == nil
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing voting contact role from provider #{symbol}"
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "voting")
       write_attribute(:voting_contact, nil)
