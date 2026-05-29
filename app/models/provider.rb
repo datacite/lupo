@@ -930,7 +930,7 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "voting")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "voting")
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
@@ -938,6 +938,7 @@ class Provider < ApplicationRecord
       puts "Removing voting contact role from provider #{symbol}"
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "voting")
+
       write_attribute(:voting_contact, nil)
     end
 
@@ -955,10 +956,16 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "billing")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "billing")
 
       write_attribute(:billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing billing contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "billing")
+
+      write_attribute(:billing_contact, nil)
     end
 
     billing_contact
@@ -975,10 +982,16 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "secondary_billing")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "secondary_billing")
 
       write_attribute(:secondary_billing_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing secondary billing contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_billing")
+
+      write_attribute(:secondary_billing_contact, nil)
     end
 
     secondary_billing_contact
@@ -995,12 +1008,18 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "service")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "service")
 
       write_attribute(:service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
-    end
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing service contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "service")
 
+      write_attribute(:service_contact, nil)
+    end
+    
     service_contact
   end
 
@@ -1015,12 +1034,17 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "secondary_service")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "secondary_service")
 
       write_attribute(:secondary_service_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
-    end
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing secondary service contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_service")
 
+      write_attribute(:secondary_service_contact, nil)
+    end
     secondary_service_contact
   end
 
@@ -1039,6 +1063,12 @@ class Provider < ApplicationRecord
       apply_contact_role(contact, "technical")
 
       write_attribute(:technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing technical contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "technical")
+
+      write_attribute(:technical_contact, nil)
     end
 
     technical_contact
@@ -1055,12 +1085,17 @@ class Provider < ApplicationRecord
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "secondary_technical")
 
-      # appply role to specified contact
+      # apply role to specified contact
       apply_contact_role(contact, "secondary_technical")
 
       write_attribute(:secondary_technical_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    elsif value == nil || value.fetch("email", nil).blank?
+      puts "Removing secondary technical contact role from provider #{symbol}"
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "secondary_technical")
+      
+      write_attribute(:secondary_technical_contact, nil)
     end
-
     secondary_technical_contact
   end
 
