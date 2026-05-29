@@ -933,6 +933,10 @@ class Provider < ApplicationRecord
       apply_contact_role(contact, "voting")
 
       write_attribute(:voting_contact, { email: contact.email, given_name: contact.given_name, family_name: contact.family_name })
+    elsif value == nil
+      # remove role from any contacts that currently have it
+      remove_contact_role(contacts, "voting")
+      write_attribute(:voting_contact, nil)
     end
 
     voting_contact
