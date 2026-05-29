@@ -1019,7 +1019,7 @@ class Provider < ApplicationRecord
 
       write_attribute(:service_contact, nil)
     end
-    
+
     service_contact
   end
 
@@ -1093,7 +1093,7 @@ class Provider < ApplicationRecord
       puts "Removing secondary technical contact role from provider #{symbol}"
       # remove role from any contacts that currently have it
       remove_contact_role(contacts, "secondary_technical")
-      
+
       write_attribute(:secondary_technical_contact, nil)
     end
     secondary_technical_contact
