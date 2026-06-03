@@ -44,6 +44,23 @@ describe ContactsController, type: :request, elasticsearch: true do
       },
     }
   end
+  let(:params1) do
+    {
+      "data" => {
+        "type" => "contacts",
+        "attributes" => {
+          "givenName" => "",
+          "familyName" => "familyName",
+          "email" => "bob@example.com",
+        },
+        "relationships": {
+          "provider": {
+            "data": { "type": "providers", "id": provider.uid },
+          }
+        },
+      },
+    }
+  end
   let(:headers) do
     {
       "HTTP_ACCEPT" => "application/vnd.api+json",
@@ -355,7 +372,7 @@ describe ContactsController, type: :request, elasticsearch: true do
       end
     end
 
-    # validation has been disabled
+    # Contacts: role_name must be unique per provider.
     context "updates role_name already taken" do
       let(:params) do
         {
@@ -436,6 +453,32 @@ describe ContactsController, type: :request, elasticsearch: true do
           "status" => "404",
           "title" => "The resource you are looking for doesn't exist.",
         )
+      end
+    end
+  end
+
+  # Contacts: email must be unique per provider.
+    context "when the request is valid" do
+      it "creates a contact" do
+        post "/contacts", params, headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig("data", "attributes")
+        expect(attributes["name"]).to eq("Josiah Carberry")
+        expect(attributes["email"]).to eq("bob@example.com")
+        expect(attributes["roleName"]).to eq(["voting"])
+        expect(attributes["fromSalesforce"]).to eq(true)
+
+        relationships = json.dig("data", "relationships")
+        expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
+
+        Contact.import
+        sleep 2
+
+        post "/contacts", params1, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{ "source" => "email", "title" => "Should be unique per provider" }])
       end
     end
   end

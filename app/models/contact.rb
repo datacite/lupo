@@ -286,14 +286,15 @@ class Contact < ApplicationRecord
   end
 
   def check_role_name
-    taken_roles = provider.contacts.reduce([]) do |sum, contact|
+    taken_roles = provider.contacts.reject do |contact|
+      contact.equal?(self) || (id.present? && contact.id == id)
+    end.reduce([]) do |sum, contact|
       sum += contact.role_name if contact.role_name.present?
       sum
-    end - Array.wrap(attribute_was(:role_name)).compact
+    end
 
     Array.wrap(role_name).each do |r|
       errors.add(:role_name, "Role name '#{r}' is not included in the list of possible role names.") unless ROLES.include?(r)
-      # TODO make sure roles are taken only once. Currently not enforcable as contacts are updated serially.
       errors.add(:role_name, "Role name '#{r}' is already taken.") if taken_roles.include?(r)
     end
   end
