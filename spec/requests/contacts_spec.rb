@@ -458,6 +458,7 @@ describe ContactsController, type: :request, elasticsearch: true do
   end
 
   # Contacts: email must be unique per provider.
+  describe "POST /contacts unique email per provider" do
     context "when the request is valid" do
       it "creates a contact" do
         post "/contacts", params, headers
