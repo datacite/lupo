@@ -50,5 +50,7 @@ jobs:
           tags: |
             ${{ inputs.image_name }}:${{ inputs.image_tag }}
             ghcr.io/${{ inputs.image_name }}:${{ inputs.image_tag }}
+          build-args: |
+            GIT_TAG=${{ inputs.image_tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache

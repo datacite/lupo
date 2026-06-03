@@ -152,6 +152,18 @@ class HashConnection
           }"
   end
 
+  # @return [Array<Edge>] {nodes}, but wrapped with Edge instances
+  def edges
+    @edges ||= nodes.map { |n| self.class.edge_class.new(n, self) }
+  end
+
+  # Required by graphql 2.x for authorization scope checking on connection nodes.
+  def was_authorized_by_scope_items?
+    @was_authorized_by_scope_items
+  end
+
+  attr_writer :was_authorized_by_scope_items
+
   private
     # @param argument [nil, Integer] `first` or `last`, as provided by the client
     # @param max_page_size [nil, Integer]

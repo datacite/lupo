@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby32:3.1.6
+FROM phusion/passenger-ruby40:3.1.6
 
 # Set correct environment variables.
 ENV HOME /home/app
@@ -12,8 +12,7 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-#  Use Ruby 3.2.10
-RUN bash -lc 'rvm --default use ruby-3.2.10'
+RUN bash -lc 'rvm --default use ruby-4.0.1'
 
 # Update installed APT packages
 RUN apt-get update && \
@@ -103,6 +102,9 @@ COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
 # Add the script to perform nginx template substitution
 COPY vendor/docker/70_nginx_templates.sh /etc/my_init.d/70_nginx_templates.sh
+
+ARG GIT_TAG=1.0
+ENV GIT_TAG=${GIT_TAG}
 
 # Expose web
 EXPOSE 80
