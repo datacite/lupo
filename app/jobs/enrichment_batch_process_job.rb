@@ -38,10 +38,10 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
         # Set these to true to test the validity of the doi after enrichment more accurately.
         doi.skip_client_domains_validation = true
-        doi.skip_schema_version_validation = true
+        doi.skip_schema_version_validation = false
 
         # We make sure we set the schema version to 4 if it is 3.
-        doi.schema_version = "http://datacite.org/schema/kernel-4" if doi.schema_version == "http://datacite.org/schema/kernel-3"
+        doi.schema_version = "http://datacite.org/schema/kernel-4"
 
         enrichment = Enrichment.new(
           filename: filename,

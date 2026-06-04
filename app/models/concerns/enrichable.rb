@@ -34,7 +34,7 @@ module Enrichable
       self[field] ||= []
       self[field] << enrichment.enriched_value
     when "update"
-      if self[field] == enrichment.original_value
+      if self[field].compact_blank == enrichment.original_value.compact_blank
         self[field] = enrichment.enriched_value
       else
         raise ArgumentError, "Original value does not match current value for update action"
@@ -43,7 +43,7 @@ module Enrichable
       success = false
       self[field] ||= []
       self[field].each_with_index do |item, index|
-        if item == enrichment.original_value
+        if item.compact_blank == enrichment.original_value.compact_blank
           self[field][index] = enrichment.enriched_value
           success = true
           break
@@ -55,7 +55,7 @@ module Enrichable
       success = false
       self[field] ||= []
       self[field].each_with_index do |item, index|
-        if item == enrichment.original_value
+        if item.compact_blank == enrichment.original_value.compact_blank
           self[field].delete_at(index)
           success = true
         end

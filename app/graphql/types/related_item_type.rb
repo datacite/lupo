@@ -6,18 +6,30 @@ class RelatedItemType < BaseObject
   field :related_item_type,
         String,
         null: false,
-        hash_key: "relatedItemType",
         description: "Related item type"
+
+  def related_item_type
+    object["relatedItemType"]
+  end
+
   field :relation_type,
         String,
         null: false,
-        hash_key: "relationType",
         description: "Relation type"
+
+  def relation_type
+    object["relationType"]
+  end
+
   field :related_item_identifier,
         RelatedItemIdentifierType,
         null: true,
-        hash_key: "relatedItemIdentifier",
         description: "Related item identifier"
+
+  def related_item_identifier
+    object["relatedItemIdentifier"]
+  end
+
   field :creators,
         [RelatedItemCreatorType],
         null: true,
@@ -46,18 +58,30 @@ class RelatedItemType < BaseObject
   field :number_type,
         String,
         null: true,
-        hash_key: "numberType",
         description: "Type of the related item's number"
+
+  def number_type
+    object["numberType"]
+  end
+
   field :first_page,
         String,
         null: true,
-        hash_key: "firstPage",
         description: "First page of the related item"
+
+  def first_page
+    object["firstPage"]
+  end
+
   field :last_page,
         String,
         null: true,
-        hash_key: "lastPage",
         description: "Last page of the related item"
+
+  def last_page
+    object["lastPage"]
+  end
+
   field :publisher,
         String,
         null: true,
@@ -65,8 +89,12 @@ class RelatedItemType < BaseObject
   field :publication_year,
         String,
         null: true,
-        hash_key: "publicationYear",
         description: "Publication year of the related item"
+
+  def publication_year
+    object["publicationYear"]
+  end
+
   field :edition,
         String,
         null: true,

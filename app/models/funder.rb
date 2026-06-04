@@ -57,7 +57,7 @@ class Funder
 
   def self.parse_message(id: nil, message: nil)
     if message["location"].present?
-      c = ISO3166::Country.find_country_by_name(message["location"])
+      c = ISO3166::Country.find_country_by_any_name(message["location"])
       code = c.present? ? c.alpha2 : nil
       country = { "code" => code, "name" => message["location"] }
     else

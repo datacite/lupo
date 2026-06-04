@@ -1,0 +1,51 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "4919fc191efbd60eee224b13acb2cd3092b4131bcaca3a4d50f2e99ee03ece0d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/controllers/resource_types_controller.rb",
+      "line": 5,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "ResourceType.where(params)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ResourceTypesController",
+        "method": "index"
+      },
+      "user_input": "params",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "d3cced71e298b752d69c415698c5c47dbfc14e80cfbcd9df1da8e1d1c1c79c5f",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/index_controller.rb",
+      "line": 59,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(Doi.where(:doi => params[:id], :aasm_state => \"findable\").first.url, :status => :see_other, :allow_other_host => true)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "IndexController",
+        "method": "show"
+      },
+      "user_input": "Doi.where(:doi => params[:id], :aasm_state => \"findable\").first.url",
+      "confidence": "Weak",
+      "cwe_id": [
+        601
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "8.0.4"
+}

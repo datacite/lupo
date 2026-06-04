@@ -9,22 +9,38 @@ class RightsType < BaseObject
   field :rights_uri,
         String,
         null: true,
-        hash_key: "rightsUri",
         description: "The URI of the license."
+
+  def rights_uri
+    object["rightsUri"]
+  end
+
   field :rights_identifier,
         String,
         null: true,
-        hash_key: "rightsIdentifier",
         description: "A short, standardized version of the license name."
+
+  def rights_identifier
+    object["rightsIdentifier"]
+  end
+
   field :rights_identifier_scheme,
         String,
         null: true,
-        hash_key: "rightsIdentifierScheme",
         description: "The name of the scheme."
+
+  def rights_identifier_scheme
+    object["rightsIdentifierScheme"]
+  end
+
   field :scheme_uri,
         String,
         null: true,
-        hash_key: "schemeUri",
         description: "The URI of the rightsIdentifierScheme."
+
+  def scheme_uri
+    object["schemeUri"]
+  end
+
   field :lang, String, null: true, description: "Language"
 end

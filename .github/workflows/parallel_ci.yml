@@ -68,10 +68,10 @@ jobs:
           sudo apt-get install -y ntpdate
           sudo ntpdate pool.ntp.org
 
-      - name: Set up Ruby 3.2.10
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.10
+          ruby-version: 4.0.1
       - uses: actions/cache@v4
         with:
           path: vendor/bundle
@@ -118,3 +118,4 @@ jobs:
             bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
           fi
           echo $?
+

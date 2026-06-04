@@ -116,7 +116,7 @@ class Organization
 
         {
           "id" => hsh["id"],
-          "title" => country.present? ? country.name : hsh["id"],
+          "title" => country.present? ? country.iso_short_name : hsh["id"],
           "count" => hsh["count"],
         }
       end
