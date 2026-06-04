@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby32:3.1.6
+FROM phusion/passenger-ruby40:3.1.6
 
 # Set correct environment variables.
 ENV HOME /home/app
@@ -12,8 +12,7 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-#  Use Ruby 3.2.10
-RUN bash -lc 'rvm --default use ruby-3.2.10'
+RUN bash -lc 'rvm --default use ruby-4.0.1'
 
 # Update installed APT packages
 RUN apt-get update && \
@@ -32,15 +31,24 @@ RUN apt-get update && \
       libdbd-mysql-perl \
       libdbi-perl \
       libterm-readkey-perl \
-      libio-socket-ssl-perl && \
+      libio-socket-ssl-perl \
+      unzip \
+      libxml2-utils && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Percona Toolkit 3.7.1
-RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1/binary/debian/noble/x86_64/percona-toolkit_3.7.1-2.noble_amd64.deb && \
+RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1/binary/debian/noble/x86_64/percona-toolkit_3.7.1-3.noble_amd64.deb && \
     apt-get update && \
     apt-get install -y -f && \
-    dpkg -i percona-toolkit_3.7.1-2.noble_amd64.deb && \
-    rm percona-toolkit_3.7.1-2.noble_amd64.deb
+    dpkg -i percona-toolkit_3.7.1-3.noble_amd64.deb && \
+    rm percona-toolkit_3.7.1-3.noble_amd64.deb && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install awscli
+RUN wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && \
+    unzip awscli-exe-linux-x86_64.zip && \
+    ./aws/install && \
+    rm awscli-exe-linux-x86_64.zip
 
 # Enable Passenger and Nginx and remove the default site
 # Preserve env variables for nginx
@@ -57,6 +65,10 @@ COPY vendor/docker/ntp.conf /etc/ntp.conf
 WORKDIR /home/app/webapp
 RUN mkdir /etc/service/shoryuken
 COPY vendor/docker/shoryuken.sh /etc/service/shoryuken/run
+
+# Add Runit script for Passenger metrics collection
+RUN mkdir /etc/service/passenger-metrics
+COPY vendor/docker/passenger-metrics-run.sh /etc/service/passenger-metrics/run
 
 # Copy webapp folder
 COPY . /home/app/webapp/
@@ -90,6 +102,9 @@ COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
 # Add the script to perform nginx template substitution
 COPY vendor/docker/70_nginx_templates.sh /etc/my_init.d/70_nginx_templates.sh
+
+ARG GIT_TAG=1.0
+ENV GIT_TAG=${GIT_TAG}
 
 # Expose web
 EXPOSE 80

@@ -48,12 +48,12 @@ module Authenticable
       private_key =
         OpenSSL::PKey.read(
           File.read(
-            Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").
+            Rails.root.join("spec", "fixtures", "certs", "rsa-2048-private.pem").
               to_s,
           ),
         )
       JWT.encode(payload, private_key, "RS512")
-    rescue OpenSSL::PKey::ECError => e
+    rescue OpenSSL::PKey::RSAError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
 
       nil
@@ -221,8 +221,9 @@ module Authenticable
       return true if user.blank?
       return false if %w[staff_admin staff_user].include?(user.role_id)
       if %w[consortium_admin].include?(user.role_id) &&
-          user.provider_id.present? &&
-          user.provider_id.upcase == doi.provider.consortium_id
+         user.provider_id.present? &&
+         doi.provider&.consortium_id&.present? &&
+         user.provider_id.downcase == doi.provider.consortium_id.downcase
         return false
       end
       if %w[provider_admin provider_user].include?(user.role_id) &&
@@ -282,12 +283,12 @@ module Authenticable
       private_key =
         OpenSSL::PKey.read(
           File.read(
-            Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").
+            Rails.root.join("spec", "fixtures", "certs", "rsa-2048-private.pem").
               to_s,
           ),
         )
       JWT.encode(payload, private_key, "RS512")
-    rescue OpenSSL::PKey::ECError => e
+    rescue OpenSSL::PKey::RSAError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
 
       nil

@@ -148,7 +148,7 @@ class ProvidersController < ApplicationController
           end
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+    rescue Elastic::Transport::Transport::Errors::BadRequest => e
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
           "error",

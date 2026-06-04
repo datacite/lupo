@@ -94,7 +94,7 @@ class ProviderPrefixesController < ApplicationController
         json: ProviderPrefixSerializer.new(provider_prefixes, options).serializable_hash.to_json,
         status: :ok
       )
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+    rescue Elastic::Transport::Transport::Errors::BadRequest => e
 
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(

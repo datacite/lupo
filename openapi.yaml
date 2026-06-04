@@ -639,6 +639,12 @@ paths:
           schema:
             type: string
         - in: query
+          name: affiliation-country
+          description: Filter DOIs by associated country inferred from ROR IDs in creators/contributors affiliations. Use comma-separated ISO 3166-1 alpha-2 country codes.
+          schema:
+            type: string
+          example: US,GB
+        - in: query
           name: funded-by
           description: Search fundingReferences.funderIdentifier for a ROR ID. Results also include DOIs containing a Crossref Funder ID in fundingReferences.funderIdentifier corresponding to the ROR ID.
           schema:

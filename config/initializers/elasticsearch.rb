@@ -3,6 +3,20 @@
 require "faraday"
 require "faraday_middleware/aws_sigv4"
 
+# Bypass Elasticsearch product check to allow OpenSearch-compatible endpoints.
+# elasticsearch-ruby 8.x raises UnsupportedProductError unless the server returns
+# x-elastic-product: Elasticsearch, which OpenSearch does not.
+module ElasticsearchV8OpenSearchBypass
+  private
+    def verify_elasticsearch(*args, &block)
+      response = @transport.perform_request(*args, &block)
+      @verified = true
+      response
+    end
+end
+
+Elasticsearch::Client.prepend(ElasticsearchV8OpenSearchBypass)
+
 if ENV["ES_HOST"].end_with?(".datacite.org")
   Elasticsearch::Model.client =
     Elasticsearch::Client.new(
@@ -31,20 +45,4 @@ else
       user: "elastic",
       password: ENV["ELASTIC_PASSWORD"],
     ) { |f| f.adapter :excon }
-end
-
-# Monkeypactch to ignore the Elasticsearch::UnsupportedProductError.
-# This error is raised because our gem version does not match the elasticsearch version in AWS OpenSearch.
-# As such, it should be safe to ignore the error.
-module Elasticsearch
-  class Client
-    alias original_verify_with_version_or_header verify_with_version_or_header
-
-    def verify_with_version_or_header(...)
-      original_verify_with_version_or_header(...)
-    rescue Elasticsearch::UnsupportedProductError
-      # let's ignore this it's adding a lot of noise to the logs
-      # warn("Ignoring elasticsearch complaint: #{exception.message}")
-    end
-  end
 end
