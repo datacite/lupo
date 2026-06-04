@@ -29,12 +29,22 @@ module DoiItem
   field :id,
         ID,
         null: false,
-        hash_key: "identifier",
         description: "The persistent identifier for the resource"
+
+  def id
+    object.is_a?(Hash) ? object["identifier"] : object.identifier
+  end
+
   field :type, String, null: false, description: "The type of the item."
+
   field :doi,
         String,
-        null: false, hash_key: "uid", description: "The DOI for the resource."
+        null: false, description: "The DOI for the resource."
+
+  def doi
+    object.is_a?(Hash) ? object["uid"] : object.uid
+  end
+
   field :creators,
         [CreatorType],
         null: true,
@@ -119,8 +129,12 @@ module DoiItem
   field :version,
         String,
         null: true,
-        hash_key: "version_info",
         description: "The version number of the resource"
+
+  def version
+    object.is_a?(Hash) ? object["version_info"] : object.version_info
+  end
+
   field :rights,
         [RightsType],
         null: true, description: "Any rights information for this resource"
@@ -139,9 +153,13 @@ module DoiItem
   field :geolocations,
         [GeolocationType],
         null: true,
-        hash_key: "geo_locations",
         description:
           "Spatial region or named place where the data was gathered or about which the data is focused."
+
+  def geolocations
+    object.is_a?(Hash) ? object["geo_locations"] : object.geo_locations
+  end
+
   field :funding_references,
         [FundingType],
         null: true,
@@ -161,13 +179,22 @@ module DoiItem
   field :member,
         MemberType,
         null: true,
-        hash_key: "provider",
         description: "The member account managing this resource"
+
+  def member
+    return nil if object.is_a?(Hash) ? object["provider"].blank? : object.provider.blank?
+    object.is_a?(Hash) ? object["provider"] : object.provider.as_indexed_json(exclude_associations: true)
+  end
+
   field :registration_agency,
         RegistrationAgencyType,
-        hash_key: "agency",
         null: true,
         description: "The DOI registration agency for the resource"
+
+  def registration_agency
+    object.is_a?(Hash) ? object["agency"] : object.agency
+  end
+
   field :formatted_citation,
         String,
         null: true, description: "Metadata as formatted citation" do

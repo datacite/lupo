@@ -66,7 +66,7 @@ describe Doi, vcr: true do
       string = file_fixture("datacite.xml").read
       expect { subject.from_json(string) }.to raise_error(
         JSON::ParserError,
-        /Empty input \(after \) at line 1, column 1/,
+        /unexpected character \(after \) at line 1, column 1/,
       )
     end
 
@@ -110,7 +110,7 @@ describe Doi, vcr: true do
       string = "abc"
       expect { subject.well_formed_xml(string) }.to raise_error(
         JSON::ParserError,
-        /Empty input \(after \) at line 1, column 1/,
+        /unexpected character \(after \) at line 1, column 1/,
       )
     end
 

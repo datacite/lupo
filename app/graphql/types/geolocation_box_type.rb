@@ -6,21 +6,36 @@ class GeolocationBoxType < BaseObject
   field :west_bound_longitude,
         Float,
         null: false,
-        hash_key: "westBoundLongitude",
         description: "Western longitudinal dimension of box."
+
+  def west_bound_longitude
+    object["westBoundLongitude"]
+  end
+
   field :east_bound_longitude,
         Float,
         null: false,
-        hash_key: "eastBoundLongitude",
         description: "Eastern longitudinal dimension of box."
+
+  def east_bound_longitude
+    object["eastBoundLongitude"]
+  end
+
   field :south_bound_latitude,
         Float,
         null: false,
-        hash_key: "southBoundLatitude",
         description: "Southern latitudinal dimension of box."
+
+  def south_bound_latitude
+    object["southBoundLatitude"]
+  end
+
   field :north_bound_latitude,
         Float,
         null: false,
-        hash_key: "northBoundLatitude",
         description: "Northern latitudinal dimension of box."
+
+  def north_bound_latitude
+    object["northBoundLatitude"]
+  end
 end

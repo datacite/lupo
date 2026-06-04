@@ -6,14 +6,21 @@ class RepositoryPrefixType < BaseObject
   field :id,
         ID,
         null: false,
-        hash_key: "uid",
         description: "Unique identifier for each repository prefix"
+
+  def id
+    object.uid
+  end
+
   field :type, String, null: false, description: "The type of the item."
   field :name,
         String,
         null: false,
-        hash_key: "prefix_id",
         description: "Repository prefix name"
+
+  def name
+    object.prefix_id
+  end
 
   def type
     "RepositoryPrefix"
