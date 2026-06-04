@@ -161,7 +161,7 @@ class ExportsController < ApplicationController
 
       send_data csv, filename: filename
     rescue StandardError,
-           Elasticsearch::Transport::Transport::Errors::BadRequest => e
+           Elastic::Transport::Transport::Errors::BadRequest => e
       render json: { "errors" => { "title" => e.message } }.to_json,
              status: :bad_request
     end
@@ -331,7 +331,7 @@ class ExportsController < ApplicationController
 
     send_data csv, filename: filename
   rescue StandardError,
-         Elasticsearch::Transport::Transport::Errors::BadRequest => e
+         Elastic::Transport::Transport::Errors::BadRequest => e
     render json: { "errors" => { "title" => e.message } }.to_json,
            status: :bad_request
   end
