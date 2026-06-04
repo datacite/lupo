@@ -202,5 +202,10 @@ class HashConnection
       def cursor
         @connection.cursor_for(@item)
       end
+
+      # Delegate authorization check to the connection
+      def was_authorized_by_scope_items?
+        @connection.was_authorized_by_scope_items?
+      end
     end
 end
