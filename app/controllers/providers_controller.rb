@@ -19,18 +19,18 @@ class ProvidersController < ApplicationController
       # Build a list of contacts with their associated roles based on provider role fields
       target_contacts = []
       Contact.roles.each do | target_role |
-        target_role_name = target_role + '_contact'
+        target_role_name = target_role + "_contact"
         target_email = @provider.send(target_role_name)["email"] if @provider.send(target_role_name).present?
         if target_email.present?
-            target_contact = target_contacts.find { |tc| tc["email"] == target_email }
-            if target_contact.present?
-              target_contact["roles"] |= [target_role]
-            else
-              target_contacts << { "email" => target_email, 
-                "roles" => [ target_role ], 
-                "given_name" => @provider.send(target_role_name)["givenName"], 
-                "family_name" => @provider.send(target_role_name)["familyName"] }
-            end
+          target_contact = target_contacts.find { |tc| tc["email"] == target_email }
+          if target_contact.present?
+            target_contact["roles"] |= [target_role]
+          else
+            target_contacts << { "email" => target_email,
+              "roles" => [ target_role ],
+              "given_name" => @provider.send(target_role_name)["givenName"],
+              "family_name" => @provider.send(target_role_name)["familyName"] }
+          end
         end
       end
       # Clear all provider role associations.
@@ -64,9 +64,9 @@ class ProvidersController < ApplicationController
             if target_contact.present?
               target_contact["roles"] |= [target_role]
             else
-              target_contacts << { "email" => target_email, 
-                "roles" => [ target_role ], 
-                "given_name" => @provider.send(target_role_name)["givenName"], 
+              target_contacts << { "email" => target_email,
+                "roles" => [ target_role ],
+                "given_name" => @provider.send(target_role_name)["givenName"],
                 "family_name" => @provider.send(target_role_name)["familyName"] }
             end
         end
