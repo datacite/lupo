@@ -183,6 +183,7 @@ class Provider < ApplicationRecord
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   accepts_nested_attributes_for :prefixes
+  accepts_nested_attributes_for :contacts
 
   # use different index for testing
   if Rails.env.test?

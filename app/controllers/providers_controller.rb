@@ -8,6 +8,86 @@ class ProvidersController < ApplicationController
   before_action :set_provider, only: %i[show update destroy stats]
   before_action :set_include
   load_and_authorize_resource except: %i[index show create totals random stats]
+  after_action :set_provider_contacts, only: %i[create update]
+  # after_action :remove_provider_contacts, only: %i[destroy]
+
+  def set_provider_contacts
+    puts "CALLING SET_PROVIDER_CONTACTS"
+    # This works because ruby/rails guarantees that in after_action, all fields are present and up-to-date in both the model and database.
+    if @provider.valid?
+      puts "++++CALLING SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
+      # Build a list of contacts with their associated roles based on provider role fields
+      target_contacts = []
+      Contact.roles.each do | target_role |
+        target_role_name = target_role + '_contact'
+        target_email = @provider.send(target_role_name)["email"] if @provider.send(target_role_name).present?
+        if target_email.present?
+            target_contact = target_contacts.find { |tc| tc["email"] == target_email }
+            if target_contact.present?
+              target_contact["roles"] |= [target_role]
+            else
+              target_contacts << { "email" => target_email, 
+                "roles" => [ target_role ], 
+                "given_name" => @provider.send(target_role_name)["givenName"], 
+                "family_name" => @provider.send(target_role_name)["familyName"] }
+            end
+        end
+      end
+      # Clear all provider role associations.
+      @provider.contacts.each do |contact|
+        contact.update("role_name" => [])
+      end
+      # Set all provider role associations based on the target_contacts list.
+      target_contacts.each do | target_contact |
+        contact = @provider.contacts
+                  .where("LOWER(email) = ?", target_contact["email"].downcase)
+                  .where(deleted_at: nil)
+                  .first_or_create!(email: target_contact["email"])
+        contact.update_attribute("role_name", target_contact["roles"])
+        contact.update_attribute("given_name", target_contact["given_name"])
+        contact.update_attribute("family_name", target_contact["family_name"])
+      end
+    end
+  end
+
+=begin
+  def set_provider_contacts
+    # This works because ruby/rails guarantees that in after_action, all fields are present and up-to-date in both the model and database.
+    if @provider.valid?
+      # Build a list of contacts with their associated roles based on provider role fields
+      target_contacts = []
+      Contact.roles.each do | target_role |
+        target_role_name = target_role + '_contact'
+        target_email = @provider.send(target_role_name)["email"] if @provider.send(target_role_name).present?
+        if target_email.present?
+            target_contact = target_contacts.find { |tc| tc["email"] == target_email }
+            if target_contact.present?
+              target_contact["roles"] |= [target_role]
+            else
+              target_contacts << { "email" => target_email, 
+                "roles" => [ target_role ], 
+                "given_name" => @provider.send(target_role_name)["givenName"], 
+                "family_name" => @provider.send(target_role_name)["familyName"] }
+            end
+        end
+      end
+      # Clear all provider role associations.
+      @provider.contacts.each do |contact|
+        contact.update("role_name" => [])
+      end
+      # Set all provider role associations based on the target_contacts list.
+      target_contacts.each do | target_contact |
+        contact = @provider.contacts
+                  .where("LOWER(email) = ?", target_contact["email"].downcase)
+                  .where(deleted_at: nil)
+                  .first_or_create!(email: target_contact["email"])
+        contact.update_attribute("role_name", target_contact["roles"])
+        contact.update_attribute("given_name", target_contact["given_name"])
+        contact.update_attribute("family_name", target_contact["family_name"])
+      end
+    end
+  end
+=end
 
   def index
     sort =

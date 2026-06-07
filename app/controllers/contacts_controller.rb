@@ -191,17 +191,31 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
-      if @contact.valid?
+      puts "CALLING SET_PROVIDER_CONTACTS"
+      if @contact.saved_changes?
+        puts "BEGIN------------------------------"
+        # Returns a hash: { "role_name" => ["Old Value", "New Value"] }
+        puts @contact.saved_changes
+        puts "END------------------------------"
+      end
+
+      if @contact.valid? && @contact.saved_change_to_role_name?
+        # Remove old provider role associations if role_name has changed
+        original_role_name = @contact.role_name_previously_was
+        Array.wrap(original_role_name).each do | role |
+          @contact.set_provider_role(role, nil)
+        end
+
+        # set provider role associations for new role_name values.
         Contact.roles.each do | role |
           if @contact.has_role?(role)
             @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
-          elsif @contact.has_provider_role?(role)
-            @contact.set_provider_role(role, nil)
           end
         end
 
         # Make sure no other contact with this provider claims these roles.
         @contact.provider.contacts.each do | contact |
+          puts "Checking contact #{contact.uid} with role_name #{contact.role_name} for provider #{contact.provider.symbol}"
           if !@contact.is_me?(contact)
             if contact.remove_roles!(Array.wrap(@contact.role_name))
               contact.update_attribute("role_name", contact.role_name)
