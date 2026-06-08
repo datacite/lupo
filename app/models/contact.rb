@@ -485,20 +485,34 @@ class Contact < ApplicationRecord
   def set_provider_role(role, contact)
     case role
     when "voting"
-      provider.update_attribute("voting_contact", contact)
+      puts "**setting provider role voting contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("voting_contact", contact)
     when "billing"
-      provider.update_attribute("billing_contact", contact)
+      puts "**setting provider role billing contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("billing_contact", contact)
     when "secondary_billing"
-      provider.update_attribute("secondary_billing_contact", contact)
+      puts "**setting provider role secondary billing contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("secondary_billing_contact", contact)
     when "service"
-      provider.update_attribute("service_contact", contact)
+      puts "**setting provider role service contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("service_contact", contact)
     when "secondary_service"
-      provider.update_attribute("secondary_service_contact", contact)
+      puts "**setting provider role secondary service contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("secondary_service_contact", contact)
     when "technical"
-      provider.update_attribute("technical_contact", contact)
+      puts "**setting provider role technical contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("technical_contact", contact)
     when "secondary_technical"
-      provider.update_attribute("secondary_technical_contact", contact)
+      puts "**setting provider role secondary technical contact to #{contact} for provider #{provider.symbol}"
+      provider.update_column("secondary_technical_contact", contact)
     end
+  end
+
+  def remove_roles(roles = [])
+    roles.each do | role |
+      Array.wrap(role_name).delete(role)
+    end
+    self.changed?
   end
 
   private
