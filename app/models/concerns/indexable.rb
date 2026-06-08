@@ -57,8 +57,8 @@ module Indexable
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         # elsif instance_of?(Client) && !from_salesforce
         send_client_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
 =begin
+      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         # elsif instance_of?(Contact) && !from_salesforce
         puts "--------------------------------------------"
         puts "GOT HERE - EXPORTING CONTACT 1111 - indexable:59 - #{to_jsonapi}"
@@ -77,7 +77,6 @@ module Indexable
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
         send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
       end
-=end
     end
 
     after_commit on: [:destroy] do
