@@ -190,7 +190,6 @@ class ContactsController < ApplicationController
     end
 
   private
-
     def set_provider_contacts
       if @contact.valid?
         puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
