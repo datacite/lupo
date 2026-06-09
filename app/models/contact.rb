@@ -457,6 +457,14 @@ class Contact < ApplicationRecord
     self.changed?
   end
 
+  def remove_roles(roles = [])
+    role_name = Array.wrap(self.role_name)
+    roles.each do | role |
+      role_name.delete(role)
+    end
+    role_name
+  end
+
   def is_me?(contact = nil)
     uid == contact.uid
   end
@@ -482,37 +490,25 @@ class Contact < ApplicationRecord
     end
   end
 
-  def set_provider_role(role, contact)
+  def set_provider_role(role, contact = nil)
+    # puts "**setting provider role #{role} contact to #{contact.email} for provider #{provider.symbol}"
     case role
     when "voting"
-      puts "**setting provider role voting contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("voting_contact", contact)
+      provider.update_attribute("voting_contact", contact)
     when "billing"
-      puts "**setting provider role billing contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("billing_contact", contact)
+      provider.update_attribute("billing_contact", contact)
     when "secondary_billing"
-      puts "**setting provider role secondary billing contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("secondary_billing_contact", contact)
+      provider.update_attribute("secondary_billing_contact", contact)
     when "service"
-      puts "**setting provider role service contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("service_contact", contact)
+      provider.update_attribute("service_contact", contact)
     when "secondary_service"
-      puts "**setting provider role secondary service contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("secondary_service_contact", contact)
+      provider.update_attribute("secondary_service_contact", contact)
     when "technical"
-      puts "**setting provider role technical contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("technical_contact", contact)
+      provider.update_attribute("technical_contact", contact)
     when "secondary_technical"
-      puts "**setting provider role secondary technical contact to #{contact} for provider #{provider.symbol}"
-      provider.update_column("secondary_technical_contact", contact)
+      provider.update_attribute("secondary_technical_contact", contact)
     end
-  end
-
-  def remove_roles(roles = [])
-    roles.each do | role |
-      Array.wrap(role_name).delete(role)
-    end
-    self.changed?
+    provider.save
   end
 
   private
