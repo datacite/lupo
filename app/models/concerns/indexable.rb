@@ -49,11 +49,9 @@ module Indexable
       # ignore if record was created via Salesforce API
       elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         # elsif instance_of?(Provider) && !from_salesforce
+        puts "--------------------------------------------"
         puts "GOT HERE - EXPORTING PROVIDER - indexable:52 - #{to_jsonapi}"
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
-        contacts.each do |c|
-          send_contact_export_message(c.to_jsonapi.merge(slack_output: true))
-        end
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         # elsif instance_of?(Client) && !from_salesforce
         send_client_export_message(to_jsonapi.merge(slack_output: true))
@@ -61,37 +59,8 @@ module Indexable
         # elsif instance_of?(Contact) && !from_salesforce
         puts "--------------------------------------------"
         puts "GOT HERE - EXPORTING CONTACT - indexable:58 - #{email}, #{role_name} - provider: #{provider.name}"
-        # puts "GOT HERE - EXPORTING CONTACT 1111 - indexable:59 - #{to_jsonapi}"
-        # puts "GOT HERE - EXPORTING CONTACT 2222 - indexable:60 - #{provider.to_jsonapi}"
-        # puts "GOT HERE - EXPORTING CONTACT 3333 - indexable:61 - #{provider.contacts.map(&:to_jsonapi)}"
-        # provider.contacts.each do |c|
-        #   if c.previous_changes.any?
-        #     puts "THIS CONTACT HAD CHANGES: #{c.email} - #{c.provider.name}"
-        #   else
-        #     puts "THIS CONTACT DID NOT HAVE CHANGES: #{c.email} - #{c.provider.name}"
-        #   end
-        #   puts "SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{c.email}, #{c.role_name} - #{c.provider.name}"
-        #   send_contact_export_message(c.to_jsonapi.merge(slack_output: true))
-        # end
-        puts "***SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{email}, #{role_name} - #{provider.name}"
-
-        provider.contacts.each do |c|
-          puts "SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{c.email}, #{c.role_name} - #{c.provider.name}"
-          send_contact_export_message(c.to_jsonapi.merge(slack_output: true))
-        end
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
-        puts "SENDING PROVIDER EXPORT MESSAGE FOR PROVIDER: #{provider.name}"
-        send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
-        puts "--------------------------------------------"
       end
-=begin
-      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        # elsif instance_of?(Contact) && !from_salesforce
-        puts "GOT HERE - EXPORTING CONTACT - indexable:59 - #{to_jsonapi}"
-        send_contact_export_message(to_jsonapi.merge(slack_output: true))
-        send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
-      end
-=end
     end
 
     after_commit on: [:destroy] do
