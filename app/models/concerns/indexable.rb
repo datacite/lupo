@@ -73,7 +73,12 @@ module Indexable
         #   puts "SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{c.email}, #{c.role_name} - #{c.provider.name}"
         #   send_contact_export_message(c.to_jsonapi.merge(slack_output: true))
         # end
-        puts "SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{email}, #{role_name} - #{provider.name}"
+        puts "***SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{email}, #{role_name} - #{provider.name}"
+
+        provider.contacts.each do |c|
+          puts "SENDING CONTACT EXPORT MESSAGE FOR CONTACT: #{c.email}, #{c.role_name} - #{c.provider.name}"
+          send_contact_export_message(c.to_jsonapi.merge(slack_output: true))
+        end
         send_contact_export_message(to_jsonapi.merge(slack_output: true))
         puts "SENDING PROVIDER EXPORT MESSAGE FOR PROVIDER: #{provider.name}"
         send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
