@@ -494,21 +494,20 @@ class Contact < ApplicationRecord
     # puts "**setting provider role #{role} contact to #{contact.email} for provider #{provider.symbol}"
     case role
     when "voting"
-      provider.update_attribute("voting_contact", contact)
+      provider.voting_contact = contact
     when "billing"
-      provider.update_attribute("billing_contact", contact)
+      provider.billing_contact = contact
     when "secondary_billing"
-      provider.update_attribute("secondary_billing_contact", contact)
+      provider.secondary_billing_contact = contact
     when "service"
-      provider.update_attribute("service_contact", contact)
+      provider.service_contact = contact
     when "secondary_service"
-      provider.update_attribute("secondary_service_contact", contact)
+      provider.secondary_service_contact = contact
     when "technical"
-      provider.update_attribute("technical_contact", contact)
+      provider.technical_contact = contact
     when "secondary_technical"
-      provider.update_attribute("secondary_technical_contact", contact)
+      provider.secondary_technical_contact = contact
     end
-    provider.save
   end
 
   private

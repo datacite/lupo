@@ -190,6 +190,7 @@ class ContactsController < ApplicationController
     end
 
   private
+
     def set_provider_contacts
       if @contact.valid?
         puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
@@ -197,10 +198,7 @@ class ContactsController < ApplicationController
         # Make sure no other contact with this provider claims these roles.
         @contact.provider.contacts.where(deleted_at: nil).each do |contact|
           if !contact.is_me?(@contact)
-            contact.update_attribute("role_name", contact.role_name - @contact.role_name)
-            contact.save
-          else
-            puts "contact is me!"
+            contact.role_name = contact.role_name - @contact.role_name
           end
         end
 
@@ -218,6 +216,7 @@ class ContactsController < ApplicationController
           end
         end
 
+        @contact.save
         @contact.provider.save
       end
     end
@@ -225,40 +224,67 @@ class ContactsController < ApplicationController
 
 =begin
     def set_provider_contacts
-      puts "CALLING SET_PROVIDER_CONTACTS from contacts_controller.rb"
-      if @contact.saved_changes?
-        puts "BEGIN------------------------------"
-        # Returns a hash: { "role_name" => ["Old Value", "New Value"] }
-        puts @contact.saved_changes
-        puts "END------------------------------"
-      end
+      if @contact.valid?
+        puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
 
-      if @contact.valid? && @contact.saved_change_to_role_name?
-        # Remove old provider role associations if role_name has changed
-        original_role_name = @contact.role_name_previously_was
-        Array.wrap(original_role_name).each do | role |
+        # Make sure no other contact with this provider claims these roles.
+        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
+          if !contact.is_me?(@contact)
+            contact.update_attribute("role_name", contact.role_name - @contact.role_name)
+            contact.save
+          end
+        end
+
+        # Clear provider role associations for this contact's provider.
+        Contact.roles.each do | role |
           @contact.set_provider_role(role, nil)
         end
 
-        # set provider role associations for new role_name values.
-        Contact.roles.each do | role |
-          if @contact.has_role?(role)
-            @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
-          end
-        end
-
-        # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.each do | contact |
-          puts "Checking contact #{contact.uid} with #{contact.email} and role_name #{contact.role_name} for provider #{contact.provider.symbol}"
-          if !@contact.is_me?(contact)
-            if contact.remove_roles!(Array.wrap(@contact.role_name))
-              contact.update_attribute("role_name", contact.role_name)
+        # Re-set provider role associations for this contact's provider.
+        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
+          contact.role_name.each do | role |
+            if contact.has_role?(role)
+              contact.set_provider_role(role, { 'email': contact.email || nil, 'given_name': contact.given_name || nil, 'family_name': contact.family_name || nil })
             end
           end
         end
+
+        @contact.save
+        @contact.provider.save
       end
     end
 =end
+
+    def set_provider_contacts
+      if @contact.valid?
+        puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
+
+        # Make sure no other contact with this provider claims these roles.
+        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
+          if !contact.is_me?(@contact)
+            contact.update_attribute("role_name", contact.role_name - @contact.role_name)
+            contact.save
+          end
+        end
+
+        # Clear provider role associations for this contact's provider.
+        Contact.roles.each do | role |
+          @contact.set_provider_role(role, nil)
+        end
+
+        # Re-set provider role associations for this contact's provider.
+        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
+          contact.role_name.each do | role |
+            if contact.has_role?(role)
+              contact.set_provider_role(role, { 'email': contact.email || nil, 'given_name': contact.given_name || nil, 'family_name': contact.family_name || nil })
+            end
+          end
+        end
+
+        @contact.save
+        @contact.provider.save
+      end
+    end
 
     def remove_provider_contacts
       Array.wrap(@contact.role_name).each do | role |
