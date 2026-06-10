@@ -187,10 +187,10 @@ class DataciteDoisController < ApplicationController
 
         results = results.map do |item|
           source = item.respond_to?(:_source) ? item._source : item
-          
+
           xml_content = xml_by_doi[source["doi"]]
-          source.xml = xml_content 
-          
+          source.xml = xml_content
+
           item
         end
       end
