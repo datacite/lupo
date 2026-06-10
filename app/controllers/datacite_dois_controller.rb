@@ -186,7 +186,7 @@ class DataciteDoisController < ApplicationController
         xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
 
         results = results.map do |item|
-          source = item.respond_to?(:_source) ? item._source : item
+          source = item._source
 
           xml_content = xml_by_doi[source["doi"]]
           source.xml = xml_content
