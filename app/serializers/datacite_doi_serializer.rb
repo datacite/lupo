@@ -117,7 +117,7 @@ class DataciteDoiSerializer
               Proc.new { |_object, params|
                 params && params[:detail]
               } do |object|
-    Base64.strict_encode64(object.xml) if object.xml.present?
+    Base64.strict_encode64(object.xml) if object.respond_to?(:xml) && object.xml.present?
   rescue ArgumentError
     nil
   end
