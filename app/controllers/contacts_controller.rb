@@ -191,21 +191,41 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
+      puts "==== CALLING FROM SET_PROVIDER_CONTACTS ===="
+      puts "CONTACT VALID? #{@contact.valid?} ===="
       if @contact.valid?
         puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
 
         # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
-          if !contact.is_me?(@contact)
-            contact.role_name = contact.role_name - @contact.role_name
+        @contact.provider.contacts.where(deleted_at: nil).where.not(uid: @contact.uid).each do |contact|
+          puts "set_provider_contacts - 1111 - checking contact: #{contact.email}, #{contact.role_name} against contact #{@contact.email}, #{@contact.role_name}"
+          puts "contact.role_name.sort: #{contact.role_name.sort}"
+          puts "@contact.role_name.sort: #{@contact.role_name.sort}"
+          old_role_name = contact.role_name
+          new_role_name = contact.role_name - @contact.role_name
+          puts "old_role_name: #{old_role_name.sort}"
+          puts "new_role_name: #{new_role_name.sort}"
+          # puts "contact.role_name.sort != @contact.role_name.sort? #{contact.role_name.sort != @contact.role_name.sort}"
+          if old_role_name.sort != new_role_name.sort
+            puts "contact role_name before removal: #{contact.role_name}"
+            contact.update_attribute("role_name", new_role_name)
+            puts "contact role_name after removal: #{contact.role_name}"
+            puts "exporting contact #{contact.email} with role_name #{contact.role_name} for provider #{contact.provider.symbol} to slack because of change to contact #{@contact.email}"
+            # send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+            contact.send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce
+          else
+            puts "contact role_name is the same as before, no need to update or export to slack"
           end
+          puts "++++++++++Finished checking contact: #{contact.email}, #{contact.role_name} against contact #{@contact.email}, #{@contact.role_name}"
         end
 
+        puts "set_provider_contacts - 2222"
         # Clear provider role associations for this contact's provider.
         Contact.roles.each do | role |
           @contact.set_provider_role(role, nil)
         end
 
+        puts "set_provider_contacts - 3333"
         # Re-set provider role associations for this contact's provider.
         @contact.provider.contacts.where(deleted_at: nil).each do |contact|
           contact.role_name.each do | role |
@@ -214,9 +234,13 @@ class ContactsController < ApplicationController
             end
           end
         end
+        puts "set_provider_contacts - 4444"
+
+        @contact.provider.save
+
+        puts "set_provider_contacts - 5555"
 
         @contact.save
-        @contact.provider.save
       end
     end
 
@@ -253,37 +277,6 @@ class ContactsController < ApplicationController
       end
     end
 =end
-
-    def set_provider_contacts
-      if @contact.valid?
-        puts "CALLING (FROM CONTACTS) set_provider_contacts: for contact #{@contact.email} and role_name #{@contact.role_name} for provider #{@contact.provider.symbol}"
-
-        # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
-          if !contact.is_me?(@contact)
-            contact.update_attribute("role_name", contact.role_name - @contact.role_name)
-            contact.save
-          end
-        end
-
-        # Clear provider role associations for this contact's provider.
-        Contact.roles.each do | role |
-          @contact.set_provider_role(role, nil)
-        end
-
-        # Re-set provider role associations for this contact's provider.
-        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
-          contact.role_name.each do | role |
-            if contact.has_role?(role)
-              contact.set_provider_role(role, { 'email': contact.email || nil, 'given_name': contact.given_name || nil, 'family_name': contact.family_name || nil })
-            end
-          end
-        end
-
-        @contact.save
-        @contact.provider.save
-      end
-    end
 
     def remove_provider_contacts
       Array.wrap(@contact.role_name).each do | role |
