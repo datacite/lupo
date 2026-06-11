@@ -211,8 +211,8 @@ class ContactsController < ApplicationController
             contact.update_attribute("role_name", new_role_name)
             puts "contact role_name after removal: #{contact.role_name}"
             puts "exporting contact #{contact.email} with role_name #{contact.role_name} for provider #{contact.provider.symbol} to slack because of change to contact #{@contact.email}"
-            # send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-            contact.send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce
+            contact.send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+            # contact.send_provider_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce
           else
             puts "contact role_name is the same as before, no need to update or export to slack"
           end
