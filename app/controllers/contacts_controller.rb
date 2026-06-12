@@ -241,6 +241,14 @@ class ContactsController < ApplicationController
         puts "set_provider_contacts - 5555"
 
         @contact.save
+
+        if transaction_include_any_action?([:create])
+          puts "Fired from a CREATE action"
+          @contact.send_provider_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        elsif transaction_include_any_action?([:update])
+          puts "Fired from an UPDATE action"
+          @contact.send_provider_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        end
       end
     end
 
