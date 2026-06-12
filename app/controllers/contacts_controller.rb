@@ -218,10 +218,10 @@ class ContactsController < ApplicationController
         end
 
         @contact.provider.save
-        @contact.send_provider_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        @contact.provider.send_provider_export_message(@contact.provider.to_jsonapi.merge(slack_output: true)) if !@contact.provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
 
         @contact.save
-        @contact.send_provider_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
       end
     end
 
