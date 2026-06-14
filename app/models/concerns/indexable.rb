@@ -52,7 +52,7 @@ module Indexable
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-         send_contact_export_message(to_jsonapi.merge(slack_output: true))
+        send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
 
