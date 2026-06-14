@@ -9,85 +9,7 @@ class ProvidersController < ApplicationController
   before_action :set_include
   load_and_authorize_resource except: %i[index show create totals random stats]
   after_action :set_provider_contacts, only: %i[create update]
-  # after_action :remove_provider_contacts, only: %i[destroy]
-
-  def set_provider_contacts
-    puts "CALLING SET_PROVIDER_CONTACTS"
-    # This works because ruby/rails guarantees that in after_action, all fields are present and up-to-date in both the model and database.
-    if @provider.valid?
-      puts "++++CALLING SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
-      # Build a list of contacts with their associated roles based on provider role fields
-      target_contacts = []
-      Contact.roles.each do | target_role |
-        target_role_name = target_role + "_contact"
-        target_email = @provider.send(target_role_name)["email"] if @provider.send(target_role_name).present?
-        if target_email.present?
-          target_contact = target_contacts.find { |tc| tc["email"] == target_email }
-          if target_contact.present?
-            target_contact["roles"] |= [target_role]
-          else
-            target_contacts << { "email" => target_email,
-              "roles" => [ target_role ],
-              "given_name" => @provider.send(target_role_name)["givenName"],
-              "family_name" => @provider.send(target_role_name)["familyName"] }
-          end
-        end
-      end
-      # Clear all provider role associations.
-      @provider.contacts.each do |contact|
-        contact.update("role_name" => [])
-      end
-      # Set all provider role associations based on the target_contacts list.
-      target_contacts.each do | target_contact |
-        contact = @provider.contacts
-                  .where("LOWER(email) = ?", target_contact["email"].downcase)
-                  .where(deleted_at: nil)
-                  .first_or_create!(email: target_contact["email"])
-        contact.update_attribute("role_name", target_contact["roles"])
-        contact.update_attribute("given_name", target_contact["given_name"])
-        contact.update_attribute("family_name", target_contact["family_name"])
-      end
-    end
-  end
-
-=begin
-  def set_provider_contacts
-    # This works because ruby/rails guarantees that in after_action, all fields are present and up-to-date in both the model and database.
-    if @provider.valid?
-      # Build a list of contacts with their associated roles based on provider role fields
-      target_contacts = []
-      Contact.roles.each do | target_role |
-        target_role_name = target_role + '_contact'
-        target_email = @provider.send(target_role_name)["email"] if @provider.send(target_role_name).present?
-        if target_email.present?
-            target_contact = target_contacts.find { |tc| tc["email"] == target_email }
-            if target_contact.present?
-              target_contact["roles"] |= [target_role]
-            else
-              target_contacts << { "email" => target_email,
-                "roles" => [ target_role ],
-                "given_name" => @provider.send(target_role_name)["givenName"],
-                "family_name" => @provider.send(target_role_name)["familyName"] }
-            end
-        end
-      end
-      # Clear all provider role associations.
-      @provider.contacts.each do |contact|
-        contact.update("role_name" => [])
-      end
-      # Set all provider role associations based on the target_contacts list.
-      target_contacts.each do | target_contact |
-        contact = @provider.contacts
-                  .where("LOWER(email) = ?", target_contact["email"].downcase)
-                  .where(deleted_at: nil)
-                  .first_or_create!(email: target_contact["email"])
-        contact.update_attribute("role_name", target_contact["roles"])
-        contact.update_attribute("given_name", target_contact["given_name"])
-        contact.update_attribute("family_name", target_contact["family_name"])
-      end
-    end
-  end
-=end
+  after_action :remove_provider_contacts, only: %i[destroy]
 
   def index
     sort =
@@ -416,6 +338,50 @@ class ProvidersController < ApplicationController
     end
 
   private
+    def set_provider_contacts
+      if @provider.valid?
+        puts "++++CALLING SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
+        puts "Provider contacts before changes: #{@provider.contacts.as_json}"
+        @provider.contacts.each { |contact| contact.role_name = [] }
+
+        puts "1111"
+        Contact.roles.each do | target_role |
+          target_role_name = target_role + "_contact"
+          if @provider.send(target_role_name).present? && @provider.send(target_role_name)["email"].present?
+            target_email = @provider.send(target_role_name)["email"]
+            target_given_name = @provider.send(target_role_name)["givenName"] || nil
+            target_family_name = @provider.send(target_role_name)["familyName"] || nil
+
+            puts "2222"
+
+            contact = @provider.contacts.detect { |c| c.email.downcase == target_email.downcase } ||
+                      @provider.contacts
+                        .where(deleted_at: nil)
+                        .where("LOWER(email) = ?", target_email.downcase)
+                        .first_or_create!(email: target_email.downcase, given_name: target_given_name, family_name: target_family_name, role_name: [])
+            puts "----Setting contact #{contact.email}, role_name #{contact.role_name} with role #{target_role} for provider #{@provider.symbol}"
+            puts "2222"
+            contact.role_name |= [target_role]
+            puts "contact role_name after |= operation: #{contact.role_name}"
+          end
+        end
+
+        puts "++++SAVING: FINISHED SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
+
+        @provider.save
+        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+
+        puts "----SAVING CONTACTS: STARTING to save contacts for provider #{@provider.symbol}"
+
+        @provider.contacts.each do |contact|
+          contact.save
+          puts "------Saved contact #{contact["email"]}, given_name #{contact["given_name"]}, family_name #{contact["family_name"]}, with roles #{contact["role_name"]} and uid #{contact.uid} for provider #{@provider.symbol}"
+          puts "------Saved contact #{contact.email}, given_name #{contact.given_name}, family_name #{contact.family_name}, with roles #{contact.role_name} and uid #{contact.uid} for provider #{@provider.symbol}"
+          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        end
+      end
+    end
+
     def safe_params
       if params[:data].blank?
         fail JSON::ParserError,
