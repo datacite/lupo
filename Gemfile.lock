@@ -487,7 +487,7 @@ GEM
       uri (>= 0.11.1)
     net-http-persistent (4.0.8)
       connection_pool (>= 2.2.4, < 4)
-    net-imap (0.6.4)
+    net-imap (0.6.4.1)
       date
       net-protocol
     net-pop (0.1.2)
@@ -864,4 +864,4 @@ DEPENDENCIES
   webmock (~> 3.26, >= 3.26.2)
 
 BUNDLED WITH
-   2.6.9
+  4.0.3
