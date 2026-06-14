@@ -9,7 +9,7 @@ class ProvidersController < ApplicationController
   before_action :set_include
   load_and_authorize_resource except: %i[index show create totals random stats]
   after_action :set_provider_contacts, only: %i[create update]
-  after_action :remove_provider_contacts, only: %i[destroy]
+  # after_action :remove_provider_contacts, only: %i[destroy]
 
   def index
     sort =
