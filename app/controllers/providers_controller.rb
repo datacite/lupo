@@ -340,11 +340,11 @@ class ProvidersController < ApplicationController
   private
     def set_provider_contacts
       if @provider.valid?
-        puts "++++CALLING SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
-        puts "Provider contacts before changes: #{@provider.contacts.as_json}"
+
+        # Clear provider role associations for this provider.
         @provider.contacts.each { |contact| contact.role_name = [] }
 
-        puts "1111"
+        # Reset provider role associations to the new ones for this provider.
         Contact.roles.each do | target_role |
           target_role_name = target_role + "_contact"
           if @provider.send(target_role_name).present? && @provider.send(target_role_name)["email"].present?
@@ -352,31 +352,23 @@ class ProvidersController < ApplicationController
             target_given_name = @provider.send(target_role_name)["givenName"] || nil
             target_family_name = @provider.send(target_role_name)["familyName"] || nil
 
-            puts "2222"
-
             contact = @provider.contacts.detect { |c| c.email.downcase == target_email.downcase } ||
                       @provider.contacts
                         .where(deleted_at: nil)
                         .where("LOWER(email) = ?", target_email.downcase)
-                        .first_or_create!(email: target_email.downcase, given_name: target_given_name, family_name: target_family_name, role_name: [])
-            puts "----Setting contact #{contact.email}, role_name #{contact.role_name} with role #{target_role} for provider #{@provider.symbol}"
-            puts "2222"
+                        .first_or_initialize(email: target_email.downcase, role_name: [])
             contact.role_name |= [target_role]
-            puts "contact role_name after |= operation: #{contact.role_name}"
+            contact.given_name = target_given_name
+            contact.family_name = target_family_name
           end
         end
 
-        puts "++++SAVING: FINISHED SET_PROVIDER_CONTACTS for provider #{@provider.symbol}"
-
+        # Save provider and contacts, and send export messages for provider and contacts.
         @provider.save
         @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
 
-        puts "----SAVING CONTACTS: STARTING to save contacts for provider #{@provider.symbol}"
-
         @provider.contacts.each do |contact|
           contact.save
-          puts "------Saved contact #{contact["email"]}, given_name #{contact["given_name"]}, family_name #{contact["family_name"]}, with roles #{contact["role_name"]} and uid #{contact.uid} for provider #{@provider.symbol}"
-          puts "------Saved contact #{contact.email}, given_name #{contact.given_name}, family_name #{contact.family_name}, with roles #{contact.role_name} and uid #{contact.uid} for provider #{@provider.symbol}"
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         end
       end

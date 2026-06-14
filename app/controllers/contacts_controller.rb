@@ -203,12 +203,12 @@ class ContactsController < ApplicationController
           end
         end
 
-        # Clear provider role associations for this contact's provider.
+        # Clear provider role associations for this contact.
         Contact.roles.each do | role |
           @contact.set_provider_role(role, nil)
         end
 
-        # Reset provider role associations for this contact's provider.
+        # Reset provider role associations for this contact.
         @contact.provider.contacts.where(deleted_at: nil).each do |contact|
           contact.role_name.each do | role |
             if contact.has_role?(role)
@@ -231,7 +231,13 @@ class ContactsController < ApplicationController
           @contact.set_provider_role(role, nil)
         end
       end
-      @contact.update_attribute("role_name", [])
+      @contact.role_name = []
+
+      @contact.provider.save
+      @contact.provider.send_provider_export_message(@contact.provider.to_jsonapi.merge(slack_output: true)) if !@contact.provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+
+      @contact.save
+      @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
     end
 
     def safe_params
