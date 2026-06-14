@@ -48,18 +48,11 @@ module Indexable
         end
       # ignore if record was created via Salesforce API
       elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        # elsif instance_of?(Provider) && !from_salesforce
-        puts "--------------------------------------------"
-        puts "GOT HERE - EXPORTING PROVIDER - indexable:52 - #{to_jsonapi}"
         send_provider_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        # elsif instance_of?(Client) && !from_salesforce
         send_client_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        # elsif instance_of?(Contact) && !from_salesforce
-        puts "--------------------------------------------"
-        puts "GOT HERE - EXPORTING CONTACT - indexable:58 - #{email}, #{role_name} - provider: #{provider.name}"
-        send_contact_export_message(to_jsonapi.merge(slack_output: true))
+         send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
 
