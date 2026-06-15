@@ -197,7 +197,7 @@ class ContactsController < ApplicationController
         @contact.provider.contacts.where(deleted_at: nil).each do | contact |
           if !@contact.is_me?(contact)
             old_role_name = contact.role_name.present? ? contact.role_name : []
-            new_role_name = contact.role_name - ( @contact.role_name.present? ? @contact.role_name : [] )
+            new_role_name = contact.role_name - (@contact.role_name.present? ? @contact.role_name : [])
             if old_role_name.sort != new_role_name.sort
               contact.update_column("role_name", new_role_name)
               contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
