@@ -191,15 +191,17 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
-      if @contact.valid?
+      if @contact.valid? && @contact.provider.present?
 
         # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.where(deleted_at: nil).where.not(uid: @contact.uid).each do |contact|
-          old_role_name = contact.role_name
-          new_role_name = contact.role_name - @contact.role_name
-          if old_role_name.sort != new_role_name.sort
-            contact.update_column("role_name", new_role_name)
-            contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        @contact.provider.contacts.where(deleted_at: nil).each do | contact |
+          if !@contact.is_me?(contact)
+            old_role_name = contact.role_name.present? ? contact.role_name : []
+            new_role_name = contact.role_name - ( @contact.role_name.present? ? @contact.role_name : [] )
+            if old_role_name.sort != new_role_name.sort
+              contact.update_column("role_name", new_role_name)
+              contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+            end
           end
         end
 
@@ -210,7 +212,7 @@ class ContactsController < ApplicationController
 
         # Reset provider role associations for this contact.
         @contact.provider.contacts.where(deleted_at: nil).each do |contact|
-          contact.role_name.each do | role |
+          contact&.role_name&.each do | role |
             if contact.has_role?(role)
               contact.set_provider_role(role, { 'email': contact.email || nil, 'given_name': contact.given_name || nil, 'family_name': contact.family_name || nil })
             end
