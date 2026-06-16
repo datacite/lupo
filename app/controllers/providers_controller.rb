@@ -363,6 +363,8 @@ class ProvidersController < ApplicationController
             contact.role_name |= [target_role]
             contact.given_name = target_given_name
             contact.family_name = target_family_name
+            contact.save
+            contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           end
         end
 
