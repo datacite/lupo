@@ -8,7 +8,7 @@ class ProvidersController < ApplicationController
   before_action :set_provider, only: %i[show update destroy stats]
   before_action :set_include
   load_and_authorize_resource except: %i[index show create totals random stats]
-  after_action :set_provider_contacts, only: %i[create update]
+  # after_action :set_provider_contacts, only: %i[create update]
 
   def index
     sort =
@@ -203,6 +203,8 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
+      set_provider_contacts
+
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
         status: :ok
@@ -219,6 +221,8 @@ class ProvidersController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
+
+      set_provider_contacts
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
