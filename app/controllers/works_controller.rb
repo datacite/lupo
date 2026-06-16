@@ -136,6 +136,19 @@ class WorksController < ApplicationController
       # Results to return are either our sample group dois or the regular hit results
       @dois = sample_dois || response.results
 
+      # Pluck XML from DB for compatibility
+      doi_ids = @dois.map { |r| r._source["doi"] }.compact
+      xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
+
+      @dois = @dois.map do |item|
+        source = item._source
+
+        xml_content = xml_by_doi[source["doi"]]
+        source.xml = xml_content
+
+        item
+      end
+
       render(
         json: WorkSerializer.new(@dois, options).serializable_hash.to_json,
         status: :ok
