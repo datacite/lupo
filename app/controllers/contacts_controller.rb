@@ -7,8 +7,8 @@ class ContactsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
 
-  after_action :set_provider_contacts, only: %i[create update]
-  after_action :remove_provider_contacts, only: %i[destroy]
+  # after_action :set_provider_contacts, only: %i[create update]
+  # after_action :remove_provider_contacts, only: %i[destroy]
   load_and_authorize_resource
 
   def index
@@ -128,6 +128,8 @@ class ContactsController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
+      set_provider_contacts
+
       render(
         json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
         status: :created
@@ -146,6 +148,8 @@ class ContactsController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
+      set_provider_contacts
+
       render(
         json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
         status: :ok
@@ -160,6 +164,7 @@ class ContactsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   def destroy
     if @contact.update(deleted_at: Time.zone.now)
+      remove_provider_contacts
       head :no_content
     else
       # Rails.logger.error @contact.errors.inspect
@@ -197,7 +202,7 @@ class ContactsController < ApplicationController
         @contact.provider.contacts.where(deleted_at: nil).each do | contact |
           if !@contact.is_me?(contact)
             old_role_name = contact.role_name.present? ? contact.role_name : []
-            new_role_name = contact.role_name - (@contact.role_name.present? ? @contact.role_name : [])
+            new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
             if old_role_name.sort != new_role_name.sort
               contact.update_column("role_name", new_role_name)
               contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
