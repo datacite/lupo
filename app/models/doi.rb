@@ -2599,9 +2599,9 @@ class Doi < ApplicationRecord
   def update_field_of_science
     self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
       if subject.is_a?(String)
-        sum += name_to_fos(subject)
+        sum += name_to_subject(subject)
       elsif subject.is_a?(Hash)
-        sum += hsh_to_fos(subject)
+        sum += hsh_to_subject(subject)
       end
 
       sum

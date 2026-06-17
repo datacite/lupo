@@ -788,10 +788,6 @@ describe WorkType do
             "subject" => "Computer and information sciences",
             "subjectScheme" => nil,
           },
-          {
-            "subject" => "FOS: Computer and information sciences",
-            "subjectScheme" => "Fields of Science and Technology (FOS)",
-          },
         ],
       )
       expect(response.dig("data", "works", "nodes", 0, "rights")).to eq(
