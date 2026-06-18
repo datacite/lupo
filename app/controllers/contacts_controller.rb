@@ -228,7 +228,7 @@ class ContactsController < ApplicationController
         # Save provider and contacts, and send export messages for provider and contacts.
         provider.save
         provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true)) if !provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "++++++++Saved provider #{@contact.provider.symbol}"
+        puts "++++++++++Saved provider #{@contact.provider.symbol}"
         puts provider.inspect
 
         contacts.each do |contact|
