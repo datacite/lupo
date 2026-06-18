@@ -205,6 +205,9 @@ class ContactsController < ApplicationController
         contacts.where.not(id: @contact.id).each do | contact |
           contact.role_name = contact.remove_roles(Array.wrap(@contact.role_name))
           contact.save
+          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+          puts "****SENDING EXPORT MESSAGE FOR CONTACT #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol} after removing roles #{Array.wrap(@contact.role_name)} from contact #{contact.email}"
+          puts contact.inspect
         end
 
         # Clear provider role associations.
