@@ -411,3 +411,71 @@ describe Client, type: :model do
     end
   end
 end
+
+describe "API key authentication", type: :model do
+  let(:client) { create(:client, password_input: "12345") }
+  let(:api_key_record) { client.api_keys.create!(name: "spec key") }
+  let(:plain_key) { api_key_record.key }
+
+  describe "decode_auth_param using key as username (per ACs)" do
+    it "authenticates with api key as username (password ignored/discarded)" do
+      payload = client.decode_auth_param(
+        username: plain_key,
+        password: "",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+    end
+
+    it "authenticates with api key as username even with dummy password" do
+      payload = client.decode_auth_param(
+        username: plain_key,
+        password: "ignored",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+    end
+  end
+
+  describe "decode_auth_param using key as password (backward compat)" do
+    it "authenticates with api key value instead of account password" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: plain_key,
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+    end
+
+    it "still prefers the real password when both could match" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: "12345",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+    end
+
+    it "rejects wrong key" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: "DC.wrongkeyvalue1234567890abcdef",
+      )
+      expect(payload).to eq({})
+    end
+  end
+
+  describe "decode_api_key (for Bearer)" do
+    it "returns payload for valid key" do
+      payload = client.decode_api_key(plain_key)
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_admin")
+    end
+
+    it "returns error for invalid" do
+      payload = client.decode_api_key("bad")
+      expect(payload[:errors]).to be_present
+    end
+  end
+end
+

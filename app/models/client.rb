@@ -95,6 +95,7 @@ class Client < ApplicationRecord
   has_many :client_prefixes, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
   has_many :provider_prefixes, through: :client_prefixes
+  has_many :api_keys, dependent: :destroy
   has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_defaults

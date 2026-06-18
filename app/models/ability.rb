@@ -13,6 +13,7 @@ class Ability
 
     if user.role_id == "staff_admin"
       can :manage, :all
+      can :manage, ApiKey
       cannot %i[new create], Doi do |doi|
         doi.client.blank? ||
           !(
@@ -77,6 +78,10 @@ class Ability
       end
       cannot %i[transfer], Client
       can %i[manage], ClientPrefix # , :client_id => user.provider_id
+      can :manage, ApiKey do |api_key|
+        client = api_key.client
+        client && client.provider_id == user.provider_id
+      end
 
       # if Flipper[:delete_doi].enabled?(user)
       #   can [:manage], Doi, :provider_id => user.provider_id
@@ -115,6 +120,9 @@ class Ability
       can %i[read], Provider
       can %i[read update read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :manage, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id && user.client&.is_active == "\x01"
+      end
 
       # if Flipper[:delete_doi].enabled?(user)
       #   can [:manage], Doi, :client_id => user.client_id
@@ -149,6 +157,9 @@ class Ability
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :read, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id
+      end
       can %i[read], Doi, client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
@@ -160,6 +171,9 @@ class Ability
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :read, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id
+      end
       can %i[read get_url read_landing_page_results],
           Doi,
           client_id: user.client_id

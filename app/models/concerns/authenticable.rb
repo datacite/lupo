@@ -153,6 +153,25 @@ module Authenticable
 
     # basic auth
     def decode_auth_param(username: nil, password: nil)
+      # Support sending the API key as the username in Basic auth (per ACs).
+      # Password is not required and is discarded.
+      # Keys are ~35 chars starting with "DC."; client symbols are <=18 chars, so use length to avoid
+      # mis-detecting client symbols that start with "DC." (e.g. DC.FOO).
+      if username.present? && username.length > 20 && username.match?(/\ADC\./i)
+        api_key = ApiKey.authenticate(username)
+        if api_key
+          client = api_key.client
+          if client
+            # update last_used (throttled)
+            if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
+              api_key.update_column(:last_used_at, Time.zone.now)
+            end
+            return get_payload(uid: client.uid, user: client)
+          end
+        end
+        return {}
+      end
+
       return {} unless username.present? && password.present?
 
       user =
@@ -162,14 +181,41 @@ module Authenticable
           Provider.unscoped.where(symbol: username.upcase).first
         end
 
-      unless user &&
+      if user &&
           secure_compare(user.password, encrypt_password_sha256(password))
-        return {}
+        uid = username.downcase
+        return get_payload(uid: uid, user: user, password: password.to_s)
       end
 
-      uid = username.downcase
+      # API key as drop-in replacement for client password (username = client symbol)
+      if username.include?(".") && user
+        api_key = ApiKey.authenticate(password)
+        if api_key && api_key.client&.symbol&.downcase == user.client_id
+          # update last_used (throttled)
+          if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
+            api_key.update_column(:last_used_at, Time.zone.now)
+          end
+          return get_payload(uid: username.downcase, user: user, password: password.to_s)
+        end
+      end
 
-      get_payload(uid: uid, user: user, password: password.to_s)
+      {}
+    end
+
+    # Authenticate using a raw API key (for direct Bearer usage)
+    def decode_api_key(token)
+      api_key = ApiKey.authenticate(token)
+      return { errors: "Invalid API key." } unless api_key
+
+      client = api_key.client
+      return { errors: "Invalid API key." } unless client
+
+      # throttle last_used
+      if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
+        api_key.update_column(:last_used_at, Time.zone.now)
+      end
+
+      get_payload(uid: client.uid, user: client)
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
