@@ -490,7 +490,7 @@ class Contact < ApplicationRecord
     end
   end
 
-  def set_provider_role(role, contact = nil)
+  def set_provider_role!(role, contact = nil)
     # puts "**setting provider role #{role} contact to #{contact.email} for provider #{provider.symbol}"
     case role
     when "voting"
