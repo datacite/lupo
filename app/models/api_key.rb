@@ -9,7 +9,7 @@ class ApiKey < ApplicationRecord
 
   validates_presence_of :client, :name
 
-  before_create :generate_key
+  before_create :initialize_api_key
 
   scope :active, -> { where(revoked_at: nil) }
 
@@ -36,13 +36,21 @@ class ApiKey < ApplicationRecord
 
   private
 
+    def initialize_api_key
+      generate_id
+      generate_key
+    end
+
+    def generate_id
+      self.id ||= SecureRandom.uuid
+    end
+
     def generate_key
       prefix = "DC."
       secret = SecureRandom.alphanumeric(32)
       plain = prefix + secret
 
       self.key = plain
-      # key_prefix = "DC." + first 8 secret chars (total 11 chars) for fast lookup against unique index
       self.key_prefix = prefix + secret[0, 8]
       self.key_hash = encrypt_password_sha256(plain)
     end

@@ -23,11 +23,10 @@ describe ApiKeysController, type: :request do
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
       post "/credentials/api-keys",
-           headers: basic_headers,
-           params: { data: { type: "api-keys", attributes: { name: "Dataverse key" } } }.to_json,
-           as: :json
+           { data: { type: "api-keys", attributes: { name: "Dataverse key" } } },
+           basic_headers
 
-      expect(response).to have_http_status(:created)
+      expect(last_response.status).to eq(201)
       expect(json.dig("data", "attributes", "name")).to eq("Dataverse key")
       key = json.dig("data", "attributes", "key")
       expect(key).to start_with("DC.")
@@ -47,31 +46,35 @@ describe ApiKeysController, type: :request do
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
       # hit an authenticated endpoint that returns 200 for client
-      get "/clients/#{client.symbol}", headers: basic_headers
-      expect(response).to have_http_status(:ok)
+      get "/clients/#{client.symbol}",
+          nil, basic_headers
+      expect(last_response.status).to eq(200)
     end
 
     it "allows basic auth using api key as username (password discarded)" do
       basic = ActionController::HttpAuthentication::Basic.encode_credentials(api_key, "")
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
-      get "/clients/#{client.symbol}", headers: basic_headers
-      expect(response).to have_http_status(:ok)
+      get "/clients/#{client.symbol}",
+          nil, basic_headers
+      expect(last_response.status).to eq(200)
     end
 
     it "allows basic auth using api key as username (with dummy password, which is discarded)" do
       basic = ActionController::HttpAuthentication::Basic.encode_credentials(api_key, "ignored")
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
-      get "/clients/#{client.symbol}", headers: basic_headers
-      expect(response).to have_http_status(:ok)
+      get "/clients/#{client.symbol}",
+          nil, basic_headers
+      expect(last_response.status).to eq(200)
     end
 
     it "allows Bearer with raw api key" do
       bearer_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer #{api_key}" }
 
-      get "/clients/#{client.symbol}", headers: bearer_headers
-      expect(response).to have_http_status(:ok)
+      get "/clients/#{client.symbol}",
+          nil, bearer_headers
+      expect(last_response.status).to eq(200)
     end
   end
 
@@ -81,17 +84,19 @@ describe ApiKeysController, type: :request do
       basic = ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, "12345")
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
-      get "/credentials/api-keys", headers: basic_headers
-      expect(response).to have_http_status(:ok)
+      get "/credentials/api-keys",
+          nil, basic_headers
+      expect(last_response.status).to eq(200)
       items = json["data"]
       expect(items.any? { |i| i.dig("attributes", "name") == "list-test" }).to be true
-      expect(items.first.dig("attributes", "id")).to be_present
+      expect(items.first["id"]).to be_present
       expect(items.first.dig("attributes", "created")).to be_present
     end
 
     it "returns 401 without valid credentials" do
-      get "/credentials/api-keys"
-      expect(response).to have_http_status(:unauthorized)
+      get "/credentials/api-keys",
+          nil
+      expect(last_response.status).to eq(401)
     end
   end
 
@@ -101,8 +106,9 @@ describe ApiKeysController, type: :request do
       basic = ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, "12345")
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
-      delete "/credentials/api-keys/#{k.id}", headers: basic_headers
-      expect(response).to have_http_status(:no_content)
+      delete "/credentials/api-keys/#{k.id}",
+             nil, basic_headers
+      expect(last_response.status).to eq(204)
 
       expect(k.reload.revoked_at).to be_present
     end

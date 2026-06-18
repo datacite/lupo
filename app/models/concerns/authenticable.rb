@@ -190,7 +190,7 @@ module Authenticable
       # API key as drop-in replacement for client password (username = client symbol)
       if username.include?(".") && user
         api_key = ApiKey.authenticate(password)
-        if api_key && api_key.client&.symbol&.downcase == user.client_id
+        if api_key && api_key.client&.symbol&.downcase == user.symbol.downcase
           # update last_used (throttled)
           if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
             api_key.update_column(:last_used_at, Time.zone.now)

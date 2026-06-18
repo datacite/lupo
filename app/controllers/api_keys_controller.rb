@@ -2,7 +2,6 @@
 
 class ApiKeysController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_include
   load_and_authorize_resource except: %i[index create]
 
   def index
