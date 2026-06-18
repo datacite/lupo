@@ -63,7 +63,18 @@ class User
       end
     elsif credentials.present?
       payload = decode_token(credentials)
-      @jwt = credentials
+      if payload.blank? || payload[:errors]
+        # Try as API key (drop-in Bearer support, non-JWT)
+        ak_payload = decode_api_key(credentials)
+        if ak_payload.present? && !ak_payload[:errors]
+          payload = ak_payload
+          @jwt = nil # keys are not JWTs
+        else
+          @jwt = credentials
+        end
+      else
+        @jwt = credentials
+      end
     end
 
     if payload.blank? || payload[:errors]
