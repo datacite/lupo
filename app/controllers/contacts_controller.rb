@@ -195,7 +195,6 @@ class ContactsController < ApplicationController
     end
 
   private
-
     def set_provider_contacts
       if @contact.valid? && @contact.provider.present?
 
@@ -205,10 +204,10 @@ class ContactsController < ApplicationController
         # Make sure no other contact with this provider claims these roles.
         contacts.where.not(id: @contact.id).each do | contact |
           # if !@contact.is_me?(contact)
-            puts "*****************************************************************"
-            puts "REMOVING ROLES 1111: contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-            contact.role_name = contact.remove_roles(Array.wrap(@contact.role_name))
-            puts "REMOVING ROLES 2222: contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
+          puts "*****************************************************************"
+          puts "REMOVING ROLES 1111: contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
+          contact.role_name = contact.remove_roles(Array.wrap(@contact.role_name))
+          puts "REMOVING ROLES 2222: contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
           # end
         end
 
