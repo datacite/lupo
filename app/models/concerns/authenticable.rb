@@ -153,10 +153,6 @@ module Authenticable
 
     # basic auth
     def decode_auth_param(username: nil, password: nil)
-      # Support sending the API key as the username in Basic auth (per ACs).
-      # Password is not required and is discarded.
-      # Keys are ~35 chars starting with "DC."; client symbols are <=18 chars, so use length to avoid
-      # mis-detecting client symbols that start with "DC." (e.g. DC.FOO).
       if username.present? && username.length > 20 && username.match?(/\ADC\./i)
         api_key = ApiKey.authenticate(username)
         if api_key
@@ -187,11 +183,9 @@ module Authenticable
         return get_payload(uid: uid, user: user, password: password.to_s)
       end
 
-      # API key as drop-in replacement for client password (username = client symbol)
       if username.include?(".") && user
         api_key = ApiKey.authenticate(password)
         if api_key && api_key.client&.symbol&.downcase == user.symbol.downcase
-          # update last_used (throttled)
           if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
             api_key.update_column(:last_used_at, Time.zone.now)
           end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ApiKey < ApplicationRecord
   include Passwordable
 
@@ -24,8 +22,6 @@ class ApiKey < ApplicationRecord
   def self.authenticate(token)
     return nil if token.blank?
 
-    # Use short prefix for lookup. key_prefix is "DC." + 8 chars (11 total).
-    # Match length exactly for the unique index lookup.
     prefix = token.to_s[0, 11]
     candidates = active.where(key_prefix: prefix)
 

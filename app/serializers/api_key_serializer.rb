@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ApiKeySerializer
   include JSONAPI::Serializer
 
@@ -9,7 +7,7 @@ class ApiKeySerializer
 
   attributes :name, :key_prefix, :created, :updated, :last_used_at, :revoked_at
 
-  # Only include the plaintext key on creation responses (controller responsibility)
+  # Only include the plaintext key on creation
   attribute :key, if: Proc.new { |object, params| params && params[:include_plain_key] } do |object|
     object.key
   end

@@ -36,7 +36,6 @@ class ApiKeysController < ApplicationController
     authorize! :create, api_key
 
     if api_key.save
-      # Return the plaintext key exactly once
       options = {
         params: {
           current_ability: current_ability,
