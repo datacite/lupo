@@ -60,7 +60,6 @@ class ApiKeysController < ApplicationController
   end
 
   private
-
     def load_client_context
       @client = current_user&.client_id.present? ? Client.find_by(symbol: current_user.client_id.upcase) : nil
     end

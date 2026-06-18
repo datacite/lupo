@@ -35,7 +35,6 @@ class ApiKey < ApplicationRecord
   end
 
   private
-
     def initialize_api_key
       generate_id
       generate_key

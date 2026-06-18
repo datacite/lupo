@@ -478,4 +478,3 @@ describe "API key authentication", type: :model do
     end
   end
 end
-

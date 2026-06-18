@@ -80,7 +80,7 @@ describe ApiKeysController, type: :request do
 
   describe "GET /credentials/api-keys" do
     it "lists keys using Basic client credentials" do
-      k = client.api_keys.create!(name: "list-test")
+      client.api_keys.create!(name: "list-test")
       basic = ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, "12345")
       basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
 
