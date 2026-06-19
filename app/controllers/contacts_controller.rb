@@ -241,6 +241,10 @@ class ContactsController < ApplicationController
           puts "**Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
           puts "**Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
         end
+
+        puts "--------Saved @@@contact #{@contact.email} with roles #{@contact.role_name} for provider #{@contact.provider.symbol}"
+        @contact.save
+        @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true))
       end
     end
 
