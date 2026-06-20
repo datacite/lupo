@@ -200,15 +200,20 @@ class ContactsController < ApplicationController
 
         contacts = @contact.provider.contacts.where(deleted_at: nil)
         provider = @contact.provider
-
+        puts "++++++++++++++++++++++++"
+        puts "1111"
         # Make sure no other contact with this provider claims these roles.
         # contacts.where.not(id: @contact.id).each do | contact |
         contacts.each do | contact |
-          if !contact.is_me?(contact)
+          puts "2222"
+          puts "****CHECKING CONTACT #{contact.email} contact_is_me? #{@contact.is_me?(contact)}"
+          if !@contact.is_me?(contact)
             old_role_name = contact.role_name.present? ? contact.role_name : []
             new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
+            puts "***OLD ROLE NAME FOR CONTACT #{contact.email}: #{old_role_name}  ***"
+            puts "***NEW ROLE NAME FOR CONTACT #{contact.email}: #{new_role_name}  ***"
             if old_role_name.sort != new_role_name.sort
-              contact.role_name = new_role_name
+              contact.update_column("role_name", new_role_name)
             end
           end
           contact.save
