@@ -205,9 +205,11 @@ class ContactsController < ApplicationController
         # contacts.where.not(id: @contact.id).each do | contact |
         contacts.each do | contact |
           if !contact.is_me?(contact)
-            puts "Removing roles #{Array.wrap(@contact.role_name)} from contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-            contact.role_name = contact.remove_roles(Array.wrap(@contact.role_name))
-            puts "After removing roles #{Array.wrap(@contact.role_name)}, contact #{contact.email} has roles #{contact.role_name} for provider #{@contact.provider.symbol}"
+            old_role_name = contact.role_name.present? ? contact.role_name : []
+            new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
+            if old_role_name.sort != new_role_name.sort
+              contact.update_column("role_name", new_role_name)
+            end
           end
           contact.save
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
