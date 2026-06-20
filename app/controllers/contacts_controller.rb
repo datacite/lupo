@@ -208,7 +208,7 @@ class ContactsController < ApplicationController
             old_role_name = contact.role_name.present? ? contact.role_name : []
             new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
             if old_role_name.sort != new_role_name.sort
-              contact.update_column("role_name", new_role_name)
+              contact.role_name = new_role_name
             end
           end
           contact.save
