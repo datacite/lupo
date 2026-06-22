@@ -349,6 +349,8 @@ class ProvidersController < ApplicationController
         # Clear provider role associations for this provider.
         @provider.contacts.where(deleted_at: nil).each { |contact|
           contact.role_name = []
+          contact.save
+          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         }
 
         # Reset provider role associations to the new ones for this provider.
@@ -370,21 +372,23 @@ class ProvidersController < ApplicationController
             contact.role_name |= [ target_role ]
             contact.given_name = target_given_name
             contact.family_name = target_family_name
+            contact.save
+            contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           end
         end
 
         # Save provider and contacts, and send export messages for provider and contacts.
-        @provider.save
-        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "++++++++Saved provider #{@provider.symbol}"
-        puts @provider.to_jsonapi.merge(slack_output: true)
+        # @provider.save
+        # @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        # puts "++++++++Saved provider #{@provider.symbol}"
+        # puts @provider.to_jsonapi.merge(slack_output: true)
 
-        @provider.contacts.where(deleted_at: nil).each do |contact|
-          contact.save
-          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-          puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
-          puts "**Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
-          puts "Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
+        # @provider.contacts.where(deleted_at: nil).each do |contact|
+        #   contact.save
+        #   contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        #   puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
+        #   puts "**Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
+        #   puts "Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
         end
       end
     end
