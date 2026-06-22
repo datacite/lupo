@@ -25,7 +25,7 @@ gem "elasticsearch-model", "~> 8.0", ">= 8.0.1", require: "elasticsearch/model"
 gem "elasticsearch-rails", "~> 8.0", ">= 8.0.1"
 gem "elastic-transport", "~> 8.0", ">= 8.0.1"
 gem "facets", "~> 3.2", require: false
-gem "faraday", "~> 2.14", ">= 2.14.1"
+gem "faraday", ">= 2.14.3"
 gem "faraday_middleware-aws-sigv4", "~> 1.0", ">= 1.0.1"
 # IMPORTANT!!!
 # We have monkey patched this gem -> config/initializers/serialization_core.rb
