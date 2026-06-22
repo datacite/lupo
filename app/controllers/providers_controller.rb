@@ -344,13 +344,11 @@ class ProvidersController < ApplicationController
     def set_provider_contacts
       if @provider.valid?
 
-        # @provider.contacts.load
+        @provider.contacts.load
 
         # Clear provider role associations for this provider.
         @provider.contacts.where(deleted_at: nil).each { |contact|
           contact.role_name = []
-          # contact.save
-          # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         }
 
         # Reset provider role associations to the new ones for this provider.
@@ -367,7 +365,6 @@ class ProvidersController < ApplicationController
             if contact.nil?
               contact = @provider.contacts.build(email: target_email)
               contact.role_name = []
-
             end
 
             contact.role_name |= [ target_role ]
