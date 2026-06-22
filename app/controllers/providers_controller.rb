@@ -384,6 +384,7 @@ class ProvidersController < ApplicationController
         @provider.save
         @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         puts "++++++++Saved provider #{@provider.symbol}"
+        puts @provider.to_jsonapi.merge(slack_output: true)
 
         @provider.contacts.each do |contact|
           contact.save
