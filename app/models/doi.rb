@@ -155,6 +155,7 @@ class Doi < ApplicationRecord
   before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
+  before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
@@ -2593,6 +2594,18 @@ class Doi < ApplicationRecord
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
       end
+  end
+
+  def update_field_of_science
+    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
+      if subject.is_a?(String)
+        sum += name_to_subject(subject)
+      elsif subject.is_a?(Hash)
+        sum += hsh_to_subject(subject)
+      end
+
+      sum
+    end.uniq
   end
 
   def update_rights_list
