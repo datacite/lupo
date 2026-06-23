@@ -13,6 +13,8 @@ on:
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
+    with:
+      run_gem_audit: true
   parallel-test:
     needs: lint
     uses: ./.github/workflows/parallel_ci.yml
