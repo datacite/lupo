@@ -9,10 +9,10 @@ class CreateApiKeys < ActiveRecord::Migration[7.2]
       t.datetime :last_used_at
       t.datetime :revoked_at
       t.timestamps
-    end
 
-    add_index :api_keys, :client_id
-    add_index :api_keys, :key_prefix, unique: true
-    add_index :api_keys, :revoked_at
+      t.index :client_id
+      t.index :key_prefix, unique: true
+      t.index :revoked_at
+    end
   end
 end
