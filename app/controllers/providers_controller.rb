@@ -364,7 +364,7 @@ class ProvidersController < ApplicationController
             contact = contacts.find { |c| c.email.downcase == target_email.downcase }
 
             if contact.nil?
-              contact = contacts.build(email: target_email)
+              contact = @provider.contacts.build(email: target_email)
               contact.role_name = []
             end
 
