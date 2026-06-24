@@ -384,7 +384,7 @@ class ProvidersController < ApplicationController
           puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "**Sent CONTACT export FOR #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
-        end   
+        end
 
         # Send provider export message.
         @provider.save
@@ -393,7 +393,7 @@ class ProvidersController < ApplicationController
         puts "**Sent PROVIDER export FOR #{@provider.symbol}"
         puts @provider.to_jsonapi.merge(slack_output: true)
 
-         # Send contact export messages.
+        # Send contact export messages.
         @provider.contacts.where(deleted_at: nil).each do |contact|
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
