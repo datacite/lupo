@@ -249,6 +249,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json["data"].size).to eq(10)
       json["data"].each do |doi|
         expect(doi.dig("attributes")).to include("xml")
+        expect(doi.dig("attributes", "xml")).to be_present
       end
     end
 
