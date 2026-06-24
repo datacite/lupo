@@ -346,6 +346,7 @@ describe WorkType do
           nodes {
             id
             doi
+            xml
             publisher {
               name
               publisherIdentifier
@@ -515,6 +516,7 @@ describe WorkType do
       response =
         LupoSchema.execute(query, variables: { first: 4, cursor: nil }).as_json
 
+      pp response
       expect(response.dig("data", "works", "totalCount")).to eq(14)
       expect(response.dig("data", "works", "totalCountFromCrossref")).to eq(
         116_990_655,
@@ -545,6 +547,9 @@ describe WorkType do
         "schemeUri" => "https://ror.org/",
         "lang" => "en"
       })
+      expect(
+        response.dig("data", "works", "nodes", 0, "xml"),
+      ).to be_present
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
 
       response =
