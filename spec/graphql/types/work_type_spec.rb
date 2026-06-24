@@ -516,7 +516,6 @@ describe WorkType do
       response =
         LupoSchema.execute(query, variables: { first: 4, cursor: nil }).as_json
 
-      pp response
       expect(response.dig("data", "works", "totalCount")).to eq(14)
       expect(response.dig("data", "works", "totalCountFromCrossref")).to eq(
         116_990_655,
