@@ -196,6 +196,7 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
+=begin
       if @contact.valid? && @contact.provider.present?
 
         contacts = @contact.provider.contacts.where(deleted_at: nil)
@@ -258,6 +259,7 @@ class ContactsController < ApplicationController
         @contact.save
         @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true))
       end
+=end
     end
 
 

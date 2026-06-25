@@ -349,7 +349,6 @@ class ProvidersController < ApplicationController
         # Clear provider role associations for this provider.
         contacts.where(deleted_at: nil).each { |contact|
           contact.role_name = []
-          contact.save
         }
 
         # Reset provider role associations to the new ones for this provider.
@@ -371,7 +370,6 @@ class ProvidersController < ApplicationController
             contact.role_name |= [ target_role ]
             contact.given_name = target_given_name
             contact.family_name = target_family_name
-            contact.save
           end
         end
 
@@ -390,7 +388,6 @@ class ProvidersController < ApplicationController
         puts "++++++++Saved provider #{@provider.symbol}"
         puts "**Sent PROVIDER export FOR #{@provider.symbol}"
         puts @provider.to_jsonapi.merge(slack_output: true)
-
       end
     end
 
