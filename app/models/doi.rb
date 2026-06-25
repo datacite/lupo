@@ -686,7 +686,6 @@ class Doi < ApplicationRecord
       "fields_of_science" => fields_of_science,
       "fields_of_science_repository" => fields_of_science_repository,
       "fields_of_science_combined" => fields_of_science_combined,
-      "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
       "agency" => agency,

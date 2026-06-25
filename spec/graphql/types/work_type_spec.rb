@@ -346,6 +346,7 @@ describe WorkType do
           nodes {
             id
             doi
+            xml
             publisher {
               name
               publisherIdentifier
@@ -545,6 +546,9 @@ describe WorkType do
         "schemeUri" => "https://ror.org/",
         "lang" => "en"
       })
+      expect(
+        response.dig("data", "works", "nodes", 0, "xml"),
+      ).to be_present
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
 
       response =
