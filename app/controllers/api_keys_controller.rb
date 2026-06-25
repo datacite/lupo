@@ -7,21 +7,29 @@ class ApiKeysController < ApplicationController
   def index
     load_client_context
 
+    include_revoked = params[:include_revoked] == "true"
+
     if @client.nil?
       if current_user&.is_admin_or_staff?
         authorize! :manage, ApiKey
-        api_keys = ApiKey.active.order(created_at: :desc)
+        api_keys = include_revoked ? ApiKey.all : ApiKey.active
       else
         raise CanCan::AccessDenied
       end
     else
+      if include_revoked && !current_user&.is_admin_or_staff?
+        raise CanCan::AccessDenied
+      end
       authorize! :read, @client
-      api_keys = @client.api_keys.active.order(created_at: :desc)
+      api_keys = include_revoked ? @client.api_keys : @client.api_keys.active
     end
 
-    options = {}
-    options[:meta] = { total: api_keys.count }
-    options[:params] = { current_ability: current_ability }
+    api_keys = order_api_keys(api_keys, include_revoked)
+
+    options = {
+      meta: { total: api_keys.count },
+      params: { current_ability: current_ability },
+    }
 
     render json: ApiKeySerializer.new(api_keys, options).serializable_hash
   end
@@ -59,8 +67,19 @@ class ApiKeysController < ApplicationController
   end
 
   private
+
     def load_client_context
       @client = current_user&.client_id.present? ? Client.find_by(symbol: current_user.client_id.upcase) : nil
+    end
+
+    def order_api_keys(scope, include_revoked)
+      if include_revoked
+        scope.order(
+          Arel.sql("revoked_at IS NULL DESC, revoked_at DESC, created_at DESC"),
+        )
+      else
+        scope.order(created_at: :desc)
+      end
     end
 
     def safe_params

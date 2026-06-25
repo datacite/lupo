@@ -5,6 +5,21 @@ require "rails_helper"
 describe ApiKeysController, type: :request do
   include Passwordable
 
+  let(:admin) { create(:provider, symbol: "ADMIN") }
+  let(:admin_bearer) do
+    Client.generate_token(
+      role_id: "staff_admin",
+      uid: admin.symbol,
+      password: admin.password,
+    )
+  end
+  let(:admin_headers) do
+    {
+      "HTTP_ACCEPT" => "application/vnd.api+json",
+      "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer,
+    }
+  end
+
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: "DATACITE.TESTKEY", password_input: "12345") }
   let(:bearer) do
@@ -91,6 +106,23 @@ describe ApiKeysController, type: :request do
       expect(items.any? { |i| i.dig("attributes", "name") == "list-test" }).to be true
       expect(items.first["id"]).to be_present
       expect(items.first.dig("attributes", "created")).to be_present
+    end
+
+    it "includes revoked keys when requested by an admin" do
+      active_key = client.api_keys.create!(name: "active-key")
+      revoked_key = client.api_keys.create!(name: "revoked-key")
+      revoked_key.revoke!
+
+      get "/credentials/api-keys?include_revoked=true",
+          nil, admin_headers
+
+      expect(last_response.status).to eq(200)
+      items = json["data"]
+
+      expect(items.map { |item| item.dig("attributes", "name") }).to include("active-key", "revoked-key")
+      expect(items.find { |item| item.dig("attributes", "name") == "revoked-key" }.dig("attributes", "revokedAt")).to be_present
+      expect(items.find { |item| item.dig("attributes", "name") == "active-key" }.dig("attributes", "revokedAt")).to be_nil
+      expect(active_key.reload.revoked_at).to be_nil
     end
 
     it "returns 401 without valid credentials" do
