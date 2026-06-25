@@ -70,6 +70,9 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(10)
       expect(json.dig("meta", "total")).to eq(10)
+      json["data"].each do |doi|
+        expect(doi.dig("attributes", "xml")).not_to be_present
+      end
     end
 
     it "returns dois with scroll" do
