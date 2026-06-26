@@ -245,7 +245,7 @@ class ContactsController < ApplicationController
         provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true)) if !provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         puts "++++++++++Saved provider #{@contact.provider.symbol}"
         puts provider.inspect
-ß
+
         contacts.each do |contact|
           contact.save
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
@@ -257,37 +257,17 @@ class ContactsController < ApplicationController
         puts "--------XXXSaved @@@contact #{@contact.email} with roles #{@contact.role_name} for provider #{@contact.provider.symbol}"
         @contact.save
         @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true))
-    endß
+      end
 
-=begin
-    def set_provider_contacts
-      if @contact.valid? && @contact.provider.present?
 
-        # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.where(deleted_at: nil).each do | contact |
-          if !@contact.is_me?(contact)
-            old_role_name = contact.role_name.present? ? contact.role_name : []
-            new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
-            if old_role_name.sort != new_role_name.sort
-              contact.update_column("role_name", new_role_name)
-              contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-            end
+
+      def remove_provider_contacts
+        Array.wrap(@contact.role_name).each do | role |
+          if @contact.has_provider_role?(role)
+            @contact.set_provider_role!(role, nil)
           end
         end
-
-        # Clear provider role associations for this contact.
-        Contact.roles.each do | role |
-          @contact.set_provider_role(role, nil)
-        end
-
-        # Reset provider role associations for this contact.
-        @contact.provider.contacts.where(deleted_at: nil).each do |contact|
-          contact&.role_name&.each do | role |
-            if contact.has_role?(role)
-              contact.set_provider_role(role, { 'email': contact.email || nil, 'given_name': contact.given_name || nil, 'family_name': contact.family_name || nil })
-            end
-          end
-        end
+        @contact.role_name = []
 
         @contact.provider.save
         @contact.provider.send_provider_export_message(@contact.provider.to_jsonapi.merge(slack_output: true)) if !@contact.provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
@@ -295,48 +275,32 @@ class ContactsController < ApplicationController
         @contact.save
         @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
       end
-    end
-=end
 
-    def remove_provider_contacts
-      Array.wrap(@contact.role_name).each do | role |
-        if @contact.has_provider_role?(role)
-          @contact.set_provider_role!(role, nil)
+      def safe_params
+        if params[:data].blank?
+          fail JSON::ParserError,
+               "You need to provide a payload following the JSONAPI spec"
         end
+
+        ActiveModelSerializers::Deserialization.jsonapi_parse!(
+          params,
+          only: [
+            :uid,
+            :givenName,
+            :familyName,
+            :email,
+            :roleName,
+            { roleName: [] },
+            :provider,
+            "fromSalesforce",
+          ],
+          keys: {
+            "givenName" => :given_name,
+            "familyName" => :family_name,
+            "roleName" => :role_name,
+            "fromSalesforce" => :from_salesforce,
+          },
+        )
       end
-      @contact.role_name = []
-
-      @contact.provider.save
-      @contact.provider.send_provider_export_message(@contact.provider.to_jsonapi.merge(slack_output: true)) if !@contact.provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-
-      @contact.save
-      @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-    end
-
-    def safe_params
-      if params[:data].blank?
-        fail JSON::ParserError,
-             "You need to provide a payload following the JSONAPI spec"
-      end
-
-      ActiveModelSerializers::Deserialization.jsonapi_parse!(
-        params,
-        only: [
-          :uid,
-          :givenName,
-          :familyName,
-          :email,
-          :roleName,
-          { roleName: [] },
-          :provider,
-          "fromSalesforce",
-        ],
-        keys: {
-          "givenName" => :given_name,
-          "familyName" => :family_name,
-          "roleName" => :role_name,
-          "fromSalesforce" => :from_salesforce,
-        },
-      )
-    end
+  end
 end
