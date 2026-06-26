@@ -196,7 +196,6 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
-=begin
       if @contact.valid? && @contact.provider.present?
 
         contacts = @contact.provider.contacts.where(deleted_at: nil)
@@ -246,22 +245,19 @@ class ContactsController < ApplicationController
         provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true)) if !provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         puts "++++++++++Saved provider #{@contact.provider.symbol}"
         puts provider.inspect
-
+ß
         contacts.each do |contact|
           contact.save
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-          puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-          puts "**Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-          puts "**Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
+          puts "--------XXXSaved contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
+          puts "**XXXSent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
+          puts "**XXXContact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
         end
 
-        puts "--------Saved @@@contact #{@contact.email} with roles #{@contact.role_name} for provider #{@contact.provider.symbol}"
+        puts "--------XXXSaved @@@contact #{@contact.email} with roles #{@contact.role_name} for provider #{@contact.provider.symbol}"
         @contact.save
         @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true))
-      end
-=end
-    end
-
+    endß
 
 =begin
     def set_provider_contacts
