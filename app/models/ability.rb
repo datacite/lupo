@@ -153,6 +153,41 @@ class Ability
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
       can %i[read], :access_datafile
+    elsif user.role_id == "client_api" && user.client.present? && user.client.is_active == "\x01"
+      can %i[read], Provider
+      can %i[read], Client, symbol: user.client_id.upcase
+      can %i[read], ClientPrefix, client_id: user.client_id
+      can %i[
+        read
+        destroy
+        update
+        register_url
+        validate
+        undo
+        get_url
+        read_landing_page_results
+      ],
+          Doi,
+          client_id: user.client_id
+      can %i[new create], Doi do |doi|
+        doi.client.prefixes.where(uid: doi.prefix).present? ||
+          doi.type == "OtherDoi"
+      end
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
+    elsif user.role_id == "client_api" && user.client.present?
+      can %i[read], Provider
+      can %i[read], Client, symbol: user.client_id.upcase
+      can %i[read], ClientPrefix, client_id: user.client_id
+      can %i[read], Doi, client_id: user.client_id
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
     elsif user.role_id == "client_admin" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase

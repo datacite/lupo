@@ -158,11 +158,8 @@ module Authenticable
         if api_key
           client = api_key.client
           if client
-            # update last_used (throttled)
-            if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
-              api_key.update_column(:last_used_at, Time.zone.now)
-            end
-            return get_payload(uid: client.uid, user: client)
+            touch_api_key_last_used(api_key)
+            return payload_for_api_key(api_key, client)
           end
         end
         return {}
@@ -186,10 +183,9 @@ module Authenticable
       if username.include?(".") && user
         api_key = ApiKey.authenticate(password)
         if api_key && api_key.client&.symbol&.downcase == user.symbol.downcase
-          if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
-            api_key.update_column(:last_used_at, Time.zone.now)
-          end
-          return get_payload(uid: username.downcase, user: user, password: password.to_s)
+          touch_api_key_last_used(api_key)
+          # Do not pass the API key secret through as password (handle system).
+          return payload_for_api_key(api_key, user)
         end
       end
 
@@ -204,12 +200,8 @@ module Authenticable
       client = api_key.client
       return { errors: "Invalid API key." } unless client
 
-      # throttle last_used
-      if api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
-        api_key.update_column(:last_used_at, Time.zone.now)
-      end
-
-      get_payload(uid: client.uid, user: client)
+      touch_api_key_last_used(api_key)
+      payload_for_api_key(api_key, client)
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
@@ -242,6 +234,21 @@ module Authenticable
       payload
     end
 
+    def payload_for_api_key(api_key, client)
+      get_payload(uid: client.uid, user: client).merge(
+        "role_id" => "client_api",
+        "auth_method" => "api_key",
+        "api_key_id" => api_key.id,
+        "api_key_prefix" => api_key.key_prefix,
+      )
+    end
+
+    def touch_api_key_last_used(api_key)
+      return unless api_key.last_used_at.nil? || api_key.last_used_at < 15.minutes.ago
+
+      api_key.update_column(:last_used_at, Time.zone.now)
+    end
+
     # constant-time comparison algorithm to prevent timing attacks
     # from Devise
     def secure_compare(a, b)
@@ -271,7 +278,7 @@ module Authenticable
           user.provider_id == doi.provider_id
         return false
       end
-      if %w[client_admin client_user user temporary].include?(user.role_id) &&
+      if %w[client_admin client_api client_user user temporary].include?(user.role_id) &&
           user.client_id.present? &&
           user.client_id == doi.client_id
         return false

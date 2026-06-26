@@ -118,6 +118,17 @@ describe User, type: :model, elasticsearch: true do
         ).to be false
       end
 
+      it "client_api" do
+        token =
+          User.generate_token(
+            role_id: "client_api", client_id: "datacite.rph",
+          )
+        subject = User.new(token)
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
+      end
+
       it "client_user" do
         token =
           User.generate_token(role_id: "client_user", client_id: "datacite.rph")
@@ -126,6 +137,7 @@ describe User, type: :model, elasticsearch: true do
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false
       end
+
 
       it "user" do
         token = User.generate_token(role_id: "user")
@@ -239,6 +251,17 @@ describe User, type: :model, elasticsearch: true do
         ).to be false
       end
 
+      it "client_api" do
+        token =
+          User.generate_token(
+            role_id: "client_api", client_id: "datacite.rph",
+          )
+        subject = User.new(token)
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
+      end
+
       it "client_user" do
         token =
           User.generate_token(role_id: "client_user", client_id: "datacite.rph")
@@ -247,6 +270,7 @@ describe User, type: :model, elasticsearch: true do
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false
       end
+
 
       it "user" do
         token = User.generate_token(role_id: "user")
@@ -424,8 +448,12 @@ describe "API key authentication", type: :model do
         password: "",
       )
       expect(payload["uid"]).to eq(client.symbol.downcase)
-      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["role_id"]).to eq("client_api")
       expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
+      expect(payload["api_key_id"]).to eq(api_key_record.id)
+      expect(payload).not_to have_key("password")
     end
 
     it "authenticates with api key as username even with dummy password" do
@@ -434,6 +462,8 @@ describe "API key authentication", type: :model do
         password: "ignored",
       )
       expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["role_id"]).to eq("client_api")
     end
   end
 
@@ -444,8 +474,10 @@ describe "API key authentication", type: :model do
         password: plain_key,
       )
       expect(payload["uid"]).to eq(client.symbol.downcase)
-      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["role_id"]).to eq("client_api")
       expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
     end
 
     it "still prefers the real password when both could match" do
@@ -454,6 +486,9 @@ describe "API key authentication", type: :model do
         password: "12345",
       )
       expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["auth_method"]).to be_nil
+      expect(payload["api_key_prefix"]).to be_nil
     end
 
     it "rejects wrong key" do
@@ -469,7 +504,9 @@ describe "API key authentication", type: :model do
     it "returns payload for valid key" do
       payload = client.decode_api_key(plain_key)
       expect(payload["client_id"]).to eq(client.symbol.downcase)
-      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["role_id"]).to eq("client_api")
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
     end
 
     it "returns error for invalid" do

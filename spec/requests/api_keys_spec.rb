@@ -145,4 +145,102 @@ describe ApiKeysController, type: :request do
       expect(k.reload.revoked_at).to be_present
     end
   end
+
+  describe "API key cannot manage credentials" do
+    let(:api_key_record) { client.api_keys.create!(name: "machine") }
+    let(:plain_key) { api_key_record.key }
+    let(:other_key) { client.api_keys.create!(name: "other") }
+
+    it "rejects list with API key as Bearer" do
+      get "/credentials/api-keys",
+          nil,
+          {
+            "HTTP_ACCEPT" => "application/vnd.api+json",
+            "HTTP_AUTHORIZATION" => "Bearer #{plain_key}",
+          }
+      expect(last_response.status).to eq(403)
+    end
+
+    it "rejects create with API key as Basic username" do
+      basic = ActionController::HttpAuthentication::Basic.encode_credentials(plain_key, "")
+      post "/credentials/api-keys",
+           { data: { type: "api-keys", attributes: { name: "sibling" } } },
+           { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
+      expect(last_response.status).to eq(403)
+      expect(client.api_keys.where(name: "sibling")).to be_empty
+    end
+
+    it "rejects create with client symbol + API key as password" do
+      basic = ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, plain_key)
+      post "/credentials/api-keys",
+           { data: { type: "api-keys", attributes: { name: "sibling" } } },
+           { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
+      expect(last_response.status).to eq(403)
+    end
+
+    it "rejects revoke with API key Bearer" do
+      delete "/credentials/api-keys/#{other_key.id}",
+             nil,
+             {
+               "HTTP_ACCEPT" => "application/vnd.api+json",
+               "HTTP_AUTHORIZATION" => "Bearer #{plain_key}",
+             }
+      expect(last_response.status).to eq(403)
+      expect(other_key.reload.revoked_at).to be_nil
+    end
+
+    it "still allows DOI/client API with API key Bearer" do
+      get "/clients/#{client.symbol}",
+          nil,
+          {
+            "HTTP_ACCEPT" => "application/vnd.api+json",
+            "HTTP_AUTHORIZATION" => "Bearer #{plain_key}",
+          }
+      expect(last_response.status).to eq(200)
+    end
+
+    it "allows credential management with JWT (password session)" do
+      get "/credentials/api-keys", nil, headers
+      expect(last_response.status).to eq(200)
+    end
+
+    it "rejects list with JWT that has client_api role (no ApiKey ability)" do
+      api_jwt = Client.generate_token(
+        role_id: "client_api",
+        uid: client.symbol.downcase,
+        provider_id: provider.symbol.downcase,
+        client_id: client.symbol.downcase,
+      )
+      get "/credentials/api-keys",
+          nil,
+          {
+            "HTTP_ACCEPT" => "application/vnd.api+json",
+            "HTTP_AUTHORIZATION" => "Bearer #{api_jwt}",
+          }
+      expect(last_response.status).to eq(403)
+    end
+  end
+
+  describe "POST /token rejects API key credentials" do
+    it "does not mint a token when password is an API key" do
+      api_key = client.api_keys.create!(name: "no-token")
+      params =
+        "grant_type=password&username=#{client.symbol}&password=#{CGI.escape(api_key.key)}"
+      post "/token", params
+
+      expect(last_response.status).to eq(400)
+      expect(json.fetch("errors", {}).first["title"]).to eq(
+        "Wrong account ID or password.",
+      )
+      expect(json["access_token"]).to be_blank
+    end
+
+    it "mints a token with the real client password" do
+      params = "grant_type=password&username=#{client.symbol}&password=12345"
+      post "/token", params
+
+      expect(last_response.status).to eq(200)
+      expect(json["access_token"]).to be_present
+    end
+  end
 end

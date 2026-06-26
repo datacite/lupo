@@ -2,6 +2,8 @@
 
 class ApiKeysController < ApplicationController
   before_action :authenticate_user!
+  before_action :reject_api_key_credentials!
+
   load_and_authorize_resource except: %i[index create]
 
   def index
@@ -20,7 +22,7 @@ class ApiKeysController < ApplicationController
       if include_revoked && !current_user&.is_admin_or_staff?
         raise CanCan::AccessDenied
       end
-      authorize! :read, @client
+      authorize_api_key_index!(@client)
       api_keys = include_revoked ? @client.api_keys : @client.api_keys.active
     end
 
@@ -38,9 +40,7 @@ class ApiKeysController < ApplicationController
     load_client_context
     raise ActiveRecord::RecordNotFound unless @client
 
-    authorize! :read, @client
     api_key = @client.api_keys.build(safe_params)
-
     authorize! :create, api_key
 
     if api_key.save
@@ -67,6 +67,20 @@ class ApiKeysController < ApplicationController
   end
 
   private
+    def reject_api_key_credentials!
+      return unless current_user&.api_key_authenticated?
+
+      raise CanCan::AccessDenied,
+            "API keys cannot manage credentials; use the client password."
+    end
+
+    def authorize_api_key_index!(client)
+      probe = client.api_keys.build
+      unless can?(:manage, probe) || can?(:read, probe)
+        raise CanCan::AccessDenied
+      end
+    end
+
     def load_client_context
       @client = current_user&.client_id.present? ? Client.find_by(symbol: current_user.client_id.upcase) : nil
     end
