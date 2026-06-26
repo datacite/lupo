@@ -46,6 +46,12 @@ describe ApiKeysController, type: :request do
       key = json.dig("data", "attributes", "key")
       expect(key).to start_with("DC.")
       expect(json.dig("data", "id")).to be_present  # uuid
+      expect(json.dig("data", "relationships", "client", "data", "id")).to eq(
+        client.symbol,
+      )
+      expect(json.dig("data", "relationships", "client", "data", "type")).to eq(
+        "clients",
+      )
     end
   end
 
@@ -123,6 +129,38 @@ describe ApiKeysController, type: :request do
       expect(items.find { |item| item.dig("attributes", "name") == "revoked-key" }.dig("attributes", "revokedAt")).to be_present
       expect(items.find { |item| item.dig("attributes", "name") == "active-key" }.dig("attributes", "revokedAt")).to be_nil
       expect(active_key.reload.revoked_at).to be_nil
+    end
+
+    it "includes own revoked keys for client password when include_revoked=true" do
+      client.api_keys.create!(name: "active-key")
+      revoked_key = client.api_keys.create!(name: "revoked-key")
+      revoked_key.revoke!
+
+      basic = ActionController::HttpAuthentication::Basic.encode_credentials(client.symbol, "12345")
+      basic_headers = { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => basic }
+
+      get "/credentials/api-keys?include_revoked=true", nil, basic_headers
+
+      expect(last_response.status).to eq(200)
+      names = json["data"].map { |item| item.dig("attributes", "name") }
+      expect(names).to include("active-key", "revoked-key")
+    end
+
+    it "returns 403 for provider credentials (no client_id)" do
+      basic = ActionController::HttpAuthentication::Basic.encode_credentials(provider.symbol, "12345")
+      # provider factory may not set password — use token instead if needed
+      provider_token = Client.generate_token(
+        role_id: "provider_admin",
+        uid: provider.symbol.downcase,
+        provider_id: provider.symbol.downcase,
+      )
+      get "/credentials/api-keys",
+          nil,
+          {
+            "HTTP_ACCEPT" => "application/vnd.api+json",
+            "HTTP_AUTHORIZATION" => "Bearer #{provider_token}",
+          }
+      expect(last_response.status).to eq(403)
     end
 
     it "returns 401 without valid credentials" do

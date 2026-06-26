@@ -20,5 +20,8 @@ class ApiKeySerializer
     object.updated_at&.iso8601
   end
 
-  belongs_to :client, record_type: :clients, serializer: :ApiKeyClient
+  belongs_to :client,
+             record_type: :clients,
+             serializer: :ApiKeyClient,
+             id_method_name: :symbol
 end

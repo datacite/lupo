@@ -9,7 +9,7 @@ class ApiKeysController < ApplicationController
   def index
     load_client_context
 
-    include_revoked = params[:include_revoked] == "true"
+    include_revoked = ActiveModel::Type::Boolean.new.cast(params[:include_revoked])
 
     if @client.nil?
       if current_user&.is_admin_or_staff?
@@ -19,9 +19,6 @@ class ApiKeysController < ApplicationController
         raise CanCan::AccessDenied
       end
     else
-      if include_revoked && !current_user&.is_admin_or_staff?
-        raise CanCan::AccessDenied
-      end
       authorize_api_key_index!(@client)
       api_keys = include_revoked ? @client.api_keys : @client.api_keys.active
     end
