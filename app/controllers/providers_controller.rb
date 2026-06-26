@@ -203,7 +203,7 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      set_provider_contacts
+      set_provider_contacts_p
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
@@ -222,7 +222,7 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      set_provider_contacts
+      set_provider_contacts_p
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
@@ -341,7 +341,7 @@ class ProvidersController < ApplicationController
     end
 
   private
-    def set_provider_contacts
+    def set_provider_contacts_p
       if @provider.valid?
 
         contacts = @provider.contacts.load
@@ -376,7 +376,7 @@ class ProvidersController < ApplicationController
         # Send contact export messages.
         contacts.each do |contact|
           contact.save
-          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+          # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "**Sent CONTACT export FOR #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
@@ -384,7 +384,7 @@ class ProvidersController < ApplicationController
 
         # Send provider export message.
         @provider.save
-        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        # @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         puts "++++++++Saved provider #{@provider.symbol}"
         puts "**Sent PROVIDER export FOR #{@provider.symbol}"
         puts @provider.to_jsonapi.merge(slack_output: true)
