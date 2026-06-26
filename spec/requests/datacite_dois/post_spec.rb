@@ -279,10 +279,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                                                     "subjectScheme" => "FOR",
-                                                                    "classificationCode" => "080505" },
-                                                                  { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
-                                                                    "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }
+                                                                    "classificationCode" => "080505" }
                                                                   ])
         expect(json.dig("data", "attributes", "contributors")).to eq([{ "affiliation" => [],
                                                                         "contributorType" => "DataManager",
@@ -590,7 +587,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                         "edition" => "1",
                                                                         "contributors" => [
                                                                             "contributorType" => "ProjectLeader",
-                                                                            "name" => "Hallett, Richard",
+                                                                            "name" => "Richard, Hallett",
                                                                             "givenName" => "Richard",
                                                                             "familyName" => "Hallett",
                                                                             "nameType" => "Personal"
@@ -2062,10 +2059,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "subjectScheme" => "FOR",
                                                                     "classificationCode" => "001"
-                                                                  },
-                                                                  { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
-                                                                    "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }])
+                                                                  }])
       end
     end
 
@@ -2558,10 +2552,7 @@ describe DataciteDoisController, type: :request, vcr: true do
                                                                     "subject" => "80505 Web Technologies (excl. Web Search)",
                                                                     "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
                                                                     "subjectScheme" => "FOR",
-                                                                    "classificationCode" => "080505" },
-                                                                  { "schemeUri" => "http://www.oecd.org/science/inno/38235147.pdf",
-                                                                    "subject" => "FOS: Computer and information sciences",
-                                                                    "subjectScheme" => "Fields of Science and Technology (FOS)" }
+                                                                    "classificationCode" => "080505" }
                                                                   ])
         expect(json.dig("data", "attributes", "contributors")).to eq([{ "affiliation" => [],
                                                                         "contributorType" => "DataManager",

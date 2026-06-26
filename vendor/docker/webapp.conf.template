@@ -16,6 +16,7 @@ server {
 
     error_log stderr;
 
+
     location / {
         # enable CORS
         set $cors 'true';
@@ -31,6 +32,9 @@ server {
             add_header 'Access-Control-Allow-Headers' 'Accept,Access-Control-Allow-Origin,Access-Control-Expose-Headers,Access-Control-Allow-Methods,Access-Control-Allow-Headers,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Mx-ReqToken,X-Requested-With' always;
             # required to be able to read Authorization header in frontend
             add_header 'Access-Control-Expose-Headers' 'Authorization' always;
+
+            # Return Lupo version
+            add_header 'X-LupoVersion' '${GIT_TAG}' always;
         }
 
         # 2 if are required, nginx treats each if block as a different context
@@ -42,6 +46,10 @@ server {
             add_header 'Access-Control-Max-Age' 1728000;
             add_header 'Content-Type' 'text/plain charset=UTF-8';
             add_header 'Content-Length' 0;
+
+            # Return Lupo version
+            add_header 'X-LupoVersion' '${GIT_TAG}' always;
+
             return 204;
         }
     }

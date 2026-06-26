@@ -126,7 +126,7 @@ GEM
       logger (~> 1.7)
       racc (~> 1.7)
     bigdecimal (3.3.1)
-    bolognese (2.6.1)
+    bolognese (2.7.0)
       activesupport (~> 8.1, >= 8.1.2)
       bibtex-ruby (~> 6.2)
       builder (~> 3.3)
@@ -351,7 +351,7 @@ GEM
     hashie (5.1.0)
       logger
     htmlentities (4.4.2)
-    i18n (1.14.8)
+    i18n (1.15.0)
       concurrent-ruby (~> 1.0)
     io-console (0.8.2)
     irb (1.17.0)
@@ -786,7 +786,7 @@ DEPENDENCIES
   aws-sdk-sqs (~> 1.112)
   base32-url (~> 0.7.0)
   batch-loader (~> 2.0, >= 2.0.6)
-  bolognese (~> 2.6.0)
+  bolognese (~> 2.7)
   bootsnap (~> 1.23)
   brakeman (~> 8.0, >= 8.0.4)
   bullet (~> 8.1)
@@ -864,4 +864,4 @@ DEPENDENCIES
   webmock (~> 3.26, >= 3.26.2)
 
 BUNDLED WITH
-  4.0.3
+   2.6.9

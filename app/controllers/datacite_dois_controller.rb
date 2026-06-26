@@ -181,7 +181,7 @@ class DataciteDoisController < ApplicationController
       end
 
       # Pluck XML from DB if params[:detail] is true
-      if params[:detail] == "true"
+      if params[:detail]
         doi_ids = results.map { |r| r._source["doi"] }.compact
         xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
 
