@@ -342,14 +342,19 @@ class ProvidersController < ApplicationController
 
   private
     def set_provider_contacts_p
+      puts "####IN SET_PROVIDER_CONTACTS_P - 1111"
       if @provider.valid?
 
-        contacts = @provider.contacts.load
+        contacts = @provider.contacts.where(deleted_at: nil).load
 
         # Clear provider role associations for this provider.
-        contacts.where(deleted_at: nil).each { |contact|
+        contacts.each { |contact|
           contact.role_name = []
         }
+
+        puts JSON.pretty_generate(contacts.as_json)
+
+        puts "####IN SET_PROVIDER_CONTACTS_P - 2222"
 
         # Reset provider role associations to the new ones for this provider.
         Contact.roles.each do | target_role |
@@ -373,14 +378,24 @@ class ProvidersController < ApplicationController
           end
         end
 
+        puts JSON.pretty_generate(contacts.as_json)
+
+        puts "####IN SET_PROVIDER_CONTACTS_P - 3333"
+
         # Send contact export messages.
         contacts.each do |contact|
           contact.save
-          # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           puts "--------Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "**Sent CONTACT export FOR #{contact.email} with roles #{contact.role_name} for provider #{@provider.symbol}"
           puts "Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
+          puts "------------------------------------------------------"
+          puts JSON.pretty_generate(contact.as_json)
+          puts contact.to_jsonapi.merge(slack_output: true)
+          puts "------------------------------------------------------"
         end
+
+        puts "####IN SET_PROVIDER_CONTACTS_P - 4444"
 
         # Send provider export message.
         @provider.save
@@ -388,6 +403,9 @@ class ProvidersController < ApplicationController
         puts "++++++++Saved provider #{@provider.symbol}"
         puts "**Sent PROVIDER export FOR #{@provider.symbol}"
         puts @provider.to_jsonapi.merge(slack_output: true)
+
+        puts JSON.pretty_generate(@provider.as_json)
+        puts "####IN SET_PROVIDER_CONTACTS_P - 5555"
       end
     end
 
