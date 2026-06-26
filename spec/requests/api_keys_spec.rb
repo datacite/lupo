@@ -147,7 +147,7 @@ describe ApiKeysController, type: :request do
     end
 
     it "returns 403 for provider credentials (no client_id)" do
-      basic = ActionController::HttpAuthentication::Basic.encode_credentials(provider.symbol, "12345")
+      ActionController::HttpAuthentication::Basic.encode_credentials(provider.symbol, "12345")
       # provider factory may not set password — use token instead if needed
       provider_token = Client.generate_token(
         role_id: "provider_admin",
