@@ -71,7 +71,7 @@ end
 
 group :development, :test do
   gem "bullet", "~> 8.1"
-  gem "byebug", "~> 13.0", platforms: %i[mri mingw x64_mingw]
+  gem "byebug", "~> 13.0", platforms: %i[mri windows]
   gem "rspec-rails", "~> 8.0", ">= 8.0.4"
 end
 
