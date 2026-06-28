@@ -342,19 +342,15 @@ class ProvidersController < ApplicationController
 
   private
     def set_provider_contacts_p
-      puts "####IN SET_PROVIDER_CONTACTS_P - 1111"
       if @provider.valid?
 
-        contacts = @provider.contacts.where(deleted_at: nil).load
+        # contacts = @provider.contacts.where(deleted_at: nil).load
+        contacts = @provider.contacts.where(deleted_at: nil).to_a
 
         # Clear provider role associations for this provider.
         contacts.each { |contact|
           contact.role_name = []
         }
-
-        puts JSON.pretty_generate(contacts.as_json)
-
-        puts "####IN SET_PROVIDER_CONTACTS_P - 2222"
 
         # Reset provider role associations to the new ones for this provider.
         Contact.roles.each do | target_role |
@@ -370,6 +366,7 @@ class ProvidersController < ApplicationController
             if contact.nil?
               contact = @provider.contacts.build(email: target_email)
               contact.role_name = []
+              contacts << contact
             end
 
             contact.role_name |= [ target_role ]
@@ -377,10 +374,6 @@ class ProvidersController < ApplicationController
             contact.family_name = target_family_name
           end
         end
-
-        puts JSON.pretty_generate(contacts.as_json)
-
-        puts "####IN SET_PROVIDER_CONTACTS_P - 3333"
 
         # Send contact export messages.
         contacts.each do |contact|
@@ -394,8 +387,6 @@ class ProvidersController < ApplicationController
           puts contact.to_jsonapi.merge(slack_output: true)
           puts "------------------------------------------------------"
         end
-
-        puts "####IN SET_PROVIDER_CONTACTS_P - 4444"
 
         # Send provider export message.
         @provider.save
