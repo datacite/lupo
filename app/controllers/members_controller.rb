@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class MembersController < ApplicationController
+  include LegacyRestDeprecation
+
+  legacy_replacement "/providers"
+
   before_action :set_provider, only: %i[show]
 
   def index

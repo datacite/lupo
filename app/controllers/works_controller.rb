@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class WorksController < ApplicationController
+  include LegacyRestDeprecation
+
+  legacy_replacement "/dois"
+
   before_action :set_doi, only: %i[show]
   before_action :set_include, only: %i[index show]
 

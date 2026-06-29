@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class DataCentersController < ApplicationController
+  include LegacyRestDeprecation
+
+  legacy_replacement "/clients"
+
   before_action :set_client, only: %i[show]
   before_action :set_include
 
