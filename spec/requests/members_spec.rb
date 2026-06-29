@@ -60,4 +60,34 @@ describe MembersController, type: :request do
       end
     end
   end
+
+  describe "with DISABLE_LEGACY_REST=true" do
+    around do |example|
+      orig = ENV["DISABLE_LEGACY_REST"]
+      ENV["DISABLE_LEGACY_REST"] = "true"
+      example.run
+    ensure
+      ENV["DISABLE_LEGACY_REST"] = orig
+    end
+
+    it "returns 410 for GET /members/:id" do
+      get "/members/#{provider.uid}"
+
+      expect(last_response.status).to eq(410)
+      expect(json["errors"].first).to include(
+        "status" => "410",
+        "title" => "This endpoint has been deprecated and is no longer available.",
+        "detail" => "Use GET /providers instead of GET /members/#{provider.uid}.",
+      )
+      expect(last_response.headers["Sunset"]).to eq(
+        LegacyRestDeprecation::LEGACY_REST_SUNSET,
+      )
+    end
+
+    it "does not affect GET /providers/:id" do
+      get "/providers/#{provider.uid}"
+
+      expect(last_response.status).to eq(200)
+    end
+  end
 end
