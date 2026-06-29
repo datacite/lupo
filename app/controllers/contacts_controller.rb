@@ -195,7 +195,6 @@ class ContactsController < ApplicationController
     end
 
   private
-
     def set_provider_contacts
       puts "####IN SET_PROVIDER_CONTACTS"
       if @contact.valid? && @contact.provider.present?
