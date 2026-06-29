@@ -375,6 +375,14 @@ class ProvidersController < ApplicationController
           end
         end
 
+        # Send provider export message.
+        @provider.save
+        # @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        puts "++++++++Saved provider #{@provider.symbol}"
+        puts "**Sent PROVIDER export FOR #{@provider.symbol}"
+        puts @provider.to_jsonapi.merge(slack_output: true)
+        puts JSON.pretty_generate(@provider.as_json)
+
         # Send contact export messages.
         contacts.each do |contact|
           contact.save
@@ -387,16 +395,6 @@ class ProvidersController < ApplicationController
           puts contact.to_jsonapi.merge(slack_output: true)
           puts "------------------------------------------------------"
         end
-
-        # Send provider export message.
-        @provider.save
-        # @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        puts "++++++++Saved provider #{@provider.symbol}"
-        puts "**Sent PROVIDER export FOR #{@provider.symbol}"
-        puts @provider.to_jsonapi.merge(slack_output: true)
-
-        puts JSON.pretty_generate(@provider.as_json)
-        puts "####IN SET_PROVIDER_CONTACTS_P - 5555"
       end
     end
 
