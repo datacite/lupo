@@ -1355,7 +1355,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.gql_query(
+    os_response = Doi.gql_query(
       args[:query],
       ids: args[:ids],
       user_id: args[:user_id],
@@ -1390,6 +1390,22 @@ class QueryType < BaseObject
         size: args[:first]
       }
     )
+
+    # Pluck XML from DB if the xml field was requested
+    if context.query.query_string&.include?("xml")
+      raw_hits = os_response.response["hits"]["hits"]
+      if raw_hits.present?
+        doi_ids = raw_hits.map { |hit| hit["_source"]["doi"] }.compact
+        xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
+
+        raw_hits.each do |hit|
+          doi = hit["_source"]["doi"]
+          hit["_source"]["xml"] = xml_by_doi[doi] if xml_by_doi[doi].present?
+        end
+      end
+    end
+
+    os_response
   end
 
   def set_doi(id)
