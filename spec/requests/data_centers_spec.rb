@@ -9,33 +9,35 @@ describe DataCentersController, type: :request do
   describe "GET /data-centers/:id" do
     context "when the record exists" do
       it "returns the data center" do
-        get "/data-centers/#{client.uid}"
+        travel_to Time.utc(2026, 6, 30, 12, 0, 0) do
+          get "/data-centers/#{client.uid}"
 
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "title")).to eq(client.name)
+          expect(last_response.status).to eq(200)
+          expect(json.dig("data", "attributes", "title")).to eq(client.name)
+          expect_legacy_sunset_headers
+        end
       end
     end
 
     context "when the record does not exist" do
       it "returns status code 404" do
-        get "/data-centers/xxx"
+        travel_to Time.utc(2026, 6, 30, 12, 0, 0) do
+          get "/data-centers/xxx"
 
-        expect(last_response.status).to eq(404)
-        expect(json["errors"].first).to eq(
-          "status" => "404",
-          "title" => "The resource you are looking for doesn't exist.",
-        )
+          expect(last_response.status).to eq(404)
+          expect(json["errors"].first).to eq(
+            "status" => "404",
+            "title" => "The resource you are looking for doesn't exist.",
+          )
+          expect_legacy_sunset_headers
+        end
       end
     end
   end
 
-  describe "with DISABLE_LEGACY_REST=true" do
+  describe "after legacy sunset date" do
     around do |example|
-      orig = ENV["DISABLE_LEGACY_REST"]
-      ENV["DISABLE_LEGACY_REST"] = "true"
-      example.run
-    ensure
-      ENV["DISABLE_LEGACY_REST"] = orig
+      travel_to(Time.utc(2026, 7, 1, 0, 0, 0)) { example.run }
     end
 
     it "returns 410 for GET /data-centers/:id" do
@@ -47,15 +49,15 @@ describe DataCentersController, type: :request do
         "title" => "This endpoint has been deprecated and is no longer available.",
         "detail" => "Use GET /clients instead of GET /data-centers/#{client.uid}.",
       )
-      expect(last_response.headers["Sunset"]).to eq(
-        LegacyRestDeprecation::LEGACY_REST_SUNSET,
-      )
+      expect(last_response.headers["Sunset"]).to be_nil
+      expect(last_response.headers["Link"]).to include('rel="sunset"')
     end
 
     it "does not affect GET /clients/:id" do
       get "/clients/#{client.uid}"
 
       expect(last_response.status).to eq(200)
+      expect_no_legacy_sunset_header
     end
   end
 end
