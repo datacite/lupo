@@ -157,6 +157,60 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.to be_able_to(:destroy, doi)
         is_expected.not_to be_able_to(:transfer, doi)
       end
+
+      it "can manage api keys for the client" do
+        api_key = client.api_keys.build(name: "test")
+        is_expected.to be_able_to(:manage, api_key)
+      end
+    end
+
+    context "when is a client_api (API key automation)" do
+      let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        )
+      end
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:client) { create(:client, provider: provider) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+      let(:token) do
+        User.generate_token({
+          role_id: "client_api",
+          provider_id: provider.symbol.downcase,
+          client_id: client.symbol.downcase,
+        })
+      end
+
+      it "can read but not update the client or contacts/analytics" do
+        is_expected.to be_able_to(:read, client)
+        is_expected.not_to be_able_to(:update, client)
+        is_expected.not_to be_able_to(:read_contact_information, client)
+        is_expected.not_to be_able_to(:read_analytics, client)
+      end
+
+      it "cannot manage or read api keys" do
+        api_key = client.api_keys.build(name: "machine")
+        is_expected.not_to be_able_to(:manage, api_key)
+        is_expected.not_to be_able_to(:read, api_key)
+        is_expected.not_to be_able_to(:create, api_key)
+      end
+
+      it "can read/create/update/destroy dois but not get_urls or transfer" do
+        is_expected.to be_able_to(:read, doi)
+        is_expected.to be_able_to(:create, doi)
+        is_expected.to be_able_to(:update, doi)
+        is_expected.to be_able_to(:destroy, doi)
+        is_expected.to be_able_to(:get_url, doi)
+        is_expected.not_to be_able_to(:get_urls, Doi)
+        is_expected.not_to be_able_to(:transfer, doi)
+      end
+
+      it "cannot access datafile credentials" do
+        is_expected.not_to be_able_to(:read, :access_datafile)
+      end
     end
 
     context "when is a client admin inactive" do
