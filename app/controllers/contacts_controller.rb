@@ -247,7 +247,7 @@ class ContactsController < ApplicationController
 
         contacts.each do |contact|
           contact.save
-          # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
           # puts "++++++++++Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
           puts "____________________________________________________________"
           puts "****Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
