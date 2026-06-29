@@ -5,6 +5,10 @@ class ApiKey < ApplicationRecord
 
   belongs_to :client, touch: true
 
+  # Used by ApiKeySerializer belongs_to :client (id_method_name: :symbol)
+  # so relationship linkage IDs are client symbols (e.g. DATACITE.TESTKEY).
+  delegate :symbol, to: :client, allow_nil: true
+
   validates_presence_of :client, :name
 
   before_create :initialize_api_key

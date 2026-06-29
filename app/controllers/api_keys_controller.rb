@@ -9,7 +9,7 @@ class ApiKeysController < ApplicationController
   def index
     load_client_context
 
-    include_revoked = ActiveModel::Type::Boolean.new.cast(params[:include_revoked])
+    include_revoked = params[:include_revoked]
 
     if @client.nil?
       if current_user&.is_admin_or_staff?
