@@ -3,6 +3,8 @@
 class MembersController < ApplicationController
   include LegacyRestDeprecation
 
+  legacy_sunset_at Time.utc(2026, 7, 1)
+  legacy_sunset_link "https://support.datacite.org/docs/datacite-rest-api-legacy-endpoints-deprecation"
   legacy_replacement "/providers"
 
   before_action :set_provider, only: %i[show]
