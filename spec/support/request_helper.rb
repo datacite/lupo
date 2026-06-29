@@ -3,7 +3,7 @@
 module RequestHelper
   LEGACY_SUNSET_HTTP_DATE = Time.utc(2026, 7, 1).httpdate.freeze
   LEGACY_SUNSET_LINK_FRAGMENT =
-    "datacite-rest-api-legacy-endpoints-deprecation".freeze
+    "datacite-rest-api-legacy-endpoints-deprecation"
 
   # Parse JSON response to ruby hash
   def json
