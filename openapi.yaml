@@ -3374,6 +3374,7 @@ components:
     software:
       type: string
       enum:
+        - Archipelago
         - Cayuse
         - CKAN
         - Dataverse
@@ -3384,6 +3385,7 @@ components:
         - Fedora
         - Invenio
         - Islandora
+        - Medad
         - MyCoRe
         - Nesstar
         - Omega-PSIR
@@ -3398,7 +3400,6 @@ components:
         - SESAR
         - Ubiquity
         - Other
-        - Unknown
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
