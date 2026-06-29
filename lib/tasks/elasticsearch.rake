@@ -39,6 +39,9 @@ namespace :elasticsearch do
 
     Rake::Task["contact:create_index"].invoke
     Rake::Task["contact:create_alias"].invoke
+
+    Rake::Task["enrichment:create_index"].invoke
+    Rake::Task["enrichment:create_alias"].invoke
   end
 
   desc "delete all indexes"
@@ -57,5 +60,6 @@ namespace :elasticsearch do
     Rake::Task["event:delete_index"].invoke
     Rake::Task["activity:delete_index"].invoke
     Rake::Task["contact:delete_index"].invoke
+    Rake::Task["enrichment:delete_index"].invoke
   end
 end
