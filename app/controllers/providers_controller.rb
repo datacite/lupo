@@ -377,7 +377,24 @@ class ProvidersController < ApplicationController
           end
         end
 
+        # Send provider export message.
+        @provider.save
+        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true))
+        puts "++++++++Saved provider #{@provider.symbol}"
+        puts "**Sent PROVIDER export FOR #{@provider.symbol}"
+        puts @provider.to_jsonapi.merge(slack_output: true)
+        puts JSON.pretty_generate(@provider.as_json)
+
         # Send contact export messages.
+        # contacts = @provider.contacts.reload if contacts.empty?
+        # contacts = @provider.contacts.reload
+        if contacts.empty?
+          contacts = @provider.contacts.where(deleted_at: nil).to_a
+          puts "!!!!NO CONTACTS were found for provider #{@provider.symbol}. Reloaded contacts: #{contacts.map(&:email).join(", ")}"
+          # puts contacts.to_jsonapi
+          puts "------------------------------------------------------"
+        end
         contacts.each do |contact|
           contact.save
           # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
@@ -390,16 +407,6 @@ class ProvidersController < ApplicationController
           puts contact.to_jsonapi.merge(slack_output: true)
           puts "------------------------------------------------------"
         end
-
-        # Send provider export message.
-        @provider.save
-        # @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true))
-        puts "++++++++Saved provider #{@provider.symbol}"
-        puts "**Sent PROVIDER export FOR #{@provider.symbol}"
-        puts @provider.to_jsonapi.merge(slack_output: true)
-        puts JSON.pretty_generate(@provider.as_json)
-
       end
     end
 
