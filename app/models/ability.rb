@@ -185,6 +185,7 @@ class Ability
       can %i[read], Doi, client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
+      can %i[read], :access_datafile
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
