@@ -122,6 +122,8 @@ class ContactsController < ApplicationController
     @contact = Contact.new(safe_params)
     authorize! :create, @contact
 
+    @contact.role_name = [] if @contact.role_name.nil?
+
     if @contact.save
       options = {}
       options[:include] = @include
