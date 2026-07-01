@@ -144,7 +144,11 @@ class ContactsController < ApplicationController
   end
 
   def update
-    if @contact.update(safe_params)
+    @contact.assign_attributes(safe_params)
+    @contact.role_name = [] if @contact.role_name.nil?
+
+    # if @contact.update(safe_params)
+    if @contact.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
