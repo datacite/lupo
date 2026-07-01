@@ -7,8 +7,6 @@ class ContactsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
 
-  # after_action :set_provider_contacts, only: %i[create update]
-  # after_action :remove_provider_contacts, only: %i[destroy]
   load_and_authorize_resource
 
   def index
@@ -147,7 +145,6 @@ class ContactsController < ApplicationController
     @contact.assign_attributes(safe_params)
     @contact.role_name = [] if @contact.role_name.nil?
 
-    # if @contact.update(safe_params)
     if @contact.save
       options = {}
       options[:include] = @include
@@ -202,29 +199,19 @@ class ContactsController < ApplicationController
 
   private
     def set_provider_contacts
-      puts "####IN SET_PROVIDER_CONTACTS"
       if @contact.valid? && @contact.provider.present?
-
         contacts = @contact.provider.contacts.where(deleted_at: nil)
         provider = @contact.provider
-        puts "++++++++++++++++++++++++"
+
         # Make sure no other contact with this provider claims these roles.
-        # contacts.where.not(id: @contact.id).each do | contact |
         contacts.each do | contact |
-          puts "****CHECKING CONTACT #{contact.email} contact_is_me? #{@contact.is_me?(contact)}"
           if !@contact.is_me?(contact)
             old_role_name = contact.role_name.present? ? contact.role_name : []
             new_role_name = (contact.role_name.present? ? contact.role_name : []) - (@contact.role_name.present? ? @contact.role_name : [])
-            # puts "***OLD ROLE NAME FOR CONTACT #{contact.email}: #{old_role_name}  ***"
-            # puts "***NEW ROLE NAME FOR CONTACT #{contact.email}: #{new_role_name}  ***"
             if old_role_name.sort != new_role_name.sort
               contact.update_column("role_name", new_role_name)
             end
           end
-          # contact.save
-          # contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-          # puts "7777SENDING EXPORT MESSAGE FOR CONTACT #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol} after removing roles #{Array.wrap(@contact.role_name)} from contact #{contact.email}"
-          # puts contact.inspect
         end
 
         # Clear provider role associations.
@@ -241,28 +228,15 @@ class ContactsController < ApplicationController
           end
         end
 
-        puts "++++++++++++++++++++++++"
-        puts "++SENDING EXPORT MESSAGES FOR PROVIDER AND CONTACTS FOR PROVIDER #{@contact.provider.symbol}"
-        puts "++++++++++++++++++++++++"
-
-        # Save provider and contacts, and send export messages for provider and contacts.
+        # Send provider export message. (Ignore if record was created/updated via Salesforce API)
         provider.save
         provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true)) if !provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        # puts "++++++++++Saved provider #{@contact.provider.symbol}"
-        puts provider.inspect
 
+        # Send contact export messages. (Ignore if record was created/updated via Salesforce API)
         contacts.each do |contact|
           contact.save
           contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-          # puts "++++++++++Saved contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-          puts "____________________________________________________________"
-          puts "****Sent export message for contact #{contact.email} with roles #{contact.role_name} for provider #{@contact.provider.symbol}"
-          puts "**Contact export message content: #{contact.to_jsonapi.merge(slack_output: true)}"
         end
-
-        # puts "--------Saved @@@contact #{@contact.email} with roles #{@contact.role_name} for provider #{@contact.provider.symbol}"
-        # @contact.save
-        # @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true))
       end
     end
 
