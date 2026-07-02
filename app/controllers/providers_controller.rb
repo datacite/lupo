@@ -202,7 +202,7 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      set_provider_contacts
+      @provider.set_provider_contacts
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
@@ -221,7 +221,7 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
-      set_provider_contacts
+      @provider.set_provider_contacts
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
@@ -340,6 +340,7 @@ class ProvidersController < ApplicationController
     end
 
   private
+=begin
     def set_provider_contacts
       if @provider.valid?
         contacts = @provider.contacts.where(deleted_at: nil).to_a
@@ -390,6 +391,7 @@ class ProvidersController < ApplicationController
         end
       end
     end
+=end
 
     def safe_params
       if params[:data].blank?
