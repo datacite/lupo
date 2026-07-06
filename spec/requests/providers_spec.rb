@@ -1185,7 +1185,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         contacts_data.each do |contact|
           expect(contact["id"]).to be_present
 
-          get  "/contacts/#{contact["id"]}", nil, admin_headers
+          get "/contacts/#{contact["id"]}", nil, admin_headers
           expect(last_response.status).to eq(200)
 
           contact_data = json.dig("data")
@@ -1213,7 +1213,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
             expect(contact_data["attributes"]["roleName"]).to eq(["voting"])
           else
             raise "Unexpected contact email: #{contact_data["attributes"]["email"]}"
-          end 
+          end
         end
       end
     end
