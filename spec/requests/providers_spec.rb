@@ -1115,4 +1115,107 @@ describe ProvidersController, type: :request, elasticsearch: true do
       expect(last_response.status).to eq(204)
     end
   end
+
+  describe "GET /providers - with contact information" do
+    context "request is valid with contact information, and contacts are created with correct information" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "systemEmail" => "jkiritha@andrew.cmu.edu",
+              "country" => "US",
+              "created" => "",
+              "description" => "",
+              "focusArea" => "general",
+              "hasPassword" => "[FILTERED]",
+              "isActive" => true,
+              "joined" => "",
+              "keepPassword" => "[FILTERED]",
+              "logoUrl" => "",
+              "name" => "Carnegie Mellon University",
+              "displayName" => "Carnegie Mellon University",
+              "organizationType" => "academicInstitution",
+              "passwordInput" => "[FILTERED]",
+              "twitterHandle" => "@eekakitty",
+              "rorId" => "https://ror.org/05njkjr15",
+              "technicalContact" => {
+                "email" => "kristian@example.com",
+                "givenName" => "Kristian",
+                "familyName" => "Garza",
+              },
+              "serviceContact" => {
+                "email" => "martin@example.com",
+                "givenName" => "Martin",
+                "familyName" => "Fenner",
+              },
+              "billingContact" => {
+                "email" => "Trisha@example.com",
+                "givenName" => "Trisha",
+                "familyName" => "cruse",
+              },
+              "secondaryBillingContact" => {
+                "email" => "Trisha@example.com",
+                "givenName" => "Trisha",
+                "familyName" => "cruse",
+              },
+              "votingContact" => {
+                "email" => "robin@example.com",
+                "givenName" => "Robin",
+                "familyName" => "Dasler",
+              },
+              "region" => "",
+              "symbol" => "CM",
+              "updated" => "",
+            },
+          },
+        }
+      end
+
+      it "creates a provider with contact roles, and their associated contacts" do
+        post "/providers", params, admin_headers
+        expect(last_response.status).to eq(200)
+        expect(
+          json.dig("data", "relationships", "contacts", "data").length
+        ).to eq(4)
+
+        contacts_data = json.dig("data", "relationships", "contacts", "data")
+        expect(contacts_data).not_to be_nil
+
+        contacts_data.each do |contact|
+          expect(contact["id"]).to be_present
+
+          get  "/contacts/#{contact["id"]}", nil, admin_headers
+          expect(last_response.status).to eq(200)
+
+          contact_data = json.dig("data")
+
+          expect(contact_data).not_to be_nil
+          expect(contact_data["id"]).to eq(contact["id"])
+          expect(contact_data["type"]).to eq("contacts")
+
+          case contact_data["attributes"]["email"]
+          when "kristian@example.com"
+            expect(contact_data["attributes"]["givenName"]).to eq("Kristian")
+            expect(contact_data["attributes"]["familyName"]).to eq("Garza")
+            expect(contact_data["attributes"]["roleName"]).to eq(["technical"])
+          when "martin@example.com"
+            expect(contact_data["attributes"]["givenName"]).to eq("Martin")
+            expect(contact_data["attributes"]["familyName"]).to eq("Fenner")
+            expect(contact_data["attributes"]["roleName"]).to eq(["service"])
+          when "Trisha@example.com"
+            expect(contact_data["attributes"]["givenName"]).to eq("Trisha")
+            expect(contact_data["attributes"]["familyName"]).to eq("cruse")
+            expect(contact_data["attributes"]["roleName"]).to eq(["billing", "secondary_billing"])
+          when "robin@example.com"
+            expect(contact_data["attributes"]["givenName"]).to eq("Robin")
+            expect(contact_data["attributes"]["familyName"]).to eq("Dasler")
+            expect(contact_data["attributes"]["roleName"]).to eq(["voting"])
+          else
+            raise "Unexpected contact email: #{contact_data["attributes"]["email"]}"
+          end 
+        end
+      end
+    end
+  end
 end
