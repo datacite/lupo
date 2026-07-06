@@ -94,16 +94,14 @@ namespace :provider do
   desc "Update provider contacts for all active providers"
   task set_all_provider_contacts: :environment do
     puts "Starting to update provider contacts..."
-    
+
     Provider.where(deleted_at: nil).find_each do |provider|
-      begin
-        provider.set_provider_contacts
-        provider.save
-        provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
-        print "."
-      rescue StandardError => e
-        puts "\nFailed to update provider ID #{provider.id}: #{e.message}"
-      end
+      provider.set_provider_contacts
+      provider.save
+      provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
+      print "."
+    rescue StandardError => e
+      puts "\nFailed to update provider ID #{provider.id}: #{e.message}"
     end
 
     puts "\nFinished updating all provider contacts."
