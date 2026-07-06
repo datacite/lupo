@@ -89,4 +89,42 @@ namespace :provider do
 
     puts Provider.delete_by_query(index: ENV["INDEX"], query: ENV["QUERY"])
   end
+
+  # This needs to be done only once. (migration)
+  desc "Update provider contacts for all active providers"
+  task set_all_provider_contacts: :environment do
+    puts "Starting to update provider contacts..."
+    
+    Provider.where(deleted_at: nil).find_each do |provider|
+      begin
+        provider.set_provider_contacts
+        provider.save
+        provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
+        print "."
+      rescue StandardError => e
+        puts "\nFailed to update provider ID #{provider.id}: #{e.message}"
+      end
+    end
+
+    puts "\nFinished updating all provider contacts."
+  end
+
+  desc "Update one provider contacts (migration)"
+  task set_one_provider_contacts: :environment do
+    if ENV["PROVIDER_ID"].nil?
+      puts "ENV['PROVIDER_ID'] is required."
+      exit
+    end
+
+    provider = Provider.where(symbol: ENV["PROVIDER_ID"]).first
+    if provider.nil?
+      puts "Provider #{ENV["PROVIDER_ID"]} not found."
+      exit
+    end
+
+    provider.set_provider_contacts
+    provider.save
+    provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
+    puts "Exported metadata for provider #{provider.symbol}."
+  end
 end
