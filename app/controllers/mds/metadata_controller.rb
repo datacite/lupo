@@ -16,7 +16,8 @@ module Mds
       xml = doi.xml
       return head :no_content if xml.blank?
 
-      render xml: xml, status: :ok
+      # Lupo unregisters the default :xml MIME type; return raw MDS payload explicitly.
+      render body: xml, content_type: "application/xml", status: :ok
     end
 
     def create

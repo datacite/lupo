@@ -86,7 +86,13 @@ describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 1 do
     it "hides a findable DOI (registered state)" do
       put "/metadata/#{doi_string}", xml, basic_headers
       doi = DataciteDoi.where(doi: doi_string.downcase).first
-      doi.update_columns(aasm_state: "findable") if doi.draft? || doi.registered?
+      # findable DOIs always have a landing URL; update_url/register_url requires it
+      if doi.draft? || doi.registered?
+        doi.update_columns(
+          aasm_state: "findable",
+          url: "https://example.org/mds-metadata-hide",
+        )
+      end
 
       delete "/metadata/#{doi_string}", nil, basic_headers.except("CONTENT_TYPE")
 
