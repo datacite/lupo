@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include Authenticable
+  include RequestCredentials
   include CanCan::ControllerAdditions
   include ErrorSerializable
   require "facets/string/snakecase"
@@ -71,15 +72,8 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
-    type, credentials = type_and_credentials_from_request_headers
-
-    return false if credentials.blank?
-
-    if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
-      raise JWT::VerificationError
-    end
-
-    @current_user = User.new(credentials, type: type)
+    @current_user = user_from_request_credentials
+    return false if @current_user.nil?
 
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 
@@ -88,11 +82,6 @@ class ApplicationController < ActionController::API
 
   def current_ability
     @current_ability ||= Ability.new(current_user)
-  end
-
-  # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
-  def type_and_credentials_from_request_headers
-    request.headers["Authorization"]&.split
   end
 
   def authenticated_user

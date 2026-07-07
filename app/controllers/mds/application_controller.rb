@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 module Mds
+  # Protocol base: auth challenge, plain-text errors, consumer headers.
+  # Domain helpers (lookup/write/mint) are included only on controllers that need them.
   class ApplicationController < ActionController::API
     include ActionController::HttpAuthentication::Basic::ControllerMethods
     include CanCan::ControllerAdditions
-    include Mds::DoiSupport
+    include RequestCredentials
 
     attr_accessor :current_user
 
@@ -40,13 +42,11 @@ module Mds
 
     protected
 
-    # Align with REST ApplicationController#authenticate_user! credential parsing:
-    # Authorization header split + User.new(credentials, type: type).
-    # MDS still challenges with Basic realm and plain-text bodies.
+    # MDS-specific challenge and plain-text failure bodies; credentials via RequestCredentials.
     def authenticate_mds_user!
-      type, credentials = type_and_credentials_from_request_headers
+      user = user_from_request_credentials
 
-      if credentials.blank?
+      if user.nil?
         request_http_basic_authentication(
           Mds.realm,
           "An Authentication object was not found in the SecurityContext",
@@ -54,7 +54,7 @@ module Mds
         return false
       end
 
-      @current_user = User.new(credentials, type: type)
+      @current_user = user
 
       if @current_user.blank? || @current_user.errors.present? ||
           @current_user.role_id == "anonymous"
@@ -67,11 +67,6 @@ module Mds
 
     def current_ability
       @current_ability ||= Ability.new(current_user)
-    end
-
-    # Same split as REST ApplicationController (Knock-style).
-    def type_and_credentials_from_request_headers
-      request.headers["Authorization"]&.split
     end
 
     def set_consumer_header
