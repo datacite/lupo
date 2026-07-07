@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "mds/error"
+
 # Helpers for the embedded MDS (legacy Metadata Store) protocol surface.
 module Mds
   # Production-like hosts when MDS_HOSTS is unset (e.g. production with only MDS_ENABLED=true).
@@ -42,4 +44,3 @@ module Mds
     ENV.fetch("MDS_REALM", "mds.datacite.org")
   end
 end
-
