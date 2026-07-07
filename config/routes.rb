@@ -4,10 +4,11 @@ Rails.application.routes.draw do
   # Classic MDS protocol (formerly Poodle). Only active when MDS_ENABLED and Host ∈ MDS_HOSTS.
   # Must be declared before the REST catch-all so mds.* hosts never fall into content negotiation.
   constraints(->(req) { Mds.host_match?(req) }) do
-    scope module: :mds do
-      resources :heartbeat, only: %i[index]
-      get "login", to: "index#login"
+    # Same memcached probe as REST /heartbeat (HeartbeatController), not an always-OK MDS stub.
+    # Declared outside module: :mds so it does not resolve to Mds::HeartbeatController.
+    resources :heartbeat, only: %i[index]
 
+    scope module: :mds do
       # update doi (body form without id in path)
       post "doi", to: "dois#update"
 

@@ -72,12 +72,8 @@ describe "MDS routing", type: :routing do
       )
     end
 
-    it "routes GET /heartbeat to mds/heartbeat#index" do
-      expect(get: mds_url("/heartbeat")).to route_to("mds/heartbeat#index")
-    end
-
-    it "routes GET /login to mds/index#login" do
-      expect(get: mds_url("/login")).to route_to("mds/index#login")
+    it "routes GET /heartbeat to shared heartbeat#index (not MDS stub)" do
+      expect(get: mds_url("/heartbeat")).to route_to("heartbeat#index")
     end
   end
 
