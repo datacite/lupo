@@ -76,7 +76,7 @@ ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= ""
 # When MDS_ENABLED is true, hostnames in MDS_HOSTS serve classic MDS routes in-process.
 # Do NOT set MDS_ENABLED / MDS_HOSTS here — environment files and process env own those so
 # test/dev can enable MDS without fighting a premature default, and production stays off
-# unless explicitly enabled. Safe fallbacks are applied in lib/mds.rb and after_initialize.
+# unless explicitly enabled. Safe fallbacks for blank hosts live in lib/mds.rb (DEFAULT_HOSTS).
 ENV["MDS_URL"] ||= "https://mds.test.datacite.org"
 ENV["MDS_REALM"] ||= "mds.datacite.org"
 
