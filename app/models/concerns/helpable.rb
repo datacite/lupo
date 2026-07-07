@@ -106,6 +106,24 @@ module Helpable
       response
     end
 
+    # When true, the stored `url` attribute is authoritative (draft/other/special providers).
+    # When false, resolve via Handle (`get_url`). Shared by REST and MDS protocol surfaces.
+    def uses_stored_landing_url?
+      !is_registered_or_findable? ||
+        %w[europ].include?(provider_id) ||
+        type == "OtherDoi"
+    end
+
+    # Landing URL for protocol responses. Nil when unknown or Handle has no value.
+    def resolved_landing_url
+      return url if uses_stored_landing_url?
+
+      response = get_url
+      return nil unless response.status == 200
+
+      response.body.dig("data", "values", 0, "data", "value")
+    end
+
     def generate_random_provider_symbol
       "4:X".gen
     end

@@ -721,38 +721,35 @@ class DataciteDoisController < ApplicationController
 
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? ||
-        %w[europ].include?(@doi.provider_id) ||
-        @doi.type == "OtherDoi"
+    # Domain owns stored-vs-Handle policy via uses_stored_landing_url? / resolved_landing_url.
+    if @doi.uses_stored_landing_url?
       url = @doi.url
       head :no_content && return if url.blank?
-    else
-      response = @doi.get_url
-
-      if response.status == 200
-        url = response.body.dig("data", "values", 0, "data", "value")
-      elsif response.status == 400 &&
-          response.body.dig("errors", 0, "title", "responseCode") == 301
-        response =
-          OpenStruct.new(
-            status: 403,
-            body: {
-              "errors" => [
-                {
-                  "status" => 403,
-                  "title" => "SERVER NOT RESPONSIBLE FOR HANDLE",
-                },
-              ],
-            },
-          )
-        url = nil
-      else
-        url = nil
-      end
+      render json: { url: url }.to_json, status: :ok
+      return
     end
 
-    if url.present?
-      render json: { url: url }.to_json, status: :ok
+    response = @doi.get_url
+
+    if response.status == 200
+      url = response.body.dig("data", "values", 0, "data", "value")
+      if url.present?
+        render json: { url: url }.to_json, status: :ok
+      else
+        render json: response.body.to_json,
+               status: response.status || :bad_request
+      end
+    elsif response.status == 400 &&
+        response.body.dig("errors", 0, "title", "responseCode") == 301
+      render json: {
+               "errors" => [
+                 {
+                   "status" => 403,
+                   "title" => "SERVER NOT RESPONSIBLE FOR HANDLE",
+                 },
+               ],
+             }.to_json,
+             status: :forbidden
     else
       render json: response.body.to_json,
              status: response.status || :bad_request
