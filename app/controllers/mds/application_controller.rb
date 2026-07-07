@@ -21,6 +21,11 @@ module Mds
       render_mds_error(exception.message, 400)
     end
 
+    # Domain/handle code (Helpable#register_url) raises this for missing url/client, etc.
+    rescue_from ActionController::BadRequest do |exception|
+      render_mds_error(exception.message.presence || "Bad Request", 400)
+    end
+
     rescue_from CanCan::AccessDenied do |_exception|
       render_mds_error("Access is denied", 403)
     end
@@ -78,12 +83,7 @@ module Mds
 
       def render_mds(body = "OK", status: 200, headers: {})
         headers.each { |k, v| response.headers[k] = v }
-
-        if status.to_i == 204
-          head :no_content
-        else
-          render plain: body.to_s, status: status
-        end
+        render plain: body.to_s, status: status
       end
 
       def render_mds_error(message, status)

@@ -2,11 +2,10 @@
 
 module Mds
   # DOI identity resolution for MDS metadata registration (path, XML identifier, or mint).
-  # Lives outside controllers so Helpable stays off the protocol base class.
+  # Uses DoiMinting only — not the full Helpable model concern (handle, landing URL, etc.).
   class DoiMinter
     include Bolognese::DoiUtils
-    include Bolognese::Utils
-    include Helpable
+    include DoiMinting
 
     def resolve_doi_id(str, data:, from:, number: nil)
       doi = validate_doi(str)

@@ -76,15 +76,27 @@ describe "MDS Dois API", type: :request, vcr: true, prefix_pool_size: 1 do
   end
 
   describe "GET /doi/:id" do
-    it "returns the URL for a DOI with a known url attribute" do
-      findable_doi
-      get "/doi/#{findable_doi.doi}", nil, basic_headers
+    it "returns the stored landing URL for a draft DOI" do
+      draft =
+        create(
+          :doi,
+          client: client,
+          doi: "10.14454/mds-draft-url",
+          aasm_state: "draft",
+          url: "https://example.org/draft-landing",
+        )
+      get "/doi/#{draft.doi}", nil, basic_headers
 
-      # May be 200 with URL from attribute/handle, or 204 if handle lookup empty in test
-      expect([200, 204]).to include(last_response.status)
-      if last_response.status == 200
-        expect(last_response.body).to be_present
-      end
+      expect(last_response.status).to eq(200)
+      expect(last_response.body).to eq("https://example.org/draft-landing")
+    end
+
+    it "returns 204 when a draft DOI has no landing URL" do
+      doi
+      get "/doi/#{doi.doi}", nil, basic_headers
+
+      expect(last_response.status).to eq(204)
+      expect(last_response.body).to be_blank
     end
 
     it "returns 404 for unknown DOI" do

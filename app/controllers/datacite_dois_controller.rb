@@ -724,7 +724,8 @@ class DataciteDoisController < ApplicationController
     # Domain owns stored-vs-Handle policy via uses_stored_landing_url? / resolved_landing_url.
     if @doi.uses_stored_landing_url?
       url = @doi.url
-      head :no_content && return if url.blank?
+      return head :no_content if url.blank?
+
       render json: { url: url }.to_json, status: :ok
       return
     end
@@ -761,8 +762,8 @@ class DataciteDoisController < ApplicationController
 
     client =
       Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
-    client_prefix = client.prefixes.first
-    head :no_content && return if client_prefix.blank?
+    client_prefix = client&.prefixes&.first
+    return head :no_content if client_prefix.blank?
 
     dois =
       DataciteDoi.get_dois(
