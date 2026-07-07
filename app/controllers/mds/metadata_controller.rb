@@ -3,6 +3,9 @@
 module Mds
   # Classic MDS /metadata surface — thin protocol adapter over DataciteDoi domain.
   class MetadataController < Mds::ApplicationController
+    include Mds::DoiWriter
+    include Bolognese::MetadataUtils
+
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi, only: %i[destroy]
 
@@ -25,12 +28,11 @@ module Mds
       end
 
       data = request.raw_post
-      # Reuse Bolognese format detection (via MetadataUtils), not a forked copy.
       from = data.blank? ? "datacite" : find_from_format(string: data)
       fail Mds::Error.new("Metadata format not recognized", status: 415) if from.blank?
 
       doi_id =
-        resolve_metadata_doi_id(
+        Mds::DoiMinter.new.resolve_doi_id(
           params[:doi_id],
           data: data,
           from: from,

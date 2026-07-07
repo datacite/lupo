@@ -3,6 +3,8 @@
 module Mds
   # Classic MDS /doi surface — thin protocol adapter over DataciteDoi domain.
   class DoisController < Mds::ApplicationController
+    include Mds::DoiWriter
+
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi, only: %i[show destroy]
 
@@ -29,7 +31,7 @@ module Mds
     def show
       authorize! :get_url, @doi
 
-      url = resolve_landing_url(@doi)
+      url = @doi.resolved_landing_url
       return head :no_content if url.blank?
 
       render_mds(url)
@@ -77,6 +79,10 @@ module Mds
       @doi = find_datacite_doi!(params[:id], not_found: "DOI not found")
     end
 
+    def valid_landing_url?(url)
+      url.to_s.match?(%r{\A(http|https|ftp)://\S+\z})
+    end
+
     def parse_doi_and_url
       if (params[:id].present? || params[:doi].present?) && params[:url].present?
         [params[:id].presence || params[:doi], params[:url]]
@@ -88,6 +94,27 @@ module Mds
       else
         [nil, nil]
       end
+    end
+
+    # Classic MDS body: "doi=...\nurl=..." lines.
+    def extract_doi_and_url_from_body(data, path_doi: nil)
+      hsh =
+        data.to_s.split("\n").map do |line|
+          arr = line.to_s.split("=", 2)
+          arr << "value" if arr.length < 2
+          arr
+        end.to_h
+
+      fail IdentifierError, "param 'doi' required" unless hsh["doi"].present?
+
+      body_doi = CGI.unescape(hsh["doi"].strip)
+      if path_doi.present? && body_doi.casecmp(path_doi) != 0
+        fail IdentifierError, "doi parameter does not match doi of resource"
+      end
+
+      fail IdentifierError, "param 'url' required" unless hsh["url"].present?
+
+      [body_doi, CGI.unescape(hsh["url"].strip)]
     end
   end
 end

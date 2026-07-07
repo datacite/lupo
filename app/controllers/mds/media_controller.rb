@@ -3,6 +3,8 @@
 module Mds
   # Classic MDS /media surface — thin protocol adapter over Media AR association.
   class MediaController < Mds::ApplicationController
+    include Mds::DoiLookup
+
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi
     before_action :set_media, only: %i[show destroy]
