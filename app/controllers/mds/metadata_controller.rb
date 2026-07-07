@@ -1,54 +1,84 @@
 # frozen_string_literal: true
 
 module Mds
+  # Classic MDS /metadata surface — thin protocol adapter over DataciteDoi domain.
   class MetadataController < Mds::ApplicationController
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi, only: %i[destroy]
 
     def show
-      @doi = validate_doi(params[:doi_id])
-      fail AbstractController::ActionNotFound unless @doi.present?
+      doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
+      authorize! :read, doi
 
-      result = Mds::MetadataOperations.new(current_user: current_user).get(@doi)
+      xml = doi.xml
+      return head :no_content if xml.blank?
 
-      if result.status == 204
-        head :no_content
-      elsif result.success?
-        render xml: result.body, status: :ok
-      else
-        render plain: result.body.to_s, status: result.status
-      end
+      render xml: xml, status: :ok
     end
 
     def create
       if request.content_type.to_s.include?("application/x-www-form-urlencoded")
-        render plain: "Content type application/x-www-form-urlencoded is not supported",
-               status: :unsupported_media_type
-        return
+        fail Mds::Error.new(
+          "Content type application/x-www-form-urlencoded is not supported",
+          status: 415,
+        )
       end
 
       data = request.raw_post
-      result =
-        Mds::MetadataOperations.new(current_user: current_user).create(
-          doi_string: params[:doi_id],
+      # Reuse Bolognese format detection (via MetadataUtils), not a forked copy.
+      from = data.blank? ? "datacite" : find_from_format(string: data)
+      fail Mds::Error.new("Metadata format not recognized", status: 415) if from.blank?
+
+      doi_id =
+        resolve_metadata_doi_id(
+          params[:doi_id],
           data: data,
+          from: from,
           number: params[:number],
         )
+      fail Mds::Error.new("DOI not found", status: 404) if doi_id.blank?
 
-      result.headers.each { |k, v| response.headers[k] = v }
-      render plain: result.body.to_s, status: result.status
+      xml_b64 = data.present? ? Base64.strict_encode64(data) : nil
+      attrs =
+        ParamsSanitizer.new(
+          {
+            doi: doi_id,
+            xml: xml_b64,
+            should_validate: true,
+            source: "mds",
+            event: "show",
+            client_id: client_symbol,
+          }.compact,
+        ).cleanse
+
+      doi = upsert_datacite_doi!(doi_id, attrs)
+
+      minted = doi.doi.to_s.upcase
+      render_mds(
+        "OK (#{minted})",
+        status: 201,
+        headers: { "Location" => "#{Mds.url}/metadata/#{doi.doi}" },
+      )
     end
 
     def destroy
-      result = Mds::MetadataOperations.new(current_user: current_user).destroy(@doi)
-      render plain: result.body.to_s, status: result.status
+      authorize! :update, @doi
+
+      @doi.current_user = current_user
+      @doi.assign_attributes(event: "hide")
+
+      unless @doi.save(validate: false)
+        message = @doi.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
     end
 
     private
 
     def set_doi
-      @doi = validate_doi(params[:doi_id])
-      fail AbstractController::ActionNotFound unless @doi.present?
+      @doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
     end
   end
 end

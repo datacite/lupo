@@ -1,35 +1,58 @@
 # frozen_string_literal: true
 
 module Mds
+  # Classic MDS /media surface — thin protocol adapter over Media AR association.
   class MediaController < Mds::ApplicationController
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi
     before_action :set_media, only: %i[show destroy]
 
     def index
-      result = Mds::MediaOperations.new(current_user: current_user).list(@doi)
-      render_result(result)
+      authorize! :read, @doi
+
+      media = @doi.media.to_a
+      fail Mds::Error.new("No media for the DOI", status: 404) if media.blank?
+
+      body = media.map { |m| "#{m.media_type}=#{m.url}" }.join("\n")
+      render_mds(body)
     end
 
     def show
-      result =
-        Mds::MediaOperations.new(current_user: current_user).show(@doi, @id)
-      render_result(result)
+      authorize! :read, @doi
+
+      fail Mds::Error.new("No media for the DOI", status: 404) if @media.blank?
+
+      render_mds("#{@media.media_type}=#{@media.url}")
     end
 
     def create
-      result =
-        Mds::MediaOperations.new(current_user: current_user).create(
-          @doi,
-          data: request.raw_post,
-        )
-      render_result(result)
+      authorize! :update, @doi
+
+      data = request.raw_post
+      fail Mds::Error.new("Media type and URL missing", status: 400) if data.blank?
+
+      media_type, url = data.to_s.split("=", 2)
+      media = Media.new(doi: @doi, media_type: media_type, url: url)
+
+      unless media.save
+        message = media.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
     end
 
     def destroy
-      result =
-        Mds::MediaOperations.new(current_user: current_user).destroy(@doi, @id)
-      render_result(result)
+      authorize! :update, @doi
+
+      fail Mds::Error.new("No media for the DOI", status: 404) if @media.blank?
+
+      unless @media.destroy
+        message = @media.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
     end
 
     private
@@ -37,23 +60,19 @@ module Mds
     def set_doi
       # Flat /media/:doi_id and nested /doi/:doi_id/media both expose :doi_id.
       raw = params[:doi_id]
-      fail AbstractController::ActionNotFound if raw.blank?
+      fail Mds::Error.new("DOI is unknown to MDS", status: 404) if raw.blank?
 
-      @doi = validate_doi(raw)
-      fail AbstractController::ActionNotFound if @doi.blank?
+      @doi = find_datacite_doi!(raw, not_found: "DOI is unknown to MDS")
     end
 
     def set_media
-      @id = params[:id]
-      fail AbstractController::ActionNotFound if @id.blank?
-    end
+      encoded = params[:id]
+      fail Mds::Error.new("No media for the DOI", status: 404) if encoded.blank?
 
-    def render_result(result)
-      if result.status == 204
-        head :no_content
-      else
-        render plain: result.body.to_s, status: result.status
-      end
+      id = Base32::URL.decode(CGI.unescape(encoded.to_s))
+      fail Mds::Error.new("No media for the DOI", status: 404) if id.blank?
+
+      @media = @doi.media.where(id: id.to_i).first
     end
   end
 end

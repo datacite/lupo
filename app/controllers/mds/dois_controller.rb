@@ -1,60 +1,92 @@
 # frozen_string_literal: true
 
 module Mds
+  # Classic MDS /doi surface — thin protocol adapter over DataciteDoi domain.
   class DoisController < Mds::ApplicationController
     prepend_before_action :authenticate_mds_user!
     before_action :set_doi, only: %i[show destroy]
 
     def index
-      result = Mds::DoiOperations.new(current_user: current_user).list
-      render_result(result)
+      authorize! :get_urls, Doi
+
+      client =
+        Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
+      client_prefix = client&.prefixes&.first
+      return head :no_content if client_prefix.blank?
+
+      dois =
+        DataciteDoi.get_dois(
+          prefix: client_prefix.uid,
+          username: current_user.uid.upcase,
+          password: current_user.password,
+        )
+
+      return head :no_content if dois.blank? || !dois.is_a?(Array) || dois.empty?
+
+      render_mds(dois.join("\n"))
     end
 
     def show
-      result = Mds::DoiOperations.new(current_user: current_user).get_url(@doi)
-      render_result(result)
+      authorize! :get_url, @doi
+
+      url = resolve_landing_url(@doi)
+      return head :no_content if url.blank?
+
+      render_mds(url)
     end
 
     def update
-      doi, url = parse_doi_and_url
-      return head :bad_request if doi.blank? || url.blank?
+      doi_string, url = parse_doi_and_url
+      return head :bad_request if doi_string.blank? || url.blank?
 
-      result = Mds::DoiOperations.new(current_user: current_user).put_url(doi, url: url)
-      render_result(result)
+      fail Mds::Error.new("Not a valid HTTP(S) or FTP URL", status: 400) unless valid_landing_url?(url)
+
+      doi_id = validate_doi(doi_string)
+      fail Mds::Error.new("DOI not found", status: 404) if doi_id.blank?
+
+      upsert_datacite_doi!(
+        doi_id,
+        url: url,
+        should_validate: true,
+        source: "mds",
+        event: "publish",
+        client_id: client_symbol,
+      )
+
+      render_mds("OK", status: 201)
     end
 
     def destroy
-      result = Mds::DoiOperations.new(current_user: current_user).destroy(@doi)
-      render_result(result)
+      authorize! :destroy, @doi
+
+      unless @doi.draft?
+        fail Mds::Error.new("Method not allowed", status: 405)
+      end
+
+      unless @doi.destroy
+        message = @doi.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
     end
 
     private
 
     def set_doi
-      @doi = validate_doi(params[:id])
-      fail AbstractController::ActionNotFound if @doi.blank?
+      @doi = find_datacite_doi!(params[:id], not_found: "DOI not found")
     end
 
     def parse_doi_and_url
       if (params[:id].present? || params[:doi].present?) && params[:url].present?
         [params[:id].presence || params[:doi], params[:url]]
       elsif request.raw_post.present?
-        Mds::DoiOperations.extract_url(
-          doi: validate_doi(params[:id]),
-          data: request.raw_post,
+        extract_doi_and_url_from_body(
+          request.raw_post,
+          path_doi: validate_doi(params[:id]),
         )
       else
         [nil, nil]
-      end
-    end
-
-    def render_result(result)
-      result.headers.each { |k, v| response.headers[k] = v }
-
-      if result.status == 204
-        head :no_content
-      else
-        render plain: result.body.to_s, status: result.status
       end
     end
   end
