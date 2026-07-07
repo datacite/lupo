@@ -82,14 +82,19 @@ describe "MDS routing", type: :routing do
   end
 
   describe "when Host is not an MDS host" do
-    it "does not route classic /doi to MDS controllers" do
-      expect(get: "/doi/10.14454/abc").not_to route_to(
+    it "does not route classic /doi on default host to MDS controllers" do
+      expect(get: "http://www.example.com/doi/10.14454/abc").not_to route_to(
         "mds/dois#show", id: "10.14454/abc",
       )
     end
 
-    it "still routes REST /dois" do
-      expect(get: "/dois").to route_to("datacite_dois#index")
+    it "still routes REST /dois on the default host" do
+      expect(get: "http://www.example.com/dois").to route_to("datacite_dois#index")
+    end
+
+    it "does not treat example.org as an MDS host" do
+      expect(get: "http://example.org/doi").not_to route_to("mds/dois#index")
     end
   end
 end
+

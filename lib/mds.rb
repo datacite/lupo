@@ -2,14 +2,30 @@
 
 # Helpers for the embedded MDS (legacy Metadata Store) protocol surface.
 module Mds
+  # Production-like hosts when MDS_HOSTS is unset (e.g. production with only MDS_ENABLED=true).
+  DEFAULT_HOSTS = %w[
+    mds.datacite.org
+    mds.test.datacite.org
+    mds.stage.datacite.org
+    mds.local
+  ].freeze
+
   module_function
 
   def enabled?
+    # Default off unless explicitly enabled (production-safe).
     ActiveModel::Type::Boolean.new.cast(ENV.fetch("MDS_ENABLED", "false"))
   end
 
   def hosts
-    ENV.fetch("MDS_HOSTS", "").split(",").map { |h| h.strip.downcase }.reject(&:blank?)
+    raw = ENV["MDS_HOSTS"].to_s
+    list =
+      if raw.blank?
+        DEFAULT_HOSTS
+      else
+        raw.split(",").map { |h| h.strip.downcase }.reject(&:blank?)
+      end
+    list
   end
 
   def host_match?(request)
@@ -26,3 +42,4 @@ module Mds
     ENV.fetch("MDS_REALM", "mds.datacite.org")
   end
 end
+

@@ -141,11 +141,11 @@ describe "MDS Dois API", type: :request, vcr: true, prefix_pool_size: 1 do
   end
 
   describe "host isolation" do
-    it "does not serve MDS /doi on a non-MDS host" do
+    it "does not serve MDS plain-text /doi on a non-MDS host" do
       get "/doi/#{doi.doi}",
           nil,
           {
-            "HTTP_HOST" => "api.example.org",
+            "HTTP_HOST" => "www.example.com",
             "HTTP_AUTHORIZATION" =>
               ActionController::HttpAuthentication::Basic.encode_credentials(
                 client.symbol,
@@ -153,9 +153,28 @@ describe "MDS Dois API", type: :request, vcr: true, prefix_pool_size: 1 do
               ),
           }
 
-      # Falls through to REST catch-all / content negotiation, not MDS plain-text contract
-      expect(last_response.status).not_to eq(200) if last_response.body == "OK"
-      expect(last_response.headers["Content-Type"].to_s).not_to eq("text/plain") if last_response.status == 404
+      # Non-MDS host must not hit Mds::DoisController (plain "DOI not found" / URL body).
+      # Falls through to REST index/content-negotiation or routing error instead.
+      expect(last_response.body).not_to eq("DOI not found")
+      expect(last_response.headers["X-Credential-Username"]).not_to eq(client.symbol.downcase) if last_response.status == 401
+    end
+
+    it "still serves REST /dois on the default host" do
+      get "/dois",
+          nil,
+          {
+            "HTTP_HOST" => "www.example.com",
+            "HTTP_ACCEPT" => "application/vnd.api+json",
+            "HTTP_AUTHORIZATION" =>
+              ActionController::HttpAuthentication::Basic.encode_credentials(
+                client.symbol,
+                ENV["MDS_PASSWORD"],
+              ),
+          }
+
+      expect(last_response.status).to eq(200)
+      expect(json).to have_key("data")
     end
   end
 end
+

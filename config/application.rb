@@ -74,15 +74,11 @@ ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= ""
 
 # MDS (legacy Metadata Store protocol, formerly Poodle)
 # When MDS_ENABLED is true, hostnames in MDS_HOSTS serve classic MDS routes in-process.
-ENV["MDS_ENABLED"] ||= "false"
-ENV["MDS_HOSTS"] ||= "mds.datacite.org,mds.test.datacite.org,mds.stage.datacite.org,mds.local"
-ENV["MDS_URL"] ||=
-  if Rails.env.production?
-    "https://mds.datacite.org"
-  else
-    "https://mds.test.datacite.org"
-  end
-ENV["MDS_REALM"] ||= ENV["MDS_HOSTS"].to_s.split(",").first.to_s.strip.presence || "mds.datacite.org"
+# Do NOT set MDS_ENABLED / MDS_HOSTS here — environment files and process env own those so
+# test/dev can enable MDS without fighting a premature default, and production stays off
+# unless explicitly enabled. Safe fallbacks are applied in lib/mds.rb and after_initialize.
+ENV["MDS_URL"] ||= "https://mds.test.datacite.org"
+ENV["MDS_REALM"] ||= "mds.datacite.org"
 
 module Lupo
   class Application < Rails::Application
