@@ -28,9 +28,9 @@ module Mds
       end
 
       xml = doi.xml
-      return Result.error(204, nil) if xml.blank?
+      return Result.no_content if xml.blank?
 
-      Result.ok(xml, status: 200)
+      Result.ok(xml)
     end
 
     def create(doi_string: nil, data:, number: nil)
