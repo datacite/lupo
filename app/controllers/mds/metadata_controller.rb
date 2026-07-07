@@ -78,9 +78,8 @@ module Mds
     end
 
     private
-
-    def set_doi
-      @doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
-    end
+      def set_doi
+        @doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
+      end
   end
 end

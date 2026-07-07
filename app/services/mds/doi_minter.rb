@@ -21,30 +21,29 @@ module Mds
     end
 
     private
-
-    def doi_from_xml_identifier(string)
-      doc = Nokogiri::XML(string, nil, "UTF-8", &:noblanks)
-      doc.remove_namespaces!
-      identifier = doc.at_css("identifier")
-      identifier = identifier.content if identifier.present?
-      validate_doi(identifier)
-    end
-
-    def mint_unique_doi(str, number: nil)
-      if number.present?
-        doi = generate_random_dois(str, number: number).first
-        existing = DataciteDoi.where(doi: doi).exists?
-        fail IdentifierError, "doi:#{doi} has already been registered" if existing
-
-        return doi
+      def doi_from_xml_identifier(string)
+        doc = Nokogiri::XML(string, nil, "UTF-8", &:noblanks)
+        doc.remove_namespaces!
+        identifier = doc.at_css("identifier")
+        identifier = identifier.content if identifier.present?
+        validate_doi(identifier)
       end
 
-      doi = nil
-      loop do
-        doi = generate_random_dois(str).first
-        break unless DataciteDoi.where(doi: doi).exists?
+      def mint_unique_doi(str, number: nil)
+        if number.present?
+          doi = generate_random_dois(str, number: number).first
+          existing = DataciteDoi.where(doi: doi).exists?
+          fail IdentifierError, "doi:#{doi} has already been registered" if existing
+
+          return doi
+        end
+
+        doi = nil
+        loop do
+          doi = generate_random_dois(str).first
+          break unless DataciteDoi.where(doi: doi).exists?
+        end
+        doi
       end
-      doi
-    end
   end
 end

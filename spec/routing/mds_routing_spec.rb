@@ -97,4 +97,3 @@ describe "MDS routing", type: :routing do
     end
   end
 end
-

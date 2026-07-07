@@ -58,23 +58,22 @@ module Mds
     end
 
     private
+      def set_doi
+        # Flat /media/:doi_id and nested /doi/:doi_id/media both expose :doi_id.
+        raw = params[:doi_id]
+        fail Mds::Error.new("DOI is unknown to MDS", status: 404) if raw.blank?
 
-    def set_doi
-      # Flat /media/:doi_id and nested /doi/:doi_id/media both expose :doi_id.
-      raw = params[:doi_id]
-      fail Mds::Error.new("DOI is unknown to MDS", status: 404) if raw.blank?
+        @doi = find_datacite_doi!(raw, not_found: "DOI is unknown to MDS")
+      end
 
-      @doi = find_datacite_doi!(raw, not_found: "DOI is unknown to MDS")
-    end
+      def set_media
+        encoded = params[:id]
+        fail Mds::Error.new("No media for the DOI", status: 404) if encoded.blank?
 
-    def set_media
-      encoded = params[:id]
-      fail Mds::Error.new("No media for the DOI", status: 404) if encoded.blank?
+        id = Base32::URL.decode(CGI.unescape(encoded.to_s))
+        fail Mds::Error.new("No media for the DOI", status: 404) if id.blank?
 
-      id = Base32::URL.decode(CGI.unescape(encoded.to_s))
-      fail Mds::Error.new("No media for the DOI", status: 404) if id.blank?
-
-      @media = @doi.media.where(id: id.to_i).first
-    end
+        @media = @doi.media.where(id: id.to_i).first
+      end
   end
 end

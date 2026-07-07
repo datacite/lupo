@@ -74,47 +74,46 @@ module Mds
     end
 
     private
-
-    def set_doi
-      @doi = find_datacite_doi!(params[:id], not_found: "DOI not found")
-    end
-
-    def valid_landing_url?(url)
-      url.to_s.match?(%r{\A(http|https|ftp)://\S+\z})
-    end
-
-    def parse_doi_and_url
-      if (params[:id].present? || params[:doi].present?) && params[:url].present?
-        [params[:id].presence || params[:doi], params[:url]]
-      elsif request.raw_post.present?
-        extract_doi_and_url_from_body(
-          request.raw_post,
-          path_doi: validate_doi(params[:id]),
-        )
-      else
-        [nil, nil]
-      end
-    end
-
-    # Classic MDS body: "doi=...\nurl=..." lines.
-    def extract_doi_and_url_from_body(data, path_doi: nil)
-      hsh =
-        data.to_s.split("\n").map do |line|
-          arr = line.to_s.split("=", 2)
-          arr << "value" if arr.length < 2
-          arr
-        end.to_h
-
-      fail IdentifierError, "param 'doi' required" unless hsh["doi"].present?
-
-      body_doi = CGI.unescape(hsh["doi"].strip)
-      if path_doi.present? && body_doi.casecmp(path_doi) != 0
-        fail IdentifierError, "doi parameter does not match doi of resource"
+      def set_doi
+        @doi = find_datacite_doi!(params[:id], not_found: "DOI not found")
       end
 
-      fail IdentifierError, "param 'url' required" unless hsh["url"].present?
+      def valid_landing_url?(url)
+        url.to_s.match?(%r{\A(http|https|ftp)://\S+\z})
+      end
 
-      [body_doi, CGI.unescape(hsh["url"].strip)]
-    end
+      def parse_doi_and_url
+        if (params[:id].present? || params[:doi].present?) && params[:url].present?
+          [params[:id].presence || params[:doi], params[:url]]
+        elsif request.raw_post.present?
+          extract_doi_and_url_from_body(
+            request.raw_post,
+            path_doi: validate_doi(params[:id]),
+          )
+        else
+          [nil, nil]
+        end
+      end
+
+      # Classic MDS body: "doi=...\nurl=..." lines.
+      def extract_doi_and_url_from_body(data, path_doi: nil)
+        hsh =
+          data.to_s.split("\n").map do |line|
+            arr = line.to_s.split("=", 2)
+            arr << "value" if arr.length < 2
+            arr
+          end.to_h
+
+        fail IdentifierError, "param 'doi' required" unless hsh["doi"].present?
+
+        body_doi = CGI.unescape(hsh["doi"].strip)
+        if path_doi.present? && body_doi.casecmp(path_doi) != 0
+          fail IdentifierError, "doi parameter does not match doi of resource"
+        end
+
+        fail IdentifierError, "param 'url' required" unless hsh["url"].present?
+
+        [body_doi, CGI.unescape(hsh["url"].strip)]
+      end
   end
 end

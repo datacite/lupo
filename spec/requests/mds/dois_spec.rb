@@ -177,4 +177,3 @@ describe "MDS Dois API", type: :request, vcr: true, prefix_pool_size: 1 do
     end
   end
 end
-
