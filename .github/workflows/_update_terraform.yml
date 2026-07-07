@@ -22,7 +22,7 @@ jobs:
       GIT_TAG: ${{ inputs.image_tag }}
     steps:
       - name: Checkout terraform config repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # public repo with terraform configuration
           repository: 'datacite/mastino'
