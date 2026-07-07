@@ -340,59 +340,6 @@ class ProvidersController < ApplicationController
     end
 
   private
-=begin
-    def set_provider_contacts
-      if @provider.valid?
-        contacts = @provider.contacts.where(deleted_at: nil).to_a
-
-        # Clear contact role associations for this provider.
-        contacts.each { |contact|
-          contact.role_name = []
-        }
-
-        # Reset contact role associations to the new ones for this provider.
-        Contact.roles.each do | target_role |
-          target_role_name = target_role + "_contact"
-          contact_data = @provider.send(target_role_name)
-
-          if contact_data.present? && contact_data["email"].present?
-            target_email = contact_data["email"]
-            target_given_name = contact_data["given_name"] || nil
-            target_family_name = contact_data["family_name"] || nil
-
-            # Find matching contact; if none exists, build it and add it to our set of contacts for this provider.
-            contact = contacts.find { |c| c.email.downcase == target_email.downcase }
-
-            if contact.nil?
-              contact = @provider.contacts.build(email: target_email)
-              contact.role_name = []
-              contacts << contact
-            end
-
-            contact.role_name |= [ target_role ]
-            contact.given_name = target_given_name
-            contact.family_name = target_family_name
-          end
-        end
-
-        # Send provider export message. (Ignore if record was created/updated via Salesforce API)
-        @provider.save
-        @provider.send_provider_export_message(@provider.to_jsonapi.merge(slack_output: true)) if !@provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-
-        # We might have added contacts to what was originally an empty set.
-        if contacts.empty?
-          contacts = @provider.contacts.where(deleted_at: nil).to_a
-        end
-
-        # Send contact export messages. (Ignore if record was created/updated via Salesforce API)
-        contacts.each do |contact|
-          contact.save
-          contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        end
-      end
-    end
-=end
-
     def safe_params
       if params[:data].blank?
         fail JSON::ParserError,
