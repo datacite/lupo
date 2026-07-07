@@ -59,6 +59,10 @@ Rails.application.configure do
   ENV["SLACK_WEBHOOK_URL"] ||= "" # Keep empty if not sending Slack notifications in tests
   ENV["MDS_USERNAME"] ||= "DATACITE.TESTUSER"
   ENV["MDS_PASSWORD"] ||= "test_mds_password"
+  ENV["MDS_ENABLED"] ||= "true"
+  ENV["MDS_HOSTS"] ||= "mds.local,localhost,127.0.0.1"
+  ENV["MDS_URL"] ||= "http://mds.local:8065"
+  ENV["MDS_REALM"] ||= "mds.local"
   ENV["ADMIN_USERNAME"] ||= "DATACITE.TESTADMIN"
   ENV["ADMIN_PASSWORD"] ||= "test_admin_password"
   ENV["PRIVATE_IP"] ||= "127.0.0.1" # Placeholder for local testing
