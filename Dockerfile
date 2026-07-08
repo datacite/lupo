@@ -37,7 +37,7 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Percona Toolkit 3.7.1
-RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1/binary/debian/noble/x86_64/percona-toolkit_3.7.1-3.noble_amd64.deb && \
+RUN wget https://downloads.percona.com/downloads/percona-toolkit/3.7.1-3/binary/debian/noble/x86_64/percona-toolkit_3.7.1-3.noble_amd64.deb && \
     apt-get update && \
     apt-get install -y -f && \
     dpkg -i percona-toolkit_3.7.1-3.noble_amd64.deb && \
