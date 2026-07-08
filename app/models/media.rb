@@ -11,7 +11,7 @@ class Media < ApplicationRecord
 
   validates_presence_of :url
   validates_format_of :url,
-                      with: %r{\A(ftp|http|https|gs|s3|dos)://\S+},
+                      with: %r{\A(ftp|http|https|gs|s3|dos)://\S+\z},
                       if: :url?
   validates_associated :doi
 

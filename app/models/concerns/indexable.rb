@@ -47,12 +47,8 @@ module Indexable
           end
         end
       # ignore if record was created via Salesforce API
-      elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        send_provider_export_message(to_jsonapi.merge(slack_output: true))
       elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
         send_client_export_message(to_jsonapi.merge(slack_output: true))
-      elsif instance_of?(Contact) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
-        send_contact_export_message(to_jsonapi.merge(slack_output: true))
       end
     end
 
@@ -64,7 +60,7 @@ module Indexable
       begin
         __elasticsearch__.delete_document
         deleted_from_active = true
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+      rescue Elastic::Transport::Transport::Errors::NotFound => e
         Rails.logger.warn "Document not found in active index: #{e.message}"
       end
 
@@ -73,7 +69,7 @@ module Indexable
         begin
           __elasticsearch__.delete_document(index: self.class.inactive_index)
           deleted_from_inactive = true
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        rescue Elastic::Transport::Transport::Errors::NotFound => e
           Rails.logger.warn "Document not found in inactive index: #{e.message}"
         end
       end      # Only log success if at least one deletion succeeded
@@ -185,7 +181,7 @@ module Indexable
             scroll_id: response["_scroll_id"],
           )
           # handle expired scroll_id (Elasticsearch returns this error)
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue Elastic::Transport::Transport::Errors::NotFound
           return Hashie::Mash.new(total: 0, results: [], scroll_id: nil)
         end
       end
@@ -1136,7 +1132,7 @@ module Indexable
             ret = h.keys.first
           end
         end
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+      rescue Elastic::Transport::Transport::Errors::NotFound => e
         Rails.logger.error e.message
       end
 

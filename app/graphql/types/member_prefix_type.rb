@@ -6,12 +6,20 @@ class MemberPrefixType < BaseObject
   field :id,
         ID,
         null: false,
-        hash_key: "uid",
         description: "Unique identifier for each provider prefix"
+
+  def id
+    object.uid
+  end
+
   field :type, String, null: false, description: "The type of the item."
   field :name,
         String,
-        null: false, hash_key: "prefix_id", description: "Provider prefix name"
+        null: false, description: "Provider prefix name"
+
+  def name
+    object.prefix_id
+  end
 
   def type
     "MemberPrefix"

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "maremma"
-require "benchmark"
 
 class Doi < ApplicationRecord
   INVALID_SCHEMAS = %w[
@@ -14,6 +13,7 @@ class Doi < ApplicationRecord
 
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
+  OS_SOURCE = { excludes: ["xml"] }.freeze
   audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
@@ -131,7 +131,7 @@ class Doi < ApplicationRecord
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
-  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+/, if: :url?, message: "URL is not valid"
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+\z/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
@@ -223,6 +223,7 @@ class Doi < ApplicationRecord
   end
 
   settings index: {
+    mapping: { total_fields: { limit: 2000 } },
     analysis: {
       analyzer: {
         string_lowercase: { tokenizer: "keyword", filter: %w(lowercase ascii_folding) },
@@ -730,7 +731,6 @@ class Doi < ApplicationRecord
       "fields_of_science" => fields_of_science,
       "fields_of_science_repository" => fields_of_science_repository,
       "fields_of_science_combined" => fields_of_science_combined,
-      "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
       "agency" => agency,
@@ -1040,6 +1040,7 @@ class Doi < ApplicationRecord
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
       size: options.dig(:page, :size),
       sort: [options[:sort]],
+      _source: OS_SOURCE,
       query: {
         bool: {
           must: must,
@@ -1052,6 +1053,7 @@ class Doi < ApplicationRecord
   # return results for one doi
   def self.find_by_id(id)
     __elasticsearch__.search(
+      _source: OS_SOURCE,
       query: {
         match: {
           uid: id,
@@ -1105,7 +1107,7 @@ class Doi < ApplicationRecord
           scroll_id: response["_scroll_id"],
         )
       # handle expired scroll_id (Elasticsearch returns this error)
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
+      rescue Elastic::Transport::Transport::Errors::NotFound
         return Hashie::Mash.new(
           total: 0,
           results: [],
@@ -1375,6 +1377,7 @@ class Doi < ApplicationRecord
         aggs: {
           "samples_hits": {
             top_hits: {
+              _source: OS_SOURCE,
               size: options[:sample_size].presence || 1,
             },
           },
@@ -1394,6 +1397,7 @@ class Doi < ApplicationRecord
         index: index_name,
         scroll: options.dig(:page, :scroll),
         body: {
+          _source: OS_SOURCE,
           size: options.dig(:page, :size),
           sort: sort,
           query: es_query,
@@ -1408,6 +1412,7 @@ class Doi < ApplicationRecord
       )
     elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search({
+        _source: OS_SOURCE,
         size: options.dig(:page, :size),
         search_after: search_after,
         sort: sort,
@@ -1417,6 +1422,7 @@ class Doi < ApplicationRecord
       }.compact)
     else
       __elasticsearch__.search({
+        _source: OS_SOURCE,
         size: options.dig(:page, :size),
         from: from,
         sort: sort,
@@ -2637,9 +2643,9 @@ class Doi < ApplicationRecord
   def update_field_of_science
     self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
       if subject.is_a?(String)
-        sum += name_to_fos(subject)
+        sum += name_to_subject(subject)
       elsif subject.is_a?(Hash)
-        sum += hsh_to_fos(subject)
+        sum += hsh_to_subject(subject)
       end
 
       sum

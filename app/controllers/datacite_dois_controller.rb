@@ -180,6 +180,21 @@ class DataciteDoisController < ApplicationController
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
+      # Pluck XML from DB if params[:detail] is true
+      if params[:detail]
+        doi_ids = results.map { |r| r._source["doi"] }.compact
+        xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
+
+        results = results.map do |item|
+          source = item._source
+
+          xml_content = xml_by_doi[source["doi"]]
+          source.xml = xml_content
+
+          item
+        end
+      end
+
       if page[:scroll].present?
         options = {}
         options[:meta] = {
@@ -415,7 +430,7 @@ class DataciteDoisController < ApplicationController
           end
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+    rescue Elastic::Transport::Transport::Errors::BadRequest => e
       message =
         JSON.parse(e.message[6..-1]).to_h.dig(
           "error",

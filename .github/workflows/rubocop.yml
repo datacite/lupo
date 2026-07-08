@@ -2,6 +2,12 @@ name: RuboCop
 
 on:
   workflow_call:
+    inputs:
+      run_gem_audit:
+        description: 'Run bundler-audit security check'
+        type: boolean
+        default: false
+        required: false
 
 jobs:
   build:
@@ -11,10 +17,15 @@ jobs:
       BUNDLE_PATH: "vendor/bundle"
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Ruby 3.2.10
+    - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2.10
+        ruby-version: 4.0.1
         bundler-cache: true
     - name: Run RuboCop
       run: bundle exec rubocop --parallel
+    - name: Security Check (bundler-audit)
+      if: inputs.run_gem_audit
+      run: bundle exec bundler-audit check --update
+    - name: Security Check (brakeman)
+      run: bundle exec brakeman --no-pager

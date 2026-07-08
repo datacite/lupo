@@ -5,6 +5,11 @@ class YearMonthTotalType < BaseObject
 
   field :year_month,
         String,
-        null: true, hash_key: :yearMonth, description: "Year-month"
+        null: true, description: "Year-month"
+
+  def year_month
+    object["yearMonth"]
+  end
+
   field :total, Int, null: true, description: "Total"
 end

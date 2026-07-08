@@ -83,11 +83,11 @@ class Provider < ApplicationRecord
                       if: :group_email?,
                       message: "group_email should be an email"
   validates_format_of :website,
-                      with: %r{https?://\S+},
+                      with: %r{\Ahttps?://\S+\z},
                       if: :website?,
                       message: "Website should be a url"
   validates_format_of :salesforce_id,
-                      with: /[a-zA-Z0-9]{18}/,
+                      with: /\A[a-zA-Z0-9]{18}\z/,
                       message: "wrong format for salesforce id",
                       if: :salesforce_id?
   validates_inclusion_of :role_name,
@@ -183,6 +183,7 @@ class Provider < ApplicationRecord
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   accepts_nested_attributes_for :prefixes
+  accepts_nested_attributes_for :contacts
 
   # use different index for testing
   if Rails.env.test?
@@ -194,6 +195,7 @@ class Provider < ApplicationRecord
   end
 
   settings index: {
+    mapping: { total_fields: { limit: 2000 } },
     analysis: {
       analyzer: {
         string_lowercase: {
@@ -770,15 +772,15 @@ class Provider < ApplicationRecord
   # end
 
   def country_name
-    ISO3166::Country[country_code].name if country_code.present?
+    ISO3166::Country[country_code].try(:iso_short_name) if country_code.present?
   end
 
   def billing_country_name
-    ISO3166::Country[billing_country].try(:name) if billing_country.present?
+    ISO3166::Country[billing_country].try(:iso_short_name) if billing_country.present?
   end
 
   def set_region
-    r = ISO3166::Country[country_code].world_region if country_code.present?
+    r = ISO3166::Country[country_code].try(:world_region) if country_code.present?
     write_attribute(:region, r)
   end
 
@@ -825,7 +827,7 @@ class Provider < ApplicationRecord
   end
 
   def uuid_format
-    unless UUID.validate(globus_uuid)
+    unless UUID_REGEX.match?(globus_uuid.to_s)
       errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID")
     end
   end
@@ -857,6 +859,7 @@ class Provider < ApplicationRecord
       "group_email" => group_email,
       "description" => description,
       "region" => region,
+      "country_code" => country_code,
       "logo_url" => logo_url,
       "non_profit_status" => non_profit_status,
       "focus_area" => focus_area,
@@ -914,6 +917,58 @@ class Provider < ApplicationRecord
 
     "#{i} providers exported."
   end
+
+  def set_provider_contacts
+    if self.valid?
+      contacts = self.contacts.where(deleted_at: nil).to_a
+
+      # Clear contact role associations for this provider.
+      contacts.each { |contact|
+        contact.role_name = []
+      }
+
+      # Reset contact role associations to the new ones for this provider.
+      Contact.roles.each do | target_role |
+        target_role_name = target_role + "_contact"
+        contact_data = self.send(target_role_name)
+
+        if contact_data.present? && contact_data["email"].present?
+          target_email = contact_data["email"]
+          target_given_name = contact_data["given_name"] || nil
+          target_family_name = contact_data["family_name"] || nil
+
+          # Find matching contact; if none exists, build it and add it to our set of contacts for this provider.
+          contact = contacts.find { |c| c.email.downcase == target_email.downcase }
+
+          if contact.nil?
+            contact = self.contacts.build(email: target_email)
+            contact.role_name = []
+            contacts << contact
+          end
+
+          contact.role_name |= [ target_role ]
+          contact.given_name = target_given_name
+          contact.family_name = target_family_name
+        end
+      end
+
+      # Send provider export message. (Ignore if record was created/updated via Salesforce API)
+      self.save
+      self.send_provider_export_message(self.to_jsonapi.merge(slack_output: true)) if !self.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+
+      # We might have added contacts to what was originally an empty set.
+      if contacts.empty?
+        contacts = self.contacts.where(deleted_at: nil).to_a
+      end
+
+      # Send contact export messages. (Ignore if record was created/updated via Salesforce API)
+      contacts.each do |contact|
+        contact.save
+        contact.send_contact_export_message(contact.to_jsonapi.merge(slack_output: true)) if !contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+      end
+    end
+  end
+
 
   private
     def set_region
