@@ -7,8 +7,6 @@ class ContactsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
 
-  after_action :set_provider_contacts, only: %i[create update]
-  after_action :remove_provider_contacts, only: %i[destroy]
   load_and_authorize_resource
 
   def index
@@ -122,11 +120,15 @@ class ContactsController < ApplicationController
     @contact = Contact.new(safe_params)
     authorize! :create, @contact
 
+    @contact.role_name = [] if @contact.role_name.nil?
+
     if @contact.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
+
+      @contact.set_provider_contacts
 
       render(
         json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
@@ -140,11 +142,16 @@ class ContactsController < ApplicationController
   end
 
   def update
-    if @contact.update(safe_params)
+    @contact.assign_attributes(safe_params)
+    @contact.role_name = [] if @contact.role_name.nil?
+
+    if @contact.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
+
+      @contact.set_provider_contacts
 
       render(
         json: ContactSerializer.new(@contact, options).serializable_hash.to_json,
@@ -160,6 +167,7 @@ class ContactsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   def destroy
     if @contact.update(deleted_at: Time.zone.now)
+      remove_provider_contacts
       head :no_content
     else
       # Rails.logger.error @contact.errors.inspect
@@ -190,34 +198,19 @@ class ContactsController < ApplicationController
     end
 
   private
-    def set_provider_contacts
-      if @contact.valid?
-        Contact.roles.each do | role |
-          if @contact.has_role?(role)
-            @contact.set_provider_role(role, { 'email': @contact.email, 'given_name': @contact.given_name, 'family_name': @contact.family_name })
-          elsif @contact.has_provider_role?(role)
-            @contact.set_provider_role(role, nil)
-          end
-        end
-
-        # Make sure no other contact with this provider claims these roles.
-        @contact.provider.contacts.each do | contact |
-          if !@contact.is_me?(contact)
-            if contact.remove_roles!(Array.wrap(@contact.role_name))
-              contact.update_attribute("role_name", contact.role_name)
-            end
-          end
-        end
-      end
-    end
-
     def remove_provider_contacts
       Array.wrap(@contact.role_name).each do | role |
         if @contact.has_provider_role?(role)
-          @contact.set_provider_role(role, nil)
+          @contact.set_provider_role!(role, nil)
         end
       end
-      @contact.update_attribute("role_name", [])
+      @contact.role_name = []
+
+      @contact.provider.save
+      @contact.provider.send_provider_export_message(@contact.provider.to_jsonapi.merge(slack_output: true)) if !@contact.provider.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+
+      @contact.save
+      @contact.send_contact_export_message(@contact.to_jsonapi.merge(slack_output: true)) if !@contact.from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
     end
 
     def safe_params
