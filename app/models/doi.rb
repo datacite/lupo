@@ -619,6 +619,7 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
+      indexes :has_enrichments, type: :boolean
     end
   end
 
@@ -712,7 +713,20 @@ class Doi < ApplicationRecord
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
-    }
+      "has_enrichments" => has_enrichments,
+    }.merge(extra_indexed_fields)
+  end
+
+  def extra_indexed_fields
+    {}
+  end
+
+  def has_enrichments
+    if association(:enrichments).loaded?
+      enrichments.any?
+    else
+      enrichments.exists?
+    end
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
@@ -1446,6 +1460,15 @@ class Doi < ApplicationRecord
     message
   end
 
+  # Small work around to get serialization working as expected for enriched dois
+  def enrichment_uuids
+    if association(:enrichments).loaded?
+      enrichments.map(&:uuid)
+    else
+      enrichments.pluck(:uuid)
+    end
+  end
+
   def uid
     doi.downcase
   end
@@ -1872,15 +1895,6 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
-  end
-
-  # Small work around to get serialization working as expected for enriched dois
-  def enrichment_uuids
-    if association(:enrichments).loaded?
-      enrichments.map(&:uuid)
-    else
-      enrichments.pluck(:uuid)
-    end
   end
 
   def _fos_filter(subject_array)
