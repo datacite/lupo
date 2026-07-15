@@ -163,7 +163,7 @@ GEM
     cancancan (3.6.1)
     case_transform (0.2)
       activesupport
-    cgi (0.5.1)
+    cgi (0.5.2)
     citeproc (1.1.0)
       date
       forwardable
@@ -206,14 +206,14 @@ GEM
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0)
     database_cleaner-core (2.0.1)
-    datadog (2.30.0)
+    datadog (2.32.0)
       cgi
       datadog-ruby_core_source (~> 3.5, >= 3.5.2)
-      libdatadog (~> 29.0.0.1.0)
+      libdatadog (~> 30.0.0.1.0)
       libddwaf (~> 1.30.0.0.0)
       logger
       msgpack
-    datadog-ruby_core_source (3.5.2)
+    datadog-ruby_core_source (3.5.3)
     date (3.5.1)
     departure (8.0.0)
       activerecord (>= 7.2.0)
@@ -410,10 +410,10 @@ GEM
       terrapin (>= 0.6.0, < 2.0)
     language_server-protocol (3.17.0.5)
     latex-decode (0.4.2)
-    libdatadog (29.0.0.1.0)
-    libdatadog (29.0.0.1.0-aarch64-linux)
-    libdatadog (29.0.0.1.0-arm64-darwin)
-    libdatadog (29.0.0.1.0-x86_64-linux)
+    libdatadog (30.0.0.1.0)
+    libdatadog (30.0.0.1.0-aarch64-linux)
+    libdatadog (30.0.0.1.0-arm64-darwin)
+    libdatadog (30.0.0.1.0-x86_64-linux)
     libddwaf (1.30.0.0.2-aarch64-linux)
       ffi (~> 1.0)
     libddwaf (1.30.0.0.2-arm64-darwin)
@@ -799,7 +799,7 @@ DEPENDENCIES
   crawler_detect (~> 1.2, >= 1.2.11)
   dalli (~> 5.0, >= 5.0.2)
   database_cleaner-active_record (~> 2.2, >= 2.2.2)
-  datadog (~> 2.30)
+  datadog (~> 2.32)
   departure (~> 8.0)
   dotenv (~> 3.2)
   elastic-transport (~> 8.0, >= 8.0.1)

@@ -66,7 +66,7 @@ gem "strip_attributes", "~> 2.0", ">= 2.0.1"
 gem "parallel", "~> 1.28"
 
 group :production, :stage do
-  gem "datadog", "~> 2.30", require: "datadog/auto_instrument"
+  gem "datadog", "~> 2.32", require: "datadog/auto_instrument"
 end
 
 group :development, :test do
