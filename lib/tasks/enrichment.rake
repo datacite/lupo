@@ -1,6 +1,41 @@
 # frozen_string_literal: true
 
 namespace :enrichment do
+  desc "Create index for enriched dois"
+  task create_index: :environment do
+    puts EnrichedDoi.create_index(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "Delete index for enriched dois"
+  task delete_index: :environment do
+    puts EnrichedDoi.delete_index(index: ENV["INDEX"])
+  end
+
+  desc "Upgrade index for enriched dois"
+  task upgrade_index: :environment do
+    puts EnrichedDoi.upgrade_index
+  end
+
+  desc "Create alias for enriched dois"
+  task create_alias: :environment do
+    puts EnrichedDoi.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "Switch index for enriched dois"
+  task switch_index: :environment do
+    puts EnrichedDoi.switch_index(alias: ENV["ALIAS"], index: ENV["INDEX"])
+  end
+
+  desc "Return active index for enriched dois"
+  task active_index: :environment do
+    puts EnrichedDoi.active_index + " is the active index."
+  end
+
+  desc "Create template for enriched dois"
+  task create_template: :environment do
+    puts EnrichedDoi.create_template
+  end
+
   desc "Process JSONL from S3 and enqueue batches sized by bytes (256KB message size limit)"
   # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl SOURCE_ID=DATACITE.COMET
   task batch_process_file: :environment do
@@ -82,5 +117,58 @@ namespace :enrichment do
 
     flush.call
     puts("Finished ingestion for s3://#{bucket}/#{key} (lines_seen=#{line_no})")
+  end
+
+  desc "Process DOI text file from S3"
+  # Example command: bundle exec rake enrichment:process_doi_file KEY=arxiv_dois.txt
+  task process_doi_file: :environment do
+    bucket = ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"]
+    key = ENV["KEY"]
+
+    abort("ENRICHMENTS_INGESTION_FILES_BUCKET_NAME is not set") if bucket.blank?
+    abort("KEY is not set") if key.blank?
+
+    puts("Begin enriched doi indexing for s3://#{bucket}/#{key}")
+
+    s3 = Aws::S3::Client.new(force_path_style: true)
+
+    buffer = +""
+    line_no = 0
+
+    process_doi = lambda do |doi, current_line_no|
+      return if doi.empty?
+
+      puts("Processing DOI [#{current_line_no}]: #{doi}")
+
+      source_doi = Doi.includes(:enrichments).find_by(doi: doi, agency: "datacite")
+
+      if source_doi.blank?
+        puts("DOI not found in database: #{doi}")
+        return
+      end
+
+      EnrichedDoiIndexJob.perform_later(doi)
+    end
+
+    s3.get_object(bucket: bucket, key: key) do |chunk|
+      buffer << chunk
+
+      while (newline_index = buffer.index("\n"))
+        raw_line = buffer.slice!(0..newline_index).delete_suffix("\n")
+        line_no += 1
+
+        doi = raw_line.strip
+        process_doi.call(doi, line_no)
+      end
+    end
+
+    # Process final line if file does not end with a newline
+    tail = buffer.strip
+    unless tail.empty?
+      line_no += 1
+      process_doi.call(tail, line_no)
+    end
+
+    puts("Finished indexing enriched dois for s3://#{bucket}/#{key} (lines_seen=#{line_no})")
   end
 end
