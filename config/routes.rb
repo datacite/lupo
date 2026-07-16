@@ -239,14 +239,6 @@ Rails.application.routes.draw do
   # custom routes for maintenance tasks
   post ":username", to: "datacite_dois#show", as: :user
 
-  # support for legacy routes
-  resources :members, only: %i[show index]
-  resources :data_centers,
-            only: %i[show index],
-            constraints: { id: /.+/ },
-            path: "/data-centers"
-  resources :works, only: %i[show index], constraints: { id: /.+/ }
-
   # content negotiation
   resources :index,
             path: "/",
