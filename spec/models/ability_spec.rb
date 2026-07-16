@@ -208,8 +208,8 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:transfer, doi)
       end
 
-      it "cannot access datafile credentials" do
-        is_expected.not_to be_able_to(:read, :access_datafile)
+      it "can access datafile credentials" do
+        is_expected.to be_able_to(:read, :access_datafile)
       end
     end
 

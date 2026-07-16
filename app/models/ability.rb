@@ -178,6 +178,7 @@ class Ability
       can %i[read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
+      can %i[read], :access_datafile
     elsif user.role_id == "client_api" && user.client.present?
       can %i[read], Provider
       can %i[read], Client, symbol: user.client_id.upcase
