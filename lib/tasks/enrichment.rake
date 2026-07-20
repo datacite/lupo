@@ -171,24 +171,4 @@ namespace :enrichment do
 
     puts("Finished indexing enriched dois for s3://#{bucket}/#{key} (lines_seen=#{line_no})")
   end
-
-  desc "Index all DOIs with enrichments into enriched-dois index"
-  task index_enriched_dois: :environment do
-    index = ENV["INDEX"] || EnrichedDoi.active_index
-    batch_size = (ENV["BATCH_SIZE"] || 2000).to_i
-    target_active_index = (index == EnrichedDoi.active_index)
-
-    enqueued_dois = Set.new
-
-    Enrichment.find_in_batches(batch_size: batch_size) do |enrichments|
-      enrichments.each do |enrichment|
-        unless enqueued_dois.include?(enrichment.doi)
-          EnrichedDoiIndexJob.perform_later(enrichment.doi, target_active_index: target_active_index)
-          enqueued_dois.add(enrichment.doi)
-        end
-      end
-    end
-
-    puts "Queued #{enqueued_dois.size} enriched DOI indexing jobs"
-  end
 end
