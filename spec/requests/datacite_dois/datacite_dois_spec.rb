@@ -13,6 +13,10 @@ def clear_doi_index
   DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
 end
 
+def refresh_enriched_doi_index
+  EnrichedDoi.__elasticsearch__.client.indices.refresh(index: EnrichedDoi.index_name)
+end
+
 DEFAULT_DOIS_FACETS = [
   "states",
   "resourceTypes",
@@ -2332,6 +2336,76 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("meta", "total")).to eq(1)
       expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 0, "relationTypeInformation")).to eq("Relates this DOI to the dataset in Dryad that contains the data underlying the article.")
       expect(json.dig("data", 0, "attributes", "relatedIdentifiers", 2, "relationTypeInformation")).to eq("Relates this DOI to the article that references it.")
+    end
+  end
+
+  context "enriched DOIs indexing", elasticsearch: true do
+    let!(:enrichment) { create(:enrichment) }
+    let!(:doi) { create(:doi, doi: enrichment.doi, client: client, aasm_state: "findable", creators: [{
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "affiliation" => [],
+      }] ) }
+
+    before do
+      IndexJobDoiRegistration.perform_now(doi)
+      import_doi_index
+      refresh_enriched_doi_index
+    end
+
+    it "returns non-enriched doi at /dois" do
+      get "/dois?query=doi:#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data").size).to eq(1)
+      expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
+      expect(json.dig("data", 0, "attributes", "creators", 0)).to eq({
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "affiliation" => [],
+        "nameIdentifiers" => [],
+      })
+    end
+
+    it "returns enriched doi at /dois?enriched=true" do
+      get "/dois?query=doi:#{doi.doi}&enriched=true&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data").size).to eq(1)
+      expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
+      expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
+    end
+
+    context "when the doi title is updated" do
+      let(:updated_titles) { [{ "title" => "Updated Title" }] }
+
+      before do
+        doi.update!(titles: updated_titles)
+        IndexJobDoiRegistration.perform_now(doi)
+        import_doi_index
+        refresh_enriched_doi_index
+      end
+
+      it "returns the updated title at /dois" do
+        get "/dois?query=doi:#{doi.doi}", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "titles")).to eq(updated_titles)
+      end
+
+      it "returns the updated title at /dois?enriched=true" do
+        get "/dois?query=doi:#{doi.doi}&enriched=true&affiliation=true", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "titles")).to eq(updated_titles)
+        expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
+      end
     end
   end
 end
