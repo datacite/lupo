@@ -118,6 +118,17 @@ describe User, type: :model, elasticsearch: true do
         ).to be false
       end
 
+      it "client_api" do
+        token =
+          User.generate_token(
+            role_id: "client_api", client_id: "datacite.rph",
+          )
+        subject = User.new(token)
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
+      end
+
       it "client_user" do
         token =
           User.generate_token(role_id: "client_user", client_id: "datacite.rph")
@@ -126,6 +137,7 @@ describe User, type: :model, elasticsearch: true do
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false
       end
+
 
       it "user" do
         token = User.generate_token(role_id: "user")
@@ -239,6 +251,17 @@ describe User, type: :model, elasticsearch: true do
         ).to be false
       end
 
+      it "client_api" do
+        token =
+          User.generate_token(
+            role_id: "client_api", client_id: "datacite.rph",
+          )
+        subject = User.new(token)
+        expect(
+          subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
+        ).to be false
+      end
+
       it "client_user" do
         token =
           User.generate_token(role_id: "client_user", client_id: "datacite.rph")
@@ -247,6 +270,7 @@ describe User, type: :model, elasticsearch: true do
           subject.not_allowed_by_doi_and_user(doi: doi, user: subject),
         ).to be false
       end
+
 
       it "user" do
         token = User.generate_token(role_id: "user")
@@ -408,6 +432,86 @@ describe Client, type: :model do
 
     it "does not contain password" do
       expect(payload).to include("role_id")
+    end
+  end
+end
+
+describe "API key authentication", type: :model do
+  let(:client) { create(:client, password_input: "12345") }
+  let(:api_key_record) { client.api_keys.create!(name: "spec key") }
+  let(:plain_key) { api_key_record.key }
+
+  describe "decode_auth_param using key as username (per ACs)" do
+    it "authenticates with api key as username (password ignored/discarded)" do
+      payload = client.decode_auth_param(
+        username: plain_key,
+        password: "",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_api")
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
+      expect(payload["api_key_id"]).to eq(api_key_record.id)
+      expect(payload).not_to have_key("password")
+    end
+
+    it "authenticates with api key as username even with dummy password" do
+      payload = client.decode_auth_param(
+        username: plain_key,
+        password: "ignored",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["role_id"]).to eq("client_api")
+    end
+  end
+
+  describe "decode_auth_param using key as password (backward compat)" do
+    it "authenticates with api key value instead of account password" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: plain_key,
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_api")
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
+    end
+
+    it "still prefers the real password when both could match" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: "12345",
+      )
+      expect(payload["uid"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["auth_method"]).to be_nil
+      expect(payload["api_key_prefix"]).to be_nil
+    end
+
+    it "rejects wrong key" do
+      payload = client.decode_auth_param(
+        username: client.symbol,
+        password: "DC.wrongkeyvalue1234567890abcdef",
+      )
+      expect(payload).to eq({})
+    end
+  end
+
+  describe "decode_api_key (for Bearer)" do
+    it "returns payload for valid key" do
+      payload = client.decode_api_key(plain_key)
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
+      expect(payload["role_id"]).to eq("client_api")
+      expect(payload["auth_method"]).to eq("api_key")
+      expect(payload["api_key_prefix"]).to eq(api_key_record.key_prefix)
+    end
+
+    it "returns error for invalid" do
+      payload = client.decode_api_key("bad")
+      expect(payload[:errors]).to be_present
     end
   end
 end

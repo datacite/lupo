@@ -22,6 +22,10 @@ class SessionsController < ApplicationController
       error_response("Wrong account ID or password.") && return
     end
 
+    if user.api_key_authenticated? || user.jwt.blank?
+      error_response("Wrong account ID or password.") && return
+    end
+
     render json: {
       "access_token" => user.jwt, "expires_in" => 3_600 * 24 * 30
     }.to_json,
