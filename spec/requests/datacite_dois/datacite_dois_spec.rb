@@ -2346,7 +2346,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         "givenName" => "M.",
         "familyName" => "Arslan",
         "affiliation" => [],
-      }] ) }
+      }]) }
 
     before do
       IndexJobDoiRegistration.perform_now(doi)
