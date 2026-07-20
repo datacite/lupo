@@ -56,5 +56,4 @@ class EnrichedDoiIndexJob < ApplicationJob
     response = enriched_doi.__elasticsearch__.index_document(index: target_index)
     Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
   end
-
 end
