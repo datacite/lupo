@@ -23,20 +23,28 @@ class User
                 :client_id,
                 :beta_tester,
                 :has_orcid_token,
+                :auth_method,
+                :api_key_id,
+                :api_key_prefix,
                 :errors
 
   def initialize(credentials, options = {})
     if credentials.present? && options.fetch(:type, "").casecmp("basic").zero?
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
-      @jwt =
-        encode_token(
-          payload.merge(
-            iat: Time.now.to_i,
-            exp: Time.now.to_i + 3_600 * 24 * 30,
-            aud: Rails.env,
-          ),
-        )
+      # Do not mint a session JWT from an API key. A JWT would lose auth_method
+      # and could manage credentials (list/create/revoke keys) via Bearer.
+      if payload.present? && payload["auth_method"] != "api_key" && !payload[:errors]
+        jwt_payload = payload.except("auth_method", "api_key_id", "api_key_prefix")
+        @jwt =
+          encode_token(
+            jwt_payload.merge(
+              iat: Time.now.to_i,
+              exp: Time.now.to_i + 3_600 * 24 * 30,
+              aud: Rails.env,
+            ),
+          )
+      end
     elsif credentials.present? && options.fetch(:type, "").casecmp("oidc").zero?
       payload = decode_alb_token(credentials)
 
@@ -63,7 +71,18 @@ class User
       end
     elsif credentials.present?
       payload = decode_token(credentials)
-      @jwt = credentials
+      if payload.blank? || payload[:errors]
+        # Try as API key (drop-in Bearer support, non-JWT)
+        ak_payload = decode_api_key(credentials)
+        if ak_payload.present? && !ak_payload[:errors]
+          payload = ak_payload
+          @jwt = nil # keys are not JWTs
+        else
+          @jwt = credentials
+        end
+      else
+        @jwt = credentials
+      end
     end
 
     if payload.blank? || payload[:errors]
@@ -79,7 +98,14 @@ class User
       @client_id = payload.fetch("client_id", nil)
       @beta_tester = payload.fetch("beta_tester", false)
       @has_orcid_token = payload.fetch("has_orcid_token", false)
+      @auth_method = payload["auth_method"]
+      @api_key_id = payload["api_key_id"]
+      @api_key_prefix = payload["api_key_prefix"]
     end
+  end
+
+  def api_key_authenticated?
+    auth_method == "api_key"
   end
 
   alias_attribute :orcid, :uid
