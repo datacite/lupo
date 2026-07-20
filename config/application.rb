@@ -148,6 +148,9 @@ module Lupo
         ddsource: %w[ruby],
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
+        # Present only for API-key auth (prefix only — never the full secret).
+        auth_method: event.payload[:auth_method],
+        api_key_prefix: event.payload[:api_key_prefix],
       }
     end if defined?(Datadog::Tracing)
 

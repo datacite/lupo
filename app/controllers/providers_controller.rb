@@ -202,6 +202,8 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
 
+      @provider.set_provider_contacts
+
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
         status: :ok
@@ -218,6 +220,8 @@ class ProvidersController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability, detail: true }
+
+      @provider.set_provider_contacts
 
       render(
         json: ProviderSerializer.new(@provider, options).serializable_hash.to_json,
