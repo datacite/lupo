@@ -13,6 +13,7 @@ class UpdateProviderIdJob < ApplicationJob
 
     if doi.present? && options[:provider_target_id].present?
       doi.__elasticsearch__.index_document
+      EnrichedDoiIndexJob.enqueue_for_datacite_doi(doi)
 
       Rails.logger.warn "[Transfer] updated DOI #{doi.doi}."
     elsif doi.present?

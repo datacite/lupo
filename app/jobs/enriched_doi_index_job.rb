@@ -3,6 +3,13 @@
 class EnrichedDoiIndexJob < ApplicationJob
   queue_as :enriched_doi_index_job
 
+  def self.enqueue_for_datacite_doi(source_doi, target_active_index: true)
+    return unless source_doi.instance_of?(DataciteDoi)
+    return unless source_doi.has_enrichments
+
+    perform_later(source_doi.doi, target_active_index: target_active_index)
+  end
+
   rescue_from ActiveJob::DeserializationError,
               SocketError,
               Elasticsearch::Transport::Transport::Errors::BadRequest,
@@ -10,12 +17,26 @@ class EnrichedDoiIndexJob < ApplicationJob
     Rails.logger.error error.message
   end
 
-  def perform(doi)
+  def perform(doi, target_active_index: true)
     log_prefix = "[EnrichedDoiIndexJob]"
+    target_index = target_active_index ? EnrichedDoi.active_index : EnrichedDoi.inactive_index
     source_doi = Doi.includes(:enrichments).find_by(doi: doi, agency: "datacite")
 
     if source_doi.blank?
       Rails.logger.info("#{log_prefix}: DOI not found: #{doi}")
+      return
+    end
+
+    if source_doi.enrichments.blank?
+      begin
+        EnrichedDoi.__elasticsearch__.client.delete(
+          index: target_index,
+          id: source_doi.id,
+        )
+      rescue => e
+        Rails.logger.error("#{log_prefix}: Failed to delete enriched DOI #{source_doi.doi}: #{e.message}")
+      end
+
       return
     end
 
@@ -41,7 +62,7 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.created_at = source_doi.created_at
     enriched_doi.updated_at = source_doi.updated_at
 
-    response = enriched_doi.__elasticsearch__.index_document
+    response = enriched_doi.__elasticsearch__.index_document(index: target_index)
     Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
   end
 end
