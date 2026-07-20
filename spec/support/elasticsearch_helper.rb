@@ -6,6 +6,7 @@ SEARCHABLE_MODELS = [
   DataciteDoi,
   OtherDoi,
   Doi,
+  EnrichedDoi,
   Event,
   Activity,
   Prefix,
