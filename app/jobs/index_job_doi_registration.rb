@@ -11,9 +11,9 @@ class IndexJobDoiRegistration < ApplicationJob
   end
 
   def perform(obj)
+    EnrichedDoiIndexJob.new.perform(obj.doi)
+
     response = obj.__elasticsearch__.index_document
     Rails.logger.error "[Elasticsearch] Error #{response.inspect}" unless %w(created updated).include?(response["result"])
-
-    EnrichedDoiIndexJob.enqueue_for_datacite_doi(obj)
   end
 end
