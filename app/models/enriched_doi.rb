@@ -11,6 +11,14 @@ class EnrichedDoi < Doi
     index_name("enriched_dois")
   end
 
+  def self.active_index
+    Rails.env.test? ? index_name : super
+  end
+
+  def self.inactive_index
+    Rails.env.test? ? index_name : super
+  end
+
   settings index: {
     analysis: {
       analyzer: {
@@ -468,7 +476,11 @@ class EnrichedDoi < Doi
 
   # For enriched searches we search over two indices dois and enriched_dois and favour the enriched version.
   def self.search_indices
-    [DataciteDoi.active_index, EnrichedDoi.active_index]
+    if Rails.env.test?
+      [DataciteDoi.index_name, EnrichedDoi.index_name]
+    else
+      [DataciteDoi.active_index, EnrichedDoi.active_index]
+    end
   end
 
   def self.enriched_query(query, options = {})
