@@ -3,6 +3,8 @@
 class EnrichedDoi < Doi
   include Elasticsearch::Model
 
+  attr_accessor :index_without_enrichments
+
   if Rails.env.test?
     index_name("enriched_dois-test#{ENV['TEST_ENV_NUMBER']}")
   elsif ENV["ES_PREFIX"].present?
@@ -465,6 +467,8 @@ class EnrichedDoi < Doi
   end
 
   def extra_indexed_fields
+    return { "enrichments" => [] } if index_without_enrichments
+
     {
       "enrichments" => enrichment_uuids,
     }
