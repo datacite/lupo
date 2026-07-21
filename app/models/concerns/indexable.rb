@@ -1187,9 +1187,16 @@ module Indexable
       alias_name = index_name
 
       body =
-        if name == "Doi" || name == "DataciteDoi" || name == "OtherDoi"
+        if name == "DataciteDoi" || name == "Doi"
           {
-            index_patterns: %w[dois*],
+            # Avoid "dois*" — it also matches dois-other*
+            index_patterns: [alias_name, "#{alias_name}_v1", "#{alias_name}_v2"],
+            settings: name == "DataciteDoi" ? settings.to_hash : DataciteDoi.settings.to_hash,
+            mappings: Doi.mappings.to_hash,
+          }
+        elsif name == "OtherDoi"
+          {
+            index_patterns: ["#{alias_name}*"],
             settings: Doi.settings.to_hash,
             mappings: Doi.mappings.to_hash,
           }
