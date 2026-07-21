@@ -28,3 +28,4 @@ groups:
     concurrency: 5
     queues:
       - enrichment_batch_process_job
+      - enriched_doi_index_job

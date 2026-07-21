@@ -22,6 +22,7 @@ module Doi::GraphqlQuery
         query: inner_query,
         aggregations: aggregations,
         track_total_hits: true,
+        _source: Doi::OS_SOURCE,
       }.compact
     end
 

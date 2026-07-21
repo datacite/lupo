@@ -7,6 +7,21 @@ class DataciteDoiSerializer
   set_type :dois
   set_id :uid
 
+  has_many :enrichments,
+         record_type: :enrichments,
+         if: proc { |_object, params| params && params[:show_enrichments] } do |object|
+          ids =
+            if object.respond_to?(:enrichment_uuids)
+              object.enrichment_uuids
+            elsif object.respond_to?(:enrichments)
+              object.enrichments
+            else
+              []
+            end
+
+          Array.wrap(ids).compact.map { |id| OpenStruct.new(id: id) }
+        end
+
   # don't cache dois, as works are cached using the doi model
 
   attributes :doi,
@@ -117,7 +132,7 @@ class DataciteDoiSerializer
               Proc.new { |_object, params|
                 params && params[:detail]
               } do |object|
-    Base64.strict_encode64(object.xml) if object.xml.present?
+    Base64.strict_encode64(object.xml) if object.respond_to?(:xml) && object.xml.present?
   rescue ArgumentError
     nil
   end

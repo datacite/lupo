@@ -179,6 +179,10 @@ Rails.application.routes.draw do
   # Monthly Data File access
   get "credentials/datafile", to: "datafile#create_credentials"
 
+  scope "credentials" do
+    resources :api_keys, path: "api-keys", only: %i[index create destroy]
+  end
+
   resources :heartbeat, only: %i[index]
 
   resources :activities, only: %i[index show], constraints: { id: /.+/ }
@@ -234,14 +238,6 @@ Rails.application.routes.draw do
 
   # custom routes for maintenance tasks
   post ":username", to: "datacite_dois#show", as: :user
-
-  # support for legacy routes
-  resources :members, only: %i[show index]
-  resources :data_centers,
-            only: %i[show index],
-            constraints: { id: /.+/ },
-            path: "/data-centers"
-  resources :works, only: %i[show index], constraints: { id: /.+/ }
 
   # content negotiation
   resources :index,

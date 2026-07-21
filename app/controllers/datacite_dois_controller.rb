@@ -12,6 +12,8 @@ class DataciteDoisController < ApplicationController
   before_action :set_raven_context, only: %i[create update validate]
 
   def index
+    show_enrichments = params["enriched"]&.upcase == "TRUE"
+
     sort =
       case params[:sort]
       when "name"
@@ -85,65 +87,66 @@ class DataciteDoisController < ApplicationController
     elsif params[:ids].present?
       response = DataciteDoi.find_by_ids(params[:ids], disable_facets: disable_facets, facets: params[:facets], page: page, sort: sort)
     else
-      response =
-        DataciteDoi.query(
-          params[:query],
-          state: params[:state],
-          exclude_registration_agencies: exclude_registration_agencies,
-          published: params[:published],
-          created: params[:created],
-          registered: params[:registered],
-          provider_id: params[:provider_id],
-          consortium_id: params[:consortium_id],
-          client_id: params[:client_id],
-          affiliation_id: params[:affiliation_id],
-          funder_id: params[:funder_id],
-          re3data_id: params[:re3data_id],
-          opendoar_id: params[:opendoar_id],
-          license: params[:license],
-          certificate: params[:certificate],
-          prefix: params[:prefix],
-          user_id: params[:user_id],
-          resource_type_id: params[:resource_type_id],
-          resource_type: params[:resource_type],
-          schema_version: params[:schema_version],
-          subject: params[:subject],
-          field_of_science: params[:field_of_science],
-          has_citations: params[:has_citations],
-          has_references: params[:has_references],
-          has_parts: params[:has_parts],
-          has_part_of: params[:has_part_of],
-          has_versions: params[:has_versions],
-          has_version_of: params[:has_version_of],
-          has_views: params[:has_views],
-          has_downloads: params[:has_downloads],
-          has_person: params[:has_person],
-          has_affiliation: params[:has_affiliation],
-          has_organization: params[:has_organization],
-          has_funder: params[:has_funder],
-          link_check_status: params[:link_check_status],
-          link_check_has_schema_org: params[:link_check_has_schema_org],
-          link_check_body_has_pid: params[:link_check_body_has_pid],
-          link_check_found_schema_org_id:
-            params[:link_check_found_schema_org_id],
-          link_check_found_dc_identifier:
-            params[:link_check_found_dc_identifier],
-          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-          sample_group: sample_group_field,
-          sample_size: params[:sample],
-          source: params[:source],
-          scroll_id: params[:scroll_id],
-          disable_facets: disable_facets,
-          facets: params[:facets],
-          page: page,
-          sort: sort,
-          random: params[:random],
-          client_type: params[:client_type],
-          funded_by: params[:funded_by],
-          include_funder_child_organizations: params[:include_funder_child_organizations],
-          affiliation_country: params[:affiliation_country],
-        )
+      query_params = {
+        state: params[:state],
+        exclude_registration_agencies: exclude_registration_agencies,
+        published: params[:published],
+        created: params[:created],
+        registered: params[:registered],
+        provider_id: params[:provider_id],
+        consortium_id: params[:consortium_id],
+        client_id: params[:client_id],
+        affiliation_id: params[:affiliation_id],
+        funder_id: params[:funder_id],
+        re3data_id: params[:re3data_id],
+        opendoar_id: params[:opendoar_id],
+        license: params[:license],
+        certificate: params[:certificate],
+        prefix: params[:prefix],
+        user_id: params[:user_id],
+        resource_type_id: params[:resource_type_id],
+        resource_type: params[:resource_type],
+        schema_version: params[:schema_version],
+        subject: params[:subject],
+        field_of_science: params[:field_of_science],
+        has_citations: params[:has_citations],
+        has_references: params[:has_references],
+        has_parts: params[:has_parts],
+        has_part_of: params[:has_part_of],
+        has_versions: params[:has_versions],
+        has_version_of: params[:has_version_of],
+        has_views: params[:has_views],
+        has_downloads: params[:has_downloads],
+        has_person: params[:has_person],
+        has_affiliation: params[:has_affiliation],
+        has_organization: params[:has_organization],
+        has_funder: params[:has_funder],
+        link_check_status: params[:link_check_status],
+        link_check_has_schema_org: params[:link_check_has_schema_org],
+        link_check_body_has_pid: params[:link_check_body_has_pid],
+        link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+        link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+        link_check_found_citation_doi: params[:link_check_found_citation_doi],
+        link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+        sample_group: sample_group_field,
+        sample_size: params[:sample],
+        source: params[:source],
+        scroll_id: params[:scroll_id],
+        disable_facets: disable_facets,
+        facets: params[:facets],
+        page: page,
+        sort: sort,
+        random: params[:random],
+        client_type: params[:client_type],
+        funded_by: params[:funded_by],
+        include_funder_child_organizations: params[:include_funder_child_organizations],
+        affiliation_country: params[:affiliation_country],
+      }
+      response = if show_enrichments
+        EnrichedDoi.enriched_query(params[:query], **query_params)
+      else
+        DataciteDoi.query(params[:query], **query_params)
+      end
     end
 
     begin
@@ -174,10 +177,25 @@ class DataciteDoisController < ApplicationController
         total = response.total
       else
         results = response.results
-        total = response.results.total
+        total = show_enrichments ? response.total : response.results.total
         total_for_pages =
           page[:cursor].nil? ? [total.to_f, 10_000].min : total.to_f
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+      end
+
+      # Pluck XML from DB if params[:detail] is true
+      if params[:detail]
+        doi_ids = results.map { |r| r._source["doi"] }.compact
+        xml_by_doi = Doi.where(doi: doi_ids).pluck(:doi, :xml).to_h
+
+        results = results.map do |item|
+          source = item._source
+
+          xml_content = xml_by_doi[source["doi"]]
+          source.xml = xml_content
+
+          item
+        end
       end
 
       if page[:scroll].present?
@@ -196,6 +214,7 @@ class DataciteDoisController < ApplicationController
                   "scroll-id" => response.scroll_id,
                   "page[scroll]" => page[:scroll],
                   "page[size]" => page[:size],
+                  "enriched" => (show_enrichments ? true : nil),
                 }.compact.
                 to_query
             end,
@@ -208,6 +227,7 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
           is_collection: options[:is_collection],
+          show_enrichments: show_enrichments,
         }
 
         # sparse fieldsets
@@ -348,7 +368,8 @@ class DataciteDoisController < ApplicationController
                           page[:number] + 1
                         end,
                       "page[size]" => page[:size],
-                      fields: fields_hash_from_params(params)
+                      fields: fields_hash_from_params(params),
+                      "enriched" => (show_enrichments ? true : nil),
                     }.compact.
                     to_query
                 end,
@@ -363,6 +384,7 @@ class DataciteDoisController < ApplicationController
               publisher: params[:publisher],
               include_other_registration_agencies: params[:include_other_registration_agencies],
               is_collection: options[:is_collection],
+              show_enrichments: show_enrichments,
             }
 
             # sparse fieldsets

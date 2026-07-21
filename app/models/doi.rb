@@ -5,6 +5,7 @@ require "maremma"
 class Doi < ApplicationRecord
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
+  OS_SOURCE = { excludes: ["xml"] }.freeze
   audited only: %i[doi url creators contributors titles publisher_obj publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers related_items funding_references geo_locations rights_list subjects schema_version content_url landing_page aasm_state source reason]
 
   # disable STI
@@ -618,6 +619,7 @@ class Doi < ApplicationRecord
         schemeUri: { type: :keyword },
         lang: { type: :keyword },
       }
+      indexes :has_enrichments, type: :boolean
     end
   end
 
@@ -685,7 +687,6 @@ class Doi < ApplicationRecord
       "fields_of_science" => fields_of_science,
       "fields_of_science_repository" => fields_of_science_repository,
       "fields_of_science_combined" => fields_of_science_combined,
-      "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
       "agency" => agency,
@@ -712,7 +713,20 @@ class Doi < ApplicationRecord
       "primary_title" => Array.wrap(primary_title),
       "publisher_obj" => publisher,
       "geo_locations" => Array.wrap(geo_locations),
-    }
+      "has_enrichments" => has_enrichments,
+    }.merge(extra_indexed_fields)
+  end
+
+  def extra_indexed_fields
+    {}
+  end
+
+  def has_enrichments
+    if association(:enrichments).loaded?
+      enrichments.any?
+    else
+      enrichments.exists?
+    end
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
@@ -995,6 +1009,7 @@ class Doi < ApplicationRecord
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
       size: options.dig(:page, :size),
       sort: [options[:sort]],
+      _source: OS_SOURCE,
       query: {
         bool: {
           must: must,
@@ -1007,6 +1022,7 @@ class Doi < ApplicationRecord
   # return results for one doi
   def self.find_by_id(id)
     __elasticsearch__.search(
+      _source: OS_SOURCE,
       query: {
         match: {
           uid: id,
@@ -1330,6 +1346,7 @@ class Doi < ApplicationRecord
         aggs: {
           "samples_hits": {
             top_hits: {
+              _source: OS_SOURCE,
               size: options[:sample_size].presence || 1,
             },
           },
@@ -1349,6 +1366,7 @@ class Doi < ApplicationRecord
         index: index_name,
         scroll: options.dig(:page, :scroll),
         body: {
+          _source: OS_SOURCE,
           size: options.dig(:page, :size),
           sort: sort,
           query: es_query,
@@ -1363,6 +1381,7 @@ class Doi < ApplicationRecord
       )
     elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search({
+        _source: OS_SOURCE,
         size: options.dig(:page, :size),
         search_after: search_after,
         sort: sort,
@@ -1372,6 +1391,7 @@ class Doi < ApplicationRecord
       }.compact)
     else
       __elasticsearch__.search({
+        _source: OS_SOURCE,
         size: options.dig(:page, :size),
         from: from,
         sort: sort,
@@ -1438,6 +1458,15 @@ class Doi < ApplicationRecord
 
     Rails.logger.error message
     message
+  end
+
+  # Small work around to get serialization working as expected for enriched dois
+  def enrichment_uuids
+    if association(:enrichments).loaded?
+      enrichments.map(&:uuid)
+    else
+      enrichments.pluck(:uuid)
+    end
   end
 
   def uid
@@ -1866,15 +1895,6 @@ class Doi < ApplicationRecord
 
   def client_id
     client.symbol.downcase if client.present?
-  end
-
-  # Small work around to get serialization working as expected for enriched dois
-  def enrichment_uuids
-    if association(:enrichments).loaded?
-      enrichments.map(&:uuid)
-    else
-      enrichments.pluck(:uuid)
-    end
   end
 
   def _fos_filter(subject_array)
@@ -2592,9 +2612,9 @@ class Doi < ApplicationRecord
   def update_field_of_science
     self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
       if subject.is_a?(String)
-        sum += name_to_fos(subject)
+        sum += name_to_subject(subject)
       elsif subject.is_a?(Hash)
-        sum += hsh_to_fos(subject)
+        sum += hsh_to_subject(subject)
       end
 
       sum

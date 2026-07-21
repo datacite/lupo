@@ -52,13 +52,14 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
           :part_of_events,
           :version_events,
           :version_of_events,
-          :metadata
+          :metadata,
+          :enrichments,
         )
 
         # Test the maximum number of queries made by the method
         expect {
           dois.first.as_indexed_json
-        }.not_to exceed_query_limit(13)
+        }.not_to exceed_query_limit(14)
       end
     end
   end

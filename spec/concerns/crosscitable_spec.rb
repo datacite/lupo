@@ -214,14 +214,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq(
-        "familyName" => "Ollomo",
-        "givenName" => "Benjamin",
-        "name" => "Ollomo, Benjamin",
-        "nameType" => "Personal",
-        "nameIdentifiers" => [],
-        "affiliation" => [],
-      )
+      expect(meta["creators"].first).to eq("name" => "Ollomo, Benjamin")
       expect(meta["titles"]).to eq(
         [{ "title" => "Data from: A new malaria agent in African hominids." }],
       )
@@ -242,14 +235,7 @@ describe Doi, vcr: true do
       expect(meta["doi"]).to eq("10.14454/testpub")
       expect(meta["creators"]).to eq(
         [
-          {
-            "familyName" => "Smith",
-            "givenName" => "John",
-            "name" => "Smith, John",
-            "nameType" => "Personal",
-            "nameIdentifiers" => [],
-            "affiliation" => [],
-          },
+          { "name" => "Smith, John" },
           {
             "name" => "つまらないものですが",
             "nameIdentifiers" => [
@@ -257,7 +243,6 @@ describe Doi, vcr: true do
                 "nameIdentifier" => "abc123", "nameIdentifierScheme" => "ISNI"
               },
             ],
-            "affiliation" => [],
           },
         ],
       )
@@ -467,14 +452,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("ris")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq(
-        "familyName" => "Sankar",
-        "givenName" => "Martial",
-        "name" => "Sankar, Martial",
-        "nameType" => "Personal",
-        "nameIdentifiers" => [],
-        "affiliation" => [],
-      )
+      expect(meta["creators"].first).to eq("name" => "Sankar, Martial")
       expect(meta["titles"]).to eq(
         [
           {
@@ -504,9 +482,7 @@ describe Doi, vcr: true do
       expect(meta["creators"].length).to eq(3)
       expect(meta["creators"].first).to eq(
         "affiliation" => [{ "name" => "NCEAS" }],
-        "familyName" => "Jones",
-        "givenName" => "Matt",
-        "name" => "Jones, Matt",
+        "name" => "Matt Jones",
         "nameIdentifiers" => [
           {
             "nameIdentifier" => "https://orcid.org/0000-0003-0077-4738",
@@ -538,7 +514,7 @@ describe Doi, vcr: true do
       expect(meta["creators"].first).to eq(
         "familyName" => "Fenner",
         "givenName" => "Martin",
-        "name" => "Fenner, Martin",
+        "name" => "Martin Fenner",
         "nameIdentifiers" => [
           {
             "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",
@@ -568,7 +544,6 @@ describe Doi, vcr: true do
       expect(meta["creators"].first).to eq(
         "familyName" => "Johansson",
         "givenName" => "Emma",
-        "name" => "Johansson, Emma",
         "nameType" => "Personal",
       )
       expect(meta["titles"]).to eq(
@@ -608,14 +583,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq(
-        "familyName" => "Ollomo",
-        "givenName" => "Benjamin",
-        "name" => "Ollomo, Benjamin",
-        "nameType" => "Personal",
-        "nameIdentifiers" => [],
-        "affiliation" => [],
-      )
+      expect(meta["creators"].first).to eq("name" => "Ollomo, Benjamin")
       expect(meta["titles"]).to eq(
         [{ "title" => "Data from: A new malaria agent in African hominids." }],
       )
@@ -634,14 +602,7 @@ describe Doi, vcr: true do
       expect(meta["doi"]).to eq("10.14454/testpub")
       expect(meta["creators"]).to eq(
         [
-          {
-            "familyName" => "Smith",
-            "givenName" => "John",
-            "name" => "Smith, John",
-            "nameType" => "Personal",
-            "nameIdentifiers" => [],
-            "affiliation" => [],
-          },
+          { "name" => "Smith, John" },
           {
             "name" => "つまらないものですが",
             "nameIdentifiers" => [
@@ -649,7 +610,6 @@ describe Doi, vcr: true do
                 "nameIdentifier" => "abc123", "nameIdentifierScheme" => "ISNI"
               },
             ],
-            "affiliation" => [],
           },
         ],
       )
@@ -768,14 +728,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq(
-        "familyName" => "Sankar",
-        "givenName" => "Martial",
-        "name" => "Sankar, Martial",
-        "nameType" => "Personal",
-        "nameIdentifiers" => [],
-        "affiliation" => [],
-      )
+      expect(meta["creators"].first).to eq("name" => "Sankar, Martial")
       expect(meta["titles"]).to eq(
         [
           {
@@ -803,9 +756,7 @@ describe Doi, vcr: true do
       expect(meta["creators"].length).to eq(3)
       expect(meta["creators"].first).to eq(
         "affiliation" => [{ "name" => "NCEAS" }],
-        "familyName" => "Jones",
-        "givenName" => "Matt",
-        "name" => "Jones, Matt",
+        "name" => "Matt Jones",
         "nameIdentifiers" => [
           {
             "nameIdentifier" => "https://orcid.org/0000-0003-0077-4738",
@@ -835,7 +786,7 @@ describe Doi, vcr: true do
       expect(meta["creators"].first).to eq(
         "familyName" => "Fenner",
         "givenName" => "Martin",
-        "name" => "Fenner, Martin",
+        "name" => "Martin Fenner",
         "nameIdentifiers" => [
           {
             "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405",

@@ -12,7 +12,7 @@ gem "aws-sdk-s3", "~> 1.218"
 gem "aws-sdk-sqs", "~> 1.112"
 gem "base32-url", "~> 0.7.0"
 gem "batch-loader", "~> 2.0", ">= 2.0.6"
-gem "bolognese", "~> 2.6.0"
+gem "bolognese", "~> 2.7"
 gem "bootsnap", "~> 1.23"
 gem "cancancan", "~> 3.6", ">= 3.6.1"
 gem "countries", "~> 8.1"
@@ -25,7 +25,7 @@ gem "elasticsearch-model", "~> 8.0", ">= 8.0.1", require: "elasticsearch/model"
 gem "elasticsearch-rails", "~> 8.0", ">= 8.0.1"
 gem "elastic-transport", "~> 8.0", ">= 8.0.1"
 gem "facets", "~> 3.2", require: false
-gem "faraday", "~> 2.14", ">= 2.14.1"
+gem "faraday", ">= 2.14.3"
 gem "faraday_middleware-aws-sigv4", "~> 1.0", ">= 1.0.1"
 # IMPORTANT!!!
 # We have monkey patched this gem -> config/initializers/serialization_core.rb
@@ -50,7 +50,7 @@ gem "mailgun-ruby", "~> 1.4", ">= 1.4.3"
 gem "maremma", "~> 6.0"
 gem "mini_magick", "~> 5.3", ">= 5.3.1"
 gem "mysql2", "~> 0.5.7"
-gem "nokogiri", ">= 1.19", ">= 1.19.2"
+gem "nokogiri", ">= 1.19.4"
 gem "premailer", "~> 1.29"
 gem "rack-cors", "~> 3.0", require: "rack/cors"
 gem "rack-utf8_sanitizer", "~> 1.11", ">= 1.11.1"
@@ -71,7 +71,7 @@ end
 
 group :development, :test do
   gem "bullet", "~> 8.1"
-  gem "byebug", "~> 13.0", platforms: %i[mri mingw x64_mingw]
+  gem "byebug", "~> 13.0", platforms: %i[mri windows]
   gem "rspec-rails", "~> 8.0", ">= 8.0.4"
 end
 
