@@ -3377,6 +3377,7 @@ components:
         - Archipelago
         - Cayuse
         - CKAN
+        - CSTR & DOI Registration API
         - Dataverse
         - dLibra
         - DSpace
