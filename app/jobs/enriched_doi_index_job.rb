@@ -30,6 +30,7 @@ class EnrichedDoiIndexJob < ApplicationJob
     return unless source_doi.has_enrichments
 
     source_doi = Doi.includes(:enrichments).find(source_doi.id)
+    original_source_attributes = source_doi.attributes
 
     source_doi.only_validate = true
     source_doi.regenerate = true
@@ -43,15 +44,18 @@ class EnrichedDoiIndexJob < ApplicationJob
       Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{source_doi.doi}: #{e.message}")
     end
 
+    fallback_to_source_doi = false
     if source_doi.invalid?
       Rails.logger.error("#{log_prefix}: DOI invalid after enrichment: #{source_doi.doi}")
-      return
+      source_doi = Doi.new(original_source_attributes)
+      fallback_to_source_doi = true
     end
 
     enriched_doi = EnrichedDoi.new(source_doi.attributes)
     enriched_doi.id = source_doi.id
     enriched_doi.created_at = source_doi.created_at
     enriched_doi.updated_at = source_doi.updated_at
+    enriched_doi.index_without_enrichments = fallback_to_source_doi
 
     response = enriched_doi.__elasticsearch__.index_document(index: target_index)
     Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
