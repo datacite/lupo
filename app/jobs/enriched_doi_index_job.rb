@@ -57,7 +57,11 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.updated_at = source_doi.updated_at
     enriched_doi.index_without_enrichments = fallback_to_source_doi
 
-    response = enriched_doi.__elasticsearch__.index_document(index: target_index)
-    Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
+    begin
+      response = enriched_doi.__elasticsearch__.index_document(index: target_index)
+      Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
+    rescue Elastic::Transport::Transport::Error, SocketError => error
+      Rails.logger.warn("#{log_prefix}: Skipping enriched indexing for DOI #{doi}: #{error.class} #{error.message}")
+    end
   end
 end
