@@ -1,0 +1,6 @@
+{
+  "title": "Version",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Version number of the resource. If the primary resource has changed the version number increases.",
+  "type": [ "number", "string" ]
+}

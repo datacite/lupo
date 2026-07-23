@@ -11,19 +11,19 @@
     "nameType": "Personal",
     "givenName": "Julia M.",
     "familyName": "Rovera",
+    "name": "Rovera, Julia M.",
     "affiliation": [{
       "name": "Drexel University"
     }],
     "nameIdentifiers": [{
       "schemeUri": "https://orcid.org",
-      "nameIdentifier": "",
+      "nameIdentifier": "https://orcid.org/0000-0001-5727-2427",
       "nameIdentifierScheme": "ORCID"
     }]
   }],
   "titles": [{
     "lang": "en",
-    "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
-    "titleType": null
+    "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population"
   }, {
     "lang": "en",
     "title": "",

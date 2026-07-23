@@ -935,9 +935,9 @@ describe WorkType do
           {
             "name" => "Kristian Garza",
             "nameType" => "Personal",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany"
-            }
+            }]
           },
           {
             "familyName" => "Garza",
@@ -968,14 +968,16 @@ describe WorkType do
           {
             "givenName" => "Cody",
             "familyName" => "Ross",
+            "name" => "Ross, Cody",
             "contributorType" => "Editor",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany"
-            }
+            }]
           },
           {
             "givenName" => "Kristian",
             "familyName" => "Garza",
+            "name" => "Garza, Kristian",
             "contributorType" => "Editor",
             "affiliation" => [
               {
@@ -1090,50 +1092,52 @@ describe WorkType do
         aasm_state: "findable",
         creators: [
           {
-            "name" => "Kristian Garza",
+            "name" => "Garza, Kristian",
             "nameType" => "Personal",
             "nameIdentifiers" =>
-              {
+             [{
                 "schemeUri": "https://orcid.org",
                 "nameIdentifier": "https://orcid.org/0000-0002-7105-9881",
                 "nameIdentifierScheme": "ORCID"
-              }
+              }]
           },
           {
             "name" => "Ross, Cody",
             "familyName" => "Ross",
             "givenName" => "Cody",
             "nameIdentifiers" =>
-              {
+              [{
                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
                 "nameIdentifierScheme" => "ORCID",
                 "schemeUri" => "https://orcid.org",
-              },
+              }],
             "nameType" => "Personal",
           },
         ],
         contributors: [
           {
+            "name" => "Ross, Cody",
             "givenName" => "Cody",
             "familyName" => "Ross",
             "contributorType" => "Editor",
             "nameIdentifiers" =>
-              {
+              [{
                 "schemeUri": "https://orcid.org",
                 "nameIdentifier": "https://orcid.org/0000-0002-7105-9881",
                 "nameIdentifierScheme": "ORCID"
-              }
+              }]
           },
           {
+            "name" => "Garza, Kristian",
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor",
             "nameIdentifiers" =>
-              {
+              [{
                 "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
                 "nameIdentifierScheme" => "ORCID",
                 "schemeUri" => "https://orcid.org",
-              },
+              }],
           },
         ],
       )
@@ -1180,7 +1184,7 @@ describe WorkType do
       expect(response.dig("data", "works", "authors").length).to eq(2)
       expect(response.dig("data", "works", "authors", 0)).to eq(
         { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "title" => "Kristian Garza",
+          "title" => "Garza, Kristian",
           "count" => 1 }
       )
     end
@@ -1193,7 +1197,7 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "creators")).to eq(
         [
           { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "name" => "Kristian Garza",
+          "name" => "Garza, Kristian",
           "givenName" => nil,
           "familyName" => nil },
          { "id" => "https://orcid.org/0000-0003-3484-6875",
@@ -1206,12 +1210,12 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "contributors")).to eq(
         [
           { "id" => "https://orcid.org/0000-0002-7105-9881",
-          "name" => nil,
+          "name" => "Ross, Cody",
           "givenName" => "Cody",
           "familyName" => "Ross",
           "contributorType" => "Editor" },
           { "id" => "https://orcid.org/0000-0003-3484-6875",
-            "name" => nil,
+            "name" => "Garza, Kristian",
             "givenName" => "Kristian",
             "familyName" => "Garza",
             "contributorType" => "Editor" }
@@ -1542,6 +1546,7 @@ describe WorkType do
       create_list(:doi, 5, aasm_state: "findable",
         types: { "resourceTypeGeneral" => "Text" },
         creators: [{
+          name: "test_name-5",
           affiliation: [{
             "name": "5",
             "affiliationIdentifier": "https://ror.org/5",
@@ -1555,6 +1560,7 @@ describe WorkType do
       create_list(:doi, 4, aasm_state: "findable",
         types: { "resourceTypeGeneral" => "JournalArticle" },
         creators: [{
+          name: "test_name-4",
           affiliation: [{
             "name": "4",
             "affiliationIdentifier": "https://ror.org/4",
@@ -1568,6 +1574,7 @@ describe WorkType do
       create_list(:doi, 3, aasm_state: "findable",
         types: { "resourceTypeGeneral" => "Image" },
         creators: [{
+          name: "test_name-3",
           affiliation: [{
             "name": "3",
             "affiliationIdentifier": "https://ror.org/3",
@@ -1581,6 +1588,7 @@ describe WorkType do
       create_list(:doi, 2, aasm_state: "findable",
         types: { "resourceTypeGeneral" => "PhysicalObject" },
         creators: [{
+          name: "test_name-2",
           affiliation: [{
             "name": "2",
             "affiliationIdentifier": "https://ror.org/2",
@@ -1594,6 +1602,7 @@ describe WorkType do
       create(:doi, aasm_state: "findable",
         types: { "resourceTypeGeneral" => "Preprint" },
         creators: [{
+          name: "test_name-1",
           affiliation: [
             {
               "name": "1",
@@ -1614,7 +1623,9 @@ describe WorkType do
     end
     let!(:missing) do
       create_list(:doi, 3, aasm_state: "findable",
-        creators: [{ affiliation: [] }],
+        creators: [{
+           name: "test_name-3",
+           affiliation: [] }],
         rights_list: [])
     end
 
@@ -1654,9 +1665,9 @@ describe WorkType do
           {
             "name" => "Kristian Garza",
             "nameType" => "Personal",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany"
-            }
+            }]
           },
           {
             "familyName" => "Garza",
@@ -1692,18 +1703,18 @@ describe WorkType do
               },
             ],
             "contributorType" => "Editor",
-            "affiliation" => {
+            "affiliation" => [{
               "name" => "Ruhr-University Bochum, Germany",
               "affiliationIdentifier": "https://ror.org/013meh722",
               "affiliationIdentifierScheme": "ROR"
-            }
+            }]
           },
           {
             "givenName" => "Kristian",
             "familyName" => "Garza",
+            "name" => "Garza, Kristian",
             "contributorType" => "Editor",
-            "affiliation" => [
-              {
+            "affiliation" => [{
               "name" => "University of Cambridge"
             }
           ]

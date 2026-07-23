@@ -1,0 +1,20 @@
+{
+  "title": "DateType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The type of date. Use RKMS‐ISO8601 standard for depicting date ranges.To indicate the end of an embargo period, use Available. To indicate the start of an embargo period, use Submitted or Accepted, as appropriate.",
+  "type": "string",
+  "enum": [
+    "Accepted",
+    "Available",
+    "Copyrighted",
+    "Collected",
+    "Coverage",
+    "Created",
+    "Issued",
+    "Submitted",
+    "Updated",
+    "Valid",
+    "Withdrawn",
+    "Other"
+  ]
+}

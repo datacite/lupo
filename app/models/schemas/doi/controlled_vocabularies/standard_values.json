@@ -1,0 +1,18 @@
+{
+  "title": "StandardValues",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Standard values for unknown information.",
+  "type": "string",
+  "enum": [
+    ":unac",
+    ":unal",
+    ":unap",
+    ":unas",
+    ":unav",
+    ":unkn",
+    ":none",
+    ":null",
+    ":tba",
+    ":etal"
+  ]
+}

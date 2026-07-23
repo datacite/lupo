@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "definitions.json",
+  "Description": "Definitions for re-use in the DOI metadata schema.",
+	"$defs": {
+    "nonemptycontentStringType": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "edtf": {
+			"type": "string",
+			"description": "A date matching W3CDTF / EDTF format, RKMS-ISO8601 date range formats, or a standard value indicating unknown or unavailable information.",
+			"anyOf": [
+				{ 
+					"description": "Pattern for iso8601 dateTime ",
+					"pattern": "(-)?[0-9]{4}(-[0-9]{2})?(-[0-9]{2})?(T([0-9]{2}:){2}[0-9]{2}Z)?" 
+				},
+				{ 
+					"description": "The following pattern is for year (yyyy) or year-month (yyyy-mm)",
+					"pattern": "\\d{2}(\\d{2}|\\?\\?|\\d(\\d|\\?))(-(\\d{2}|\\?\\?))?~?\\??" 
+				},
+				{ 
+					"description": "The following pattern is for  yearMonthDay - yyyymmdd,  where 'dd' may be '??'  so '200412??' means 'some day during the month of 12/2004'",
+					"pattern": "\\d{6}(\\d{2}|\\?\\?)?~?\\??" 
+				},
+				{
+					"description": "The following pattern is for date and time with T separator:'yyyymmddThhmmss'.",
+					 "pattern": "\\d{8}T\\d{6}" 
+				},
+				{ 
+					"description": "The following pattern is for a date range. in years: 'yyyy/yyyy'; or year/month: yyyy-mm/yyyy-mm, or year/month/day: yyyy-mm-dd/yyyy-mm-dd.",
+					"pattern": "((-)?(\\d{4}(-\\d{2})?(-\\d{2})?)|unknown)/((-)?(\\d{4}(-\\d{2})?(-\\d{2})?)|unknown|open)" 
+				},
+				{ 
+					"description": "A reference to the controlled vocabulary of standard values indicating unknown or unavailable information for dates.",
+					"$ref": "controlled_vocabularies/standard_values.json" 
+				}
+			]
+    },
+    "yearType": {
+			"type": [ "integer", "string" ],
+			"oneOf": [
+				{
+					"pattern": "[\\d]{4}",
+					"type": "string"
+				},
+				{
+					"type": "integer",
+					"minimum": 1000,
+					"maximum": 9999
+				}
+			]
+    },
+		"language": {
+			"type": [ "string", "null"],
+			"pattern": "^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$"
+		},
+    "longitudeType": {
+      "maximum": 180,
+      "minimum": -180,
+      "type": "number"
+    },
+    "latitudeType": {
+      "maximum": 90,
+      "minimum": -90,
+      "type": "number"
+    },
+		"box": {
+			"type": "object",
+			"properties": {
+				"westBoundLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"eastBoundLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"southBoundLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				},
+				"northBoundLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				}
+			},
+			"required": [
+				"westBoundLongitude",
+				"eastBoundLongitude",
+				"southBoundLatitude",
+				"northBoundLatitude"
+			],
+			"additionalProperties": false
+    },
+		"point": {
+			"type": "object",
+			"properties": {
+				"pointLongitude": {
+					"$ref": "#/$defs/longitudeType"
+				},
+				"pointLatitude": {
+					"$ref": "#/$defs/latitudeType"
+				}
+			},
+			"required": [
+				"pointLongitude",
+				"pointLatitude"
+			],
+			"additionalProperties": false
+		}
+	}
+}

@@ -1,0 +1,6 @@
+{
+  "title": "Language",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Primary language of the resource. Allowed values are taken from IETF BCP 47, ISO 639-1 language codes.",
+  "$ref": "definitions.json#/$defs/language"
+}

@@ -1,0 +1,30 @@
+{
+  "title": "ContributorBase",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The institution or person responsible for collecting, creating, or otherwise contributing to the development of the dataset.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
+    },
+    "nameType": {
+      "$ref": "controlled_vocabularies/name_type.json"
+    },
+    "lang": {
+      "$ref": "definitions.json#/$defs/language"
+    },
+    "givenName": {
+      "type": "string"
+    },
+    "familyName": {
+      "type": "string"
+    },
+     "contributorType": {
+      "$ref": "controlled_vocabularies/contributor_type.json"
+    }
+  },
+  "required": [
+    "name",
+    "contributorType"
+  ]
+}

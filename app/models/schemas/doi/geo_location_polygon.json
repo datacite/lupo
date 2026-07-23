@@ -1,0 +1,23 @@
+{
+  "title": "GeoLocationPolygon",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minItems": 4,
+  "items": {
+    "oneOf": [
+      { "$ref": "polygon_point" },
+      { "$ref": "in_polygon_point" }
+    ]
+  },
+  "allOf": [
+    {
+      "contains": { "$ref": "polygon_point" },
+      "minContains": 4
+    },
+    {
+      "contains": { "$ref": "in_polygon_point" },
+      "minContains": 0,
+      "maxContains": 1
+    }
+  ]
+}
