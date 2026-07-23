@@ -218,7 +218,6 @@ paths:
             type: string
             enum:
               - provider
-              - repository
         - in: query
           name: sort
           schema:
