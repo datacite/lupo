@@ -12,6 +12,10 @@ class DataciteDoi < Doi
     index_name "dois"
   end
 
+  settings index: Doi.settings.to_hash.fetch(:index, {}).merge(
+    number_of_shards: ENV["NUMBER_OF_SHARDS_DATACITE_DOI"].to_i,
+  )
+
   def self.index_all_by_client(options = {})
     client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
     # throw out id 0
