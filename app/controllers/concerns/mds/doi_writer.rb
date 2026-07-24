@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Shared DataciteDoi create/update path for MDS PUT /doi and PUT /metadata.
-  # Authorization uses CanCan authorize! only (same path as other controller actions).
   module DoiWriter
     extend ActiveSupport::Concern
 

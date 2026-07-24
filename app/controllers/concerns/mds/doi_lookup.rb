@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Minimal DOI lookup for MDS controllers that need a DataciteDoi record.
-  # Intentionally does not include model concerns (Helpable, MetadataUtils).
   module DoiLookup
     extend ActiveSupport::Concern
 

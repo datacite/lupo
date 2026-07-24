@@ -165,6 +165,7 @@ class Ability
         validate
         undo
         get_url
+        get_urls
         read_landing_page_results
       ],
           Doi,

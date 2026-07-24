@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Classic MDS /doi surface — thin protocol adapter over DataciteDoi domain.
   class DoisController < Mds::ApplicationController
     include Mds::DoiWriter
 
@@ -20,7 +19,6 @@ module Mds
         DataciteDoi.get_dois(
           prefix: client_prefix.uid,
           username: current_user.uid.upcase,
-          password: current_user.password,
         )
 
       return head :no_content if dois.blank? || !dois.is_a?(Array) || dois.empty?
@@ -95,7 +93,6 @@ module Mds
         end
       end
 
-      # Classic MDS body: "doi=...\nurl=..." lines.
       def extract_doi_and_url_from_body(data, path_doi: nil)
         hsh =
           data.to_s.split("\n").map do |line|

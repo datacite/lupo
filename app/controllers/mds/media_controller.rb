@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Classic MDS /media surface — thin protocol adapter over Media AR association.
   class MediaController < Mds::ApplicationController
     include Mds::DoiLookup
 
@@ -59,7 +58,6 @@ module Mds
 
     private
       def set_doi
-        # Flat /media/:doi_id and nested /doi/:doi_id/media both expose :doi_id.
         raw = params[:doi_id]
         fail Mds::Error.new("DOI is unknown to MDS", status: 404) if raw.blank?
 

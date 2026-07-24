@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Classic MDS /metadata surface — thin protocol adapter over DataciteDoi domain.
   class MetadataController < Mds::ApplicationController
     include Mds::DoiWriter
     include Bolognese::MetadataUtils
@@ -16,7 +15,6 @@ module Mds
       xml = doi.xml
       return head :no_content if xml.blank?
 
-      # Lupo unregisters the default :xml MIME type; return raw MDS payload explicitly.
       render body: xml, content_type: "application/xml", status: :ok
     end
 

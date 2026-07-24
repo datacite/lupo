@@ -72,13 +72,7 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
-    @current_user = user_from_request_credentials
-    return false if @current_user.nil?
-
-    fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
-
-    set_api_key_sentry_tags
-    @current_user
+    authenticate_request!
   end
 
   def current_ability
@@ -186,11 +180,6 @@ class ApplicationController < ActionController::API
     end
 
     def set_api_key_sentry_tags
-      return unless current_user.try(:api_key_authenticated?)
-
-      Sentry.set_tags(
-        auth_method: current_user.auth_method,
-        api_key_prefix: current_user.api_key_prefix,
-      )
+      tag_api_key_observability!
     end
 end

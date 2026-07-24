@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Mds
-  # Protocol base: auth challenge, plain-text errors, consumer headers.
-  # Domain helpers (lookup/write/mint) are included only on controllers that need them.
   class ApplicationController < ActionController::API
     include ActionController::HttpAuthentication::Basic::ControllerMethods
     include CanCan::ControllerAdditions
@@ -12,7 +10,6 @@ module Mds
 
     after_action :set_consumer_header
 
-    # Protocol-facing errors always map to plain-text MDS responses.
     rescue_from Mds::Error do |exception|
       render_mds_error(exception.message, exception.status)
     end
@@ -21,7 +18,6 @@ module Mds
       render_mds_error(exception.message, 400)
     end
 
-    # Domain/handle code (Helpable#register_url) raises this for missing url/client, etc.
     rescue_from ActionController::BadRequest do |exception|
       render_mds_error(exception.message.presence || "Bad Request", 400)
     end
@@ -46,11 +42,10 @@ module Mds
     end
 
     protected
-      # MDS-specific challenge and plain-text failure bodies; credentials via RequestCredentials.
       def authenticate_mds_user!
-        user = user_from_request_credentials
+        user = authenticate_request!
 
-        if user.nil?
+        if user == false || user.nil?
           request_http_basic_authentication(
             Mds.realm,
             "An Authentication object was not found in the SecurityContext",
@@ -58,10 +53,7 @@ module Mds
           return false
         end
 
-        @current_user = user
-
-        if @current_user.blank? || @current_user.errors.present? ||
-            @current_user.role_id == "anonymous"
+        if user.role_id == "anonymous"
           render_mds_error("Bad credentials", 401)
           return false
         end
@@ -96,7 +88,6 @@ module Mds
         render plain: message.to_s, status: status
       end
 
-      # Unexpected framework errors — do not map NoMethodError to 422.
       unless Rails.env.development?
         rescue_from ActionController::RoutingError do |_exception|
           render_mds_error("DOI not found", 404)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Shared Authorization-header credential parsing for REST and MDS controllers.
 module RequestCredentials
   extend ActiveSupport::Concern
 
@@ -9,9 +8,6 @@ module RequestCredentials
     request.headers["Authorization"]&.split
   end
 
-  # Build a User from the request Authorization header.
-  # Returns nil when credentials are missing.
-  # Raises JWT::VerificationError when the token is blacklisted.
   def user_from_request_credentials
     type, credentials = type_and_credentials_from_request_headers
     return if credentials.blank?
@@ -21,5 +17,25 @@ module RequestCredentials
     end
 
     User.new(credentials, type: type)
+  end
+
+  def authenticate_request!
+    @current_user = user_from_request_credentials
+    return false if @current_user.nil?
+
+    fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
+
+    tag_api_key_observability!
+    @current_user
+  end
+
+  def tag_api_key_observability!
+    return unless @current_user.try(:api_key_authenticated?)
+    return unless defined?(Sentry)
+
+    Sentry.set_tags(
+      auth_method: @current_user.auth_method,
+      api_key_prefix: @current_user.api_key_prefix,
+    )
   end
 end
