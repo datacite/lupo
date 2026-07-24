@@ -8,11 +8,13 @@ module Helpable
   require "securerandom"
   require "base32/url"
 
+  # Kept for existing call sites; mint algorithm lives in DoiMinting.
   UPPER_LIMIT = 1_073_741_823
 
   included do
     include Bolognese::Utils
     include Bolognese::DoiUtils
+    include DoiMinting
 
     def register_url
       if url.blank?
@@ -106,40 +108,30 @@ module Helpable
       response
     end
 
+    # When true, the stored `url` attribute is authoritative (draft/other/special providers).
+    # When false, resolve via Handle (`get_url`). Shared by REST and MDS protocol surfaces.
+    def uses_stored_landing_url?
+      !is_registered_or_findable? ||
+        %w[europ].include?(provider_id) ||
+        type == "OtherDoi"
+    end
+
+    # Landing URL for protocol responses. Nil when unknown or Handle has no value.
+    def resolved_landing_url
+      return url if uses_stored_landing_url?
+
+      response = get_url
+      return nil unless response.status == 200
+
+      response.body.dig("data", "values", 0, "data", "value")
+    end
+
     def generate_random_provider_symbol
       "4:X".gen
     end
 
     def generate_random_repository_symbol
       "6:X".gen
-    end
-
-    def generate_random_dois(str, options = {})
-      prefix = validate_prefix(str)
-      fail IdentifierError, "No valid prefix found" if prefix.blank?
-
-      shoulder = str.split("/", 2)[1].to_s
-      encode_doi(
-        prefix,
-        shoulder: shoulder, number: options[:number], size: options[:size],
-      )
-    end
-
-    def encode_doi(prefix, options = {})
-      return nil if prefix.blank?
-
-      number = options[:number].to_s.scan(/\d+/).join("").to_i
-      shoulder = options[:shoulder].to_s
-      shoulder += "-" if shoulder.present?
-      length = 8
-      split = 4
-      size = (options[:size] || 1).to_i
-
-      Array.new(size).map do |_a|
-        n = number.positive? ? number : SecureRandom.random_number(UPPER_LIMIT)
-        prefix.to_s + "/" + shoulder +
-          Base32::URL.encode(n, split: split, length: length, checksum: true)
-      end.uniq
     end
 
     def epoch_to_utc(epoch)

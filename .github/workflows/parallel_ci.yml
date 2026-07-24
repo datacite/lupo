@@ -60,7 +60,7 @@ jobs:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: root
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Sync time
         run: |

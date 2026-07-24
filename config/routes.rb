@@ -1,6 +1,31 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  # Classic MDS protocol (formerly Poodle). Only active when MDS_ENABLED.
+  constraints(->(req) { Mds.host_match?(req) }) do
+    resources :heartbeat, only: %i[index]
+
+    scope module: :mds do
+      post "doi", to: "dois#update"
+
+      post "media/:doi_id", to: "media#create", constraints: { doi_id: /.+/ }
+      get "media/:doi_id", to: "media#index", constraints: { doi_id: /.+/ }
+
+      post "metadata", to: "metadata#create"
+      post "metadata/:doi_id", to: "metadata#create", constraints: { doi_id: /.+/ }
+      put "metadata/:doi_id", to: "metadata#create", constraints: { doi_id: /.+/ }
+      get "metadata/:doi_id", to: "metadata#show", constraints: { doi_id: /.+/ }
+      get "metadata", to: "metadata#show"
+      delete "metadata/:doi_id", to: "metadata#destroy", constraints: { doi_id: /.+/ }
+
+      resources :dois, path: "/doi", constraints: { id: /.+/ } do
+        resources :media
+      end
+
+      match "*path", to: "application#route_not_found", via: :all
+    end
+  end
+
   post "/client-api/graphql", to: "graphql#execute"
   get "/client-api/graphql", to: "index#method_not_allowed"
 
