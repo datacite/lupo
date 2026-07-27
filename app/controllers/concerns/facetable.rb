@@ -504,9 +504,9 @@ module Facetable
 
     def _facet_by_general_contributor(arr, aggregate, source)
       arr.map { |hsh|
-        orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
+        orcid_id = hsh["key"]
 
-        if orcid_id.nil?
+        if orcid_id.blank?
           next
         end
 
@@ -517,7 +517,9 @@ module Facetable
         # Filter through creators to find creator that matches the key
         matched_creator = creators.select do |creator|
           if creator.key?("nameIdentifiers")
-            Array.wrap(creator["nameIdentifiers"]).any? { |ni| ni["nameIdentifier"] == orcid_id }
+            Array.wrap(creator["nameIdentifiers"]).any? do |ni|
+              ni["nameIdentifier"] == orcid_id || orcid_as_url(orcid_from_url(ni["nameIdentifier"])) == orcid_id
+            end
           end
         end
 
