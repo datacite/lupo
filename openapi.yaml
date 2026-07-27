@@ -1795,7 +1795,7 @@ paths:
   /credentials/api-keys:
     get:
       tags:
-        - api-keys
+        - credentials
       summary: Return a list of API keys for the authenticated repository account.
       parameters:
         - in: query
@@ -1827,7 +1827,7 @@ paths:
                         example: 1
     post:
       tags:
-        - api-keys
+        - credentials
       summary: Create a new API key for the authenticated repository account.
       security:
         - BasicAuth: []
@@ -1847,6 +1847,8 @@ paths:
                         - apiKeys
                     attributes:
                       type: object
+                      required:
+                        - name
                       properties:
                         name:
                           type: string
@@ -1862,7 +1864,7 @@ paths:
   /credentials/api-keys/{id}:
     delete:
       tags:
-        - api-keys
+        - credentials
       summary: Revoke an API key for the authenticated repository account.
       security:
         - BasicAuth: []
@@ -1935,24 +1937,23 @@ components:
                     type: 
                       type: string
                       enum: [clients]
-      required:
-        - id
-        - type
-        - attributes
     ApiKeyCreated:
       description: Returned only on creation. Includes the full API key value which is not retrievable afterwards.
-      allOf:
-        - $ref: '#/components/schemas/ApiKey'
-        - type: object
-          properties:
-            attributes:
-              type: object
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ApiKey'
+            - type: object
               properties:
-                key:
-                  type: string
-                  readOnly: true
-                  description: The full API key value. Only returned on creation.
-                  example: DC.xcmd5Zmv_EXAMPLE_API_KEY
+                attributes:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      readOnly: true
+                      description: The full API key value. Only returned on creation.
+                      example: DC.xcmd5Zmv_EXAMPLE_API_KEY
     Activity:
       type: object
       description: Represents an activity for an event within DataCite systems.
