@@ -340,4 +340,46 @@ describe Provider, type: :model do
       expect(activity.audited_changes["non_profit_status"]).to eq("non-profit")
     end
   end
+
+  describe "is_active" do
+    it "defaults to active binary flag" do
+      provider = create(:provider)
+      expect(provider.is_active).to eq("\x01")
+    end
+
+    it "deactivates when set to false" do
+      provider = create(:provider)
+      expect(provider.update(is_active: false)).to be true
+      expect(provider.reload.is_active).to eq("\x00")
+    end
+
+    it "stays inactive across subsequent updates that omit is_active" do
+      provider = create(:provider, is_active: false)
+      expect(provider.is_active).to eq("\x00")
+
+      expect(
+        provider.update(name: "Updated Name", display_name: "Updated Name"),
+      ).to be true
+      expect(provider.reload.is_active).to eq("\x00")
+    end
+
+    it "does not treat the inactive binary flag as truthy during validation" do
+      provider = create(:provider, is_active: false)
+      provider.is_active = "\x00"
+      provider.valid?
+      expect(provider.is_active).to eq("\x00")
+    end
+
+    it "reactivates when set to true" do
+      provider = create(:provider, is_active: false)
+      expect(provider.update(is_active: true)).to be true
+      expect(provider.reload.is_active).to eq("\x01")
+    end
+
+    it "maps nil to inactive binary flag" do
+      provider = create(:provider)
+      expect(provider.update(is_active: nil)).to be true
+      expect(provider.reload.is_active).to eq("\x00")
+    end
+  end
 end

@@ -1004,6 +1004,38 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
     end
 
+    context "deactivates isActive" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => { "isActive" => false },
+          },
+        }
+      end
+
+      it "sets isActive to false and keeps it false on later updates" do
+        put "/providers/#{provider.symbol}", params, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(provider.reload.is_active).to eq("\x00")
+
+        put "/providers/#{provider.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "name" => "Still Inactive Provider" },
+              },
+            },
+            admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(provider.reload.is_active).to eq("\x00")
+      end
+    end
+
     context "invalid globus_uuid" do
       let(:params) do
         {

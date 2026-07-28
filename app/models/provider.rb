@@ -37,6 +37,9 @@ class Provider < ApplicationRecord
   # include helper module for setting password
   include Passwordable
 
+  # normalize binary is_active flags without Ruby truthiness bugs
+  include BinaryActiveFlag
+
   # include helper module for authentication
   include Authenticable
 
@@ -978,7 +981,7 @@ class Provider < ApplicationRecord
 
     def set_defaults
       self.symbol = symbol.upcase if symbol.present?
-      self.is_active = is_active ? "\x01" : "\x00"
+      normalize_binary_is_active
       self.version = version.present? ? version + 1 : 0
       self.role_name = "ROLE_ALLOCATOR" if role_name.blank?
       self.doi_quota_used = 0 unless doi_quota_used.to_i > 0

@@ -198,6 +198,43 @@ describe Client, type: :model, prefix_pool_size: 3 do
     end
   end
 
+  describe "is_active" do
+    it "defaults to active binary flag" do
+      expect(client.is_active).to eq("\x01")
+    end
+
+    it "deactivates when set to false" do
+      expect(client.update(is_active: false)).to be true
+      expect(client.reload.is_active).to eq("\x00")
+    end
+
+    it "stays inactive across subsequent updates that omit is_active" do
+      client.update!(is_active: false)
+      expect(client.is_active).to eq("\x00")
+
+      expect(client.update(name: "Updated Repository")).to be true
+      expect(client.reload.is_active).to eq("\x00")
+    end
+
+    it "does not treat the inactive binary flag as truthy during validation" do
+      client.update!(is_active: false)
+      client.is_active = "\x00"
+      client.valid?
+      expect(client.is_active).to eq("\x00")
+    end
+
+    it "reactivates when set to true" do
+      client.update!(is_active: false)
+      expect(client.update(is_active: true)).to be true
+      expect(client.reload.is_active).to eq("\x01")
+    end
+
+    it "maps nil to inactive binary flag" do
+      expect(client.update(is_active: nil)).to be true
+      expect(client.reload.is_active).to eq("\x00")
+    end
+  end
+
   describe "issn" do
     let(:client) do
       build(:client, provider: provider, client_type: "periodical")
