@@ -179,6 +179,10 @@ Rails.application.routes.draw do
   # Monthly Data File access
   get "credentials/datafile", to: "datafile#create_credentials"
 
+  scope "credentials" do
+    resources :api_keys, path: "api-keys", only: %i[index create destroy]
+  end
+
   resources :heartbeat, only: %i[index]
 
   resources :activities, only: %i[index show], constraints: { id: /.+/ }

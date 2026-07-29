@@ -144,6 +144,7 @@ class DataciteDoi < Doi
     selected_dois = DataciteDoi.where(id: ids, type: "DataciteDoi").includes(
       :client,
       :media,
+      :enrichments,
       :view_events,
       :download_events,
       :citation_events,
@@ -164,6 +165,10 @@ class DataciteDoi < Doi
         }
       end
       upload_to_elasticsearch(index, bulk_body)
+
+      dois.each do |doi|
+        EnrichedDoiIndexJob.enqueue_for_datacite_doi(doi, target_active_index: index == active_index)
+      end
     end
   end
 end

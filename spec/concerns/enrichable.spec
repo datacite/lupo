@@ -23,27 +23,7 @@ describe Enrichable, vcr: true do
     it "when action is updateChild and original_value matches exactly" do
       original_creators = doi.creators.deep_dup
 
-      enrichment = Enrichment.new
-      enrichment.doi = doi.doi
-      enrichment.field = "creators"
-      enrichment.action = "updateChild"
-      enrichment.original_value = {
-        "name": "Arslan, M.",
-        "givenName": "M.",
-        "familyName": "Arslan",
-        "affiliation": []
-      }
-      enrichment.enriched_value = {
-          "name": "Arslan, M.",
-          "nameType": "Personal",
-          "givenName": "M.",
-          "familyName": "Arslan",
-          "affiliation": [ {
-              "name": "DataCite",
-              "identifier": "https://ror.org/04wxnsj81",
-              "identifierScheme": "ROR"
-          } ]
-        }
+      enrichment = build(:enrichment, doi: doi.doi)
 
       doi.regenerate = true
       doi.apply_enrichment(enrichment)
@@ -56,29 +36,18 @@ describe Enrichable, vcr: true do
     it "when action is updateChild and original_value contains additional empty or nil values" do
       original_creators = doi.creators.deep_dup
 
-      enrichment = Enrichment.new
-      enrichment.doi = doi.doi
-      enrichment.field = "creators"
-      enrichment.action = "updateChild"
-      enrichment.original_value = {
-        "name": "Arslan, M.",
-        "nameType": nil,
-        "givenName": "M.",
-        "familyName": "Arslan",
-        "affiliation": [],
-        "nameIdentifiers": []
-      }
-      enrichment.enriched_value = {
+      enrichment = build(
+        :enrichment,
+        doi: doi.doi,
+        original_value: {
           "name": "Arslan, M.",
-          "nameType": "Personal",
+          "nameType": nil,
           "givenName": "M.",
           "familyName": "Arslan",
-          "affiliation": [ {
-              "name": "DataCite",
-              "identifier": "https://ror.org/04wxnsj81",
-              "identifierScheme": "ROR"
-          } ]
+          "affiliation": [],
+          "nameIdentifiers": []
         }
+      )
 
       doi.regenerate = true
       doi.apply_enrichment(enrichment)

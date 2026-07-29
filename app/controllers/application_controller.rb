@@ -83,6 +83,7 @@ class ApplicationController < ActionController::API
 
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
 
+    set_api_key_sentry_tags
     @current_user
   end
 
@@ -175,7 +176,13 @@ class ApplicationController < ActionController::API
   private
     def append_info_to_payload(payload)
       super
-      payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
+      return unless current_user.try(:uid)
+
+      payload[:uid] = current_user.uid.downcase
+      if current_user.try(:api_key_authenticated?)
+        payload[:auth_method] = current_user.auth_method
+        payload[:api_key_prefix] = current_user.api_key_prefix
+      end
     end
 
     def set_raven_context
@@ -185,6 +192,16 @@ class ApplicationController < ActionController::API
         else
           { ip_address: request.ip }
         end
+      )
+      set_api_key_sentry_tags
+    end
+
+    def set_api_key_sentry_tags
+      return unless current_user.try(:api_key_authenticated?)
+
+      Sentry.set_tags(
+        auth_method: current_user.auth_method,
+        api_key_prefix: current_user.api_key_prefix,
       )
     end
 end

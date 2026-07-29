@@ -3,12 +3,22 @@
 class EnrichedDoi < Doi
   include Elasticsearch::Model
 
+  attr_accessor :index_without_enrichments
+
   if Rails.env.test?
     index_name("enriched_dois-test#{ENV['TEST_ENV_NUMBER']}")
   elsif ENV["ES_PREFIX"].present?
     index_name("enriched_dois-#{ENV['ES_PREFIX']}")
   else
     index_name("enriched_dois")
+  end
+
+  def self.active_index
+    Rails.env.test? ? index_name : super
+  end
+
+  def self.inactive_index
+    Rails.env.test? ? index_name : super
   end
 
   settings index: {
@@ -429,6 +439,7 @@ class EnrichedDoi < Doi
       indexes :version_of_ids, type: :keyword
       indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
+      indexes :enrichments, type: :keyword
       indexes :primary_title, type: :object, properties: {
         title: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true } } },
         titleType: { type: :keyword },
@@ -456,6 +467,8 @@ class EnrichedDoi < Doi
   end
 
   def extra_indexed_fields
+    return { "enrichments" => [] } if index_without_enrichments
+
     {
       "enrichments" => enrichment_uuids,
     }
@@ -468,7 +481,11 @@ class EnrichedDoi < Doi
 
   # For enriched searches we search over two indices dois and enriched_dois and favour the enriched version.
   def self.search_indices
-    [DataciteDoi.active_index, EnrichedDoi.active_index]
+    if Rails.env.test?
+      [DataciteDoi.index_name, EnrichedDoi.index_name]
+    else
+      [DataciteDoi.active_index, EnrichedDoi.active_index]
+    end
   end
 
   def self.enriched_query(query, options = {})

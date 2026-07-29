@@ -13,6 +13,7 @@ class Ability
 
     if user.role_id == "staff_admin"
       can :manage, :all
+      can :manage, ApiKey
       cannot %i[new create], Doi do |doi|
         doi.client.blank? ||
           !(
@@ -25,7 +26,10 @@ class Ability
       can :export, :repositories
     elsif user.role_id == "staff_user"
       can %i[read read_billing_information read_contact_information read_analytics], :all
-    elsif user.role_id == "consortium_admin" && user.provider_id.present?
+    elsif user.role_id == "consortium_admin" && user.provider_id.present? &&
+        provider_account_active?(user)
+      # Active consortium: full management of self, child orgs, and their clients.
+      # Same pattern as active client_admin (is_active == "\x01").
       can %i[manage read_billing_information read_contact_information], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
@@ -65,7 +69,38 @@ class Ability
             user.provider_id.casecmp(activity.doi.provider.consortium_id)
       end
       can %i[read], :access_datafile
-    elsif user.role_id == "provider_admin" && user.provider_id.present?
+    elsif user.role_id == "consortium_admin" && user.provider_id.present?
+      # Inactive consortium: read-only (cannot self-reactivate or manage orgs/clients).
+      can %i[read read_billing_information read_contact_information], Provider do |provider|
+        user.provider_id.casecmp(provider.consortium_id)
+      end
+      can %i[read read_billing_information read_contact_information],
+          Provider,
+          symbol: user.provider_id.upcase
+      can %i[read], ProviderPrefix do |provider_prefix|
+        provider_prefix.provider &&
+          user.provider_id.casecmp(provider_prefix.provider.consortium_id)
+      end
+      can %i[read], Contact
+      can %i[read read_contact_information], Client do |client|
+        client.provider &&
+          user.provider_id.casecmp(client.provider.consortium_id)
+      end
+      can %i[read], ClientPrefix
+      can %i[read get_url read_landing_page_results], Doi do |doi|
+        user.provider_id.casecmp(doi.provider.consortium_id)
+      end
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? ||
+          activity.doi.provider &&
+            user.provider_id.casecmp(activity.doi.provider.consortium_id)
+      end
+      can %i[read], :access_datafile
+    elsif user.role_id == "provider_admin" && user.provider_id.present? &&
+        provider_account_active?(user)
+      # Active provider/member: full self-service rights.
       can %i[update read read_billing_information read_contact_information read_analytics],
           Provider,
           symbol: user.provider_id.upcase
@@ -77,6 +112,10 @@ class Ability
       end
       cannot %i[transfer], Client
       can %i[manage], ClientPrefix # , :client_id => user.provider_id
+      can :manage, ApiKey do |api_key|
+        client = api_key.client
+        client && client.provider_id == user.provider_id
+      end
 
       # if Flipper[:delete_doi].enabled?(user)
       #   can [:manage], Doi, :provider_id => user.provider_id
@@ -85,6 +124,25 @@ class Ability
       # end
 
       can %i[read get_url transfer read_landing_page_results],
+          Doi,
+          provider_id: user.provider_id
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.provider_id == user.provider_id
+      end
+      can %i[read], :access_datafile
+    elsif user.role_id == "provider_admin" && user.provider_id.present?
+      # Inactive provider: read-only (cannot self-reactivate or manage repositories).
+      # Mirrors inactive client_admin (update/manage stripped when is_active != "\x01").
+      can %i[read read_billing_information read_contact_information read_analytics],
+          Provider,
+          symbol: user.provider_id.upcase
+      can %i[read], Contact, provider_id: user.provider_id
+      can %i[read], ProviderPrefix, provider_id: user.provider_id
+      can %i[read read_contact_information], Client, provider_id: user.provider_id
+      can %i[read], ClientPrefix
+      can %i[read get_url read_landing_page_results],
           Doi,
           provider_id: user.provider_id
       can %i[read], Doi
@@ -115,6 +173,9 @@ class Ability
       can %i[read], Provider
       can %i[read update read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :manage, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id && user.client&.is_active == "\x01"
+      end
 
       # if Flipper[:delete_doi].enabled?(user)
       #   can [:manage], Doi, :client_id => user.client_id
@@ -145,10 +206,50 @@ class Ability
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
       can %i[read], :access_datafile
+    elsif user.role_id == "client_api" && user.client.present? && user.client.is_active == "\x01"
+      can %i[read], Provider
+      can %i[read], Client, symbol: user.client_id.upcase
+      can %i[read], ClientPrefix, client_id: user.client_id
+      can %i[
+        read
+        destroy
+        update
+        register_url
+        validate
+        undo
+        get_url
+        read_landing_page_results
+      ],
+          Doi,
+          client_id: user.client_id
+      can %i[new create], Doi do |doi|
+        doi.client.prefixes.where(uid: doi.prefix).present? ||
+          doi.type == "OtherDoi"
+      end
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
+      can %i[read], :access_datafile
+    elsif user.role_id == "client_api" && user.client.present?
+      can %i[read], Provider
+      can %i[read], Client, symbol: user.client_id.upcase
+      can %i[read], ClientPrefix, client_id: user.client_id
+      can %i[read], Doi, client_id: user.client_id
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], :access_datafile
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
     elsif user.role_id == "client_admin" && user.client.present?
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :read, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id
+      end
       can %i[read], Doi, client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
@@ -160,6 +261,9 @@ class Ability
       can %i[read], Provider
       can %i[read read_contact_information read_analytics], Client, symbol: user.client_id.upcase
       can %i[read], ClientPrefix, client_id: user.client_id
+      can :read, ApiKey do |api_key|
+        api_key.client&.symbol&.downcase == user.client_id
+      end
       can %i[read get_url read_landing_page_results],
           Doi,
           client_id: user.client_id
@@ -208,4 +312,11 @@ class Ability
       end
     end
   end
+
+  private
+    # Providers store is_active as binary(1): "\x01" active, "\x00" inactive.
+    # Same check used for client_admin / client_api active gates.
+    def provider_account_active?(user)
+      user.provider.present? && user.provider.is_active == "\x01"
+    end
 end
