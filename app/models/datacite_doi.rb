@@ -14,17 +14,14 @@ class DataciteDoi < Doi
 
   def self.index_all_by_client(options = {})
     client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
-    # throw out id 0
-    client_to_doi_count.delete(0)
-
-
     index = options[:index] || self.inactive_index
     batch_size = options[:batch_size] || 2000
     client_to_doi_count.keys.each do |client_id|
       DoiImportByClientJob.perform_later(
         client_id,
         index: index,
-        batch_size: batch_size
+        batch_size: batch_size,
+        skip_client_lookup: true
       )
     end
   end
@@ -51,23 +48,7 @@ class DataciteDoi < Doi
     count
   end
 
-  def self.import_by_client(client_id, options = {})
-    # Get optional parameters
-    import_index =
-      if Rails.env.test?
-        index_name
-      elsif options[:index].present?
-        options[:index]
-      else
-        active_index
-      end
-    batch_size = options[:batch_size] || 50
-
-    # Abort if client_id is blank
-    if client_id.blank?
-      Rails.logger.error "Missing client ID."
-      exit
-    end
+  def self.lookup_client_and_get_dois(client_id, options = {})
     # Search by propper ID
     client = ::Client.find_by(id: client_id, deleted_at: nil)
     if client.nil?
@@ -80,9 +61,39 @@ class DataciteDoi < Doi
     end
 
     # import DOIs for client
-    Rails.logger.info "Started import of #{client.dois.count} DOIs for repository #{client.symbol} into the index '#{import_index}'"
+    Rails.logger.info "Grabbing DOIs for repository #{client.symbol}"
 
-    client.dois.find_in_batches(batch_size: batch_size) do |dois|
+    client.dois
+  end
+
+  def self.import_by_client(client_id, options = {})
+    # Abort if client_id is blank
+    if client_id.blank?
+      Rails.logger.error "Missing client ID."
+      exit
+    end
+    # Get optional parameters
+    import_index =
+      if Rails.env.test?
+        index_name
+      elsif options[:index].present?
+        options[:index]
+      else
+        active_index
+      end
+
+    batch_size = options[:batch_size] || 50
+
+    # If skip_client is included in the options do not do a client lookup and just go to the Dois
+    if options[:skip_client_lookup]
+      client_dois = DataciteDoi.where(type: "DataciteDoi").where(datacentre: client_id)
+    else
+      client_dois = lookup_client_and_get_dois(client_id, options)
+    end
+
+    Rails.logger.info "Started import of #{client_dois.count} DOIs for client_id #{client_id} into the index '#{import_index}'"
+
+    client_dois.select(:id).find_in_batches(batch_size: batch_size) do |dois|
       ids = dois.pluck(:id)
       DataciteDoiImportInBulkJob.perform_later(ids, index: import_index)
     end
