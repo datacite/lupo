@@ -157,12 +157,12 @@ class DataciteDoiSerializer
 
   attribute :creators do |object, params|
     # Always return an array of creators and affiliations
-    # use new array format only if affiliation param present
+    # use new array format only if affiliation=true
     Array.wrap(object.creators).
       map do |c|
       c["affiliation"] =
         Array.wrap(c["affiliation"]).map do |a|
-          params[:affiliation] ? a : a["name"]
+          params[:affiliation] == "true" ? a : a["name"]
         end.compact
       c["nameIdentifiers"] = Array.wrap(c["nameIdentifiers"])
       c
@@ -175,12 +175,12 @@ class DataciteDoiSerializer
                 params && params[:composite].blank?
               } do |object, params|
     # Always return an array of contributors and affiliations
-    # use new array format only if param present
+    # use new array format only if affiliation=true
     Array.wrap(object.contributors).
       map do |c|
       c["affiliation"] =
         Array.wrap(c["affiliation"]).map do |a|
-          params[:affiliation] ? a : a["name"]
+          params[:affiliation] == "true" ? a : a["name"]
         end.compact
       c["nameIdentifiers"] = Array.wrap(c["nameIdentifiers"])
       c
