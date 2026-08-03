@@ -10,9 +10,8 @@
       "$ref": "controlled_vocabularies/resource_type_general.json" 
     }
   },
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [
-    "resourceType",
     "resourceTypeGeneral"
   ]
 }

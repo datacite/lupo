@@ -23,8 +23,5 @@
         "$ref": "definitions.json#/$defs/language"
       }
     },
-    "required": [
-      "subject"
-    ],
     "additionalProperties": false
 }
