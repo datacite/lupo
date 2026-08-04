@@ -1038,6 +1038,22 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", 0, "attributes", "creators")).to eq([{ "name" => "Garza, Kristian J.", "nameType" => "Personal", "givenName" => "Kristian J.", "familyName" => "Garza", "affiliation" => [{ "name" => "Freie Universität Berlin", "affiliationIdentifier" => "https://ror.org/046ak2485", "affiliationIdentifierScheme" => "ROR" }], "nameIdentifiers" => [{ "schemeUri" => "https://orcid.org", "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }] }])
     end
 
+    it "returns affiliation as strings when affiliation=false", vcr: true do
+      get "/dois?query=Kristian%20Garza&affiliation=false", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "creators")).to eq([{ "name" => "Garza, Kristian J.", "nameType" => "Personal", "givenName" => "Kristian J.", "familyName" => "Garza", "affiliation" => ["Freie Universität Berlin"], "nameIdentifiers" => [{ "schemeUri" => "https://orcid.org", "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }] }])
+    end
+
+    it "returns affiliation as strings when affiliation is a non-true value", vcr: true do
+      get "/dois?query=Kristian%20Garza&affiliation=foo", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "attributes", "creators")).to eq([{ "name" => "Garza, Kristian J.", "nameType" => "Personal", "givenName" => "Kristian J.", "familyName" => "Garza", "affiliation" => ["Freie Universität Berlin"], "nameIdentifiers" => [{ "schemeUri" => "https://orcid.org", "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }] }])
+    end
+
     it "returns dois with field of science", vcr: true do
       get "/dois?field-of-science=computer_and_information_sciences", nil, headers
 

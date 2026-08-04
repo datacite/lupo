@@ -405,6 +405,38 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
     end
 
+    context "deactivates isActive" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => { "isActive" => false },
+          },
+        }
+      end
+
+      it "sets isActive to false and keeps it false on later updates" do
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(client.reload.is_active).to eq("\x00")
+
+        put "/clients/#{client.symbol}",
+            {
+              "data" => {
+                "type" => "clients",
+                "attributes" => { "name" => "Still Inactive Repository" },
+              },
+            },
+            headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(client.reload.is_active).to eq("\x00")
+      end
+    end
+
     context "invalid globus_uuid" do
       let(:params) do
         {
