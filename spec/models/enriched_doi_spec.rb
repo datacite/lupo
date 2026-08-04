@@ -15,8 +15,12 @@ describe EnrichedDoi, type: :model do
       expect(enriched_doi).to be_readonly
     end
 
-    it "raises on save" do
+    it "raises on save for a new record" do
       expect { EnrichedDoi.new.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
+    end
+
+    it "raises on save for a persisted record" do
+      expect { enriched_doi.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
     end
 
     it "raises on update" do

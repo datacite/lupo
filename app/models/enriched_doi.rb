@@ -11,9 +11,19 @@ class EnrichedDoi < Doi
     true
   end
 
+  # Validations run before the readonly? check in ActiveRecord::Validations#save,
+  # so invalid records would otherwise return false instead of raising.
+  def save(**_options, &_block)
+    _raise_readonly_record_error
+  end
+
+  def save!(**_options, &_block)
+    _raise_readonly_record_error
+  end
+
   # delete bypasses callbacks and does not consult readonly?
   def delete
-    raise ActiveRecord::ReadOnlyRecord, "#{self.class} is marked as readonly"
+    _raise_readonly_record_error
   end
 
   if Rails.env.test?
