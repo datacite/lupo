@@ -336,7 +336,7 @@ GEM
     google-protobuf (4.34.1-x86_64-linux-gnu)
       bigdecimal
       rake (~> 13.3)
-    graphql (2.6.3)
+    graphql (2.6.7)
       base64
       fiber-storage
       logger
@@ -773,6 +773,7 @@ GEM
 PLATFORMS
   aarch64-linux
   arm64-darwin-23
+  arm64-darwin-24
   arm64-darwin-25
   universal-darwin-21
   x86_64-darwin-20
@@ -817,7 +818,7 @@ DEPENDENCIES
   flipper-active_support_cache_store (~> 1.4, >= 1.4.1)
   gender_detector (~> 2.1)
   google-protobuf (~> 4.34, >= 4.34.1)
-  graphql (~> 2.5, >= 2.5.26)
+  graphql (~> 2.5, >= 2.6.6)
   graphql-batch (~> 0.6.1)
   hashdiff (~> 1.2, >= 1.2.1)
   hashid-rails (~> 1.4, >= 1.4.1)
