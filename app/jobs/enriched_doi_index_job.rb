@@ -29,7 +29,7 @@ class EnrichedDoiIndexJob < ApplicationJob
 
     return unless source_doi.has_enrichments
 
-    original_source_attributes = source_doi.attributes
+    original_source_attributes = source_doi.attributes.deep_dup
 
     source_doi.only_validate = true
     source_doi.regenerate = true

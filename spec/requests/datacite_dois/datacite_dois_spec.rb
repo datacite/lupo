@@ -2363,9 +2363,52 @@ describe DataciteDoisController, type: :request, vcr: true do
         "familyName" => "Arslan",
         "affiliation" => [],
       }]) }
+    let(:doi_with_invalid_url) do
+      create(:doi, doi: "10.14454/invalid", client: client, aasm_state: "findable", creators: [{
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "affiliation" => [],
+      }]).tap do |doi_record|
+        doi_record.update_column(:url, "http://example.com/invalid with space")
+      end
+    end
+    let!(:enrichment_for_doi_with_invalid_url) { create(:enrichment, doi: doi_with_invalid_url.doi)}
+    let(:doi_with_contributor) do
+      create(:doi, client: client, aasm_state: "findable", contributors: [{
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "contributorType" => "ContactPerson",
+        "affiliation" => [],
+      }])
+    end
+    let!(:enrichment_with_invalid_contributor) { create(:enrichment, 
+      doi: doi_with_contributor.doi,
+      field: "contributors",
+      original_value: doi_with_contributor.contributors.first,
+      enriched_value: {
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "contributorType" => "Funder",
+        "affiliation" => [
+          {
+            "name": "UNSW Sydney, neilcmalan@gmail.com",
+            "schemeUri": "https://ror.org",
+            "affiliationIdentifier": "https://ror.org/03r8z3t63",
+            "affiliationIdentifierScheme": "ROR"
+          }
+        ],
+        "nameIdentifiers" => [],
+      }) }
 
     before do
       IndexJobDoiRegistration.perform_now(doi)
+      IndexJobDoiRegistration.perform_now(doi_with_invalid_url)
+      IndexJobDoiRegistration.perform_now(doi_with_contributor)
+      EnrichedDoiIndexJob.perform_now(doi_with_invalid_url.doi)
+      EnrichedDoiIndexJob.perform_now(doi_with_contributor.doi)
       import_doi_index
       refresh_enriched_doi_index
     end
@@ -2421,6 +2464,69 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
         expect(json.dig("data", 0, "attributes", "titles")).to eq(updated_titles)
         expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
+      end
+    end
+
+    context "when a doi record has an invalid url" do
+      it "returns the original value at /dois" do
+        get "/dois?query=doi:#{doi_with_invalid_url.doi}", nil, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_invalid_url.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "creators")).to eq([{
+          "name" => "Arslan, M.",
+          "givenName" => "M.",
+          "familyName" => "Arslan",
+          "affiliation" => [],
+          "nameIdentifiers" => [],
+        }])
+      end
+
+      it "returns the original value at /dois?enriched=true" do
+        get "/dois?query=doi:#{doi_with_invalid_url.doi}&enriched=true", nil, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_invalid_url.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "creators")).to eq([{
+          "name" => "Arslan, M.",
+          "givenName" => "M.",
+          "familyName" => "Arslan",
+          "affiliation" => [],
+          "nameIdentifiers" => [],
+        }])
+        expect(json.dig("data", 0, "relationships", "enrichments", "data")).to eq([])
+      end
+    end
+
+    context "when an enrichment record has an invalid contributor" do
+      it "returns the original value at /dois" do
+        get "/dois?query=doi:#{doi_with_contributor.doi}", nil, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_contributor.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "contributors")).to eq([{
+          "name" => "Arslan, M.",
+          "givenName" => "M.",
+          "familyName" => "Arslan",
+          "contributorType" => "ContactPerson",
+          "affiliation" => [],
+          "nameIdentifiers" => [],
+        }])
+      end
+
+      it "returns the original value at /dois?enriched=true" do
+        get "/dois?query=doi:#{doi_with_contributor.doi}&enriched=true", nil, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data").size).to eq(1)
+        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_contributor.doi.downcase)
+        expect(json.dig("data", 0, "attributes", "contributors")).to eq([{
+          "name" => "Arslan, M.",
+          "givenName" => "M.",
+          "familyName" => "Arslan",
+          "contributorType" => "ContactPerson",
+          "affiliation" => [],
+          "nameIdentifiers" => [],
+        }])
       end
     end
   end
