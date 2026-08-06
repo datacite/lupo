@@ -1004,6 +1004,150 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
     end
 
+    context "deactivates isActive" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => { "isActive" => false },
+          },
+        }
+      end
+
+      it "sets isActive to false and keeps it false on later updates" do
+        put "/providers/#{provider.symbol}", params, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(provider.reload.is_active).to eq("\x00")
+
+        put "/providers/#{provider.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "name" => "Still Inactive Provider" },
+              },
+            },
+            admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(provider.reload.is_active).to eq("\x00")
+      end
+    end
+
+    context "inactive provider_admin cannot self-reactivate or update" do
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+          is_active: false,
+          password_input: "12345",
+        )
+      end
+      let(:provider_admin_token) do
+        User.generate_token(
+          role_id: "provider_admin",
+          provider_id: provider.symbol.downcase,
+        )
+      end
+      let(:provider_admin_headers) do
+        {
+          "HTTP_ACCEPT" => "application/vnd.api+json",
+          "HTTP_AUTHORIZATION" => "Bearer " + provider_admin_token,
+        }
+      end
+
+      it "rejects isActive true and leaves the provider inactive" do
+        put "/providers/#{provider.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "isActive" => true },
+              },
+            },
+            provider_admin_headers
+
+        expect(last_response.status).to eq(403)
+        expect(provider.reload.is_active).to eq("\x00")
+      end
+
+      it "rejects other attribute updates while inactive" do
+        put "/providers/#{provider.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "name" => "Should Not Change" },
+              },
+            },
+            provider_admin_headers
+
+        expect(last_response.status).to eq(403)
+        expect(provider.reload.name).not_to eq("Should Not Change")
+      end
+    end
+
+    context "active consortium_admin can set child organization isActive" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => { "isActive" => false },
+          },
+        }
+      end
+
+      it "deactivates a consortium organization" do
+        expect(provider.is_active).to eq("\x01")
+
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "isActive")).to be false
+        expect(provider.reload.is_active).to eq("\x00")
+      end
+    end
+
+    context "inactive consortium_admin cannot update self or child orgs" do
+      let(:consortium) do
+        create(:provider, role_name: "ROLE_CONSORTIUM", is_active: false)
+      end
+      let(:token) do
+        User.generate_token(
+          role_id: "consortium_admin",
+          provider_id: consortium.symbol.downcase,
+        )
+      end
+
+      it "rejects reactivating the consortium itself" do
+        put "/providers/#{consortium.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "isActive" => true },
+              },
+            },
+            headers
+
+        expect(last_response.status).to eq(403)
+        expect(consortium.reload.is_active).to eq("\x00")
+      end
+
+      it "rejects updating a child organization isActive" do
+        put "/providers/#{provider.symbol}",
+            {
+              "data" => {
+                "type" => "providers",
+                "attributes" => { "isActive" => false },
+              },
+            },
+            headers
+
+        expect(last_response.status).to eq(403)
+      end
+    end
+
     context "invalid globus_uuid" do
       let(:params) do
         {

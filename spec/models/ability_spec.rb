@@ -365,6 +365,21 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
     end
 
     context "when is a provider admin" do
+      # Persisted provider required: Ability checks user.provider.is_active.
+      let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+          is_active: true,
+        )
+      end
+      let(:contact) { create(:contact, provider: provider) }
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:client) { create(:client, provider: provider) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
       let(:token) do
         User.generate_token(
           role_id: "provider_admin", provider_id: provider.symbol.downcase,
@@ -424,7 +439,87 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
       end
     end
 
+    context "when is a provider admin inactive" do
+      let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+          is_active: false,
+        )
+      end
+      let(:contact) { create(:contact, provider: provider) }
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:client) { create(:client, provider: provider) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+      let(:token) do
+        User.generate_token(
+          role_id: "provider_admin", provider_id: provider.symbol.downcase,
+        )
+      end
+
+      it "can read the user" do
+        is_expected.to be_able_to(:read, user)
+      end
+
+      it "can read but not update/create/destroy the provider (cannot self-reactivate)" do
+        is_expected.to be_able_to(:read, provider)
+        is_expected.to be_able_to(:read_billing_information, provider)
+        is_expected.to be_able_to(:read_contact_information, provider)
+        is_expected.not_to be_able_to(:update, provider)
+        is_expected.not_to be_able_to(:create, provider)
+        is_expected.not_to be_able_to(:destroy, provider)
+      end
+
+      it "can read but not create/update/destroy the contact" do
+        is_expected.to be_able_to(:read, contact)
+        is_expected.not_to be_able_to(:create, contact)
+        is_expected.not_to be_able_to(:update, contact)
+        is_expected.not_to be_able_to(:destroy, contact)
+      end
+
+      it "can read but not create/update/destroy/transfer the client" do
+        is_expected.to be_able_to(:read, client)
+        is_expected.to be_able_to(:read_contact_information, client)
+        is_expected.not_to be_able_to(:create, client)
+        is_expected.not_to be_able_to(:update, client)
+        is_expected.not_to be_able_to(:destroy, client)
+        is_expected.not_to be_able_to(:transfer, client)
+      end
+
+      it "can read but not create/update/destroy the provider prefix" do
+        is_expected.to be_able_to(:read, provider_prefix)
+        is_expected.not_to be_able_to(:create, provider_prefix)
+        is_expected.not_to be_able_to(:update, provider_prefix)
+        is_expected.not_to be_able_to(:destroy, provider_prefix)
+      end
+
+      it "can read but not transfer/create/update/destroy the doi" do
+        is_expected.to be_able_to(:read, doi)
+        is_expected.not_to be_able_to(:transfer, doi)
+        is_expected.not_to be_able_to(:create, doi)
+        is_expected.not_to be_able_to(:update, doi)
+        is_expected.not_to be_able_to(:destroy, doi)
+      end
+    end
+
     context "when is a consortium admin" do
+      let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", is_active: true) }
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        )
+      end
+      let(:contact) { create(:contact, provider: provider) }
+      let(:consortium_contact) { create(:contact, provider: consortium) }
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:client) { create(:client, provider: provider) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
       let(:token) do
         User.generate_token(
           role_id: "consortium_admin", provider_id: consortium.symbol.downcase,
@@ -498,6 +593,62 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:create, doi)
         is_expected.not_to be_able_to(:update, doi)
         is_expected.not_to be_able_to(:destroy, doi)
+      end
+    end
+
+    context "when is a consortium admin inactive" do
+      let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", is_active: false) }
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+        )
+      end
+      let(:contact) { create(:contact, provider: provider) }
+      let(:consortium_contact) { create(:contact, provider: consortium) }
+      let!(:prefix) { create(:prefix, uid: "10.14454") }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:client) { create(:client, provider: provider) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+      let(:token) do
+        User.generate_token(
+          role_id: "consortium_admin", provider_id: consortium.symbol.downcase,
+        )
+      end
+
+      it "can read the user" do
+        is_expected.to be_able_to(:read, user)
+      end
+
+      it "can read but not update/create/destroy the consortium (cannot self-reactivate)" do
+        is_expected.to be_able_to(:read, consortium)
+        is_expected.not_to be_able_to(:update, consortium)
+        is_expected.not_to be_able_to(:create, consortium)
+        is_expected.not_to be_able_to(:destroy, consortium)
+      end
+
+      it "can read but not create/update/destroy child consortium organizations" do
+        is_expected.to be_able_to(:read, provider)
+        is_expected.not_to be_able_to(:create, provider)
+        is_expected.not_to be_able_to(:update, provider)
+        is_expected.not_to be_able_to(:destroy, provider)
+      end
+
+      it "can read but not create/update/destroy/transfer the client" do
+        is_expected.to be_able_to(:read, client)
+        is_expected.not_to be_able_to(:create, client)
+        is_expected.not_to be_able_to(:update, client)
+        is_expected.not_to be_able_to(:destroy, client)
+        is_expected.not_to be_able_to(:transfer, client)
+      end
+
+      it "can read but not create/update/destroy contacts" do
+        is_expected.to be_able_to(:read, contact)
+        is_expected.to be_able_to(:read, consortium_contact)
+        is_expected.not_to be_able_to(:create, contact)
+        is_expected.not_to be_able_to(:update, contact)
+        is_expected.not_to be_able_to(:destroy, contact)
       end
     end
 

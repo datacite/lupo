@@ -218,7 +218,6 @@ paths:
             type: string
             enum:
               - provider
-              - repository
         - in: query
           name: sort
           schema:
@@ -1792,9 +1791,168 @@ paths:
       responses:
         '200':
           description: OK
+  /credentials/api-keys:
+    get:
+      tags:
+        - credentials
+      summary: Return a list of API keys for the authenticated repository account.
+      parameters:
+        - in: query
+          name: include_revoked
+          description: Include revoked API keys in the response.
+          schema:
+            type: boolean
+            default: false
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: A JSON array of API keys.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApiKey'
+                  meta:
+                    type: object
+                    properties:
+                      total:
+                        description: Total results count.
+                        type: number
+                        example: 1
+    post:
+      tags:
+        - credentials
+      summary: Create a new API key for the authenticated repository account.
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - apiKeys
+                    attributes:
+                      type: object
+                      required:
+                        - name
+                      properties:
+                        name:
+                          type: string
+                          description: The name of the API key.
+                          example: Dataverse installation
+      responses:
+        '201':
+          description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyCreated'
+  /credentials/api-keys/{id}:
+    delete:
+      tags:
+        - credentials
+      summary: Revoke an API key for the authenticated repository account.
+      security:
+        - BasicAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the API key to revoke.
+          required: true
+          example: 2d36ceeb-fc94-4e88-b8b7-0b47c6c6cd67
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
 components:
   schemas:
     # core object types
+    ApiKey:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 2d36ceeb-fc94-4e88-b8b7-0b47c6c6cd67
+        type:
+          type: string
+          enum: [apiKeys]
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Dataverse installation
+            keyPrefix:
+              type: string
+              readOnly: true
+              example: DC.xcmd5Zmv
+            created:
+              type: string
+              format: date-time
+              readOnly: true
+            updated:
+              type: string
+              format: date-time
+              readOnly: true
+            lastUsedAt:
+              type: string
+              format: date-time
+              nullable: true
+              readOnly: true
+              example: null
+            revokedAt:
+              type: string
+              format: date-time
+              nullable: true
+              readOnly: true
+              example: null
+        relationships:
+          type: object
+          properties:
+            client:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: HNAJ.IAJGQC
+                    type: 
+                      type: string
+                      enum: [clients]
+    ApiKeyCreated:
+      description: Returned only on creation. Includes the full API key value which is not retrievable afterwards.
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ApiKey'
+            - type: object
+              properties:
+                attributes:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      readOnly: true
+                      description: The full API key value. Only returned on creation.
+                      example: DC.xcmd5Zmv_EXAMPLE_API_KEY
     Activity:
       type: object
       description: Represents an activity for an event within DataCite systems.
@@ -3374,8 +3532,10 @@ components:
     software:
       type: string
       enum:
+        - Archipelago
         - Cayuse
         - CKAN
+        - CSTR & DOI Registration API
         - Dataverse
         - dLibra
         - DSpace
@@ -3384,6 +3544,7 @@ components:
         - Fedora
         - Invenio
         - Islandora
+        - Medad
         - MyCoRe
         - Nesstar
         - Omega-PSIR
@@ -3398,7 +3559,6 @@ components:
         - SESAR
         - Ubiquity
         - Other
-        - Unknown
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string

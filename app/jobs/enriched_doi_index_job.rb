@@ -20,7 +20,7 @@ class EnrichedDoiIndexJob < ApplicationJob
   def perform(doi, target_active_index: true)
     log_prefix = "[EnrichedDoiIndexJob]"
     target_index = target_active_index ? EnrichedDoi.active_index : EnrichedDoi.inactive_index
-    source_doi = Doi.find_by(doi: doi, agency: "datacite")
+    source_doi = Doi.includes(:enrichments).find_by(doi: doi, agency: "datacite")
 
     if source_doi.blank?
       Rails.logger.info("#{log_prefix}: DOI not found: #{doi}")
@@ -29,7 +29,6 @@ class EnrichedDoiIndexJob < ApplicationJob
 
     return unless source_doi.has_enrichments
 
-    source_doi = Doi.includes(:enrichments).find(source_doi.id)
     original_source_attributes = source_doi.attributes
 
     source_doi.only_validate = true
@@ -57,11 +56,7 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.updated_at = source_doi.updated_at
     enriched_doi.index_without_enrichments = fallback_to_source_doi
 
-    begin
-      response = enriched_doi.__elasticsearch__.index_document(index: target_index)
-      Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
-    rescue Elastic::Transport::Transport::Error, SocketError => error
-      Rails.logger.warn("#{log_prefix}: Skipping enriched indexing for DOI #{doi}: #{error.class} #{error.message}")
-    end
+    response = enriched_doi.__elasticsearch__.index_document(index: target_index)
+    Rails.logger.error("[Elasticsearch] Error #{response.inspect}") unless %w[created updated].include?(response["result"])
   end
 end

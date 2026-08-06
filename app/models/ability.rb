@@ -26,7 +26,10 @@ class Ability
       can :export, :repositories
     elsif user.role_id == "staff_user"
       can %i[read read_billing_information read_contact_information read_analytics], :all
-    elsif user.role_id == "consortium_admin" && user.provider_id.present?
+    elsif user.role_id == "consortium_admin" && user.provider_id.present? &&
+        provider_account_active?(user)
+      # Active consortium: full management of self, child orgs, and their clients.
+      # Same pattern as active client_admin (is_active == "\x01").
       can %i[manage read_billing_information read_contact_information], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
@@ -66,7 +69,38 @@ class Ability
             user.provider_id.casecmp(activity.doi.provider.consortium_id)
       end
       can %i[read], :access_datafile
-    elsif user.role_id == "provider_admin" && user.provider_id.present?
+    elsif user.role_id == "consortium_admin" && user.provider_id.present?
+      # Inactive consortium: read-only (cannot self-reactivate or manage orgs/clients).
+      can %i[read read_billing_information read_contact_information], Provider do |provider|
+        user.provider_id.casecmp(provider.consortium_id)
+      end
+      can %i[read read_billing_information read_contact_information],
+          Provider,
+          symbol: user.provider_id.upcase
+      can %i[read], ProviderPrefix do |provider_prefix|
+        provider_prefix.provider &&
+          user.provider_id.casecmp(provider_prefix.provider.consortium_id)
+      end
+      can %i[read], Contact
+      can %i[read read_contact_information], Client do |client|
+        client.provider &&
+          user.provider_id.casecmp(client.provider.consortium_id)
+      end
+      can %i[read], ClientPrefix
+      can %i[read get_url read_landing_page_results], Doi do |doi|
+        user.provider_id.casecmp(doi.provider.consortium_id)
+      end
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? ||
+          activity.doi.provider &&
+            user.provider_id.casecmp(activity.doi.provider.consortium_id)
+      end
+      can %i[read], :access_datafile
+    elsif user.role_id == "provider_admin" && user.provider_id.present? &&
+        provider_account_active?(user)
+      # Active provider/member: full self-service rights.
       can %i[update read read_billing_information read_contact_information read_analytics],
           Provider,
           symbol: user.provider_id.upcase
@@ -90,6 +124,25 @@ class Ability
       # end
 
       can %i[read get_url transfer read_landing_page_results],
+          Doi,
+          provider_id: user.provider_id
+      can %i[read], Doi
+      can %i[read], User
+      can %i[read], Activity do |activity|
+        activity.doi.findable? || activity.doi.provider_id == user.provider_id
+      end
+      can %i[read], :access_datafile
+    elsif user.role_id == "provider_admin" && user.provider_id.present?
+      # Inactive provider: read-only (cannot self-reactivate or manage repositories).
+      # Mirrors inactive client_admin (update/manage stripped when is_active != "\x01").
+      can %i[read read_billing_information read_contact_information read_analytics],
+          Provider,
+          symbol: user.provider_id.upcase
+      can %i[read], Contact, provider_id: user.provider_id
+      can %i[read], ProviderPrefix, provider_id: user.provider_id
+      can %i[read read_contact_information], Client, provider_id: user.provider_id
+      can %i[read], ClientPrefix
+      can %i[read get_url read_landing_page_results],
           Doi,
           provider_id: user.provider_id
       can %i[read], Doi
@@ -260,4 +313,11 @@ class Ability
       end
     end
   end
+
+  private
+    # Providers store is_active as binary(1): "\x01" active, "\x00" inactive.
+    # Same check used for client_admin / client_api active gates.
+    def provider_account_active?(user)
+      user.provider.present? && user.provider.is_active == "\x01"
+    end
 end

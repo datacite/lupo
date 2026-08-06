@@ -60,7 +60,7 @@ jobs:
       MYSQL_HOST: "127.0.0.1"
       MYSQL_USER: root
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Sync time
         run: |
@@ -72,7 +72,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 4.0.1
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
