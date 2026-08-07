@@ -13,6 +13,17 @@ Rails API application for managing DataCite providers, clients, prefixes and DOI
 *   **DOI**: Digital Object Identifier, the core entity managed by the system.
 *   **Prefix**: DOIs are assigned within a prefix (e.g., 10.1234).
 
+## MDS API (classic Metadata Store protocol)
+
+Lupo can serve the [classic DataCite MDS API](https://support.datacite.org/docs/mds-api-guide) in-process (paths such as `/doi`, `/metadata`, `/media`), replacing the former standalone [Poodle](https://github.com/datacite/poodle) service.
+
+*   Enable with `MDS_ENABLED=true`.
+*   Requests are accepted only when the HTTP `Host` is listed in `MDS_HOSTS` (e.g. `mds.datacite.org`, `mds.test.datacite.org`, `mds.local`).
+*   Public MDS URLs stay the same; only the backend behind those hosts changes.
+*   Non-MDS hosts continue to serve the JSON:API / GraphQL REST surface only.
+
+See `.env.example` for `MDS_ENABLED`, `MDS_HOSTS`, `MDS_URL`, and `MDS_REALM`.
+
 ## Tech Stack
 
 *   Ruby on Rails
