@@ -32,7 +32,7 @@ module Mds
       data = request.raw_post
       fail Mds::Error.new("Media type and URL missing", status: 400) if data.blank?
 
-      media_type, url = data.to_s.split("=", 2)
+      media_type, url = parse_media_body(data)
       media = Media.new(doi: @doi, media_type: media_type, url: url)
 
       unless media.save
@@ -72,6 +72,20 @@ module Mds
         fail Mds::Error.new("No media for the DOI", status: 404) if id.blank?
 
         @media = @doi.media.where(id: id.to_i).first
+      end
+
+      # MDS media body is mediaType=url. Both parts are required; blank type must not
+      # fall through to Media#set_defaults (text/plain).
+      def parse_media_body(data)
+        media_type, url = data.to_s.split("=", 2)
+        media_type = media_type.to_s.strip
+        url = url.to_s.strip
+
+        if media_type.blank? || url.blank?
+          fail Mds::Error.new("Media type and URL missing", status: 400)
+        end
+
+        [media_type, url]
       end
   end
 end

@@ -53,6 +53,36 @@ describe "MDS Media API", type: :request, vcr: true, prefix_pool_size: 1 do
       expect(doi.media.first.media_type).to eq("application/pdf")
       expect(doi.media.first.url).to eq("https://example.org/file.pdf")
     end
+
+    it "rejects blank URL" do
+      post "/media/#{doi.doi}",
+           "application/pdf=",
+           basic_headers.merge("CONTENT_TYPE" => "text/plain")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("Media type and URL missing")
+      expect(doi.media.count).to eq(0)
+    end
+
+    it "rejects blank media type" do
+      post "/media/#{doi.doi}",
+           "=https://example.org/file.pdf",
+           basic_headers.merge("CONTENT_TYPE" => "text/plain")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("Media type and URL missing")
+      expect(doi.media.count).to eq(0)
+    end
+
+    it "rejects body without media type and URL pair" do
+      post "/media/#{doi.doi}",
+           "application/pdf",
+           basic_headers.merge("CONTENT_TYPE" => "text/plain")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("Media type and URL missing")
+      expect(doi.media.count).to eq(0)
+    end
   end
 
   describe "GET /media/:doi_id" do
