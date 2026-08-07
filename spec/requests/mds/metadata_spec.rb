@@ -60,6 +60,17 @@ describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 1 do
       expect(last_response.status).to eq(415)
       expect(last_response.body).to include("not supported")
     end
+
+    it "rejects path DOI that does not match metadata identifier" do
+      put "/metadata/10.14454/other-doi", xml, basic_headers
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq(
+        "doi parameter does not match doi of resource",
+      )
+      expect(DataciteDoi.where(doi: "10.14454/other-doi").count).to eq(0)
+      expect(DataciteDoi.where(doi: doi_string.downcase).count).to eq(0)
+    end
   end
 
   describe "GET /metadata/:doi_id" do

@@ -8,13 +8,15 @@ module Mds
     include DoiMinting
 
     def resolve_doi_id(str, data:, from:, number: nil)
-      doi = validate_doi(str)
-      return doi if doi.present?
+      path_doi = validate_doi(str)
+      body_doi = from == "datacite" ? doi_from_xml_identifier(data) : nil
 
-      if from == "datacite"
-        doi = doi_from_xml_identifier(data)
-        return doi if doi.present?
+      if path_doi.present?
+        ensure_path_matches_body!(path_doi, body_doi)
+        return path_doi
       end
+
+      return body_doi if body_doi.present?
 
       mint_unique_doi(str, number: number)
     end
@@ -26,6 +28,14 @@ module Mds
         identifier = doc.at_css("identifier")
         identifier = identifier.content if identifier.present?
         validate_doi(identifier)
+      end
+
+      # Same consistency rule as MDS PUT /doi path vs body doi parameter.
+      def ensure_path_matches_body!(path_doi, body_doi)
+        return if body_doi.blank?
+        return if body_doi.casecmp(path_doi).zero?
+
+        fail IdentifierError, "doi parameter does not match doi of resource"
       end
 
       def mint_unique_doi(str, number: nil)
