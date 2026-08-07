@@ -2373,7 +2373,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         doi_record.update_column(:url, "http://example.com/invalid with space")
       end
     end
-    let!(:enrichment_for_doi_with_invalid_url) { create(:enrichment, doi: doi_with_invalid_url.doi)}
+    let!(:enrichment_for_doi_with_invalid_url) { create(:enrichment, doi: doi_with_invalid_url.doi) }
     let(:doi_with_contributor) do
       create(:doi, client: client, aasm_state: "findable", contributors: [{
         "name" => "Arslan, M.",
@@ -2383,7 +2383,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         "affiliation" => [],
       }])
     end
-    let!(:enrichment_with_invalid_contributor) { create(:enrichment, 
+    let!(:enrichment_with_invalid_contributor) { create(:enrichment,
       doi: doi_with_contributor.doi,
       field: "contributors",
       original_value: doi_with_contributor.contributors.first,
