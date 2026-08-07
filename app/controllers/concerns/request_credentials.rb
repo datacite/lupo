@@ -5,18 +5,25 @@ module RequestCredentials
 
   # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
   def type_and_credentials_from_request_headers
-    request.headers["Authorization"]&.split
+    # Limit 2 keeps JWT/API-key material intact if it ever contained spaces.
+    request.headers["Authorization"]&.split(" ", 2)
   end
 
   def user_from_request_credentials
     type, credentials = type_and_credentials_from_request_headers
     return if credentials.blank?
 
-    if (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
+    # Only JWT access tokens belong on the blacklist — never DC.* API keys.
+    if !api_key_token?(credentials) &&
+        (ENV["JWT_BLACKLISTED"] || "").split(",").include?(credentials)
       raise JWT::VerificationError
     end
 
     User.new(credentials, type: type)
+  end
+
+  def api_key_token?(token)
+    token.present? && token.length > 20 && token.to_s.match?(/\ADC\./i)
   end
 
   def authenticate_request!
