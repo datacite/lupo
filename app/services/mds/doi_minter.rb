@@ -39,6 +39,11 @@ module Mds
       end
 
       def mint_unique_doi(str, number: nil)
+        # Fail closed before generate_random_dois so blank/malformed mint
+        # input returns a deterministic MDS client error (IdentifierError → 400).
+        prefix = validate_prefix(str)
+        fail IdentifierError, "No valid prefix found" if prefix.blank?
+
         if number.present?
           doi = generate_random_dois(str, number: number).first
           existing = DataciteDoi.where(doi: doi).exists?

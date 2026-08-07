@@ -73,6 +73,40 @@ describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 1 do
     end
   end
 
+  describe "POST /metadata" do
+    it "rejects minting when path and body provide no valid prefix" do
+      expect {
+        post "/metadata", "", basic_headers
+      }.not_to change(DataciteDoi, :count)
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("No valid prefix found")
+    end
+
+    it "rejects minting when path is not a valid prefix" do
+      expect {
+        post "/metadata/not-a-prefix", "", basic_headers
+      }.not_to change(DataciteDoi, :count)
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("No valid prefix found")
+    end
+
+    it "rejects minting when metadata has no identifier and path is blank" do
+      body = xml.sub(
+        %r{<identifier[^>]*>.*?</identifier>}m,
+        "<identifier identifierType=\"DOI\"></identifier>",
+      )
+
+      expect {
+        post "/metadata", body, basic_headers
+      }.not_to change(DataciteDoi, :count)
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("No valid prefix found")
+    end
+  end
+
   describe "GET /metadata/:doi_id" do
     it "returns XML for an existing DOI" do
       put "/metadata/#{doi_string}", xml, basic_headers
