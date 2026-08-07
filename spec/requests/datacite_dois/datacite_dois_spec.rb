@@ -2437,6 +2437,36 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
     end
 
+    context "with cursor pagination" do
+      let!(:additional_dois) { create_list(:doi, 4, client: client, aasm_state: "findable") }
+
+      before do
+        import_doi_index
+        refresh_enriched_doi_index
+      end
+
+      it "returns enriched dois with cursor" do
+        get "/dois?enriched=true&page[cursor]&page[size]=2", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"].size).to eq(2)
+        expect(json.dig("links", "next")).to be_present
+        expect(json.dig("links", "next")).to include("enriched=true")
+
+        cursor = Rack::Utils.parse_query(json.dig("links", "next").split("?", 2).last).fetch("page[cursor]", nil)
+        expect(cursor).to be_present
+        expect { Base64.urlsafe_decode64(cursor) }.not_to raise_error
+
+        next_link_absolute = Addressable::URI.parse(json.dig("links", "next"))
+        next_link = next_link_absolute.path + "?" + next_link_absolute.query
+
+        get next_link, nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"]).not_to be_empty
+      end
+    end
+
     context "when the doi title is updated" do
       let(:updated_titles) { [{ "title" => "Updated Title" }] }
 
