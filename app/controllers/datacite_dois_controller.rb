@@ -576,7 +576,7 @@ class DataciteDoisController < ApplicationController
     if @doi.save
       options = {}
       options[:include] = @include
-      options[:is_collection] = false
+      options[:is_collection] = falseschema
       options[:params] = {
         current_ability: current_ability,
         detail: true,

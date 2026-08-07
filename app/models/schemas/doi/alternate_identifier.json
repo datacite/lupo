@@ -11,5 +11,8 @@
       "type": ["string", "null"]
     }
   },
+  "required": [
+    "identifierType"
+  ],
   "additionalProperties": false
 }
