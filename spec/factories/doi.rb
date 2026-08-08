@@ -97,7 +97,10 @@ FactoryBot.define do
       [{ "title": "Data from: A new malaria agent in African hominids." }]
     end
     descriptions do
-      [{ "description": "Data from: A new malaria agent in African hominids." }]
+      [{
+        "description": "Data from: A new malaria agent in African hominids.",
+        "descriptionType": "TechnicalInfo"
+      }]
     end
     subjects do
       [

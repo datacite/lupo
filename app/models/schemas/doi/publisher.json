@@ -1,12 +1,27 @@
 {
+  "title": "Publisher",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource. This property will be used to formulate the citation, so consider the prominence of the role.",
   "type": "object",
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "properties": {
-    "name": { "type": "string" },
-    "publisherIdentifier": { "type": "string" },
-    "publisherIdentifierScheme": { "type": "string" },
-    "schemeUri": { "type": "string" },
-    "lang": { "type": "string" }
+    "name": {
+      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
+    },
+    "publisherIdentifier": { 
+      "type": "string"
+    },
+    "publisherIdentifierScheme": {
+       "type": "string"
+    },
+    "schemeUri": { 
+      "type": "string"
+    },
+    "lang": {
+      "$ref": "definitions.json#/$defs/language"
+    }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": [
+    "name"
+  ]
 }

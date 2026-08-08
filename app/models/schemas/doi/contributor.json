@@ -1,0 +1,16 @@
+{
+  "title": "Contributor",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The institution or person responsible for collecting, creating, or otherwise contributing to the development of the dataset.",
+  "type": "object",
+  "$ref": "contributor_base.json",
+  "properties": {
+    "nameIdentifiers": {
+      "$ref": "name_identifiers.json"
+    },
+    "affiliation": {
+      "$ref": "affiliations.json"
+    }
+  },
+  "unevaluatedProperties": false
+}

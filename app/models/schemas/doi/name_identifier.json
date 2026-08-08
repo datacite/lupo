@@ -1,0 +1,18 @@
+{
+  "title": "NameIdentifier",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Uniquely identifies a creator or contributor, according to various identifier schemes.",
+  "type": "object",
+  "properties": {
+    "nameIdentifier": {
+      "type": "string"
+    },
+    "nameIdentifierScheme": {
+      "type": ["string", "null"]
+    },
+    "schemeUri": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
