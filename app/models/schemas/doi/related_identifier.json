@@ -29,5 +29,9 @@
       "type": "string"
     }
   },
+  "required": [
+    "relatedIdentifierType",
+    "relationType"
+  ],
   "additionalProperties": false
 }
