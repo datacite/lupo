@@ -1,7 +1,7 @@
 {
   "title": "Sizes",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "array",
+  "type": ["array", "null"],
   "minItems": 0,
   "items": {
     "$ref": "size.json"
