@@ -828,7 +828,10 @@ class EnrichedDoi < Doi
 
     Hashie::Mash.new(
       total:        response.dig("hits", "total", "value") || 0,
-      results:      (response.dig("hits", "hits") || []).map { |r| r["_source"] },
+      results:      (response.dig("hits", "hits") || []).map { |r|
+        source = r["_source"] || {}
+        r["sort"] ? source.merge("sort" => r["sort"]) : source
+      },
       scroll_id:    response["_scroll_id"],
       aggregations: response["aggregations"] || {},
       records:      (response.dig("hits", "hits") || []).map { |r| r }
