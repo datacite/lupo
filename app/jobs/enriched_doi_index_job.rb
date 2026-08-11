@@ -33,7 +33,7 @@ class EnrichedDoiIndexJob < ApplicationJob
 
     source_doi.only_validate = true
     source_doi.regenerate = true
-    source_doi.skip_client_domains_validation = true
+    source_doi.skip_url_validation = true
     source_doi.skip_schema_version_validation = false
     source_doi.schema_version = "http://datacite.org/schema/kernel-4"
 

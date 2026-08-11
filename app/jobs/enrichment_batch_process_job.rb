@@ -37,7 +37,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         doi.regenerate = true
 
         # Set these to true to test the validity of the doi after enrichment more accurately.
-        doi.skip_client_domains_validation = true
+        doi.skip_url_validation = true
         doi.skip_schema_version_validation = false
 
         # We make sure we set the schema version to 4 if it is 3.
