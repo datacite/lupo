@@ -23,7 +23,7 @@
       "type": "string"
     },
     "schemeType": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "relationTypeInformation": {
       "type": "string"
