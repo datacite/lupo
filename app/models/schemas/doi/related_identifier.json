@@ -17,7 +17,7 @@
       "$ref": "controlled_vocabularies/relation_type.json"
     },
     "relatedMetadataScheme": {
-      "$ref": "controlled_vocabularies/relation_type.json"
+      "type": "string"
     },
     "schemeUri": {
       "type": "string"
