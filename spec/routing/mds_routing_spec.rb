@@ -66,9 +66,12 @@ describe "MDS routing", type: :routing do
       )
     end
 
-    it "routes nested media under /doi" do
+    it "routes nested media under /doi when DOI contains a slash" do
       expect(get: mds_url("/doi/10.14454/abc/media")).to route_to(
         "mds/media#index", doi_id: "10.14454/abc",
+      )
+      expect(post: mds_url("/doi/10.14454/abc/media")).to route_to(
+        "mds/media#create", doi_id: "10.14454/abc",
       )
     end
 

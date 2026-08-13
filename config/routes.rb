@@ -18,9 +18,13 @@ Rails.application.routes.draw do
       get "metadata", to: "metadata#show"
       delete "metadata/:doi_id", to: "metadata#destroy", constraints: { doi_id: /.+/ }
 
+      # Nested media parent param is :doi_id (not :id). Constrain it like top-level
+      # /media/:doi_id and like Poodle's intent for slashy DOIs.
       resources :dois, path: "/doi", only: %i[index show update destroy],
                        constraints: { id: /.+/ } do
-        resources :media, only: %i[index show create destroy]
+        resources :media,
+                  only: %i[index show create destroy],
+                  constraints: { doi_id: /.+/ }
       end
 
       match "*path", to: "application#route_not_found", via: :all

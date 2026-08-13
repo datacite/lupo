@@ -40,6 +40,8 @@ module Mds
       fail Mds::Error.new(Mds::DOI_UNKNOWN_TO_MDS, status: 404) if doi_id.blank?
 
       xml_b64 = data.present? ? Base64.strict_encode64(data) : nil
+      # event: "show" matches Poodle Metadatable#create_metadata (REST attributes).
+      # Do not use "register" here — that would diverge from classic MDS/Poodle.
       attrs =
         ParamsSanitizer.new(
           {
