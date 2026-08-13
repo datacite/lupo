@@ -90,7 +90,7 @@ class Doi < ApplicationRecord
   attribute :should_validate, :boolean, default: false
   attribute :publisher, :string, default: nil
 
-  attr_accessor :skip_client_domains_validation
+  attr_accessor :skip_url_validation
   attr_accessor :skip_schema_version_validation
 
   belongs_to :client, foreign_key: :datacentre, optional: true
@@ -131,12 +131,12 @@ class Doi < ApplicationRecord
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
-  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+\z/, if: :url?, message: "URL is not valid"
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/\S+\z/, if: Proc.new { |doi| doi.url? && !doi.skip_url_validation }, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
-  validate :check_url, if: Proc.new { |doi| doi.is_registered_or_findable? && !skip_client_domains_validation }
+  validate :check_url, if: Proc.new { |doi| doi.is_registered_or_findable? && !skip_url_validation }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
   validate :check_titles, if: :titles?
@@ -1477,7 +1477,7 @@ class Doi < ApplicationRecord
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string, version: doi.version.to_i + 1)
 
     # update_attributes will trigger validations and Elasticsearch indexing
-    attrs = attrs.merge(skip_client_domains_validation: true, skip_schema_version_validation: true)
+    attrs = attrs.merge(skip_url_validation: true, skip_schema_version_validation: true)
     doi.update(attrs)
     message = "[MySQL] Imported metadata for DOI " + doi.doi + "."
     Rails.logger.info message

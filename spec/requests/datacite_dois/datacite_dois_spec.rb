@@ -2413,7 +2413,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       refresh_enriched_doi_index
     end
 
-    it "returns non-enriched doi at /dois" do
+    it "returns the original value at /dois" do
       get "/dois?query=doi:#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -2435,6 +2435,7 @@ describe DataciteDoisController, type: :request, vcr: true do
       expect(json.dig("data").size).to eq(1)
       expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
       expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
+      expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(1)
     end
 
     context "with cursor pagination" do
@@ -2494,6 +2495,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", 0, "attributes", "doi")).to eq(doi.doi.downcase)
         expect(json.dig("data", 0, "attributes", "titles")).to eq(updated_titles)
         expect(json.dig("data", 0, "attributes", "creators", 0)).to eq(enrichment.enriched_value)
+        expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(1)
       end
     end
 
@@ -2512,19 +2514,15 @@ describe DataciteDoisController, type: :request, vcr: true do
         }])
       end
 
-      it "returns the original value at /dois?enriched=true" do
-        get "/dois?query=doi:#{doi_with_invalid_url.doi}&enriched=true", nil, headers
+      it "returns the enriched value at /dois?enriched=true" do
+        get "/dois?query=doi:#{doi_with_invalid_url.doi}&enriched=true&affiliation=true", nil, headers
         expect(last_response.status).to eq(200)
         expect(json.dig("data").size).to eq(1)
         expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_invalid_url.doi.downcase)
-        expect(json.dig("data", 0, "attributes", "creators")).to eq([{
-          "name" => "Arslan, M.",
-          "givenName" => "M.",
-          "familyName" => "Arslan",
-          "affiliation" => [],
-          "nameIdentifiers" => [],
-        }])
-        expect(json.dig("data", 0, "relationships", "enrichments", "data")).to eq([])
+        expect(json.dig("data", 0, "attributes", "creators")).to eq([
+          enrichment_for_doi_with_invalid_url.enriched_value
+        ])
+        expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(1)
       end
     end
 
@@ -2557,6 +2555,7 @@ describe DataciteDoisController, type: :request, vcr: true do
           "affiliation" => [],
           "nameIdentifiers" => [],
         }])
+        expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(0)
       end
     end
   end
