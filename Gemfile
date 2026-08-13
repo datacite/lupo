@@ -82,7 +82,7 @@ group :development do
   gem "listen", "~> 3.10"
   gem "reek", "~> 6.5" # possible removal
   gem "seedbank", "~> 0.5.0" # possible removal
-  gem "rubocop", "~> 1.86", require: false
+  gem "rubocop", "~> 1.89", require: false
   gem "rubocop-performance", "~> 1.26", ">= 1.26.1", require: false
   gem "rubocop-rails", "~> 2.34", ">= 2.34.3", require: false
   gem "rubocop-packaging", "~> 0.6.0", require: false

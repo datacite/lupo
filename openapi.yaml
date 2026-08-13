@@ -315,6 +315,37 @@ paths:
                    data:
                     type: object
                     $ref: '#/components/schemas/Client'
+  '/clients/{id}/activities':
+      get:
+        parameters:
+        - name: id
+          in: path
+          description: DataCite Repository account ID.
+          required: true
+          schema:
+            type: string
+        tags:
+          - clients
+          - activities
+        summary: Return activities for a specific client.
+        responses:
+          '200':
+            description: A JSON object.
+            content:
+              application/vnd.api+json:
+                schema:
+                  type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Activity'
+                    meta:
+                      allOf:
+                        - $ref: '#/components/schemas/MetaCore'
+                    links:
+                      allOf:
+                        - $ref: '#/components/schemas/Links'
   /repositories:
     post:
       tags:
@@ -1657,6 +1688,37 @@ paths:
                       consortiumOrganizationCount:
                         type: number
                         description: Returned only when the provider is a Consortium.
+  '/providers/{id}/activities':
+    get:
+      parameters:
+      - name: id
+        in: path
+        description: DataCite Direct Member, Consortium Organization, or Consortium account ID.
+        required: true
+        schema:
+          type: string
+      tags:
+        - providers
+        - activities
+      summary: Return activities for a specific provider.
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/MetaCore'
+                  links:
+                    allOf:
+                      - $ref: '#/components/schemas/Links'
   /reports:
     get:
       tags:
