@@ -469,7 +469,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       doi.subjects = ["Tree"]
       expect(doi.save).to be false
     end
-
   end
 
   describe "dates" do
