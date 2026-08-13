@@ -72,10 +72,21 @@ ENV["MONTHLY_DATAFILE_BUCKET"] ||= "monthly-datafile.stage.datacite.org"
 ENV["MONTHLY_DATAFILE_ACCESS_ROLE"] ||= ""
 ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"] ||= ""
 
+# MDS (legacy Metadata Store protocol, formerly Poodle)
+# When MDS_ENABLED is true, hostnames in MDS_HOSTS serve classic MDS routes in-process.
+# Do NOT set MDS_ENABLED / MDS_HOSTS here — environment files and process env own those so
+# test/dev can enable MDS without fighting a premature default, and production stays off
+# unless explicitly enabled. Safe fallbacks for blank hosts live in lib/mds.rb (DEFAULT_HOSTS).
+ENV["MDS_URL"] ||= "https://mds.test.datacite.org"
+ENV["MDS_REALM"] ||= "mds.datacite.org"
+
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
+
+    # MDS protocol helpers (lib/mds.rb)
+    require Rails.root.join("lib/mds")
 
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,

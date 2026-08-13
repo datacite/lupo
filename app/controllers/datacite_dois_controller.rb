@@ -728,41 +728,25 @@ class DataciteDoisController < ApplicationController
 
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? ||
-        %w[europ].include?(@doi.provider_id) ||
-        @doi.type == "OtherDoi"
-      url = @doi.url
-      head :no_content && return if url.blank?
-    else
-      response = @doi.get_url
-
-      if response.status == 200
-        url = response.body.dig("data", "values", 0, "data", "value")
-      elsif response.status == 400 &&
-          response.body.dig("errors", 0, "title", "responseCode") == 301
-        response =
-          OpenStruct.new(
-            status: 403,
-            body: {
-              "errors" => [
-                {
-                  "status" => 403,
-                  "title" => "SERVER NOT RESPONSIBLE FOR HANDLE",
-                },
-              ],
-            },
-          )
-        url = nil
-      else
-        url = nil
-      end
-    end
-
-    if url.present?
-      render json: { url: url }.to_json, status: :ok
-    else
-      render json: response.body.to_json,
-             status: response.status || :bad_request
+    result = @doi.resolve_landing_url
+    case result.kind
+    when :ok
+      render json: { url: result.url }.to_json, status: :ok
+    when :no_content
+      head :no_content
+    when :forbidden_handle
+      render json: {
+               "errors" => [
+                 {
+                   "status" => 403,
+                   "title" => "SERVER NOT RESPONSIBLE FOR HANDLE",
+                 },
+               ],
+             }.to_json,
+             status: :forbidden
+    when :upstream
+      render json: result.body.to_json,
+             status: result.status || :bad_request
     end
   end
 
@@ -771,8 +755,8 @@ class DataciteDoisController < ApplicationController
 
     client =
       Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
-    client_prefix = client.prefixes.first
-    head :no_content && return if client_prefix.blank?
+    client_prefix = client&.prefixes&.first
+    return head :no_content if client_prefix.blank?
 
     dois =
       DataciteDoi.get_dois(
