@@ -3,7 +3,8 @@
 require "rails_helper"
 include Passwordable
 
-describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 1 do
+# prefix_pool_size 2: primary client + other_client for cross-repo visibility specs
+describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 2 do
   let(:provider) do
     create(
       :provider,
