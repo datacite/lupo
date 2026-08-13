@@ -465,13 +465,11 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(doi.subjects).to eq([{ "subject" => "Tree" }])
     end
 
-    # TEMPORARILY REMOVE THIS TEST - FOR JSON-SCHEMA BRANCH.
-    # it "string" do
-    #   doi.subjects = ["Tree"]
-    #   expect(doi.save).to be true
-    #   expect(doi.errors.details).to be_empty
-    #   expect(doi.subjects).to eq([{ "subject" => "Tree" }])
-    # end
+    it "string" do
+      doi.subjects = ["Tree"]
+      expect(doi.save).to be false
+    end
+
   end
 
   describe "dates" do
