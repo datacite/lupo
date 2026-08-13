@@ -27,7 +27,7 @@
     }
   },
   "required": [
-    "funderName",
-    "funderIdentifierType"],
+    "funderName"
+  ],
   "additionalProperties": false
 }
