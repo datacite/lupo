@@ -23,6 +23,16 @@ module Mds
         doi
       end
 
+      # Same visibility rules as REST DataciteDoisController#show: findable is
+      # public; draft/registered only for the owning client (or provider/staff).
+      # Use 404 (not 403) so existence of another repository's draft is not confirmed.
+      # Do not use authorize! :read — Ability has a global can :read, Doi.
+      def authorize_mds_doi_read!(doi, not_found: Mds::DOI_UNKNOWN_TO_MDS)
+        if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+          fail Mds::Error.new(not_found, status: 404)
+        end
+      end
+
       # DOIs for the authenticated repository's first prefix (MDS GET /doi list).
       # Returns nil when there is nothing to list (caller should 204).
       def listed_dois_for_current_user

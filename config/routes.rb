@@ -18,8 +18,9 @@ Rails.application.routes.draw do
       get "metadata", to: "metadata#show"
       delete "metadata/:doi_id", to: "metadata#destroy", constraints: { doi_id: /.+/ }
 
-      resources :dois, path: "/doi", constraints: { id: /.+/ } do
-        resources :media
+      resources :dois, path: "/doi", only: %i[index show update destroy],
+                       constraints: { id: /.+/ } do
+        resources :media, only: %i[index show create destroy]
       end
 
       match "*path", to: "application#route_not_found", via: :all

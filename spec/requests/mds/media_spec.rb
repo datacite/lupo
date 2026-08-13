@@ -83,6 +83,52 @@ describe "MDS Media API", type: :request, vcr: true, prefix_pool_size: 1 do
       expect(last_response.body).to eq("Media type and URL missing")
       expect(doi.media.count).to eq(0)
     end
+
+    it "rejects non-http(s)/ftp media URLs" do
+      post "/media/#{doi.doi}",
+           "application/pdf=not-a-url",
+           basic_headers.merge("CONTENT_TYPE" => "text/plain")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq("Not a valid HTTP(S) or FTP URL")
+      expect(doi.media.count).to eq(0)
+    end
+  end
+
+  describe "cross-client media visibility" do
+    let(:other_client) do
+      create(
+        :client,
+        provider: provider,
+        symbol: "DATACITE.OTHER",
+        password: encrypt_password_sha256(ENV["MDS_PASSWORD"]),
+      )
+    end
+    let!(:other_client_prefix) do
+      create(:client_prefix, client: other_client, prefix: prefix)
+    end
+    let!(:other_draft) do
+      create(
+        :doi,
+        client: other_client,
+        doi: "10.14454/other-draft-media",
+        aasm_state: "draft",
+      )
+    end
+
+    it "does not list media for another repository's draft DOI" do
+      create(
+        :media,
+        doi: other_draft,
+        media_type: "application/pdf",
+        url: "https://example.org/secret.pdf",
+      )
+
+      get "/media/#{other_draft.doi}", nil, basic_headers
+
+      expect(last_response.status).to eq(404)
+      expect(last_response.body).to eq("DOI is unknown to MDS")
+    end
   end
 
   describe "GET /media/:doi_id" do

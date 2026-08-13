@@ -10,7 +10,7 @@ module Mds
 
     def show
       doi = find_datacite_doi!(params[:doi_id], not_found: Mds::DOI_UNKNOWN_TO_MDS)
-      authorize! :read, doi
+      authorize_mds_doi_read!(doi, not_found: Mds::DOI_UNKNOWN_TO_MDS)
 
       xml = doi.xml
       return head :no_content if xml.blank?

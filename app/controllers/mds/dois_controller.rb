@@ -19,10 +19,21 @@ module Mds
     def show
       authorize! :get_url, @doi
 
-      url = @doi.resolved_landing_url
-      return head :no_content if url.blank?
-
-      render_mds(url)
+      # Map full LandingUrlResolution so Handle failures are not collapsed to 204
+      # (REST get_url keeps 403/upstream; MDS uses plain-text status codes).
+      result = @doi.resolve_landing_url
+      case result.kind
+      when :ok
+        render_mds(result.url)
+      when :no_content
+        head :no_content
+      when :forbidden_handle
+        fail Mds::Error.new("SERVER NOT RESPONSIBLE FOR HANDLE", status: 403)
+      when :upstream
+        status = result.status.to_i
+        status = 502 if status < 400
+        fail Mds::Error.new("Handle service error", status: status)
+      end
     end
 
     def update

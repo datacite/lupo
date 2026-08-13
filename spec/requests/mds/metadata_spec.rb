@@ -125,6 +125,71 @@ describe "MDS Metadata API", type: :request, vcr: true, prefix_pool_size: 1 do
       expect(last_response.status).to eq(404)
       expect(last_response.body).to eq("DOI is unknown to MDS")
     end
+
+    context "cross-client visibility" do
+      let(:other_client) do
+        create(
+          :client,
+          provider: provider,
+          symbol: "DATACITE.OTHER",
+          password: encrypt_password_sha256(ENV["MDS_PASSWORD"]),
+        )
+      end
+      let!(:other_client_prefix) do
+        create(:client_prefix, client: other_client, prefix: prefix)
+      end
+
+      it "does not leak another repository's draft metadata" do
+        draft =
+          create(
+            :doi,
+            client: other_client,
+            doi: "10.14454/other-draft-meta",
+            aasm_state: "draft",
+          )
+        draft.update_columns(xml: xml)
+
+        get "/metadata/#{draft.doi}",
+            nil,
+            basic_headers.except("CONTENT_TYPE")
+
+        expect(last_response.status).to eq(404)
+        expect(last_response.body).to eq("DOI is unknown to MDS")
+      end
+
+      it "allows reading another repository's findable metadata" do
+        findable =
+          create(
+            :doi,
+            client: other_client,
+            doi: "10.14454/other-findable-meta",
+            aasm_state: "findable",
+            url: "https://example.org/public",
+          )
+        findable.update_columns(xml: xml)
+
+        get "/metadata/#{findable.doi}",
+            nil,
+            basic_headers.except("CONTENT_TYPE")
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.body).to include("resource")
+      end
+    end
+  end
+
+  describe "PUT /metadata path vs non-DataCite body identifier" do
+    it "rejects path DOI that does not match schema.org @id" do
+      body = file_fixture("schema_org.json").read
+      # fixture @id is 10.5438/4K3M-NYVG — detected as schema_org by body shape
+      put "/metadata/10.14454/other-doi",
+          body,
+          basic_headers.merge("CONTENT_TYPE" => "application/json")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq(Mds::PATH_BODY_MISMATCH)
+      expect(DataciteDoi.where(doi: "10.14454/other-doi").count).to eq(0)
+    end
   end
 
   describe "DELETE /metadata/:doi_id" do

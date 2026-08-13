@@ -9,7 +9,7 @@ module Mds
     before_action :set_media, only: %i[show destroy]
 
     def index
-      authorize! :read, @doi
+      authorize_mds_doi_read!(@doi)
 
       media = @doi.media.to_a
       fail Mds::Error.new("No media for the DOI", status: 404) if media.blank?
@@ -19,7 +19,7 @@ module Mds
     end
 
     def show
-      authorize! :read, @doi
+      authorize_mds_doi_read!(@doi)
 
       fail Mds::Error.new("No media for the DOI", status: 404) if @media.blank?
 
@@ -75,7 +75,8 @@ module Mds
       end
 
       # MDS media body is mediaType=url. Both parts are required; blank type must not
-      # fall through to Media#set_defaults (text/plain).
+      # fall through to Media#set_defaults (text/plain). URL schemes match PUT /doi
+      # landing URLs (http/https/ftp) for a consistent MDS surface.
       def parse_media_body(data)
         media_type, url = data.to_s.split("=", 2)
         media_type = media_type.to_s.strip
@@ -83,6 +84,10 @@ module Mds
 
         if media_type.blank? || url.blank?
           fail Mds::Error.new("Media type and URL missing", status: 400)
+        end
+
+        unless url.match?(%r{\A(http|https|ftp)://\S+\z})
+          fail Mds::Error.new("Not a valid HTTP(S) or FTP URL", status: 400)
         end
 
         [media_type, url]

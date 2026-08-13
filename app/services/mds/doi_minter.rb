@@ -9,7 +9,7 @@ module Mds
 
     def resolve_doi_id(str, data:, from:, number: nil)
       path_doi = validate_doi(str)
-      body_doi = from == "datacite" ? doi_from_xml_identifier(data) : nil
+      body_doi = doi_from_metadata_body(data, from)
 
       if path_doi.present?
         Mds.assert_path_matches_body!(path_doi, body_doi)
@@ -22,12 +22,31 @@ module Mds
     end
 
     private
+      # Extract a DOI identifier from the metadata body for any recognized format.
+      # DataCite XML uses a direct parse; other formats go through Bolognese.
+      def doi_from_metadata_body(data, from)
+        return if data.blank? || from.blank?
+
+        if from == "datacite"
+          return doi_from_xml_identifier(data)
+        end
+
+        doi_from_bolognese(data, from)
+      end
+
       def doi_from_xml_identifier(string)
         doc = Nokogiri::XML(string, nil, "UTF-8", &:noblanks)
         doc.remove_namespaces!
         identifier = doc.at_css("identifier")
         identifier = identifier.content if identifier.present?
         validate_doi(identifier)
+      end
+
+      def doi_from_bolognese(string, from)
+        meta = Bolognese::Metadata.new(input: string, from: from)
+        validate_doi(meta.doi.presence || meta.id)
+      rescue StandardError
+        nil
       end
 
       def mint_unique_doi(str, number: nil)

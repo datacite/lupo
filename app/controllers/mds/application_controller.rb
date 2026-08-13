@@ -4,6 +4,8 @@ module Mds
   class ApplicationController < ActionController::API
     include ActionController::HttpAuthentication::Basic::ControllerMethods
     include CanCan::ControllerAdditions
+    # not_allowed_by_doi_and_user — same draft/registered gate as REST show
+    include Authenticable
     include RequestCredentials
 
     attr_accessor :current_user

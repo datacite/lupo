@@ -131,6 +131,40 @@ describe "MDS Dois API", type: :request, vcr: true, prefix_pool_size: 1 do
       expect(last_response.status).to eq(400)
       expect(last_response.body).to eq("Not a valid HTTP(S) or FTP URL")
     end
+
+    it "rejects path DOI that does not match body doi parameter" do
+      body = "doi=10.14454/body-doi\nurl=https://example.org/landing"
+      put "/doi/10.14454/path-doi",
+          body,
+          basic_headers.merge("CONTENT_TYPE" => "text/plain;charset=UTF-8")
+
+      expect(last_response.status).to eq(400)
+      expect(last_response.body).to eq(Mds::PATH_BODY_MISMATCH)
+    end
+  end
+
+  describe "GET /doi/:id Handle failures" do
+    it "returns 403 when Handle is not responsible for the DOI" do
+      findable_doi
+      allow_any_instance_of(DataciteDoi).to receive(:resolve_landing_url).
+        and_return(LandingUrlResolution.forbidden_handle)
+
+      get "/doi/#{findable_doi.doi}", nil, basic_headers
+
+      expect(last_response.status).to eq(403)
+      expect(last_response.body).to eq("SERVER NOT RESPONSIBLE FOR HANDLE")
+    end
+
+    it "returns an error status when Handle upstream fails" do
+      findable_doi
+      allow_any_instance_of(DataciteDoi).to receive(:resolve_landing_url).
+        and_return(LandingUrlResolution.upstream(status: 503, body: {}))
+
+      get "/doi/#{findable_doi.doi}", nil, basic_headers
+
+      expect(last_response.status).to eq(503)
+      expect(last_response.body).to eq("Handle service error")
+    end
   end
 
   describe "DELETE /doi/:id" do

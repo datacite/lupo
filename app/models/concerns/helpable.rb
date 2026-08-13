@@ -145,7 +145,9 @@ module Helpable
       end
     end
 
-    # Convenience for plain-text surfaces (MDS): URL string or nil → 204.
+    # URL string only when resolution is :ok. Non-ok outcomes (no URL, Handle
+    # 403, upstream errors) yield nil — callers that need distinct Handle errors
+    # (REST get_url, MDS GET /doi) should use #resolve_landing_url instead.
     def resolved_landing_url
       result = resolve_landing_url
       result.ok? ? result.url : nil
