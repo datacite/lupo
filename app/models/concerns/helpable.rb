@@ -109,21 +109,46 @@ module Helpable
     end
 
     # When true, the stored `url` attribute is authoritative (draft/other/special providers).
-    # When false, resolve via Handle (`get_url`). Shared by REST and MDS protocol surfaces.
+    # When false, resolve via Handle (`get_url`).
     def uses_stored_landing_url?
       !is_registered_or_findable? ||
         %w[europ].include?(provider_id) ||
         type == "OtherDoi"
     end
 
-    # Landing URL for protocol responses. Nil when unknown or Handle has no value.
-    def resolved_landing_url
-      return url if uses_stored_landing_url?
+    # Full landing-URL policy for REST and MDS. Controllers only map the result.
+    def resolve_landing_url
+      if uses_stored_landing_url?
+        return url.present? ? LandingUrlResolution.ok(url) : LandingUrlResolution.no_content
+      end
 
       response = get_url
-      return nil unless response.status == 200
 
-      response.body.dig("data", "values", 0, "data", "value")
+      if response.status == 200
+        value = response.body.dig("data", "values", 0, "data", "value")
+        if value.present?
+          LandingUrlResolution.ok(value)
+        else
+          LandingUrlResolution.upstream(
+            status: response.status || 400,
+            body: response.body,
+          )
+        end
+      elsif response.status == 400 &&
+          response.body.dig("errors", 0, "title", "responseCode") == 301
+        LandingUrlResolution.forbidden_handle
+      else
+        LandingUrlResolution.upstream(
+          status: response.status || 400,
+          body: response.body,
+        )
+      end
+    end
+
+    # Convenience for plain-text surfaces (MDS): URL string or nil → 204.
+    def resolved_landing_url
+      result = resolve_landing_url
+      result.ok? ? result.url : nil
     end
 
     def generate_random_provider_symbol

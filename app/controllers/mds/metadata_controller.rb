@@ -37,7 +37,7 @@ module Mds
           from: from,
           number: params[:number],
         )
-      fail Mds::Error.new(Mds::DOI_NOT_FOUND, status: 404) if doi_id.blank?
+      fail Mds::Error.new(Mds::DOI_UNKNOWN_TO_MDS, status: 404) if doi_id.blank?
 
       xml_b64 = data.present? ? Base64.strict_encode64(data) : nil
       attrs =

@@ -23,7 +23,7 @@ module RequestCredentials
   end
 
   def api_key_token?(token)
-    token.present? && token.length > 20 && token.to_s.match?(/\ADC\./i)
+    Authenticable.api_key_token?(token)
   end
 
   def authenticate_request!

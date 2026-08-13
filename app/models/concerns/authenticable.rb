@@ -200,8 +200,13 @@ module Authenticable
       payload_for_api_key(api_key, client)
     end
 
+    # Single source of truth for DC.* API key material (also used by RequestCredentials).
+    def self.api_key_token?(token)
+      token.present? && token.to_s.length > 20 && token.to_s.match?(/\ADC\./i)
+    end
+
     def api_key_token?(token)
-      token.present? && token.length > 20 && token.match?(/\ADC\./i)
+      Authenticable.api_key_token?(token)
     end
 
     def get_payload(uid: nil, user: nil, password: nil)

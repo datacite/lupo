@@ -728,27 +728,13 @@ class DataciteDoisController < ApplicationController
 
     authorize! :get_url, @doi
 
-    # Domain owns stored-vs-Handle policy via uses_stored_landing_url? / resolved_landing_url.
-    if @doi.uses_stored_landing_url?
-      url = @doi.url
-      return head :no_content if url.blank?
-
-      render json: { url: url }.to_json, status: :ok
-      return
-    end
-
-    response = @doi.get_url
-
-    if response.status == 200
-      url = response.body.dig("data", "values", 0, "data", "value")
-      if url.present?
-        render json: { url: url }.to_json, status: :ok
-      else
-        render json: response.body.to_json,
-               status: response.status || :bad_request
-      end
-    elsif response.status == 400 &&
-        response.body.dig("errors", 0, "title", "responseCode") == 301
+    result = @doi.resolve_landing_url
+    case result.kind
+    when :ok
+      render json: { url: result.url }.to_json, status: :ok
+    when :no_content
+      head :no_content
+    when :forbidden_handle
       render json: {
                "errors" => [
                  {
@@ -758,9 +744,9 @@ class DataciteDoisController < ApplicationController
                ],
              }.to_json,
              status: :forbidden
-    else
-      render json: response.body.to_json,
-             status: response.status || :bad_request
+    when :upstream
+      render json: result.body.to_json,
+             status: result.status || :bad_request
     end
   end
 
