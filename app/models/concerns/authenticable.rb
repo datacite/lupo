@@ -6,6 +6,12 @@ module Authenticable
   require "jwt"
   require "base64"
 
+  # Single source of truth for DC.* API key material (controllers via RequestCredentials,
+  # User via instance method below). Must live on the module, not inside `included`.
+  def self.api_key_token?(token)
+    token.present? && token.to_s.length > 20 && token.to_s.match?(/\ADC\./i)
+  end
+
   included do
     # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
@@ -198,11 +204,6 @@ module Authenticable
 
       touch_api_key_last_used(api_key)
       payload_for_api_key(api_key, client)
-    end
-
-    # Single source of truth for DC.* API key material (also used by RequestCredentials).
-    def self.api_key_token?(token)
-      token.present? && token.to_s.length > 20 && token.to_s.match?(/\ADC\./i)
     end
 
     def api_key_token?(token)
