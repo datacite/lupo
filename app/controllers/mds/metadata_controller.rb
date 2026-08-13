@@ -9,7 +9,7 @@ module Mds
     before_action :set_doi, only: %i[destroy]
 
     def show
-      doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
+      doi = find_datacite_doi!(params[:doi_id], not_found: Mds::DOI_UNKNOWN_TO_MDS)
       authorize! :read, doi
 
       xml = doi.xml
@@ -37,7 +37,7 @@ module Mds
           from: from,
           number: params[:number],
         )
-      fail Mds::Error.new("DOI not found", status: 404) if doi_id.blank?
+      fail Mds::Error.new(Mds::DOI_NOT_FOUND, status: 404) if doi_id.blank?
 
       xml_b64 = data.present? ? Base64.strict_encode64(data) : nil
       attrs =
@@ -78,7 +78,7 @@ module Mds
 
     private
       def set_doi
-        @doi = find_datacite_doi!(params[:doi_id], not_found: "DOI is unknown to MDS")
+        @doi = find_datacite_doi!(params[:doi_id], not_found: Mds::DOI_UNKNOWN_TO_MDS)
       end
   end
 end

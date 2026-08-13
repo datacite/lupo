@@ -59,9 +59,9 @@ module Mds
     private
       def set_doi
         raw = params[:doi_id]
-        fail Mds::Error.new("DOI is unknown to MDS", status: 404) if raw.blank?
+        fail Mds::Error.new(Mds::DOI_UNKNOWN_TO_MDS, status: 404) if raw.blank?
 
-        @doi = find_datacite_doi!(raw, not_found: "DOI is unknown to MDS")
+        @doi = find_datacite_doi!(raw, not_found: Mds::DOI_UNKNOWN_TO_MDS)
       end
 
       def set_media

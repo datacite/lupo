@@ -33,8 +33,20 @@ module Mds
     end
 
     rescue_from ActiveRecord::RecordNotFound,
-                AbstractController::ActionNotFound do |_exception|
-      render_mds_error("DOI not found", 404)
+                AbstractController::ActionNotFound,
+                ActionController::RoutingError do |_exception|
+      render_mds_error(Mds::DOI_NOT_FOUND, 404)
+    end
+
+    rescue_from ActiveModel::ForbiddenAttributesError,
+                ActionController::UnpermittedParameters,
+                ActionController::ParameterMissing do |exception|
+      Sentry.capture_exception(exception) if defined?(Sentry)
+      render_mds_error(exception.message, 422)
+    end
+
+    rescue_from NotImplementedError do |_exception|
+      render_mds_error("Not Implemented", 501)
     end
 
     def route_not_found
@@ -86,23 +98,6 @@ module Mds
 
         logger.error "[MDS #{status}]: #{message}"
         render plain: message.to_s, status: status
-      end
-
-      unless Rails.env.development?
-        rescue_from ActionController::RoutingError do |_exception|
-          render_mds_error("DOI not found", 404)
-        end
-
-        rescue_from ActiveModel::ForbiddenAttributesError,
-                    ActionController::UnpermittedParameters,
-                    ActionController::ParameterMissing do |exception|
-          Sentry.capture_exception(exception)
-          render_mds_error(exception.message, 422)
-        end
-
-        rescue_from NotImplementedError do |_exception|
-          render_mds_error("Not Implemented", 501)
-        end
       end
   end
 end

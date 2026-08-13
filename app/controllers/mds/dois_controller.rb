@@ -10,18 +10,8 @@ module Mds
     def index
       authorize! :get_urls, Doi
 
-      client =
-        Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
-      client_prefix = client&.prefixes&.first
-      return head :no_content if client_prefix.blank?
-
-      dois =
-        DataciteDoi.get_dois(
-          prefix: client_prefix.uid,
-          username: current_user.uid.upcase,
-        )
-
-      return head :no_content if dois.blank? || !dois.is_a?(Array) || dois.empty?
+      dois = listed_dois_for_current_user
+      return head :no_content if dois.blank?
 
       render_mds(dois.join("\n"))
     end
@@ -37,12 +27,14 @@ module Mds
 
     def update
       doi_string, url = parse_doi_and_url
-      return head :bad_request if doi_string.blank? || url.blank?
+      if doi_string.blank? || url.blank?
+        fail Mds::Error.new("DOI and URL required", status: 400)
+      end
 
       fail Mds::Error.new("Not a valid HTTP(S) or FTP URL", status: 400) unless valid_landing_url?(url)
 
       doi_id = validate_doi(doi_string)
-      fail Mds::Error.new("DOI not found", status: 404) if doi_id.blank?
+      fail Mds::Error.new(Mds::DOI_NOT_FOUND, status: 404) if doi_id.blank?
 
       upsert_datacite_doi!(
         doi_id,
@@ -73,7 +65,7 @@ module Mds
 
     private
       def set_doi
-        @doi = find_datacite_doi!(params[:id], not_found: "DOI not found")
+        @doi = find_datacite_doi!(params[:id], not_found: Mds::DOI_NOT_FOUND)
       end
 
       def valid_landing_url?(url)
@@ -104,9 +96,7 @@ module Mds
         fail IdentifierError, "param 'doi' required" unless hsh["doi"].present?
 
         body_doi = CGI.unescape(hsh["doi"].strip)
-        if path_doi.present? && body_doi.casecmp(path_doi) != 0
-          fail IdentifierError, "doi parameter does not match doi of resource"
-        end
+        Mds.assert_path_matches_body!(path_doi, body_doi)
 
         fail IdentifierError, "param 'url' required" unless hsh["url"].present?
 

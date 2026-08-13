@@ -12,6 +12,11 @@ module Mds
     mds.local
   ].freeze
 
+  # Classic MDS plain-text 404 copy differs by resource family.
+  DOI_NOT_FOUND = "DOI not found"
+  DOI_UNKNOWN_TO_MDS = "DOI is unknown to MDS"
+  PATH_BODY_MISMATCH = "doi parameter does not match doi of resource"
+
   module_function
 
   def enabled?
@@ -42,5 +47,13 @@ module Mds
 
   def realm
     ENV.fetch("MDS_REALM", "mds.datacite.org")
+  end
+
+  # Shared path vs body DOI consistency for PUT /doi and metadata registration.
+  def assert_path_matches_body!(path_doi, body_doi)
+    return if path_doi.blank? || body_doi.blank?
+    return if body_doi.to_s.casecmp(path_doi.to_s).zero?
+
+    raise IdentifierError, PATH_BODY_MISMATCH
   end
 end

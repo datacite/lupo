@@ -65,4 +65,24 @@ describe Mds do
       expect(Mds.hosts).to eq(["mds.local"])
     end
   end
+
+  describe ".assert_path_matches_body!" do
+    it "allows matching path and body DOIs case-insensitively" do
+      expect {
+        Mds.assert_path_matches_body!("10.14454/abc", "10.14454/ABC")
+      }.not_to raise_error
+    end
+
+    it "allows when body DOI is blank" do
+      expect {
+        Mds.assert_path_matches_body!("10.14454/abc", nil)
+      }.not_to raise_error
+    end
+
+    it "raises IdentifierError on mismatch" do
+      expect {
+        Mds.assert_path_matches_body!("10.14454/a", "10.14454/b")
+      }.to raise_error(IdentifierError, Mds::PATH_BODY_MISMATCH)
+    end
+  end
 end
