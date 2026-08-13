@@ -493,6 +493,7 @@ describe DataciteDoisController, type: :request, vcr: true do
               "event" => "publish",
               "fundingReferences": [{
                 "funderName": "fake_funder_name",
+                "funderIdentifierType": "ROR",
                 "schemeUri": "http://funder_uri"
               }]
             },
