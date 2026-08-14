@@ -5,7 +5,7 @@
   },
   "identifiers": [{
     "identifier": "https://doi.org/10.17918/9zwb-rb91",
-    "identifier_type": "DOI"
+    "identifierType": "DOI"
   }],
   "creators": [{
     "nameType": "Personal",
