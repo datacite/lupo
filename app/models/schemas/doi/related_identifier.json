@@ -20,7 +20,7 @@
       "type": "string"
     },
     "schemeUri": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeType": {
       "type": ["string", "null"]
