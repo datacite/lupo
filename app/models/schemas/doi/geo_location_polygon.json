@@ -5,17 +5,17 @@
   "minItems": 4,
   "items": {
     "oneOf": [
-      { "$ref": "polygon_point" },
-      { "$ref": "in_polygon_point" }
+      { "$ref": "polygon_point.json" },
+      { "$ref": "in_polygon_point.json" }
     ]
   },
   "allOf": [
     {
-      "contains": { "$ref": "polygon_point" },
+      "contains": { "$ref": "polygon_point.json" },
       "minContains": 4
     },
     {
-      "contains": { "$ref": "in_polygon_point" },
+      "contains": { "$ref": "in_polygon_point.json" },
       "minContains": 0,
       "maxContains": 1
     }
