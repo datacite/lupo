@@ -547,13 +547,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
   describe "types" do
     let(:doi) { build(:doi) }
 
-    # TEMPORARILY REMOVE THIS TEST - FOR JSON-SCHEMA BRANCH.
-    # it "string" do
-    #   doi.types = "Dataset"
-    #   expect(doi.save).to be false
-    #   expect(doi.errors.details).to eq(types: [{ error: "Types 'Dataset' should be an object instead of a string." }])
-    # end
-
     it "only resource_type_general" do
       doi.types = { "resourceTypeGeneral" => "Dataset" }
       expect(doi.save).to be true
