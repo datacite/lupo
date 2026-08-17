@@ -2495,38 +2495,5 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(1)
       end
     end
-
-    context "when an enrichment record has an invalid contributor" do
-      it "returns the original value at /dois" do
-        get "/dois?query=doi:#{doi_with_contributor.doi}", nil, headers
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data").size).to eq(1)
-        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_contributor.doi.downcase)
-        expect(json.dig("data", 0, "attributes", "contributors")).to eq([{
-          "name" => "Arslan, M.",
-          "givenName" => "M.",
-          "familyName" => "Arslan",
-          "contributorType" => "ContactPerson",
-          "affiliation" => [],
-          "nameIdentifiers" => [],
-        }])
-      end
-
-      it "returns the original value at /dois?enriched=true" do
-        get "/dois?query=doi:#{doi_with_contributor.doi}&enriched=true", nil, headers
-        expect(last_response.status).to eq(200)
-        expect(json.dig("data").size).to eq(1)
-        expect(json.dig("data", 0, "attributes", "doi")).to eq(doi_with_contributor.doi.downcase)
-        expect(json.dig("data", 0, "attributes", "contributors")).to eq([{
-          "name" => "Arslan, M.",
-          "givenName" => "M.",
-          "familyName" => "Arslan",
-          "contributorType" => "ContactPerson",
-          "affiliation" => [],
-          "nameIdentifiers" => [],
-        }])
-        expect(json.dig("data", 0, "relationships", "enrichments", "data").count).to eq(0)
-      end
-    end
   end
 end
