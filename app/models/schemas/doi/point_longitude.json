@@ -1,5 +1,7 @@
 {
   "title": "PointLongitude",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": [ "number", "string" ]
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
 }
