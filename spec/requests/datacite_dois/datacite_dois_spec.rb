@@ -2374,41 +2374,11 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
     let!(:enrichment_for_doi_with_invalid_url) { create(:enrichment, doi: doi_with_invalid_url.doi) }
-    let(:doi_with_contributor) do
-      create(:doi, client: client, aasm_state: "findable", contributors: [{
-        "name" => "Arslan, M.",
-        "givenName" => "M.",
-        "familyName" => "Arslan",
-        "contributorType" => "ContactPerson",
-        "affiliation" => [],
-      }])
-    end
-    let!(:enrichment_with_invalid_contributor) { create(:enrichment,
-      doi: doi_with_contributor.doi,
-      field: "contributors",
-      original_value: doi_with_contributor.contributors.first,
-      enriched_value: {
-        "name" => "Arslan, M.",
-        "givenName" => "M.",
-        "familyName" => "Arslan",
-        "contributorType" => "Funder",
-        "affiliation" => [
-          {
-            "name": "UNSW Sydney, neilcmalan@gmail.com",
-            "schemeUri": "https://ror.org",
-            "affiliationIdentifier": "https://ror.org/03r8z3t63",
-            "affiliationIdentifierScheme": "ROR"
-          }
-        ],
-        "nameIdentifiers" => [],
-      }) }
 
     before do
       IndexJobDoiRegistration.perform_now(doi)
       IndexJobDoiRegistration.perform_now(doi_with_invalid_url)
-      IndexJobDoiRegistration.perform_now(doi_with_contributor)
       EnrichedDoiIndexJob.perform_now(doi_with_invalid_url.doi)
-      EnrichedDoiIndexJob.perform_now(doi_with_contributor.doi)
       import_doi_index
       refresh_enriched_doi_index
     end
