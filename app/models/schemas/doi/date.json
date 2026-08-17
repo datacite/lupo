@@ -11,7 +11,7 @@
       "$ref": "controlled_vocabularies/date_type.json"
     },
     "dateInformation": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "required": [
