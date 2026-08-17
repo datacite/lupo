@@ -16,9 +16,5 @@
       "$ref": "geo_location_polygon.json"
     }
   },
-  "required": [
-    "pointLatitude",
-    "pointLongitude"
-  ],
   "additionalProperties": false
 }

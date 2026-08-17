@@ -1,23 +1,52 @@
 {
   "title": "GeoLocationPolygon",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "array",
-  "minItems": 4,
-  "items": {
-    "oneOf": [
-      { "$ref": "polygon_point.json" },
-      { "$ref": "in_polygon_point.json" }
-    ]
-  },
-  "allOf": [
-    {
-      "contains": { "$ref": "polygon_point.json" },
-      "minContains": 4
-    },
-    {
-      "contains": { "$ref": "in_polygon_point.json" },
-      "minContains": 0,
-      "maxContains": 1
-    }
-  ]
+	"type": "array",
+	"items": {
+		"type": "object",
+		"oneOf": [
+			{
+				"required": [
+					"polygonPoint"
+				],
+				"properties": {
+					"polygonPoint": {
+						"$ref": "polygon_point.json"
+					}
+				},
+				"additionalProperties": false
+			},
+			{
+				"required": [
+					"inPolygonPoint"
+				],
+				"properties": {
+					"inPolygonPoint": {
+						"$ref": "in_polygon_point.json"
+					}
+				},
+				"additionalProperties": false
+			}
+		]
+	},
+	"allOf": [
+		{
+			"contains": {
+				"required": [
+					"polygonPoint"
+				]
+			},
+			"minContains": 4
+		},
+		{
+			"contains": {
+				"required": [
+					"inPolygonPoint"
+				]
+			},
+			"minContains": 0,
+			"maxContains": 1
+		}
+	]
 }
+
