@@ -8,6 +8,7 @@ class EnrichmentSerializer
   set_id :uuid
 
   attributes :doi,
+             :source_id,
              :field,
              :action,
              :original_value,
