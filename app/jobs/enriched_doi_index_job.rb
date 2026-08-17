@@ -29,11 +29,11 @@ class EnrichedDoiIndexJob < ApplicationJob
 
     return unless source_doi.has_enrichments
 
-    original_source_attributes = source_doi.attributes
+    original_source_attributes = source_doi.attributes.deep_dup
 
     source_doi.only_validate = true
     source_doi.regenerate = true
-    source_doi.skip_client_domains_validation = true
+    source_doi.skip_url_validation = true
     source_doi.skip_schema_version_validation = false
     source_doi.schema_version = "http://datacite.org/schema/kernel-4"
 
