@@ -808,7 +808,7 @@ class DataciteDoisController < ApplicationController
       # Ensure validation works as expected when not persisting the record
       doi.only_validate = true
       doi.regenerate = true
-      doi.skip_client_domains_validation = true
+      doi.skip_url_validation = true
       doi.skip_schema_version_validation = false
 
       # Ensure we use schema version 4 for validation

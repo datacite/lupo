@@ -22,7 +22,7 @@ class UrlJob < ApplicationJob
 
       if url.present?
         if (
-           doi.is_registered_or_findable? || %w[europ].include?(doi.provider_id)
+          doi.is_registered_or_findable? || %w[europ].include?(doi.provider_id)
          ) &&
             doi.minted.blank?
           doi.update(url: url, minted: Time.zone.now)

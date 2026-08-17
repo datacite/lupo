@@ -35,7 +35,7 @@ gem "flipper", "~> 1.4", ">= 1.4.1"
 gem "flipper-active_support_cache_store", "~> 1.4", ">= 1.4.1"
 gem "gender_detector", "~> 2.1"
 gem "google-protobuf", "~> 4.34", ">= 4.34.1"
-gem "graphql", "~> 2.5", ">= 2.5.26"
+gem "graphql", "~> 2.5", ">= 2.6.6"
 gem "graphql-batch", "~> 0.6.1"
 gem "hashid-rails", "~> 1.4", ">= 1.4.1"
 gem "iso-639", "~> 0.3.8"
@@ -82,7 +82,7 @@ group :development do
   gem "listen", "~> 3.10"
   gem "reek", "~> 6.5" # possible removal
   gem "seedbank", "~> 0.5.0" # possible removal
-  gem "rubocop", "~> 1.86", require: false
+  gem "rubocop", "~> 1.89", require: false
   gem "rubocop-performance", "~> 1.26", ">= 1.26.1", require: false
   gem "rubocop-rails", "~> 2.34", ">= 2.34.3", require: false
   gem "rubocop-packaging", "~> 0.6.0", require: false
