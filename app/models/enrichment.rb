@@ -48,6 +48,7 @@ class Enrichment < ApplicationRecord
     def to_enrichment_hash
       {
         "doi" => doi,
+        "sourceId" => source_id,
         "field" => field,
         "action" => action,
         "originalValue" => original_value,

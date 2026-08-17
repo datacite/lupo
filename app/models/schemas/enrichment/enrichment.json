@@ -70,13 +70,9 @@
           "type": "array"
         }
       ]
-    },
-    "sourceId": {
-      "type": "string",
-      "description": "The source id (DOI) of the enrichment record."
     }
   },
-  "required": ["doi", "action", "field", "sourceId"],
+  "required": ["doi", "action", "field"],
   "allOf": [
     {
       "if": {
