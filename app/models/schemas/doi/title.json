@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "title": { 
-      "type": [ "string", "null" ]
+      "type": [ "string" ]
     },
     "titleType": {
       "$ref": "controlled_vocabularies/title_type.json"
