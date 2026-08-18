@@ -6,7 +6,7 @@ FactoryBot.define do
 
     field { "creators" }
     action { "updateChild" }
-    source_id { "datacite.comet" }
+    source_id { "10.0000/fake.test.doi.2026.001" }
 
     original_value do
       {
@@ -32,14 +32,6 @@ FactoryBot.define do
           },
         ],
       }
-    end
-
-    contributors do
-      [{ "name" => "DataCite COMET", "contributorType" => "DataCurator" }]
-    end
-
-    resources do
-      [{ "relatedIdentifier" => "https://ror.org/04wxnsj81", "relationType" => "IsDerivedFrom", "relatedIdentifierType" => "URL" }]
     end
 
     transient do

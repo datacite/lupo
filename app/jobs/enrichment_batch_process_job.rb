@@ -47,8 +47,6 @@ class EnrichmentBatchProcessJob < ApplicationJob
           filename: filename,
           doi: uid,
           source_id: source_id,
-          contributors: parsed_line["contributors"],
-          resources: parsed_line["resources"],
           field: parsed_line["field"],
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],

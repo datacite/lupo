@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_154200) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -255,14 +255,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_100000) do
 
   create_table "enrichments", charset: "utf8mb3", force: :cascade do |t|
     t.string "action", null: false
-    t.json "contributors", null: false
     t.datetime "created_at", null: false
     t.string "doi", null: false
     t.json "enriched_value"
     t.string "field", null: false
     t.string "filename"
     t.json "original_value"
-    t.json "resources", null: false
     t.string "source_id", null: false
     t.datetime "updated_at", null: false
     t.string "uuid", limit: 36, null: false
