@@ -5,14 +5,17 @@
   "type": "object",
   "properties": {
     "nameIdentifier": {
-      "$ref": "definitions.json#/$defs/nonemptycontentStringType"
+      "type": "string"
     },
     "nameIdentifierScheme": {
-      "type": ["string", "null"]
+      "type": ["string"]
     },
     "schemeUri": {
       "type": "string"
     }
   },
+  "required": [
+    "nameIdentifierScheme"
+  ],
   "additionalProperties": false
 }
