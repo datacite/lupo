@@ -5,6 +5,27 @@ class EnrichedDoi < Doi
 
   attr_accessor :index_without_enrichments
 
+  # EnrichedDoi is an Elasticsearch indexing view of a DataciteDoi with
+  # enrichments applied. It must never be persisted to the database.
+  def readonly?
+    true
+  end
+
+  # Validations run before the readonly? check in ActiveRecord::Validations#save,
+  # so invalid records would otherwise return false instead of raising.
+  def save(**_options, &_block)
+    _raise_readonly_record_error
+  end
+
+  def save!(**_options, &_block)
+    _raise_readonly_record_error
+  end
+
+  # delete bypasses callbacks and does not consult readonly?
+  def delete
+    _raise_readonly_record_error
+  end
+
   if Rails.env.test?
     index_name("enriched_dois-test#{ENV['TEST_ENV_NUMBER']}")
   elsif ENV["ES_PREFIX"].present?
