@@ -8,7 +8,10 @@
       "type": [ "string" ]
     },
     "titleType": {
-      "$ref": "controlled_vocabularies/title_type.json"
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/title_type.json" },
+        { "type": "null" }
+      ]
     },
     "lang": {
       "$ref": "definitions.json#/$defs/language"

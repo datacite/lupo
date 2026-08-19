@@ -8,7 +8,10 @@
       "type": "string"
     },
     "nameType": {
-      "$ref": "controlled_vocabularies/name_type.json"
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/name_type.json" },
+        { "type": "null" }
+      ]
     },
     "lang": {
       "$ref": "definitions.json#/$defs/language"
