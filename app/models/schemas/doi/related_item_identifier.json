@@ -8,16 +8,19 @@
       "type": "string"
     },
     "relatedItemIdentifierType": {
-      "$ref": "controlled_vocabularies/related_identifier_type.json"
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/related_identifier_type.json" },
+        { "type": "null" }
+      ]
     },
     "relatedMetadataScheme": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeURI": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeType": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "additionalProperties": false
