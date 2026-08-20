@@ -183,7 +183,7 @@ class Doi < ApplicationRecord
     self[:language]
   end
 
-  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| 
+  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi|
     if errors.any?
       false
     else
