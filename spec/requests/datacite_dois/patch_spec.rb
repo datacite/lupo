@@ -279,7 +279,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48"}])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
@@ -305,7 +305,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48"}])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
