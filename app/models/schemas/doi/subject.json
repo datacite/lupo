@@ -14,7 +14,7 @@
         "type": "string" 
      },
       "valueUri": {
-        "type": "string" 
+        "type": ["string", "null"]
       },
       "classificationCode": {
         "type": "string"
