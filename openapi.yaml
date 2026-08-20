@@ -191,7 +191,7 @@ paths:
         - in: query
           name: software
           schema:
-            $ref: '#/components/schemas/software'
+            type: string
         - in: query
           name: client-type
           schema:
@@ -439,7 +439,6 @@ paths:
                             $ref: '#/components/schemas/repositoryType'
                         software:
                           type: string
-                          $ref: '#/components/schemas/software'
                         isActive:
                           description: Set to true if this account can register and update DOIs.
                           type: boolean
@@ -575,7 +574,6 @@ paths:
                             $ref: '#/components/schemas/repositoryType'
                         software:
                           type: string
-                          $ref: '#/components/schemas/software'
                         isActive:
                           description: Set to true if this account can register and update DOIs.
                           type: boolean
@@ -2189,7 +2187,6 @@ components:
               type: string
             software:
               type: string
-              $ref: '#/components/schemas/software'
             subjects:
               type: array
               items:
@@ -3591,36 +3588,6 @@ components:
         - multidisciplinary
         - project-related
         - other
-    software:
-      type: string
-      enum:
-        - Archipelago
-        - Cayuse
-        - CKAN
-        - CSTR & DOI Registration API
-        - Dataverse
-        - dLibra
-        - DSpace
-        - EPrints
-        - Ex Libris Esploro
-        - Fedora
-        - Invenio
-        - Islandora
-        - Medad
-        - MyCoRe
-        - Nesstar
-        - Omega-PSIR
-        - Omeka S
-        - Open Journal Systems (OJS)
-        - OPUS
-        - Pubman
-        - Pure
-        - Redivis
-        - RSpace
-        - Samvera
-        - SESAR
-        - Ubiquity
-        - Other
     relationType:
       description: '[DataCite Metadata Schema: relationType](https://datacite-metadata-schema.readthedocs.io/en/4/appendices/appendix-1/relationType/)'
       type: string
