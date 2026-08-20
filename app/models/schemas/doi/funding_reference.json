@@ -8,22 +8,25 @@
       "$ref": "definitions.json#/$defs/nonemptycontentStringType"
     },
     "funderIdentifier": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "funderIdentifierType": {
-      "$ref": "controlled_vocabularies/funder_identifier_type.json"
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/funder_identifier_type.json" },
+        { "type": "null" }
+      ]
     },
     "schemeUri": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "awardNumber": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "awardUri": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "awardTitle": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "required": [
