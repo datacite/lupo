@@ -4,19 +4,19 @@
   "type": "object",
   "properties": {
     "rights": { 
-      "type": "string" 
+      "type": ["string", "null"]
     },
     "rightsUri": { 
-      "type": "string" 
+      "type": ["string", "null"]
     },
     "rightsIdentifier": { 
-      "type": "string" 
+      "type": ["string", "null"]
     },
     "rightsIdentifierScheme": { 
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeUri": { 
-      "type": "string" 
+      "type": ["string", "null"]
     },
     "lang": {
       "$ref": "definitions.json#/$defs/language"
