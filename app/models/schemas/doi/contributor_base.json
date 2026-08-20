@@ -17,10 +17,10 @@
       "$ref": "definitions.json#/$defs/language"
     },
     "givenName": {
-      "type": "string"
+      "type": [ "string", "null" ]
     },
     "familyName": {
-      "type": "string"
+      "type": [ "string", "null" ]
     },
      "contributorType": {
       "$ref": "controlled_vocabularies/contributor_type.json"
