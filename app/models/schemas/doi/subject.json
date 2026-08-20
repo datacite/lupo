@@ -5,19 +5,19 @@
     "type": "object",
     "properties": {
       "subject": {
-        "type": "string"
+        "type": ["string", "null"]
       },
       "subjectScheme":  {
-        "type": "string" 
+        "type": ["string", "null"]
       },
       "schemeUri": {
-        "type": "string" 
+        "type": ["string", "null"]
      },
       "valueUri": {
         "type": ["string", "null"]
       },
       "classificationCode": {
-        "type": "string"
+        "type": ["string", "null"]
       },
       "lang": {
         "$ref": "definitions.json#/$defs/language"
