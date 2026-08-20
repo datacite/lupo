@@ -135,7 +135,6 @@ class Doi < ApplicationRecord
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_url, if: Proc.new { |doi| doi.is_registered_or_findable? && !skip_url_validation }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
@@ -184,11 +183,19 @@ class Doi < ApplicationRecord
     self[:language]
   end
 
+  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| 
+    if errors.any?
+      false
+    else
+      doi.update_xml if doi.regenerate
+      doi.validatable?
+    end
+  }
+
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
   before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
-  before_validation :update_xml, if: :regenerate
   before_validation :update_agency
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
