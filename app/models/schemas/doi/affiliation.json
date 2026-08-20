@@ -5,16 +5,16 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "affiliationIdentifier": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "affiliationIdentifierScheme": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeUri": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "additionalProperties": false
