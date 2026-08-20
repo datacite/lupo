@@ -288,7 +288,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
         expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
         expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
-        expect(doc.at_css("geoLocations").content).to eq("-123.0+123.-4060.2312")
+        expect(doc.at_css("geoLocations").content).to eq("-123.0123.0-4060.2312")
       end
     end
 
