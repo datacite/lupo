@@ -1,0 +1,16 @@
+{
+  "title": "Creator",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The main researchers involved working on the data, or the authors of the publication in priority order. May be a corporate/institutional or personal name.",
+  "type": "object",
+  "$ref": "creator_base.json",
+  "properties": {
+    "nameIdentifiers": {
+      "$ref": "name_identifiers.json"
+    },
+    "affiliation": {
+      "$ref": "affiliations.json"
+    }
+  },
+  "unevaluatedProperties": false
+}

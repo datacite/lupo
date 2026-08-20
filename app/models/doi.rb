@@ -3,6 +3,14 @@
 require "maremma"
 
 class Doi < ApplicationRecord
+  INVALID_SCHEMAS = %w[
+      http://datacite.org/schema/kernel-2.1
+      http://datacite.org/schema/kernel-2.2
+      http://datacite.org/schema/kernel-3.0
+      http://datacite.org/schema/kernel-3.1
+      http://datacite.org/schema/kernel-3
+    ].freeze
+
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
   OS_SOURCE = { excludes: ["xml"] }.freeze
@@ -113,16 +121,13 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  json_schema_validation = {
-    message: ->(errors) { errors },
-    schema: PUBLISHER_JSON_SCHEMA
-  }
-
-  def validate_publisher_obj?(doi)
-    doi.validatable? && doi.publisher_obj? && !(doi.publisher_obj.blank? || doi.publisher_obj.all?(nil))
+  def validate_json_attribute?(attribute)
+    validatable? && !self[attribute].nil? && !INVALID_SCHEMAS.include?(self.schema_version)
   end
 
-  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
+  def schema_file_path(schema_name)
+    Rails.root.join("app", "models", "schemas", "doi", "#{schema_name}.json")
+  end
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -130,7 +135,6 @@ class Doi < ApplicationRecord
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_url, if: Proc.new { |doi| doi.is_registered_or_findable? && !skip_url_validation }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
@@ -149,13 +153,50 @@ class Doi < ApplicationRecord
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
+  # JSON-SCHEMA VALIDATION
+  validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
+  validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
+  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }, unless: :only_validate
+  validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
+  validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
+  validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
+  validates :identifiers, if: proc { |doi| doi.validate_json_attribute?(:identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
+  validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
+  validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
+  validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
+  validates :version, if: proc { |doi| doi.validate_json_attribute?(:version) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("version") } }, unless: :only_validate
+  validates :rights_list, if: proc { |doi| doi.validate_json_attribute?(:rights_list) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("rights_list") } }, unless: :only_validate
+  validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
+  validates :geo_locations, if: proc { |doi| doi.validate_json_attribute?(:geo_locations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geo_locations") } }, unless: :only_validate
+  validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
+  validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
+  validates :types, if: proc { |doi| doi.validate_json_attribute?(:types) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
+
+  validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
+    message: ->(errors) { errors },
+    schema: lambda { schema_file_path("language") }
+  }, unless: :only_validate
+
+  # See https://github.com/mirego/activerecord_json_validator for an explanation of why this must be done.
+  def raw_language
+    self[:language]
+  end
+
+  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi|
+    if errors.any?
+      false
+    else
+      doi.update_xml if doi.regenerate
+      doi.validatable?
+    end
+  }
+
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
   before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
-  before_validation :update_xml, if: :regenerate
   before_validation :update_agency
-  before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
@@ -2607,18 +2648,6 @@ class Doi < ApplicationRecord
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
       end
-  end
-
-  def update_field_of_science
-    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
-      if subject.is_a?(String)
-        sum += name_to_subject(subject)
-      elsif subject.is_a?(Hash)
-        sum += hsh_to_subject(subject)
-      end
-
-      sum
-    end.uniq
   end
 
   def update_rights_list

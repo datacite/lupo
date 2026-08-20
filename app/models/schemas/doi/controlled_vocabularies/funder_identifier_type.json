@@ -1,0 +1,14 @@
+{
+  "title": "FunderIdentifierType",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The type of the funderIdentifier.",
+  "type": "string",
+  "enum": [
+    "ISNI",
+    "GRID",
+    "ROR",
+    "Crossref Funder ID",
+    "Other"
+  ]
+}
+

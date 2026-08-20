@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
   "minItems": 0,
   "items": {
@@ -14,10 +14,7 @@
           ]
         },
         "lang": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "$ref": "../doi/language.json"
         },
         "subject":             { "type": "string" },
         "subjectScheme":       { "type": "string" }

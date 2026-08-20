@@ -2,6 +2,7 @@
 
 require "rails_helper"
 include Passwordable
+require "pp"
 
 describe DataciteDoisController, type: :request, vcr: true do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -167,7 +168,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI #{doi.uid}: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => doi.uid }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => doi.uid }])
       end
     end
 
@@ -278,7 +279,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI #{doi_id}: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
@@ -304,7 +305,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI 10.14454/077d-fj48: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48" }])
       end
     end
 
@@ -417,7 +418,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string.", "uid" => "10.14454/4k3m-nyvg" }])
+        expect(json["errors"]).to eq([{ "source" => "titles", "title" => "Value at root is not an array", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 
@@ -491,6 +492,7 @@ describe DataciteDoisController, type: :request, vcr: true do
               "event" => "publish",
               "fundingReferences": [{
                 "funderName": "fake_funder_name",
+                "funderIdentifierType": "ROR",
                 "schemeUri": "http://funder_uri"
               }]
             },
