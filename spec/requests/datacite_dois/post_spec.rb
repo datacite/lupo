@@ -1570,7 +1570,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         post "/dois", not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI 10.14454/4k3m-nyvg: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/4k3m-nyvg" }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/4k3m-nyvg" }])
       end
     end
 

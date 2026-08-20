@@ -168,7 +168,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI #{doi.uid}: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => doi.uid }])
+        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "Array size at root is less than: 1", "uid" => doi.uid }])
       end
     end
 
@@ -279,7 +279,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI #{doi_id}: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
+        expect(json["errors"]).to eq([{"source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48"}])
       end
     end
 
@@ -305,7 +305,7 @@ describe DataciteDoisController, type: :request, vcr: true do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{ "source" => "creators", "title" => "DOI 10.14454/077d-fj48: Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0", "uid" => "10.14454/077d-fj48" }])
+        expect(json["errors"]).to eq([{"source" => "creators", "title" => "Array size at root is less than: 1", "uid" => "10.14454/077d-fj48"}])
       end
     end
 
