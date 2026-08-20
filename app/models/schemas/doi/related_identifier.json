@@ -8,7 +8,10 @@
       "type": "string"
     },
     "resourceTypeGeneral": {
-      "$ref": "controlled_vocabularies/resource_type_general.json"
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/resource_type_general.json" },
+        { "type": "null" }
+      ]
     },
     "relatedIdentifierType": {
       "$ref": "controlled_vocabularies/related_identifier_type.json"
@@ -17,7 +20,7 @@
       "$ref": "controlled_vocabularies/relation_type.json"
     },
     "relatedMetadataScheme": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "schemeUri": {
       "type": ["string", "null"]
@@ -26,7 +29,7 @@
       "type": ["string", "null"]
     },
     "relationTypeInformation": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "required": [
