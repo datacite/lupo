@@ -173,12 +173,15 @@ class Doi < ApplicationRecord
   validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
   validates :types, if: proc { |doi| doi.validate_json_attribute?(:types) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
 
+  # Workaround for validating the language attribute as JSON without interfering with the actual string value.
+  # Language is a plain string, not JSON. Using the JSON validator directly on :language interferes with the assignment of the actual string value from sanitized_params, wrongly setting the :language field to an empty hash.
+  # Therefore, we define a custom getter method for :language called raw_language, and validate that. This allows us to use the JSON validator on raw_language without affecting the actual :language attribute, and surprisingly, any errors are correctly associated with the language attribute (not raw_language).
+  # See https://github.com/mirego/activerecord_json_validator for an explanation of using json validators in this way.
   validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
     message: ->(errors) { errors },
     schema: lambda { schema_file_path("language") }
   }, unless: :only_validate
 
-  # See https://github.com/mirego/activerecord_json_validator for an explanation of why this must be done.
   def raw_language
     self[:language]
   end
@@ -2301,26 +2304,6 @@ class Doi < ApplicationRecord
     end
   end
 
-=begin
-  def check_contributors
-    Array.wrap(contributors).each do |c|
-      errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
-
-      if c["name"].nil?
-        errors.add(:contributors, "A contributor is missing a required element: name.")
-      else
-        if schema_version == "http://datacite.org/schema/kernel-4"
-          if c["contributorType"].nil? || c["contributorType"].blank?
-            errors.add(:contributors, "Contributor '#{c['name']}' is missing a required element: contributor type.")
-          else
-            errors.add(:contributors, "Contributor '#{c['name']}' has a contributor type that is not supported in schema 4: '#{c['contributorType']}'.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor Translator WorkPackageLeader).include?(c["contributorType"])
-          end
-        end
-      end
-    end
-  end
-=end
-
   def check_identifiers
     Array.wrap(identifiers).each do |i|
       errors.add(:identifiers, "Identifier '#{i}' should be an object instead of a string.") unless i.is_a?(Hash)
@@ -2647,6 +2630,13 @@ class Doi < ApplicationRecord
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
+      # Until we can handle this issue properly, we leave it as is to avoid a breaking change for now.
+      # See https://github.com/datacite/lupo/issues/904.  The fix would be:
+      # rubocop:disable Layout/CommentIndentation
+      # If the language doesn't match the expected pattern, just keep it as is, this allows validation to catch invalid formats.
+      # else
+      #   language
+      # rubocop:enable Layout/CommentIndentation
       end
   end
 

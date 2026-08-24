@@ -2691,16 +2691,17 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
 
     # TEMPORARILY REMOVE TEST FOR INVALID LANGUAGE FIELD
+    # The test for invalid language field is temporarily removed due to issue #904 (https://github.com/datacite/lupo/issues/904)
     # context "json-schema - validate language field - INVALID" do
     #   before do
     #     valid_attributes["data"]["attributes"]["language"] = "fr!800-afs"
     #   end
-
+    #
     #   it "creates a Doi" do
     #     VCR.turned_off do
     #       post "/dois", valid_attributes, headers
     #     end
-
+    #
     #     expect(last_response.status).to eq(422)
     #     expect(json.dig("errors")).to eq([
     #       { "source" => "metadata", "title" => "Is invalid", "uid" => "10.14454/10703" }
