@@ -195,6 +195,21 @@ class Doi < ApplicationRecord
     end
   }
 
+  after_validation :remap_json_errors
+
+  def remap_json_errors
+    # Check if the native json validator caught errors on :identifiers
+    if errors.include?(:identifiers)
+      # Pull out the error messages
+      existing_messages = errors.delete(:identifiers)
+
+      # Re-assign them to your desired key path
+      existing_messages.each do |message|
+        errors.add(:"identifiers/alternateIdentifiers", message)
+      end
+    end
+  end
+
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
@@ -2630,13 +2645,8 @@ class Doi < ApplicationRecord
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
-      # Until we can handle this issue properly, we leave it as is to avoid a breaking change for now.
-      # See https://github.com/datacite/lupo/issues/904.  The fix would be:
-      # rubocop:disable Layout/CommentIndentation
-      # If the language doesn't match the expected pattern, just keep it as is, this allows validation to catch invalid formats.
-      # else
-      #   language
-      # rubocop:enable Layout/CommentIndentation
+      else
+        language
       end
   end
 
