@@ -200,21 +200,6 @@ class Doi < ApplicationRecord
     end
   }
 
-  after_validation :remap_json_errors
-
-  def remap_json_errors
-    # Check if the native json validator caught errors on :identifiers
-    if errors.include?(:identifiers)
-      # Pull out the error messages
-      existing_messages = errors.delete(:identifiers)
-
-      # Re-assign them to your desired key path
-      existing_messages.each do |message|
-        errors.add(:"identifiers/alternateIdentifiers", message)
-      end
-    end
-  end
-
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
