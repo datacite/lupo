@@ -173,10 +173,14 @@ class Doi < ApplicationRecord
   validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
   validates :types, if: proc { |doi| doi.validate_json_attribute?(:types) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
 
-  # Workaround for validating the language attribute as JSON without interfering with the actual string value.
-  # Language is a plain string, not JSON. Using the JSON validator directly on :language interferes with the assignment of the actual string value from sanitized_params, wrongly setting the :language field to an empty hash.
-  # Therefore, we define a custom getter method for :language called raw_language, and validate that. This allows us to use the JSON validator on raw_language without affecting the actual :language attribute, and surprisingly, any errors are correctly associated with the language attribute (not raw_language).
+  # Workaround for validating the language attribute as JSON.
+  # Language is a plain string. The JSON validator expects json input for validation.
+  # Using the validator directly on the language field interferes with the assignment of the actual string value from sanitized_params to the :language attribute,
+  # causing it to be set incorrectly (as an empty hash '{}').
+  # Therefore, we define a custom getter method for :language called raw_language, and validate that as a workaround.
+  # Surprisingly, any errors are correctly associated with the language attribute (not raw_language).
   # See https://github.com/mirego/activerecord_json_validator for an explanation of using json validators in this way.
+
   validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
     message: ->(errors) { errors },
     schema: lambda { schema_file_path("language") }
@@ -185,6 +189,7 @@ class Doi < ApplicationRecord
   def raw_language
     self[:language]
   end
+
 
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi|
     if errors.any?
@@ -2637,6 +2642,8 @@ class Doi < ApplicationRecord
     end
   end
 
+  # Sets language to nil if it doesn't match ISO 639-1 or the xs:language pattern
+  # See https://github.com/datacite/lupo/issues/904
   def update_language
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
@@ -2644,8 +2651,6 @@ class Doi < ApplicationRecord
       if entry.present? && entry.alpha2.present?
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
-        language
-      else
         language
       end
   end
