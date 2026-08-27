@@ -8,11 +8,8 @@
       "type": "string"
     },
     "identifierType": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
-  "required": [
-    "identifierType"
-  ],
   "additionalProperties": false
 }

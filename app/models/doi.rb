@@ -2637,6 +2637,8 @@ class Doi < ApplicationRecord
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
+      else
+        language
       end
   end
 

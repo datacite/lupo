@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "date": {
-      "type": ["string"]
+      "type": ["string", "null"]
     },
     "dateType": {
       "$ref": "controlled_vocabularies/date_type.json"
