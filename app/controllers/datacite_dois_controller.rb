@@ -863,8 +863,8 @@ class DataciteDoisController < ApplicationController
             Array.wrap(alternate_identifiers).map do |a|
               if a.respond_to?(:fetch)
                 {
-                  identifier: a.fetch(:alternateIdentifier),
-                  identifierType: a.fetch(:alternateIdentifierType),
+                  identifier: a.fetch(:alternateIdentifier, nil),
+                  identifierType: a.fetch(:alternateIdentifierType, nil),
                 }
               else
                 a
