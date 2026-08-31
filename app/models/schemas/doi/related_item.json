@@ -14,8 +14,11 @@
       }
     },
     "titles": {
-      "$ref": "titles.json",
-      "minItems": 0
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "title.json"
+      }
     },
     "publicationYear": {
       "$ref": "publication_year.json"
