@@ -2129,7 +2129,9 @@ class Doi < ApplicationRecord
   # providers europ, and DOI registration agencies do their own handle registration, so fetch url from handle system instead
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
+    return if @updating_url
 
+    @updating_url = true
     if %w(europ).include?(provider_id) || type == "OtherDoi"
       UrlJob.perform_later(doi)
     # TODO better define conditions for updating handle system
