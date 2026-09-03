@@ -1,0 +1,27 @@
+{
+  "title": "Subject",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Subject, keywords, classification codes, or key phrases describing the resource.",
+    "type": "object",
+    "properties": {
+      "subject": {
+        "type": ["string", "null"]
+      },
+      "subjectScheme":  {
+        "type": ["string", "null"]
+      },
+      "schemeUri": {
+        "type": ["string", "null"]
+     },
+      "valueUri": {
+        "type": ["string", "null"]
+      },
+      "classificationCode": {
+        "type": ["string", "null"]
+      },
+      "lang": {
+        "$ref": "definitions.json#/$defs/language"
+      }
+    },
+    "additionalProperties": false
+}

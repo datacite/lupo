@@ -3,6 +3,14 @@
 require "maremma"
 
 class Doi < ApplicationRecord
+  INVALID_SCHEMAS = %w[
+      http://datacite.org/schema/kernel-2.1
+      http://datacite.org/schema/kernel-2.2
+      http://datacite.org/schema/kernel-3.0
+      http://datacite.org/schema/kernel-3.1
+      http://datacite.org/schema/kernel-3
+    ].freeze
+
   self.ignored_columns += [:publisher]
   PUBLISHER_JSON_SCHEMA = Rails.root.join("app", "models", "schemas", "doi", "publisher.json")
   OS_SOURCE = { excludes: ["xml"] }.freeze
@@ -113,16 +121,13 @@ class Doi < ApplicationRecord
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
-  json_schema_validation = {
-    message: ->(errors) { errors },
-    schema: PUBLISHER_JSON_SCHEMA
-  }
-
-  def validate_publisher_obj?(doi)
-    doi.validatable? && doi.publisher_obj? && !(doi.publisher_obj.blank? || doi.publisher_obj.all?(nil))
+  def validate_json_attribute?(attribute)
+    validatable? && !self[attribute].nil? && !INVALID_SCHEMAS.include?(self.schema_version)
   end
 
-  validates :publisher_obj, if: ->(doi) { validate_publisher_obj?(doi) }, json: json_schema_validation
+  def schema_file_path(schema_name)
+    Rails.root.join("app", "models", "schemas", "doi", "#{schema_name}.json")
+  end
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-._;()\/:a-zA-Z0-9*~$=]+\z/, on: :create
@@ -130,7 +135,6 @@ class Doi < ApplicationRecord
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates_inclusion_of :agency, in: %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_url, if: Proc.new { |doi| doi.is_registered_or_findable? && !skip_url_validation }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
@@ -149,13 +153,58 @@ class Doi < ApplicationRecord
   validate :check_geo_locations, if: :geo_locations?
   validate :check_language, if: :language?
 
+  # JSON-SCHEMA VALIDATION
+  validates :creators, if: proc { |doi| doi.validate_json_attribute?(:creators) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("creators") } }, unless: :only_validate
+  validates :titles, if: proc { |doi| doi.validate_json_attribute?(:titles) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("titles") } }, unless: :only_validate
+  validates :publisher_obj, if: proc { |doi| doi.validate_json_attribute?(:publisher_obj) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publisher") } }, unless: :only_validate
+  validates :publication_year, if: proc { |doi| doi.validate_json_attribute?(:publication_year) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("publication_year") } }, unless: :only_validate
+  validates :subjects, if: proc { |doi| doi.validate_json_attribute?(:subjects) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("subjects") } }, unless: :only_validate
+  validates :contributors, if: proc { |doi| doi.validate_json_attribute?(:contributors) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("contributors") } }, unless: :only_validate
+  validates :dates, if: proc { |doi| doi.validate_json_attribute?(:dates) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("dates") } }, unless: :only_validate
+  validates :identifiers, if: proc { |doi| doi.validate_json_attribute?(:identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("alternate_identifiers") } }, unless: :only_validate
+  validates :related_identifiers, if: proc { |doi| doi.validate_json_attribute?(:related_identifiers) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_identifiers") } }, unless: :only_validate
+  validates :sizes, if: proc { |doi| doi.validate_json_attribute?(:sizes) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("sizes") } }, unless: :only_validate
+  validates :formats, if: proc { |doi| doi.validate_json_attribute?(:formats) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("formats") } }, unless: :only_validate
+  validates :version, if: proc { |doi| doi.validate_json_attribute?(:version) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("version") } }, unless: :only_validate
+  validates :rights_list, if: proc { |doi| doi.validate_json_attribute?(:rights_list) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("rights_list") } }, unless: :only_validate
+  validates :descriptions, if: proc { |doi| doi.validate_json_attribute?(:descriptions) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("descriptions") } }, unless: :only_validate
+  validates :geo_locations, if: proc { |doi| doi.validate_json_attribute?(:geo_locations) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("geo_locations") } }, unless: :only_validate
+  validates :funding_references, if: proc { |doi| doi.validate_json_attribute?(:funding_references) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("funding_references") } }, unless: :only_validate
+  validates :related_items, if: proc { |doi| doi.validate_json_attribute?(:related_items) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("related_items") } }, unless: :only_validate
+  validates :types, if: proc { |doi| doi.validate_json_attribute?(:types) }, json: { message: ->(errors) { errors }, schema: lambda { schema_file_path("resource_type") } }, unless: :only_validate
+
+  # Workaround for validating the language attribute as JSON.
+  # Language is a plain string. The JSON validator expects json input for validation.
+  # Using the validator directly on the language field interferes with the assignment of the actual string value from sanitized_params to the :language attribute,
+  # causing it to be set incorrectly (as an empty hash '{}').
+  # Therefore, we define a custom getter method for :language called raw_language, and validate that as a workaround.
+  # Surprisingly, any errors are correctly associated with the language attribute (not raw_language).
+  # See https://github.com/mirego/activerecord_json_validator for an explanation of using json validators in this way.
+
+  validates :raw_language, presence: true, if: proc { |doi| doi.validate_json_attribute?(:raw_language) }, json: {
+    message: ->(errors) { errors },
+    schema: lambda { schema_file_path("language") }
+  }, unless: :only_validate
+
+  def raw_language
+    self[:language]
+  end
+
+
+  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi|
+    if errors.any?
+      false
+    else
+      doi.update_xml if doi.regenerate
+      doi.validatable?
+    end
+  }
+
   after_commit :update_url, on: %i[create update]
   after_commit :update_media, on: %i[create update]
 
   before_validation :update_publisher, if: [ :will_save_change_to_publisher? ]
-  before_validation :update_xml, if: :regenerate
   before_validation :update_agency
-  before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
@@ -2260,26 +2309,6 @@ class Doi < ApplicationRecord
     end
   end
 
-=begin
-  def check_contributors
-    Array.wrap(contributors).each do |c|
-      errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
-
-      if c["name"].nil?
-        errors.add(:contributors, "A contributor is missing a required element: name.")
-      else
-        if schema_version == "http://datacite.org/schema/kernel-4"
-          if c["contributorType"].nil? || c["contributorType"].blank?
-            errors.add(:contributors, "Contributor '#{c['name']}' is missing a required element: contributor type.")
-          else
-            errors.add(:contributors, "Contributor '#{c['name']}' has a contributor type that is not supported in schema 4: '#{c['contributorType']}'.") unless %w(ContactPerson DataCollector DataCurator DataManager Distributor Editor HostingInstitution Other Producer ProjectLeader ProjectManager ProjectMember RegistrationAgency RegistrationAuthority RelatedPerson ResearchGroup RightsHolder Researcher Sponsor Supervisor Translator WorkPackageLeader).include?(c["contributorType"])
-          end
-        end
-      end
-    end
-  end
-=end
-
   def check_identifiers
     Array.wrap(identifiers).each do |i|
       errors.add(:identifiers, "Identifier '#{i}' should be an object instead of a string.") unless i.is_a?(Hash)
@@ -2598,6 +2627,8 @@ class Doi < ApplicationRecord
     end
   end
 
+  # Sets language to nil if it doesn't match ISO 639-1 or the xs:language pattern
+  # See https://github.com/datacite/lupo/issues/904
   def update_language
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
@@ -2606,19 +2637,9 @@ class Doi < ApplicationRecord
         entry.alpha2
       elsif language.match?(/^[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*$/)
         language
+      else
+        language
       end
-  end
-
-  def update_field_of_science
-    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
-      if subject.is_a?(String)
-        sum += name_to_subject(subject)
-      elsif subject.is_a?(Hash)
-        sum += hsh_to_subject(subject)
-      end
-
-      sum
-    end.uniq
   end
 
   def update_rights_list

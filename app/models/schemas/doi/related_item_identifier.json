@@ -1,0 +1,27 @@
+{
+  "title": "RelatedItemIdentifier",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The identifier for the related item.",
+  "type": "object",
+  "properties": {
+    "relatedItemIdentifier": {
+      "type": "string"
+    },
+    "relatedItemIdentifierType": {
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/related_identifier_type.json" },
+        { "type": "null" }
+      ]
+    },
+    "relatedMetadataScheme": {
+      "type": ["string", "null"]
+    },
+    "schemeURI": {
+      "type": ["string", "null"]
+    },
+    "schemeType": {
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": false
+}

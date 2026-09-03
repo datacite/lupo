@@ -1,0 +1,21 @@
+{
+  "title": "Affiliation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Uniquely identifies an affiliation, according to various identifier schemes.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": ["string", "null"]
+    },
+    "affiliationIdentifier": {
+      "type": ["string", "null"]
+    },
+    "affiliationIdentifierScheme": {
+      "type": ["string", "null"]
+    },
+    "schemeUri": {
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": false
+}

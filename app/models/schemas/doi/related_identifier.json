@@ -1,0 +1,40 @@
+{
+  "title": "RelatedIdentifiers",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Identifiers of related resources. Use this property to indicate subsets of properties, as appropriate.",
+  "type": "object",
+  "properties": {
+    "relatedIdentifier": {
+      "type": "string"
+    },
+    "resourceTypeGeneral": {
+      "anyOf": [
+        { "$ref": "controlled_vocabularies/resource_type_general.json" },
+        { "type": "null" }
+      ]
+    },
+    "relatedIdentifierType": {
+      "$ref": "controlled_vocabularies/related_identifier_type.json"
+    },
+    "relationType": {
+      "$ref": "controlled_vocabularies/relation_type.json"
+    },
+    "relatedMetadataScheme": {
+      "type": ["string", "null"]
+    },
+    "schemeUri": {
+      "type": ["string", "null"]
+    },
+    "schemeType": {
+      "type": ["string", "null"]
+    },
+    "relationTypeInformation": {
+      "type": ["string", "null"]
+    }
+  },
+  "required": [
+    "relatedIdentifierType",
+    "relationType"
+  ],
+  "additionalProperties": false
+}

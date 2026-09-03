@@ -1,0 +1,26 @@
+{
+  "title": "Rights",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "rights": { 
+      "type": ["string", "null"]
+    },
+    "rightsUri": { 
+      "type": ["string", "null"]
+    },
+    "rightsIdentifier": { 
+      "type": ["string", "null"]
+    },
+    "rightsIdentifierScheme": { 
+      "type": ["string", "null"]
+    },
+    "schemeUri": { 
+      "type": ["string", "null"]
+    },
+    "lang": {
+      "$ref": "definitions.json#/$defs/language"
+    }
+  },
+  "additionalProperties": false
+}

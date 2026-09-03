@@ -1,0 +1,26 @@
+{
+  "title": "GeoLocationBox",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "eastBoundLongitude": {
+      "$ref": "point_longitude.json"
+    },
+    "northBoundLatitude": {
+      "$ref": "point_latitude.json"
+    },
+    "southBoundLatitude": {
+      "$ref": "point_latitude.json"
+    },
+    "westBoundLongitude": {
+      "$ref": "point_longitude.json"
+    }
+  },
+  "required": [
+    "eastBoundLongitude",
+    "northBoundLatitude",
+    "southBoundLatitude",
+    "westBoundLongitude"
+  ],
+  "additionalProperties": false
+}
