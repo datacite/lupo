@@ -6,9 +6,10 @@ class EnrichmentsController < ApplicationController
   def index
     doi = params["doi"]&.upcase
     client_id = params["client_id"]
+    source_id = params["source_id"]
     cursor = params.dig("page", "cursor")
 
-    base_enrichments = base_page_enrichments(doi, client_id)
+    base_enrichments = base_page_enrichments(doi, client_id, source_id)
 
     enrichments = if cursor.present?
       cursor_updated_at, cursor_id, cursor_page = decode_cursor(cursor)
@@ -38,11 +39,13 @@ class EnrichmentsController < ApplicationController
   end
 
   private
-    def base_page_enrichments(doi, client_id)
+    def base_page_enrichments(doi, client_id, source_id)
       if doi.present?
         Enrichment.by_doi(doi)
       elsif client_id.present?
         Enrichment.by_client(client_id)
+      elsif source_id.present?
+        Enrichment.by_source(source_id)
       else
         Enrichment.all
       end

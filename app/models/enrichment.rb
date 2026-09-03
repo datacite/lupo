@@ -18,6 +18,8 @@ class Enrichment < ApplicationRecord
 
   scope :by_client, ->(client_id) { joins(doi_record: :client).where(datacentre: { symbol: client_id }) }
 
+  scope :by_source, ->(source_id) { where(source_id: source_id) }
+
   scope :by_cursor, ->(updated_at, id) {
     where("(enrichments.updated_at < ?) OR (enrichments.updated_at = ? AND enrichments.id < ?)",
       updated_at,
