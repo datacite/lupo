@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "resourceType": { 
-      "type": "string" 
+      "type": [ "string", "null" ] 
     },
     "resourceTypeGeneral": { 
       "$ref": "controlled_vocabularies/resource_type_general.json" 
