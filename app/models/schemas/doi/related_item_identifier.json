@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "relatedItemIdentifier": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "relatedItemIdentifierType": {
       "anyOf": [

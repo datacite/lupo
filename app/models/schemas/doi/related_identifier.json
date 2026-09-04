@@ -5,7 +5,7 @@
   "type": "object",
   "properties": {
     "relatedIdentifier": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "resourceTypeGeneral": {
       "anyOf": [
