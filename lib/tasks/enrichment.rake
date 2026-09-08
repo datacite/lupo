@@ -171,4 +171,28 @@ namespace :enrichment do
 
     puts("Finished indexing enriched dois for s3://#{bucket}/#{key} (lines_seen=#{line_no})")
   end
+
+  desc "Update source_id for filename"
+  # Example command: bundle exec rake enrichment:update_source_id FILENAME=arxiv_dois.txt SOURCE_ID=DATACITE.COMET
+  task update_source_id: :environment do
+    filename = ENV["FILENAME"]
+    source_id = ENV["SOURCE_ID"]&.strip&.upcase
+
+    abort("FILENAME is not set") if filename.blank?
+    abort("SOURCE_ID is not set") if source_id.blank?
+
+    enrichments = Enrichment.where(filename: filename)
+    total = enrichments.count
+    updated = 0
+
+    puts("Updating source_id to #{source_id} for #{total} enrichments with filename=#{filename}")
+
+    enrichments.in_batches(of: 10_000) do |batch|
+      count = batch.update_all(source_id: source_id)
+      updated += count
+      puts("Updated #{updated}/#{total} enrichments")
+    end
+
+    puts("Finished updating source_id for filename=#{filename} (updated=#{updated})")
+  end
 end
