@@ -52,6 +52,9 @@ doc/dependencies*
 !.env.example
 !.env.travis
 !.env.build
+
+# Local-only lockfile for the native dev-server Gemfile (Gemfile.dev)
+/Gemfile.dev.lock
 docker-compose.override.yml
 .vscode
 .solargraph.yml

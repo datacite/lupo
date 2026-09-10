@@ -1,0 +1,8 @@
+# Untracked, local-only Gemfile for running a native development server.
+# On `master` the app is served by Passenger inside Docker, so no server gem is
+# in the main Gemfile. This layers Puma (the Rails default dev server) on top of
+# the real Gemfile without modifying the committed Gemfile/Gemfile.lock.
+#
+# Usage: BUNDLE_GEMFILE=Gemfile.dev bundle exec rails server
+eval_gemfile "Gemfile"
+gem "puma", "~> 6.4"
