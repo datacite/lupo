@@ -5,7 +5,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
 
   queue_as :enrichment_batch_process_job
 
-  def perform(lines, filename, source_id)
+  def perform(lines, filename)
     log_prefix = "EnrichmentBatchProcessJob (#{filename})"
 
     # We will process the lines in parallel to speed up ingestion.
@@ -46,7 +46,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
         enrichment = Enrichment.new(
           filename: filename,
           doi: uid,
-          source_id: source_id,
+          source_id: parsed_line["sourceId"]&.upcase,
           field: parsed_line["field"],
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
