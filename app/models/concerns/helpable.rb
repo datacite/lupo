@@ -180,7 +180,7 @@ module Helpable
       end
 
       count_url =
-        ENV["HANDLE_URL"] + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
+        (ENV["HANDLE_PRIMARY_URL"] || ENV["HANDLE_URL"]) + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
       response =
         Maremma.get(
           count_url,
