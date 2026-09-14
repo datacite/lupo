@@ -818,7 +818,7 @@ DEPENDENCIES
   flipper-active_support_cache_store (~> 1.4, >= 1.4.1)
   gender_detector (~> 2.1)
   google-protobuf (~> 4.34, >= 4.34.1)
-  graphql (~> 2.5, >= 2.6.6)
+  graphql (~> 2.5, >= 2.6.7)
   graphql-batch (~> 0.6.1)
   hashdiff (~> 1.2, >= 1.2.1)
   hashid-rails (~> 1.4, >= 1.4.1)
