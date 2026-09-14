@@ -37,15 +37,13 @@ namespace :enrichment do
   end
 
   desc "Process JSONL from S3 and enqueue batches sized by bytes (256KB message size limit)"
-  # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl SOURCE_ID=DATACITE.COMET
+  # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl
   task batch_process_file: :environment do
     bucket = ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"]
     key    = ENV["KEY"]
-    source_id = ENV["SOURCE_ID"]
 
     abort("ENRICHMENTS_INGESTION_FILES_BUCKET_NAME is not set") if bucket.blank?
     abort("KEY is not set") if key.blank?
-    abort("SOURCE_ID is not set") if source_id.blank?
 
     # SQS limit is 256KB so we'll set the batch size to be more conservative to allow for some
     # overhead and ensure we don't exceed limits.
@@ -64,7 +62,7 @@ namespace :enrichment do
     flush = lambda do
       return if batch_lines.empty?
 
-      EnrichmentBatchProcessJob.perform_later(batch_lines, key, source_id)
+      EnrichmentBatchProcessJob.perform_later(batch_lines, key)
 
       batch_lines.clear
       batch_bytes = 0
