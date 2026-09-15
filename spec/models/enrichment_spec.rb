@@ -38,7 +38,7 @@ describe Enrichment, type: :model, elasticsearch: false, prefix_pool_size: 1 do
       expect(doi.reload.has_enrichments).to be(true)
     end
 
-    it "does nothing when the associated record is not a DataciteDoi" do
+    it "does nothing when the associated record is not a DataciteDoi", prefix_pool_size: 2 do
       other_doi = create(:other_doi)
       other_enrichment = create(:enrichment, doi_record: other_doi)
       clear_enqueued_jobs
