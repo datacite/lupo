@@ -3,6 +3,8 @@
 require "rails_helper"
 
 describe Enrichment, type: :model, elasticsearch: false, prefix_pool_size: 1 do
+  include ActiveJob::TestHelper
+
   describe "after_destroy_commit" do
     let(:doi) { create(:doi, type: "DataciteDoi") }
     let!(:enrichment) { create(:enrichment, doi_record: doi) }
