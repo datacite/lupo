@@ -199,7 +199,7 @@ module Helpable
 
         (0...total_pages).each do |page|
           url =
-            ENV["HANDLE_URL"] +
+            (ENV["HANDLE_PRIMARY_URL"] || ENV["HANDLE_URL"]) +
             "/api/handles?prefix=#{options[:prefix]}&page=#{
               page
             }&pageSize=1000"
