@@ -179,8 +179,10 @@ module Helpable
         )
       end
 
+      base_handle_url = (ENV["HANDLE_PRIMARY_URL"].presence || ENV["HANDLE_URL"])
+
       count_url =
-        (ENV["HANDLE_PRIMARY_URL"] || ENV["HANDLE_URL"]) + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
+        base_handle_url + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
       response =
         Maremma.get(
           count_url,
@@ -199,7 +201,7 @@ module Helpable
 
         (0...total_pages).each do |page|
           url =
-            ENV["HANDLE_URL"] +
+            base_handle_url +
             "/api/handles?prefix=#{options[:prefix]}&page=#{
               page
             }&pageSize=1000"
