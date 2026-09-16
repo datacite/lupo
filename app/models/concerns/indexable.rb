@@ -22,6 +22,8 @@ module Indexable
       elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
         IndexJob.perform_later(self)
       elsif instance_of?(DataciteDoi)
+        # update url before enqueueing so the index job does not race with after_commit :update_url.
+        update_url
         IndexJobDoiRegistration.perform_later(self)
 
         if index_sync_enabled?
