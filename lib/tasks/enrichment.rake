@@ -36,85 +36,115 @@ namespace :enrichment do
     puts EnrichedDoi.create_template
   end
 
-  desc "Process JSONL from S3 and enqueue batches sized by bytes (256KB message size limit)"
-  # "Example command: bundle exec rake enrichment:batch_process_file KEY=02022026_test_ingestion_file.jsonl
+  desc "Process gzipped JSONL objects under an S3 prefix and enqueue batches sized by bytes (256KB message size limit)"
+  # Bucket is always ENRICHMENTS_INGESTION_FILES_BUCKET_NAME (enrichments-ingestion-files).
+  # PREFIX is the key prefix inside that bucket, e.g. affiliations/2026-09-01/full
+  # Example: bundle exec rake enrichment:batch_process_file PREFIX=affiliations/2026-09-01/full
   task batch_process_file: :environment do
+    require "zlib"
+
     bucket = ENV["ENRICHMENTS_INGESTION_FILES_BUCKET_NAME"]
-    key    = ENV["KEY"]
+    prefix = ENV["PREFIX"]
 
     abort("ENRICHMENTS_INGESTION_FILES_BUCKET_NAME is not set") if bucket.blank?
-    abort("KEY is not set") if key.blank?
+    abort("PREFIX is not set (e.g. affiliations/2026-09-01/full)") if prefix.blank?
+
+    prefix = "#{prefix}/" unless prefix.end_with?("/")
 
     # SQS limit is 256KB so we'll set the batch size to be more conservative to allow for some
     # overhead and ensure we don't exceed limits.
     max_batch_bytes = 150000
 
-    puts("Begin ingestion for s3://#{bucket}/#{key} (max_batch_bytes=#{max_batch_bytes})")
-
     s3 = Aws::S3::Client.new(force_path_style: true)
 
-    buffer  = +""
-    line_no = 0
+    puts("Listing s3://#{bucket}/#{prefix}")
 
-    batch_lines = []
-    batch_bytes = 0
+    object_keys = []
+    token = nil
 
-    flush = lambda do
-      return if batch_lines.empty?
+    loop do
+      response = s3.list_objects_v2(
+        bucket: bucket,
+        prefix: prefix,
+        continuation_token: token,
+      )
 
-      EnrichmentBatchProcessJob.perform_later(batch_lines, key)
-
-      batch_lines.clear
-      batch_bytes = 0
-    end
-
-    s3.get_object(bucket: bucket, key: key) do |chunk|
-      buffer << chunk
-
-      while (idx = buffer.index("\n"))
-        raw = buffer.slice!(0..idx).delete_suffix("\n")
-        line_no += 1
-
-        line = raw.strip
-
-        next if line.empty?
-
-        # +1 for the newline we removed, and some slack for JSON array encoding.
-        line_bytes = line.bytesize + 1
-
-        # If a single line is too big to ever fit in one message we need to process differently.
-        if line_bytes > max_batch_bytes
-          raise "Single JSONL line at #{line_no} is #{line_bytes} bytes, exceeds MAX_BATCH_BYTES=#{max_batch_bytes}. "
-        end
-
-        # If adding this line would exceed the cap, flush current batch first.
-        if (batch_bytes + line_bytes) > max_batch_bytes
-          flush.call
-        end
-
-        batch_lines << line
-        batch_bytes += line_bytes
-      end
-    end
-
-    # File might not end with newline
-    tail = buffer.strip
-
-    unless tail.empty?
-      line_no += 1
-      line_bytes = tail.bytesize + 1
-
-      if line_bytes > max_batch_bytes
-        raise "Single JSONL tail line at #{line_no} is #{line_bytes} bytes, exceeds MAX_BATCH_BYTES=#{max_batch_bytes}."
+      Array(response.contents).each do |object|
+        object_keys << object.key
       end
 
-      flush.call if (batch_bytes + line_bytes) > max_batch_bytes
-      batch_lines << tail
-      batch_bytes += line_bytes
+      break unless response.is_truncated
+
+      token = response.next_continuation_token
     end
 
-    flush.call
-    puts("Finished ingestion for s3://#{bucket}/#{key} (lines_seen=#{line_no})")
+    object_keys.sort!
+    abort("No .jsonl.gz objects found at s3://#{bucket}/#{prefix}") if object_keys.empty?
+
+    object_keys.each do |object_key|
+      puts("Found object: s3://#{bucket}/#{object_key}")
+    end
+
+    # process_object = lambda do |object_key|
+    #   puts("Begin ingestion for s3://#{bucket}/#{object_key} (max_batch_bytes=#{max_batch_bytes})")
+
+    #   buffer = +""
+    #   line_no = 0
+    #   batch_lines = []
+    #   batch_bytes = 0
+    #   inflater = Zlib::Inflate.new(Zlib::MAX_WBITS + 16)
+
+    #   flush = lambda do
+    #     return if batch_lines.empty?
+
+    #     EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
+    #     batch_lines.clear
+    #     batch_bytes = 0
+    #   end
+
+    #   enqueue_line = lambda do |raw|
+    #     line = raw.strip
+    #     return if line.empty?
+
+    #     line_no += 1
+    #     line_bytes = line.bytesize + 1
+
+    #     if line_bytes > max_batch_bytes
+    #       raise "Single JSONL line at #{object_key}:#{line_no} is #{line_bytes} bytes, exceeds MAX_BATCH_BYTES=#{max_batch_bytes}."
+    #     end
+
+    #     flush.call if (batch_bytes + line_bytes) > max_batch_bytes
+
+    #     batch_lines << line
+    #     batch_bytes += line_bytes
+    #   end
+
+    #   consume_chunk = lambda do |chunk|
+    #     next if chunk.empty?
+
+    #     buffer << chunk
+
+    #     while (idx = buffer.index("\n"))
+    #       enqueue_line.call(buffer.slice!(0..idx).delete_suffix("\n"))
+    #     end
+    #   end
+
+    #   begin
+    #     s3.get_object(bucket: bucket, key: object_key) do |chunk|
+    #       consume_chunk.call(inflater.inflate(chunk))
+    #     end
+    #     consume_chunk.call(inflater.finish)
+    #   ensure
+    #     inflater.close
+    #   end
+
+    #   enqueue_line.call(buffer) unless buffer.strip.empty?
+    #   flush.call
+    #   puts("Finished ingestion for s3://#{bucket}/#{object_key} (lines_seen=#{line_no})")
+    # end
+
+    # puts("Ingesting #{object_keys.size} gzipped file(s) under s3://#{bucket}/#{prefix}")
+    # object_keys.each { |object_key| process_object.call(object_key) }
   end
 
   desc "Process DOI text file from S3"
