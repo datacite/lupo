@@ -253,6 +253,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_154200) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
+  create_table "doi_batch_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.string "doi"
+    t.bigint "doi_batch_id", null: false
+    t.boolean "generated_doi", default: false, null: false
+    t.json "payload", null: false
+    t.integer "position", null: false
+    t.integer "response_status"
+    t.json "result_errors"
+    t.datetime "started_at"
+    t.string "status", default: "queued", null: false
+    t.datetime "updated_at", null: false
+    t.index ["doi_batch_id", "position"], name: "index_doi_batch_items_on_doi_batch_id_and_position", unique: true
+    t.index ["doi_batch_id", "status", "position"], name: "index_doi_batch_items_on_batch_status_position"
+    t.index ["doi_batch_id"], name: "index_doi_batch_items_on_doi_batch_id"
+  end
+
+  create_table "doi_batches", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "client_id"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.integer "failed_count", default: 0, null: false
+    t.string "operation", null: false
+    t.string "provider_id"
+    t.string "role_id", null: false
+    t.datetime "started_at"
+    t.string "status", default: "queued", null: false
+    t.string "submitted_by", null: false
+    t.integer "succeeded_count", default: 0, null: false
+    t.integer "total_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid", null: false
+    t.index ["client_id", "created_at"], name: "index_doi_batches_on_client_id_and_created_at"
+    t.index ["provider_id", "created_at"], name: "index_doi_batches_on_provider_id_and_created_at"
+    t.index ["submitted_by", "created_at"], name: "index_doi_batches_on_submitted_by_and_created_at"
+    t.index ["uuid"], name: "index_doi_batches_on_uuid", unique: true
+  end
+
   create_table "enrichments", charset: "utf8mb3", force: :cascade do |t|
     t.string "action", null: false
     t.datetime "created_at", null: false
@@ -355,4 +394,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_154200) do
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "doi_batch_items", "doi_batches"
 end
