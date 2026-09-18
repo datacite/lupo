@@ -104,9 +104,8 @@ namespace :enrichment do
       flush = lambda do
         return if batch_lines.empty?
 
-        file_name = "#{prefix}/#{object_key}"
-        puts("Processing batch for file: #{file_name}")
-        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, file_name)
+        puts("Processing batch for file: #{object_key}")
+        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
         batch_lines.clear
         batch_bytes = 0
       end
