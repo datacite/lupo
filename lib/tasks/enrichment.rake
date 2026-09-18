@@ -53,7 +53,8 @@ namespace :enrichment do
 
     # SQS limit is 256KB so we'll set the batch size to be more conservative to allow for some
     # overhead and ensure we don't exceed limits.
-    max_batch_bytes = 150000
+    # max_batch_bytes = 150000
+    ##### TODO ADD THIS BACK
 
     s3 = Aws::S3::Client.new(force_path_style: true)
 
