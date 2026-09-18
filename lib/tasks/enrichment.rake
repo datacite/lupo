@@ -70,6 +70,9 @@ namespace :enrichment do
       )
 
       Array(response.contents).each do |object|
+        # Skip the zero-byte folder marker object S3 creates for the prefix itself.
+        next unless object.key.end_with?(".jsonl.gz")
+
         object_keys << object.key
       end
 
@@ -85,6 +88,10 @@ namespace :enrichment do
       puts("Found object: s3://#{bucket}/#{object_key}")
     end
 
+    # Testing only: ingest the first gzipped object so we can verify reads without
+    # streaming the whole prefix.
+    object_keys = object_keys.first(1)
+
     process_object = lambda do |object_key|
       puts("Begin ingestion for s3://#{bucket}/#{object_key} (max_batch_bytes=#{max_batch_bytes})")
 
@@ -98,7 +105,8 @@ namespace :enrichment do
         return if batch_lines.empty?
 
         # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
-        batch_lines.dup.each { |x| puts("Processing line: #{x}") }
+        # Testing only: print the first line of each batch instead of enqueueing.
+        puts("Processing line: #{batch_lines.first}")
         batch_lines.clear
         batch_bytes = 0
       end
