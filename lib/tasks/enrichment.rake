@@ -104,9 +104,9 @@ namespace :enrichment do
       flush = lambda do
         return if batch_lines.empty?
 
-        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
-        # Testing only: print the first line of each batch instead of enqueueing.
-        puts("Processing line: #{batch_lines.first}")
+        file_name = "#{prefix}/#{object_key}"
+        puts("Processing batch for file: #{file_name}")
+        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, file_name)
         batch_lines.clear
         batch_bytes = 0
       end
