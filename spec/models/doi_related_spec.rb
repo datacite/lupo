@@ -34,9 +34,10 @@ describe Doi, type: :model, vcr: true, elasticsearch: true do
 
         # With EventsPreloader, we should make minimal queries
         # 1 query for DOIs, 1 query for events (via EventsPreloader), plus associations
+        # + 1 batched enrichments preload (avoids per-DOI EXISTS from has_enrichments)
         expect {
           DataciteDoi.import_in_bulk(ids)
-        }.not_to exceed_query_limit(6) # Allow some overhead for associations (client, media, metadata, allocator)
+        }.not_to exceed_query_limit(7) # Allow some overhead for associations (client, media, metadata, allocator, enrichments)
       end
 
       it "uses EventsPreloader to preload events for each batch" do

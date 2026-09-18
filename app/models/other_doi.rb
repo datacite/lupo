@@ -149,7 +149,8 @@ class OtherDoi < Doi
     selected_dois = OtherDoi.where(id: ids, type: "OtherDoi").includes(
       { client: :provider },
       :media,
-      :metadata
+      :metadata,
+      :enrichments
     )
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
       # Preload all events for this batch in a single query

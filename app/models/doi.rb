@@ -840,11 +840,14 @@ class Doi < ApplicationRecord
   end
 
   def has_enrichments
-    if association(:enrichments).loaded?
-      enrichments.any?
-    else
-      enrichments.exists?
-    end
+    return @has_enrichments if defined?(@has_enrichments)
+
+    @has_enrichments =
+      if association(:enrichments).loaded?
+        enrichments.any?
+      else
+        enrichments.exists?
+      end
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
