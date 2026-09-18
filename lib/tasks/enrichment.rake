@@ -53,8 +53,7 @@ namespace :enrichment do
 
     # SQS limit is 256KB so we'll set the batch size to be more conservative to allow for some
     # overhead and ensure we don't exceed limits.
-    # max_batch_bytes = 150000
-    ##### TODO ADD THIS BACK
+    max_batch_bytes = 150000
 
     s3 = Aws::S3::Client.new(force_path_style: true)
 
@@ -86,66 +85,67 @@ namespace :enrichment do
       puts("Found object: s3://#{bucket}/#{object_key}")
     end
 
-    # process_object = lambda do |object_key|
-    #   puts("Begin ingestion for s3://#{bucket}/#{object_key} (max_batch_bytes=#{max_batch_bytes})")
+    process_object = lambda do |object_key|
+      puts("Begin ingestion for s3://#{bucket}/#{object_key} (max_batch_bytes=#{max_batch_bytes})")
 
-    #   buffer = +""
-    #   line_no = 0
-    #   batch_lines = []
-    #   batch_bytes = 0
-    #   inflater = Zlib::Inflate.new(Zlib::MAX_WBITS + 16)
+      buffer = +""
+      line_no = 0
+      batch_lines = []
+      batch_bytes = 0
+      inflater = Zlib::Inflate.new(Zlib::MAX_WBITS + 16)
 
-    #   flush = lambda do
-    #     return if batch_lines.empty?
+      flush = lambda do
+        return if batch_lines.empty?
 
-    #     EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
-    #     batch_lines.clear
-    #     batch_bytes = 0
-    #   end
+        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
+        batch_lines.dup.each { |x| puts("Processing line: #{x}") }
+        batch_lines.clear
+        batch_bytes = 0
+      end
 
-    #   enqueue_line = lambda do |raw|
-    #     line = raw.strip
-    #     return if line.empty?
+      enqueue_line = lambda do |raw|
+        line = raw.strip
+        return if line.empty?
 
-    #     line_no += 1
-    #     line_bytes = line.bytesize + 1
+        line_no += 1
+        line_bytes = line.bytesize + 1
 
-    #     if line_bytes > max_batch_bytes
-    #       raise "Single JSONL line at #{object_key}:#{line_no} is #{line_bytes} bytes, exceeds MAX_BATCH_BYTES=#{max_batch_bytes}."
-    #     end
+        if line_bytes > max_batch_bytes
+          raise "Single JSONL line at #{object_key}:#{line_no} is #{line_bytes} bytes, exceeds MAX_BATCH_BYTES=#{max_batch_bytes}."
+        end
 
-    #     flush.call if (batch_bytes + line_bytes) > max_batch_bytes
+        flush.call if (batch_bytes + line_bytes) > max_batch_bytes
 
-    #     batch_lines << line
-    #     batch_bytes += line_bytes
-    #   end
+        batch_lines << line
+        batch_bytes += line_bytes
+      end
 
-    #   consume_chunk = lambda do |chunk|
-    #     next if chunk.empty?
+      consume_chunk = lambda do |chunk|
+        next if chunk.empty?
 
-    #     buffer << chunk
+        buffer << chunk
 
-    #     while (idx = buffer.index("\n"))
-    #       enqueue_line.call(buffer.slice!(0..idx).delete_suffix("\n"))
-    #     end
-    #   end
+        while (idx = buffer.index("\n"))
+          enqueue_line.call(buffer.slice!(0..idx).delete_suffix("\n"))
+        end
+      end
 
-    #   begin
-    #     s3.get_object(bucket: bucket, key: object_key) do |chunk|
-    #       consume_chunk.call(inflater.inflate(chunk))
-    #     end
-    #     consume_chunk.call(inflater.finish)
-    #   ensure
-    #     inflater.close
-    #   end
+      begin
+        s3.get_object(bucket: bucket, key: object_key) do |chunk|
+          consume_chunk.call(inflater.inflate(chunk))
+        end
+        consume_chunk.call(inflater.finish)
+      ensure
+        inflater.close
+      end
 
-    #   enqueue_line.call(buffer) unless buffer.strip.empty?
-    #   flush.call
-    #   puts("Finished ingestion for s3://#{bucket}/#{object_key} (lines_seen=#{line_no})")
-    # end
+      enqueue_line.call(buffer) unless buffer.strip.empty?
+      flush.call
+      puts("Finished ingestion for s3://#{bucket}/#{object_key} (lines_seen=#{line_no})")
+    end
 
-    # puts("Ingesting #{object_keys.size} gzipped file(s) under s3://#{bucket}/#{prefix}")
-    # object_keys.each { |object_key| process_object.call(object_key) }
+    puts("Ingesting #{object_keys.size} gzipped file(s) under s3://#{bucket}/#{prefix}")
+    object_keys.each { |object_key| process_object.call(object_key) }
   end
 
   desc "Process DOI text file from S3"
