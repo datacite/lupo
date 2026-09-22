@@ -101,7 +101,7 @@ namespace :enrichment do
         return if batch_lines.empty?
 
         puts("Processing batch for file: #{object_key}")
-        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
+        EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
         batch_lines.clear
         batch_bytes = 0
       end
