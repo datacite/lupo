@@ -88,10 +88,6 @@ namespace :enrichment do
       puts("Found object: s3://#{bucket}/#{object_key}")
     end
 
-    # Testing only: ingest the first gzipped object so we can verify reads without
-    # streaming the whole prefix.
-    object_keys = object_keys.first(1)
-
     process_object = lambda do |object_key|
       puts("Begin ingestion for s3://#{bucket}/#{object_key} (max_batch_bytes=#{max_batch_bytes})")
 
