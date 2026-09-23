@@ -8,8 +8,8 @@ class DataciteDoisController < ApplicationController
   include Crosscitable
 
   prepend_before_action :authenticate_user!
-  before_action :set_include, only: %i[index show create update]
-  before_action :set_raven_context, only: %i[create update validate]
+  before_action :set_include, only: %i[index show create update update_batch]
+  before_action :set_raven_context, only: %i[create update update_batch validate]
 
   def index
     show_enrichments = params["enriched"]&.upcase == "TRUE"
@@ -566,97 +566,50 @@ class DataciteDoisController < ApplicationController
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
 
-    @doi = DataciteDoi.new(sanitized_params)
+    return submit_batch("create") if params[:data].is_a?(Array)
 
-    # capture username and password for reuse in the handle system
-    @doi.current_user = current_user
+    result =
+      DoiMutation.new(
+        operation: "create",
+        attributes: sanitized_params,
+        actor: current_user,
+        authorizer: method(:authorize!),
+      ).call
 
-    authorize! :new, @doi
-
-    if @doi.save
-      options = {}
-      options[:include] = @include
-      options[:is_collection] = false
-      options[:params] = {
-        current_ability: current_ability,
-        detail: true,
-        affiliation: params[:affiliation],
-        publisher: params[:publisher],
-        include_other_registration_agencies: params[:include_other_registration_agencies],
-      }
-
-      render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
-        status: :created,
-        location: @doi
-      )
-    else
-      render json: serialize_errors(@doi.errors, uid: @doi.uid),
-             include: @include,
-             status: :unprocessable_entity
-    end
+    render_mutation_result(result, location: result.doi)
   end
 
   def update
-    @doi = DataciteDoi.where(doi: params[:id]).first
-    exists = @doi.present?
-    should_validate = true
-
-    # capture username and password for reuse in the handle system
-
-    if exists
-      @doi.current_user = current_user
-
-      if params.dig(:data, :attributes, :mode) == "transfer"
-        # only update client_id
-
-        authorize! :transfer, @doi
-        @doi.assign_attributes(sanitized_params.slice(:client_id))
-        should_validate = false
-      else
-        authorize! :update, @doi
-        if sanitized_params[:schema_version].blank?
-          @doi.assign_attributes(
-            sanitized_params.except(:doi, :client_id).merge(
-              schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION,
-            ),
-          )
-        else
-          @doi.assign_attributes(sanitized_params.except(:doi, :client_id))
-        end
-      end
-    else
-      doi_id = validate_doi(params[:id])
-      fail ActiveRecord::RecordNotFound if doi_id.blank?
-
-      @doi = DataciteDoi.new(sanitized_params.merge(doi: doi_id))
-      # capture username and password for reuse in the handle system
-      @doi.current_user = current_user
-
-      authorize! :new, @doi
+    existing_doi = DataciteDoi.where(doi: params[:id]).first
+    if existing_doi.present?
+      action =
+        params.dig(:data, :attributes, :mode) == "transfer" ?
+          :transfer :
+          :update
+      authorize! action, existing_doi
     end
 
-    if @doi.save(validate: should_validate)
-      options = {}
-      options[:include] = @include
-      options[:is_collection] = false
-      options[:params] = {
-        current_ability: current_ability,
-        detail: true,
-        affiliation: params[:affiliation],
-        publisher: params[:publisher],
-        include_other_registration_agencies: params[:include_other_registration_agencies],
-      }
+    result =
+      DoiMutation.new(
+        operation: "update",
+        id: params[:id],
+        attributes: sanitized_params,
+        mode: params.dig(:data, :attributes, :mode),
+        actor: current_user,
+        authorizer: method(:authorize!),
+      ).call
 
-      render(
-        json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
-        status: exists ? :ok : :created
-      )
-    else
-      render json: serialize_errors(@doi.errors, uid: @doi.uid),
-             include: @include,
-             status: :unprocessable_entity
+    render_mutation_result(result)
+  end
+
+  def update_batch
+    fail CanCan::AuthorizationNotPerformed if current_user.blank?
+    unless params[:data].is_a?(Array)
+      raise ActionController::BadRequest,
+            "Batch updates require data to be an array"
     end
+
+    submit_batch("update")
   end
 
   def undo
@@ -801,6 +754,58 @@ class DataciteDoisController < ApplicationController
   end
 
   protected
+    def render_mutation_result(result, location: nil)
+      @doi = result.doi
+
+      if result.success?
+        options = {}
+        options[:include] = @include
+        options[:is_collection] = false
+        options[:params] = {
+          current_ability: current_ability,
+          detail: true,
+          affiliation: params[:affiliation],
+          publisher: params[:publisher],
+          include_other_registration_agencies: params[:include_other_registration_agencies],
+        }
+
+        render_options = {
+          json: DataciteDoiSerializer.new(@doi, options).serializable_hash.to_json,
+          status: result.status,
+        }
+        render_options[:location] = location if location.present?
+        render(**render_options)
+      else
+        render json: serialize_errors(@doi.errors, uid: @doi.uid),
+               include: @include,
+               status: :unprocessable_entity
+      end
+    end
+
+    def submit_batch(operation)
+      batch =
+        DoiBatchSubmission.new(
+          operation: operation,
+          resources: params[:data],
+          actor: current_user,
+          authorizer: method(:authorize!),
+        ).call
+
+      location = doi_batch_url(batch.uuid)
+      render(
+        json:
+          DoiBatchSerializer.new(
+            batch,
+            links: {
+              self: location,
+              items: items_doi_batch_url(batch.uuid),
+            },
+          ).serializable_hash,
+        status: :accepted,
+        location: location,
+      )
+    end
+
     def handle_show_enriched_doi(doi, options)
       # Short circuit if there are no enrichments
       return render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok) if doi.enrichments.empty?
@@ -850,56 +855,24 @@ class DataciteDoisController < ApplicationController
              "You need to provide a payload following the JSONAPI spec"
       end
 
-      # alternateIdentifiers as alias for identifiers
-      # easier before strong_parameters are checked
-      if params.dig(:data, :attributes).present? &&
-          !params.dig(:data, :attributes)&.key?(:identifiers) &&
-          params.dig(:data, :attributes)&.key?(:alternateIdentifiers)
-
-        alternate_identifiers = params.dig(:data, :attributes, :alternateIdentifiers)
-
-        params[:data][:attributes][:identifiers] =
-          alternate_identifiers.nil? ? nil :
-            Array.wrap(alternate_identifiers).map do |a|
-              if a.respond_to?(:fetch)
-                {
-                  identifier: a.fetch(:alternateIdentifier, nil),
-                  identifierType: a.fetch(:alternateIdentifierType, nil),
-                }
-              else
-                a
-              end
-            end
-      end
-
-      ParamsSanitizer.sanitize_nameIdentifiers(params[:creators])
-      ParamsSanitizer.sanitize_nameIdentifiers(params[:contributors])
-
-      p =
-        params.require(:data).permit(
-          :type,
-          :id,
-          attributes: ParamsSanitizer::ATTRIBUTES_MAP,
-          relationships: ParamsSanitizer::RELATIONSHIPS_MAP,
-        ).
-          reverse_merge(ParamsSanitizer::DEFAULTS_MAP)
-      client_id =
-      p.dig("relationships", "client", "data", "id") ||
-      current_user.try(:client_id)
-      p = p.fetch("attributes").merge(client_id: client_id)
-      p
+      resource_params =
+        DoiResourceParameters.new(params.require(:data), actor: current_user)
+      permitted = resource_params.permitted_resource
+      permitted.fetch("attributes").merge(client_id: resource_params.client_id)
     end
 
     def sanitized_params
-      ParamsSanitizer.new(safe_params.to_h).cleanse
+      ParamsSanitizer.new(safe_params.to_h.with_indifferent_access).cleanse
     end
 
     def set_raven_context
-      return nil if params.dig(:data, :attributes, :xml).blank?
+      resources = params[:data].is_a?(Array) ? params[:data] : [params[:data]]
+      xml = resources.filter_map { |resource| resource&.dig(:attributes, :xml) }.first
+      return nil if xml.blank?
 
       Sentry.set_context(
         :metadata,
-        { xml: Base64.decode64(params.dig(:data, :attributes, :xml)) }
+        { xml: Base64.decode64(xml) }
       )
     end
 end
