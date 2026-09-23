@@ -80,7 +80,7 @@ group :development do
   gem "bundler-audit", "~> 0.9.3"
   gem "fasterer", "~> 0.11.0" # possible removal
   gem "listen", "~> 3.10"
-  gem "puma", "~> 6.4"
+  gem "puma", "~> 8.0", ">= 8.0.2"
   gem "reek", "~> 6.5" # possible removal
   gem "seedbank", "~> 0.5.0" # possible removal
   gem "rubocop", "~> 1.89", require: false
