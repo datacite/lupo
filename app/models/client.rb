@@ -957,27 +957,37 @@ class Client < ApplicationRecord
 
     def assign_prefix
       available_prefix = get_prefix
-      if !available_prefix
+      if available_prefix.blank?
         errors.add(
           :base,
           "No prefixes available.  Created repository, but a prefix was not assigned.  Contact support to get a prefix.",
         )
-      else
-        prefix, provider_prefix = nil
-        available_prefix.class.name == "Prefix" ? prefix = available_prefix : provider_prefix = available_prefix
-
-        if !provider_prefix.present?
-          provider_prefix = ProviderPrefix.create(
-            provider_id: provider.symbol, prefix_id: prefix.uid
-          )
-        end
-
-        ClientPrefix.create(
-          client_id: symbol,
-          provider_prefix_id: provider_prefix.uid,
-          prefix_id: provider_prefix.prefix.uid
-        )
+        return
       end
+
+      if available_prefix.is_a?(Prefix)
+        prefix = available_prefix
+        provider_prefix = ProviderPrefix.create!(
+          provider_id: provider.symbol,
+          prefix_id: prefix.uid,
+        )
+      else
+        provider_prefix = available_prefix
+        prefix = provider_prefix.prefix
+        if prefix.blank?
+          errors.add(
+            :base,
+            "No prefixes available.  Created repository, but a prefix was not assigned.  Contact support to get a prefix.",
+          )
+          return
+        end
+      end
+
+      ClientPrefix.create!(
+        client_id: symbol,
+        provider_prefix_id: provider_prefix.uid,
+        prefix_id: prefix.uid,
+      )
     end
 
     def user_url

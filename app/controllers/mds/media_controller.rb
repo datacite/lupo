@@ -1,0 +1,96 @@
+# frozen_string_literal: true
+
+module Mds
+  class MediaController < Mds::ApplicationController
+    include Mds::DoiLookup
+
+    prepend_before_action :authenticate_mds_user!
+    before_action :set_doi
+    before_action :set_media, only: %i[show destroy]
+
+    def index
+      authorize_mds_doi_read!(@doi)
+
+      media = @doi.media.to_a
+      fail Mds::Error.new("No media for the DOI", status: 404) if media.blank?
+
+      body = media.map { |m| "#{m.media_type}=#{m.url}" }.join("\n")
+      render_mds(body)
+    end
+
+    def show
+      authorize_mds_doi_read!(@doi)
+
+      fail Mds::Error.new("No media for the DOI", status: 404) if @media.blank?
+
+      render_mds("#{@media.media_type}=#{@media.url}")
+    end
+
+    def create
+      authorize! :update, @doi
+
+      data = request.raw_post
+      fail Mds::Error.new("Media type and URL missing", status: 400) if data.blank?
+
+      media_type, url = parse_media_body(data)
+      media = Media.new(doi: @doi, media_type: media_type, url: url)
+
+      unless media.save
+        message = media.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
+    end
+
+    def destroy
+      authorize! :update, @doi
+
+      fail Mds::Error.new("No media for the DOI", status: 404) if @media.blank?
+
+      unless @media.destroy
+        message = @media.errors.full_messages.first || "Unprocessable entity"
+        fail Mds::Error.new(message, status: 422)
+      end
+
+      render_mds("OK")
+    end
+
+    private
+      def set_doi
+        raw = params[:doi_id]
+        fail Mds::Error.new(Mds::DOI_UNKNOWN_TO_MDS, status: 404) if raw.blank?
+
+        @doi = find_datacite_doi!(raw, not_found: Mds::DOI_UNKNOWN_TO_MDS)
+      end
+
+      def set_media
+        encoded = params[:id]
+        fail Mds::Error.new("No media for the DOI", status: 404) if encoded.blank?
+
+        id = Base32::URL.decode(CGI.unescape(encoded.to_s))
+        fail Mds::Error.new("No media for the DOI", status: 404) if id.blank?
+
+        @media = @doi.media.where(id: id.to_i).first
+      end
+
+      # MDS media body is mediaType=url. Both parts are required; blank type must not
+      # fall through to Media#set_defaults (text/plain). URL schemes match PUT /doi
+      # landing URLs (http/https/ftp) for a consistent MDS surface.
+      def parse_media_body(data)
+        media_type, url = data.to_s.split("=", 2)
+        media_type = media_type.to_s.strip
+        url = url.to_s.strip
+
+        if media_type.blank? || url.blank?
+          fail Mds::Error.new("Media type and URL missing", status: 400)
+        end
+
+        unless url.match?(%r{\A(http|https|ftp)://\S+\z})
+          fail Mds::Error.new("Not a valid HTTP(S) or FTP URL", status: 400)
+        end
+
+        [media_type, url]
+      end
+  end
+end

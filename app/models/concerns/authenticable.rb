@@ -6,6 +6,12 @@ module Authenticable
   require "jwt"
   require "base64"
 
+  # Single source of truth for DC.* API key material (controllers via RequestCredentials,
+  # User via instance method below). Must live on the module, not inside `included`.
+  def self.api_key_token?(token)
+    token.present? && token.to_s.length > 20 && token.to_s.match?(/\ADC\./i)
+  end
+
   included do
     # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
@@ -153,16 +159,10 @@ module Authenticable
 
     # basic auth
     def decode_auth_param(username: nil, password: nil)
-      if username.present? && username.length > 20 && username.match?(/\ADC\./i)
-        api_key = ApiKey.authenticate(username)
-        if api_key
-          client = api_key.client
-          if client
-            touch_api_key_last_used(api_key)
-            return payload_for_api_key(api_key, client)
-          end
-        end
-        return {}
+      # API key as Basic username (password ignored). Fail hard so callers get 401
+      # instead of silently falling through to anonymous on public REST endpoints.
+      if api_key_token?(username)
+        return decode_api_key(username)
       end
 
       return {} unless username.present? && password.present?
@@ -180,13 +180,15 @@ module Authenticable
         return get_payload(uid: uid, user: user, password: password.to_s)
       end
 
-      if username.include?(".") && user
+      # API key as Basic password for a known client symbol.
+      if username.include?(".") && user && api_key_token?(password)
         api_key = ApiKey.authenticate(password)
         if api_key && api_key.client&.symbol&.downcase == user.symbol.downcase
           touch_api_key_last_used(api_key)
           # Do not pass the API key secret through as password (handle system).
           return payload_for_api_key(api_key, user)
         end
+        return { errors: "Invalid API key." }
       end
 
       {}
@@ -202,6 +204,10 @@ module Authenticable
 
       touch_api_key_last_used(api_key)
       payload_for_api_key(api_key, client)
+    end
+
+    def api_key_token?(token)
+      Authenticable.api_key_token?(token)
     end
 
     def get_payload(uid: nil, user: nil, password: nil)

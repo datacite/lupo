@@ -491,12 +491,12 @@ describe "API key authentication", type: :model do
       expect(payload["api_key_prefix"]).to be_nil
     end
 
-    it "rejects wrong key" do
+    it "rejects wrong key with an explicit error" do
       payload = client.decode_auth_param(
         username: client.symbol,
         password: "DC.wrongkeyvalue1234567890abcdef",
       )
-      expect(payload).to eq({})
+      expect(payload[:errors]).to eq("Invalid API key.")
     end
   end
 
@@ -512,6 +512,16 @@ describe "API key authentication", type: :model do
     it "returns error for invalid" do
       payload = client.decode_api_key("bad")
       expect(payload[:errors]).to be_present
+    end
+  end
+
+  describe "decode_auth_param with invalid DC.* username" do
+    it "returns Invalid API key error instead of empty anonymous payload" do
+      payload = client.decode_auth_param(
+        username: "DC.invalidkey000000000000000000000",
+        password: "ignored",
+      )
+      expect(payload[:errors]).to eq("Invalid API key.")
     end
   end
 end
