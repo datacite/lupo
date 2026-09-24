@@ -35,6 +35,8 @@ Mime::Type.register "application/vnd.codemeta.ld+json", :codemeta
 Mime::Type.register "application/x-bibtex", :bibtex
 Mime::Type.register "application/x-research-info-systems", :ris
 Mime::Type.register "text/x-bibliography", :citation
+Mime::Type.register "application/rdf+xml", :rdf_xml
+Mime::Type.register "text/turtle", :turtle, %w[application/x-turtle]
 
 # register renderers for these Mime types
 # :citation and :datacite is handled differently
@@ -82,4 +84,12 @@ end
 
 ActionController::Renderers.add :csv do |obj, options|
   options[:header].to_csv + Array.wrap(obj).map { |o| o.send("csv") }.join("")
+end
+
+ActionController::Renderers.add :rdf_xml do |obj, _options|
+  Array.wrap(obj).map { |o| o.rdf_xml }.join("\n")
+end
+
+ActionController::Renderers.add :turtle do |obj, _options|
+  Array.wrap(obj).map { |o| o.turtle }.join("\n")
 end
