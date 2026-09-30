@@ -109,6 +109,24 @@ describe ProvidersController, type: :request, elasticsearch: true do
           provider.billing_information,
         )
         expect(json["data"]["attributes"]["rorId"]).to eq(provider.ror_id)
+        expect(json["data"]["attributes"].key?("annualRevenue")).to be true
+      end
+    end
+
+    context "annual revenue is hidden without billing permission" do
+      let(:provider) do
+        create(
+          :provider,
+          non_profit_status: "for-profit",
+          annual_revenue: "0-500.000€",
+        )
+      end
+
+      it "omits annual revenue for anonymous requests" do
+        get "/providers/#{provider.symbol.downcase}"
+
+        expect(last_response.status).to eq(200)
+        expect(json["data"]["attributes"]["annualRevenue"]).to be_nil
       end
     end
 
@@ -371,6 +389,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(json["data"].dig("attributes", "billingInformation")).to eq(nil)
         expect(json["data"].dig("attributes", "twitterHandle")).to eq(nil)
+        expect(json["data"].dig("attributes", "annualRevenue")).to eq(nil)
       end
     end
 
@@ -569,6 +588,39 @@ describe ProvidersController, type: :request, elasticsearch: true do
         )
         expect(json.dig("data", "attributes", "rorId")).to eq(
           "https://ror.org/05njkjr15",
+        )
+      end
+    end
+
+    context "request is valid with annual revenue for for-profit" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "symbol" => "FP",
+              "name" => "For Profit Org",
+              "displayName" => "For Profit Org",
+              "region" => "EMEA",
+              "systemEmail" => "doe@joe.joe",
+              "website" => "https://www.example.org",
+              "country" => "GB",
+              "nonProfitStatus" => "for-profit",
+              "annualRevenue" => "0-500.000€",
+            },
+          },
+        }
+      end
+
+      it "creates a provider" do
+        post "/providers", params, admin_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "nonProfitStatus")).to eq(
+          "for-profit",
+        )
+        expect(json.dig("data", "attributes", "annualRevenue")).to eq(
+          "0-500.000€",
         )
       end
     end
@@ -951,6 +1003,37 @@ describe ProvidersController, type: :request, elasticsearch: true do
         ).to eq(consortium.symbol.downcase)
         expect(json.dig("data", "attributes", "organizationType")).to eq(
           "internationalOrganization",
+        )
+      end
+    end
+
+    context "updates annual revenue for for-profit" do
+      let(:provider) do
+        create(
+          :provider,
+          consortium: consortium,
+          role_name: "ROLE_CONSORTIUM_ORGANIZATION",
+          non_profit_status: "for-profit",
+          annual_revenue: "0-500.000€",
+        )
+      end
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "annualRevenue" => "500.001€-2.000.000€",
+            },
+          },
+        }
+      end
+
+      it "updates the record" do
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "annualRevenue")).to eq(
+          "500.001€-2.000.000€",
         )
       end
     end
