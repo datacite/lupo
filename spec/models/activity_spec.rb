@@ -59,7 +59,7 @@ describe Activity, type: :model do
     let(:provider) { create(:provider) }
 
     it "activity exists" do
-      provider.update(non_profit_status: "for-profit")
+      provider.update(non_profit_status: "for-profit", annual_revenue: "0-500.000€")
 
       expect(provider.activities.length).to eq(2)
       activity = provider.activities.last
@@ -68,6 +68,7 @@ describe Activity, type: :model do
       expect(activity.request_uuid).to be_present
       expect(activity.audited_changes).to eq(
         "non_profit_status" => %w[non-profit for-profit],
+        "annual_revenue" => [nil, "0-500.000€"],
       )
     end
   end
