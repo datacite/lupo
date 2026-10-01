@@ -72,7 +72,12 @@ module Indexable
         rescue Elastic::Transport::Transport::Errors::NotFound => e
           Rails.logger.warn "Document not found in inactive index: #{e.message}"
         end
-      end      # Only log success if at least one deletion succeeded
+      elsif instance_of?(Client) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        send_client_export_message(to_jsonapi.merge(slack_output: true))
+      elsif instance_of?(Provider) && !from_salesforce && (Rails.env.production? || ENV["SQS_PREFIX"] == "stage")
+        send_provider_export_message(to_jsonapi.merge(slack_output: true))
+      end
+      # Only log success if at least one deletion succeeded
       if deleted_from_active || deleted_from_inactive
         if self.class.name == "Event"
           Rails.logger.info "#{self.class.name} #{uuid} deleted from Elasticsearch index."

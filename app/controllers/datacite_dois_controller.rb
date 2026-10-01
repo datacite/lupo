@@ -490,6 +490,9 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
         }
+        # Preload events since we are going to show details
+        # This optimizes the serializer which accesses part_events, citation_events, etc.
+        EventsPreloader.new([doi]).preload!
 
         if show_enriched
           return handle_show_enriched_doi(doi, options)
@@ -805,26 +808,13 @@ class DataciteDoisController < ApplicationController
       # Short circuit if there are no enrichments
       return render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok) if doi.enrichments.empty?
 
-      # Ensure validation works as expected when not persisting the record
-      doi.only_validate = true
-      doi.regenerate = true
-      doi.skip_url_validation = true
-      doi.skip_schema_version_validation = false
-
-      # Ensure we use schema version 4 for validation
-      doi.schema_version = "http://datacite.org/schema/kernel-4"
-
       # Apply enrichments to the doi
-      doi.enrichments.each do |enrichment|
-        doi.apply_enrichment(enrichment)
-      rescue
-        next
-      end
+      doi.apply_all_enrichments
 
-      # Ensure there are no enrichments in the relationship section if the doi is invalid
+      # If invalid after enrichment, reload from DB and clear enrichments relationship
       if doi.invalid?
         # Reset the doi to original version to revert enrichment application
-        doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
+        doi = Doi.find_by(doi: doi.doi, agency: "datacite")
 
         # Clear enrichments
         doi.association(:enrichments).target = []
