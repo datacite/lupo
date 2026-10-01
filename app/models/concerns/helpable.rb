@@ -66,7 +66,15 @@ module Helpable
 
       if [200, 201].include?(response.status)
         if minted.blank?
-          update(minted: Time.zone.now, updated: Time.zone.now)
+          now = Time.zone.now
+          # update_columns skips callbacks, so a second after_commit update_url
+          # (and handle PUT) is not triggered; re-index explicitly instead.
+          if persisted?
+            update_columns(minted: now, updated: now)
+            enqueue_index_update if respond_to?(:enqueue_index_update)
+          else
+            assign_attributes(minted: now, updated: now)
+          end
         end
 
         unless Rails.env.test?
