@@ -2080,8 +2080,15 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
   describe "as_indexed_json" do
     it "uses slim client and provider snapshots" do
       provider = create(:provider, ror_id: "https://ror.org/01abcde23")
-      client = create(:client, provider: provider, re3data_id: "10.17616/R3XS37", opendoar_id: "1234", certificate: ["certificate-a"], client_type: "repository")
-      doi = create(:doi, client: client, provider: provider)
+      client = create(
+        :client,
+        provider: provider,
+        re3data_id: "10.17616/R3XS37",
+        opendoar_id: 1234,
+        certificate: ["CoreTrustSeal"],
+        client_type: "repository",
+      )
+      doi = create(:doi, client: client)
 
       client_json = doi.as_indexed_json["client"]
       provider_json = doi.as_indexed_json["provider"]
@@ -2089,8 +2096,8 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
       expect(client_json).to include(
         "uid" => client.uid,
         "re3data_id" => "10.17616/R3XS37",
-        "opendoar_id" => "1234",
-        "certificate" => ["certificate-a"],
+        "opendoar_id" => 1234,
+        "certificate" => ["CoreTrustSeal"],
         "client_type" => "repository",
       )
       expect(client_json).not_to include("password", "salesforce_id", "globus_uuid", "system_email", "service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
