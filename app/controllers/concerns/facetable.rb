@@ -506,9 +506,9 @@ module Facetable
       arr.map { |hsh|
         orcid_id = hsh["key"]
 
-        if orcid_id.blank?
-          next
-        end
+        # person_id buckets are ORCID URLs. Authors buckets can also include
+        # other name identifiers (for example OSF), which are not facets.
+        next unless orcid_facet_key?(orcid_id)
 
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
@@ -533,6 +533,13 @@ module Facetable
           }
         end
       }.compact
+    end
+
+    def orcid_facet_key?(key)
+      return false if key.blank?
+
+      %r{\Ahttps?://orcid\.org/.+\z}i.match?(key) ||
+        %r{\A\d{4}-\d{4}-\d{4}-\d{3}[\dX]\z}i.match?(key)
     end
 
     def facet_by_authors(arr)
