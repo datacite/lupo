@@ -1,0 +1,16 @@
+# Temporary: measure the GHCR layer cache. Removed after the cold and warm runs.
+name: Compare image build cache
+on:
+  push:
+    branches:
+      - cursor-ghcr-docker-cache-24c6
+permissions:
+  contents: read
+  packages: write
+jobs:
+  call_build_and_push:
+    uses: ./.github/workflows/build.yml
+    with:
+      image_name: ${{ github.repository }}
+      image_tag: ci-cache-bench
+    secrets: inherit
