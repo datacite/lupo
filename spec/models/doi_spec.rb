@@ -2099,6 +2099,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         "opendoar_id" => 1234,
         "certificate" => ["CoreTrustSeal"],
         "client_type" => "repository",
+        "is_active" => client.is_active,
       )
       expect(client_json).not_to include("password", "salesforce_id", "globus_uuid", "system_email", "service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
 
@@ -2107,6 +2108,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         "ror_id" => "https://ror.org/01abcde23",
         "name" => provider.name,
         "display_name" => provider.display_name,
+        "is_active" => provider.is_active,
       )
       expect(provider_json).not_to include("password", "billing_information", "technical_contact", "service_contact", "consortium")
     end

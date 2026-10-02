@@ -853,6 +853,7 @@ class Doi < ApplicationRecord
       "language" => client.language,
       "client_type" => client.client_type,
       "certificate" => Array.wrap(client.certificate),
+      "is_active" => client.is_active,
       "symbol" => client.symbol,
       "year" => client.year,
       "domains" => client.domains,
@@ -878,6 +879,7 @@ class Doi < ApplicationRecord
       "member_type" => provider.member_type,
       "organization_type" => provider.organization_type,
       "focus_area" => provider.focus_area,
+      "is_active" => provider.is_active,
       "joined" => provider.joined.try(:iso8601),
       "ror_id" => provider.ror_id,
     }
