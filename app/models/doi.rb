@@ -2098,11 +2098,11 @@ class Doi < ApplicationRecord
   def person_id
     (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
-        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ORCID" && name_identifier.fetch("nameIdentifier", nil).present?
-          sum << orcid_as_url(
-            orcid_from_url(name_identifier.fetch("nameIdentifier", nil))
-          )
-        end
+        next unless name_identifier.is_a?(Hash)
+        next unless name_identifier.fetch("nameIdentifierScheme", nil) == "ORCID"
+
+        orcid_url = orcid_url_from_identifier(name_identifier.fetch("nameIdentifier", nil))
+        sum << orcid_url if orcid_url.present?
       end
       sum.uniq
     end
