@@ -2077,6 +2077,43 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
   end
 
+  describe "as_indexed_json" do
+    it "uses slim client and provider snapshots" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23")
+      client = create(
+        :client,
+        provider: provider,
+        re3data_id: "10.17616/R3XS37",
+        opendoar_id: 1234,
+        certificate: ["CoreTrustSeal"],
+        client_type: "repository",
+      )
+      doi = create(:doi, client: client)
+
+      client_json = doi.as_indexed_json["client"]
+      provider_json = doi.as_indexed_json["provider"]
+
+      expect(client_json).to include(
+        "uid" => client.uid,
+        "re3data_id" => "10.17616/R3XS37",
+        "opendoar_id" => 1234,
+        "certificate" => ["CoreTrustSeal"],
+        "client_type" => "repository",
+        "is_active" => client.is_active,
+      )
+      expect(client_json).not_to include("password", "salesforce_id", "globus_uuid", "system_email", "service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
+
+      expect(provider_json).to include(
+        "uid" => provider.uid,
+        "ror_id" => "https://ror.org/01abcde23",
+        "name" => provider.name,
+        "display_name" => provider.display_name,
+        "is_active" => provider.is_active,
+      )
+      expect(provider_json).not_to include("password", "billing_information", "technical_contact", "service_contact", "consortium")
+    end
+  end
+
   describe "update publisher" do
     let(:doi) { create(:doi) }
 

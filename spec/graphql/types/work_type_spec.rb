@@ -534,9 +534,19 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(
         @works[0].identifier,
       )
+      # Sort is created asc, then uid. Records created in the same second
+      # order by uid, so the first hit is not a fixed factory DOI.
+      second_creator = Array.wrap(@works[0].creators)[1]
+      expected_creator_type =
+        case second_creator && second_creator["nameType"]
+        when "Organizational"
+          "Organization"
+        when "Personal"
+          "Person"
+        end
       expect(
         response.dig("data", "works", "nodes", 0, "creators", 1, "type"),
-      ).to be nil
+      ).to eq(expected_creator_type)
       expect(
         response.dig("data", "works", "nodes", 0, "publisher"),
       ).to eq({

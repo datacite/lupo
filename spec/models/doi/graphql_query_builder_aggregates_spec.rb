@@ -42,8 +42,7 @@ RSpec.describe Doi::GraphqlQuery::Builder do
               work_types: { terms: { field: "resource_type_id_and_name", min_doc_count: 1 } },
             },
             terms: {
-              field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
-              include: "https?://orcid.org/.*",
+              field: "person_id",
               min_doc_count: 1,
               size: 10,
             },

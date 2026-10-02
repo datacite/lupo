@@ -504,11 +504,11 @@ module Facetable
 
     def _facet_by_general_contributor(arr, aggregate, source)
       arr.map { |hsh|
-        orcid_id = %r{\A(?:(http|https)://(orcid.org)/)(.+)\z}.match?(hsh["key"]) && hsh["key"]
+        orcid_id = hsh["key"]
 
-        if orcid_id.nil?
-          next
-        end
+        # person_id buckets are ORCID URLs. Authors buckets can also include
+        # other name identifiers (for example OSF), which are not facets.
+        next unless orcid_facet_key?(orcid_id)
 
         # The aggregation query should only return 1 hit, so hence the index
         # into first element
@@ -517,7 +517,9 @@ module Facetable
         # Filter through creators to find creator that matches the key
         matched_creator = creators.select do |creator|
           if creator.key?("nameIdentifiers")
-            Array.wrap(creator["nameIdentifiers"]).any? { |ni| ni["nameIdentifier"] == orcid_id }
+            Array.wrap(creator["nameIdentifiers"]).any? do |ni|
+              ni["nameIdentifier"] == orcid_id || orcid_as_url(orcid_from_url(ni["nameIdentifier"])) == orcid_id
+            end
           end
         end
 
@@ -531,6 +533,13 @@ module Facetable
           }
         end
       }.compact
+    end
+
+    def orcid_facet_key?(key)
+      return false if key.blank?
+
+      %r{\Ahttps?://orcid\.org/.+\z}i.match?(key) ||
+        %r{\A\d{4}-\d{4}-\d{4}-\d{3}[\dX]\z}i.match?(key)
     end
 
     def facet_by_authors(arr)
