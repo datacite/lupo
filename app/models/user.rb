@@ -70,18 +70,14 @@ class User
           )
       end
     elsif credentials.present?
-      payload = decode_token(credentials)
-      if payload.blank? || payload[:errors]
-        # Try as API key (drop-in Bearer support, non-JWT)
-        ak_payload = decode_api_key(credentials)
-        if ak_payload.present? && !ak_payload[:errors]
-          payload = ak_payload
-          @jwt = nil # keys are not JWTs
-        else
-          @jwt = credentials
-        end
+      # Prefer API-key detection before JWT. DC.* tokens are never valid JWTs
+      # (they have only two "."-segments), and JWT blacklist must not block keys.
+      if api_key_token?(credentials)
+        payload = decode_api_key(credentials)
+        @jwt = nil
       else
-        @jwt = credentials
+        payload = decode_token(credentials)
+        @jwt = credentials if payload.present? && !payload[:errors]
       end
     end
 

@@ -198,13 +198,13 @@ describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
         is_expected.not_to be_able_to(:create, api_key)
       end
 
-      it "can read/create/update/destroy dois but not get_urls or transfer" do
+      it "can read/create/update/destroy dois and get_url(s) but not transfer" do
         is_expected.to be_able_to(:read, doi)
         is_expected.to be_able_to(:create, doi)
         is_expected.to be_able_to(:update, doi)
         is_expected.to be_able_to(:destroy, doi)
         is_expected.to be_able_to(:get_url, doi)
-        is_expected.not_to be_able_to(:get_urls, Doi)
+        is_expected.to be_able_to(:get_urls, Doi)
         is_expected.not_to be_able_to(:transfer, doi)
       end
 
