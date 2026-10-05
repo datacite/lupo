@@ -12,6 +12,10 @@ class OtherDoi < Doi
     index_name "dois-other"
   end
 
+  settings index: Doi.settings.to_hash.fetch(:index, {}).merge(
+    number_of_shards: ENV["NUMBER_OF_SHARDS_OTHER_DOI"].to_i,
+  )
+
   def client_id=(_value)
     write_attribute(:datacentre, 0)
   end

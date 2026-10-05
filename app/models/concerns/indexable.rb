@@ -1202,7 +1202,7 @@ module Indexable
         elsif name == "OtherDoi"
           {
             index_patterns: ["#{alias_name}*"],
-            settings: Doi.settings.to_hash,
+            settings: settings.to_hash,
             mappings: Doi.mappings.to_hash,
           }
         else
