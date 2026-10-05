@@ -8,9 +8,9 @@ describe "Datacite DOI number_of_shards" do
     expect(DataciteDoi.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)
   end
 
-  it "does not apply the shard setting to OtherDoi or shared Doi settings" do
+  it "does not apply the Datacite shard setting to shared Doi settings" do
     expect(Doi.settings.to_hash.dig(:index, :number_of_shards)).to be_nil
-    expect(OtherDoi.settings.to_hash.dig(:index, :number_of_shards)).to be_nil
+    expect(DataciteDoi.settings).not_to equal(Doi.settings)
   end
 
   it "uses DataciteDoi.settings when building the Datacite template" do
@@ -29,14 +29,17 @@ describe "Datacite DOI number_of_shards" do
     DataciteDoi.create_template
   end
 
-  it "keeps OtherDoi templates free of the Datacite shard setting" do
+  it "keeps OtherDoi templates on OtherDoi settings, not shared Doi settings" do
     indices = Elasticsearch::Model.client.indices
     allow(indices).to receive(:exists_template?).and_return(false)
     expect(indices).to receive(:put_template) do |args|
       expect(args[:name]).to eq(OtherDoi.index_name)
       expect(args[:body][:index_patterns]).to eq(["#{OtherDoi.index_name}*"])
-      expect(args[:body][:settings]).to eq(Doi.settings.to_hash)
-      expect(args[:body][:settings].dig(:index, :number_of_shards)).to be_nil
+      expect(args[:body][:settings]).to eq(OtherDoi.settings.to_hash)
+      expect(args[:body][:settings][:index][:number_of_shards]).to eq(
+        ENV.fetch("NUMBER_OF_SHARDS_OTHER_DOI").to_i,
+      )
+      expect(Doi.settings.to_hash.dig(:index, :number_of_shards)).to be_nil
       { "acknowledged" => true }
     end
 
