@@ -66,6 +66,39 @@ describe "Facetable", type: :controller do
       expect(authors).to eq (expected_result)
     end
 
+    it "facet by author matches a bare ORCID id to the ORCID URL bucket" do
+      aggs = [
+        {
+          "key" => "https://orcid.org/0000-0003-3484-6875",
+          "doc_count" => 2,
+          "authors" => {
+            "hits" => {
+              "hits" => [
+                {
+                  "_source" => {
+                    "creators" => [
+                      {
+                        "name" => "Garza, Kristian",
+                        "nameIdentifiers" => [
+                          { "nameIdentifier" => "0000-0003-3484-6875" },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ]
+
+      expect(model.facet_by_authors(aggs)).to eq(
+        [
+          { "id" => "https://orcid.org/0000-0003-3484-6875", "title" => "Garza, Kristian", "count" => 2 },
+        ],
+      )
+    end
+
     it "facet by funder" do
       funders = model.facet_by_funders(funder_aggs)
 
