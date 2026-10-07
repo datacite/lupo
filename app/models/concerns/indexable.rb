@@ -11,10 +11,11 @@ module Indexable
       if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
         other_doi = OtherDoi.find_by(id: self.id)
         if other_doi
-          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
+          # Pass index tokens so after_commit never calls get_alias on the request path.
+          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: :active })
 
           if index_sync_enabled?
-            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
+            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: :inactive })
           end
         end
       elsif ["Event", "Activity"].include?(self.class.name)
@@ -25,7 +26,7 @@ module Indexable
         IndexJobDoiRegistration.perform_later(self)
 
         if index_sync_enabled?
-          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
+          DataciteDoiImportInBulkJob.perform_later([id], { index: :inactive })
         end
       else
         __elasticsearch__.index_document
