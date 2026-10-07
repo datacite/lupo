@@ -1055,6 +1055,18 @@ module Indexable
       # end
     end
 
+    ACTIVE_INDEX_CACHE_TTL = 1.hour
+
+    def active_index_cache_key
+      "elasticsearch/active_index/#{index_name}"
+    end
+
+    # Bust and re-fetch the active index name from Elasticsearch.
+    def refresh_index_name_cache!
+      Rails.cache.delete(active_index_cache_key)
+      active_index
+    end
+
     # switch between the two indexes, i.e. the index that is aliased
     # alias index for OtherDoi by default is not writeable,
     # as we also have DataciteDoi alias
@@ -1065,6 +1077,7 @@ module Indexable
       is_write_index = options[:is_write_index] || name != "OtherDoi"
 
       client = Elasticsearch::Model.client
+      message = nil
 
       if client.indices.exists_alias?(name: alias_name, index: [index_name])
         client.indices.update_aliases body: {
@@ -1085,7 +1098,7 @@ module Indexable
           ],
         }
 
-        "Switched active index to #{alternate_index_name}."
+        message = "Switched active index to #{alternate_index_name}."
       elsif client.indices.exists_alias?(
         name: alias_name, index: [alternate_index_name],
       )
@@ -1107,41 +1120,59 @@ module Indexable
           ],
         }
 
-        "Switched active index to #{index_name}."
+        message = "Switched active index to #{index_name}."
       end
+
+      refresh_index_name_cache! if message
+      message
     end
 
-    # Return the active index, i.e. the index that is aliased
-    # Don't rely on the first index being the correct one.
+    # Return the active index, i.e. the index that is aliased.
+    # Result is cached; failures are not cached and return nil without raising.
     def active_index
-      ret = nil
+      cached = Rails.cache.read(active_index_cache_key)
+      return cached if cached.present?
 
+      fetched = fetch_active_index_from_elasticsearch
+      if fetched.present?
+        Rails.cache.write(
+          active_index_cache_key,
+          fetched,
+          expires_in: ACTIVE_INDEX_CACHE_TTL,
+        )
+      end
+      fetched
+    end
+
+    # Query Elasticsearch for the write index behind the model alias.
+    # Don't rely on the first index being the correct one.
+    def fetch_active_index_from_elasticsearch
+      ret = nil
       alias_name = index_name
       client = Elasticsearch::Model.client
 
-      begin
-        h = client.indices.get_alias(name: alias_name)
+      h = client.indices.get_alias(name: alias_name)
 
-        if h.size == 1
-          ret = h.keys.first
-        else
-          # Looping through indices that have alias_name.
-          h.each do |key, value|
-            if value.dig("aliases", alias_name, "is_write_index") == true
-              ret = key
-              break
-            end
-          end
-          # If it gets here with no value, just return the first key.
-          if ret.nil?
-            ret = h.keys.first
+      if h.size == 1
+        ret = h.keys.first
+      else
+        # Looping through indices that have alias_name.
+        h.each do |key, value|
+          if value.dig("aliases", alias_name, "is_write_index") == true
+            ret = key
+            break
           end
         end
-      rescue Elastic::Transport::Transport::Errors::NotFound => e
-        Rails.logger.error e.message
+        # If it gets here with no value, just return the first key.
+        ret = h.keys.first if ret.nil?
       end
 
       ret
+    rescue Elastic::Transport::Transport::Error => e
+      Rails.logger.error(
+        "[Elasticsearch] Error fetching active index for alias #{alias_name}: #{e.class} #{e.message}",
+      )
+      nil
     end
 
     # Return the inactive index, i.e. the index that is not aliased
