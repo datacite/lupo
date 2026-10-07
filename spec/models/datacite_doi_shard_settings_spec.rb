@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Datacite DOI number_of_shards" do
+describe "Datacite DOI number_of_shards", skip_prefix_pool: true do
   it "defaults to 1 on DataciteDoi settings" do
     expect(ENV.fetch("NUMBER_OF_SHARDS_DATACITE_DOI")).to eq("1")
     expect(DataciteDoi.settings.to_hash.dig(:index, :number_of_shards)).to eq(1)
