@@ -3,9 +3,9 @@
 require "rails_helper"
 
 describe "Activity number_of_shards" do
-  it "defaults to 5 on Activity settings" do
-    expect(ENV.fetch("NUMBER_OF_SHARDS_ACTIVITY")).to eq("5")
-    expect(Activity.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)
+  it "defaults to 1 on Activity settings" do
+    expect(ENV.fetch("NUMBER_OF_SHARDS_ACTIVITY")).to eq("1")
+    expect(Activity.settings.to_hash.dig(:index, :number_of_shards)).to eq(1)
   end
 
   it "does not apply the Activity shard setting to shared Doi settings" do
@@ -22,7 +22,7 @@ describe "Activity number_of_shards" do
       expect(args[:name]).to eq(Activity.index_name)
       expect(args[:body][:index_patterns]).to eq(["#{Activity.index_name}*"])
       expect(args[:body][:settings]).to eq(Activity.settings.to_hash)
-      expect(args[:body][:settings][:index][:number_of_shards]).to eq(5)
+      expect(args[:body][:settings][:index][:number_of_shards]).to eq(1)
       expect(args[:body][:mappings]).to eq(Activity.mappings.to_hash)
       { "acknowledged" => true }
     end

@@ -3,9 +3,9 @@
 require "rails_helper"
 
 describe "Other DOI number_of_shards" do
-  it "defaults to 5 on OtherDoi settings" do
-    expect(ENV.fetch("NUMBER_OF_SHARDS_OTHER_DOI")).to eq("5")
-    expect(OtherDoi.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)
+  it "defaults to 1 on OtherDoi settings" do
+    expect(ENV.fetch("NUMBER_OF_SHARDS_OTHER_DOI")).to eq("1")
+    expect(OtherDoi.settings.to_hash.dig(:index, :number_of_shards)).to eq(1)
   end
 
   it "does not apply the OtherDoi shard setting to shared Doi settings" do
@@ -21,7 +21,7 @@ describe "Other DOI number_of_shards" do
       expect(args[:name]).to eq(OtherDoi.index_name)
       expect(args[:body][:index_patterns]).to eq(["#{OtherDoi.index_name}*"])
       expect(args[:body][:settings]).to eq(OtherDoi.settings.to_hash)
-      expect(args[:body][:settings][:index][:number_of_shards]).to eq(5)
+      expect(args[:body][:settings][:index][:number_of_shards]).to eq(1)
       expect(args[:body][:mappings]).to eq(Doi.mappings.to_hash)
       { "acknowledged" => true }
     end
