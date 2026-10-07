@@ -10,6 +10,9 @@ RSpec.describe SharedContainerSettings, type: :service do
   # This ensures test isolation without affecting other cached data
   before do
     Rails.cache.delete(cache_key)
+    SharedContainerSettings::INDEX_SYNC_MODELS.each do |model_name|
+      allow(model_name.constantize).to receive(:refresh_index_name_cache!)
+    end
   end
 
   after do
@@ -64,6 +67,24 @@ RSpec.describe SharedContainerSettings, type: :service do
         described_class.enable_index_sync!
       }.to change { Rails.cache.read(cache_key) }.from(false).to(true)
     end
+
+    it "warms index name caches for DOI models" do
+      described_class.enable_index_sync!
+
+      SharedContainerSettings::INDEX_SYNC_MODELS.each do |model_name|
+        expect(model_name.constantize).to have_received(:refresh_index_name_cache!)
+      end
+    end
+
+    it "still enables sync when warming a model cache fails" do
+      allow(DataciteDoi).to receive(:refresh_index_name_cache!).and_raise(
+        Elastic::Transport::Transport::Errors::TooManyRequests.new("rate limited"),
+      )
+
+      described_class.enable_index_sync!
+
+      expect(Rails.cache.read(cache_key)).to be(true)
+    end
   end
 
   describe ".disable_index_sync!" do
@@ -78,6 +99,14 @@ RSpec.describe SharedContainerSettings, type: :service do
       expect {
         described_class.disable_index_sync!
       }.to change { Rails.cache.read(cache_key) }.from(true).to(false)
+    end
+
+    it "does not refresh index name caches" do
+      described_class.disable_index_sync!
+
+      SharedContainerSettings::INDEX_SYNC_MODELS.each do |model_name|
+        expect(model_name.constantize).not_to have_received(:refresh_index_name_cache!)
+      end
     end
   end
 end
