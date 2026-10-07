@@ -25,25 +25,24 @@ module ResolvesElasticsearchIndex
   end
 
   private
+    # Returns options with a concrete :index, or nil when a token could not be resolved
+    # (caller should skip the import).
+    def resolve_options_index(model, options)
+      opts = options.deep_dup
+      return opts unless opts.key?(:index) || opts.key?("index")
 
-  # Returns options with a concrete :index, or nil when a token could not be resolved
-  # (caller should skip the import).
-  def resolve_options_index(model, options)
-    opts = options.deep_dup
-    return opts unless opts.key?(:index) || opts.key?("index")
+      raw = opts[:index]
+      raw = opts["index"] if raw.nil?
+      resolved = self.class.resolve_index_option(model, raw)
 
-    raw = opts[:index]
-    raw = opts["index"] if raw.nil?
-    resolved = self.class.resolve_index_option(model, raw)
+      if self.class.index_alias_token?(raw) && resolved.blank?
+        Rails.logger.error(
+          "[Elasticsearch] Could not resolve index token #{raw.inspect} for #{model.name}",
+        )
+        return nil
+      end
 
-    if self.class.index_alias_token?(raw) && resolved.blank?
-      Rails.logger.error(
-        "[Elasticsearch] Could not resolve index token #{raw.inspect} for #{model.name}",
-      )
-      return nil
+      opts[:index] = resolved
+      opts
     end
-
-    opts[:index] = resolved
-    opts
-  end
 end
