@@ -50,7 +50,9 @@ class EnrichmentBatchProcessJob < ApplicationJob
           field: parsed_line["field"],
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
-          enriched_value: parsed_line["enrichedValue"]
+          enriched_value: parsed_line["enrichedValue"],
+          key: parsed_line["key"],
+          event: parsed_line["event"]
         )
 
         # Validate enrichment and if invalid, exit.
