@@ -278,6 +278,43 @@ describe Doi, vcr: true, elasticsearch: true do
       )
       # expect { subject.register_url }.to raise_error(ActionController::BadRequest, "No valid prefix found")
     end
+
+    context "setting minted after the first successful registration", vcr: false do
+      before do
+        stub_request(:put, %r{/api/handles/}).to_return(
+          status: 201,
+          body: { "responseCode" => 1, "handle" => "10.5438/MCNV-GA6N" }.to_json,
+          headers: { "Content-Type" => "application/json" },
+        )
+      end
+
+      it "writes minted on a persisted DOI without a nested save" do
+        doi = create(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable", minted: nil)
+        version = doi.reload.version
+
+        expect(doi).not_to receive(:update_url)
+        expect(doi).to receive(:enqueue_index_update).once
+
+        doi.register_url
+
+        doi.reload
+        expect(doi.minted).to be_present
+        expect(doi.updated).to be_present
+        expect(doi.version).to eq(version)
+        expect(a_request(:put, %r{/api/handles/})).to have_been_made.once
+      end
+
+      it "assigns minted on an unsaved DOI without saving it" do
+        subject.minted = nil
+        expect(subject).not_to be_persisted
+
+        subject.register_url
+
+        expect(subject.minted).to be_present
+        expect(subject).not_to be_persisted
+        expect(Doi.where(doi: "10.5438/MCNV-GA6N")).not_to exist
+      end
+    end
   end
 
   context "get_dois" do
