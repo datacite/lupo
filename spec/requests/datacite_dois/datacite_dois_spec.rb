@@ -2355,7 +2355,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 11
     end
   end
 
-  context "GET /dois/[id] with enriched=true", elasticsearch: true, prefix_pool_size: 1 do
+  context "GET /dois/[id] with enriched=true", elasticsearch: true, prefix_pool_size: 4 do
     let!(:enrichment) { create(:enrichment) }
     let!(:enrichment_newer) do
       create(:enrichment,
@@ -2442,7 +2442,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 11
     end
   end
 
-  context "GET /dois with enriched=true", elasticsearch: true, prefix_pool_size: 1 do
+  context "GET /dois with enriched=true", elasticsearch: true, prefix_pool_size: 4 do
     let!(:enrichment) { create(:enrichment) }
     let!(:doi) { create(:doi, doi: enrichment.doi, client: client, aasm_state: "findable", creators: [{
         "name" => "Arslan, M.",
