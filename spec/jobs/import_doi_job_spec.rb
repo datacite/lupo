@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ImportDoiJob, type: :job do
+describe ImportDoiJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi) }
   subject(:job) { ImportDoiJob.perform_later(doi.doi) }
 

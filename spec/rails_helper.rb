@@ -2,7 +2,6 @@
 
 ENV["RAILS_ENV"] = "test"
 ENV["TEST_CLUSTER_NODES"] = "1"
-ENV["PREFIX_POOL_SIZE"] = "20"
 
 # set up Code Climate
 require "simplecov"
@@ -93,18 +92,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do |example|
-    # Checking if :skip_prefix_pool parameter is set in metadata
-    if example.metadata[:skip_prefix_pool]
-      # Skip the prefix pool setup
-      next
-    end
+    next if example.metadata[:skip_prefix_pool]
+    next if example.metadata[:prefix_pool_size].blank?
 
-    prefix_pool_size = example.metadata[:prefix_pool_size].present? ? example.metadata[:prefix_pool_size].to_i : ENV["PREFIX_POOL_SIZE"].to_i
-    if prefix_pool_size <= 0
-      @prefix_pool = []
-    else
-      @prefix_pool = create_list(:prefix, prefix_pool_size)
-    end
+    prefix_pool_size = example.metadata[:prefix_pool_size].to_i
+    @prefix_pool = prefix_pool_size <= 0 ? [] : create_list(:prefix, prefix_pool_size)
     Prefix.import
   end
 

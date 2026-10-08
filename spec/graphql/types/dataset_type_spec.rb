@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe DatasetType do
-  describe "fields" do
+describe DatasetType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -453,7 +453,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with views", elasticsearch: true, vcr: true do
+  describe "query with views", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -588,7 +588,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with versions", elasticsearch: true, vcr: true do
+  describe "query with versions", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -649,7 +649,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with version of", elasticsearch: true, vcr: true do
+  describe "query with version of", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -710,7 +710,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with parts", elasticsearch: true, vcr: true do
+  describe "query with parts", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }

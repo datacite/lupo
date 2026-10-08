@@ -2,12 +2,12 @@
 
 require "rails_helper"
 
-describe Event, type: :model, vcr: true do
+describe Event, type: :model, vcr: true, prefix_pool_size: 1 do
   before(:each) do
     allow(Time.zone).to receive(:now).and_return(Time.mktime(2_015, 4, 8))
   end
 
-  context "event" do
+  context "event", skip_prefix_pool: true do
     subject { create(:event) }
 
     it { is_expected.to validate_presence_of(:subj_id) }
@@ -256,7 +256,7 @@ describe Event, type: :model, vcr: true do
     # end
   end
 
-  context "crossref" do
+  context "crossref", skip_prefix_pool: true do
     subject { create(:event_for_crossref) }
 
     it "creates event" do
@@ -270,7 +270,7 @@ describe Event, type: :model, vcr: true do
     end
   end
 
-  context "crossref import" do
+  context "crossref import", skip_prefix_pool: true do
     subject { create(:event_for_crossref_import) }
 
     it "creates event" do
@@ -284,7 +284,7 @@ describe Event, type: :model, vcr: true do
     end
   end
 
-  context "datacite orcid auto-update" do
+  context "datacite orcid auto-update", skip_prefix_pool: true do
     subject { create(:event_for_datacite_orcid_auto_update) }
 
     it "creates event" do
@@ -296,7 +296,7 @@ describe Event, type: :model, vcr: true do
     end
   end
 
-  context "datacite funder" do
+  context "datacite funder", skip_prefix_pool: true do
     subject { create(:event_for_datacite_funder) }
 
     it "creates event" do
@@ -308,7 +308,7 @@ describe Event, type: :model, vcr: true do
     end
   end
 
-  context "datacite versions" do
+  context "datacite versions", skip_prefix_pool: true do
     subject { create(:event_for_datacite_versions) }
 
     it "creates event" do
@@ -320,7 +320,7 @@ describe Event, type: :model, vcr: true do
     end
   end
 
-  describe "camelcase_nested_objects" do
+  describe "camelcase_nested_objects", skip_prefix_pool: true do
     subject { create(:event_for_datacite_related) }
 
     it "should transform keys" do

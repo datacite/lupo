@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe MetadataController, type: :request do
+describe MetadataController, type: :request, prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "ADMIN") }
   let(:client) { create(:client, provider: provider) }
   let(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi") }

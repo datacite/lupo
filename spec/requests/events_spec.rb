@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventsController, type: :request, elasticsearch: true, vcr: true do
+describe EventsController, type: :request, elasticsearch: true, vcr: true, prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) do
     create(

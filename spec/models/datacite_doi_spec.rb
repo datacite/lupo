@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DataciteDoi, type: :model, vcr: true do
+describe DataciteDoi, type: :model, vcr: true, prefix_pool_size: 1 do
   it_behaves_like "an STI class"
 
   describe "import_by_ids", elasticsearch: true do

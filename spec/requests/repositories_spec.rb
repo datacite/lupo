@@ -23,7 +23,7 @@ def reset_indices
   import_index(DataciteDoi)
 end
 
-describe RepositoriesController, type: :request, elasticsearch: true do
+describe RepositoriesController, type: :request, elasticsearch: true, prefix_pool_size: 2 do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let!(:provider) do

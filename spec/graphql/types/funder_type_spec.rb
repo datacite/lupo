@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe FunderType do
-  describe "fields" do
+describe FunderType, prefix_pool_size: 3 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -215,7 +215,7 @@ describe FunderType do
     end
   end
 
-  describe "query funders national", elasticsearch: true, vcr: true do
+  describe "query funders national", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         funders(query: \"national\", first: 10, after: \"OA\") {

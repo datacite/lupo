@@ -3,7 +3,7 @@
 require "rails_helper"
 require "cancan/matchers"
 
-describe User, type: :model, elasticsearch: false, skip_prefix_pool: true do
+describe User, type: :model, elasticsearch: false do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
   let(:consortium) { build_stubbed(:provider, role_name: "ROLE_CONSORTIUM") }

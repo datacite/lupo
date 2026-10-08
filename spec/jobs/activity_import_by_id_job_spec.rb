@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ActivityImportByIdJob, type: :job do
+describe ActivityImportByIdJob, type: :job, prefix_pool_size: 1 do
   let(:activity) { create(:activity) }
   subject(:job) { ActivityImportByIdJob.perform_later(activity.id) }
 

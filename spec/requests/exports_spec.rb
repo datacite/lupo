@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ExportsController, type: :request do
+describe ExportsController, type: :request, prefix_pool_size: 1 do
   let(:admin_bearer) { User.generate_token }
   let(:admin_headers) do
     {
@@ -34,7 +34,7 @@ describe ExportsController, type: :request do
     )
   end
 
-  describe "GET /export/organizations", elasticsearch: true do
+  describe "GET /export/organizations", elasticsearch: true, skip_prefix_pool: true do
     before do
       Provider.import
       sleep 2
@@ -123,7 +123,7 @@ describe ExportsController, type: :request do
     end
   end
 
-  describe "GET /export/contacts", elasticsearch: true do
+  describe "GET /export/contacts", elasticsearch: true, skip_prefix_pool: true do
     before do
       Provider.import
       Contact.import

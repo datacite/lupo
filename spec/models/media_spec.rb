@@ -6,7 +6,7 @@ describe Media, type: :model do
   it { should validate_presence_of(:url) }
 end
 
-context "validations" do
+context "validations", prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "ADMIN") }
   let(:client) { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client) }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe IndexJob, type: :job do
+describe IndexJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi) }
   subject(:job) { IndexJob.perform_later(doi) }
 

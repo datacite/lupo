@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Providers", type: :controller, elasticsearch: true do
+describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 3 do
   subject { ProvidersController.new }
   before(:all) do
     current_year = Date.today.year.to_s
@@ -16,7 +16,7 @@ describe "Providers", type: :controller, elasticsearch: true do
     end
   end
 
-  describe "provider_count" do
+  describe "provider_count", skip_prefix_pool: true do
     before do
       allow(Time.zone).to receive(:now).and_return(Time.mktime(2_015, 4, 8))
       @providers = create_list(:provider, 3)
