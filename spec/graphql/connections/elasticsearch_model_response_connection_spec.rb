@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ElasticsearchModelResponseConnection::Edge do
+RSpec.describe ElasticsearchModelResponseConnection::Edge, skip_prefix_pool: true do
   let(:item) { { id: 1, name: "test" } }
   let(:connection) { instance_double(ElasticsearchModelResponseConnection) }
   let(:edge) { described_class.new(item, connection) }

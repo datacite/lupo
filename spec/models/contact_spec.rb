@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Contact, type: :model do
+describe Contact, type: :model, skip_prefix_pool: true do
   let(:contact) { create(:contact) }
 
   describe "Validations" do

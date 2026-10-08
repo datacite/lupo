@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe BinaryActiveFlag do
+describe BinaryActiveFlag, skip_prefix_pool: true do
   # Provider includes BinaryActiveFlag; exercise the private helpers via send.
   let(:provider) { build(:provider) }
 

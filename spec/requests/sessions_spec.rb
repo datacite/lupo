@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Provider session", type: :request do
+describe "Provider session", type: :request, skip_prefix_pool: true do
   let!(:provider) { create(:provider, password_input: "12345") }
 
   context "wrong grant_type" do
@@ -51,7 +51,7 @@ describe "Provider session", type: :request do
   end
 end
 
-describe "reset", type: :request, vcr: true do
+describe "reset", type: :request, vcr: true, prefix_pool_size: 1 do
   let(:provider) do
     create(:provider, symbol: "DATACITE", password_input: "12345")
   end

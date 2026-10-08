@@ -134,7 +134,7 @@ require "rails_helper"
 #   end
 # end
 
-describe "other_doi:import_one", order: :defined do
+describe "other_doi:import_one", order: :defined, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -151,7 +151,7 @@ describe "other_doi:import_one", order: :defined do
   end
 end
 
-describe "other_doi:index_one", order: :defined do
+describe "other_doi:index_one", order: :defined, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -168,7 +168,7 @@ describe "other_doi:index_one", order: :defined do
   end
 end
 
-describe "other_doi:refresh", elasticsearch: true do
+describe "other_doi:refresh", elasticsearch: true, skip_prefix_pool: true do
   include ActiveJob::TestHelper
   include_context "rake"
 

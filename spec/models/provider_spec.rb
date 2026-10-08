@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Provider, type: :model do
+describe Provider, type: :model, skip_prefix_pool: true do
   let(:provider) { create(:provider) }
 
   describe "validations" do

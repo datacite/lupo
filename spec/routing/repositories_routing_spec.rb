@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe RepositoriesController, type: :routing do
+describe RepositoriesController, type: :routing, skip_prefix_pool: true do
   describe "routing" do
     it "routes to #index" do
       expect(get: "/repositories").to route_to("repositories#index")

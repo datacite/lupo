@@ -44,7 +44,7 @@ DEFAULT_META_FIELDS = [
   "page",
 ]
 
-describe DataciteDoisController, type: :request, vcr: true do
+describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 11 do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer } }
@@ -907,7 +907,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois with query", elasticsearch: true do
+  describe "GET /dois with query", elasticsearch: true, prefix_pool_size: 4 do
     let!(:doi) do
       create(:doi, client: client, aasm_state: "findable", creators:
       [{
@@ -1106,7 +1106,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/:id", elasticsearch: true do
+  describe "GET /dois/:id", elasticsearch: true, prefix_pool_size: 1 do
     let!(:doi) { create(:doi, client: client) }
 
     before do
@@ -1222,7 +1222,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois for dissertations", elasticsearch: true, vcr: true do
+  describe "GET /dois for dissertations", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
 
     before do
@@ -1240,7 +1240,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois for instruments", elasticsearch: true, vcr: true do
+  describe "GET /dois for instruments", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
 
     before do
@@ -1258,7 +1258,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois for interactive resources", elasticsearch: true, vcr: true do
+  describe "GET /dois for interactive resources", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
 
     before do
@@ -1288,7 +1288,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois for fake resources", elasticsearch: true, vcr: true do
+  describe "GET /dois for fake resources", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Fake", "resourceType" => "Presentation" }, client: client) }
 
     before do
@@ -1304,7 +1304,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "state" do
+  describe "state", prefix_pool_size: 1 do
     let(:doi_id) { "10.14454/4K3M-NYVG" }
     let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
@@ -1470,7 +1470,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "PUT /dois/:id" do
+  describe "PUT /dois/:id", prefix_pool_size: 1 do
     context "update publisher" do
       let(:doi) { create(:doi, doi: "10.14454/10703", publisher: nil, client: client) }
       let(:xml) { Base64.strict_encode64(file_fixture("datacite-example-full-v4.5.xml").read) }
@@ -1639,7 +1639,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "DELETE /dois/:id" do
+  describe "DELETE /dois/:id", prefix_pool_size: 1 do
     let(:doi) { create(:doi, client: client, aasm_state: "draft") }
 
     it "returns status code 204" do
@@ -1650,7 +1650,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "DELETE /dois/:id findable state" do
+  describe "DELETE /dois/:id findable state", prefix_pool_size: 1 do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
     it "returns status code 405" do
@@ -1661,7 +1661,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "POST /dois/set-url", elasticsearch: true do
+  describe "POST /dois/set-url", elasticsearch: true, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, client: client, url: nil) }
 
     it "returns dois" do
@@ -1672,7 +1672,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/random" do
+  describe "GET /dois/random", prefix_pool_size: 1 do
     it "returns random doi" do
       get "/dois/random?prefix=10.14454", headers: headers
 
@@ -1681,7 +1681,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/<doi> linkcheck results", elasticsearch: true do
+  describe "GET /dois/<doi> linkcheck results", elasticsearch: true, prefix_pool_size: 2 do
     let(:landing_page) do
       {
         "checked" => Time.zone.now.utc.iso8601,
@@ -1772,7 +1772,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/random?prefix" do
+  describe "GET /dois/random?prefix", prefix_pool_size: 1 do
     it "returns random doi with prefix" do
       get "/dois/random?prefix=#{prefix.uid}", nil, headers
 
@@ -1781,7 +1781,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/random?number" do
+  describe "GET /dois/random?number", prefix_pool_size: 1 do
     let(:number) { 122149076 }
 
     it "returns predictable doi" do
@@ -1792,7 +1792,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/DOI/get-url", vcr: true, elasticsearch: true do
+  describe "GET /dois/DOI/get-url", vcr: true, elasticsearch: true, prefix_pool_size: 1 do
     context "it works" do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
@@ -1865,7 +1865,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     # end
   end
 
-  describe "GET /dois/get-dois", vcr: true do
+  describe "GET /dois/get-dois", vcr: true, prefix_pool_size: 1 do
     let!(:prefix) { create(:prefix, uid: "10.5438") }
     let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
@@ -1883,7 +1883,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/get-dois no authentication", vcr: true do
+  describe "GET /dois/get-dois no authentication", vcr: true, prefix_pool_size: 1 do
     it "returns error message" do
       get "/dois/get-dois"
 
@@ -2230,7 +2230,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/query=doi:... - CASE INSENSITIVE", vcr: true, elasticsearch: true do
+  describe "GET /dois/query=doi:... - CASE INSENSITIVE", vcr: true, elasticsearch: true, prefix_pool_size: 1 do
     context "it works" do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
@@ -2255,7 +2255,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  describe "GET /dois/query=id:... - CASE INSENSITIVE", vcr: true, elasticsearch: true do
+  describe "GET /dois/query=id:... - CASE INSENSITIVE", vcr: true, elasticsearch: true, prefix_pool_size: 1 do
     context "it works" do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
@@ -2282,7 +2282,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
   ## Metadata 4.7 queries with new field: relationTypeInformation (in relatedIdentifiers and relatedItems)
 
-  describe "GET /dois/query=...relationTypeInformation", vcr: true, elasticsearch: true do
+  describe "GET /dois/query=...relationTypeInformation", vcr: true, elasticsearch: true, prefix_pool_size: 1 do
     let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable",
       related_items: [
         {
@@ -2355,7 +2355,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  context "GET /dois/[id] with enriched=true", elasticsearch: true do
+  context "GET /dois/[id] with enriched=true", elasticsearch: true, prefix_pool_size: 1 do
     let!(:enrichment) { create(:enrichment) }
     let!(:enrichment_newer) do
       create(:enrichment,
@@ -2442,7 +2442,7 @@ describe DataciteDoisController, type: :request, vcr: true do
     end
   end
 
-  context "GET /dois with enriched=true", elasticsearch: true do
+  context "GET /dois with enriched=true", elasticsearch: true, prefix_pool_size: 1 do
     let!(:enrichment) { create(:enrichment) }
     let!(:doi) { create(:doi, doi: enrichment.doi, client: client, aasm_state: "findable", creators: [{
         "name" => "Arslan, M.",

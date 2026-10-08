@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ReindexByDoiJob, type: :job do
+describe ReindexByDoiJob, type: :job, prefix_pool_size: 2 do
   let(:datacite_doi) { create(:doi, agency: "datacite") }
   let(:other_doi) { create(:doi, agency: "crossref") }
   subject(:job) { ReindexByDoiJob.perform_later(nil, { doi: datacite_doi.doi }.to_json) }

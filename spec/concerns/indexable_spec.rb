@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Indexable", vcr: true, elasticsearch: true do
+describe "Indexable", vcr: true, elasticsearch: true, prefix_pool_size: 1 do
   subject { create(:doi) }
 
   it "send_import_message" do
@@ -16,8 +16,8 @@ describe "Indexable", vcr: true, elasticsearch: true do
   end
 end
 
-describe "Indexable class methods", elasticsearch: true do
-  context "client" do
+describe "Indexable class methods", elasticsearch: true, prefix_pool_size: 4 do
+  context "client", prefix_pool_size: 1 do
     let!(:client) { create(:client) }
 
     before do
@@ -41,7 +41,7 @@ describe "Indexable class methods", elasticsearch: true do
     end
   end
 
-  context "provider" do
+  context "provider", skip_prefix_pool: true do
     let!(:provider) { create(:provider) }
 
     before do
@@ -219,7 +219,7 @@ describe "Indexable class methods", elasticsearch: true do
     end
   end
 
-  describe "after_commit callback when touched", elasticsearch: true, vcr: true do
+  describe "after_commit callback when touched", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     context "when agency is not datacite" do
       let!(:other_doi) { create(:other_doi, agency: "crossref") }
       let!(:event) { create(:event, obj_id: other_doi.doi, source_doi: other_doi.doi) }
@@ -292,7 +292,7 @@ describe "Indexable class methods", elasticsearch: true do
     end
   end
 
-  describe "after_commit callback", elasticsearch: true, vcr: true do
+  describe "after_commit callback", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     context "when event is committed" do
       let!(:doi) { create(:doi) }
       let!(:event) { create(:event) }

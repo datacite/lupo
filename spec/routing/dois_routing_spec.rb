@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DataciteDoisController, type: :routing do
+describe DataciteDoisController, type: :routing, skip_prefix_pool: true do
   describe "routing" do
     it "routes to #index" do
       expect(get: "/dois").to route_to("datacite_dois#index")

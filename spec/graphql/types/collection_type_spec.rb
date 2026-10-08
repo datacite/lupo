@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe CollectionType do
+describe CollectionType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

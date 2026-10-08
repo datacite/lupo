@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DefinedTermType do
+describe DefinedTermType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

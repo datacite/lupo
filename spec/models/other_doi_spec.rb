@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe OtherDoi, type: :model do
+describe OtherDoi, type: :model, skip_prefix_pool: true do
   it_behaves_like "an STI class"
 
   # describe "import_by_ids", elasticsearch: true do

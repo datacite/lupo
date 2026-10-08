@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Indexable active index cache" do
+describe "Indexable active index cache", skip_prefix_pool: true do
   let(:cache_key) { DataciteDoi.active_index_cache_key }
   let(:indices) { Elasticsearch::Model.client.indices }
   let(:alias_name) { DataciteDoi.index_name }

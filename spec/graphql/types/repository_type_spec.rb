@@ -3,12 +3,12 @@
 
 require "rails_helper"
 
-describe RepositoryType do
+describe RepositoryType, prefix_pool_size: 2 do
   before(:all) do
     @current_year = Date.today.year.to_s
   end
 
-  describe "fields" do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:uid).of_type("ID!") }
@@ -314,7 +314,7 @@ describe RepositoryType do
     end
   end
 
-  describe "query single repository" do
+  describe "query single repository", skip_prefix_pool: true do
     before :all do
       id_query = "query($id: ID!){
           repository(id: $id) {

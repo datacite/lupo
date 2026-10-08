@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe PreloadedEventRelation do
+describe PreloadedEventRelation, skip_prefix_pool: true do
   let(:event1) { double("Event", id: 1, target_doi: "10.1234/TEST1", source_doi: "10.1234/TEST2", total: 10) }
   let(:event2) { double("Event", id: 2, target_doi: "10.1234/TEST2", source_doi: "10.1234/TEST3", total: 20) }
   let(:event3) { double("Event", id: 3, target_doi: "10.1234/TEST1", source_doi: nil, total: 30) }

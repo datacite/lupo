@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Other DOI number_of_shards" do
+describe "Other DOI number_of_shards", skip_prefix_pool: true do
   it "defaults to 5 on OtherDoi settings" do
     expect(ENV.fetch("NUMBER_OF_SHARDS_OTHER_DOI")).to eq("5")
     expect(OtherDoi.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)

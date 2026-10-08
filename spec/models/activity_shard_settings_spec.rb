@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Activity number_of_shards" do
+describe "Activity number_of_shards", skip_prefix_pool: true do
   it "defaults to 5 on Activity settings" do
     expect(ENV.fetch("NUMBER_OF_SHARDS_ACTIVITY")).to eq("5")
     expect(Activity.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)

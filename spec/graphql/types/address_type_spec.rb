@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe AddressType do
+describe AddressType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

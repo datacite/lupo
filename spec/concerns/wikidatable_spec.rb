@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Organization", vcr: true do
+describe "Organization", vcr: true, skip_prefix_pool: true do
   subject { Organization }
 
   context "find_by_wikidata_id" do
@@ -64,7 +64,7 @@ describe "Organization", vcr: true do
   end
 end
 
-describe "Person", vcr: true do
+describe "Person", vcr: true, skip_prefix_pool: true do
   subject { Person }
 
   context "wikidata_query" do

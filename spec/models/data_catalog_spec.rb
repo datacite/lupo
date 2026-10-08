@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DataCatalog, type: :model, vcr: true do
+describe DataCatalog, type: :model, vcr: true, skip_prefix_pool: true do
   describe "find_by_id" do
     it "found" do
       id = "https://doi.org/10.17616/r3qp53"

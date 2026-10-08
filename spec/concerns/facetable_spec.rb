@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Facetable", type: :controller do
+describe "Facetable", type: :controller, skip_prefix_pool: true do
     let(:author_aggs) { JSON.parse(file_fixture("authors_aggs.json").read) }
     let(:author_aggs_with_multiple_name_identifiers) { JSON.parse(file_fixture("authors_aggs_with_multiple_name_identifiers.json").read) }
     let(:model) { DataciteDoisController.new }

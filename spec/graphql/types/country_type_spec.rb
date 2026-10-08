@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe CountryType do
+describe CountryType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

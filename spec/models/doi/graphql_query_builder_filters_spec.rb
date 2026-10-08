@@ -4,7 +4,7 @@
 
 require "rails_helper"
 
-RSpec.describe Doi::GraphqlQuery::Builder do
+RSpec.describe Doi::GraphqlQuery::Builder, skip_prefix_pool: true do
   let(:query) { "" }
   let(:options) { {} }
 

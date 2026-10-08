@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe DatafileController, type: :request do
+RSpec.describe DatafileController, type: :request, prefix_pool_size: 1 do
   describe "GET /credentials/datafile" do
     let(:path) { "/credentials/datafile" }
 
@@ -105,7 +105,7 @@ RSpec.describe DatafileController, type: :request do
       end
     end
 
-    context "without credentials" do
+    context "without credentials", skip_prefix_pool: true do
       it "returns 401" do
         get path
 
@@ -114,7 +114,7 @@ RSpec.describe DatafileController, type: :request do
       end
     end
 
-    context "as staff_admin" do
+    context "as staff_admin", skip_prefix_pool: true do
       let(:bearer) { User.generate_token(role_id: "staff_admin") }
       include_examples "grants datafile access"
 
@@ -145,12 +145,12 @@ RSpec.describe DatafileController, type: :request do
       end
     end
 
-    context "as staff_user" do
+    context "as staff_user", skip_prefix_pool: true do
       let(:bearer) { User.generate_token(role_id: "staff_user") }
       include_examples "grants datafile access"
     end
 
-    context "as consortium_admin" do
+    context "as consortium_admin", skip_prefix_pool: true do
       let(:bearer) do
         User.generate_token(role_id: "consortium_admin", provider_id: "consortium")
       end
@@ -158,7 +158,7 @@ RSpec.describe DatafileController, type: :request do
       include_examples "grants datafile access"
     end
 
-    context "as provider_admin" do
+    context "as provider_admin", skip_prefix_pool: true do
       let(:bearer) do
         User.generate_token(role_id: "provider_admin", provider_id: "datacite")
       end
@@ -166,7 +166,7 @@ RSpec.describe DatafileController, type: :request do
       include_examples "grants datafile access"
     end
 
-    context "as provider_user" do
+    context "as provider_user", skip_prefix_pool: true do
       let(:bearer) do
         User.generate_token(role_id: "provider_user", provider_id: "datacite")
       end
@@ -222,7 +222,7 @@ RSpec.describe DatafileController, type: :request do
       include_examples "grants datafile access"
     end
 
-    context "as user with provider_id" do
+    context "as user with provider_id", skip_prefix_pool: true do
       let(:bearer) { User.generate_token(role_id: "user", provider_id: "datacite") }
       include_examples "grants datafile access"
     end
@@ -242,12 +242,12 @@ RSpec.describe DatafileController, type: :request do
       include_examples "grants datafile access"
     end
 
-    context "as user without provider_id/client_id" do
+    context "as user without provider_id/client_id", skip_prefix_pool: true do
       let(:bearer) { User.generate_token(role_id: "user") }
       include_examples "denies datafile access"
     end
 
-    context "as temporary" do
+    context "as temporary", skip_prefix_pool: true do
       let(:bearer) { User.generate_token(role_id: "temporary") }
       include_examples "denies datafile access"
     end

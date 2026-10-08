@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Prefix, type: :model do
+RSpec.describe Prefix, type: :model, prefix_pool_size: 1 do
   let!(:prefixes) { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
 
@@ -10,7 +10,7 @@ RSpec.describe Prefix, type: :model do
     Prefix.destroy_all
   end
 
-  describe "Validations" do
+  describe "Validations", skip_prefix_pool: true do
     it { should validate_presence_of(:uid) }
   end
 

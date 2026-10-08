@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Person, vcr: true do
+describe Person, vcr: true, skip_prefix_pool: true do
   subject { Person }
 
   context "orcid_from_url" do

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ProviderPrefix, type: :model do
+describe ProviderPrefix, type: :model, skip_prefix_pool: true do
   let(:prefix) { create(:prefix, uid: "10.6000") }
   let(:provider) { create(:provider) }
   subject { create(:provider_prefix, prefix: prefix, provider: provider) }

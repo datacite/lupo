@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventsPreloader do
+describe EventsPreloader, prefix_pool_size: 1 do
   let(:client) { create(:client) }
   let(:doi1) { create(:doi, client: client, doi: "10.1234/TEST1", aasm_state: "findable") }
   let(:doi2) { create(:doi, client: client, doi: "10.1234/TEST2", aasm_state: "findable") }

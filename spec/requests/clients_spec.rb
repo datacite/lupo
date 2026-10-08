@@ -3,7 +3,7 @@
 require "rails_helper"
 include Passwordable
 
-describe ClientsController, type: :request, elasticsearch: true do
+describe ClientsController, type: :request, elasticsearch: true, prefix_pool_size: 4 do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -53,7 +53,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /clients/:id" do
+  describe "GET /clients/:id", prefix_pool_size: 1 do
     context "when the record exists" do
       it "returns the client" do
         get "/clients/#{client.uid}", nil, headers
@@ -107,7 +107,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "POST /clients" do
+  describe "POST /clients", prefix_pool_size: 2 do
     context "when the request is valid" do
       let(:params_igsn_catalog) do
         {
@@ -299,7 +299,7 @@ describe ClientsController, type: :request, elasticsearch: true do
       end
     end
 
-    context "when there are available provider prefixes" do
+    context "when there are available provider prefixes", prefix_pool_size: 1 do
       let!(:prefix) { create(:prefix, uid: "10.14454") }
       let!(:provider_prefix) do
         create(:provider_prefix, provider: provider, prefix: prefix)
@@ -341,7 +341,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "PUT /clients/:id" do
+  describe "PUT /clients/:id", prefix_pool_size: 1 do
     context "when the record exists" do
       let(:params) do
         {
@@ -483,7 +483,7 @@ describe ClientsController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "DELETE /clients/:id" do
+  describe "DELETE /clients/:id", prefix_pool_size: 1 do
     it "returns status code 204" do
       delete "/clients/#{client.uid}", nil, headers
 

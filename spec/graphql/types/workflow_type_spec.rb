@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe WorkflowType do
+describe WorkflowType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

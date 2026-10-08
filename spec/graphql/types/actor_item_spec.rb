@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ActorItem do
+describe ActorItem, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

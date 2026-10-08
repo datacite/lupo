@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe SoundType do
+describe SoundType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Doi, vcr: true, elasticsearch: true do
+describe Doi, vcr: true, elasticsearch: true, prefix_pool_size: 2 do
   subject { create(:doi) }
 
   context "generate_random_provider_symbol" do

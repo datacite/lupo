@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ContactsController, type: :request, elasticsearch: true do
+describe ContactsController, type: :request, elasticsearch: true, skip_prefix_pool: true do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) do
     create(

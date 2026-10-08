@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe DataManagementPlanType do
-  describe "fields" do
+describe DataManagementPlanType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -608,7 +608,7 @@ describe DataManagementPlanType do
   end
 
   describe "find data management plan with citations",
-           elasticsearch: true, vcr: true do
+           elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) do
       create(

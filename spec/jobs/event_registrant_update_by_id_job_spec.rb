@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventRegistrantUpdateByIdJob, type: :job, vcr: true do
+describe EventRegistrantUpdateByIdJob, type: :job, vcr: true, skip_prefix_pool: true do
   let(:event) { create(:event) }
   subject(:job) { EventRegistrantUpdateByIdJob.perform_later(event.uuid) }
 

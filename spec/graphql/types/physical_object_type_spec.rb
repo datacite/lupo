@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe PhysicalObjectType do
+describe PhysicalObjectType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

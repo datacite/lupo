@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe MetadataController, type: :routing do
+RSpec.describe MetadataController, type: :routing, skip_prefix_pool: true do
   describe "routing" do
     it "routes to #index" do
       expect(get: "dois/1/metadata").to route_to(

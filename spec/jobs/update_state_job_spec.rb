@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe UpdateStateJob, type: :job do
+describe UpdateStateJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi) }
   subject(:job) { UpdateStateJob.perform_later(doi.doi) }
 

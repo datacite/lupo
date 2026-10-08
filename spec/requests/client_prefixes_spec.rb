@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Client Prefixes", type: :request, elasticsearch: true do
+describe "Client Prefixes", type: :request, elasticsearch: true, prefix_pool_size: 2 do
   let!(:provider) { create(:provider) }
   let!(:client) { create(:client, provider: provider) }
   let!(:client_prefix) { client.client_prefixes.first }

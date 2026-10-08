@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Organization, type: :model, vcr: true do
+describe Organization, type: :model, vcr: true, skip_prefix_pool: true do
   describe "ror_id_from_url" do
     it "full url" do
       ror_id = "https://ror.org/0521rfb23"

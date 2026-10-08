@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe IdentifierType do
+describe IdentifierType, skip_prefix_pool: true do
   describe "fields" do
     subject { described_class }
 

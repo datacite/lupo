@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Dois", type: :controller do
+describe "Dois", type: :controller, skip_prefix_pool: true do
   subject { DataciteDoisController.new }
 
   it "no params" do
