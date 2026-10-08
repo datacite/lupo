@@ -324,10 +324,9 @@ module Doi::GraphqlQuery
           },
           creators_and_contributors: {
             terms: {
-              field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+              field: "person_id",
               size: facet_count,
-              min_doc_count: 1,
-              include: "https?://orcid.org/.*"
+              min_doc_count: 1
             },
             aggs: {
               creators_and_contributors: {
