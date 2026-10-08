@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe InteractiveResourceType, skip_prefix_pool: true do
+describe InteractiveResourceType do
   describe "fields" do
     subject { described_class }
 

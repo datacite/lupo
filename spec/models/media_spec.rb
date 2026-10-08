@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Media, type: :model, skip_prefix_pool: true do
+describe Media, type: :model do
   it { should validate_presence_of(:url) }
 end
 

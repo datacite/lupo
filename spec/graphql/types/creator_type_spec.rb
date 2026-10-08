@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe CreatorType, skip_prefix_pool: true do
+describe CreatorType do
   describe "fields" do
     subject { described_class }
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Funder, type: :model, vcr: true, skip_prefix_pool: true do
+describe Funder, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
       id = "https://doi.org/10.13039/501100006568"

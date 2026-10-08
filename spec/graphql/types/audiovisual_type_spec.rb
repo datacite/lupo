@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe AudiovisualType, skip_prefix_pool: true do
+describe AudiovisualType do
   describe "fields" do
     subject { described_class }
 

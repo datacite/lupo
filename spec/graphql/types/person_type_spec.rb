@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe PersonType, skip_prefix_pool: true do
+describe PersonType do
   describe "fields" do
     subject { described_class }
 

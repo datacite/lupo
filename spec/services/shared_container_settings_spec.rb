@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe SharedContainerSettings, type: :service, skip_prefix_pool: true do
+RSpec.describe SharedContainerSettings, type: :service do
   # Define a constant for the cache key to avoid repeating the "magic string"
   let(:cache_key) { SharedContainerSettings::INDEX_SYNC_KEY }
 

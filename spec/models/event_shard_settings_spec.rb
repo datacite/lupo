@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Event number_of_shards", skip_prefix_pool: true do
+describe "Event number_of_shards" do
   it "defaults to 5 on Event settings" do
     expect(ENV.fetch("NUMBER_OF_SHARDS_EVENT")).to eq("5")
     expect(Event.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)

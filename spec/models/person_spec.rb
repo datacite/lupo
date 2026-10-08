@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Person, type: :model, vcr: true, skip_prefix_pool: true do
+describe Person, type: :model, vcr: true do
   describe "find_by_id" do
     xit "found" do
       id = "https://orcid.org/0000-0003-2706-4082"

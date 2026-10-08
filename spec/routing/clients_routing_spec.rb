@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ClientsController, type: :routing, skip_prefix_pool: true do
+describe ClientsController, type: :routing do
   describe "routing" do
     it "routes to #index" do
       expect(get: "/clients").to route_to("clients#index")

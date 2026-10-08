@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe LabelType, skip_prefix_pool: true do
+describe LabelType do
   describe "fields" do
     subject { described_class }
 

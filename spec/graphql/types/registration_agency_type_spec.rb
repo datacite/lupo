@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe RegistrationAgencyType, skip_prefix_pool: true do
+describe RegistrationAgencyType do
   describe "fields" do
     subject { described_class }
 

@@ -168,7 +168,7 @@ describe "other_doi:index_one", order: :defined, prefix_pool_size: 1 do
   end
 end
 
-describe "other_doi:refresh", elasticsearch: true, skip_prefix_pool: true do
+describe "other_doi:refresh", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
 

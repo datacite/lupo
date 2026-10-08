@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe RepositoryPrefixType, skip_prefix_pool: true do
+describe RepositoryPrefixType do
   describe "fields" do
     subject { described_class }
 

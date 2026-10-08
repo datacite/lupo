@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe FacetType, skip_prefix_pool: true do
+describe FacetType do
   describe "fields" do
     subject { described_class }
 

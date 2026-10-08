@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe RorReferenceStore, type: :service, skip_prefix_pool: true do
+RSpec.describe RorReferenceStore, type: :service do
   let(:sample_json) { JSON.generate({ "100010552" => "https://ror.org/04ttjf776" }) }
   let(:s3_client) { instance_double(Aws::S3::Client) }
   let(:s3_response) { instance_double(Aws::S3::Types::GetObjectOutput, body: StringIO.new(sample_json)) }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DoiItem, skip_prefix_pool: true do
+describe DoiItem do
   describe "fields" do
     subject { described_class }
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe HashConnection::Edge, skip_prefix_pool: true do
+RSpec.describe HashConnection::Edge do
   let(:item) { { id: 1, name: "test" } }
   let(:connection) { instance_double(HashConnection) }
   let(:edge) { described_class.new(item, connection) }

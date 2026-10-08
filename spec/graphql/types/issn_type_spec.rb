@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe IssnType, skip_prefix_pool: true do
+describe IssnType do
   describe "fields" do
     subject { described_class }
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe FundingType, skip_prefix_pool: true do
+describe FundingType do
   describe "fields" do
     subject { described_class }
 

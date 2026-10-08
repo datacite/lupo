@@ -335,7 +335,7 @@ describe User, type: :model, elasticsearch: true, prefix_pool_size: 1 do
   end
 end
 
-describe Provider, type: :model, skip_prefix_pool: true do
+describe Provider, type: :model do
   subject { create(:provider, password_input: "12345") }
 
   describe "encode_auth_param" do

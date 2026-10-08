@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe ResourceType, type: :model, skip_prefix_pool: true do
+RSpec.describe ResourceType, type: :model do
   describe "from new object" do
     let(:rt) { ResourceType.new({ "id" => "BookChapter", "title" => "BookChapter" }) }
 

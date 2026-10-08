@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe QueryType, skip_prefix_pool: true do
+describe QueryType do
   describe "fields" do
     subject { described_class }
 

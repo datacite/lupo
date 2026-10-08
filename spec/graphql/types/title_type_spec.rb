@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe TitleType, skip_prefix_pool: true do
+describe TitleType do
   describe "fields" do
     subject { described_class }
 

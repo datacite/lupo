@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ImageType, skip_prefix_pool: true do
+describe ImageType do
   describe "fields" do
     subject { described_class }
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "contact:import_from_providers", elasticsearch: true, skip_prefix_pool: true do
+describe "contact:import_from_providers", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
 

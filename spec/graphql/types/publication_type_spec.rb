@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe PublicationType, skip_prefix_pool: true do
+describe PublicationType do
   describe "fields" do
     subject { described_class }
 

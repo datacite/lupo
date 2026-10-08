@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Doi, vcr: true, skip_prefix_pool: true do
+describe Doi, vcr: true do
   let(:xml) { file_fixture("datacite.xml").read }
 
   subject { DataciteDoisController.new }

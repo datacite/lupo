@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventType, skip_prefix_pool: true do
+describe EventType do
   describe "fields" do
     subject { described_class }
 

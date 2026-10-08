@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Provider session", type: :request, skip_prefix_pool: true do
+describe "Provider session", type: :request do
   let!(:provider) { create(:provider, password_input: "12345") }
 
   context "wrong grant_type" do
