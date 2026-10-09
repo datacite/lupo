@@ -193,4 +193,39 @@ namespace :enrichment do
 
     puts("Finished updating source_id for filename=#{filename} (updated=#{updated})")
   end
+
+  desc "Delete enrichment with uuid"
+  task delete_by_uuid: :environment do
+    uuid = ENV["UUID"]
+
+    abort("UUID is not set") if uuid.blank?
+
+    enrichments = Enrichment.find_by(uuid: uuid)
+
+    puts("Deleting enrichment with uuid=#{uuid}")
+
+    enrichments.destroy!
+
+    puts("Finished deleting enrichment with uuid=#{uuid}")
+  end
+
+  desc "Delete enrichments with source_id"
+  # Example command: bundle exec rake enrichment:delete_by_source_id SOURCE_ID=DATACITE.COMET
+  task delete_by_source_id: :environment do
+    source_id = ENV["SOURCE_ID"]&.strip&.upcase
+
+    abort("SOURCE_ID is not set") if source_id.blank?
+
+    enrichments = Enrichment.where(source_id: source_id)
+    total = enrichments.count
+    deleted = 0
+
+    puts("Deleting #{total} enrichments with source_id=#{source_id}")
+
+    enrichments.in_batches(of: 10_000) do |batch|
+      batch.destroy_all
+    end
+
+    puts("Finished deleting enrichments with source_id=#{source_id} (deleted=#{deleted})")
+  end
 end
