@@ -270,7 +270,15 @@ class Provider < ApplicationRecord
                 },
               }
       indexes :consortium_organization_ids, type: :keyword
-      indexes :country_code, type: :keyword
+      indexes :country,
+              type: :object,
+              properties: {
+                country_code: { type: :keyword },
+                region: { type: :keyword },
+                subregion: { type: :keyword },
+                world_region: { type: :keyword },
+                world: { type: :keyword }
+              }
       indexes :role_name, type: :keyword
       indexes :cache_key, type: :keyword
       indexes :joined, type: :date
@@ -395,7 +403,7 @@ class Provider < ApplicationRecord
       "description" => description,
       "website" => website,
       "region" => region,
-      "country_code" => country_code,
+      country: country_as_indexed_json,
       "logo_url" => logo_url,
       "focus_area" => focus_area,
       "organization_type" => organization_type,
@@ -995,6 +1003,21 @@ class Provider < ApplicationRecord
       if logo_content_type.present?
         self.logo_file_name =
           symbol.downcase + "." + logo_content_type.split("/").last
+      end
+    end
+
+    def country_as_indexed_json(_options = {})
+      country = ISO3166::Country[country_code]
+      if country_code.present?
+        {
+          country_code: country_code&.upcase,
+          region: country&.region.presence, 
+          subregion: country&.subregion.presence,
+          world_region: country&.world_region.presence,
+          world: 'global'
+        }
+      else
+        nil
       end
     end
 end
