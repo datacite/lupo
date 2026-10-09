@@ -29,3 +29,7 @@ groups:
     queues:
       - enrichment_batch_process_job
       - enriched_doi_index_job
+  doi_batches_group:
+    concurrency: <%= ENV.fetch('DOI_BATCH_CONCURRENCY', 5) %>
+    queues:
+      - lupo_doi_batch
