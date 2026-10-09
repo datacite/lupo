@@ -39,7 +39,7 @@ namespace :enrichment do
   desc "Process gzipped JSONL objects under an S3 prefix and enqueue batches sized by bytes (256KB message size limit)"
   # Bucket is always ENRICHMENTS_INGESTION_FILES_BUCKET_NAME (enrichments-ingestion-files).
   # PREFIX is the key prefix inside that bucket, e.g. affiliations/2026-09-01/full
-  # Example: bundle exec rake enrichment:batch_process_file PREFIX=affiliations/2026-09-01/full
+  # bundle exec rake enrichment:batch_process_file PREFIX=resource-type-general/2026-10-01/full
   task batch_process_file: :environment do
     require "zlib"
 
@@ -101,7 +101,8 @@ namespace :enrichment do
         return if batch_lines.empty?
 
         puts("Processing batch for file: #{object_key}")
-        EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
+        # EnrichmentBatchProcessJob.perform_later(batch_lines.dup, object_key)
+        EnrichmentBatchProcessJob.perform_now(batch_lines.dup, object_key)
         batch_lines.clear
         batch_bytes = 0
       end
