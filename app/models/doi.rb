@@ -2937,6 +2937,29 @@ class Doi < ApplicationRecord
     end
   end
 
+  # Ensure Bolognese metadata is populated from stored DataCite XML before
+  # calling Bolognese RDF writers. This is local-only (no network calls).
+  def ensure_bolognese_meta!
+    return meta if meta.present?
+    return meta if xml.blank?
+
+    @meta = parse_xml(xml, doi: doi)
+  end
+
+  def rdf_xml
+    ensure_bolognese_meta!
+    raise ActionController::UnknownFormat, "RDF representation is not available for this DOI" if graph.nil?
+
+    super
+  end
+
+  def turtle
+    ensure_bolognese_meta!
+    raise ActionController::UnknownFormat, "RDF representation is not available for this DOI" if graph.nil?
+
+    super
+  end
+
   private
     def filtered_preloaded_events(relation_type_key, relation_type_value, doi_key)
       PreloadedEventRelation.new(
