@@ -51,7 +51,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"],
-          key: parsed_line["key"],
+          key: parsed_line["contentKey"],
           event: parsed_line["event"]
         )
 
