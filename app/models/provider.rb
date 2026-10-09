@@ -1011,10 +1011,10 @@ class Provider < ApplicationRecord
       if country_code.present?
         {
           country_code: country_code&.upcase,
-          region: country&.region.presence, 
+          region: country&.region.presence,
           subregion: country&.subregion.presence,
           world_region: country&.world_region.presence,
-          world: 'global'
+          world: "global"
         }
       else
         nil
