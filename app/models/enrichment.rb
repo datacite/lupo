@@ -51,6 +51,8 @@ class Enrichment < ApplicationRecord
         "sourceId" => source_id,
         "field" => field,
         "action" => action,
+        "contentKey" => content_key,
+        "event" => event,
         "originalValue" => original_value,
         "enrichedValue" => enriched_value
       }.compact
