@@ -958,10 +958,9 @@ class Doi < ApplicationRecord
       },
       creators_and_contributors: {
         terms: {
-          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          field: "person_id",
           size: 10,
-          min_doc_count: 1,
-          include: "https?://orcid.org/.*"
+          min_doc_count: 1
         },
         aggs: {
           creators_and_contributors: {
@@ -985,10 +984,9 @@ class Doi < ApplicationRecord
       },
       person_to_work_types_multilevel: {
         terms: {
-          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          field: "person_id",
           size: 10,
-          min_doc_count: 1,
-          include: "https?://orcid.org/.*"
+          min_doc_count: 1
         },
         aggs: {
           creators_and_contributors: {

@@ -99,6 +99,39 @@ describe "Facetable", type: :controller do
       )
     end
 
+    it "facet by author keeps a bare ORCID bucket key" do
+      aggs = [
+        {
+          "key" => "0000-0003-3484-6875",
+          "doc_count" => 1,
+          "authors" => {
+            "hits" => {
+              "hits" => [
+                {
+                  "_source" => {
+                    "creators" => [
+                      {
+                        "name" => "Garza, Kristian",
+                        "nameIdentifiers" => [
+                          { "nameIdentifier" => "0000-0003-3484-6875" },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ]
+
+      expect(model.facet_by_authors(aggs)).to eq(
+        [
+          { "id" => "0000-0003-3484-6875", "title" => "Garza, Kristian", "count" => 1 },
+        ],
+      )
+    end
+
     it "facet by funder" do
       funders = model.facet_by_funders(funder_aggs)
 
