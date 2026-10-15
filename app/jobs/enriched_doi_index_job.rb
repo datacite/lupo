@@ -45,6 +45,7 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.id = source_doi.id
     enriched_doi.created_at = source_doi.created_at
     enriched_doi.updated_at = source_doi.updated_at
+    enriched_doi.enrichment_source_ids = source_doi.enrichment_source_ids
     enriched_doi.index_without_enrichments = fallback_to_source_doi
 
     response = enriched_doi.__elasticsearch__.index_document(index: target_index)
