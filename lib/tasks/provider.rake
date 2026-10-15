@@ -125,4 +125,67 @@ namespace :provider do
     provider.send_provider_export_message(provider.to_jsonapi.merge(slack_output: true))
     puts "Exported metadata for provider #{provider.symbol}."
   end
+
+  # One-off: backfill annual_revenue from a CSV of For-profit Organizations exported from a Salesforce report before enabling
+  # Fabrica -> Salesforce sync for this field.
+  #
+  # Expected CSV columns:
+  #   Organization ID, Annual Revenue (For-Profit)
+  #
+  # Usage:
+  #   DRY_RUN=true CSV_FILE=/path/to/export.csv bundle exec rake provider:backfill_annual_revenue
+  #   DRY_RUN=false CSV_FILE=/path/to/export.csv bundle exec rake provider:backfill_annual_revenue
+  desc "Backfill annual_revenue from Salesforce CSV (one-off)"
+  task backfill_annual_revenue: :environment do
+    require "csv"
+
+    csv_file = ENV["CSV_FILE"].presence || ENV["FILE"].presence
+    if csv_file.blank?
+      puts "ENV['CSV_FILE'] is required (path to Salesforce CSV export)."
+      exit 1
+    end
+    unless File.exist?(csv_file)
+      puts "CSV file not found: #{csv_file}"
+      exit 1
+    end
+
+    dry_run = ActiveModel::Type::Boolean.new.cast(ENV.fetch("DRY_RUN", "true"))
+    puts dry_run ? "Dry run (set DRY_RUN=false to apply)." : "Applying updates."
+
+    stats = { rows: 0, skipped_blank: 0, not_found: 0, updated: 0 }
+
+    CSV.foreach(csv_file, headers: true, encoding: "UTF-8") do |row|
+      stats[:rows] += 1
+
+      salesforce_id = row["Organization ID"].to_s.strip
+      annual_revenue = row["Annual Revenue (For-Profit)"].to_s.strip
+
+      if annual_revenue.blank?
+        stats[:skipped_blank] += 1
+        next
+      end
+
+      provider = Provider.where(salesforce_id: salesforce_id).first
+      if provider.nil?
+        stats[:not_found] += 1
+        puts "Skip #{salesforce_id}: provider not found"
+        next
+      end
+
+      if dry_run
+        stats[:updated] += 1
+        puts "Would update #{provider.symbol} (#{salesforce_id}): #{annual_revenue.inspect}"
+        next
+      end
+
+      # Bypass validations/callbacks so raw SF values are stored and SF is not re-exported.
+      provider.update_column(:annual_revenue, annual_revenue)
+      stats[:updated] += 1
+      puts "Updated #{provider.symbol} (#{salesforce_id}): #{annual_revenue.inspect}"
+    end
+
+    puts "\nSummary:"
+    stats.each { |key, value| puts "  #{key}: #{value}" }
+    puts dry_run ? "\nDry run complete. Re-run with DRY_RUN=false to apply." : "\nBackfill complete."
+  end
 end
