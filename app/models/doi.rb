@@ -1026,6 +1026,13 @@ class Doi < ApplicationRecord
           bucket_truncate: { bucket_sort: { size: 10 } },
         },
       },
+      enrichment_source_ids: {
+        terms: {
+          field: "enrichment_source_ids",
+          size: 10,
+          min_doc_count: 1
+        }
+      }
     }
 
   def self.default_doi_query_facets
@@ -1305,6 +1312,7 @@ class Doi < ApplicationRecord
     filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } } if options[:schema_version].present?
     filter << { terms: { "subjects.subject.keyword": options[:subject].split(",") } } if options[:subject].present?
+    filter << { terms: { enrichment_source_ids: options[:enrichment_source_id].split(",").map(&:downcase) } } if options[:enrichment_source_id].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
       filter << { terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } }

@@ -141,6 +141,7 @@ class DataciteDoisController < ApplicationController
         funded_by: params[:funded_by],
         include_funder_child_organizations: params[:include_funder_child_organizations],
         affiliation_country: params[:affiliation_country],
+        enrichment_source_id: params[:enrichment_source_id],
       }
       response = if show_enrichments
         EnrichedDoi.enriched_query(params[:query], **query_params)
@@ -278,6 +279,7 @@ class DataciteDoisController < ApplicationController
           open_licenses_count: :metric_doc_count,
           funders: :facet_by_funders,
           person_to_work_types_multilevel: :multi_facet_by_contributors_and_worktype,
+          enrichment_source_ids: :facet_by_source,
         }
 
         facets_to_bucket_path = {
@@ -370,6 +372,7 @@ class DataciteDoisController < ApplicationController
                       "page[size]" => page[:size],
                       fields: fields_hash_from_params(params),
                       "enriched" => (show_enrichments ? true : nil),
+                      "enrichment-source-id" => params[:enrichment_source_id],
                     }.compact.
                     to_query
                 end,
