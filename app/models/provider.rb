@@ -274,7 +274,6 @@ class Provider < ApplicationRecord
       indexes :organization_type, type: :keyword
       indexes :member_type, type: :keyword
       indexes :non_profit_status, type: :keyword
-      indexes :annual_revenue, type: :keyword
       indexes :consortium_id,
               type: :text,
               fields: {
@@ -417,7 +416,6 @@ class Provider < ApplicationRecord
       "organization_type" => organization_type,
       "member_type" => member_type,
       "non_profit_status" => non_profit_status,
-      "annual_revenue" => annual_revenue,
       "consortium_id" => consortium_id,
       "consortium_organization_ids" =>
         options[:exclude_associations] ? nil : consortium_organization_ids,
