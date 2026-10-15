@@ -70,6 +70,14 @@ class Provider < ApplicationRecord
   attr_readonly :symbol
   attr_reader :from_salesforce
 
+  ANNUAL_REVENUE_OPTIONS = [
+    "0-500.000€",
+    "500.001€-2.000.000€",
+    "2.000.001€-50.000.000€",
+    "50.000.001€-1.000.000.000€",
+    ">1.000.000.000€",
+  ].freeze
+
   delegate :salesforce_id, to: :consortium, prefix: true, allow_nil: true
 
   validates_presence_of :symbol, :name, :display_name, :system_email
@@ -124,6 +132,13 @@ class Provider < ApplicationRecord
                          in: %w[non-profit for-profit],
                          message:
                            "non-profit status '%s' is not included in the list"
+  validates_inclusion_of :annual_revenue,
+                         in: ANNUAL_REVENUE_OPTIONS,
+                         allow_blank: true,
+                         message:
+                           "annual revenue '%s' is not a valid value"
+  validates_presence_of :annual_revenue,
+                        if: -> { non_profit_status == "for-profit" }
   validates_inclusion_of :focus_area,
                          in: %w[
                            naturalSciences
@@ -865,6 +880,7 @@ class Provider < ApplicationRecord
       "country_code" => country_code,
       "logo_url" => logo_url,
       "non_profit_status" => non_profit_status,
+      "annual_revenue" => annual_revenue,
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type_label,
@@ -989,6 +1005,7 @@ class Provider < ApplicationRecord
       self.billing_information = {} if billing_information.blank?
       self.consortium_id = nil unless member_type == "consortium_organization"
       self.non_profit_status = "non-profit" if non_profit_status.blank?
+      self.annual_revenue = nil if non_profit_status == "non-profit"
       self.doi_estimate = doi_estimate.to_i
 
       # custom filename for attachment as data URLs don't support filenames

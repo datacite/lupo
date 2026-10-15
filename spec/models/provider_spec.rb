@@ -73,6 +73,7 @@ describe Provider, type: :model do
 
     it "for-profit" do
       subject.non_profit_status = "for-profit"
+      subject.annual_revenue = "0-500.000€"
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
     end
@@ -88,6 +89,50 @@ describe Provider, type: :model do
       expect(subject.save).to be false
       expect(subject.errors.details).to eq(
         non_profit_status: [{ error: :inclusion, value: "super-profit" }],
+      )
+    end
+  end
+
+  describe "annual revenue" do
+    subject { build(:provider) }
+
+    it "valid option for for-profit" do
+      subject.non_profit_status = "for-profit"
+      subject.annual_revenue = "500.001€-2.000.000€"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.annual_revenue).to eq("500.001€-2.000.000€")
+    end
+
+    it "required for for-profit" do
+      subject.non_profit_status = "for-profit"
+      subject.annual_revenue = nil
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(
+        annual_revenue: [{ error: :blank }],
+      )
+    end
+
+    it "not required for non-profit" do
+      subject.non_profit_status = "non-profit"
+      subject.annual_revenue = nil
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "cleared when non-profit" do
+      subject.non_profit_status = "non-profit"
+      subject.annual_revenue = "0-500.000€"
+      expect(subject.save).to be true
+      expect(subject.annual_revenue).to be_nil
+    end
+
+    it "invalid option" do
+      subject.non_profit_status = "for-profit"
+      subject.annual_revenue = "invalid-option"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(
+        annual_revenue: [{ error: :inclusion, value: "invalid-option" }],
       )
     end
   end
