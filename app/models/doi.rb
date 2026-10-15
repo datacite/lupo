@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "maremma"
+require_relative "concerns/preloaded_event_relation"
 
 class Doi < ApplicationRecord
   INVALID_SCHEMAS = %w[
@@ -84,6 +85,7 @@ class Doi < ApplicationRecord
   alias_attribute :state, :aasm_state
 
   attr_accessor :current_user
+  attr_accessor :preloaded_events
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
@@ -107,6 +109,73 @@ class Doi < ApplicationRecord
   has_many :activities, as: :auditable, dependent: :destroy
   # has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+
+  # Override association methods to use preloaded_events when available
+  # Check for !nil instead of present? to handle empty arrays (preloaded but no events)
+  # Also filter by source_doi/target_doi to match association behavior
+  def view_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "views", :target_doi)
+    else
+      association(:view_events).scope
+    end
+  end
+
+  def download_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "downloads", :target_doi)
+    else
+      association(:download_events).scope
+    end
+  end
+
+  def reference_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "references", :source_doi)
+    else
+      association(:reference_events).scope
+    end
+  end
+
+  def citation_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "citations", :target_doi)
+    else
+      association(:citation_events).scope
+    end
+  end
+
+  def part_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "parts", :source_doi)
+    else
+      association(:part_events).scope
+    end
+  end
+
+  def part_of_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "part_of", :target_doi)
+    else
+      association(:part_of_events).scope
+    end
+  end
+
+  def version_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:source_relation_type_id, "versions", :source_doi)
+    else
+      association(:version_events).scope
+    end
+  end
+
+  def version_of_events
+    if !preloaded_events.nil?
+      filtered_preloaded_events(:target_relation_type_id, "version_of", :target_doi)
+    else
+      association(:version_of_events).scope
+    end
+  end
 
   has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
   has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
@@ -771,11 +840,14 @@ class Doi < ApplicationRecord
   end
 
   def has_enrichments
-    if association(:enrichments).loaded?
-      enrichments.any?
-    else
-      enrichments.exists?
-    end
+    return @has_enrichments if defined?(@has_enrichments)
+
+    @has_enrichments =
+      if association(:enrichments).loaded?
+        enrichments.any?
+      else
+        enrichments.exists?
+      end
   end
 
   DOI_AGGREGATION_DEFINITIONS = {
@@ -886,10 +958,9 @@ class Doi < ApplicationRecord
       },
       creators_and_contributors: {
         terms: {
-          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          field: "person_id",
           size: 10,
-          min_doc_count: 1,
-          include: "https?://orcid.org/.*"
+          min_doc_count: 1
         },
         aggs: {
           creators_and_contributors: {
@@ -913,10 +984,9 @@ class Doi < ApplicationRecord
       },
       person_to_work_types_multilevel: {
         terms: {
-          field: "creators_and_contributors.nameIdentifiers.nameIdentifier",
+          field: "person_id",
           size: 10,
-          min_doc_count: 1,
-          include: "https?://orcid.org/.*"
+          min_doc_count: 1
         },
         aggs: {
           creators_and_contributors: {
@@ -956,6 +1026,13 @@ class Doi < ApplicationRecord
           bucket_truncate: { bucket_sort: { size: 10 } },
         },
       },
+      enrichment_source_ids: {
+        terms: {
+          field: "enrichment_source_ids",
+          size: 10,
+          min_doc_count: 1
+        }
+      }
     }
 
   def self.default_doi_query_facets
@@ -1235,6 +1312,7 @@ class Doi < ApplicationRecord
     filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } } if options[:schema_version].present?
     filter << { terms: { "subjects.subject.keyword": options[:subject].split(",") } } if options[:subject].present?
+    filter << { terms: { enrichment_source_ids: options[:enrichment_source_id].split(",").map(&:downcase) } } if options[:enrichment_source_id].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
       filter << { terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } }
@@ -2026,11 +2104,11 @@ class Doi < ApplicationRecord
   def person_id
     (Array.wrap(creators) + Array.wrap(contributors)).reduce([]) do |sum, c|
       Array.wrap(c.fetch("nameIdentifiers", nil)).each do |name_identifier|
-        if name_identifier.is_a?(Hash) && name_identifier.fetch("nameIdentifierScheme", nil) == "ORCID" && name_identifier.fetch("nameIdentifier", nil).present?
-          sum << orcid_as_url(
-            orcid_from_url(name_identifier.fetch("nameIdentifier", nil))
-          )
-        end
+        next unless name_identifier.is_a?(Hash)
+        next unless name_identifier.fetch("nameIdentifierScheme", nil) == "ORCID"
+
+        orcid_url = orcid_url_from_identifier(name_identifier.fetch("nameIdentifier", nil))
+        sum << orcid_url if orcid_url.present?
       end
       sum.uniq
     end
@@ -2868,6 +2946,15 @@ class Doi < ApplicationRecord
   end
 
   private
+    def filtered_preloaded_events(relation_type_key, relation_type_value, doi_key)
+      PreloadedEventRelation.new(
+        preloaded_events.select do |e|
+          e.public_send(relation_type_key) == relation_type_value &&
+            e.public_send(doi_key)&.upcase == doi.upcase
+        end
+      )
+    end
+
     def update_publisher_from_hash
       symbolized_publisher_hash = publisher_before_type_cast.symbolize_keys
       if !symbolized_publisher_hash.values.all?(nil)

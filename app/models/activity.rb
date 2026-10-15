@@ -24,6 +24,10 @@ class Activity < Audited::Audit
     index_name "activities"
   end
 
+  settings index: {
+    number_of_shards: ENV["NUMBER_OF_SHARDS_ACTIVITY"].to_i,
+  }
+
   mapping dynamic: "false" do
     indexes :id, type: :keyword
     indexes :auditable_id, type: :keyword

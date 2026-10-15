@@ -1240,6 +1240,88 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         ]
       )
     end
+
+    describe "ORCID identifier shapes" do
+      subject(:doi) { build(:doi, creators: creators, contributors: []) }
+
+      let(:creators) do
+        [{
+          "name" => "Example, Person",
+          "nameIdentifiers" => name_identifiers,
+        }]
+      end
+
+      context "when the identifier is an ORCID URL" do
+        let(:name_identifiers) do
+          [{ "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }]
+        end
+
+        it "keeps the URL" do
+          expect(doi.person_id).to eq(["https://orcid.org/0000-0003-3484-6875"])
+        end
+      end
+
+      context "when the identifier is a bare ORCID id" do
+        let(:name_identifiers) do
+          [{ "nameIdentifier" => "0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" }]
+        end
+
+        it "stores the ORCID URL" do
+          expect(doi.person_id).to eq(["https://orcid.org/0000-0003-3484-6875"])
+        end
+      end
+
+      context "when the bare id ends in x" do
+        let(:name_identifiers) do
+          [{ "nameIdentifier" => "0000-0001-7701-701x", "nameIdentifierScheme" => "ORCID" }]
+        end
+
+        it "stores an uppercased ORCID URL" do
+          expect(doi.person_id).to eq(["https://orcid.org/0000-0001-7701-701X"])
+        end
+      end
+
+      context "when the scheme is ORCID but the value is not an ORCID" do
+        let(:name_identifiers) do
+          [{ "nameIdentifier" => "https://osf.io/8kzbu/", "nameIdentifierScheme" => "ORCID" }]
+        end
+
+        it "does not store a nil slot" do
+          expect(doi.person_id).to eq([])
+        end
+      end
+
+      context "when the scheme is not ORCID" do
+        let(:name_identifiers) do
+          [{ "nameIdentifier" => "0000-0003-3484-6875", "nameIdentifierScheme" => "OSF" }]
+        end
+
+        it "ignores the identifier" do
+          expect(doi.person_id).to eq([])
+        end
+      end
+
+      context "when identifiers are mixed" do
+        let(:name_identifiers) do
+          [
+            { "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme" => "ORCID" },
+            { "nameIdentifier" => "", "nameIdentifierScheme" => "ORCID" },
+            { "nameIdentifier" => "https://osf.io/8kzbu/", "nameIdentifierScheme" => "ORCID" },
+            { "nameIdentifier" => "0000-0003-3484-0000", "nameIdentifierScheme" => "ORCID" },
+            { "nameIdentifier" => "https://orcid.org/0000-0003-0800-1234", "nameIdentifierScheme" => "OSF" },
+          ]
+        end
+
+        it "keeps only resolved ORCID URLs" do
+          expect(doi.person_id).to eq(
+            [
+              "https://orcid.org/0000-0003-3484-6875",
+              "https://orcid.org/0000-0003-3484-0000",
+            ],
+          )
+        end
+      end
+    end
   end
 
   describe "related_identifiers" do

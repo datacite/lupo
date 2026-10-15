@@ -19,7 +19,7 @@ Rails API application for managing DataCite providers, clients, prefixes and DOI
 *   MySQL
 *   OpenSearch (Elasticsearch)
 *   Memcached
-*   S3 compatible storage (Minio in dev and test)
+*   S3 compatible storage (LocalStack in local development; endpoint `http://localhost:4566`)
 *   Shoryuken (AWS SQS) for Background Jobs
     * Inline Background Jobs in development and test environments
 

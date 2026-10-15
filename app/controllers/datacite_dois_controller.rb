@@ -141,6 +141,7 @@ class DataciteDoisController < ApplicationController
         funded_by: params[:funded_by],
         include_funder_child_organizations: params[:include_funder_child_organizations],
         affiliation_country: params[:affiliation_country],
+        enrichment_source_id: params[:enrichment_source_id],
       }
       response = if show_enrichments
         EnrichedDoi.enriched_query(params[:query], **query_params)
@@ -278,6 +279,7 @@ class DataciteDoisController < ApplicationController
           open_licenses_count: :metric_doc_count,
           funders: :facet_by_funders,
           person_to_work_types_multilevel: :multi_facet_by_contributors_and_worktype,
+          enrichment_source_ids: :facet_by_source,
         }
 
         facets_to_bucket_path = {
@@ -370,6 +372,7 @@ class DataciteDoisController < ApplicationController
                       "page[size]" => page[:size],
                       fields: fields_hash_from_params(params),
                       "enriched" => (show_enrichments ? true : nil),
+                      "enrichment-source-id" => params[:enrichment_source_id],
                     }.compact.
                     to_query
                 end,
@@ -490,6 +493,9 @@ class DataciteDoisController < ApplicationController
           publisher: params[:publisher],
           include_other_registration_agencies: params[:include_other_registration_agencies],
         }
+        # Preload events since we are going to show details
+        # This optimizes the serializer which accesses part_events, citation_events, etc.
+        EventsPreloader.new([doi]).preload!
 
         if show_enriched
           return handle_show_enriched_doi(doi, options)
@@ -805,26 +811,13 @@ class DataciteDoisController < ApplicationController
       # Short circuit if there are no enrichments
       return render(json: EnrichedDoiSerializer.new(doi, options).serializable_hash.to_json, status: :ok) if doi.enrichments.empty?
 
-      # Ensure validation works as expected when not persisting the record
-      doi.only_validate = true
-      doi.regenerate = true
-      doi.skip_url_validation = true
-      doi.skip_schema_version_validation = false
-
-      # Ensure we use schema version 4 for validation
-      doi.schema_version = "http://datacite.org/schema/kernel-4"
-
       # Apply enrichments to the doi
-      doi.enrichments.each do |enrichment|
-        doi.apply_enrichment(enrichment)
-      rescue
-        next
-      end
+      doi.apply_all_enrichments
 
-      # Ensure there are no enrichments in the relationship section if the doi is invalid
+      # If invalid after enrichment, reload from DB and clear enrichments relationship
       if doi.invalid?
         # Reset the doi to original version to revert enrichment application
-        doi = Doi.includes(:enrichments).find_by(doi: doi.doi, agency: "datacite")
+        doi = Doi.find_by(doi: doi.doi, agency: "datacite")
 
         # Clear enrichments
         doi.association(:enrichments).target = []

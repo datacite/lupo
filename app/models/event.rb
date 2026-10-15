@@ -148,6 +148,10 @@ class Event < ApplicationRecord
     index_name "events"
   end
 
+  settings index: {
+    number_of_shards: ENV["NUMBER_OF_SHARDS_EVENT"].to_i,
+  }
+
   mapping dynamic: "false" do
     indexes :uuid, type: :keyword
     indexes :subj_id, type: :keyword

@@ -12,6 +12,10 @@ class DataciteDoi < Doi
     index_name "dois"
   end
 
+  settings index: Doi.settings.to_hash.fetch(:index, {}).merge(
+    number_of_shards: ENV["NUMBER_OF_SHARDS_DATACITE_DOI"].to_i,
+  )
+
   def self.index_all_by_client(options = {})
     client_to_doi_count = DataciteDoi.where(type: "DataciteDoi").group(:datacentre).count
     # throw out id 0
@@ -142,20 +146,15 @@ class DataciteDoi < Doi
 
     # get database records from array of database ids
     selected_dois = DataciteDoi.where(id: ids, type: "DataciteDoi").includes(
-      :client,
+      { client: :provider },
       :media,
-      :enrichments,
-      :view_events,
-      :download_events,
-      :citation_events,
-      :reference_events,
-      :part_events,
-      :part_of_events,
-      :version_events,
-      :version_of_events,
-      :metadata
+      :metadata,
+      :enrichments
     )
     selected_dois.find_in_batches(batch_size: batch_size) do |dois|
+      # Preload all events for this batch in a single query
+      EventsPreloader.new(dois).preload!
+
       bulk_body = dois.map do |doi|
         {
           index: {

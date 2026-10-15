@@ -31,17 +31,8 @@ class EnrichedDoiIndexJob < ApplicationJob
 
     original_source_attributes = source_doi.attributes.deep_dup
 
-    source_doi.only_validate = true
-    source_doi.regenerate = true
-    source_doi.skip_url_validation = true
-    source_doi.skip_schema_version_validation = false
-    source_doi.schema_version = "http://datacite.org/schema/kernel-4"
 
-    source_doi.enrichments.each do |enrichment|
-      source_doi.apply_enrichment(enrichment)
-    rescue => e
-      Rails.logger.error("#{log_prefix}: Failed to apply enrichment for DOI #{source_doi.doi}: #{e.message}")
-    end
+    source_doi.apply_all_enrichments
 
     fallback_to_source_doi = false
     if source_doi.invalid?
@@ -54,6 +45,7 @@ class EnrichedDoiIndexJob < ApplicationJob
     enriched_doi.id = source_doi.id
     enriched_doi.created_at = source_doi.created_at
     enriched_doi.updated_at = source_doi.updated_at
+    enriched_doi.enrichment_source_ids = source_doi.enrichment_source_ids
     enriched_doi.index_without_enrichments = fallback_to_source_doi
 
     response = enriched_doi.__elasticsearch__.index_document(index: target_index)
