@@ -2685,7 +2685,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     it "enrichment-source-id filter returns a list filtered by enrichment_source_ids when enriched=true" do
       get "/dois?enriched=true&enrichment-source-id=#{affiliation_enrichment.source_id}", nil, headers
-      
+
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
       expect(json.dig("data", 0, "id").downcase).to eq(doi_with_affiliation_enrichment.doi.downcase)
@@ -2693,7 +2693,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     it "query=enrichment_source_ids: filter returns a list filtered by enrichment_source_ids when enriched=true" do
       get "/dois?enriched=true&query=enrichment_source_ids:#{resource_type_enrichment.source_id}", nil, headers
-      
+
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(1)
       expect(json.dig("data", 0, "id").downcase).to eq(doi_with_resource_type_enrichment.doi.downcase)
@@ -2708,7 +2708,7 @@ describe DataciteDoisController, type: :request, vcr: true do
 
     it "enrichment-source-id filter returns an empty list when enriched= is not set" do
       get "/dois?enrichment-source-id=#{affiliation_enrichment.source_id}", nil, headers
-      
+
       expect(last_response.status).to eq(200)
       expect(json.dig("meta", "total")).to eq(0)
     end
