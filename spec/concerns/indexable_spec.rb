@@ -289,6 +289,28 @@ describe "Indexable class methods", elasticsearch: true do
         end
         event.doi_for_source.touch
       end
+
+      it "sets minted before enqueueing IndexJobDoiRegistration" do
+        token = User.generate_token(role_id: "client_admin")
+        unsaved = build(
+          :doi,
+          agency: "datacite",
+          aasm_state: "findable",
+          minted: nil,
+          current_user: User.new(token),
+        )
+        expect(unsaved.minted).to be_nil
+
+        allow(unsaved).to receive(:register_url) do
+          unsaved.update!(minted: Time.zone.now)
+        end
+
+        expect(IndexJobDoiRegistration).to receive(:perform_later).at_least(:once) do |arg|
+          expect(DataciteDoi.find(arg.id).minted).to be_present
+        end
+
+        unsaved.save!
+      end
     end
   end
 
