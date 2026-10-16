@@ -461,6 +461,7 @@ class EnrichedDoi < Doi
       indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
       indexes :enrichments, type: :keyword
+      indexes :enrichment_source_ids, type: :keyword, normalizer: "keyword_lowercase"
       indexes :primary_title, type: :object, properties: {
         title: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true } } },
         titleType: { type: :keyword },
@@ -488,10 +489,11 @@ class EnrichedDoi < Doi
   end
 
   def extra_indexed_fields
-    return { "enrichments" => [] } if index_without_enrichments
+    return { "enrichments" => [], "enrichment_source_ids" => [] } if index_without_enrichments
 
     {
       "enrichments" => enrichment_uuids,
+      "enrichment_source_ids" => enrichment_source_ids,
     }
   end
 
@@ -633,6 +635,7 @@ class EnrichedDoi < Doi
     filter << { range: { publication_year: { gte: "#{options[:published].split(',').min}||/y", lte: "#{options[:published].split(',').max}||/y", format: "yyyy" } } } if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" } } if options[:schema_version].present?
     filter << { terms: { "subjects.subject.keyword": options[:subject].split(",") } } if options[:subject].present?
+    filter << { terms: { enrichment_source_ids: options[:enrichment_source_id].split(",").map(&:downcase) } } if options[:enrichment_source_id].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
       filter << { terms: { "subjects.subject.keyword": options[:pid_entity].split(",").map(&:humanize) } }

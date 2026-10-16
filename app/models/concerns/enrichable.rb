@@ -25,6 +25,14 @@ module Enrichable
     "fundingReferences" => "funding_references"
   }.freeze
 
+  def enrichment_source_ids
+    @enrichment_source_ids ||= []
+  end
+
+  def enrichment_source_ids=(value)
+    @enrichment_source_ids = Array.wrap(value)
+  end
+
   def apply_enrichment(enrichment)
     self.readonly!
     action = enrichment.action
@@ -77,12 +85,16 @@ module Enrichable
     self.skip_url_validation = true
     self.skip_schema_version_validation = false
     self.schema_version = "http://datacite.org/schema/kernel-4"
+    successful_source_ids = []
 
     self.enrichments.order(created_at: :desc).each do |enrichment|
       apply_enrichment(enrichment)
+      successful_source_ids << enrichment.source_id.to_s.strip.downcase.presence
     rescue => e
       Rails.logger.error("#{log_prefix}: Failed to apply enrichment #{enrichment.id} for DOI #{self.doi}: #{e.message}")
     end
+
+    self.enrichment_source_ids = successful_source_ids.compact.uniq
 
     self
   end

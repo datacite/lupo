@@ -2626,4 +2626,91 @@ describe DataciteDoisController, type: :request, vcr: true do
       end
     end
   end
+
+  describe "GET /dois with filters and aggregations on enrichment_source_ids", elasticsearch: true do
+    let!(:affiliation_enrichment) { create(:enrichment, source_id: "10.1234/affiliation-enrichment") }
+    let!(:doi_with_affiliation_enrichment) { create(:doi, doi: affiliation_enrichment.doi, client: client, aasm_state: "findable", creators: [{
+        "name" => "Arslan, M.",
+        "givenName" => "M.",
+        "familyName" => "Arslan",
+        "affiliation" => [],
+      }]) }
+    let(:doi_with_resource_type_enrichment) do
+      create(:doi, doi: "10.14454/rte", client: client, aasm_state: "findable")
+    end
+    let!(:resource_type_enrichment) do
+      create(:enrichment, source_id: "10.1234/rte-enrichment", doi: doi_with_resource_type_enrichment.doi, field: "types", action: "update", original_value: {
+        "resourceTypeGeneral": "Dataset",
+        "resourceType": "DataPackage",
+        "schemaOrg": "Dataset",
+        "citeproc": "dataset",
+        "bibtex": "misc",
+        "ris": "DATA",
+      }, enriched_value: {
+        "resourceTypeGeneral": "JournalArticle",
+        "resourceType": "DataPackage",
+        "schemaOrg": "Dataset",
+        "citeproc": "dataset",
+        "bibtex": "misc",
+        "ris": "DATA",
+      })
+    end
+
+    before do
+      IndexJobDoiRegistration.perform_now(doi_with_affiliation_enrichment)
+      IndexJobDoiRegistration.perform_now(doi_with_resource_type_enrichment)
+      # EnrichedDoiIndexJob.perform_now(doi_with_resource_type_enrichment.doi)
+      # EnrichedDoiIndexJob.perform_now(doi_with_affiliation_enrichment.doi)
+      import_doi_index
+      refresh_enriched_doi_index
+    end
+
+    it "enrichmentSourceIds facet returns meta.enrichmentSourceIds when enriched=true" do
+      get "/dois?enriched=true&disable-facets=false&facets=enrichmentSourceIds", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "enrichmentSourceIds")).to eq([
+        {
+          "id" => "10.1234/affiliation-enrichment",
+          "title" => "10.1234/affiliation-enrichment",
+          "count" => 1,
+        },
+        {
+          "id" => "10.1234/rte-enrichment",
+          "title" => "10.1234/rte-enrichment",
+          "count" => 1
+        }
+      ])
+    end
+
+    it "enrichment-source-id filter returns a list filtered by enrichment_source_ids when enriched=true" do
+      get "/dois?enriched=true&enrichment-source-id=#{affiliation_enrichment.source_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "id").downcase).to eq(doi_with_affiliation_enrichment.doi.downcase)
+    end
+
+    it "query=enrichment_source_ids: filter returns a list filtered by enrichment_source_ids when enriched=true" do
+      get "/dois?enriched=true&query=enrichment_source_ids:#{resource_type_enrichment.source_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(1)
+      expect(json.dig("data", 0, "id").downcase).to eq(doi_with_resource_type_enrichment.doi.downcase)
+    end
+
+    it "enrichmentSourceIds facet returns empty meta.enrichmentSourceIds when enriched= is not set" do
+      get "/dois?disable-facets=false&facets=enrichmentSourceIds", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "enrichmentSourceIds")).to eq([])
+    end
+
+    it "enrichment-source-id filter returns an empty list when enriched= is not set" do
+      get "/dois?enrichment-source-id=#{affiliation_enrichment.source_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("meta", "total")).to eq(0)
+    end
+  end
 end
