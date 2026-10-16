@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ActivitiesController, type: :request do
+describe ActivitiesController, type: :request, prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) do
     create(

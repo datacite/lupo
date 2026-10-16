@@ -58,7 +58,7 @@ require "rails_helper"
 #   end
 # end
 
-describe "doi:set_url", elasticsearch: true do
+describe "doi:set_url", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -74,7 +74,7 @@ describe "doi:set_url", elasticsearch: true do
   end
 end
 
-describe "doi:set_handle", elasticsearch: true do
+describe "doi:set_handle", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -92,7 +92,7 @@ describe "doi:set_handle", elasticsearch: true do
   end
 end
 
-describe "doi:set_minted", elasticsearch: true do
+describe "doi:set_minted", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -108,7 +108,7 @@ describe "doi:set_minted", elasticsearch: true do
   end
 end
 
-describe "doi:set_schema_version", elasticsearch: true do
+describe "doi:set_schema_version", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -124,7 +124,7 @@ describe "doi:set_schema_version", elasticsearch: true do
   end
 end
 
-describe "doi:set_registration_agency", elasticsearch: true do
+describe "doi:set_registration_agency", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -142,7 +142,7 @@ describe "doi:set_registration_agency", elasticsearch: true do
   end
 end
 
-describe "doi:set_license", elasticsearch: true do
+describe "doi:set_license", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -158,7 +158,7 @@ describe "doi:set_license", elasticsearch: true do
   end
 end
 
-describe "doi:set_language", elasticsearch: true do
+describe "doi:set_language", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -174,7 +174,7 @@ describe "doi:set_language", elasticsearch: true do
   end
 end
 
-describe "doi:set_identifiers", elasticsearch: true do
+describe "doi:set_identifiers", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -190,7 +190,7 @@ describe "doi:set_identifiers", elasticsearch: true do
   end
 end
 
-describe "doi:set_field_of_science", elasticsearch: true do
+describe "doi:set_field_of_science", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -206,7 +206,7 @@ describe "doi:set_field_of_science", elasticsearch: true do
   end
 end
 
-describe "doi:convert_affiliations", elasticsearch: true do
+describe "doi:convert_affiliations", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -222,7 +222,7 @@ describe "doi:convert_affiliations", elasticsearch: true do
   end
 end
 
-describe "doi:convert_containers", elasticsearch: true do
+describe "doi:convert_containers", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -238,7 +238,7 @@ describe "doi:convert_containers", elasticsearch: true do
   end
 end
 
-describe "doi:migrate_landing_page", elasticsearch: true do
+describe "doi:migrate_landing_page", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -254,7 +254,7 @@ describe "doi:migrate_landing_page", elasticsearch: true do
   end
 end
 
-describe "doi:repair_landing_page", elasticsearch: true do
+describe "doi:repair_landing_page", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -291,7 +291,7 @@ describe "doi:repair_landing_page", elasticsearch: true do
   end
 end
 
-describe "doi:delete_by_prefix", elasticsearch: true do
+describe "doi:delete_by_prefix", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 

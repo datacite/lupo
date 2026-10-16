@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Mailable", type: :model, vcr: true do
+describe "Mailable", type: :model, vcr: true, prefix_pool_size: 1 do
   let(:token) { User.generate_token }
   let(:provider) do
     create(

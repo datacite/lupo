@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Activity, type: :model do
+describe Activity, type: :model, prefix_pool_size: 1 do
   context "create doi" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client) }
@@ -41,7 +41,7 @@ describe Activity, type: :model do
     end
   end
 
-  context "create provider" do
+  context "create provider", skip_prefix_pool: true do
     let(:provider) { create(:provider) }
 
     it "activity exists" do
@@ -55,7 +55,7 @@ describe Activity, type: :model do
     end
   end
 
-  context "update provider" do
+  context "update provider", skip_prefix_pool: true do
     let(:provider) { create(:provider) }
 
     it "activity exists" do

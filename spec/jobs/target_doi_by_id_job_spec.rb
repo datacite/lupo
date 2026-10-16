@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe TargetDoiByIdJob, type: :job do
+describe TargetDoiByIdJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi) }
   subject(:job) { TargetDoiByIdJob.perform_later(doi) }
 
