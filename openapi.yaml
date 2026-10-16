@@ -1082,7 +1082,11 @@ paths:
     post:
       tags:
         - dois
-      summary: Add a new DOI.
+      summary: Add one DOI or asynchronously add a batch of DOIs.
+      description: >-
+        A single resource object is processed synchronously. An array containing
+        1 to 1,000 resources is accepted as an asynchronous batch and returns
+        202 with a polling URL.
       security:
         - BasicAuth: []
         - bearerAuth: []
@@ -1091,12 +1095,20 @@ paths:
           $ref: '#/components/parameters/affiliationParam'
         - in: query
           $ref: '#/components/parameters/publisherParam'
+        - in: header
+          name: Content-Encoding
+          required: false
+          schema:
+            type: string
+            enum: [gzip, deflate]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DoiDetailItem'
+              oneOf:
+                - $ref: '#/components/schemas/DoiDetailItem'
+                - $ref: '#/components/schemas/DoiBatchRequest'
       responses:
         '201':
           description: Created
@@ -1104,6 +1116,122 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/DoiDetailItem'
+        '202':
+          description: Batch accepted for asynchronous processing.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiBatchDocument'
+        '400':
+          description: Invalid batch shape, size, or DOI.
+        '403':
+          description: At least one batch item is not authorized.
+    patch:
+      tags:
+        - dois
+      summary: Update a batch of DOIs asynchronously.
+      description: >-
+        Accepts between 1 and 1,000 DOI resources. Every resource must include
+        `data.id`. Missing DOIs are created using the same upsert semantics as
+        member PATCH requests. Transfer mode is not supported in batches.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Content-Encoding
+          required: false
+          schema:
+            type: string
+            enum: [gzip, deflate]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoiBatchRequest'
+      responses:
+        '202':
+          description: Batch accepted for asynchronous processing.
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiBatchDocument'
+        '400':
+          description: Invalid batch shape, size, DOI, or unsupported mode.
+        '403':
+          description: At least one batch item is not authorized.
+  '/doi-batches/{id}':
+    get:
+      tags:
+        - dois
+      summary: Return the status of an asynchronous DOI batch.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Batch status and aggregate result counts.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiBatchDocument'
+        '403':
+          description: The authenticated user cannot access this batch.
+        '404':
+          description: Batch not found.
+  '/doi-batches/{id}/items':
+    get:
+      tags:
+        - dois
+      summary: Return cursor-paginated results for a DOI batch.
+      security:
+        - BasicAuth: []
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [queued, processing, succeeded, failed]
+        - name: page[cursor]
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Per-item results, including validation errors.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/DoiBatchItemsDocument'
+        '403':
+          description: The authenticated user cannot access this batch.
+        '404':
+          description: Batch not found.
   '/dois/{id}':
     get:
       parameters:
@@ -2247,6 +2375,150 @@ components:
                   $ref: '#/components/schemas/DataObject'
       required:
         - id
+    DoiBatchRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items:
+            type: object
+            required:
+              - type
+              - attributes
+            properties:
+              id:
+                type: string
+                description: Required for PATCH batches and omitted for POST batches.
+              type:
+                type: string
+                enum: [dois]
+              attributes:
+                type: object
+                description: DOI attributes accepted by the corresponding single-resource operation.
+              relationships:
+                type: object
+    DoiBatchDocument:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DoiBatch'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+            items:
+              type: string
+              format: uri
+    DoiBatch:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [doi-batches]
+        attributes:
+          type: object
+          properties:
+            operation:
+              type: string
+              enum: [create, update]
+            status:
+              type: string
+              enum: [queued, processing, completed]
+            totalCount:
+              type: integer
+            succeededCount:
+              type: integer
+            failedCount:
+              type: integer
+            pendingCount:
+              type: integer
+            startedAt:
+              type: string
+              format: date-time
+              nullable: true
+            completedAt:
+              type: string
+              format: date-time
+              nullable: true
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    DoiBatchItemsDocument:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DoiBatchItem'
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: uri
+            next:
+              type: string
+              format: uri
+              nullable: true
+    DoiBatchItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Zero-based position in the submitted batch.
+        type:
+          type: string
+          enum: [doi-batch-items]
+        attributes:
+          type: object
+          properties:
+            position:
+              type: integer
+            doi:
+              type: string
+              nullable: true
+            status:
+              type: string
+              enum: [queued, processing, succeeded, failed]
+            responseStatus:
+              type: integer
+              nullable: true
+            errors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  title:
+                    type: string
+                  uid:
+                    type: string
+        links:
+          type: object
+          properties:
+            doi:
+              type: string
+              format: uri
+              nullable: true
     DoiDetailItem:
       description: >-
         Represents a single DOI and provides access to metadata attributes. More
