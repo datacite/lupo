@@ -2709,4 +2709,53 @@ describe DataciteDoisController, type: :request, vcr: true do
     #   end
     # end
   end
+
+  describe "handle registration", vcr: false do
+    let(:xml) { Base64.strict_encode64(file_fixture("datacite.xml").read) }
+    let(:handle_put) { a_request(:put, %r{/api/handles/}) }
+
+    before do
+      stub_request(:put, %r{/api/handles/}).to_return(
+        status: 201,
+        body: { "responseCode" => 1, "handle" => "10.14454/10703" }.to_json,
+        headers: { "Content-Type" => "application/json" },
+      )
+    end
+
+    it "registers the handle once when creating a findable DOI" do
+      valid_attributes = {
+        "data" => {
+          "type" => "dois",
+          "attributes" => {
+            "doi" => "10.14454/10703",
+            "url" => "http://www.bl.uk/pdf/patspec.pdf",
+            "xml" => xml,
+            "source" => "test",
+            "event" => "publish",
+          },
+        },
+      }
+
+      post "/dois", valid_attributes, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json.dig("data", "attributes", "state")).to eq("findable")
+      expect(json.dig("data", "attributes", "registered")).to be_present
+      expect(Doi.find_by(doi: "10.14454/10703").minted).to be_present
+      expect(handle_put).to have_been_made.once
+    end
+
+    it "registers the handle once when publishing a draft DOI" do
+      draft = create(:doi, client: client, doi: "10.14454/4k3m-nyvh", aasm_state: "draft", url: "http://www.bl.uk/pdf/patspec.pdf", minted: nil)
+      update_attributes = { "data" => { "type" => "dois", "attributes" => { "event" => "publish" } } }
+
+      patch "/dois/#{draft.doi}", update_attributes, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig("data", "attributes", "state")).to eq("findable")
+      expect(json.dig("data", "attributes", "registered")).to be_present
+      expect(draft.reload.minted).to be_present
+      expect(handle_put).to have_been_made.once
+    end
+  end
 end
