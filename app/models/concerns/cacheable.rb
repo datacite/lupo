@@ -56,13 +56,25 @@ module Cacheable
     end
 
     def cached_prefix_response(prefix, _options = {})
-      if Rails.application.config.action_controller.perform_caching
-        Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 24.hours) do
-          Prefix.where(uid: prefix).first
-        end
-      else
-        Prefix.where(uid: prefix).first
+      uid = prefix.to_s
+      return Prefix.where(uid: uid).first unless Rails.application.config.action_controller.perform_caching
+
+      # Cache only the numeric id as a hint. Always re-load and verify uid so a
+      # destroyed/recreated prefix cannot yield an orphan FK (common in tests that
+      # reuse fixed uids like 10.17616 across before/after :all blocks).
+      cached_id = Rails.cache.fetch("prefix_response/#{uid}", expires_in: 24.hours) do
+        Prefix.where(uid: uid).pick(:id)
       end
+
+      record = cached_id.present? ? Prefix.find_by(id: cached_id) : nil
+      return record if record&.uid.to_s == uid
+
+      Rails.cache.delete("prefix_response/#{uid}")
+      found = Prefix.where(uid: uid).first
+      if found
+        Rails.cache.write("prefix_response/#{uid}", found.id, expires_in: 24.hours)
+      end
+      found
     end
 
     def cached_resource_type_response(id)

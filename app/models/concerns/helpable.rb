@@ -8,11 +8,13 @@ module Helpable
   require "securerandom"
   require "base32/url"
 
+  # Kept for existing call sites; mint algorithm lives in DoiMinting.
   UPPER_LIMIT = 1_073_741_823
 
   included do
     include Bolognese::Utils
     include Bolognese::DoiUtils
+    include DoiMinting
 
     def register_url
       if url.blank?
@@ -106,40 +108,57 @@ module Helpable
       response
     end
 
+    # When true, the stored `url` attribute is authoritative (draft/other/special providers).
+    # When false, resolve via Handle (`get_url`).
+    def uses_stored_landing_url?
+      !is_registered_or_findable? ||
+        %w[europ].include?(provider_id) ||
+        type == "OtherDoi"
+    end
+
+    # Full landing-URL policy for REST and MDS. Controllers only map the result.
+    def resolve_landing_url
+      if uses_stored_landing_url?
+        return url.present? ? LandingUrlResolution.ok(url) : LandingUrlResolution.no_content
+      end
+
+      response = get_url
+
+      if response.status == 200
+        value = response.body.dig("data", "values", 0, "data", "value")
+        if value.present?
+          LandingUrlResolution.ok(value)
+        else
+          LandingUrlResolution.upstream(
+            status: response.status || 400,
+            body: response.body,
+          )
+        end
+      elsif response.status == 400 &&
+          response.body.dig("errors", 0, "title", "responseCode") == 301
+        LandingUrlResolution.forbidden_handle
+      else
+        LandingUrlResolution.upstream(
+          status: response.status || 400,
+          body: response.body,
+        )
+      end
+    end
+
+    # URL string only when resolution is :ok. Non-ok outcomes (no URL, Handle
+    # 403, upstream errors) yield nil — callers that need distinct Handle errors
+    # (REST get_url, MDS GET /doi) should use #resolve_landing_url instead.
+    def resolved_landing_url
+      result = resolve_landing_url
+      result.ok? ? result.url : nil
+    end
+
     def generate_random_provider_symbol
       "4:X".gen
     end
 
     def generate_random_repository_symbol
       "6:X".gen
-    end
-
-    def generate_random_dois(str, options = {})
-      prefix = validate_prefix(str)
-      fail IdentifierError, "No valid prefix found" if prefix.blank?
-
-      shoulder = str.split("/", 2)[1].to_s
-      encode_doi(
-        prefix,
-        shoulder: shoulder, number: options[:number], size: options[:size],
-      )
-    end
-
-    def encode_doi(prefix, options = {})
-      return nil if prefix.blank?
-
-      number = options[:number].to_s.scan(/\d+/).join("").to_i
-      shoulder = options[:shoulder].to_s
-      shoulder += "-" if shoulder.present?
-      length = 8
-      split = 4
-      size = (options[:size] || 1).to_i
-
-      Array.new(size).map do |_a|
-        n = number.positive? ? number : SecureRandom.random_number(UPPER_LIMIT)
-        prefix.to_s + "/" + shoulder +
-          Base32::URL.encode(n, split: split, length: length, checksum: true)
-      end.uniq
     end
 
     def epoch_to_utc(epoch)
