@@ -224,23 +224,18 @@ describe "Indexable class methods", elasticsearch: true do
       let!(:other_doi) { create(:other_doi, agency: "crossref") }
       let!(:event) { create(:event, obj_id: other_doi.doi, source_doi: other_doi.doi) }
 
-      before do
-        allow(Doi).to receive(:active_index).and_return("dois-other-test")
-      end
-
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as Doi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(options[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq(:active))
         end
         Doi.find(other_doi.id).touch
       end
 
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as DataciteDoi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
-          puts("the options are #{options}")
           expect(ids).to(eq([other_doi.id]))
-          expect(options[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq(:active))
         end
         DataciteDoi.find(other_doi.id).touch
       end
@@ -248,15 +243,15 @@ describe "Indexable class methods", elasticsearch: true do
       it "performs OtherDoiImportInBulkJob with OtherDoi when touched as OtherDoi" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(options[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq(:active))
         end
         other_doi.touch
       end
 
-      it "the index_name of the object passed to OtherDoiImportInBulkJob is dois-other when related event doi_for_source is touched" do
+      it "the index token passed to OtherDoiImportInBulkJob is :active when related event doi_for_source is touched" do
         expect(OtherDoiImportInBulkJob).to receive(:perform_later) do |ids, options|
           expect(ids).to(eq([other_doi.id]))
-          expect(options[:index]).to(eq("dois-other-test"))
+          expect(options[:index]).to(eq(:active))
         end
         event.doi_for_source.touch
       end
