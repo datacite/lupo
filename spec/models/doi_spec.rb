@@ -2171,10 +2171,12 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         "certificate" => ["CoreTrustSeal"],
         "client_type" => "repository",
         "is_active" => client.is_active,
-        "system_email" => client.system_email,
-        "globus_uuid" => client.globus_uuid,
       )
-      expect(client_json).not_to include("service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
+      expect(client_json).not_to include(
+        "password", "system_email", "salesforce_id", "globus_uuid", "service_contact",
+        "provider", "provider_id", "provider_id_and_name", "consortium_id",
+        "repository_type", "software", "cache_key", "subjects"
+      )
 
       expect(provider_json).to include(
         "uid" => provider.uid,
@@ -2186,8 +2188,13 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         "is_active" => provider.is_active,
         "created" => provider.created.iso8601,
         "updated" => provider.updated.iso8601,
+        "doi_estimate" => provider.doi_estimate,
       )
-      expect(provider_json).not_to include("consortium", "client_ids", "prefix_ids", "contacts", "cache_key")
+      expect(provider_json).not_to include(
+        "password", "system_email", "group_email", "globus_uuid", "twitter_handle",
+        "salesforce_id", "billing_information", "technical_contact", "service_contact",
+        "voting_contact", "consortium", "client_ids", "prefix_ids", "contacts", "cache_key"
+      )
     end
 
     it "keeps a periodical client's issn" do
@@ -2213,40 +2220,22 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
 
       client_sources = indexed_snapshot_sources(
         ClientSerializer,
+        CLIENT_SNAPSHOT_EXCLUDED_ATTRIBUTES,
         "re3data" => "re3data_id",
         "opendoar" => "opendoar_id",
-        "contactEmail" => "system_email",
         "isActive" => "is_active",
-        "hasPassword" => "password",
-        "globusUuid" => "globus_uuid",
-        "salesforceId" => "salesforce_id",
       )
       provider_sources = indexed_snapshot_sources(
         ProviderSerializer,
+        PROVIDER_SNAPSHOT_EXCLUDED_ATTRIBUTES,
         "country" => "country_code",
         "isActive" => "is_active",
-        "hasPassword" => "password",
         "displayName" => "display_name",
         "logoUrl" => "logo_url",
         "memberType" => "member_type",
         "organizationType" => "organization_type",
         "focusArea" => "focus_area",
         "nonProfitStatus" => "non_profit_status",
-        "systemEmail" => "system_email",
-        "groupEmail" => "group_email",
-        "globusUuid" => "globus_uuid",
-        "twitterHandle" => "twitter_handle",
-        "salesforceId" => "salesforce_id",
-        "fromSalesforce" => "from_salesforce",
-        "billingInformation" => "billing_information",
-        "technicalContact" => "technical_contact",
-        "secondaryTechnicalContact" => "secondary_technical_contact",
-        "billingContact" => "billing_contact",
-        "secondaryBillingContact" => "secondary_billing_contact",
-        "serviceContact" => "service_contact",
-        "secondaryServiceContact" => "secondary_service_contact",
-        "votingContact" => "voting_contact",
-        "hasRequiredContacts" => "has_required_contacts",
         "doiEstimate" => "doi_estimate",
       )
 
@@ -2255,8 +2244,39 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
   end
 
-  def indexed_snapshot_sources(serializer, aliases)
-    serializer.attributes_to_serialize.map do |_name, attribute|
+  # Ability-gated or sensitive serializer attributes. Intentionally absent from
+  # the DOI snapshot. The pre-1603 client/provider documents did index several
+  # of these (password, emails, billing, contacts). A new serializer attribute
+  # fails the coverage example until it is stored or added here on purpose.
+  CLIENT_SNAPSHOT_EXCLUDED_ATTRIBUTES = %w[
+    contactEmail
+    globusUuid
+    salesforceId
+    hasPassword
+  ].freeze
+  PROVIDER_SNAPSHOT_EXCLUDED_ATTRIBUTES = %w[
+    systemEmail
+    groupEmail
+    globusUuid
+    twitterHandle
+    hasPassword
+    billingInformation
+    salesforceId
+    fromSalesforce
+    technicalContact
+    secondaryTechnicalContact
+    billingContact
+    secondaryBillingContact
+    serviceContact
+    secondaryServiceContact
+    votingContact
+    hasRequiredContacts
+  ].freeze
+
+  def indexed_snapshot_sources(serializer, excluded, aliases)
+    serializer.attributes_to_serialize.filter_map do |_name, attribute|
+      next if excluded.include?(attribute.key.to_s)
+
       if attribute.method.is_a?(Symbol)
         attribute.method.to_s
       else
