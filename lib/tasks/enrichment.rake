@@ -227,4 +227,24 @@ namespace :enrichment do
 
     puts("Finished updating source_id for filename=#{filename} (updated=#{updated})")
   end
+
+  desc "Delete enrichments associated with a given file name"
+  # Example command: bundle exec rake enrichment:delete_enrichments_with_filename FILENAME=arxiv_dois.txt
+  task delete_enrichments_with_filename: :environment do
+    filename = ENV["FILENAME"]
+
+    abort("FILENAME is not set") if filename.blank?
+
+    enrichments = Enrichment.where(filename: filename)
+    total = enrichments.count
+    deleted = 0
+
+    enrichments.in_batches(of: 10_000) do |batch|
+      count = batch.delete_all
+      deleted += count
+      puts("Deleted #{deleted}/#{total} enrichments")
+    end
+
+    puts("Finished deleting enrichments for filename=#{filename} (deleted=#{deleted})")
+  end
 end
