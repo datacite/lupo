@@ -240,7 +240,7 @@ namespace :enrichment do
     deleted = 0
 
     enrichments.in_batches(of: 10_000) do |batch|
-      count = batch.delete_all
+      count = batch.destroy_all.size
       deleted += count
       puts("Deleted #{deleted}/#{total} enrichments")
     end
