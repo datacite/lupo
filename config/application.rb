@@ -81,11 +81,6 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
-    # Rails 8.0 defaults this to 1 second. Addressable::URI.parse of large
-    # metadata XML during DOI validation can exceed that and raise
-    # Regexp::TimeoutError.
-    Regexp.timeout = 5 if Regexp.respond_to?(:timeout=)
-
     # include graphql
     config.paths.add Rails.root.join("app", "graphql", "types").to_s,
                      eager_load: true
