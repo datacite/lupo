@@ -2171,17 +2171,97 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
         "certificate" => ["CoreTrustSeal"],
         "client_type" => "repository",
         "is_active" => client.is_active,
+        "system_email" => client.system_email,
+        "globus_uuid" => client.globus_uuid,
       )
-      expect(client_json).not_to include("password", "salesforce_id", "globus_uuid", "system_email", "service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
+      expect(client_json).not_to include("service_contact", "provider", "provider_id", "provider_id_and_name", "consortium_id", "repository_type", "software", "cache_key", "subjects")
 
       expect(provider_json).to include(
         "uid" => provider.uid,
+        "symbol" => provider.symbol,
         "ror_id" => "https://ror.org/01abcde23",
         "name" => provider.name,
         "display_name" => provider.display_name,
+        "non_profit_status" => provider.non_profit_status,
         "is_active" => provider.is_active,
+        "created" => provider.created.iso8601,
+        "updated" => provider.updated.iso8601,
       )
-      expect(provider_json).not_to include("password", "billing_information", "technical_contact", "service_contact", "consortium")
+      expect(provider_json).not_to include("consortium", "client_ids", "prefix_ids", "contacts", "cache_key")
+    end
+
+    it "keeps a periodical client's issn" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23")
+      issn = [{ "issnl" => "1234-5678" }]
+      client = create(:client, provider: provider, client_type: "periodical", issn: issn)
+      doi = create(:doi, client: client)
+
+      expect(doi.as_indexed_json.dig("client", "issn")).to eq(issn)
+    end
+
+    it "covers every ClientSerializer and ProviderSerializer attribute" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23", non_profit_status: "non-profit")
+      client = create(
+        :client,
+        provider: provider,
+        client_type: "periodical",
+        issn: [{ "issnl" => "1234-5678" }],
+      )
+      doi = create(:doi, client: client)
+      client_json = doi.as_indexed_json["client"]
+      provider_json = doi.as_indexed_json["provider"]
+
+      client_sources = indexed_snapshot_sources(
+        ClientSerializer,
+        "re3data" => "re3data_id",
+        "opendoar" => "opendoar_id",
+        "contactEmail" => "system_email",
+        "isActive" => "is_active",
+        "hasPassword" => "password",
+        "globusUuid" => "globus_uuid",
+        "salesforceId" => "salesforce_id",
+      )
+      provider_sources = indexed_snapshot_sources(
+        ProviderSerializer,
+        "country" => "country_code",
+        "isActive" => "is_active",
+        "hasPassword" => "password",
+        "displayName" => "display_name",
+        "logoUrl" => "logo_url",
+        "memberType" => "member_type",
+        "organizationType" => "organization_type",
+        "focusArea" => "focus_area",
+        "nonProfitStatus" => "non_profit_status",
+        "systemEmail" => "system_email",
+        "groupEmail" => "group_email",
+        "globusUuid" => "globus_uuid",
+        "twitterHandle" => "twitter_handle",
+        "salesforceId" => "salesforce_id",
+        "fromSalesforce" => "from_salesforce",
+        "billingInformation" => "billing_information",
+        "technicalContact" => "technical_contact",
+        "secondaryTechnicalContact" => "secondary_technical_contact",
+        "billingContact" => "billing_contact",
+        "secondaryBillingContact" => "secondary_billing_contact",
+        "serviceContact" => "service_contact",
+        "secondaryServiceContact" => "secondary_service_contact",
+        "votingContact" => "voting_contact",
+        "hasRequiredContacts" => "has_required_contacts",
+        "doiEstimate" => "doi_estimate",
+      )
+
+      expect(client_sources - client_json.keys).to eq([])
+      expect(provider_sources - provider_json.keys).to eq([])
+    end
+  end
+
+  def indexed_snapshot_sources(serializer, aliases)
+    serializer.attributes_to_serialize.map do |_name, attribute|
+      if attribute.method.is_a?(Symbol)
+        attribute.method.to_s
+      else
+        aliases.fetch(attribute.key.to_s)
+      end
     end
   end
 
