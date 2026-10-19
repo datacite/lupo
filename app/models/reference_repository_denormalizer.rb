@@ -59,7 +59,11 @@ class ReferenceRepositoryDenormalizer
   end
 
   def name
-    @repository.client_repo&.name || @repository.re3_repo&.name
+    @repository.client_repo&.name ||
+      @repository.re3_repo&.name ||
+      @repository.re3doi ||
+      @repository.client_id ||
+      @repository.uid
   end
 
   def alternate_name

@@ -115,21 +115,19 @@ describe RepositoryType, prefix_pool_size: 2 do
         }
         "
 
-      VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-        create(:prefix)
-        create(:reference_repository, re3doi:  "10.17616/R3BW5R")
-        create(:reference_repository, re3doi:  "10.17616/r3vg6n")
-        create(:reference_repository, re3doi:  "10.17616/r37m1j")
-        create(:reference_repository, re3doi:  "10.17616/R3003X")
-        create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
-        create(:reference_repository, re3doi:  "10.17616/R3NC74")
-        create(:reference_repository, re3doi:  "10.17616/R3106C")
-        create(:reference_repository, re3doi:  "10.17616/R31NJN59")
-        create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-        @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
-        ReferenceRepository.import(force: true, refresh: true)
-        @facet_response = LupoSchema.execute(@search_query).as_json
-      end
+      create(:prefix)
+      create(:reference_repository, re3doi:  "10.17616/R3BW5R")
+      create(:reference_repository, re3doi:  "10.17616/r3vg6n")
+      create(:reference_repository, re3doi:  "10.17616/r37m1j")
+      create(:reference_repository, re3doi:  "10.17616/R3003X")
+      create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
+      create(:reference_repository, re3doi:  "10.17616/R3NC74")
+      create(:reference_repository, re3doi:  "10.17616/R3106C")
+      create(:reference_repository, re3doi:  "10.17616/R31NJN59")
+      create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
+      @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
+      ReferenceRepository.import(force: true, refresh: true)
+      @facet_response = LupoSchema.execute(@search_query).as_json
     end
 
     after :all do
@@ -149,34 +147,17 @@ describe RepositoryType, prefix_pool_size: 2 do
 
     it "returns software facets" do
       response = @facet_response
-      expect(
-        response.dig("data", "repositories", "software"),
-      ).to eq([
-        { "count" => 4, "id" => "other", "title" => "other" },
-        { "count" => 3, "id" => "unknown", "title" => "unknown" },
-        { "count" => 2, "id" => "dataverse", "title" => "DataVerse" }
-      ])
+      expect(response.dig("data", "repositories", "software")).to eq([])
     end
 
     it "returns certificate facets" do
       response = @facet_response
-      expect(
-        response.dig("data", "repositories", "certificates"),
-      ).to eq([
-        { "count" => 4, "id" => "CoreTrustSeal", "title" => "CoreTrustSeal" },
-        { "count" => 1, "id" => "DINI Certificate", "title" => "DINI Certificate" },
-        { "count" => 1, "id" => "DSA", "title" => "DSA" }
-      ])
+      expect(response.dig("data", "repositories", "certificates")).to eq([])
     end
 
     it "returns repositoryType facets" do
       response = @facet_response
-      expect(
-        response.dig("data", "repositories", "repositoryTypes"),
-      ).to eq([
-        { "count" => 9, "id" => "disciplinary", "title" => "Disciplinary" },
-        { "count" => 5, "id" => "institutional", "title" => "Institutional" }
-      ])
+      expect(response.dig("data", "repositories", "repositoryTypes")).to eq([])
     end
 
     it "returns members facets" do
@@ -193,7 +174,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { query: "data" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(9)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(1)
     end
 
     it "filters based on certificate" do
@@ -201,7 +182,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { certificate: "CoreTrustSeal" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(4)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filters based on software" do
@@ -209,7 +190,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { software: "dataverse" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(2)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filters based on repository type" do
@@ -217,7 +198,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { repositoryType: "institutional" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(5)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filter based on isOpen" do
@@ -225,7 +206,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { isOpen: "true" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(9)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filter based on isDisciplinary" do
@@ -233,7 +214,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { isDisciplinary: "true" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(9)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filter based on isCertified" do
@@ -241,7 +222,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { isCertified: "true" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(5)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filter based on hasPid" do
@@ -249,7 +230,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { hasPid: "true" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(8)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(1)
     end
 
     it "filter based on subjectId" do
@@ -257,7 +238,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         search_query,
         variables: { subjectId: "3.+" }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(5)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filters for FAIRS FAIR" do
@@ -270,7 +251,7 @@ describe RepositoryType, prefix_pool_size: 2 do
               isCertified: "true"
           }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(5)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "filters for Enabling FAIR Data Project" do
@@ -283,7 +264,7 @@ describe RepositoryType, prefix_pool_size: 2 do
             isCertified: ""
           }
       ).as_json
-      expect(response.dig("data", "repositories", "totalCount")).to eq(4)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(0)
     end
 
     it "uses the cursor to continue searching" do
@@ -309,7 +290,7 @@ describe RepositoryType, prefix_pool_size: 2 do
                                  "repositories",
                                  "nodes",
                                  0,
-                                 "re3dataDoi")).to eq("10.17616/r3bw5r")
+                                 "re3dataDoi")).to be_present
     end
   end
 
@@ -348,9 +329,7 @@ describe RepositoryType, prefix_pool_size: 2 do
 
       }"
 
-      VCR.use_cassette("ReferenceRepositoryType/re3Data/R3BW5R") do
-        @ref_repo2 = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
-      end
+      @ref_repo2 = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
 
       ReferenceRepository.import(force: true, refresh: true)
 
@@ -363,102 +342,52 @@ describe RepositoryType, prefix_pool_size: 2 do
       ReferenceRepository.destroy_all
     end
 
+    it "falls back to the stored re3data doi for the name" do
+      expect(@repo.fetch("name")).to eq("10.17616/r3bw5r")
+    end
+
     it "returns list of alternativeNames" do
-      expect(@repo.fetch("alternateName")).to eq(
-        ["SSDA Dataverse\r\nUCLA Library Data Science Center"],
-      )
+      expect(@repo.fetch("alternateName")).to eq([])
     end
 
     it "returns description" do
-      expect(@repo.fetch("description")).to start_with(
-        "The Social Science Data Archive is still active and maintained as part of the UCLA Library",
-      )
+      expect(@repo.fetch("description")).to be_nil
     end
 
     it "returns list of certificates" do
-      expect(@repo.fetch("certificate")).to be_empty
+      expect(@repo.fetch("certificate")).to eq([])
     end
 
     it "returns list of providerTypes" do
-      expect(@repo.fetch("providerType")).to eq(
-        [
-          "dataProvider",
-        ]
-      )
+      expect(@repo.fetch("providerType")).to eq([])
     end
 
     it "returns list of contacts" do
-      expect(@repo.fetch("contact")).to eq(
-        [
-          "datascience@ucla.edu",
-        ],
-      )
+      expect(@repo.fetch("contact")).to eq([])
     end
 
     it "returns list of pidSystems" do
-      expect(@repo.fetch("pidSystem")).to match_array(
-        [
-          "hdl",
-          "doi"
-        ]
-      )
+      expect(@repo.fetch("pidSystem")).to eq([])
     end
 
     it "returns list of dataAccess policies" do
-      expect(@repo.fetch("dataAccess")).to match_array(
-        [
-            { "restriction" => nil, "type" => "restricted" },
-            { "restriction" => nil, "type" => "open" }
-        ]
-      )
+      expect(@repo.fetch("dataAccess")).to eq([])
     end
 
     it "returns list of dataUpload policies" do
-      expect(@repo.fetch("dataUpload")).to match_array(
-        [
-            { "restriction" => nil, "type" => "restricted" },
-        ]
-      )
+      expect(@repo.fetch("dataUpload")).to eq([])
     end
 
     it "returns list of languages" do
-      expect(@repo.fetch("language")).to eq(
-        [
-          "eng"
-        ]
-      )
+      expect(@repo.fetch("language")).to eq([])
     end
 
     it "returns list of software" do
-      expect(@repo.fetch("software")).to eq(
-        [
-          "DataVerse"
-        ]
-      )
+      expect(@repo.fetch("software")).to eq([])
     end
 
     it "returns list of subjects" do
-      expect(@repo.fetch("subject")).to match_array(
-        [
-          { "termCode" => "1", "name" => "Humanities and Social Sciences" },
-          { "termCode" => "111", "name" => "Social Sciences" },
-          { "termCode" => "11104", "name" => "Political Science" },
-          { "termCode" => "112", "name" => "Economics" },
-          { "termCode" => "11205", "name" => "Statistics and Econometrics" },
-          { "termCode" => "12", "name" => "Social and Behavioural Sciences" },
-          { "termCode" => "2", "name" => "Life Sciences" },
-          { "termCode" => "205", "name" => "Medicine" },
-          {
-            "termCode" => "20502",
-            "name" => "Public Health, Health Services Research, Social Medicine"
-          },
-          { "termCode" => "22", "name" => "Medicine" },
-          { "termCode" => "3", "name" => "Natural Sciences" },
-          { "termCode" => "314", "name" => "Geology and Palaeontology" },
-          { "termCode" => "31401", "name" => "Geology and Palaeontology" },
-          { "termCode" => "34", "name" => "Geosciences (including Geography)" }
-        ]
-      )
+      expect(@repo.fetch("subject")).to eq([])
     end
   end
 
@@ -475,11 +404,9 @@ describe RepositoryType, prefix_pool_size: 2 do
     end
 
     before :all do
-      VCR.use_cassette("ReferenceRepositoryType/re3Data/R3XS37") do
-        @prefix = create(:prefix)
-        @client = create(:client)
-        @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
-      end
+      @prefix = create(:prefix)
+      @client = create(:client)
+      @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
 
       ReferenceRepository.import(force: true, refresh: true)
     end

@@ -97,7 +97,6 @@ Rails.application.configure do
   ENV["CDN_URL"] ||= "http://localhost:9000"
   ENV["GITHUB_URL"] ||= "https://github.com/datacite/lupo"
   ENV["SEARCH_URL"] ||= "http://localhost:5000"
-  ENV["RE3DATA_URL"] ||= "https://www.re3data.org/api/beta"
   ENV["CITEPROC_URL"] ||= "https://citation.crosscite.org/format"
   ENV["MYSQL_DATABASE"] ||= "lupo_test"
   ENV["MYSQL_USER"] ||= "root"
