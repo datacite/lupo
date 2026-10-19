@@ -8,7 +8,7 @@ namespace :activity do
 
   desc "Delete index for activities"
   task delete_index: :environment do
-    puts Activity.delete_index(index: ENV["INDEX"])
+    puts Activity.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for activities"

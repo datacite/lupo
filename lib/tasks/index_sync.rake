@@ -23,9 +23,25 @@ namespace :index_sync do
 
     SharedContainerSettings::INDEX_SYNC_MODELS.each do |model_name|
       model = model_name.constantize
-      active = model.active_index
-      inactive = model.inactive_index
-      puts "  #{model_name}: active=#{active.inspect} inactive=#{inactive.inspect}"
+      cached = Rails.cache.read(model.active_index_cache_key)
+      begin
+        state = IndexAliasCoordination.fetch_live(model.index_name)
+        live = state.active
+        holders = state.holders
+        verdict =
+          if holders.size > 1
+            "AMBIGUOUS (#{holders.size} holders)"
+          elsif cached.nil?
+            "NOT CACHED"
+          elsif cached == live
+            "OK"
+          else
+            "DRIFT"
+          end
+        puts "  #{model_name}: cached=#{cached.inspect} live=#{live.inspect} holders=#{holders.inspect} #{verdict}"
+      rescue StandardError => e
+        puts "  #{model_name}: cached=#{cached.inspect} live=nil holders=nil UNRESOLVED (live lookup failed: #{e.class})"
+      end
     end
   end
 end

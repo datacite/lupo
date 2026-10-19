@@ -26,7 +26,7 @@ namespace :repository do
 
   desc "Delete index for reference_repositories"
   task delete_index: :environment do
-    puts ReferenceRepository.delete_index(index: ENV["INDEX"])
+    puts ReferenceRepository.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for reference_repositories"
