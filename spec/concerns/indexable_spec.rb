@@ -21,8 +21,7 @@ describe "Indexable class methods", elasticsearch: true, prefix_pool_size: 4 do
     let!(:client) { create(:client) }
 
     before do
-      Client.import
-      sleep 2
+      Client.import(refresh: true)
     end
 
     it "find_by_id" do
@@ -45,8 +44,7 @@ describe "Indexable class methods", elasticsearch: true, prefix_pool_size: 4 do
     let!(:provider) { create(:provider) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "find_by_id" do
@@ -78,8 +76,7 @@ describe "Indexable class methods", elasticsearch: true, prefix_pool_size: 4 do
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     # it 'find_by_id' do

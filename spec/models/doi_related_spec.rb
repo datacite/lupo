@@ -339,8 +339,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: true, prefix_pool_size: 1 
     end
 
     it "other_relations should not include citations,parts,references" do
-      Event.import
-      sleep 2
+      Event.import(refresh: true)
       expect(doi.other_relation_ids.length).to eq(3)
       expect(doi.other_relation_count).to eq(3)
     end

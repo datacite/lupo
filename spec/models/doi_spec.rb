@@ -100,9 +100,6 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
           allow(new_doi).to receive(:send_import_message)
           new_doi.save!
 
-          # Sleep for a short duration to ensure the asynchronous after_commit has completed
-          sleep 1
-
           expect(new_doi).to have_received(:send_import_message).with(new_doi.to_jsonapi)
         end
       end
@@ -1636,8 +1633,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     it "transfer all dois" do
@@ -1941,8 +1937,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     let!(:doi) { create(:doi) }
 
     it "counts all dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query
       expect(response.results.total).to eq(4)
@@ -1950,8 +1945,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all consortia dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(consortium_id: "dc")
       expect(response.results.total).to eq(3)
@@ -1959,8 +1953,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all consortia dois no dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(consortium_id: "abc")
       expect(response.results.total).to eq(0)
@@ -1968,8 +1961,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all provider dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(provider_id: "datacite")
       expect(response.results.total).to eq(3)
@@ -1977,8 +1969,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all provider dois no dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(provider_id: "abc")
       expect(response.results.total).to eq(0)
@@ -1986,8 +1977,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all client dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(client_id: "datacite.test")
       expect(response.results.total).to eq(3)
@@ -1995,8 +1985,7 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
 
     it "counts all client dois no dois" do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
 
       response = subject.stats_query(client_id: "datacite.abc")
       expect(response.results.total).to eq(0)
