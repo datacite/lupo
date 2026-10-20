@@ -127,8 +127,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         create(:reference_repository, re3doi:  "10.17616/R31NJN59")
         create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
         @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
-        ReferenceRepository.import(force: true)
-        sleep 2
+        ReferenceRepository.import(force: true, refresh: true)
         @facet_response = LupoSchema.execute(@search_query).as_json
       end
     end
@@ -353,8 +352,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         @ref_repo2 = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       end
 
-      ReferenceRepository.import(force: true)
-      sleep 2
+      ReferenceRepository.import(force: true, refresh: true)
 
       response = LupoSchema.execute(id_query, variables: { id: @ref_repo2.re3doi }).as_json
       @repo = response.dig("data", "repository")
@@ -483,8 +481,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         @ref_repo = create(:reference_repository, client_id: @client.uid, re3doi:  "10.17616/R3XS37")
       end
 
-      ReferenceRepository.import(force: true)
-      sleep 2
+      ReferenceRepository.import(force: true, refresh: true)
     end
 
     after :all do
@@ -589,11 +586,10 @@ describe RepositoryType, prefix_pool_size: 2 do
           relation_type_id: "is-referenced-by",
           occurred_at: "2016-06-13T16:14:19Z",
         )
-        Provider.import(force: true)
-        Client.import(force: true)
-        Doi.import(force: true)
-        ReferenceRepository.import(force: true)
-        sleep 2
+        Provider.import(force: true, refresh: true)
+        Client.import(force: true, refresh: true)
+        Doi.import(force: true, refresh: true)
+        ReferenceRepository.import(force: true, refresh: true)
       end
     end
 
@@ -640,14 +636,13 @@ describe RepositoryType, prefix_pool_size: 2 do
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
     before do
-      Provider.import(force: true)
-      Client.import(force: true)
-      Doi.import(force: true)
-      Prefix.import(force: true)
-      ClientPrefix.import(force: true)
-      ReferenceRepository.import(force: true)
-      Event.import(force: true)
-      sleep 3
+      Provider.import(force: true, refresh: true)
+      Client.import(force: true, refresh: true)
+      Doi.import(force: true, refresh: true)
+      Prefix.import(force: true, refresh: true)
+      ClientPrefix.import(force: true, refresh: true)
+      ReferenceRepository.import(force: true, refresh: true)
+      Event.import(force: true, refresh: true)
     end
 
     after do

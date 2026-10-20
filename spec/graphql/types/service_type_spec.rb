@@ -44,10 +44,9 @@ describe ServiceType, prefix_pool_size: 1 do
     end
 
     before do
-      Provider.import
-      Client.import
-      Doi.import
-      sleep 3
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 

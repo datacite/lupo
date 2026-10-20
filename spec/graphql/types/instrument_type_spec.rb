@@ -23,8 +23,7 @@ describe InstrumentType, prefix_pool_size: 3 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 

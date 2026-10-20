@@ -33,9 +33,8 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      ReferenceRepository.import
-      sleep 2
+      Doi.import(refresh: true)
+      ReferenceRepository.import(refresh: true)
     end
 
     let(:query) do
@@ -145,8 +144,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -197,8 +195,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -255,8 +252,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -507,8 +503,7 @@ describe WorkType, prefix_pool_size: 18 do
     let!(:member_doi) { create(:doi, aasm_state: "findable", client: client) }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 15 }).results.to_a
     end
 
@@ -686,8 +681,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -775,8 +769,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -1009,8 +1002,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_work) do
@@ -1161,8 +1153,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1341,8 +1332,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1393,7 +1383,6 @@ describe WorkType, prefix_pool_size: 18 do
 
   describe "query works with repository subjects", prefix_pool_size: 1 do
     before :all do
-      SLEEP_TIME = 2
       WORK_COUNT = 10
 
       DataciteDoi.import(force: true)
@@ -1425,8 +1414,7 @@ describe WorkType, prefix_pool_size: 18 do
         aasm_state: "findable",
         client: client
       )
-      Doi.import
-      sleep SLEEP_TIME
+      Doi.import(refresh: true)
       @facet_response = LupoSchema.execute(search_query).as_json
       Rails.logger.level = :fatal
       DataciteDoi.destroy_all
@@ -1485,8 +1473,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1647,8 +1634,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -1741,8 +1727,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1886,8 +1871,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1947,8 +1931,7 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -2017,9 +2000,8 @@ describe WorkType, prefix_pool_size: 18 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @response = LupoSchema.execute(query).as_json
     end
 
@@ -2142,8 +2124,7 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
   end
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do
@@ -2197,8 +2178,7 @@ describe "query with resourceTypeId", elasticsearch: true, prefix_pool_size: 2 d
   end
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do
@@ -2264,8 +2244,7 @@ describe "query with client_type facet", elasticsearch: true, prefix_pool_size: 
   let!(:doi_raid_registry) { create(:doi, client: client_raid_registry, aasm_state: "findable") }
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do

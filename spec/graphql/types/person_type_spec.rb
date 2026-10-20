@@ -82,10 +82,9 @@ describe PersonType do
     end
 
     before do
-      Client.import
-      Event.import
-      Doi.import
-      sleep 3
+      Client.import(refresh: true)
+      Event.import(refresh: true)
+      Doi.import(refresh: true)
     end
 
     let(:query) do
