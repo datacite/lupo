@@ -299,7 +299,16 @@ module Indexable
             { range: { updated: { lte: "#{options[:until_date]}||/d" } } }
         end
         if options[:region].present?
-          filter << { term: { region: options[:region].upcase } }
+          filter << { term: { 'country.region': options[:region].upcase } }
+        end
+        if options[:iso3166_world_region].present?
+          filter << { term: { 'country.iso3166_world_region': options[:iso3166_world_region].upcase } }
+        end
+        if options[:iso3166_region].present?
+          filter << { term: { 'country.iso3166_region': options[:iso3166_region] } }
+        end
+        if options[:iso3166_subregion].present?
+          filter << { term: { 'country.iso3166_subregion': options[:iso3166_subregion] } }
         end
         if options[:consortium_id].present?
           filter << { term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true  } } }
