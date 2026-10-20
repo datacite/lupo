@@ -534,8 +534,25 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(
         @works[0].identifier,
       )
+      # `doi`'s second creator has no nameType, so its GraphQL type is nil.
+      # works() sorts by created then uid, and created is stamped at whole-second
+      # resolution, so nodes[0] is not stable: funder_doi and member_doi use
+      # factory creators whose second creator is a Person.
+      untyped_creator_work =
+        LupoSchema.execute(
+          "query {
+            works(ids: [\"#{doi.doi}\"]) {
+              nodes { doi creators { type } }
+            }
+          }",
+        ).as_json
       expect(
-        response.dig("data", "works", "nodes", 0, "creators", 1, "type"),
+        untyped_creator_work.dig("data", "works", "nodes", 0, "doi"),
+      ).to eq(doi.doi.downcase)
+      expect(
+        untyped_creator_work.dig(
+          "data", "works", "nodes", 0, "creators", 1, "type",
+        ),
       ).to be nil
       expect(
         response.dig("data", "works", "nodes", 0, "publisher"),
