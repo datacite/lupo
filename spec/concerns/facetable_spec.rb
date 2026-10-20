@@ -215,7 +215,6 @@ describe "Facetable", type: :controller do
 #   #   before do
 #   #     Provider.create(provider)
 #   #     clients.each { |item| Client.create(item) }
-#   #     sleep 2
 #   #   end
 
 #   #   it "should return nothing" do

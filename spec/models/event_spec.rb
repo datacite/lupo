@@ -243,11 +243,10 @@ describe Event, type: :model, vcr: true, prefix_pool_size: 1 do
     #   let!(:events) { create_list(:event_for_datacite_related, 30, source_id: "datacite-crossref", obj_id: doi.doi) }
 
     #   before do
-    #     Provider.import
-    #     Client.import
-    #     DataciteDoi.import
-    #     Event.import
-    #     sleep 3
+    #     Provider.import(refresh: true)
+    #     Client.import(refresh: true)
+    #     DataciteDoi.import(refresh: true)
+    #     Event.import(refresh: true)
     #   end
 
     #   it "check run" do

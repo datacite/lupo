@@ -43,8 +43,7 @@ require "rails_helper"
 #   let(:output) { "0 DOIs with no URL found in the database.\n" }
 
 #   before do
-#     Doi.import
-#     sleep 1
+#     Doi.import(refresh: true)
 #   end
 
 #   it "prerequisites should include environment" do
