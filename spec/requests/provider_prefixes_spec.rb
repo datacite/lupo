@@ -51,9 +51,8 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix
   before(:each) do
     clear_provider_prefix_index
     import_provider_prefix_index
-    Prefix.import
-    Provider.import
-    sleep 2
+    Prefix.import(refresh: true)
+    Provider.import(refresh: true)
   end
 
   describe "GET /provider-prefixes by consortium" do
@@ -197,9 +196,8 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix
       end
 
       before do
-        Prefix.import
-        Provider.import
-        sleep 2
+        Prefix.import(refresh: true)
+        Provider.import(refresh: true)
       end
 
       it "creates a provider-prefix" do
@@ -208,7 +206,8 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix
         expect(last_response.status).to eq(201)
         expect(json.dig("data", "id")).not_to be_nil
 
-        sleep 2
+        Prefix.__elasticsearch__.refresh_index!
+        ProviderPrefix.__elasticsearch__.refresh_index!
 
         get "/prefixes?state=unassigned", nil, headers
 
@@ -220,9 +219,8 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix
 
         expect(last_response.status).to eq(204)
 
-        Prefix.import
-        ProviderPrefix.import
-        sleep 2
+        Prefix.import(refresh: true)
+        ProviderPrefix.import(refresh: true)
 
         get "/prefixes?state=unassigned", nil, headers
 
@@ -254,8 +252,7 @@ describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix
 
     before do
       clear_provider_prefix_index
-      ProviderPrefix.import
-      sleep 2
+      ProviderPrefix.import(refresh: true)
     end
 
     it "deletes the prefix" do

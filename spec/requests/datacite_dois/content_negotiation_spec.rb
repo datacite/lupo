@@ -21,8 +21,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 2 
     let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
     end
 
     context "no permission" do

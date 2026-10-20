@@ -36,8 +36,7 @@ describe ExportsController, type: :request, prefix_pool_size: 1 do
 
   describe "GET /export/organizations", elasticsearch: true, skip_prefix_pool: true do
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "returns organizations", vcr: false do
@@ -80,9 +79,8 @@ describe ExportsController, type: :request, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      Client.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Client.import(refresh: true)
     end
 
     it "returns repositories", vcr: false do
@@ -125,9 +123,8 @@ describe ExportsController, type: :request, prefix_pool_size: 1 do
 
   describe "GET /export/contacts", elasticsearch: true, skip_prefix_pool: true do
     before do
-      Provider.import
-      Contact.import
-      sleep 2
+      Provider.import(refresh: true)
+      Contact.import(refresh: true)
     end
 
     it "returns all contacts", vcr: false do
@@ -157,9 +154,8 @@ describe ExportsController, type: :request, prefix_pool_size: 1 do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      DataciteDoi.import
-      Client.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Client.import(refresh: true)
     end
 
     it "returns repositories with dois not indexed", vcr: false do

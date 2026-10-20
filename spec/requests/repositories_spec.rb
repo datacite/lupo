@@ -694,13 +694,11 @@ describe RepositoriesController, type: :request, elasticsearch: true, prefix_poo
     end
 
     before do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
     end
 
     it "transfered all DOIs" do
       put "/repositories/#{client.symbol}", params, headers
-      sleep 1
 
       expect(last_response.status).to eq(200)
     end
@@ -708,7 +706,6 @@ describe RepositoriesController, type: :request, elasticsearch: true, prefix_poo
     it "transfered all DOIs consortium" do
       put "/repositories/#{client.symbol}",
           params, consortium_headers
-      sleep 1
 
       expect(last_response.status).to eq(200)
     end

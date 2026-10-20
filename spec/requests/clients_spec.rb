@@ -39,9 +39,8 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
     let!(:clients) { create_list(:client, 3) }
 
     before do
-      Client.import
-      Provider.import
-      sleep 1
+      Client.import(refresh: true)
+      Provider.import(refresh: true)
     end
 
     it "returns clients" do
@@ -90,9 +89,8 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
     end
 
     before do
-      Client.import
-      DataciteDoi.import
-      sleep 3
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns clients" do
@@ -162,8 +160,7 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
           provider.uid,
         )
 
-        Client.import
-        sleep 2
+        Client.import(refresh: true)
 
         get "/clients", nil, headers
 
@@ -180,8 +177,7 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
         attributes = json.dig("data", "attributes")
         expect(attributes["clientType"]).to eq("igsnCatalog")
 
-        Client.import
-        sleep 2
+        Client.import(refresh: true)
 
         get "/clients", nil, headers
 
@@ -198,8 +194,7 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
         attributes = json.dig("data", "attributes")
         expect(attributes["clientType"]).to eq("raidRegistry")
 
-        Client.import
-        sleep 2
+        Client.import(refresh: true)
 
         get "/clients", nil, headers
 
@@ -527,13 +522,11 @@ describe ClientsController, type: :request, elasticsearch: true, prefix_pool_siz
     end
 
     before do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns status code 200" do
       put "/clients/#{client.symbol}", params, headers
-      sleep 1
 
       expect(last_response.status).to eq(200)
     end
