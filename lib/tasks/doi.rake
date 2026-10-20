@@ -279,8 +279,9 @@ namespace :doi do
   desc "Delete dois by a prefix"
   task delete_by_prefix: :environment do
     if ENV["PREFIX"].nil?
-      puts "ENV['PREFIX'] is required."
-      exit
+      # ArgumentError stops the task before any delete. Kernel#exit would
+      # raise SystemExit and abort the RSpec process with status 0.
+      raise ArgumentError, "ENV['PREFIX'] is required."
     end
 
     puts "Note: This does not delete any associated prefix."
