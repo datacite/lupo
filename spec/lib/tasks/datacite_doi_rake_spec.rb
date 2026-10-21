@@ -166,7 +166,7 @@ require "rails_helper"
 #   end
 # end
 
-describe "datacite_doi:import_one", order: :defined do
+describe "datacite_doi:import_one", order: :defined, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -183,7 +183,7 @@ describe "datacite_doi:import_one", order: :defined do
   end
 end
 
-describe "datacite_doi:index_one", order: :defined do
+describe "datacite_doi:index_one", order: :defined, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 

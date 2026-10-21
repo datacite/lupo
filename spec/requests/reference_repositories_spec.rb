@@ -3,7 +3,7 @@
 require "rails_helper"
 include Passwordable
 
-describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
+describe ReferenceRepositoriesController, type: :request, elasticsearch: true, prefix_pool_size: 5 do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -77,7 +77,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /reference-repositories/:id" do
+  describe "GET /reference-repositories/:id", prefix_pool_size: 2 do
     context "when the record exists" do
       it "returns the repository" do
         get "/reference-repositories/#{@ref_repo.uid}", nil, headers

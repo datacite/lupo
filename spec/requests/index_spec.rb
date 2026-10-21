@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe IndexController, type: :request do
+describe IndexController, type: :request, prefix_pool_size: 1 do
   let(:doi) { create(:doi, aasm_state: "findable") }
 
   describe "content_negotation" do

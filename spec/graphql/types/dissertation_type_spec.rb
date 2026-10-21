@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe DissertationType do
-  describe "fields" do
+describe DissertationType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }

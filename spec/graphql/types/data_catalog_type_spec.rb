@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe DataCatalogType do
-  describe "fields" do
+describe DataCatalogType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -231,7 +231,7 @@ describe DataCatalogType do
     end
   end
 
-  describe "more data_catalogs queries", elasticsearch: true, vcr: true do
+  describe "more data_catalogs queries", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:filtered_query) do
       "query($query: String, $subject: String, $open: String, $certified: String, $pid: String, $software: String, $disciplinary: String){
             dataCatalogs( query: $query, subject: $subject, open: $open, certified: $certified, pid: $pid, software: $software, disciplinary: $disciplinary){

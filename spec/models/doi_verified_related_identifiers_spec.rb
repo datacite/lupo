@@ -3,7 +3,7 @@
 
 require "rails_helper"
 
-describe Doi, type: :model, vcr: true, elasticsearch: true do
+describe Doi, type: :model, vcr: true, elasticsearch: true, prefix_pool_size: 1 do
   describe "related_doi" do
     let(:client) { create(:client) }
     let(:target_doi) do

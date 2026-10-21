@@ -15,7 +15,7 @@ def import_provider_prefix_index
   ProviderPrefix.__elasticsearch__.client.indices.refresh(index: ProviderPrefix.index_name)
 end
 
-describe ProviderPrefixesController, type: :request, elasticsearch: true do
+describe ProviderPrefixesController, type: :request, elasticsearch: true, prefix_pool_size: 6 do
   let!(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let!(:provider) do
     create(

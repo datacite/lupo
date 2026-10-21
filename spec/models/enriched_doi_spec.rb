@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EnrichedDoi, type: :model do
+describe EnrichedDoi, type: :model, prefix_pool_size: 1 do
   it_behaves_like "an STI class"
 
   describe "database write protection" do

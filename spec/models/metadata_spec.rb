@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe Metadata, type: :model, vcr: true do
+describe Metadata, type: :model, vcr: true, prefix_pool_size: 2 do
   let(:provider) { create(:provider, symbol: "ADMIN") }
   let(:client) { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
