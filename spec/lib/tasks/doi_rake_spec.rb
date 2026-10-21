@@ -295,14 +295,22 @@ describe "doi:delete_by_prefix", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "" }
-
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
   end
 
-  it "should run the rake task" do
-    expect(capture_stdout { subject.invoke }).to eq(output)
+  # Kernel#exit and Kernel#abort raise SystemExit, which RSpec does not
+  # rescue. This expectation rescues that exception inside the example, so
+  # a regression fails here instead of stopping the suite.
+  it "raises when PREFIX is missing instead of exiting the process" do
+    prefix = ENV.delete("PREFIX")
+    allow(Doi).to receive(:delete_dois_by_prefix)
+
+    expect { capture_stdout { subject.invoke } }.to raise_error(
+      ArgumentError, "ENV['PREFIX'] is required."
+    )
+    expect(Doi).not_to have_received(:delete_dois_by_prefix)
+  ensure
+    ENV["PREFIX"] = prefix unless prefix.nil?
   end
 end
