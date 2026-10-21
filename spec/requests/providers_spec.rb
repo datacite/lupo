@@ -1362,4 +1362,88 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       end
     end
   end
+
+  describe "OpenSearch filtering - verify that a given country_code (country) is mapped in open search to the correct region and ISO3166 attributes and is searchable" do
+    let!(:us_provider) { create(:provider, country_code: "US") }
+    let!(:it_provider) { create(:provider, country_code: "IT") }
+    let!(:jp_provider) { create(:provider, country_code: "JP") }
+
+    before do
+      # Manually import/index the records into your test index
+      Provider.__elasticsearch__.import(force: true)
+      Provider.__elasticsearch__.refresh_index!
+    end
+
+    it "returns the correct provider for United States" do
+      expect(Provider.search("US").records.to_a).to include(us_provider)
+    end
+
+    it "returns the correct provider for Italy" do
+      expect(Provider.search("IT").records.to_a).to include(it_provider)
+    end
+
+    it "returns the correct provider for Japan" do
+      expect(Provider.search("JP").records.to_a).to include(jp_provider)
+    end
+
+    it "returns the correct provider for region" do
+      region = "AMER"
+
+      search_query = {
+        query: {
+          match: {
+            "region": region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(us_provider)
+    end
+
+    it "returns the correct provider for ISO3166 world region" do
+      iso3166_world_region = "AMER"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_world_region": iso3166_world_region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(us_provider)
+    end
+
+    it "returns the correct provider for ISO3166 region" do
+      iso3166_region = "Europe"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_region": iso3166_region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(it_provider)
+    end
+
+    it "returns the correct provider for ISO3166 subregion" do
+      iso3166_subregion = "Eastern Asia"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_subregion": iso3166_subregion
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(jp_provider)
+    end
+  end
 end
