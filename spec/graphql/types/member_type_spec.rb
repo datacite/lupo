@@ -1,42 +1,43 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-def import_index(index_class)
-  # Ensure index exists with proper mappings
-  unless index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
-    index_class.__elasticsearch__.create_index!
-  end
-
-  # Import with wait_for option to ensure completion
-  index_class.import(refresh: true)
-end
-
-def clear_index(index_class)
-  if index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
-    # Delete and recreate index to ensure clean state
-    index_class.__elasticsearch__.delete_index!
-    index_class.__elasticsearch__.create_index!
-  end
-end
-
-def reset_indices
-  # Define order based on dependencies
-  index_classes = [
-    ProviderPrefix,
-    ReferenceRepository,
-    DataciteDoi,
-    Client,
-    Provider
-  ]
-
-  # Clear all indices first
-  index_classes.each { |klass| clear_index(klass) }
-
-  # Then import all with proper mappings
-  index_classes.each { |klass| import_index(klass) }
-end
 
 describe MemberType do
+  def import_index(index_class)
+    # Ensure index exists with proper mappings
+    unless index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
+      index_class.__elasticsearch__.create_index!
+    end
+
+    # Import with wait_for option to ensure completion
+    index_class.import(refresh: true)
+  end
+
+  def clear_index(index_class)
+    if index_class.__elasticsearch__.client.indices.exists?(index: index_class.index_name)
+      # Delete and recreate index to ensure clean state
+      index_class.__elasticsearch__.delete_index!
+      index_class.__elasticsearch__.create_index!
+    end
+  end
+
+  def reset_indices
+    # Define order based on dependencies
+    index_classes = [
+      ProviderPrefix,
+      ReferenceRepository,
+      DataciteDoi,
+      Client,
+      Provider
+    ]
+
+    # Clear all indices first
+    index_classes.each { |klass| clear_index(klass) }
+
+    # Then import all with proper mappings
+    index_classes.each { |klass| import_index(klass) }
+  end
+
   describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
