@@ -230,22 +230,33 @@ namespace :enrichment do
 
   desc "Delete enrichments associated with a given file name"
   # Example command: bundle exec rake enrichment:delete_enrichments_with_filename FILENAME=arxiv_dois.txt
+  # Optional: BATCH_SIZE=50000 (default 10000)
   task delete_enrichments_with_filename: :environment do
     filename = ENV["FILENAME"]
+    batch_size = (ENV["BATCH_SIZE"].presence || 10_000).to_i
 
     abort("FILENAME is not set") if filename.blank?
+    abort("BATCH_SIZE must be > 0") if batch_size <= 0
 
-    enrichments = Enrichment.where(filename: filename)
     deleted = 0
 
-    # delete_all (SQL DELETE) instead of destroy_all — no AR instantiation/callbacks.
-    # Safe here: Enrichment has no dependent associations or destroy callbacks.
-    enrichments.in_batches(of: 10_000) do |batch|
-      count = batch.delete_all
+    # DELETE … WHERE filename = ? LIMIT n.
+    #
+    # Why not in_batches + delete_all? That yields
+    #   DELETE … WHERE filename = ? AND id IN (…)
+    # With tens of millions of rows on one filename, MySQL can pick the
+    # filename index and scan huge ranges each batch — slower than destroy_all,
+    # which issues per-row DELETE … WHERE id = ? (primary key lookups).
+    #
+    # LIMIT deletes walk the filename index and stop after n rows.
+    loop do
+      count = Enrichment.where(filename: filename).limit(batch_size).delete_all
+      break if count.zero?
+
       deleted += count
       puts("Deleted #{deleted} enrichments for filename=#{filename}")
     end
 
-    puts("Finished deleting enrichments for filename=#{filename}")
+    puts("Finished deleting enrichments for filename=#{filename} (deleted=#{deleted})")
   end
 end
