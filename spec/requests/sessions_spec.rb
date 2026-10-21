@@ -51,7 +51,7 @@ describe "Provider session", type: :request do
   end
 end
 
-describe "reset", type: :request, vcr: true do
+describe "reset", type: :request, vcr: true, prefix_pool_size: 1 do
   let(:provider) do
     create(:provider, symbol: "DATACITE", password_input: "12345")
   end

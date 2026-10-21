@@ -2,11 +2,11 @@
 
 require "rails_helper"
 
-describe User, type: :model, elasticsearch: true do
+describe User, type: :model, elasticsearch: true, prefix_pool_size: 1 do
   let(:token) { User.generate_token }
   subject { User.new(token) }
 
-  describe "decode_token DataCite" do
+  describe "decode_token DataCite", skip_prefix_pool: true do
     it "has name" do
       payload = subject.decode_token(token)
       expect(payload["name"]).to eq("Josiah Carberry")
@@ -30,7 +30,7 @@ describe User, type: :model, elasticsearch: true do
     end
   end
 
-  describe "decode_alb_token" do
+  describe "decode_alb_token", skip_prefix_pool: true do
     let(:token) { User.generate_alb_token }
 
     it "has name" do
@@ -298,7 +298,7 @@ describe User, type: :model, elasticsearch: true do
     end
   end
 
-  describe "encode_token" do
+  describe "encode_token", skip_prefix_pool: true do
     it "with name" do
       token = subject.encode_token("name" => "Josiah Carberry")
       expect(token).to start_with("eyJhbG")
@@ -310,7 +310,7 @@ describe User, type: :model, elasticsearch: true do
     end
   end
 
-  describe "encode_alb_token" do
+  describe "encode_alb_token", skip_prefix_pool: true do
     it "with name" do
       token = subject.encode_alb_token("name" => "Josiah Carberry")
       expect(token).to start_with("eyJhbG")
@@ -322,7 +322,7 @@ describe User, type: :model, elasticsearch: true do
     end
   end
 
-  describe "encode_globus_token" do
+  describe "encode_globus_token", skip_prefix_pool: true do
     it "with name" do
       token = subject.encode_globus_token("name" => "Josiah Carberry")
       expect(token).to start_with("eyJhbG")
@@ -397,7 +397,7 @@ describe Provider, type: :model do
   end
 end
 
-describe Client, type: :model do
+describe Client, type: :model, prefix_pool_size: 1 do
   subject { create(:client, password_input: "12345") }
 
   describe "decode_auth_param" do
@@ -436,7 +436,7 @@ describe Client, type: :model do
   end
 end
 
-describe "API key authentication", type: :model do
+describe "API key authentication", type: :model, prefix_pool_size: 1 do
   let(:client) { create(:client, password_input: "12345") }
   let(:api_key_record) { client.api_keys.create!(name: "spec key") }
   let(:plain_key) { api_key_record.key }

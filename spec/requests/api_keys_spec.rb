@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ApiKeysController, type: :request do
+describe ApiKeysController, type: :request, prefix_pool_size: 1 do
   include Passwordable
 
   let(:admin) { create(:provider, symbol: "ADMIN") }

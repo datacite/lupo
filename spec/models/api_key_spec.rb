@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ApiKey, type: :model do
+describe ApiKey, type: :model, prefix_pool_size: 1 do
   let(:client) { create(:client, password_input: "12345") }
 
   describe "creation" do

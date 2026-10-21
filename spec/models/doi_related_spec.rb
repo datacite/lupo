@@ -3,7 +3,7 @@
 
 require "rails_helper"
 
-describe Doi, type: :model, vcr: true, elasticsearch: true do
+describe Doi, type: :model, vcr: true, elasticsearch: true, prefix_pool_size: 1 do
   describe "views" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }

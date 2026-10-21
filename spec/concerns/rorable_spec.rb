@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Rorable", type: :model do
+describe "Rorable", type: :model, prefix_pool_size: 1 do
   before do
     allow(RorReferenceStore).to receive(:funder_to_ror).with("100010552").and_return("https://ror.org/04ttjf776")
     allow(RorReferenceStore).to receive(:funder_to_ror).with("10.77777/100010552").and_return(nil)

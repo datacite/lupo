@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ProvidersController, type: :request, elasticsearch: true do
+describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_size: 1 do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) do
     create(
@@ -44,7 +44,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     }
   end
 
-  describe "GET /providers" do
+  describe "GET /providers", skip_prefix_pool: true do
     let!(:providers) { create_list(:provider, 3) }
 
     before do
@@ -61,7 +61,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers for consortium" do
+  describe "GET /providers for consortium", skip_prefix_pool: true do
     let(:consortium) do
       create(:provider, symbol: "dc", role_name: "ROLE_CONSORTIUM")
     end
@@ -87,7 +87,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers/:id" do
+  describe "GET /providers/:id", skip_prefix_pool: true do
     context "when the record exists" do
       it "returns the provider" do
         get "/providers/#{provider.symbol.downcase}",
@@ -144,7 +144,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers/:id with contacts" do
+  describe "GET /providers/:id with contacts", skip_prefix_pool: true do
     let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
 
     before do
@@ -257,7 +257,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "POST /providers" do
+  describe "POST /providers", skip_prefix_pool: true do
     context "request is valid" do
       let(:logo) do
         "data:image/png;base64," +
@@ -908,7 +908,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "PUT /providers/:id" do
+  describe "PUT /providers/:id", skip_prefix_pool: true do
     context "when the record exists" do
       let(:params) do
         {
@@ -1245,7 +1245,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "DELETE /providers/:id" do
+  describe "DELETE /providers/:id", skip_prefix_pool: true do
     let!(:provider) { create(:provider) }
 
     before do
@@ -1260,7 +1260,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers - with contact information" do
+  describe "GET /providers - with contact information", skip_prefix_pool: true do
     context "request is valid with contact information, and contacts are created with correct information" do
       let(:params) do
         {
