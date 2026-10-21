@@ -23,8 +23,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all providers" do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
       expect(subject.provider_count).to match_array(
         @CUMULATIVE_BY_YEAR
       )
@@ -33,8 +32,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     it "takes into account deleted providers" do
       @providers.first.update(deleted_at: "2018-06-14")
       @providers.last.update(deleted_at: "2015-06-14")
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
       expect(subject.provider_count).to match_array(
         @CUMULATIVE_BY_YEAR_WITH_DELETES
       )
@@ -48,8 +46,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all clients" do
-      Client.import
-      sleep 2
+      Client.import(refresh: true)
       expect(subject.client_count).to match_array(
         @CUMULATIVE_BY_YEAR
       )
@@ -58,8 +55,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     it "takes into account deleted clients" do
       @clients.first.update(deleted_at: "2018-06-14")
       @clients.last.update(deleted_at: "2015-06-14")
-      Client.import
-      sleep 2
+      Client.import(refresh: true)
       expect(subject.client_count).to match_array(
         @CUMULATIVE_BY_YEAR_WITH_DELETES
       )
@@ -95,8 +91,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     let!(:datacite_doi) { create(:doi, type: "DataciteDoi") }
 
     it "counts all dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count).to eq(
         [{ "count" => 4, "id" => "2015", "title" => "2015" }],
@@ -104,8 +99,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all consortium dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(consortium_id: "dc")).to eq(
         [{ "count" => 3, "id" => "2015", "title" => "2015" }],
@@ -113,15 +107,13 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all consortium dois no dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(consortium_id: "abc")).to eq([])
     end
 
     it "counts all provider dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(provider_id: "datacite")).to eq(
         [{ "count" => 3, "id" => "2015", "title" => "2015" }],
@@ -129,15 +121,13 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all provider dois no dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(provider_id: "abc")).to eq([])
     end
 
     it "counts all client dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(client_id: "datacite.test")).to eq(
         [{ "count" => 3, "id" => "2015", "title" => "2015" }],
@@ -145,8 +135,7 @@ describe "Providers", type: :controller, elasticsearch: true, prefix_pool_size: 
     end
 
     it "counts all client dois no dois" do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
 
       expect(subject.doi_count(client_id: "abc")).to eq([])
     end

@@ -15,8 +15,7 @@ describe PrefixesController, type: :request, elasticsearch: true, prefix_pool_si
 
   describe "GET /prefixes" do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     it "returns prefixes" do
@@ -42,8 +41,7 @@ describe PrefixesController, type: :request, elasticsearch: true, prefix_pool_si
 
   describe "GET /prefixes/:id", skip_prefix_pool: true do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -93,8 +91,7 @@ describe PrefixesController, type: :request, elasticsearch: true, prefix_pool_si
 
   describe "POST /prefixes", skip_prefix_pool: true do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     context "when the request is valid" do

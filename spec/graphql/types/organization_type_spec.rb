@@ -160,8 +160,7 @@ describe OrganizationType, prefix_pool_size: 7 do
       create(:doi)
     }
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -323,8 +322,7 @@ describe OrganizationType, prefix_pool_size: 7 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -472,8 +470,7 @@ describe OrganizationType, prefix_pool_size: 7 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -902,8 +899,7 @@ describe OrganizationType, prefix_pool_size: 7 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do

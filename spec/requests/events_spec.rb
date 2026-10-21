@@ -355,8 +355,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true, prefi
           "https://doi.org/10.1016/j.jastp.2013.05.001",
         )
 
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
         get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
@@ -368,8 +367,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true, prefi
       it "has created aggregation" do
         post uri, params, headers
 
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
         get uri, nil, headers
 
         expect(json.dig("meta", "created", 0, "count")).to eq(1)
@@ -942,9 +940,8 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true, prefi
     let(:uri) { "/events/#{event.uuid}?include=doi-for-source,doi-for-target" }
 
     before do
-      DataciteDoi.import
-      Event.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Event.import(refresh: true)
     end
 
     context "as admin user" do

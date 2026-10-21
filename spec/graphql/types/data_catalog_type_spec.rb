@@ -34,10 +34,9 @@ describe DataCatalogType, prefix_pool_size: 4 do
   #   let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
 
   #   before do
-  #     Client.import
-  #     Event.import
-  #     Doi.import
-  #     sleep 2
+  #     Client.import(refresh: true)
+  #     Event.import(refresh: true)
+  #     Doi.import(refresh: true)
   #   end
 
   #   let(:query) do
@@ -131,8 +130,7 @@ describe DataCatalogType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do

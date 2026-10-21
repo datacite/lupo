@@ -48,8 +48,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:providers) { create_list(:provider, 3) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "returns providers" do
@@ -74,8 +73,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:provider) { create(:provider) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "returns providers" do
@@ -148,9 +146,8 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
 
     before do
-      Provider.import
-      Contact.import
-      sleep 2
+      Provider.import(refresh: true)
+      Contact.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -183,10 +180,9 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns provider" do
@@ -207,10 +203,9 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns providers" do
@@ -235,10 +230,9 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     end
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns provider" do
@@ -358,8 +352,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       end
 
       before do
-        Provider.import
-        sleep 2
+        Provider.import(refresh: true)
       end
 
       it "has no permission" do
@@ -848,8 +841,6 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
           "internationalOrganization",
         )
 
-        sleep 1
-
         get "/providers/#{
               provider_symbol
             }",
@@ -1249,8 +1240,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     let!(:provider) { create(:provider) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "deletes the provider" do

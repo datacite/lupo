@@ -34,9 +34,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "without username" do
@@ -73,9 +72,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "repository" do
@@ -109,9 +107,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "provider" do
@@ -145,9 +142,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "query by doi" do
@@ -184,9 +180,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "query by doi" do
@@ -208,9 +203,8 @@ describe ActivitiesController, type: :request, prefix_pool_size: 1 do
     let!(:other_doi) { create(:doi, client: client) }
 
     before do
-      DataciteDoi.import
-      Activity.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Activity.import(refresh: true)
     end
 
     context "query by doi" do

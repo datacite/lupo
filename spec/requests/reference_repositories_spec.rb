@@ -37,7 +37,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
 
   before :all do
     VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-      create(:prefix, uid: "10.17616")
+      create(:prefix)
       @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       create(:reference_repository, re3doi:  "10.17616/r3vg6n")
       create(:reference_repository, re3doi:  "10.17616/r37m1j")
@@ -48,8 +48,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
       create(:reference_repository, re3doi:  "10.17616/R31NJN59")
       create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
       @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
-      ReferenceRepository.import(force: true)
-      sleep 2
+      ReferenceRepository.import(force: true, refresh: true)
     end
   end
 
@@ -64,9 +63,8 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
     let!(:clients) { create_list(:client, 3) }
 
     before do
-      Client.import()
-      ReferenceRepository.import()
-      sleep 3
+      Client.import(refresh: true)
+      ReferenceRepository.import(refresh: true)
     end
     it "returns reference-repositories" do
       get "/reference-repositories", nil, headers

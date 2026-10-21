@@ -35,8 +35,7 @@ describe PreprintType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
@@ -118,8 +117,7 @@ describe PreprintType, prefix_pool_size: 4 do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 

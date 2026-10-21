@@ -67,10 +67,9 @@ describe FunderType, prefix_pool_size: 3 do
     end
 
     before do
-      Client.import
-      Event.import
-      Doi.import
-      sleep 2
+      Client.import(refresh: true)
+      Event.import(refresh: true)
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -165,8 +164,7 @@ describe FunderType, prefix_pool_size: 3 do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
