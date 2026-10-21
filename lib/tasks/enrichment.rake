@@ -236,15 +236,16 @@ namespace :enrichment do
     abort("FILENAME is not set") if filename.blank?
 
     enrichments = Enrichment.where(filename: filename)
-    total = enrichments.count
     deleted = 0
 
+    # delete_all (SQL DELETE) instead of destroy_all — no AR instantiation/callbacks.
+    # Safe here: Enrichment has no dependent associations or destroy callbacks.
     enrichments.in_batches(of: 10_000) do |batch|
-      count = batch.destroy_all.size
+      count = batch.delete_all
       deleted += count
-      puts("Deleted #{deleted}/#{total} enrichments")
+      puts("Deleted #{deleted} enrichments for filename=#{filename}")
     end
 
-    puts("Finished deleting enrichments for filename=#{filename} (deleted=#{deleted})")
+    puts("Finished deleting enrichments for filename=#{filename}")
   end
 end
