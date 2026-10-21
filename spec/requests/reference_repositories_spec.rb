@@ -37,7 +37,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
 
   before :all do
     VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-      create(:prefix, uid: "10.17616")
+      create(:prefix)
       @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
       create(:reference_repository, re3doi:  "10.17616/r3vg6n")
       create(:reference_repository, re3doi:  "10.17616/r37m1j")

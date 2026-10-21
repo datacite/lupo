@@ -116,7 +116,7 @@ describe RepositoryType, prefix_pool_size: 2 do
         "
 
       VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-        create(:prefix, uid: "10.17616")
+        create(:prefix)
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
         create(:reference_repository, re3doi:  "10.17616/r3vg6n")
         create(:reference_repository, re3doi:  "10.17616/r37m1j")
