@@ -36,6 +36,9 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
   let(:query) { "jamon" }
 
   before :all do
+    # ProviderPrefix#prefix_id= resolves prefixes through Rails.cache, which may
+    # still hold a 10.17616 record destroyed by an earlier spec file.
+    Rails.cache.delete("prefix_response/10.17616")
     VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
       create(:prefix)
       @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
@@ -57,6 +60,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
     Client.destroy_all
     Provider.destroy_all
     Prefix.destroy_all
+    Rails.cache.delete("prefix_response/10.17616")
   end
 
   describe "GET /reference-repositories", elasticsearch: true do

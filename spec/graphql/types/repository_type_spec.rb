@@ -115,6 +115,9 @@ describe RepositoryType, prefix_pool_size: 2 do
         }
         "
 
+      # ProviderPrefix#prefix_id= resolves prefixes through Rails.cache, which may
+      # still hold a 10.17616 record destroyed by an earlier spec file.
+      Rails.cache.delete("prefix_response/10.17616")
       VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
         create(:prefix)
         create(:reference_repository, re3doi:  "10.17616/R3BW5R")
@@ -138,6 +141,7 @@ describe RepositoryType, prefix_pool_size: 2 do
       Client.destroy_all
       Provider.destroy_all
       Prefix.destroy_all
+      Rails.cache.delete("prefix_response/10.17616")
     end
 
     let(:search_query) { @search_query }

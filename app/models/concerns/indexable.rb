@@ -7,35 +7,7 @@ module Indexable
 
   included do
     after_commit on: %i[create update] do
-      # use index_document instead of update_document to also update virtual attributes
-      if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
-        other_doi = OtherDoi.find_by(id: self.id)
-        if other_doi
-          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
-
-          if index_sync_enabled?
-            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
-          end
-        end
-      elsif ["Event", "Activity"].include?(self.class.name)
-        IndexBackgroundJob.perform_later(self)
-      elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
-        IndexJob.perform_later(self)
-      elsif instance_of?(DataciteDoi)
-        IndexJobDoiRegistration.perform_later(self)
-
-        if index_sync_enabled?
-          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
-        end
-      else
-        __elasticsearch__.index_document
-        # This is due to the order of indexing, we want to always ensure
-        # the prefix index is up to date with relations
-        # So we force it here to reindex prefix if we touch them.
-        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-          self.prefix.__elasticsearch__.index_document
-        end
-      end
+      enqueue_index_update
 
       if instance_of?(DataciteDoi) || instance_of?(OtherDoi) || instance_of?(Doi)
         if aasm_state == "findable"
@@ -91,6 +63,38 @@ module Indexable
       # reindex prefix
       if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
         IndexJob.perform_later(self.prefix)
+      end
+    end
+
+    def enqueue_index_update
+      # use index_document instead of update_document to also update virtual attributes
+      if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
+        other_doi = OtherDoi.find_by(id: self.id)
+        if other_doi
+          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
+
+          if index_sync_enabled?
+            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
+          end
+        end
+      elsif ["Event", "Activity"].include?(self.class.name)
+        IndexBackgroundJob.perform_later(self)
+      elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
+        IndexJob.perform_later(self)
+      elsif instance_of?(DataciteDoi)
+        IndexJobDoiRegistration.perform_later(self)
+
+        if index_sync_enabled?
+          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
+        end
+      else
+        __elasticsearch__.index_document
+        # This is due to the order of indexing, we want to always ensure
+        # the prefix index is up to date with relations
+        # So we force it here to reindex prefix if we touch them.
+        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+          self.prefix.__elasticsearch__.index_document
+        end
       end
     end
 
