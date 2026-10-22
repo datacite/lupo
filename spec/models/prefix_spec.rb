@@ -65,3 +65,59 @@ RSpec.describe Prefix, type: :model, prefix_pool_size: 1 do
     end
   end
 end
+
+RSpec.describe Prefix, "lookups by uid", type: :model do
+  let!(:provider) { create(:provider) }
+  let(:uid) { build(:prefix).uid }
+
+  def create_provider_prefix
+    ProviderPrefix.create!(provider_id: provider.symbol, prefix_id: uid)
+  end
+
+  def expect_lookups_to_find_the_current_prefix
+    current = Prefix.find_by!(uid: uid)
+
+    # Client#assign_prefix passes the uid to ClientPrefix#prefix_id=
+    create(:provider_prefix, provider: provider, prefix: current)
+    client = create(:client, provider: provider)
+    expect(client.reload.prefixes).to eq([current])
+
+    # ProviderPrefix#prefix_id=
+    other_provider = create(:provider)
+    provider_prefix =
+      ProviderPrefix.create!(provider_id: other_provider.symbol, prefix_id: uid)
+    expect(provider_prefix.prefix).to eq(current)
+  end
+
+  it "resolves a uid that was destroyed and created again" do
+    create(:prefix, uid: uid)
+    create_provider_prefix
+    Prefix.find_by!(uid: uid).destroy!
+
+    create(:prefix, uid: uid)
+
+    expect_lookups_to_find_the_current_prefix
+  end
+
+  it "resolves a uid whose earlier row was rolled back" do
+    # Like DatabaseCleaner rolling back an earlier example: no commit
+    # callback runs for the discarded row, so its id stays in the cache.
+    ActiveRecord::Base.transaction(requires_new: true) do
+      create(:prefix, uid: uid)
+      create_provider_prefix
+      raise ActiveRecord::Rollback
+    end
+
+    create(:prefix, uid: uid)
+
+    expect_lookups_to_find_the_current_prefix
+  end
+
+  it "resolves a uid that was looked up before it existed" do
+    expect { create_provider_prefix }.to raise_error(ActiveRecord::RecordNotFound)
+
+    create(:prefix, uid: uid)
+
+    expect_lookups_to_find_the_current_prefix
+  end
+end

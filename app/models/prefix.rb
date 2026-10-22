@@ -21,6 +21,12 @@ class Prefix < ApplicationRecord
   has_many :provider_prefixes, dependent: :destroy
   has_many :providers, through: :provider_prefixes
 
+  # ProviderPrefix#prefix_id= and ClientPrefix#prefix_id= look up prefixes by
+  # uid through cached_prefix_response. Expire that entry after every commit,
+  # including create: a row with the same uid may have been deleted or rolled
+  # back without running callbacks, leaving a cached record with a dead id.
+  after_commit :expire_cached_prefix_responses
+
   # use different index for testing
   if Rails.env.test?
     index_name "prefixes-test#{ENV['TEST_ENV_NUMBER']}"
@@ -46,6 +52,12 @@ class Prefix < ApplicationRecord
     indexes :providers, type: :object
     indexes :client_prefixes, type: :object
     indexes :provider_prefixes, type: :object
+  end
+
+  def expire_cached_prefix_responses
+    [uid, uid_before_last_save].compact.uniq.each do |value|
+      expire_cached_prefix_response(value)
+    end
   end
 
   def as_indexed_json(_options = {})
