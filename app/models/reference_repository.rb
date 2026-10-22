@@ -68,10 +68,14 @@ class ReferenceRepository < ApplicationRecord
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
   end
 
-  def self.find_re3(doi)
-    Rails.cache.fetch("re3repo/#{doi}", expires_in: 5.minutes) do
-      DataCatalog.find_by_id(doi).fetch(:data, []).first
+  def self.find_re3(_doi)
+    unless defined?(@re3_lookup_disabled_logged) && @re3_lookup_disabled_logged
+      @re3_lookup_disabled_logged = true
+      Rails.logger.warn(
+        "ReferenceRepository re3data lookups are disabled; the re3data endpoint is no longer active",
+      )
     end
+    nil
   end
 
   def uid

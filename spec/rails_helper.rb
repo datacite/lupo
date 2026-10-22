@@ -85,10 +85,6 @@ RSpec.configure do |config|
   config.before(:suite) do
     puts("Clearing_cache")
     Rails.cache.clear
-    puts("Caching re3data")
-    VCR.use_cassette("DataCatalog/cache_warmer") do
-      DataCatalog.fetch_and_cache_all(pages: 3, duration: 30.minutes)
-    end
   end
 
   config.before(:each) do |example|
