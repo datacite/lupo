@@ -1981,8 +1981,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 2 
       it "updates the Doi" do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
-        DataciteDoi.import
-        sleep 2
+        DataciteDoi.import(refresh: true)
 
         get "/dois", nil, headers
 
@@ -2019,8 +2018,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 2 
       it "updates the Doi" do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
-        DataciteDoi.import
-        sleep 2
+        DataciteDoi.import(refresh: true)
 
         get "/dois", nil, headers
 
@@ -2180,8 +2178,7 @@ describe DataciteDoisController, type: :request, vcr: true, prefix_pool_size: 2 
       end
 
       before do
-        DataciteDoi.import
-        sleep 2
+        DataciteDoi.import(refresh: true)
       end
 
       it "updates the Doi" do

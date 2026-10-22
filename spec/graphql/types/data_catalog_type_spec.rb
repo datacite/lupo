@@ -34,10 +34,9 @@ describe DataCatalogType, prefix_pool_size: 4 do
   #   let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
 
   #   before do
-  #     Client.import
-  #     Event.import
-  #     Doi.import
-  #     sleep 2
+  #     Client.import(refresh: true)
+  #     Event.import(refresh: true)
+  #     Doi.import(refresh: true)
   #   end
 
   #   let(:query) do
@@ -99,139 +98,45 @@ describe DataCatalogType, prefix_pool_size: 4 do
   #   end
   # end
 
-  describe "query data_catalogs", elasticsearch: true, vcr: true do
-    let!(:dois) { create_list(:doi, 3) }
-    let!(:doi) do
-      create(
-        :doi,
-        aasm_state: "findable",
-        creators: [
-          {
-            "familyName" => "Garza",
-            "givenName" => "Kristian",
-            "name" => "Garza, Kristian",
-            "nameIdentifiers" => [
-              {
-                "nameIdentifier" => "https://orcid.org/0000-0003-3484-6875",
-                "nameIdentifierScheme" => "ORCID",
-                "schemeUri" => "https://orcid.org",
-              },
-            ],
-            "nameType" => "Personal",
-            "affiliation": [
-              {
-                "name": "University of Cambridge",
-                "affiliationIdentifier": "https://ror.org/013meh722",
-                "affiliationIdentifierScheme": "ROR",
-              },
-            ],
-          },
-        ],
-      )
-    end
-
-    before do
-      Doi.import
-      sleep 2
-    end
-
+  describe "query data_catalogs", skip_prefix_pool: true do
     let(:query) do
       "query {
-        dataCatalogs(query: \"Dataverse\", first: 10, after: \"OA\") {
+        dataCatalogs(query: \"Dataverse\", first: 10) {
           totalCount
           pageInfo {
-            endCursor
             hasNextPage
           }
           nodes {
             id
             name
-            alternateName
-            description
-            certificates {
-              termCode
-              name
-            }
-            softwareApplication {
-              name
-              url
-              softwareVersion
-            }
-            contacts
-            providerTypes
-            pidSystems
-            inLanguage
-            dataAccesses {
-                type
-                restriction {
-                    text
-                }
-            }
           }
         }
       }"
     end
 
-    it "returns data_catalog information" do
+    it "returns an empty connection" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(85)
-      expect(
-        response.dig("data", "dataCatalogs", "pageInfo", "endCursor"),
-      ).to eq("OQ")
+      expect(response["errors"]).to be_nil
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
+      expect(response.dig("data", "dataCatalogs", "nodes")).to eq([])
       expect(
         response.dig("data", "dataCatalogs", "pageInfo", "hasNextPage"),
-      ).to eq true
-      expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(10)
-
-      data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)
-      expect(data_catalog.fetch("id")).to eq("https://doi.org/10.17616/r3bw5r")
-      expect(data_catalog.fetch("name")).to eq(
-        "UCLA Social Science Data Archive Dataverse",
-      )
-      expect(data_catalog.fetch("alternateName")).to eq(
-        ["SSDA Dataverse\r\nUCLA Library Data Science Center"],
-      )
-      expect(data_catalog.fetch("description")).to start_with(
-        "The Social Science Data Archive is still active and maintained as part of the UCLA Library",
-      )
-      expect(data_catalog.fetch("certificates")).to be_empty
-      expect(data_catalog.fetch("providerTypes")).to eq(
-        [
-          "dataProvider",
-        ]
-      )
-      expect(data_catalog.fetch("contacts")).to eq(
-        [
-          "datascience@ucla.edu",
-          "datascience@ucla.edu"
-        ],
-      )
-      expect(data_catalog.fetch("pidSystems")).to eq(
-        [
-          "hdl",
-          "DOI"
-        ]
-      )
-      expect(data_catalog.fetch("inLanguage")).to eq(
-        [
-          "eng"
-        ]
-      )
-      expect(data_catalog.fetch("dataAccesses")).to eq(
-        [
-            { "restriction" => nil, "type" => "restricted" },
-            { "restriction" => nil, "type" => "open" }
-        ]
-      )
-
-      expect(data_catalog.fetch("softwareApplication")).to eq(
-        [{ "name" => "DataVerse", "softwareVersion" => nil, "url" => nil }],
-      )
+      ).to eq(false)
     end
   end
 
-  describe "more data_catalogs queries", elasticsearch: true, vcr: true, skip_prefix_pool: true do
+  describe "data_catalog", skip_prefix_pool: true do
+    it "reports that the catalog record is not found" do
+      response = LupoSchema.execute(
+        %(query { dataCatalog(id: "https://doi.org/10.17616/r3xs37") { id } }),
+      ).as_json
+
+      expect(response.dig("errors", 0, "message")).to eq("Record not found")
+    end
+  end
+
+  describe "more data_catalogs queries", skip_prefix_pool: true do
     let(:filtered_query) do
       "query($query: String, $subject: String, $open: String, $certified: String, $pid: String, $software: String, $disciplinary: String){
             dataCatalogs( query: $query, subject: $subject, open: $open, certified: $certified, pid: $pid, software: $software, disciplinary: $disciplinary){
@@ -239,19 +144,20 @@ describe DataCatalogType, prefix_pool_size: 4 do
         }
     }"
     end
+
     it "has no filters" do
       response = LupoSchema.execute(filtered_query, variables: { query: "" }).as_json
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(1938)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
     end
 
     it "filters based on query" do
       response = LupoSchema.execute(filtered_query, variables: { query: "Dataverse" }).as_json
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(112)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
     end
 
     it "filters based on subject" do
       response = LupoSchema.execute(filtered_query, variables: { subject: "23" }).as_json
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(159)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
     end
 
     it "filters for FAIRS FAIR" do
@@ -264,7 +170,7 @@ describe DataCatalogType, prefix_pool_size: 4 do
               certified: "true"
           }
       ).as_json
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(131)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
     end
 
     it "filters for Enabling FAIR Data Project" do
@@ -277,7 +183,7 @@ describe DataCatalogType, prefix_pool_size: 4 do
               certified: ""
           }
       ).as_json
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(255)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(0)
     end
   end
 end

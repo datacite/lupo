@@ -36,21 +36,18 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
   let(:query) { "jamon" }
 
   before :all do
-    VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-      create(:prefix, uid: "10.17616")
-      @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
-      create(:reference_repository, re3doi:  "10.17616/r3vg6n")
-      create(:reference_repository, re3doi:  "10.17616/r37m1j")
-      create(:reference_repository, re3doi:  "10.17616/R3003X")
-      create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
-      create(:reference_repository, re3doi:  "10.17616/R3NC74")
-      create(:reference_repository, re3doi:  "10.17616/R3106C")
-      create(:reference_repository, re3doi:  "10.17616/R31NJN59")
-      create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-      @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
-      ReferenceRepository.import(force: true)
-      sleep 2
-    end
+    create(:prefix)
+    @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
+    create(:reference_repository, re3doi:  "10.17616/r3vg6n")
+    create(:reference_repository, re3doi:  "10.17616/r37m1j")
+    create(:reference_repository, re3doi:  "10.17616/R3003X")
+    create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
+    create(:reference_repository, re3doi:  "10.17616/R3NC74")
+    create(:reference_repository, re3doi:  "10.17616/R3106C")
+    create(:reference_repository, re3doi:  "10.17616/R31NJN59")
+    create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
+    @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
+    ReferenceRepository.import(force: true, refresh: true)
   end
 
   after :all do
@@ -64,9 +61,8 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
     let!(:clients) { create_list(:client, 3) }
 
     before do
-      Client.import()
-      ReferenceRepository.import()
-      sleep 3
+      Client.import(refresh: true)
+      ReferenceRepository.import(refresh: true)
     end
     it "returns reference-repositories" do
       get "/reference-repositories", nil, headers
@@ -83,7 +79,7 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true, p
         get "/reference-repositories/#{@ref_repo.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "name")).to eq("UCLA Social Science Data Archive Dataverse")
+        expect(json.dig("data", "attributes", "name")).to eq("10.17616/r3bw5r")
       end
     end
 

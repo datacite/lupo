@@ -191,7 +191,6 @@ describe Doi, vcr: true, elasticsearch: true, prefix_pool_size: 2 do
     #   expect(subject.url).to eq(url)
     #   expect(subject.minted.iso8601).to be_present
 
-    #   sleep 1
     #   response = subject.get_url
 
     #   expect(response.body.dig("data", "responseCode")).to eq(1)

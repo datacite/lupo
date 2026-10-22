@@ -14,8 +14,7 @@ describe DatasetType, prefix_pool_size: 4 do
     let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -136,8 +135,7 @@ describe DatasetType, prefix_pool_size: 4 do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
@@ -212,8 +210,7 @@ describe DatasetType, prefix_pool_size: 4 do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -304,8 +301,7 @@ describe DatasetType, prefix_pool_size: 4 do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -395,9 +391,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 3
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -474,9 +469,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -541,9 +535,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -602,9 +595,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -663,9 +655,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 3
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -725,9 +716,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -791,9 +781,8 @@ describe DatasetType, prefix_pool_size: 4 do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 

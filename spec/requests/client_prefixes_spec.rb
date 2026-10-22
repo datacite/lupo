@@ -18,9 +18,8 @@ describe "Client Prefixes", type: :request, elasticsearch: true, prefix_pool_siz
 
   describe "GET /client-prefixes" do
     before do
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
+      Prefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
     end
 
     it "returns client-prefixes" do
@@ -33,9 +32,8 @@ describe "Client Prefixes", type: :request, elasticsearch: true, prefix_pool_siz
 
   describe "GET /client-prefixes/:uid" do
     before do
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
+      Prefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -129,8 +127,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true, prefix_pool_siz
     let!(:client_prefix) { create(:client_prefix, client: client, provider_prefix: provider_prefix) }
 
     before do
-      ClientPrefix.import
-      sleep 2
+      ClientPrefix.import(refresh: true)
     end
 
     it "deletes the prefix" do

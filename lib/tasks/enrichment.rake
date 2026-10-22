@@ -259,4 +259,40 @@ namespace :enrichment do
 
     puts("Finished deleting enrichments for filename=#{filename} (deleted=#{deleted})")
   end
+
+  desc "Delete duplicate enrichments, keeping the lowest id per content_key"
+  # Example: bundle exec rake enrichment:delete_enrichments_with_duplicate_content_key
+  # Optional: BATCH_SIZE=10000 (default 10000)
+  #
+  # Expected shape: many content_keys (possibly millions) each with a small
+  # number of near-identical rows (typically 2). NULL content_keys are skipped.
+  task delete_enrichments_with_duplicate_content_key: :environment do
+    batch_size = (ENV["BATCH_SIZE"].presence || 10_000).to_i
+    abort("BATCH_SIZE must be > 0") if batch_size <= 0
+
+    deleted = 0
+
+    # Keep MIN(id) per content_key: any row that has a smaller-id sibling with
+    # the same key is a duplicate. With only a few rows per key the self-join
+    # stays cheap; batch via LIMIT and delete by primary key only.
+    loop do
+      # LIMIT cannot use a bound parameter in MySQL (it becomes '10000' and fails).
+      ids = Enrichment.connection.select_values(<<~SQL.squish)
+        SELECT DISTINCT e1.id
+        FROM enrichments e1
+        INNER JOIN enrichments e2
+          ON e1.content_key = e2.content_key
+          AND e1.id > e2.id
+        WHERE e1.content_key IS NOT NULL
+        LIMIT #{batch_size}
+      SQL
+      break if ids.empty?
+
+      count = Enrichment.where(id: ids).delete_all
+      deleted += count
+      puts("Deleted #{deleted} duplicate enrichments (batch=#{count})")
+    end
+
+    puts("Finished deleting enrichments with duplicate content_key (deleted=#{deleted})")
+  end
 end

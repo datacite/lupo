@@ -2,28 +2,28 @@
 
 require "rails_helper"
 
-def import_index(index_class)
-  index_class.import
-  index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
-end
-
-def clear_index(index_class)
-  index_class.__elasticsearch__.client.delete_by_query(index: index_class.index_name, body: { query: { match_all: {} } })
-  index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
-end
-
-def reset_indices
-  clear_index(DataciteDoi)
-  clear_index(Client)
-  clear_index(Provider)
-  clear_index(ReferenceRepository)
-  import_index(ReferenceRepository)
-  import_index(Provider)
-  import_index(Client)
-  import_index(DataciteDoi)
-end
-
 describe RepositoriesController, type: :request, elasticsearch: true, prefix_pool_size: 2 do
+  def import_index(index_class)
+    index_class.import
+    index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
+  end
+
+  def clear_index(index_class)
+    index_class.__elasticsearch__.client.delete_by_query(index: index_class.index_name, body: { query: { match_all: {} } })
+    index_class.__elasticsearch__.client.indices.refresh(index: index_class.index_name)
+  end
+
+  def reset_indices
+    clear_index(DataciteDoi)
+    clear_index(Client)
+    clear_index(Provider)
+    clear_index(ReferenceRepository)
+    import_index(ReferenceRepository)
+    import_index(Provider)
+    import_index(Client)
+    import_index(DataciteDoi)
+  end
+
   let(:ids) { clients.map(&:uid).join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let!(:provider) do
@@ -694,13 +694,11 @@ describe RepositoriesController, type: :request, elasticsearch: true, prefix_poo
     end
 
     before do
-      DataciteDoi.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
     end
 
     it "transfered all DOIs" do
       put "/repositories/#{client.symbol}", params, headers
-      sleep 1
 
       expect(last_response.status).to eq(200)
     end
@@ -708,7 +706,6 @@ describe RepositoriesController, type: :request, elasticsearch: true, prefix_poo
     it "transfered all DOIs consortium" do
       put "/repositories/#{client.symbol}",
           params, consortium_headers
-      sleep 1
 
       expect(last_response.status).to eq(200)
     end

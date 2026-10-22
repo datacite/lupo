@@ -61,8 +61,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
-      Contact.import
-      sleep 1
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -78,8 +77,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
-      Contact.import
-      sleep 2
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -95,8 +93,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3) }
 
     before do
-      Contact.import
-      sleep 1
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -112,9 +109,8 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3, provider: provider) }
 
     before do
-      Provider.import
-      Contact.import
-      sleep 2
+      Provider.import(refresh: true)
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -130,9 +126,8 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:consortium_contact) { create(:contact, provider: consortium, role_name: ["billing"]) }
 
     before do
-      Provider.import
-      Contact.import
-      sleep 1
+      Provider.import(refresh: true)
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -148,8 +143,7 @@ describe ContactsController, type: :request, elasticsearch: true do
     let!(:contacts) { create_list(:contact, 3, deleted_at: Time.zone.now) }
 
     before do
-      Contact.import
-      sleep 2
+      Contact.import(refresh: true)
     end
 
     it "returns contacts" do
@@ -215,8 +209,7 @@ describe ContactsController, type: :request, elasticsearch: true do
         relationships = json.dig("data", "relationships")
         expect(relationships).to eq("provider" => { "data" => { "id" => provider.uid, "type" => "providers" } })
 
-        Contact.import
-        sleep 2
+        Contact.import(refresh: true)
 
         get "/contacts", nil, headers
 
