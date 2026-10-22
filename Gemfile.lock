@@ -472,8 +472,6 @@ GEM
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.0331)
-    mini_magick (5.3.1)
-      logger
     mini_mime (1.1.5)
     minitest (6.0.6)
       drb (~> 2.0)
@@ -837,7 +835,6 @@ DEPENDENCIES
   logstash-logger (~> 1.0)
   mailgun-ruby (~> 1.4, >= 1.4.3)
   maremma (~> 6.0)
-  mini_magick (~> 5.3, >= 5.3.1)
   mysql2 (~> 0.5.7)
   nokogiri (>= 1.19.4)
   parallel (~> 1.28)

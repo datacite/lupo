@@ -25,7 +25,7 @@ RUN apt-get update && \
       nano \
       tmux \
       tzdata \
-      imagemagick \
+      file \
       shared-mime-info \
       gettext \
       libdbd-mysql-perl \
