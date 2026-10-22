@@ -1365,15 +1365,15 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
     end
 
     it "returns the correct provider for United States" do
-      expect(Provider.search("US").records.to_a).to include(us_provider)
+      expect(Provider.search("US").records.to_a).to include(us_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for Italy" do
-      expect(Provider.search("IT").records.to_a).to include(it_provider)
+      expect(Provider.search("IT").records.to_a).to include(it_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for Japan" do
-      expect(Provider.search("JP").records.to_a).to include(jp_provider)
+      expect(Provider.search("JP").records.to_a).to include(jp_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for region" do
@@ -1388,7 +1388,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       }
 
       results = Provider.search(search_query)
-      expect(results.records.to_a).to include(us_provider)
+      expect(results.records.to_a).to include(us_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for ISO3166 world region" do
@@ -1403,7 +1403,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       }
 
       results = Provider.search(search_query)
-      expect(results.records.to_a).to include(us_provider)
+      expect(results.records.to_a).to include(us_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for ISO3166 region" do
@@ -1418,7 +1418,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       }
 
       results = Provider.search(search_query)
-      expect(results.records.to_a).to include(it_provider)
+      expect(results.records.to_a).to include(it_provider).and have_attributes(size: 1)
     end
 
     it "returns the correct provider for ISO3166 subregion" do
@@ -1433,7 +1433,7 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       }
 
       results = Provider.search(search_query)
-      expect(results.records.to_a).to include(jp_provider)
+      expect(results.records.to_a).to include(jp_provider).and have_attributes(size: 1)
     end
   end
 end

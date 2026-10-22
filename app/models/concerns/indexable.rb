@@ -299,7 +299,7 @@ module Indexable
             { range: { updated: { lte: "#{options[:until_date]}||/d" } } }
         end
         if options[:region].present?
-          filter << { term: { 'country.region': options[:region].upcase } }
+          filter << { term: { 'region': options[:region].upcase } }
         end
         if options[:iso3166_world_region].present?
           filter << { term: { 'country.iso3166_world_region': options[:iso3166_world_region].upcase } }
