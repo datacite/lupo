@@ -77,6 +77,11 @@ RSpec.describe Prefix, "lookups by uid", type: :model do
   def expect_lookups_to_find_the_current_prefix
     current = Prefix.find_by!(uid: uid)
 
+    # Check the setters before writing anything: creating a ProviderPrefix
+    # touches the prefix, which would expire the cache entry by itself.
+    expect(ProviderPrefix.new(prefix_id: uid).prefix).to eq(current)
+    expect(ClientPrefix.new(prefix_id: uid).prefix).to eq(current)
+
     # Client#assign_prefix passes the uid to ClientPrefix#prefix_id=
     create(:provider_prefix, provider: provider, prefix: current)
     client = create(:client, provider: provider)
@@ -117,6 +122,22 @@ RSpec.describe Prefix, "lookups by uid", type: :model do
     expect { create_provider_prefix }.to raise_error(ActiveRecord::RecordNotFound)
 
     create(:prefix, uid: uid)
+
+    expect_lookups_to_find_the_current_prefix
+  end
+
+  it "expires the cached uid even if indexing the new prefix fails" do
+    ActiveRecord::Base.transaction(requires_new: true) do
+      create(:prefix, uid: uid)
+      create_provider_prefix
+      raise ActiveRecord::Rollback
+    end
+
+    # Indexing runs in an earlier commit callback, after the row is committed.
+    prefix = build(:prefix, uid: uid)
+    allow(prefix.__elasticsearch__).to receive(:index_document).
+      and_raise(Faraday::ConnectionFailed, "search unavailable")
+    expect { prefix.save! }.to raise_error(Faraday::ConnectionFailed)
 
     expect_lookups_to_find_the_current_prefix
   end
