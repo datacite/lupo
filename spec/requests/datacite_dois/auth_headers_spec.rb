@@ -3,17 +3,17 @@
 require "rails_helper"
 include Passwordable
 
-def import_doi_index
-  DataciteDoi.import
-  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
-end
-
-def clear_doi_index
-  DataciteDoi.__elasticsearch__.client.delete_by_query(index: DataciteDoi.index_name, body: { query: { match_all: {} } })
-  DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
-end
-
 describe DataciteDoisController, type: :request, vcr: true do
+  def import_doi_index
+    DataciteDoi.import
+    DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
+  end
+
+  def clear_doi_index
+    DataciteDoi.__elasticsearch__.client.delete_by_query(index: DataciteDoi.index_name, body: { query: { match_all: {} } })
+    DataciteDoi.__elasticsearch__.client.indices.refresh(index: DataciteDoi.index_name)
+  end
+
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer } }
