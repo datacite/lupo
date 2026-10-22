@@ -114,6 +114,17 @@ describe Provider, type: :model do
       expect(subject.logo_file_name).to eq(subject.symbol.downcase + ".png")
       expect(subject.logo.content_type).to eq("image/png")
       expect(subject.logo.size).to be > 10
+      expect(File.binread(subject.logo.path)).to eq(file_fixture("bl.png").binread)
+    end
+
+    it "with logo too large" do
+      # a real PNG padded past the limit, so only the size check fails
+      subject.logo =
+        "data:image/png;base64," +
+        Base64.strict_encode64(file_fixture("bl.png").binread + ("\0" * 1.megabyte))
+      expect(subject.save).to be false
+      expect(subject.errors.details[:logo_file_size].first[:error]).to eq(:less_than)
+      expect(subject.errors.details.keys).to match_array(%i[logo logo_file_size])
     end
 
     it "without logo" do

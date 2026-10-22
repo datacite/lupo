@@ -51,15 +51,16 @@ class Provider < ApplicationRecord
 
   include Elasticsearch::Model
 
-  has_attached_file :logo,
-                    styles: { medium: ["500x200", :png] },
-                    default_style: :medium,
-                    default_url: "/images/members/default.png"
+  # Logos are stored as uploaded (no resizing), so Paperclip never shells out
+  # to ImageMagick. Display sizing is left to the clients, and the size limit
+  # keeps oversized uploads from being served as-is.
+  has_attached_file :logo, default_url: "/images/members/default.png"
 
   validates_attachment :logo,
                        content_type: {
                          content_type: %w[image/jpg image/jpeg image/png],
-                       }
+                       },
+                       size: { less_than: 1.megabyte }
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -815,7 +816,7 @@ class Provider < ApplicationRecord
   end
 
   def logo_url
-    logo.url(:medium) if logo.present?
+    logo.url if logo.present?
   end
 
   def password_input=(value)

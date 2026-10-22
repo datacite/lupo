@@ -298,6 +298,37 @@ describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_s
       end
     end
 
+    context "logo too large" do
+      let(:params) do
+        {
+          "data" => {
+            "type" => "providers",
+            "attributes" => {
+              "symbol" => "BL",
+              "name" => "British Library",
+              "displayName" => "British Library",
+              "memberType" => "direct_member",
+              "logo" => "data:image/png;base64," +
+                Base64.strict_encode64(file_fixture("bl.png").binread + ("\0" * 1.megabyte)),
+              "website" => "https://www.bl.uk",
+              "region" => "EMEA",
+              "systemEmail" => "doe@joe.joe",
+              "country" => "GB",
+            },
+          },
+        }
+      end
+
+      it "returns an error" do
+        post "/providers", params, admin_headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to include(
+          a_hash_including("source" => "logo_file_size"),
+        )
+      end
+    end
+
     context "from salesforce" do
       let(:params) do
         {
