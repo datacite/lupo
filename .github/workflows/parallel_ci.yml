@@ -24,43 +24,49 @@ jobs:
         # than this mostly adds setup cost without finishing sooner.
         ci_node_total: [8]
 
-    services:
-      memcached:
-        image: memcached:1.6.22
-        ports:
-          - 11211
-      mysql:
-        image: mysql:8.4.7
-        env:
-          MYSQL_DATABASE: datacite
-          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        ports:
-          - 3306
-      elasticsearch:
-        image: opensearchproject/opensearch:2
-        env:
-          discovery.type: single-node
-          OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
-          OPENSEARCH_INITIAL_ADMIN_PASSWORD: AnUnsecurePassword123
-          DISABLE_SECURITY_PLUGIN: true
-          http.cors.enabled: true
-          bootstrap.memory_lock: true
-          http.cors.allow-origin: "*"
-          compatibility.override_main_response_version: true
-          logger.org.opensearch.discovery: "ERROR"
-        ports:
-          - 9200
-      floci:
-        # Lightweight LocalStack-compatible AWS emulator for S3 metadata storage.
-        # Signatures aren't validated, so the dummy S3 credentials below work as-is.
-        image: floci/floci:2.3.0
-        ports:
-          - "4566:4566"
-
     env:
+      # Service images, started by the "Start services" step
+      MEMCACHED_IMAGE: memcached:1.6.22
+      MYSQL_IMAGE: mysql:8.4.7
+      OPENSEARCH_IMAGE: opensearchproject/opensearch:2
+      # Lightweight LocalStack-compatible AWS emulator for S3 metadata storage.
+      # Signatures aren't validated, so the dummy S3 credentials below work as-is.
+      FLOCI_IMAGE: floci/floci:2.3.0
+      # Fixed ports: each job has the runner to itself.
       MYSQL_HOST: "127.0.0.1"
+      MYSQL_PORT: 3306
       MYSQL_USER: root
+      MYSQL_DATABASE: datacite
+      ES_HOST: localhost:9200
+      ELASTIC_PASSWORD: AnUnsecurePassword123
+      MEMCACHE_SERVERS: localhost:11211
     steps:
+      # Started here instead of under `services:`, which pulls images one at a
+      # time before any step runs. These pull in parallel in the background
+      # while the steps below run; "Wait for services" blocks until they're ready.
+      - name: Start services
+        run: |
+          # Background processes keep running after the step ends
+          start() {
+            name=$1; shift
+            echo "Starting $name (${@: -1})"
+            (docker run -d --name "$name" "$@" > /dev/null 2> "/tmp/$name.err" || touch "/tmp/$name.failed") &
+          }
+          start memcached -p 11211:11211 "$MEMCACHED_IMAGE"
+          start mysql -p 3306:3306 -e MYSQL_DATABASE=$MYSQL_DATABASE -e MYSQL_ALLOW_EMPTY_PASSWORD=yes "$MYSQL_IMAGE"
+          start opensearch -p 9200:9200 \
+            -e discovery.type=single-node \
+            -e "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" \
+            -e OPENSEARCH_INITIAL_ADMIN_PASSWORD=$ELASTIC_PASSWORD \
+            -e DISABLE_SECURITY_PLUGIN=true \
+            -e http.cors.enabled=true \
+            -e bootstrap.memory_lock=true \
+            -e "http.cors.allow-origin=*" \
+            -e compatibility.override_main_response_version=true \
+            -e logger.org.opensearch.discovery=ERROR \
+            "$OPENSEARCH_IMAGE"
+          start floci -p 4566:4566 "$FLOCI_IMAGE"
+
       - uses: actions/checkout@v7
 
       - name: Sync time
@@ -85,11 +91,6 @@ jobs:
           sudo apt-get install -y imagemagick
       - name: Install
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          MYSQL_DATABASE: ${{ job.services.mysql.env.MYSQL_DATABASE }}
-          ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
-          ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
-          MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           RAILS_ENV: test
         run: |
           cp .env.build .env
@@ -97,16 +98,29 @@ jobs:
           gem install bundler:2.6.9
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:setup
+      # Nothing above needs the services, so their pulls overlap with all of it
+      - name: Wait for services
+        timeout-minutes: 3
+        run: |
+          ready() {
+            for name in memcached mysql opensearch floci; do
+              if [ -f /tmp/$name.failed ]; then echo "$name failed to start:"; cat /tmp/$name.err; exit 1; fi
+            done
+            "$@" > /dev/null 2>&1
+          }
+          until ready docker exec mysql mysqladmin ping -h 127.0.0.1 --silent; do sleep 1; done
+          until ready curl -sf "http://$ES_HOST/_cluster/health?wait_for_status=yellow&timeout=1s"; do sleep 1; done
+          until ready bash -c "echo > /dev/tcp/127.0.0.1/11211"; do sleep 1; done
+          until ready curl -sf http://localhost:4566/_floci/health; do sleep 1; done
+          docker ps --format '{{.Names}} ({{.Image}}): {{.Status}}'
+      - name: Set up database
+        env:
+          RAILS_ENV: test
+        run: bundle exec rails db:setup
       - name: Test
         env:
-          MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
-          MYSQL_DATABASE: ${{ job.services.mysql.env.MYSQL_DATABASE }}
-          ES_HOST: localhost:${{ job.services.elasticsearch.ports[9200] }}
-          ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
-          MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.floci.ports[4566] }}
+          AWS_ENDPOINT_URL_S3: http://localhost:4566
           AWS_ACCESS_KEY_ID_S3: s3accesskeyid
           AWS_SECRET_ACCESS_KEY_S3: s3accesskeypass
           METADATA_STORAGE_BUCKET_NAME: metadata
