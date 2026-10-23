@@ -68,7 +68,6 @@ describe Activity, type: :model, prefix_pool_size: 1 do
       expect(activity.request_uuid).to be_present
       expect(activity.audited_changes).to eq(
         "non_profit_status" => %w[non-profit for-profit],
-        "annual_revenue" => [nil, "0-500.000€"],
       )
     end
   end
