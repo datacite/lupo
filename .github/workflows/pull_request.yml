@@ -10,13 +10,17 @@ on:
         type: boolean
         default: true
         required: false
+# A new push to the PR cancels the run still going on the previous commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   lint:
     uses: ./.github/workflows/rubocop.yml
     with:
       run_gem_audit: true
+  # Runs alongside lint rather than after it, so a lint failure doesn't hold up test results
   parallel-test:
-    needs: lint
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
     with:
