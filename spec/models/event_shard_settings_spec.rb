@@ -2,10 +2,10 @@
 
 require "rails_helper"
 
-describe "Event number_of_shards" do
-  it "defaults to 5 on Event settings" do
-    expect(ENV.fetch("NUMBER_OF_SHARDS_EVENT")).to eq("5")
-    expect(Event.settings.to_hash.dig(:index, :number_of_shards)).to eq(5)
+describe "Event number_of_shards", skip_prefix_pool: true do
+  it "defaults to 1 on Event settings" do
+    expect(ENV.fetch("NUMBER_OF_SHARDS_EVENT")).to eq("1")
+    expect(Event.settings.to_hash.dig(:index, :number_of_shards)).to eq(1)
   end
 
   it "does not apply the Event shard setting to shared Doi settings" do
@@ -22,7 +22,7 @@ describe "Event number_of_shards" do
       expect(args[:name]).to eq(Event.index_name)
       expect(args[:body][:index_patterns]).to eq(["#{Event.index_name}*"])
       expect(args[:body][:settings]).to eq(Event.settings.to_hash)
-      expect(args[:body][:settings][:index][:number_of_shards]).to eq(5)
+      expect(args[:body][:settings][:index][:number_of_shards]).to eq(1)
       expect(args[:body][:mappings]).to eq(Event.mappings.to_hash)
       { "acknowledged" => true }
     end
