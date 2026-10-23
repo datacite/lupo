@@ -16,10 +16,13 @@ jobs:
       matrix:
         # set N-1 indexes for parallel jobs
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
-        ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        ci_node_index: [0, 1, 2, 3, 4, 5, 6, 7]
         # Set N number of parallel jobs you want to run
         # Remember to update ci_node_index above to 0..N-1
-        ci_node_total: [16]
+        # Groups are balanced by recorded runtime (spec/parallel_runtime_rspec.log).
+        # The slowest single spec file sets a floor on group time, so more jobs
+        # than this mostly adds setup cost without finishing sooner.
+        ci_node_total: [8]
 
     services:
       memcached:
@@ -47,14 +50,12 @@ jobs:
           logger.org.opensearch.discovery: "ERROR"
         ports:
           - 9200
-      localstack:
-        image: localstack/localstack:2.3.2
+      floci:
+        # Lightweight LocalStack-compatible AWS emulator for S3 metadata storage.
+        # Signatures aren't validated, so the dummy S3 credentials below work as-is.
+        image: floci/floci:2.3.0
         ports:
-          - "4566:4566" # LocalStack edge port
-        env:
-          SERVICES: s3 # Only start S3
-          AWS_ACCESS_KEY_ID: s3accesskeyid
-          AWS_SECRET_ACCESS_KEY: s3accesskeypass
+          - "4566:4566"
 
     env:
       MYSQL_HOST: "127.0.0.1"
@@ -105,17 +106,30 @@ jobs:
           ELASTIC_PASSWORD: ${{ job.services.elasticsearch.env.OPENSEARCH_INITIAL_ADMIN_PASSWORD }}
           MEMCACHE_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.localstack.ports[4566] }}
+          AWS_ENDPOINT_URL_S3: http://localhost:${{ job.services.floci.ports[4566] }}
           AWS_ACCESS_KEY_ID_S3: s3accesskeyid
           AWS_SECRET_ACCESS_KEY_S3: s3accesskeypass
+          METADATA_STORAGE_BUCKET_NAME: metadata
           CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           RAILS_ENV: test
         run: |
+          # Record this group's per-file runtimes so the committed log can be refreshed
+          RSPEC_OPTS="--format progress --format ParallelTests::RSpec::RuntimeLogger --out tmp/parallel_runtime_rspec.log"
           if [ "${{ inputs.fail-fast }}" = "true" ]; then
-            bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec -o "--fail-fast"
-          else
-            bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec
+            RSPEC_OPTS="$RSPEC_OPTS --fail-fast"
           fi
+          bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec \
+            --group-by runtime --runtime-log spec/parallel_runtime_rspec.log -o "$RSPEC_OPTS"
           echo $?
+      # To refresh spec/parallel_runtime_rspec.log from a green run:
+      #   gh run download <run-id> -p 'rspec-runtime-*' -D tmp/rspec-runtime
+      #   cat tmp/rspec-runtime/*/parallel_runtime_rspec.log | sort > spec/parallel_runtime_rspec.log
+      - name: Upload test runtimes
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rspec-runtime-${{ matrix.ci_node_index }}
+          path: tmp/parallel_runtime_rspec.log
+          retention-days: 14
 
