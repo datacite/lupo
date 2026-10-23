@@ -8,13 +8,12 @@ namespace :other_doi do
 
   desc "Delete index for other dois"
   task delete_index: :environment do
-    puts OtherDoi.delete_index(index: ENV["INDEX"])
+    puts OtherDoi.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for other dois"
   task upgrade_index: :environment do
-    puts OtherDoi.upgrade_index(index: ENV["INDEX"])
-    puts OtherDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
+    puts OtherDoi.upgrade_index(index: ENV["INDEX"], refresh_interval: ENV["INTERVAL"])
   end
 
   desc "Set refresh interval for other dois"
@@ -68,7 +67,7 @@ namespace :other_doi do
     until_id = (ENV["UNTIL_ID"] || OtherDoi.maximum(:id)).to_i
     shard_size = ENV["SHARD_SIZE"]&.to_i || 10_000
     batch_size = ENV["BATCH_SIZE"]&.to_i || 50
-    selected_index = ENV["INDEX"] || OtherDoi.inactive_index
+    selected_index = ENV["INDEX"] || OtherDoi.live_inactive_index!
     puts OtherDoi.import_by_ids(
       from_id: from_id,
       until_id: until_id,

@@ -8,7 +8,7 @@ namespace :enrichment do
 
   desc "Delete index for enriched dois"
   task delete_index: :environment do
-    puts EnrichedDoi.delete_index(index: ENV["INDEX"])
+    puts EnrichedDoi.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for enriched dois"
