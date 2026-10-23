@@ -15,6 +15,7 @@ class Provider < ApplicationRecord
     secondary_billing_contact
     voting_contact
     billing_information
+    annual_revenue
     salesforce_id
     password
     updated
