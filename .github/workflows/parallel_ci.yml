@@ -50,7 +50,9 @@ jobs:
           start() {
             name=$1; shift
             echo "Starting $name (${@: -1})"
-            (docker run -d --name "$name" "$@" > /dev/null 2> "/tmp/$name.err" || touch "/tmp/$name.failed") &
+            # The subshell's own output is redirected too, so it doesn't hold the
+            # step's output open and make the runner wait for it.
+            (docker run -d --name "$name" "$@" > /dev/null 2> "/tmp/$name.err" || touch "/tmp/$name.failed") > /dev/null 2>&1 &
           }
           start memcached -p 11211:11211 "$MEMCACHED_IMAGE"
           start mysql -p 3306:3306 -e MYSQL_DATABASE=$MYSQL_DATABASE -e MYSQL_ALLOW_EMPTY_PASSWORD=yes "$MYSQL_IMAGE"
@@ -68,12 +70,6 @@ jobs:
           start floci -p 4566:4566 "$FLOCI_IMAGE"
 
       - uses: actions/checkout@v7
-
-      - name: Sync time
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ntpdate
-          sudo ntpdate pool.ntp.org
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
