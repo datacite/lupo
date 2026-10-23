@@ -125,6 +125,18 @@ class ProviderSerializer
               },
             &:globus_uuid
 
+  attribute :annual_revenue,
+            if:
+              Proc.new { |object, params|
+                params[:current_ability] &&
+                  params[:current_ability].can?(
+                    :read_billing_information,
+                    object,
+                  ) ==
+                    true
+              },
+            &:annual_revenue
+
   attribute :system_email,
             if:
               Proc.new { |object, params|

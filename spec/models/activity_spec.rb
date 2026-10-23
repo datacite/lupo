@@ -59,7 +59,7 @@ describe Activity, type: :model, prefix_pool_size: 1 do
     let(:provider) { create(:provider) }
 
     it "activity exists" do
-      provider.update(non_profit_status: "for-profit")
+      provider.update(non_profit_status: "for-profit", annual_revenue: "0-500.000€")
 
       expect(provider.activities.length).to eq(2)
       activity = provider.activities.last
