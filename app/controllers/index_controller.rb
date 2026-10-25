@@ -14,7 +14,7 @@ class IndexController < ApplicationController
     respond_to do |format|
       format.html do
         # forward to URL registered in handle system for no content negotiation
-        redirect_to doi.url, status: :see_other
+        redirect_to doi.url, status: :see_other, allow_other_host: true
       end
       format.citation do
         # extract optional style and locale from header
@@ -37,8 +37,10 @@ class IndexController < ApplicationController
         :datacite,
         :datacite_json,
         :jats,
+        :rdf_xml,
         :ris,
         :schema_org,
+        :turtle,
       ) { render request.format.to_sym => doi }
       header = %w[
         doi

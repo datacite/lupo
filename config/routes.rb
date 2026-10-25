@@ -53,6 +53,12 @@ Rails.application.routes.draw do
       to: "index#show", constraints: { id: /.+/ }, defaults: { format: :bibtex }
   get "/application/x-research-info-systems/:id",
       to: "index#show", constraints: { id: /.+/ }, defaults: { format: :ris }
+  get "/application/rdf+xml/:id",
+      to: "index#show", constraints: { id: /.+/ }, defaults: { format: :rdf_xml }
+  get "/application/x-turtle/:id",
+      to: "index#show", constraints: { id: /.+/ }, defaults: { format: :turtle }
+  get "/text/turtle/:id",
+      to: "index#show", constraints: { id: /.+/ }, defaults: { format: :turtle }
   get "/text/csv/:id",
       to: "index#show", constraints: { id: /.+/ }, defaults: { format: :csv }
   get "/text/x-bibliography/:id",
