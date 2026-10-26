@@ -55,14 +55,23 @@ module Cacheable
       end
     end
 
+    # Caches the whole Prefix record, including its database id. Prefix expires
+    # the entry (expire_cached_prefix_response) whenever a prefix is created,
+    # updated or destroyed, so a uid that is deleted and created again is not
+    # resolved to the old id. A missing prefix is not cached.
     def cached_prefix_response(prefix, _options = {})
       if Rails.application.config.action_controller.perform_caching
-        Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 24.hours) do
-          Prefix.where(uid: prefix).first
-        end
+        Rails.cache.fetch(
+          "prefix_response/#{prefix}",
+          expires_in: 24.hours, skip_nil: true,
+        ) { Prefix.where(uid: prefix).first }
       else
         Prefix.where(uid: prefix).first
       end
+    end
+
+    def expire_cached_prefix_response(prefix)
+      Rails.cache.delete("prefix_response/#{prefix}")
     end
 
     def cached_resource_type_response(id)
