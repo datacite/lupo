@@ -75,13 +75,15 @@ jobs:
       - uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          key: ${{ runner.os }}-ruby-4.0.9-libmysqlclient24-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-gems-
+            ${{ runner.os }}-ruby-4.0.9-libmysqlclient24-gems-
       - name: Install ImageMagick
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick
+      - name: Install MySQL client
+        run: sudo apt-get install -y libmysqlclient-dev
       - name: Install
         env:
           MYSQL_PORT: ${{ job.services.mysql.ports[3306] }}
