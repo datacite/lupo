@@ -74,14 +74,14 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 4.0.1
+          ruby-version: 4.0.9
       - uses: actions/cache@v6
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          key: ${{ runner.os }}-ruby-4.0.9-libmysqlclient24-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Install ImageMagick
+            ${{ runner.os }}-ruby-4.0.9-libmysqlclient24-gems-
+      - name: Install ImageMagick and MySQL client
         # The Ubuntu mirror sometimes stalls for minutes. Give up on a slow
         # attempt after 60s and retry; a fresh attempt usually gets through.
         timeout-minutes: 4
@@ -89,10 +89,10 @@ jobs:
           for attempt in 1 2 3; do
             # Recommended extras (Ghostscript, fonts) aren't needed and roughly
             # double the download; dead connections are dropped after 10s.
-            if sudo timeout 60 sh -c 'apt-get update && apt-get install -y --no-install-recommends -o Acquire::http::Timeout=10 imagemagick'; then
+            if sudo timeout 60 sh -c 'apt-get update && apt-get install -y --no-install-recommends -o Acquire::http::Timeout=10 imagemagick libmysqlclient-dev'; then
               exit 0
             fi
-            echo "::warning::ImageMagick install attempt $attempt timed out or failed; retrying"
+            echo "::warning::apt install attempt $attempt timed out or failed; retrying"
             sudo dpkg --configure -a || true  # tidy up if an attempt was killed mid-install
           done
           exit 1
