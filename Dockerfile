@@ -12,7 +12,7 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-RUN bash -lc 'rvm --default use ruby-4.0.1'
+RUN bash -lc 'rvm --default use ruby-4.0.9'
 
 # Update installed APT packages
 RUN apt-get update && \
