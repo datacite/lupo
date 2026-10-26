@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby40:3.1.6
+FROM phusion/passenger-ruby40:3.2.2
 
 # Set correct environment variables.
 ENV HOME /home/app
@@ -12,8 +12,6 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-RUN bash -lc 'rvm --default use ruby-4.0.9'
-
 # Update installed APT packages
 RUN apt-get update && \
     apt-get install -y \
@@ -21,7 +19,7 @@ RUN apt-get update && \
       gnupg \
       ca-certificates \
       lsb-release \
-      ntp \
+      ntpsec \
       nano \
       tmux \
       tzdata \
