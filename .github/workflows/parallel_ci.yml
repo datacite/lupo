@@ -65,7 +65,7 @@ jobs:
       - name: Sync time
         run: |
           sudo apt-get update
-          sudo apt-get install -y ntpdate
+          sudo apt-get install -y ntpsec-ntpdate
           sudo ntpdate pool.ntp.org
 
       - name: Set up Ruby
