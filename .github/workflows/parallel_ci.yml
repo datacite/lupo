@@ -10,7 +10,7 @@ on:
 
 jobs:
   parallel-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: ${{ inputs.fail-fast }}
       matrix:
