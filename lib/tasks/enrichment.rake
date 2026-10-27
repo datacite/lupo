@@ -262,35 +262,56 @@ namespace :enrichment do
 
   desc "Delete duplicate enrichments, keeping the lowest id per content_key"
   # Example: bundle exec rake enrichment:delete_enrichments_with_duplicate_content_key
-  # Optional: BATCH_SIZE=10000 (default 10000)
+  # Optional: BATCH_SIZE=10000 (default 10000) — rows fetched per keyset slice
   #
-  # Expected shape: many content_keys (possibly millions) each with a small
-  # number of near-identical rows (typically 2). NULL content_keys are skipped.
+  # Walks the content_key index with a keyset cursor. Each batch only touches a
+  # contiguous slice (never re-scans already-processed keys). Keep MIN(id) per
+  # content_key; NULL content_keys are skipped.
+  #
+  # Prefer this over per-row find_each: ~49M non-null keys would mean tens of
+  # millions of queries; keyset slices turn that into a few thousand range scans.
   task delete_enrichments_with_duplicate_content_key: :environment do
     batch_size = (ENV["BATCH_SIZE"].presence || 10_000).to_i
     abort("BATCH_SIZE must be > 0") if batch_size <= 0
 
+    conn = Enrichment.connection
     deleted = 0
+    cursor = nil
 
-    # Keep MIN(id) per content_key: any row that has a smaller-id sibling with
-    # the same key is a duplicate. With only a few rows per key the self-join
-    # stays cheap; batch via LIMIT and delete by primary key only.
     loop do
       # LIMIT cannot use a bound parameter in MySQL (it becomes '10000' and fails).
-      ids = Enrichment.connection.select_values(<<~SQL.squish)
-        SELECT DISTINCT e1.id
-        FROM enrichments e1
-        INNER JOIN enrichments e2
-          ON e1.content_key = e2.content_key
-          AND e1.id > e2.id
-        WHERE e1.content_key IS NOT NULL
+      cursor_clause = cursor ? "AND content_key > #{conn.quote(cursor)}" : ""
+      keys = conn.select_values(<<~SQL.squish)
+        SELECT content_key
+        FROM enrichments
+        WHERE content_key IS NOT NULL
+          #{cursor_clause}
+        ORDER BY content_key
         LIMIT #{batch_size}
       SQL
-      break if ids.empty?
+      break if keys.empty?
 
-      count = Enrichment.where(id: ids).delete_all
+      first_key = keys.first
+      last_key = keys.last
+
+      ids = conn.select_values(<<~SQL.squish)
+        SELECT e.id
+        FROM enrichments e
+        INNER JOIN (
+          SELECT content_key, MIN(id) AS keep_id
+          FROM enrichments
+          WHERE content_key >= #{conn.quote(first_key)}
+            AND content_key <= #{conn.quote(last_key)}
+          GROUP BY content_key
+          HAVING COUNT(*) > 1
+        ) d ON e.content_key = d.content_key AND e.id > d.keep_id
+      SQL
+
+      count = ids.empty? ? 0 : Enrichment.where(id: ids).delete_all
       deleted += count
-      puts("Deleted #{deleted} duplicate enrichments (batch=#{count})")
+      puts("Deleted #{deleted} duplicate enrichments (batch=#{count}, cursor=#{last_key})")
+
+      cursor = last_key
     end
 
     puts("Finished deleting enrichments with duplicate content_key (deleted=#{deleted})")
