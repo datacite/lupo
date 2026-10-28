@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_153231) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_170948) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -67,7 +67,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_153231) do
     t.string "non_profit_status", limit: 191
     t.string "organization_type", limit: 191
     t.string "password"
-    t.string "region"
     t.string "role_name"
     t.string "ror_id"
     t.string "salesforce_id", limit: 191
