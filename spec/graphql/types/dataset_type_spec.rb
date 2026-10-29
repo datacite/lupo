@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe DatasetType do
-  describe "fields" do
+describe DatasetType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -14,8 +14,7 @@ describe DatasetType do
     let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -136,8 +135,7 @@ describe DatasetType do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
@@ -212,8 +210,7 @@ describe DatasetType do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -304,8 +301,7 @@ describe DatasetType do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -395,9 +391,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 3
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -453,7 +448,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with views", elasticsearch: true, vcr: true do
+  describe "query with views", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -474,9 +469,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -541,9 +535,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -588,7 +581,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with versions", elasticsearch: true, vcr: true do
+  describe "query with versions", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -602,9 +595,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -649,7 +641,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with version of", elasticsearch: true, vcr: true do
+  describe "query with version of", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -663,9 +655,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 3
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -710,7 +701,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with parts", elasticsearch: true, vcr: true do
+  describe "query with parts", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -725,9 +716,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
@@ -791,9 +781,8 @@ describe DatasetType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe UrlJob, type: :job do
+describe UrlJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi) }
   subject(:job) { UrlJob.perform_later(doi.doi) }
 

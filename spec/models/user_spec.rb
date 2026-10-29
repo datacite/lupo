@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe User, type: :model do
-  describe "from token" do
+describe User, type: :model, prefix_pool_size: 1 do
+  describe "from token", skip_prefix_pool: true do
     let(:token) { User.generate_token }
     let(:user) { User.new(token) }
 

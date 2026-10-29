@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe ProvidersController, type: :request, elasticsearch: true do
+describe ProvidersController, type: :request, elasticsearch: true, prefix_pool_size: 1 do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) do
     create(
@@ -44,12 +44,11 @@ describe ProvidersController, type: :request, elasticsearch: true do
     }
   end
 
-  describe "GET /providers" do
+  describe "GET /providers", skip_prefix_pool: true do
     let!(:providers) { create_list(:provider, 3) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "returns providers" do
@@ -61,7 +60,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers for consortium" do
+  describe "GET /providers for consortium", skip_prefix_pool: true do
     let(:consortium) do
       create(:provider, symbol: "dc", role_name: "ROLE_CONSORTIUM")
     end
@@ -74,8 +73,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     let!(:provider) { create(:provider) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "returns providers" do
@@ -87,7 +85,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers/:id" do
+  describe "GET /providers/:id", skip_prefix_pool: true do
     context "when the record exists" do
       it "returns the provider" do
         get "/providers/#{provider.symbol.downcase}",
@@ -144,13 +142,12 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers/:id with contacts" do
+  describe "GET /providers/:id with contacts", skip_prefix_pool: true do
     let!(:contact) { create(:contact, provider: provider, role_name: ["billing"]) }
 
     before do
-      Provider.import
-      Contact.import
-      sleep 2
+      Provider.import(refresh: true)
+      Contact.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -183,10 +180,9 @@ describe ProvidersController, type: :request, elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns provider" do
@@ -207,10 +203,9 @@ describe ProvidersController, type: :request, elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns providers" do
@@ -235,10 +230,9 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
 
     before do
-      Provider.import
-      Client.import
-      DataciteDoi.import
-      sleep 2
+      Provider.import(refresh: true)
+      Client.import(refresh: true)
+      DataciteDoi.import(refresh: true)
     end
 
     it "returns provider" do
@@ -257,7 +251,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "POST /providers" do
+  describe "POST /providers", skip_prefix_pool: true do
     context "request is valid" do
       let(:logo) do
         "data:image/png;base64," +
@@ -358,8 +352,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
       end
 
       before do
-        Provider.import
-        sleep 2
+        Provider.import(refresh: true)
       end
 
       it "has no permission" do
@@ -848,8 +841,6 @@ describe ProvidersController, type: :request, elasticsearch: true do
           "internationalOrganization",
         )
 
-        sleep 1
-
         get "/providers/#{
               provider_symbol
             }",
@@ -908,7 +899,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "PUT /providers/:id" do
+  describe "PUT /providers/:id", skip_prefix_pool: true do
     context "when the record exists" do
       let(:params) do
         {
@@ -1245,12 +1236,11 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "DELETE /providers/:id" do
+  describe "DELETE /providers/:id", skip_prefix_pool: true do
     let!(:provider) { create(:provider) }
 
     before do
-      Provider.import
-      sleep 2
+      Provider.import(refresh: true)
     end
 
     it "deletes the provider" do
@@ -1260,7 +1250,7 @@ describe ProvidersController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /providers - with contact information" do
+  describe "GET /providers - with contact information", skip_prefix_pool: true do
     context "request is valid with contact information, and contacts are created with correct information" do
       let(:params) do
         {
@@ -1360,6 +1350,90 @@ describe ProvidersController, type: :request, elasticsearch: true do
           end
         end
       end
+    end
+  end
+
+  describe "OpenSearch filtering - verify that a given country_code (country) is mapped in open search to the correct region and ISO3166 attributes and is searchable" do
+    let!(:us_provider) { create(:provider, country_code: "US") }
+    let!(:it_provider) { create(:provider, country_code: "IT") }
+    let!(:jp_provider) { create(:provider, country_code: "JP") }
+
+    before do
+      # Manually import/index the records into your test index
+      Provider.__elasticsearch__.import(force: true)
+      Provider.__elasticsearch__.refresh_index!
+    end
+
+    it "returns the correct provider for United States" do
+      expect(Provider.search("US").records.to_a).to include(us_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for Italy" do
+      expect(Provider.search("IT").records.to_a).to include(it_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for Japan" do
+      expect(Provider.search("JP").records.to_a).to include(jp_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for region" do
+      region = "AMER"
+
+      search_query = {
+        query: {
+          match: {
+            "region": region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(us_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for ISO3166 world region" do
+      iso3166_world_region = "AMER"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_world_region": iso3166_world_region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(us_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for ISO3166 region" do
+      iso3166_region = "Europe"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_region": iso3166_region
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(it_provider).and have_attributes(size: 1)
+    end
+
+    it "returns the correct provider for ISO3166 subregion" do
+      iso3166_subregion = "Eastern Asia"
+
+      search_query = {
+        query: {
+          match: {
+            "country.iso3166_subregion": iso3166_subregion
+          }
+        }
+      }
+
+      results = Provider.search(search_query)
+      expect(results.records.to_a).to include(jp_provider).and have_attributes(size: 1)
     end
   end
 end

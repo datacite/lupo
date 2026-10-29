@@ -3,7 +3,7 @@
 require "rails_helper"
 include Passwordable
 
-describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
+describe ReferenceRepositoriesController, type: :request, elasticsearch: true, prefix_pool_size: 5 do
   let(:ids) { clients.map(&:uid).join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -36,21 +36,21 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
   let(:query) { "jamon" }
 
   before :all do
-    VCR.use_cassette("ReferenceRepositoryType/re3Data/set_of_10_re3_repositories") do
-      create(:prefix, uid: "10.17616")
-      @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
-      create(:reference_repository, re3doi:  "10.17616/r3vg6n")
-      create(:reference_repository, re3doi:  "10.17616/r37m1j")
-      create(:reference_repository, re3doi:  "10.17616/R3003X")
-      create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
-      create(:reference_repository, re3doi:  "10.17616/R3NC74")
-      create(:reference_repository, re3doi:  "10.17616/R3106C")
-      create(:reference_repository, re3doi:  "10.17616/R31NJN59")
-      create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
-      @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
-      ReferenceRepository.import(force: true)
-      sleep 2
-    end
+    # ProviderPrefix#prefix_id= resolves prefixes through Rails.cache, which may
+    # still hold a 10.17616 record destroyed by an earlier spec file.
+    Rails.cache.delete("prefix_response/10.17616")
+    create(:prefix)
+    @ref_repo = create(:reference_repository, re3doi:  "10.17616/R3BW5R")
+    create(:reference_repository, re3doi:  "10.17616/r3vg6n")
+    create(:reference_repository, re3doi:  "10.17616/r37m1j")
+    create(:reference_repository, re3doi:  "10.17616/R3003X")
+    create(:reference_repository, re3doi:  "10.17616/R31NJCHT")
+    create(:reference_repository, re3doi:  "10.17616/R3NC74")
+    create(:reference_repository, re3doi:  "10.17616/R3106C")
+    create(:reference_repository, re3doi:  "10.17616/R31NJN59")
+    create(:reference_repository, re3doi:  "10.17616/R31NJMTE")
+    @client = create(:client, re3data_id:  "10.17616/R31NJMJX")
+    ReferenceRepository.import(force: true, refresh: true)
   end
 
   after :all do
@@ -58,15 +58,15 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
     Client.destroy_all
     Provider.destroy_all
     Prefix.destroy_all
+    Rails.cache.delete("prefix_response/10.17616")
   end
 
   describe "GET /reference-repositories", elasticsearch: true do
     let!(:clients) { create_list(:client, 3) }
 
     before do
-      Client.import()
-      ReferenceRepository.import()
-      sleep 3
+      Client.import(refresh: true)
+      ReferenceRepository.import(refresh: true)
     end
     it "returns reference-repositories" do
       get "/reference-repositories", nil, headers
@@ -77,13 +77,13 @@ describe ReferenceRepositoriesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /reference-repositories/:id" do
+  describe "GET /reference-repositories/:id", prefix_pool_size: 2 do
     context "when the record exists" do
       it "returns the repository" do
         get "/reference-repositories/#{@ref_repo.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig("data", "attributes", "name")).to eq("UCLA Social Science Data Archive Dataverse")
+        expect(json.dig("data", "attributes", "name")).to eq("10.17616/r3bw5r")
       end
     end
 

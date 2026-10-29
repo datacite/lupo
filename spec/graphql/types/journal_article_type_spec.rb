@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe JournalArticleType do
-  describe "fields" do
+describe JournalArticleType, prefix_pool_size: 4 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -23,8 +23,7 @@ describe JournalArticleType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
@@ -86,8 +85,7 @@ describe JournalArticleType do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 

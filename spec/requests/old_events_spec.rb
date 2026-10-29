@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe OldEventsController, type: :request, elasticsearch: true, vcr: true do
+describe OldEventsController, type: :request, elasticsearch: true, vcr: true, prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) do
     create(
@@ -354,8 +354,7 @@ describe OldEventsController, type: :request, elasticsearch: true, vcr: true do
           "https://doi.org/10.1016/j.jastp.2013.05.001",
         )
 
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
         get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
@@ -931,9 +930,8 @@ describe OldEventsController, type: :request, elasticsearch: true, vcr: true do
     let(:uri) { "/events/#{event.uuid}?include=subj,obj" }
 
     before do
-      DataciteDoi.import
-      Event.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Event.import(refresh: true)
     end
 
     context "as admin user" do
@@ -1022,8 +1020,7 @@ describe OldEventsController, type: :request, elasticsearch: true, vcr: true do
       end
 
       before do
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
       end
 
       it "text/csv" do

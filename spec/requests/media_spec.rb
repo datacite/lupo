@@ -3,7 +3,7 @@
 require "rails_helper"
 
 describe MediaController,
-         type: :request, order: :defined, elasticsearch: true do
+         type: :request, order: :defined, elasticsearch: true, prefix_pool_size: 1 do
   let!(:provider) { create(:provider, symbol: "ADMIN") }
   let!(:prefix) { create(:prefix, uid: "10.14455") }
   let!(:client) { create(:client, provider: provider) }

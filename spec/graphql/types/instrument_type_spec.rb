@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe InstrumentType do
-  describe "fields" do
+describe InstrumentType, prefix_pool_size: 3 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -23,8 +23,7 @@ describe InstrumentType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 

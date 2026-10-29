@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventsController, type: :request, elasticsearch: true, vcr: true do
+describe EventsController, type: :request, elasticsearch: true, vcr: true, prefix_pool_size: 1 do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) do
     create(
@@ -355,8 +355,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
           "https://doi.org/10.1016/j.jastp.2013.05.001",
         )
 
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
         get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
@@ -368,8 +367,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       it "has created aggregation" do
         post uri, params, headers
 
-        Event.import
-        sleep 2
+        Event.import(refresh: true)
         get uri, nil, headers
 
         expect(json.dig("meta", "created", 0, "count")).to eq(1)
@@ -942,9 +940,8 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     let(:uri) { "/events/#{event.uuid}?include=doi-for-source,doi-for-target" }
 
     before do
-      DataciteDoi.import
-      Event.import
-      sleep 2
+      DataciteDoi.import(refresh: true)
+      Event.import(refresh: true)
     end
 
     context "as admin user" do

@@ -2,15 +2,15 @@
 
 require "rails_helper"
 
-describe WorkType do
-  describe "fields" do
+describe WorkType, prefix_pool_size: 18 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
     it { is_expected.to have_field(:type).of_type("String!") }
   end
 
-  describe "find work", elasticsearch: true do
+  describe "find work", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -33,9 +33,8 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      ReferenceRepository.import
-      sleep 2
+      Doi.import(refresh: true)
+      ReferenceRepository.import(refresh: true)
     end
 
     let(:query) do
@@ -139,14 +138,13 @@ describe WorkType do
     end
   end
 
-  describe "find work with claims", elasticsearch: true, vcr: true do
+  describe "find work with claims", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:work) do
       create(:doi, doi: "10.17863/cam.536", aasm_state: "findable")
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -191,14 +189,13 @@ describe WorkType do
     end
   end
 
-  describe "find work with claims and errors", elasticsearch: true, vcr: true do
+  describe "find work with claims and errors", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:work) do
       create(:doi, doi: "10.70048/sc61-b496", aasm_state: "findable")
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -243,7 +240,7 @@ describe WorkType do
     end
   end
 
-  describe "find work crossref", elasticsearch: true, vcr: true do
+  describe "find work crossref", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -255,8 +252,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -290,7 +286,7 @@ describe WorkType do
     end
   end
 
-  describe "find work not found", elasticsearch: true do
+  describe "find work not found", elasticsearch: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         work(id: \"https://doi.org/10.14454/xxx\") {
@@ -333,7 +329,7 @@ describe WorkType do
     end
   end
 
-  describe "query works", elasticsearch: true, vcr: true do
+  describe "query works", elasticsearch: true, vcr: true, prefix_pool_size: 2 do
     let(:query) do
       "query($first: Int, $cursor: String) {
         works(first: $first, after: $cursor) {
@@ -507,8 +503,7 @@ describe WorkType do
     let!(:member_doi) { create(:doi, aasm_state: "findable", client: client) }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 15 }).results.to_a
     end
 
@@ -534,8 +529,25 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(
         @works[0].identifier,
       )
+      # `doi`'s second creator has no nameType, so its GraphQL type is nil.
+      # works() sorts by created then uid, and created is stamped at whole-second
+      # resolution, so nodes[0] is not stable: funder_doi and member_doi use
+      # factory creators whose second creator is a Person.
+      untyped_creator_work =
+        LupoSchema.execute(
+          "query {
+            works(ids: [\"#{doi.doi}\"]) {
+              nodes { doi creators { type } }
+            }
+          }",
+        ).as_json
       expect(
-        response.dig("data", "works", "nodes", 0, "creators", 1, "type"),
+        untyped_creator_work.dig("data", "works", "nodes", 0, "doi"),
+      ).to eq(doi.doi.downcase)
+      expect(
+        untyped_creator_work.dig(
+          "data", "works", "nodes", 0, "creators", 1, "type",
+        ),
       ).to be nil
       expect(
         response.dig("data", "works", "nodes", 0, "publisher"),
@@ -669,8 +681,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -758,8 +769,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -807,7 +817,7 @@ describe WorkType do
     end
   end
 
-  describe "create claim", elasticsearch: true, vcr: true do
+  describe "create claim", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "mutation {
         createClaim(doi: \"10.5438/4hr0-d640\", id: \"d140d44e-af70-43ec-a90b-49878a954487\", sourceId: \"orcid_update\") {
@@ -857,7 +867,7 @@ describe WorkType do
     end
   end
 
-  describe "delete claim", elasticsearch: true, vcr: true do
+  describe "delete claim", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "mutation {
         deleteClaim(id: \"79b54ea5-7a38-4fd1-bc75-57708492d910\") {
@@ -897,7 +907,7 @@ describe WorkType do
     end
   end
 
-  describe "delete claim not found", elasticsearch: true, vcr: true do
+  describe "delete claim not found", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "mutation {
         deleteClaim(id: \"6dcaeca5-7e5a-449a-86b8-f2ae80db3fef\") {
@@ -926,7 +936,7 @@ describe WorkType do
     end
   end
 
-  describe "find work with a creator or contributor with an affiliation property that's a hash", elasticsearch: true do
+  describe "find work with a creator or contributor with an affiliation property that's a hash", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -992,8 +1002,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_work) do
@@ -1085,7 +1094,7 @@ describe WorkType do
     end
   end
 
-  describe "find work with a creator or contributor with a nameIdentifier property that's a hash", elasticsearch: true do
+  describe "find work with a creator or contributor with a nameIdentifier property that's a hash", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -1144,8 +1153,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1224,7 +1232,7 @@ describe WorkType do
     end
   end
 
-  describe "get author aggregations when creators have multiple nameIdentifiers", elasticsearch: true do
+  describe "get author aggregations when creators have multiple nameIdentifiers", elasticsearch: true, prefix_pool_size: 2 do
     let!(:work_one) do
       create(
         :doi,
@@ -1324,8 +1332,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1374,9 +1381,8 @@ describe WorkType do
     end
   end
 
-  describe "query works with repository subjects" do
+  describe "query works with repository subjects", prefix_pool_size: 1 do
     before :all do
-      SLEEP_TIME = 2
       WORK_COUNT = 10
 
       DataciteDoi.import(force: true)
@@ -1408,8 +1414,7 @@ describe WorkType do
         aasm_state: "findable",
         client: client
       )
-      Doi.import
-      sleep SLEEP_TIME
+      Doi.import(refresh: true)
       @facet_response = LupoSchema.execute(search_query).as_json
       Rails.logger.level = :fatal
       DataciteDoi.destroy_all
@@ -1458,7 +1463,7 @@ describe WorkType do
   end
 
 
-  describe "get formatted citation", elasticsearch: true do
+  describe "get formatted citation", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work_one) do
       create(
         :doi,
@@ -1468,8 +1473,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query_works) do
@@ -1630,8 +1634,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
@@ -1656,7 +1659,7 @@ describe WorkType do
     end
   end
 
-  describe "query creators and contributors", elasticsearch: true do
+  describe "query creators and contributors", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -1724,8 +1727,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1781,7 +1783,7 @@ describe WorkType do
   end
 
 
-  describe "query contributors with a mix of ORCID iDs and local identifiers", elasticsearch: true do
+  describe "query contributors with a mix of ORCID iDs and local identifiers", elasticsearch: true, prefix_pool_size: 1 do
     let!(:work) do
       create(
         :doi,
@@ -1869,8 +1871,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1930,8 +1931,7 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1953,7 +1953,7 @@ describe WorkType do
     end
   end
 
-  describe "query with relationships", elasticsearch: true, vcr: true do
+  describe "query with relationships", elasticsearch: true, vcr: true, prefix_pool_size: 1 do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
@@ -2000,9 +2000,8 @@ describe WorkType do
     end
 
     before do
-      Doi.import
-      Event.import
-      sleep 2
+      Doi.import(refresh: true)
+      Event.import(refresh: true)
       @response = LupoSchema.execute(query).as_json
     end
 
@@ -2096,7 +2095,7 @@ end
 
 
 
-describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL)", elasticsearch: true do
+describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERAL)", elasticsearch: true, prefix_pool_size: 15 do
   let!(:text_projects) do
     create_list(:doi, 5, aasm_state: "findable",
       types: {
@@ -2125,8 +2124,7 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
   end
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do
@@ -2162,7 +2160,7 @@ describe "query with projects (TEMPORARY UNTIL PROJECT IS A RESOURCE_TYPE_GENERA
   end
 end
 
-describe "query with resourceTypeId", elasticsearch: true do
+describe "query with resourceTypeId", elasticsearch: true, prefix_pool_size: 2 do
   let!(:instrument_doi) do
     create(:doi, aasm_state: "findable",
       types: {
@@ -2180,8 +2178,7 @@ describe "query with resourceTypeId", elasticsearch: true do
   end
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do
@@ -2234,7 +2231,7 @@ describe "query with resourceTypeId", elasticsearch: true do
   end
 end
 
-describe "query with client_type facet", elasticsearch: true do
+describe "query with client_type facet", elasticsearch: true, prefix_pool_size: 4 do
   let(:provider) { create(:provider) }
   let(:client_repository) { create(:client, provider: provider, client_type: "repository") }
   let(:client_periodical) { create(:client, provider: provider, client_type: "periodical") }
@@ -2247,8 +2244,7 @@ describe "query with client_type facet", elasticsearch: true do
   let!(:doi_raid_registry) { create(:doi, client: client_raid_registry, aasm_state: "findable") }
 
   before do
-    Doi.import
-    sleep 2
+    Doi.import(refresh: true)
   end
 
   let(:query) do

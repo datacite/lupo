@@ -43,8 +43,7 @@ require "rails_helper"
 #   let(:output) { "0 DOIs with no URL found in the database.\n" }
 
 #   before do
-#     Doi.import
-#     sleep 1
+#     Doi.import(refresh: true)
 #   end
 
 #   it "prerequisites should include environment" do
@@ -58,7 +57,7 @@ require "rails_helper"
 #   end
 # end
 
-describe "doi:set_url", elasticsearch: true do
+describe "doi:set_url", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -74,7 +73,7 @@ describe "doi:set_url", elasticsearch: true do
   end
 end
 
-describe "doi:set_handle", elasticsearch: true do
+describe "doi:set_handle", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -92,7 +91,7 @@ describe "doi:set_handle", elasticsearch: true do
   end
 end
 
-describe "doi:set_minted", elasticsearch: true do
+describe "doi:set_minted", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -108,7 +107,7 @@ describe "doi:set_minted", elasticsearch: true do
   end
 end
 
-describe "doi:set_schema_version", elasticsearch: true do
+describe "doi:set_schema_version", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -124,7 +123,7 @@ describe "doi:set_schema_version", elasticsearch: true do
   end
 end
 
-describe "doi:set_registration_agency", elasticsearch: true do
+describe "doi:set_registration_agency", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -142,7 +141,7 @@ describe "doi:set_registration_agency", elasticsearch: true do
   end
 end
 
-describe "doi:set_license", elasticsearch: true do
+describe "doi:set_license", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -158,7 +157,7 @@ describe "doi:set_license", elasticsearch: true do
   end
 end
 
-describe "doi:set_language", elasticsearch: true do
+describe "doi:set_language", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -174,7 +173,7 @@ describe "doi:set_language", elasticsearch: true do
   end
 end
 
-describe "doi:set_identifiers", elasticsearch: true do
+describe "doi:set_identifiers", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -190,7 +189,7 @@ describe "doi:set_identifiers", elasticsearch: true do
   end
 end
 
-describe "doi:set_field_of_science", elasticsearch: true do
+describe "doi:set_field_of_science", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -206,7 +205,7 @@ describe "doi:set_field_of_science", elasticsearch: true do
   end
 end
 
-describe "doi:convert_affiliations", elasticsearch: true do
+describe "doi:convert_affiliations", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -222,7 +221,7 @@ describe "doi:convert_affiliations", elasticsearch: true do
   end
 end
 
-describe "doi:convert_containers", elasticsearch: true do
+describe "doi:convert_containers", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -238,7 +237,7 @@ describe "doi:convert_containers", elasticsearch: true do
   end
 end
 
-describe "doi:migrate_landing_page", elasticsearch: true do
+describe "doi:migrate_landing_page", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -254,7 +253,7 @@ describe "doi:migrate_landing_page", elasticsearch: true do
   end
 end
 
-describe "doi:repair_landing_page", elasticsearch: true do
+describe "doi:repair_landing_page", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -291,18 +290,26 @@ describe "doi:repair_landing_page", elasticsearch: true do
   end
 end
 
-describe "doi:delete_by_prefix", elasticsearch: true do
+describe "doi:delete_by_prefix", elasticsearch: true, prefix_pool_size: 1 do
   include ActiveJob::TestHelper
   include_context "rake"
-
-  let!(:doi) { create(:doi, aasm_state: "findable") }
-  let(:output) { "" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
   end
 
-  it "should run the rake task" do
-    expect(capture_stdout { subject.invoke }).to eq(output)
+  # Kernel#exit and Kernel#abort raise SystemExit, which RSpec does not
+  # rescue. This expectation rescues that exception inside the example, so
+  # a regression fails here instead of stopping the suite.
+  it "raises when PREFIX is missing instead of exiting the process" do
+    prefix = ENV.delete("PREFIX")
+    allow(Doi).to receive(:delete_dois_by_prefix)
+
+    expect { capture_stdout { subject.invoke } }.to raise_error(
+      ArgumentError, "ENV['PREFIX'] is required."
+    )
+    expect(Doi).not_to have_received(:delete_dois_by_prefix)
+  ensure
+    ENV["PREFIX"] = prefix unless prefix.nil?
   end
 end

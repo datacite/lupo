@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe SoftwareType do
-  describe "fields" do
+describe SoftwareType, prefix_pool_size: 1 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -21,8 +21,7 @@ describe SoftwareType do
       )
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
       @dois = Doi.gql_query(nil, page: { cursor: [], size: 1 }).results.to_a
     end
 

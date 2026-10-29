@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe DataciteDoiImportInBulkJob, type: :job do
+describe DataciteDoiImportInBulkJob, type: :job, prefix_pool_size: 1 do
   let(:doi) { create(:doi, type: "DataciteDoi") }
   subject(:job) { DataciteDoiImportInBulkJob.perform_later([{ "id" => doi.id, "as_indexed_json" => doi.as_indexed_json }]) }
 

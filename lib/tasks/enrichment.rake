@@ -228,38 +228,35 @@ namespace :enrichment do
     puts("Finished updating source_id for filename=#{filename} (updated=#{updated})")
   end
 
-  desc "Delete enrichment with uuid"
-  task delete_by_uuid: :environment do
-    uuid = ENV["UUID"]
+  desc "Delete enrichments associated with a given file name"
+  # Example command: bundle exec rake enrichment:delete_enrichments_with_filename FILENAME=arxiv_dois.txt
+  # Optional: BATCH_SIZE=50000 (default 10000)
+  task delete_enrichments_with_filename: :environment do
+    filename = ENV["FILENAME"]
+    batch_size = (ENV["BATCH_SIZE"].presence || 10_000).to_i
 
-    abort("UUID is not set") if uuid.blank?
+    abort("FILENAME is not set") if filename.blank?
+    abort("BATCH_SIZE must be > 0") if batch_size <= 0
 
-    enrichments = Enrichment.find_by(uuid: uuid)
-
-    puts("Deleting enrichment with uuid=#{uuid}")
-
-    enrichments.destroy!
-
-    puts("Finished deleting enrichment with uuid=#{uuid}")
-  end
-
-  desc "Delete enrichments with source_id"
-  # Example command: bundle exec rake enrichment:delete_by_source_id SOURCE_ID=DATACITE.COMET
-  task delete_by_source_id: :environment do
-    source_id = ENV["SOURCE_ID"]&.strip&.upcase
-
-    abort("SOURCE_ID is not set") if source_id.blank?
-
-    enrichments = Enrichment.where(source_id: source_id)
-    total = enrichments.count
     deleted = 0
 
-    puts("Deleting #{total} enrichments with source_id=#{source_id}")
+    # DELETE … WHERE filename = ? LIMIT n.
+    #
+    # Why not in_batches + delete_all? That yields
+    #   DELETE … WHERE filename = ? AND id IN (…)
+    # With tens of millions of rows on one filename, MySQL can pick the
+    # filename index and scan huge ranges each batch — slower than destroy_all,
+    # which issues per-row DELETE … WHERE id = ? (primary key lookups).
+    #
+    # LIMIT deletes walk the filename index and stop after n rows.
+    loop do
+      count = Enrichment.where(filename: filename).limit(batch_size).delete_all
+      break if count.zero?
 
-    enrichments.in_batches(of: 10_000) do |batch|
-      batch.destroy_all
+      deleted += count
+      puts("Deleted #{deleted} enrichments for filename=#{filename}")
     end
 
-    puts("Finished deleting enrichments with source_id=#{source_id} (deleted=#{deleted})")
+    puts("Finished deleting enrichments for filename=#{filename} (deleted=#{deleted})")
   end
 end

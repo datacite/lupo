@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventsPreloader do
+describe EventsPreloader, prefix_pool_size: 1 do
   let(:client) { create(:client) }
   let(:doi1) { create(:doi, client: client, doi: "10.1234/TEST1", aasm_state: "findable") }
   let(:doi2) { create(:doi, client: client, doi: "10.1234/TEST2", aasm_state: "findable") }
@@ -88,23 +88,26 @@ describe EventsPreloader do
       end
     end
 
-    context "with large batch" do
-      it "chunks large DOI lists" do
-        # Create more than CHUNK_SIZE DOIs
-        large_batch = create_list(:doi, EventsPreloader::CHUNK_SIZE + 100, client: client, aasm_state: "findable")
+    context "with more DOIs than CHUNK_SIZE" do
+      before { stub_const("EventsPreloader::CHUNK_SIZE", 2) }
 
-        # Create events for some of them
+      # doi1 and doi3 fall in different chunks
+      let!(:event) do
         create(:event_for_crossref, {
-          subj_id: "https://doi.org/#{large_batch.first.doi}",
-          obj_id: "https://doi.org/#{large_batch.last.doi}",
+          subj_id: "https://doi.org/#{doi1.doi}",
+          obj_id: "https://doi.org/#{doi3.doi}",
           relation_type_id: "references",
         })
+      end
 
-        expect {
-          EventsPreloader.new(large_batch).preload!
-        }.not_to raise_error
+      it "queries once per chunk and attaches events across chunks" do
+        preloader = EventsPreloader.new([doi1, doi2, doi3])
 
-        expect(large_batch.first.preloaded_events).not_to be_nil
+        expect { preloader.preload! }.not_to exceed_query_limit(2)
+
+        expect(doi1.preloaded_events).to eq([event])
+        expect(doi3.preloaded_events).to eq([event])
+        expect(doi2.preloaded_events).to eq([])
       end
     end
 

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe PrefixesController, type: :request, elasticsearch: true do
+describe PrefixesController, type: :request, elasticsearch: true, prefix_pool_size: 1 do
   let!(:prefixes) { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }
@@ -15,8 +15,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
 
   describe "GET /prefixes" do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     it "returns prefixes" do
@@ -40,10 +39,9 @@ describe PrefixesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "GET /prefixes/:id" do
+  describe "GET /prefixes/:id", skip_prefix_pool: true do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -80,7 +78,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "PATCH /prefixes/:prefix_id" do
+  describe "PATCH /prefixes/:prefix_id", skip_prefix_pool: true do
     it "returns method not supported error" do
       patch "/prefixes/#{prefix_id}", nil, headers
 
@@ -91,10 +89,9 @@ describe PrefixesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "POST /prefixes" do
+  describe "POST /prefixes", skip_prefix_pool: true do
     before do
-      Prefix.import
-      sleep 2
+      Prefix.import(refresh: true)
     end
 
     context "when the request is valid" do
@@ -131,7 +128,7 @@ describe PrefixesController, type: :request, elasticsearch: true do
     end
   end
 
-  describe "DELETE /prefixes/:id" do
+  describe "DELETE /prefixes/:id", skip_prefix_pool: true do
     it "returns status code 204" do
       delete "/prefixes/#{prefix_id}", nil, headers
 

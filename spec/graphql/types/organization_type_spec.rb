@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe OrganizationType do
-  describe "fields" do
+describe OrganizationType, prefix_pool_size: 7 do
+  describe "fields", skip_prefix_pool: true do
     subject { described_class }
 
     it { is_expected.to have_field(:id).of_type("ID!") }
@@ -160,8 +160,7 @@ describe OrganizationType do
       create(:doi)
     }
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -279,7 +278,7 @@ describe OrganizationType do
     end
   end
 
-  describe "find organization by grid_id", elasticsearch: true, vcr: true do
+  describe "find organization by grid_id", elasticsearch: true, vcr: true, prefix_pool_size: 2 do
     let!(:doi) do
       create(
         :doi,
@@ -323,8 +322,7 @@ describe OrganizationType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -428,7 +426,7 @@ describe OrganizationType do
   end
 
   describe "find organization by crossref_funder_id",
-           elasticsearch: true, vcr: true do
+           elasticsearch: true, vcr: true, prefix_pool_size: 2 do
     let!(:doi) do
       create(
         :doi,
@@ -472,8 +470,7 @@ describe OrganizationType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -576,7 +573,7 @@ describe OrganizationType do
     end
   end
 
-  describe "find organization no wikidata", elasticsearch: true, vcr: true do
+  describe "find organization no wikidata", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         organization(id: \"https://ror.org/02q0ygf45\") {
@@ -791,7 +788,7 @@ describe OrganizationType do
     end
   end
 
-  describe "find organization not found", elasticsearch: true, vcr: true do
+  describe "find organization not found", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         organization(id: \"https://ror.org/xxxx\") {
@@ -843,7 +840,7 @@ describe OrganizationType do
     end
   end
 
-  describe "query all organizations", vcr: true do
+  describe "query all organizations", vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         organizations {
@@ -902,8 +899,7 @@ describe OrganizationType do
     end
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -1001,7 +997,7 @@ describe OrganizationType do
     end
   end
 
-  describe "query organizations with umlaut", elasticsearch: true, vcr: true do
+  describe "query organizations with umlaut", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         organizations(query: \"münster\") {
@@ -1074,7 +1070,7 @@ describe OrganizationType do
     end
   end
 
-  describe "query organizations by type", elasticsearch: true, vcr: true do
+  describe "query organizations by type", elasticsearch: true, vcr: true, skip_prefix_pool: true do
     let(:query) do
       "query {
         organizations(types: \"government\", country: \"de\", after: \"MQ\") {

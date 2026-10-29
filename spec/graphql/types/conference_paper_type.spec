@@ -14,8 +14,7 @@ describe ConferencePaperType do
     let!(:conference_papers) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Conference paper" }, aasm_state: "findable") }
 
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do
@@ -51,8 +50,7 @@ describe ConferencePaperType do
       }])
     end
     before do
-      Doi.import
-      sleep 2
+      Doi.import(refresh: true)
     end
 
     let(:query) do

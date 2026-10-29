@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe RepositoryPrefixesController, type: :request do
+describe RepositoryPrefixesController, type: :request, prefix_pool_size: 2 do
   let!(:provider) { create(:provider) }
   let!(:client) { create(:client, provider: provider) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
@@ -15,10 +15,9 @@ describe RepositoryPrefixesController, type: :request do
 
   describe "GET /repository-prefixes", elasticsearch: true do
     before do
-      Prefix.import
-      ClientPrefix.import
-      ProviderPrefix.import
-      sleep 2
+      Prefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
+      ProviderPrefix.import(refresh: true)
     end
 
     it "returns repository-prefixes" do
@@ -110,8 +109,7 @@ describe RepositoryPrefixesController, type: :request do
 
   describe "DELETE /repository-prefixes/:uid", elasticsearch: true do
     before do
-      ClientPrefix.import
-      sleep 2
+      ClientPrefix.import(refresh: true)
     end
 
     it "deletes a repository-prefix" do
@@ -124,11 +122,10 @@ describe RepositoryPrefixesController, type: :request do
 
   describe "POST /repository-prefixes", elasticsearch: true do
     before do
-      Prefix.import
-      Client.import
-      ProviderPrefix.import
-      ClientPrefix.import
-      sleep 3
+      Prefix.import(refresh: true)
+      Client.import(refresh: true)
+      ProviderPrefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
     end
 
     context "when the request is valid" do

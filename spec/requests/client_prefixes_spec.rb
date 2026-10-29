@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "Client Prefixes", type: :request, elasticsearch: true do
+describe "Client Prefixes", type: :request, elasticsearch: true, prefix_pool_size: 2 do
   let!(:provider) { create(:provider) }
   let!(:client) { create(:client, provider: provider) }
   let!(:client_prefix) { client.client_prefixes.first }
@@ -18,9 +18,8 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
 
   describe "GET /client-prefixes" do
     before do
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
+      Prefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
     end
 
     it "returns client-prefixes" do
@@ -33,9 +32,8 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
 
   describe "GET /client-prefixes/:uid" do
     before do
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
+      Prefix.import(refresh: true)
+      ClientPrefix.import(refresh: true)
     end
 
     context "when the record exists" do
@@ -129,8 +127,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
     let!(:client_prefix) { create(:client_prefix, client: client, provider_prefix: provider_prefix) }
 
     before do
-      ClientPrefix.import
-      sleep 2
+      ClientPrefix.import(refresh: true)
     end
 
     it "deletes the prefix" do

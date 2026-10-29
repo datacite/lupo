@@ -181,7 +181,7 @@ class Provider < ApplicationRecord
   # has_one :service_contact, ->(contact) { where("'service' in ?", Array.wrap(contact.role_name)) }
   # has_one :billing_contact, ->(contact) { where("'billing' in ?", Array.wrap(contact.role_name)) }
 
-  before_validation :set_region, :set_defaults
+  before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -271,6 +271,13 @@ class Provider < ApplicationRecord
               }
       indexes :consortium_organization_ids, type: :keyword
       indexes :country_code, type: :keyword
+      indexes :country,
+              type: :object,
+              properties: {
+                iso3166_region: { type: :keyword },
+                iso3166_subregion: { type: :keyword },
+                iso3166_world_region: { type: :keyword },
+              }
       indexes :role_name, type: :keyword
       indexes :cache_key, type: :keyword
       indexes :joined, type: :date
@@ -396,6 +403,7 @@ class Provider < ApplicationRecord
       "website" => website,
       "region" => region,
       "country_code" => country_code,
+      "country" => country_as_indexed_json,
       "logo_url" => logo_url,
       "focus_area" => focus_area,
       "organization_type" => organization_type,
@@ -782,9 +790,20 @@ class Provider < ApplicationRecord
     ISO3166::Country[billing_country].try(:iso_short_name) if billing_country.present?
   end
 
-  def set_region
-    r = ISO3166::Country[country_code].try(:world_region) if country_code.present?
-    write_attribute(:region, r)
+  def region
+    country_code.present? ? ISO3166::Country[country_code].try(:world_region) : nil
+  end
+
+  def iso3166_subregion
+    country_code.present? ? ISO3166::Country[country_code].try(:subregion) : nil
+  end
+
+  def iso3166_region
+    country_code.present? ? ISO3166::Country[country_code].try(:region) : nil
+  end
+
+  def iso3166_world_region
+    country_code.present? ? ISO3166::Country[country_code].try(:world_region) : nil
   end
 
   def regions
@@ -792,7 +811,7 @@ class Provider < ApplicationRecord
   end
 
   def region_human_name
-    regions[region]
+    region.present? ? regions[region] : nil
   end
 
   def logo_url
@@ -849,7 +868,6 @@ class Provider < ApplicationRecord
     end
   end
 
-  # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
       "symbol" => symbol,
@@ -972,13 +990,7 @@ class Provider < ApplicationRecord
     end
   end
 
-
   private
-    def set_region
-      r = ISO3166::Country[country_code].world_region if country_code.present?
-      write_attribute(:region, r)
-    end
-
     def set_defaults
       self.symbol = symbol.upcase if symbol.present?
       normalize_binary_is_active
@@ -995,6 +1007,19 @@ class Provider < ApplicationRecord
       if logo_content_type.present?
         self.logo_file_name =
           symbol.downcase + "." + logo_content_type.split("/").last
+      end
+    end
+
+    def country_as_indexed_json(_options = {})
+      country = ISO3166::Country[country_code]
+      if country_code.present?
+        {
+          iso3166_subregion: country&.subregion.presence,
+          iso3166_region: country&.region.presence,
+          iso3166_world_region: country&.world_region.presence,
+        }
+      else
+        nil
       end
     end
 end

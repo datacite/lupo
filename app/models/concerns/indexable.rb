@@ -7,35 +7,7 @@ module Indexable
 
   included do
     after_commit on: %i[create update] do
-      # use index_document instead of update_document to also update virtual attributes
-      if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
-        other_doi = OtherDoi.find_by(id: self.id)
-        if other_doi
-          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
-
-          if index_sync_enabled?
-            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
-          end
-        end
-      elsif ["Event", "Activity"].include?(self.class.name)
-        IndexBackgroundJob.perform_later(self)
-      elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
-        IndexJob.perform_later(self)
-      elsif instance_of?(DataciteDoi)
-        IndexJobDoiRegistration.perform_later(self)
-
-        if index_sync_enabled?
-          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
-        end
-      else
-        __elasticsearch__.index_document
-        # This is due to the order of indexing, we want to always ensure
-        # the prefix index is up to date with relations
-        # So we force it here to reindex prefix if we touch them.
-        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
-          self.prefix.__elasticsearch__.index_document
-        end
-      end
+      enqueue_index_update
 
       if instance_of?(DataciteDoi) || instance_of?(OtherDoi) || instance_of?(Doi)
         if aasm_state == "findable"
@@ -91,6 +63,38 @@ module Indexable
       # reindex prefix
       if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
         IndexJob.perform_later(self.prefix)
+      end
+    end
+
+    def enqueue_index_update
+      # use index_document instead of update_document to also update virtual attributes
+      if ["Doi", "DataciteDoi", "OtherDoi"].include?(self.class.name) && agency != "datacite"
+        other_doi = OtherDoi.find_by(id: self.id)
+        if other_doi
+          OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.active_index })
+
+          if index_sync_enabled?
+            OtherDoiImportInBulkJob.perform_later([other_doi.id], { index: self.class.inactive_index })
+          end
+        end
+      elsif ["Event", "Activity"].include?(self.class.name)
+        IndexBackgroundJob.perform_later(self)
+      elsif not %w[Prefix ProviderPrefix ClientPrefix DataciteDoi].include?(self.class.name)
+        IndexJob.perform_later(self)
+      elsif instance_of?(DataciteDoi)
+        IndexJobDoiRegistration.perform_later(self)
+
+        if index_sync_enabled?
+          DataciteDoiImportInBulkJob.perform_later([id], { index: self.class.inactive_index })
+        end
+      else
+        __elasticsearch__.index_document
+        # This is due to the order of indexing, we want to always ensure
+        # the prefix index is up to date with relations
+        # So we force it here to reindex prefix if we touch them.
+        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+          self.prefix.__elasticsearch__.index_document
+        end
       end
     end
 
@@ -299,7 +303,16 @@ module Indexable
             { range: { updated: { lte: "#{options[:until_date]}||/d" } } }
         end
         if options[:region].present?
-          filter << { term: { region: options[:region].upcase } }
+          filter << { term: { 'region': options[:region].upcase } }
+        end
+        if options[:iso3166_world_region].present?
+          filter << { term: { 'country.iso3166_world_region': options[:iso3166_world_region].upcase } }
+        end
+        if options[:iso3166_region].present?
+          filter << { term: { 'country.iso3166_region': options[:iso3166_region] } }
+        end
+        if options[:iso3166_subregion].present?
+          filter << { term: { 'country.iso3166_subregion': options[:iso3166_subregion] } }
         end
         if options[:consortium_id].present?
           filter << { term: { "consortium_id": { value: options[:consortium_id], case_insensitive: true  } } }
