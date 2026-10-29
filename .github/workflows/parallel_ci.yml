@@ -86,8 +86,9 @@ jobs:
         run: |
           for attempt in 1 2 3; do
             # Recommended extras (Ghostscript, fonts) aren't needed and roughly
-            # double the download; dead connections are dropped after 10s.
-            if sudo timeout 60 sh -c 'apt-get update && apt-get install -y --no-install-recommends -o Acquire::http::Timeout=10 imagemagick libmysqlclient-dev'; then
+            # double the download; dead connections are dropped after 10s, both
+            # while updating the package index and while downloading packages.
+            if sudo timeout 60 sh -c 'o="-o Acquire::http::Timeout=10"; apt-get $o update && apt-get $o install -y --no-install-recommends imagemagick libmysqlclient-dev'; then
               exit 0
             fi
             echo "::warning::apt install attempt $attempt timed out or failed; retrying"
