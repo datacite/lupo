@@ -20,6 +20,11 @@ class EnrichmentBatchProcessJob < ApplicationJob
           next
         end
 
+        content_key = parsed_line["contentKey"]
+
+        # content_key must be unique when present. Skip create if we already have it
+        next if content_key.present? && Enrichment.exists?(content_key: content_key)
+
         # We only create enrichments for DOIs that exist and which have an agency of 'datacite'.
         uid = parsed_line["doi"]&.upcase
         doi = Doi.find_by(doi: uid, agency: "datacite")
@@ -51,7 +56,7 @@ class EnrichmentBatchProcessJob < ApplicationJob
           action: parsed_line["action"],
           original_value: parsed_line["originalValue"],
           enriched_value: parsed_line["enrichedValue"],
-          content_key: parsed_line["contentKey"],
+          content_key: content_key,
           event: parsed_line["event"]
         )
 
