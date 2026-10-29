@@ -813,53 +813,35 @@ module Indexable
     # create alias
     def create_alias(options = {})
       alias_name = options[:alias] || index_name
-      index_name = options[:index] || self.index_name + "_v1"
-      # alternate_index_name = options[:index] || self.index_name + "_v2"
+      target_index = options[:index] || "#{index_name}_v1"
 
-      client = Elasticsearch::Model.client
+      IndexAliasCoordination.with_lock(alias_name) do
+        with_alias_mutation_locked(alias_name) do
+          client = Elasticsearch::Model.client
 
-      # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
-      # TODO switch to DataciteDoi index
-      # if self.name == "Doi"
-      #   datacite_index_name = DataciteDoi.index_name + "_v1"
-      #   datacite_alternate_index_name = DataciteDoi.index_name + "_v2"
-      #   other_index_name = OtherDoi.index_name + "_v1"
-      #   other_alternate_index_name = OtherDoi.index_name + "_v2"
-
-      #   if client.indices.exists_alias?(name: alias_name, index: [datacite_index_name])
-      #     "Alias #{alias_name} for index #{datacite_index_name} already exists."
-      #   else
-      #     client.indices.put_alias index: datacite_index_name, name: alias_name
-      #     "Created alias #{alias_name} for index #{datacite_index_name}."
-      #   end
-      #   if client.indices.exists_alias?(name: alias_name, index: [other_index_name])
-      #     "Alias #{alias_name} for index #{other_index_name} already exists."
-      #   else
-      #     client.indices.put_alias index: other_index_name, name: alias_name
-      #     "Created alias #{alias_name} for index #{other_index_name}."
-      #   end
-      # else
-      if client.indices.exists_alias?(name: alias_name, index: [index_name])
-        "Alias #{alias_name} for index #{index_name} already exists."
-      else
-        # alias index is writeable unless it is for OtherDoi index
-        client.indices.update_aliases(
-          body: {
-            actions: [
-              {
-                add: {
-                  index: index_name,
-                  alias: alias_name,
-                  is_write_index: name != "OtherDoi",
-                },
+          if client.indices.exists_alias?(name: alias_name, index: [target_index])
+            "Alias #{alias_name} for index #{target_index} already exists."
+          else
+            # alias index is writeable unless it is for OtherDoi index
+            response = client.indices.update_aliases(
+              body: {
+                actions: [
+                  {
+                    add: {
+                      index: target_index,
+                      alias: alias_name,
+                      is_write_index: name != "OtherDoi",
+                    },
+                  },
+                ],
               },
-            ],
-          },
-        )
+            )
+            ensure_alias_update_acknowledged!(response, alias_name)
 
-        "Created alias #{alias_name} for index #{index_name}."
+            "Created alias #{alias_name} for index #{target_index}."
+          end
+        end
       end
-      # end
     end
 
     # list all aliases
@@ -872,128 +854,79 @@ module Indexable
     # delete alias
     def delete_alias(options = {})
       alias_name = options[:alias] || index_name
-      index_name = (options[:index] || self.index_name) + "_v1"
-      alternate_index_name = (options[:index] || self.index_name) + "_v2"
+      primary_index = "#{options[:index] || index_name}_v1"
+      alternate_index = "#{options[:index] || index_name}_v2"
 
-      client = Elasticsearch::Model.client
+      IndexAliasCoordination.with_lock(alias_name) do
+        with_alias_mutation_locked(alias_name) do
+          client = Elasticsearch::Model.client
+          message = nil
 
-      # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
-      # TODO switch to DataciteDoi index
-      # if self.name == "Doi"
-      #   datacite_index_name = DataciteDoi.index_name + "_v1"
-      #   datacite_alternate_index_name = DataciteDoi.index_name + "_v2"
-      #   other_index_name = OtherDoi.index_name + "_v1"
-      #   other_alternate_index_name = OtherDoi.index_name + "_v2"
+          if client.indices.exists_alias?(name: alias_name, index: [primary_index])
+            client.indices.delete_alias index: primary_index, name: alias_name
+            message = "Deleted alias #{alias_name} for index #{primary_index}."
+          end
+          if client.indices.exists_alias?(name: alias_name, index: [alternate_index])
+            client.indices.delete_alias index: alternate_index, name: alias_name
+            message = "Deleted alias #{alias_name} for index #{alternate_index}."
+          end
 
-      #   if client.indices.exists_alias?(name: alias_name, index: [datacite_index_name])
-      #     client.indices.delete_alias index: datacite_index_name, name: alias_name
-      #     "Deleted alias #{alias_name} for index #{datacite_index_name}."
-      #   end
-      #   if client.indices.exists_alias?(name: alias_name, index: [datacite_alternate_index_name])
-      #     client.indices.delete_alias index: datacite_alternate_index_name, name: alias_name
-      #     "Deleted alias #{alias_name} for index #{datacite_alternate_index_name}."
-      #   end
-      #   if client.indices.exists_alias?(name: alias_name, index: [other_index_name])
-      #     client.indices.delete_alias index: other_index_name, name: alias_name
-      #     "Deleted alias #{alias_name} for index #{other_index_name}."
-      #   end
-      #   if client.indices.exists_alias?(name: alias_name, index: [other_alternate_index_name])
-      #     client.indices.delete_alias index: other_alternate_index_name, name: alias_name
-      #     "Deleted alias #{alias_name} for index #{other_alternate_index_name}."
-      #   end
-      # else
-      if client.indices.exists_alias?(name: alias_name, index: [index_name])
-        client.indices.delete_alias index: index_name, name: alias_name
-        "Deleted alias #{alias_name} for index #{index_name}."
+          message
+        end
       end
-      if client.indices.exists_alias?(
-        name: alias_name, index: [alternate_index_name],
-      )
-        client.indices.delete_alias index: alternate_index_name,
-                                    name: alias_name
-        "Deleted alias #{alias_name} for index #{alternate_index_name}."
-      end
-      # end
     end
 
     # create both indexes used for aliasing
     def create_index(options = {})
       alias_name = options[:alias] || index_name
-      index_name = (options[:index] || self.index_name) + "_v1"
-      alternate_index_name = (options[:index] || self.index_name) + "_v2"
-      client = Elasticsearch::Model.client
+      primary_index = "#{options[:index] || index_name}_v1"
+      alternate_index = "#{options[:index] || index_name}_v2"
 
-      # delete index if it has the same name as the alias
-      if __elasticsearch__.index_exists?(index: alias_name) &&
-          !client.indices.exists_alias?(name: alias_name)
-        __elasticsearch__.delete_index!(index: alias_name)
+      IndexAliasCoordination.with_lock(alias_name) do
+        with_alias_mutation_locked(alias_name) do
+          client = Elasticsearch::Model.client
+
+          # delete index if it has the same name as the alias
+          if __elasticsearch__.index_exists?(index: alias_name) &&
+              !client.indices.exists_alias?(name: alias_name)
+            __elasticsearch__.delete_index!(index: alias_name)
+          end
+
+          create_template if name == "DataciteDoi" || name == "OtherDoi"
+
+          unless __elasticsearch__.index_exists?(index: primary_index)
+            __elasticsearch__.create_index!(index: primary_index)
+          end
+          unless __elasticsearch__.index_exists?(index: alternate_index)
+            __elasticsearch__.create_index!(index: alternate_index)
+          end
+
+          "Created indexes #{primary_index} and #{alternate_index}."
+        end
       end
-
-      create_template if name == "DataciteDoi" || name == "OtherDoi"
-
-      # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
-      # TODO switch to DataciteDoi index
-      # if self.name == "Doi"
-      #   datacite_index_name = DataciteDoi.index_name + "_v1"
-      #   datacite_alternate_index_name = DataciteDoi.index_name + "_v2"
-      #   other_index_name = OtherDoi.index_name + "_v1"
-      #   other_alternate_index_name = OtherDoi.index_name + "_v2"
-
-      #   self.__elasticsearch__.create_index!(index: datacite_index_name) unless self.__elasticsearch__.index_exists?(index: datacite_index_name)
-      #   self.__elasticsearch__.create_index!(index: datacite_alternate_index_name) unless self.__elasticsearch__.index_exists?(index: datacite_alternate_index_name)
-      #   self.__elasticsearch__.create_index!(index: other_index_name) unless self.__elasticsearch__.index_exists?(index: other_index_name)
-      #   self.__elasticsearch__.create_index!(index: other_alternate_index_name) unless self.__elasticsearch__.index_exists?(index: other_alternate_index_name)
-
-      #   "Created indexes #{datacite_index_name}, #{other_index_name}, #{datacite_alternate_index_name}, and #{other_alternate_index_name}."
-      # else
-      unless __elasticsearch__.index_exists?(index: index_name)
-        __elasticsearch__.create_index!(index: index_name)
-      end
-      unless __elasticsearch__.index_exists?(index: alternate_index_name)
-        __elasticsearch__.create_index!(index: alternate_index_name)
-      end
-
-      "Created indexes #{index_name} and #{alternate_index_name}."
-      # end
     end
 
     # delete index and both indexes used for aliasing
     def delete_index(options = {})
-      # client = Elasticsearch::Model.client
-
       if options[:index]
-        __elasticsearch__.delete_index!(index: options[:index])
-        return "Deleted index #{options[:index]}."
+        delete_named_index(options[:index], force: options[:force] == true)
+      else
+        IndexAliasCoordination.with_lock(index_name) do
+          with_alias_mutation_locked(index_name) do
+            primary_index = "#{index_name}_v1"
+            alternate_index = "#{index_name}_v2"
+
+            if __elasticsearch__.index_exists?(index: primary_index)
+              __elasticsearch__.delete_index!(index: primary_index)
+            end
+            if __elasticsearch__.index_exists?(index: alternate_index)
+              __elasticsearch__.delete_index!(index: alternate_index)
+            end
+
+            "Deleted indexes #{primary_index} and #{alternate_index}."
+          end
+        end
       end
-
-      # alias_name = index_name
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
-
-      # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
-      # TODO switch to DataciteDoi index
-      # if self.name == "Doi"
-      #   datacite_index_name = DataciteDoi.index_name + "_v1"
-      #   datacite_alternate_index_name = DataciteDoi.index_name + "_v2"
-      #   other_index_name = OtherDoi.index_name + "_v1"
-      #   other_alternate_index_name = OtherDoi.index_name + "_v2"
-
-      #   self.__elasticsearch__.delete_index!(index: datacite_index_name) if self.__elasticsearch__.index_exists?(index: datacite_index_name)
-      #   self.__elasticsearch__.delete_index!(index: datacite_alternate_index_name) if self.__elasticsearch__.index_exists?(index: datacite_alternate_index_name)
-      #   self.__elasticsearch__.delete_index!(index: other_index_name) if self.__elasticsearch__.index_exists?(index: other_index_name)
-      #   self.__elasticsearch__.delete_index!(index: other_alternate_index_name) if self.__elasticsearch__.index_exists?(index: other_alternate_index_name)
-
-      #   "Deleted indexes #{datacite_index_name}, #{other_index_name}, #{datacite_alternate_index_name}, and #{other_alternate_index_name}."
-      # else
-      if __elasticsearch__.index_exists?(index: index_name)
-        __elasticsearch__.delete_index!(index: index_name)
-      end
-      if __elasticsearch__.index_exists?(index: alternate_index_name)
-        __elasticsearch__.delete_index!(index: alternate_index_name)
-      end
-
-      "Deleted indexes #{index_name} and #{alternate_index_name}."
-      # end
     end
 
     # list all indices
@@ -1004,12 +937,22 @@ module Indexable
     end
 
     # delete and create inactive index to use current mappings
-    # Needs to run every time we change the mappings
+    # Needs to run every time we change the mappings.
+    # The target comes from live alias state under the alias lock, never from
+    # the cache. A missing or ambiguous alias fails closed.
     def upgrade_index(options = {})
-      inactive_index ||= (options[:index] || self.inactive_index)
-
-      __elasticsearch__.create_index!(index: inactive_index, force: true)
-      "Upgraded inactive index #{inactive_index}."
+      alias_name = index_name
+      IndexAliasCoordination.with_lock(alias_name) do
+        with_alias_mutation_locked(alias_name) do
+          target = destructive_inactive_target_locked!(alias_name, explicit: options[:index])
+          __elasticsearch__.create_index!(index: target, force: true)
+          messages = ["Upgraded inactive index #{target}."]
+          if options.key?(:refresh_interval)
+            messages << set_refresh_interval(target, options[:refresh_interval])
+          end
+          messages.join("\n")
+        end
+      end
     end
 
     # show stats for both indexes
@@ -1068,16 +1011,31 @@ module Indexable
       # end
     end
 
-    ACTIVE_INDEX_CACHE_TTL = 1.hour
+    # Active-index cache for an alias.
+    #
+    # Invariants:
+    # 1. Readers never overwrite a value that is already present. This change
+    #    still populates a miss with a plain write; the add-only read path
+    #    follows in a later change.
+    # 2. Mutators overwrite under the per-alias MySQL advisory lock, from a
+    #    live OpenSearch lookup, and read the value back.
+    # 3. Destructive targets come from live alias state under that lock.
+    #    Missing or ambiguous alias state fails closed.
+    #
+    # Manual OpenSearch changes and processes that do not go through these
+    # methods bypass the lock and the invalidation. The 60s TTL only bounds
+    # that exposure.
+    ACTIVE_INDEX_CACHE_TTL = IndexAliasCoordination::TTL
 
-    def active_index_cache_key
-      "elasticsearch/active_index/#{index_name}"
+    def active_index_cache_key(alias_name = index_name)
+      IndexAliasCoordination.cache_key(alias_name)
     end
 
-    # Bust and re-fetch the active index name from Elasticsearch.
-    def refresh_index_name_cache!
-      Rails.cache.delete(active_index_cache_key)
-      active_index
+    # Replace the cached active index with a live OpenSearch lookup.
+    def refresh_index_name_cache!(alias_name = index_name)
+      IndexAliasCoordination.with_lock(alias_name) do
+        refresh_index_name_cache_locked(alias_name)
+      end
     end
 
     # switch between the two indexes, i.e. the index that is aliased
@@ -1085,102 +1043,70 @@ module Indexable
     # as we also have DataciteDoi alias
     def switch_index(options = {})
       alias_name = options[:alias] || index_name
-      index_name = (options[:index] || self.index_name) + "_v1"
-      alternate_index_name = (options[:index] || self.index_name) + "_v2"
+      primary_index = "#{options[:index] || index_name}_v1"
+      alternate_index = "#{options[:index] || index_name}_v2"
       is_write_index = options[:is_write_index] || name != "OtherDoi"
 
-      client = Elasticsearch::Model.client
-      message = nil
+      IndexAliasCoordination.with_lock(alias_name) do
+        with_alias_mutation_locked(alias_name) do
+          holders = IndexAliasCoordination.fetch_live(alias_name).holders
+          client = Elasticsearch::Model.client
 
-      if client.indices.exists_alias?(name: alias_name, index: [index_name])
-        client.indices.update_aliases body: {
-          actions: [
-            {
-              remove: {
-                index: index_name,
-                alias: alias_name,
-              },
-            },
-            {
-              add: {
-                index: alternate_index_name,
-                alias: alias_name,
-                is_write_index: is_write_index,
-              },
-            },
-          ],
-        }
-
-        message = "Switched active index to #{alternate_index_name}."
-      elsif client.indices.exists_alias?(
-        name: alias_name, index: [alternate_index_name],
-      )
-        client.indices.update_aliases body: {
-          actions: [
-            {
-              remove: {
-                index: alternate_index_name,
-                alias: alias_name,
-              },
-            },
-            {
-              add: {
-                index: index_name,
-                alias: alias_name,
-                is_write_index: is_write_index,
-              },
-            },
-          ],
-        }
-
-        message = "Switched active index to #{index_name}."
+          if holders.include?(primary_index)
+            response = client.indices.update_aliases body: {
+              actions: [
+                { remove: { index: primary_index, alias: alias_name } },
+                {
+                  add: {
+                    index: alternate_index,
+                    alias: alias_name,
+                    is_write_index: is_write_index,
+                  },
+                },
+              ],
+            }
+            ensure_alias_update_acknowledged!(response, alias_name)
+            "Switched active index to #{alternate_index}."
+          elsif holders.include?(alternate_index)
+            response = client.indices.update_aliases body: {
+              actions: [
+                { remove: { index: alternate_index, alias: alias_name } },
+                {
+                  add: {
+                    index: primary_index,
+                    alias: alias_name,
+                    is_write_index: is_write_index,
+                  },
+                },
+              ],
+            }
+            ensure_alias_update_acknowledged!(response, alias_name)
+            "Switched active index to #{primary_index}."
+          end
+        end
       end
-
-      refresh_index_name_cache! if message
-      message
     end
 
     # Return the active index, i.e. the index that is aliased.
     # Result is cached; failures are not cached and return nil without raising.
-    def active_index
-      cached = Rails.cache.read(active_index_cache_key)
+    # A miss still uses a plain write. The add-only read path is a follow-up.
+    def active_index(alias_name = index_name)
+      key = active_index_cache_key(alias_name)
+      cached = Rails.cache.read(key)
       return cached if cached.present?
 
-      fetched = fetch_active_index_from_elasticsearch
+      fetched = fetch_active_index_from_elasticsearch(alias_name)
       if fetched.present?
-        Rails.cache.write(
-          active_index_cache_key,
-          fetched,
-          expires_in: ACTIVE_INDEX_CACHE_TTL,
-        )
+        Rails.cache.write(key, fetched, expires_in: ACTIVE_INDEX_CACHE_TTL)
       end
       fetched
     end
 
-    # Query Elasticsearch for the write index behind the model alias.
+    # Query Elasticsearch for the write index behind the alias.
     # Don't rely on the first index being the correct one.
-    def fetch_active_index_from_elasticsearch
-      ret = nil
-      alias_name = index_name
-      client = Elasticsearch::Model.client
-
-      h = client.indices.get_alias(name: alias_name)
-
-      if h.size == 1
-        ret = h.keys.first
-      else
-        # Looping through indices that have alias_name.
-        h.each do |key, value|
-          if value.dig("aliases", alias_name, "is_write_index") == true
-            ret = key
-            break
-          end
-        end
-        # If it gets here with no value, just return the first key.
-        ret = h.keys.first if ret.nil?
-      end
-
-      ret
+    # Transport errors return nil. NotFound is an empty alias, also nil.
+    def fetch_active_index_from_elasticsearch(alias_name = index_name)
+      IndexAliasCoordination.fetch_live(alias_name).active
     rescue Elastic::Transport::Transport::Error => e
       Rails.logger.error(
         "[Elasticsearch] Error fetching active index for alias #{alias_name}: #{e.class} #{e.message}",
@@ -1188,33 +1114,43 @@ module Indexable
       nil
     end
 
-    # Return the inactive index, i.e. the index that is not aliased
-    def inactive_index
-      ret = nil
+    # Return the inactive index, i.e. the index that is not aliased.
+    # Still derived from the cache. Used only for non-destructive defaults.
+    def inactive_index(alias_name = index_name, base: index_name)
+      resolved = active_index(alias_name)
+      return nil if resolved.nil?
 
-      active_index = self.active_index
-
-      if !active_index.nil?
-        index_name = self.index_name + "_v1"
-        alternate_index_name = self.index_name + "_v2"
-
-        ret = active_index.end_with?("v1") ? alternate_index_name : index_name
-      end
-
-      ret
+      primary_index = "#{base}_v1"
+      alternate_index = "#{base}_v2"
+      resolved.end_with?("v1") ? alternate_index : primary_index
     end
 
-    # Set the refresh interval for a given index
-    def set_refresh_interval(index_name, refresh_interval = "120s")
-      client = Elasticsearch::Model.client
-      index_to_update = index_name.nil? ? self.inactive_index : index_name
+    # Live _v1/_v2 complement of the alias. Does not take the alias lock.
+    # Raises when the alias is missing, ambiguous, or not on _v1/_v2.
+    def live_inactive_index!(alias_name = index_name, base: index_name)
+      state = IndexAliasCoordination.fetch_live(alias_name)
+      expected = ["#{base}_v1", "#{base}_v2"]
+      active = state.holders.size == 1 ? state.holders.first : nil
+      unless active && expected.include?(active)
+        raise IndexAliasCoordination::UnsafeIndexOperation,
+          "Cannot resolve inactive index for #{alias_name}: holders #{state.holders.inspect}"
+      end
 
-      # Check if the index exists
+      (expected - [active]).first
+    end
+
+    # Set the refresh interval for a given index.
+    # A nil or empty interval means "120s" rather than resetting the index
+    # to the cluster default. A nil index resolves the inactive index live.
+    def set_refresh_interval(index, refresh_interval = "120s")
+      refresh_interval = refresh_interval.presence || "120s"
+      client = Elasticsearch::Model.client
+      index_to_update = index.nil? ? live_inactive_index! : index
+
       unless client.indices.exists index: index_to_update
         return "Index '#{index_to_update}' not found."
       end
 
-      # Update the index settings
       response = client.indices.put_settings(
         index: index_to_update,
         body: {
@@ -1229,6 +1165,117 @@ module Indexable
       else
         "Failed to update refresh interval for index '#{index_to_update}'."
       end
+    end
+
+    # Assumes the alias lock is held. Resyncs from live OpenSearch after the
+    # block, including when the block raises. The original exception wins.
+    def with_alias_mutation_locked(alias_name)
+      result = yield
+      refresh_index_name_cache_locked(alias_name)
+      result
+    rescue StandardError => e
+      begin
+        refresh_index_name_cache_locked(alias_name)
+      rescue StandardError => cleanup
+        Rails.logger.error(
+          "[IndexAlias] cache resync after failed mutation of #{alias_name} failed: #{cleanup.class} #{cleanup.message}",
+        )
+        begin
+          Rails.cache.delete(active_index_cache_key(alias_name))
+        rescue StandardError
+          nil
+        end
+      end
+      raise e
+    end
+
+    def refresh_index_name_cache_locked(alias_name)
+      value = IndexAliasCoordination.fetch_live(alias_name).active
+      IndexAliasCoordination.write_authoritative!(alias_name, value)
+      value
+    end
+
+    def destructive_inactive_target_locked!(alias_name, explicit:)
+      expected = ["#{index_name}_v1", "#{index_name}_v2"]
+      state = IndexAliasCoordination.fetch_live(alias_name)
+      active = state.holders.size == 1 ? state.holders.first : nil
+      unless active && expected.include?(active)
+        raise IndexAliasCoordination::UnsafeIndexOperation,
+          "Refusing to upgrade #{alias_name}: expected exactly one of #{expected.join(', ')} " \
+          "to hold the alias, holders were #{state.holders.inspect}"
+      end
+
+      computed = (expected - [active]).first
+      unless explicit.nil?
+        unless expected.include?(explicit) && explicit != active
+          raise IndexAliasCoordination::UnsafeIndexOperation,
+            "Refusing to upgrade explicit target #{explicit.inspect} for #{alias_name}; active is #{active}"
+        end
+        return explicit
+      end
+
+      computed
+    end
+
+    def delete_named_index(target, force:)
+      IndexAliasCoordination.with_lock(index_name) do
+        aliases = aliases_on_index(target)
+        if aliases.any? && !force
+          raise IndexAliasCoordination::UnsafeIndexOperation,
+            "Refusing to delete index #{target} because it is aliased by #{aliases.join(', ')}. " \
+            "Pass force: true to override."
+        end
+
+        extras = aliases.reject { |candidate| candidate == index_name }
+        with_extra_alias_locks(extras) do
+          if aliases.any?
+            Rails.logger.warn(
+              "[IndexAlias] Deleting index #{target} with force; aliases that will disappear: #{aliases.join(', ')}",
+            )
+          end
+
+          with_alias_mutation_locked(index_name) do
+            __elasticsearch__.delete_index!(index: target)
+            extras.each { |extra| refresh_index_name_cache_locked(extra) }
+            "Deleted index #{target}."
+          end
+        end
+      end
+    end
+
+    def with_extra_alias_locks(alias_names, &block)
+      return yield if alias_names.empty?
+
+      head, *tail = alias_names
+      IndexAliasCoordination.with_lock(head) do
+        with_extra_alias_locks(tail, &block)
+      end
+    end
+
+    def aliases_on_index(target)
+      response = Elasticsearch::Model.client.indices.get_alias(index: target)
+      response.each_value.flat_map do |meta|
+        raw = meta["aliases"] || meta[:aliases] || {}
+        raw.keys.map(&:to_s)
+      end
+    rescue Elastic::Transport::Transport::Errors::NotFound
+      []
+    end
+
+    def ensure_alias_update_acknowledged!(response, alias_name)
+      return if alias_update_acknowledged?(response)
+
+      holders = IndexAliasCoordination.fetch_live(alias_name).holders
+      raise IndexAliasCoordination::AliasUpdateUnacknowledged,
+        "OpenSearch did not acknowledge the alias update for #{alias_name}; live holders: #{holders.inspect}"
+    end
+
+    def alias_update_acknowledged?(response)
+      return false unless response.respond_to?(:[])
+
+      value = response["acknowledged"]
+      value = response[:acknowledged] if value.nil?
+      value == true
     end
 
     # create index template

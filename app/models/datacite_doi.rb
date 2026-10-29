@@ -22,7 +22,7 @@ class DataciteDoi < Doi
     client_to_doi_count.delete(0)
 
 
-    index = options[:index] || self.inactive_index
+    index = options[:index] || live_inactive_index!
     batch_size = options[:batch_size] || 2000
     client_to_doi_count.keys.each do |client_id|
       DoiImportByClientJob.perform_later(
@@ -34,10 +34,12 @@ class DataciteDoi < Doi
   end
 
   def self.import_by_ids(options = {})
-    index = options[:index] || inactive_index
-    if Rails.env.test?
-      index = index_name
-    end
+    index =
+      if Rails.env.test?
+        index_name
+      else
+        options[:index] || live_inactive_index!
+      end
     datacite_dois = DataciteDoi.select(:id).where(type: "DataciteDoi")
     from_id = (options[:from_id] || datacite_dois.minimum(:id)). to_i
     until_id = (options[:until_id] || datacite_dois.maximum(:id)). to_i
