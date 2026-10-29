@@ -1,12 +1,6 @@
 name: Parallel CI
 on:
   workflow_call:
-    inputs:
-      fail-fast:
-        description: "Stop all jobs if any job fails"
-        required: false
-        type: boolean
-        default: true
 
 jobs:
   parallel-test:
@@ -128,9 +122,6 @@ jobs:
         run: |
           # Record this group's per-file runtimes so the committed log can be refreshed
           RSPEC_OPTS="--format progress --format ParallelTests::RSpec::RuntimeLogger --out tmp/parallel_runtime_rspec.log"
-          if [ "${{ inputs.fail-fast }}" = "true" ]; then
-            RSPEC_OPTS="$RSPEC_OPTS --fail-fast"
-          fi
           bundle exec parallel_test spec/ -n $CI_NODE_TOTAL --only-group $CI_NODE_INDEX --type rspec \
             --group-by runtime --runtime-log spec/parallel_runtime_rspec.log -o "$RSPEC_OPTS"
           echo $?
