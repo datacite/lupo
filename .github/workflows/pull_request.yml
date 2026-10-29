@@ -23,5 +23,3 @@ jobs:
   parallel-test:
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
-    with:
-      fail-fast: ${{ github.event_name == 'workflow_dispatch' && inputs.fail-fast || !contains(github.event.pull_request.labels.*.name, 'run-all-tests') }}
