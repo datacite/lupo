@@ -11,6 +11,8 @@ class Ability
     user ||= User.new(nil) # Guest user
     # @user = user
 
+    can :read, DoiBatch, submitted_by: user.uid if user.uid.present?
+
     if user.role_id == "staff_admin"
       can :manage, :all
       can :manage, ApiKey
@@ -200,6 +202,7 @@ class Ability
         doi.client.prefixes.where(uid: doi.prefix).present? ||
           doi.type == "OtherDoi"
       end
+      can :read, DoiBatch, client_id: user.client_id
       can %i[read], Doi
       can %i[read], User
       can %i[read], Activity do |activity|
