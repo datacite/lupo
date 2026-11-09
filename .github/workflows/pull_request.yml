@@ -4,12 +4,6 @@ on:
     branches:
       - master
   workflow_dispatch:
-    inputs:
-      fail-fast:
-        description: 'Stop all jobs if any job fails'
-        type: boolean
-        default: true
-        required: false
 # A new push to the PR cancels the run still going on the previous commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
