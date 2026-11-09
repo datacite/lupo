@@ -4,12 +4,6 @@ on:
     branches:
       - master
   workflow_dispatch:
-    inputs:
-      fail-fast:
-        description: 'Stop all jobs if any job fails'
-        type: boolean
-        default: true
-        required: false
 # A new push to the PR cancels the run still going on the previous commit
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,5 +17,3 @@ jobs:
   parallel-test:
     uses: ./.github/workflows/parallel_ci.yml
     secrets: inherit
-    with:
-      fail-fast: ${{ github.event_name == 'workflow_dispatch' && inputs.fail-fast || !contains(github.event.pull_request.labels.*.name, 'run-all-tests') }}
