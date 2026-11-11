@@ -44,6 +44,28 @@ namespace :elasticsearch do
     Rake::Task["enrichment:create_alias"].invoke
   end
 
+  desc "Refresh active-index cache entries from live OpenSearch aliases. Safe in production."
+  task refresh_active_index_caches: :environment do
+    model_names =
+      if ENV["MODELS"].present?
+        ENV["MODELS"].split(",").map(&:strip).reject(&:empty?)
+      else
+        IndexAliasCoordination::INDEXED_MODELS
+      end
+
+    seen_aliases = {}
+    model_names.each do |model_name|
+      model = model_name.constantize
+      alias_name = model.index_name
+      next if seen_aliases[alias_name]
+
+      seen_aliases[alias_name] = true
+      cached_before = Rails.cache.read(model.active_index_cache_key)
+      live_after = model.refresh_index_name_cache!
+      puts "#{alias_name} #{cached_before.inspect} -> #{live_after.inspect}"
+    end
+  end
+
   desc "delete all indexes"
   task delete_all_indexes: :environment do
     fail "These tasks can only be used in the development enviroment" if Rails.env.production?

@@ -8,7 +8,7 @@ namespace :contact do
 
   desc "Delete index for contacts"
   task delete_index: :environment do
-    puts Contact.delete_index(index: ENV["INDEX"])
+    puts Contact.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for contacts"
