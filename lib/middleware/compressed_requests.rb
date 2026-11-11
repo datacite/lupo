@@ -7,7 +7,7 @@ module Middleware
     end
 
     def method_handled?(env)
-      !!(env["REQUEST_METHOD"] =~ /(POST|PUT)/)
+      !!(env["REQUEST_METHOD"] =~ /\A(POST|PUT|PATCH)\z/)
     end
 
     def encoding_handled?(env)
@@ -20,7 +20,7 @@ module Middleware
         extracted = decode(env["rack.input"], env["HTTP_CONTENT_ENCODING"])
         hsh = JSON.parse(extracted)
 
-        request.update_param("data",  hsh.fetch("data", {}))
+        request.update_param("data", hsh.fetch("data", {}))
         request.update_param("encoding", env["HTTP_CONTENT_ENCODING"])
 
         env.delete("HTTP_CONTENT_ENCODING")
