@@ -17,7 +17,7 @@ gem "bootsnap", "~> 1.23"
 gem "cancancan", "~> 3.6", ">= 3.6.1"
 gem "countries", "~> 8.1"
 gem "crawler_detect", "~> 1.2", ">= 1.2.11"
-gem "dalli", "~> 5.0", ">= 5.0.2"
+gem "dalli", "~> 5.0", ">= 5.2.9"
 gem "departure", "~> 8.0"
 gem "dotenv", "~> 3.2"
 gem "elasticsearch", "~> 8.19", ">= 8.19.3"
@@ -80,7 +80,7 @@ group :development do
   gem "bundler-audit", "~> 0.9.3"
   gem "fasterer", "~> 0.11.0" # possible removal
   gem "listen", "~> 3.10"
-  gem "puma", "~> 8.0", ">= 8.0.2"
+  gem "puma", "~> 8.0", ">= 8.0.3"
   gem "reek", "~> 6.5" # possible removal
   gem "seedbank", "~> 0.5.0" # possible removal
   gem "rubocop", "~> 1.89", require: false
