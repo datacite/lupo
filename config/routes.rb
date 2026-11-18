@@ -143,6 +143,10 @@ Rails.application.routes.draw do
       to: "repositories#index", defaults: { format: :csv }
 
   # manage DOIs
+  patch "dois", to: "datacite_dois#update_batch"
+  resources :doi_batches, path: "doi-batches", only: %i[show] do
+    get :items, on: :member
+  end
   post "dois/validate", to: "datacite_dois#validate"
   post "dois/undo", to: "datacite_dois#undo"
   post "dois/status", to: "datacite_dois#status"
