@@ -8,13 +8,12 @@ namespace :datacite_doi do
 
   desc "Delete index for datacite dois"
   task delete_index: :environment do
-    puts DataciteDoi.delete_index(index: ENV["INDEX"])
+    puts DataciteDoi.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for datacite dois"
   task upgrade_index: :environment do
-    puts DataciteDoi.upgrade_index(index: ENV["INDEX"])
-    puts DataciteDoi.set_refresh_interval(ENV["INDEX"], ENV["INTERVAL"])
+    puts DataciteDoi.upgrade_index(index: ENV["INDEX"], refresh_interval: ENV["INTERVAL"])
   end
 
   desc "Set refresh interval for datacite dois"
@@ -69,7 +68,7 @@ namespace :datacite_doi do
 
   desc "Index all datacite DOIs grouped by Client"
   task index_all_by_client: :environment do
-    import_index = ENV["INDEX"] || DataciteDoi.inactive_index
+    import_index = ENV["INDEX"] || DataciteDoi.live_inactive_index!
     batch_size = ENV["BATCH_SIZE"].nil? ? 2000 : ENV["BATCH_SIZE"].to_i
     DataciteDoi.index_all_by_client(
       index: import_index,
@@ -83,7 +82,7 @@ namespace :datacite_doi do
       puts "ENV variable CLIENT_ID is required"
       exit
     end
-    import_index = ENV["INDEX"] || DataciteDoi.inactive_index
+    import_index = ENV["INDEX"] || DataciteDoi.live_inactive_index!
     batch_size = ENV["BATCH_SIZE"].nil? ? 2000 : ENV["BATCH_SIZE"].to_i
     DataciteDoi.import_by_client(
       client_id: ENV["CLIENT_ID"],
@@ -102,7 +101,7 @@ namespace :datacite_doi do
       from_id: from_id,
       until_id: until_id,
       batch_size: batch_size,
-      index: ENV["INDEX"] || DataciteDoi.inactive_index
+      index: ENV["INDEX"] || DataciteDoi.live_inactive_index!
     )
   end
 

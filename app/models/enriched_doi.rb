@@ -34,11 +34,11 @@ class EnrichedDoi < Doi
     index_name("enriched_dois")
   end
 
-  def self.active_index
+  def self.active_index(*args)
     Rails.env.test? ? index_name : super
   end
 
-  def self.inactive_index
+  def self.inactive_index(*args, **kwargs)
     Rails.env.test? ? index_name : super
   end
 

@@ -79,10 +79,12 @@ class OtherDoi < Doi
 
   # TODO remove query for type once STI is enabled
   def self.import_by_ids(options = {})
-    index = options[:index] || inactive_index
-    if Rails.env.test?
-      index = index_name
-    end
+    index =
+      if Rails.env.test?
+        index_name
+      else
+        options[:index] || live_inactive_index!
+      end
     from_id  = (options[:from_id]  || OtherDoi.where(type: "OtherDoi").minimum(:id)).to_i
     until_id = (options[:until_id] || OtherDoi.where(type: "OtherDoi").maximum(:id)).to_i
     shard_size = options[:shard_size] || 10_000

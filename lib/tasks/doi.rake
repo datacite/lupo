@@ -9,7 +9,7 @@ namespace :doi do
 
   desc "Delete index for dois"
   task delete_index: :environment do
-    puts Doi.delete_index(index: ENV["INDEX"])
+    puts Doi.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "List indices for dois"

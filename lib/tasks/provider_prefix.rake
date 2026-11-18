@@ -8,7 +8,7 @@ namespace :provider_prefix do
 
   desc "Delete index for provider_prefixes"
   task delete_index: :environment do
-    puts ProviderPrefix.delete_index(index: ENV["INDEX"])
+    puts ProviderPrefix.delete_index(index: ENV["INDEX"], force: ENV["FORCE"] == "true")
   end
 
   desc "Upgrade index for provider_prefixes"
