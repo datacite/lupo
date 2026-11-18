@@ -2148,6 +2148,143 @@ describe Doi, type: :model, vcr: true, elasticsearch: false, prefix_pool_size: 1
     end
   end
 
+  describe "as_indexed_json" do
+    it "uses slim client and provider snapshots" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23")
+      client = create(
+        :client,
+        provider: provider,
+        re3data_id: "10.17616/R3XS37",
+        opendoar_id: 1234,
+        certificate: ["CoreTrustSeal"],
+        client_type: "repository",
+      )
+      doi = create(:doi, client: client)
+
+      client_json = doi.as_indexed_json["client"]
+      provider_json = doi.as_indexed_json["provider"]
+
+      expect(client_json).to include(
+        "uid" => client.uid,
+        "re3data_id" => "10.17616/R3XS37",
+        "opendoar_id" => 1234,
+        "certificate" => ["CoreTrustSeal"],
+        "client_type" => "repository",
+        "is_active" => client.is_active,
+      )
+      expect(client_json).not_to include(
+        "password", "system_email", "salesforce_id", "globus_uuid", "service_contact",
+        "provider", "provider_id", "provider_id_and_name", "consortium_id",
+        "repository_type", "software", "cache_key", "subjects"
+      )
+
+      expect(provider_json).to include(
+        "uid" => provider.uid,
+        "symbol" => provider.symbol,
+        "ror_id" => "https://ror.org/01abcde23",
+        "name" => provider.name,
+        "display_name" => provider.display_name,
+        "non_profit_status" => provider.non_profit_status,
+        "is_active" => provider.is_active,
+        "created" => provider.created.iso8601,
+        "updated" => provider.updated.iso8601,
+        "doi_estimate" => provider.doi_estimate,
+      )
+      expect(provider_json).not_to include(
+        "password", "system_email", "group_email", "globus_uuid", "twitter_handle",
+        "salesforce_id", "billing_information", "technical_contact", "service_contact",
+        "voting_contact", "consortium", "client_ids", "prefix_ids", "contacts", "cache_key"
+      )
+    end
+
+    it "keeps a periodical client's issn" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23")
+      issn = [{ "issnl" => "1234-5678" }]
+      client = create(:client, provider: provider, client_type: "periodical", issn: issn)
+      doi = create(:doi, client: client)
+
+      expect(doi.as_indexed_json.dig("client", "issn")).to eq(issn)
+    end
+
+    it "covers every ClientSerializer and ProviderSerializer attribute" do
+      provider = create(:provider, ror_id: "https://ror.org/01abcde23", non_profit_status: "non-profit")
+      client = create(
+        :client,
+        provider: provider,
+        client_type: "periodical",
+        issn: [{ "issnl" => "1234-5678" }],
+      )
+      doi = create(:doi, client: client)
+      client_json = doi.as_indexed_json["client"]
+      provider_json = doi.as_indexed_json["provider"]
+
+      client_sources = indexed_snapshot_sources(
+        ClientSerializer,
+        CLIENT_SNAPSHOT_EXCLUDED_ATTRIBUTES,
+        "re3data" => "re3data_id",
+        "opendoar" => "opendoar_id",
+        "isActive" => "is_active",
+      )
+      provider_sources = indexed_snapshot_sources(
+        ProviderSerializer,
+        PROVIDER_SNAPSHOT_EXCLUDED_ATTRIBUTES,
+        "country" => "country_code",
+        "isActive" => "is_active",
+        "displayName" => "display_name",
+        "logoUrl" => "logo_url",
+        "memberType" => "member_type",
+        "organizationType" => "organization_type",
+        "focusArea" => "focus_area",
+        "nonProfitStatus" => "non_profit_status",
+        "doiEstimate" => "doi_estimate",
+      )
+
+      expect(client_sources - client_json.keys).to eq([])
+      expect(provider_sources - provider_json.keys).to eq([])
+    end
+  end
+
+  # Ability-gated or sensitive serializer attributes. Intentionally absent from
+  # the DOI snapshot. The pre-1603 client/provider documents did index several
+  # of these (password, emails, billing, contacts). A new serializer attribute
+  # fails the coverage example until it is stored or added here on purpose.
+  CLIENT_SNAPSHOT_EXCLUDED_ATTRIBUTES = %w[
+    contactEmail
+    globusUuid
+    salesforceId
+    hasPassword
+  ].freeze
+  PROVIDER_SNAPSHOT_EXCLUDED_ATTRIBUTES = %w[
+    systemEmail
+    groupEmail
+    globusUuid
+    twitterHandle
+    hasPassword
+    billingInformation
+    salesforceId
+    fromSalesforce
+    technicalContact
+    secondaryTechnicalContact
+    billingContact
+    secondaryBillingContact
+    serviceContact
+    secondaryServiceContact
+    votingContact
+    hasRequiredContacts
+  ].freeze
+
+  def indexed_snapshot_sources(serializer, excluded, aliases)
+    serializer.attributes_to_serialize.filter_map do |_name, attribute|
+      next if excluded.include?(attribute.key.to_s)
+
+      if attribute.method.is_a?(Symbol)
+        attribute.method.to_s
+      else
+        aliases.fetch(attribute.key.to_s)
+      end
+    end
+  end
+
   describe "update publisher" do
     let(:doi) { create(:doi) }
 

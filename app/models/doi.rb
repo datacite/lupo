@@ -818,8 +818,8 @@ class Doi < ApplicationRecord
       "created" => created.try(:iso8601),
       "updated" => updated.try(:iso8601),
       "published" => published.try(:iso8601),
-      "client" => client.try(:as_indexed_json, exclude_associations: true),
-      "provider" => provider.try(:as_indexed_json, exclude_associations: true),
+      "client" => doi_client_indexed_json,
+      "provider" => doi_provider_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
       "reference_ids" => reference_ids,
@@ -837,6 +837,58 @@ class Doi < ApplicationRecord
 
   def extra_indexed_fields
     {}
+  end
+
+  def doi_client_indexed_json
+    return nil if client.blank?
+
+    {
+      "id" => client.uid,
+      "uid" => client.uid,
+      "symbol" => client.symbol,
+      "name" => client.name,
+      "alternate_name" => client.alternate_name,
+      "description" => client.description,
+      "language" => client.language,
+      "client_type" => client.client_type,
+      "domains" => client.domains,
+      "year" => client.year,
+      "url" => client.url,
+      "issn" => client.issn,
+      "re3data_id" => client.re3data_id,
+      "opendoar_id" => client.opendoar_id,
+      "certificate" => Array.wrap(client.certificate),
+      "is_active" => client.is_active,
+      "created" => client.created.try(:iso8601),
+      "updated" => client.updated.try(:iso8601),
+    }
+  end
+
+  def doi_provider_indexed_json
+    return nil if provider.blank?
+
+    {
+      "id" => provider.uid,
+      "uid" => provider.uid,
+      "symbol" => provider.symbol,
+      "name" => provider.name,
+      "display_name" => provider.display_name,
+      "description" => provider.description,
+      "website" => provider.website,
+      "region" => provider.region,
+      "country_code" => provider.country_code,
+      "logo_url" => provider.logo_url,
+      "member_type" => provider.member_type,
+      "organization_type" => provider.organization_type,
+      "focus_area" => provider.focus_area,
+      "non_profit_status" => provider.non_profit_status,
+      "is_active" => provider.is_active,
+      "joined" => provider.joined.try(:iso8601),
+      "ror_id" => provider.ror_id,
+      "doi_estimate" => provider.doi_estimate,
+      "created" => provider.created.try(:iso8601),
+      "updated" => provider.updated.try(:iso8601),
+    }
   end
 
   def has_enrichments
