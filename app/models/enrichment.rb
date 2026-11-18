@@ -14,6 +14,8 @@ class Enrichment < ApplicationRecord
 
   has_one :client, through: :doi_record
 
+  after_destroy_commit :sync_doi_enrichment_index
+
   scope :by_doi, ->(doi) { where(doi: doi) }
 
   scope :by_client, ->(client_id) { joins(doi_record: :client).where(datacentre: { symbol: client_id }) }
@@ -28,6 +30,16 @@ class Enrichment < ApplicationRecord
   scope :order_by_cursor, -> { order(updated_at: :desc, id: :desc) }
 
   private
+    def sync_doi_enrichment_index
+      datacite_doi = DataciteDoi.find_by(doi: doi, type: "DataciteDoi")
+      return if datacite_doi.blank?
+      return if Enrichment.exists?(doi: doi)
+
+      # Reindex so the DataciteDoi document's computed has_enrichments is false.
+      datacite_doi.touch
+      EnrichedDoiDeleteJob.enqueue_for_datacite_doi(datacite_doi)
+    end
+
     def set_defaults
       self.uuid = SecureRandom.uuid if uuid.blank?
     end
