@@ -201,7 +201,7 @@ GEM
       base64
       ssrf_filter (~> 1.5)
     csv (3.3.5)
-    dalli (5.2.8)
+    dalli (5.3.3)
       logger
     database_cleaner-active_record (2.2.2)
       activerecord (>= 5.a)
@@ -478,7 +478,7 @@ GEM
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
-    msgpack (1.8.3)
+    msgpack (1.8.7)
     multi_json (1.21.1)
     multipart-post (2.4.1)
     mysql2 (0.5.7)
@@ -537,7 +537,7 @@ GEM
       date
       stringio
     public_suffix (7.0.5)
-    puma (8.0.2)
+    puma (8.1.2)
       nio4r (~> 2.0)
     qonfig (0.30.0)
       base64 (>= 0.2)
@@ -802,7 +802,7 @@ DEPENDENCIES
   cancancan (~> 3.6, >= 3.6.1)
   countries (~> 8.1)
   crawler_detect (~> 1.2, >= 1.2.11)
-  dalli (~> 5.0, >= 5.0.2)
+  dalli (~> 5.0, >= 5.2.9)
   database_cleaner-active_record (~> 2.2, >= 2.2.2)
   datadog (>= 2.45.0)
   departure (~> 8.0)
@@ -843,7 +843,7 @@ DEPENDENCIES
   parallel (~> 1.28)
   parallel_tests (~> 5.6)
   premailer (~> 1.29)
-  puma (~> 8.0, >= 8.0.2)
+  puma (~> 8.0, >= 8.0.3)
   rack-cors (~> 3.0)
   rack-utf8_sanitizer (~> 1.11, >= 1.11.1)
   rails (~> 8.1, >= 8.1.3)
