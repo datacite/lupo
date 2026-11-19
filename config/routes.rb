@@ -239,14 +239,14 @@ Rails.application.routes.draw do
   # custom routes for maintenance tasks
   post ":username", to: "datacite_dois#show", as: :user
 
+  resources :resolution_reports, path: "resolution-reports", only: [:index]
+
   # content negotiation
   resources :index,
             path: "/",
             only: %i[show index],
             constraints: { id: /.+/ },
             format: false
-
-  resources :resolution_reports
 
   root to: "index#index"
 
