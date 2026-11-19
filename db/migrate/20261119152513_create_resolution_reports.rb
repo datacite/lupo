@@ -14,7 +14,6 @@ class CreateResolutionReports < ActiveRecord::Migration[8.0]
 
       t.index [:period, :prefix], unique: true, name: "idx_period_prefix"
       t.index [:prefix, :period], name: "idx_prefix_period"
-
     end
   end
 end
