@@ -246,6 +246,8 @@ Rails.application.routes.draw do
             constraints: { id: /.+/ },
             format: false
 
+  resources :resolution_reports
+
   root to: "index#index"
 
   # rescue routing errors
