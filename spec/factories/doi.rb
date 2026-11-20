@@ -27,6 +27,11 @@ FactoryBot.define do
         "lang": "en",
       }
     end
+
+    trait :with_datacite_xml do
+      xml { file_fixture("datacite.xml").read }
+    end
+
     creators do
       [
         {
