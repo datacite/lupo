@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # lib/tasks/resolution_report.rake
 
 require "aws-sdk-s3"
