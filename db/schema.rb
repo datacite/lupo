@@ -368,6 +368,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_152513) do
     t.integer "total_unique_dois", default: 0, null: false, unsigned: true
     t.integer "unique_doi_failures", default: 0, null: false, unsigned: true
     t.integer "unique_doi_successes", default: 0, null: false, unsigned: true
+    t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" }, null: false
     t.index ["period", "prefix"], name: "idx_period_prefix", unique: true
     t.index ["prefix", "period"], name: "idx_prefix_period"
   end

@@ -11,6 +11,7 @@ class CreateResolutionReports < ActiveRecord::Migration[8.0]
       t.integer :unique_doi_failures, unsigned: true, null: false, default: 0
 
       t.timestamp :created_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.timestamp :updated_at, null: false, default: -> { "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" }
 
       t.index [:period, :prefix], unique: true, name: "idx_period_prefix"
       t.index [:prefix, :period], name: "idx_prefix_period"

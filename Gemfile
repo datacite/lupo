@@ -64,6 +64,7 @@ gem "sparql", "~> 3.1", ">= 3.1.2"
 gem "string_pattern", "~> 2.4"
 gem "strip_attributes", "~> 2.0", ">= 2.0.1"
 gem "parallel", "~> 1.28"
+gem "oj", "~> 3.16"
 
 group :production, :stage do
   gem "datadog", ">= 2.45.0", require: "datadog/auto_instrument"
