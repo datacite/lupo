@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_153231) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_19_152513) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -356,6 +356,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_153231) do
     t.datetime "created_at", null: false
     t.string "re3doi"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "resolution_reports", id: :integer, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.timestamp "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "failed_resolutions", default: 0, null: false, unsigned: true
+    t.string "period", limit: 7, null: false
+    t.string "prefix", limit: 80, null: false
+    t.integer "successful_resolutions", default: 0, null: false, unsigned: true
+    t.integer "total_attempted_resolutions", default: 0, null: false, unsigned: true
+    t.integer "total_unique_dois", default: 0, null: false, unsigned: true
+    t.integer "unique_doi_failures", default: 0, null: false, unsigned: true
+    t.integer "unique_doi_successes", default: 0, null: false, unsigned: true
+    t.timestamp "updated_at", default: -> { "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" }, null: false
+    t.index ["period", "prefix"], name: "idx_period_prefix", unique: true
+    t.index ["prefix", "period"], name: "idx_prefix_period"
   end
 
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
